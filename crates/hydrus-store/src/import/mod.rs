@@ -945,15 +945,15 @@ pub(crate) mod tests {
         assert!(!dest.with_file_name("other.db.importing").exists());
     }
 
-    #[test]
-    fn rebuilt_counts_match_the_reference_caches() {
-        let (source, _dest_dir, dest) = import_basic();
-        let conn = Connection::open(&dest).unwrap();
+    /// Compare every count the native store derived with the reference's own
+    /// autocomplete caches. Returns how many rows were compared.
+    fn compare_counts_with_reference(source: &Path, dest: &Path) -> usize {
+        let conn = Connection::open(dest).unwrap();
         conn.execute(
             "ATTACH DATABASE ?1 AS ref",
             [format!(
-                "file:{}?mode=ro",
-                source.path().join("client.caches.db").display()
+                "file:{}?mode=ro&immutable=1",
+                source.join("client.caches.db").display()
             )],
         )
         .unwrap();
@@ -965,28 +965,57 @@ pub(crate) mod tests {
                 .map(Result::unwrap)
                 .collect()
         };
+        let ids = |sql: &str| -> Vec<i64> {
+            conn.prepare(sql)
+                .unwrap()
+                .query_map([], |r| r.get(0))
+                .unwrap()
+                .map(Result::unwrap)
+                .collect()
+        };
+        let exists = |table: &str| -> bool {
+            conn.query_row(
+                "SELECT EXISTS (SELECT 1 FROM ref.sqlite_master WHERE name = ?1)",
+                [table],
+                |r| r.get(0),
+            )
+            .unwrap()
+        };
+        let tag_services = ids(&format!(
+            "SELECT service_id FROM services WHERE service_type IN ({}, {})",
+            ServiceType::LocalTag.code(),
+            ServiceType::TagRepository.code()
+        ));
+        let all_known_files = ids(&format!(
+            "SELECT service_id FROM services WHERE service_type = {}",
+            ServiceType::CombinedFile.code()
+        ))[0];
+        let file_services = ids("SELECT service_id FROM services");
         let mut compared = 0;
-        for tag_service in [9, 10, 14] {
+        for tag_service in tag_services {
             for (display, ours, theirs) in [
                 (false, "cache_tag_counts", "ac_cache"),
                 (true, "cache_display_counts", "display_ac_cache"),
             ] {
-                // all known files
                 let expected = rows(&format!(
                     "SELECT tag_id, current_count, pending_count FROM ref.combined_files_{theirs}_{tag_service}
                      WHERE current_count > 0 OR pending_count > 0 ORDER BY tag_id"
                 ));
                 let actual = rows(&format!(
-                    "SELECT tag_id, current, pending FROM {ours}_{tag_service} WHERE domain_id = 2 ORDER BY tag_id"
+                    "SELECT tag_id, current, pending FROM {ours}_{tag_service} WHERE domain_id = {all_known_files} ORDER BY tag_id"
                 ));
                 assert_eq!(
                     actual, expected,
                     "all known files, service {tag_service}, display {display}"
                 );
                 compared += expected.len();
-                for file_service in [3, 4, 5, 6, 7, 8, 15] {
+                for &file_service in &file_services {
+                    let table = format!("specific_{theirs}_{file_service}_{tag_service}");
+                    if !exists(&table) {
+                        continue;
+                    }
                     let expected = rows(&format!(
-                        "SELECT tag_id, current_count, pending_count FROM ref.specific_{theirs}_{file_service}_{tag_service}
+                        "SELECT tag_id, current_count, pending_count FROM ref.{table}
                          WHERE current_count > 0 OR pending_count > 0 ORDER BY tag_id"
                     ));
                     let actual = rows(&format!(
@@ -1000,6 +1029,29 @@ pub(crate) mod tests {
                 }
             }
         }
+        compared
+    }
+
+    #[test]
+    fn rebuilt_counts_match_the_reference_caches() {
+        let (source, _dest_dir, dest) = import_basic();
+        let compared = compare_counts_with_reference(source.path(), &dest);
         assert!(compared > 300, "only compared {compared} rows");
+    }
+
+    /// The same check on any reference install, e.g. one made by
+    /// `oracle/make_bench_db.py`:
+    /// `HYDRUS_REFERENCE_DB=/path/to/db cargo test -p hydrus-store --release -- --ignored any_reference`
+    #[test]
+    #[ignore = "needs HYDRUS_REFERENCE_DB"]
+    fn any_reference_install_counts_match() {
+        let source =
+            PathBuf::from(std::env::var_os("HYDRUS_REFERENCE_DB").expect("HYDRUS_REFERENCE_DB"));
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(&source, &dest).unwrap();
+        let compared = compare_counts_with_reference(&source, &dest);
+        eprintln!("compared {compared} count rows");
+        assert!(compared > 0);
     }
 }
