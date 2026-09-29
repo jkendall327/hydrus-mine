@@ -88,3 +88,6 @@ shell.nix
 # rust
 /target/
 **/*.rs.bk
+
+# agent worktrees
+/.claude/worktrees/
