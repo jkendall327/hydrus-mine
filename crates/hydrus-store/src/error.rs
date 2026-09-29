@@ -39,6 +39,9 @@ pub enum StoreError {
     #[error("the database writer has shut down")]
     WriterGone,
 
+    #[error("reading the reference database: {0}")]
+    Legacy(#[from] hydrus_legacy::LegacyError),
+
     #[error("{0}")]
     Invalid(String),
 }

@@ -8,8 +8,8 @@
 //! count is checked against its source.
 //!
 //! Service settings and serialised objects need the reference's serialisation
-//! format decoded; that is the caller's job (see the `hydrus-legacy` crate),
-//! so it's passed in as [`ImportInput`]. This module only knows SQL.
+//! format decoded: [`decode_input`] does that with `hydrus-legacy`'s typed
+//! decoders, and [`import_legacy`] puts the two halves together.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -21,6 +21,10 @@ use hydrus_core::{ServiceId, ServiceKey, ServiceType, SubtagId};
 use crate::error::{Result, StoreError};
 use crate::services::{self, ServiceKind};
 use crate::{counts, master, schema};
+
+mod decode;
+
+pub use decode::decode_input;
 
 /// Reference schema version this importer understands.
 pub const SUPPORTED_REFERENCE_VERSION: u32 = 688;
@@ -56,8 +60,42 @@ pub struct ImportReport {
     pub tag_services: usize,
 }
 
+/// Import the reference install whose database directory is `source_dir`
+/// into a new native database at `dest`, which must not exist.
+pub fn import_legacy(source_dir: &Path, dest: &Path) -> Result<ImportReport> {
+    let input = {
+        // see attach_read_only: don't leave WAL sidecars behind in the source
+        let mode = if source_is_open(source_dir) {
+            hydrus_legacy::OpenMode::Shared
+        } else {
+            hydrus_legacy::OpenMode::Immutable
+        };
+        let options = hydrus_legacy::OpenOptions {
+            mode,
+            ..hydrus_legacy::OpenOptions::default()
+        };
+        let db = hydrus_legacy::LegacyDb::open_with(source_dir, options)?;
+        decode_input(&db)?
+    };
+    import(source_dir, dest, &input)
+}
+
+/// Whether any of the source database files has a WAL file, i.e. it is open
+/// in the reference client or wasn't closed cleanly.
+fn source_is_open(source_dir: &Path) -> bool {
+    hydrus_legacy::db::DATABASE_FILES
+        .iter()
+        .any(|(_, file)| has_wal(&source_dir.join(file)))
+}
+
+fn has_wal(path: &Path) -> bool {
+    let mut wal = path.as_os_str().to_owned();
+    wal.push("-wal");
+    Path::new(&wal).exists()
+}
+
 /// Import the reference database in `source_dir` into a new native database
-/// at `dest`, which must not exist.
+/// at `dest`, which must not exist, with already-decoded settings.
 pub fn import(source_dir: &Path, dest: &Path, input: &ImportInput) -> Result<ImportReport> {
     if dest.exists() {
         return Err(StoreError::Invalid(format!(
@@ -101,9 +139,7 @@ fn attach_read_only(conn: &Connection, path: &Path, alias: &str) -> Result<()> {
             path.display()
         )));
     }
-    let mut wal = path.as_os_str().to_owned();
-    wal.push("-wal");
-    let mode = if Path::new(&wal).exists() {
+    let mode = if has_wal(path) {
         "mode=ro"
     } else {
         "mode=ro&immutable=1"
@@ -742,65 +778,113 @@ fn settingless_kind(service_type: ServiceType) -> Option<ServiceKind> {
 pub(crate) mod tests {
     use super::*;
     use crate::services::{
-        LikeRatingConfig, NumericalRatingConfig, RatingDisplay, ServerConfig, StarShape,
+        LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay, Rgb,
+        ServerConfig, StarAppearance, StarShape,
     };
-
-    /// Unpack a reference fixture database into a temp dir.
-    pub(crate) fn legacy_fixture(name: &str) -> tempfile::TempDir {
-        let dir = tempfile::tempdir().unwrap();
-        let tarball = Path::new(env!("CARGO_MANIFEST_DIR"))
-            .join(format!("../../oracle/fixtures/legacy_db/{name}.tar.gz"));
-        let file = std::fs::File::open(&tarball).unwrap();
-        tar::Archive::new(flate2::read::GzDecoder::new(file))
-            .unpack(dir.path())
-            .unwrap();
-        dir
-    }
-
-    /// Settings for the basic fixture's configurable services, as the legacy
-    /// decoder will produce them.
-    pub(crate) fn basic_input() -> ImportInput {
-        let mut input = ImportInput::default();
-        let like = LikeRatingConfig {
-            display: RatingDisplay::default(),
-            shape: StarShape::FAT_STAR,
-            rating_svg: None,
-        };
-        let stars = NumericalRatingConfig {
-            display: RatingDisplay::default(),
-            shape: StarShape::CIRCLE,
-            rating_svg: None,
-            num_stars: 5,
-            allow_zero: true,
-            custom_pad: 4,
-            show_fraction_beside_stars: 0,
-        };
-        input
-            .service_kinds
-            .insert(ServiceId(12), ServiceKind::RatingLike(like));
-        input.service_kinds.insert(
-            ServiceId(13),
-            ServiceKind::ClientApi(ServerConfig {
-                port: Some(45901),
-                ..ServerConfig::default()
-            }),
-        );
-        input
-            .service_kinds
-            .insert(ServiceId(16), ServiceKind::RatingNumerical(stars));
-        input.service_kinds.insert(
-            ServiceId(17),
-            ServiceKind::RatingIncDec(RatingDisplay::default()),
-        );
-        input
-    }
+    use hydrus_testkit::legacy_fixture;
 
     pub(crate) fn import_basic() -> (tempfile::TempDir, tempfile::TempDir, PathBuf) {
         let source = legacy_fixture("basic");
         let dest_dir = tempfile::tempdir().unwrap();
         let dest = dest_dir.path().join("hydrus.db");
-        import(source.path(), &dest, &basic_input()).unwrap();
+        import_legacy(source.path(), &dest).unwrap();
         (source, dest_dir, dest)
+    }
+
+    #[test]
+    fn decodes_the_basic_fixture_settings() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let colours = |like: [u8; 3], dislike: [u8; 3]| RatingColours {
+            like: PenBrush {
+                pen: Rgb([0, 0, 0]),
+                brush: Rgb(like),
+            },
+            dislike: PenBrush {
+                pen: Rgb([0, 0, 0]),
+                brush: Rgb(dislike),
+            },
+            ..RatingColours::default()
+        };
+        let display = |colours| RatingDisplay {
+            colours,
+            ..RatingDisplay::default()
+        };
+        let mut kinds: Vec<_> = input.service_kinds.into_iter().collect();
+        kinds.sort_by_key(|(id, _)| *id);
+        assert_eq!(
+            kinds,
+            [
+                (
+                    ServiceId(12),
+                    ServiceKind::RatingLike(LikeRatingConfig {
+                        display: display(colours([240, 240, 65], [200, 80, 120])),
+                        appearance: StarAppearance::Shape(StarShape::FAT_STAR),
+                    })
+                ),
+                (
+                    ServiceId(13),
+                    ServiceKind::ClientApi(ServerConfig {
+                        port: Some(45901),
+                        ..ServerConfig::default()
+                    })
+                ),
+                (
+                    ServiceId(16),
+                    ServiceKind::RatingNumerical(NumericalRatingConfig {
+                        display: display(RatingColours::default()),
+                        appearance: StarAppearance::Shape(StarShape::CIRCLE),
+                        num_stars: 5,
+                        allow_zero: true,
+                        custom_pad: 4,
+                        show_fraction_beside_stars: 0,
+                    })
+                ),
+                (
+                    ServiceId(17),
+                    ServiceKind::RatingIncDec(display(RatingColours::default()))
+                ),
+            ]
+        );
+        let keys: Vec<_> = input
+            .api_permissions
+            .iter()
+            .map(|p| {
+                (
+                    hex::encode(&p.access_key),
+                    p.name.as_str(),
+                    p.permits_everything,
+                    p.permissions.to_string(),
+                    p.search_tag_filter.as_ref().map(ToString::to_string),
+                )
+            })
+            .collect();
+        assert_eq!(
+            keys,
+            [
+                (
+                    "0123456789abcdef".repeat(4),
+                    "oracle",
+                    true,
+                    "[]".to_owned(),
+                    None
+                ),
+                (
+                    "fedcba9876543210".repeat(4),
+                    "oracle restricted",
+                    false,
+                    "[3]".to_owned(),
+                    Some(
+                        r#"{"rules":{"":"blacklist",":":"blacklist","safe":"whitelist"}}"#
+                            .to_owned()
+                    )
+                ),
+            ]
+        );
+        assert_eq!(
+            input.settings["thumbnails"],
+            serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100})
+        );
     }
 
     #[test]
@@ -848,18 +932,13 @@ pub(crate) mod tests {
     #[test]
     fn refuses_to_overwrite_or_import_the_wrong_version() {
         let (source, _dest_dir, dest) = import_basic();
-        assert!(import(source.path(), &dest, &basic_input()).is_err());
+        assert!(import_legacy(source.path(), &dest).is_err());
         let wrong = legacy_fixture("basic");
         let c = Connection::open(wrong.path().join("client.db")).unwrap();
         c.execute("UPDATE version SET version = 600", []).unwrap();
         drop(c);
-        let err = import(
-            wrong.path(),
-            &dest.with_file_name("other.db"),
-            &basic_input(),
-        )
-        .unwrap_err();
-        assert!(err.to_string().contains("v600"), "{err}");
+        let err = import_legacy(wrong.path(), &dest.with_file_name("other.db")).unwrap_err();
+        assert!(err.to_string().contains("600"), "{err}");
         assert!(!dest.with_file_name("other.db.importing").exists());
     }
 

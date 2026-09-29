@@ -133,6 +133,31 @@ impl StarShape {
     }
 }
 
+/// How a like/dislike or numerical rating is drawn: a built-in shape or a
+/// named SVG.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum StarAppearance {
+    Shape(StarShape),
+    Svg(String),
+}
+
+impl Default for StarAppearance {
+    fn default() -> Self {
+        StarAppearance::Shape(StarShape::FAT_STAR)
+    }
+}
+
+impl StarAppearance {
+    /// The label the Client API reports (`star_shape`).
+    pub fn label(&self) -> &'static str {
+        match self {
+            StarAppearance::Shape(shape) => shape.name().unwrap_or("circle"),
+            StarAppearance::Svg(_) => "svg",
+        }
+    }
+}
+
 /// Settings every local rating service has.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize, Default)]
 pub struct RatingDisplay {
@@ -145,16 +170,14 @@ pub struct RatingDisplay {
 pub struct LikeRatingConfig {
     #[serde(flatten)]
     pub display: RatingDisplay,
-    pub shape: StarShape,
-    pub rating_svg: Option<String>,
+    pub appearance: StarAppearance,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct NumericalRatingConfig {
     #[serde(flatten)]
     pub display: RatingDisplay,
-    pub shape: StarShape,
-    pub rating_svg: Option<String>,
+    pub appearance: StarAppearance,
     pub num_stars: u32,
     pub allow_zero: bool,
     pub custom_pad: i32,
@@ -504,8 +527,7 @@ pub fn default_services() -> Vec<(ServiceKey, String, ServiceKind)> {
             },
             ..RatingDisplay::default()
         },
-        shape: StarShape::FAT_STAR,
-        rating_svg: None,
+        appearance: StarAppearance::Shape(StarShape::FAT_STAR),
     };
     let key = |k: &[u8]| ServiceKey::new(k.to_vec());
     vec![
@@ -597,7 +619,9 @@ mod tests {
         assert_eq!(my_tags.id, ServiceId(9));
         assert_eq!(reg.tag_services().count(), 2);
         let fav = reg.builtin(builtin_keys::FAVOURITES).unwrap();
-        assert!(matches!(&fav.kind, ServiceKind::RatingLike(c) if c.shape == StarShape::FAT_STAR));
+        assert!(
+            matches!(&fav.kind, ServiceKind::RatingLike(c) if c.appearance == StarAppearance::Shape(StarShape::FAT_STAR))
+        );
         // mapping tables exist for tag services
         c.execute("INSERT INTO mappings_9_current VALUES (1, 1)", [])
             .unwrap();
@@ -607,8 +631,7 @@ mod tests {
     fn numerical_stars_match_reference_rounding() {
         let five = NumericalRatingConfig {
             display: RatingDisplay::default(),
-            shape: StarShape::CIRCLE,
-            rating_svg: None,
+            appearance: StarAppearance::Shape(StarShape::CIRCLE),
             num_stars: 5,
             allow_zero: true,
             custom_pad: 4,

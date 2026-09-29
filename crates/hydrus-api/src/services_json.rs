@@ -50,9 +50,9 @@ pub fn describe(service: &Service) -> Map<String, Json> {
     d.insert("name".into(), json!(service.name));
     d.insert("type".into(), json!(t.code()));
     d.insert("type_pretty".into(), json!(t.name()));
-    let (display, shape) = match &service.kind {
-        ServiceKind::RatingLike(c) => (Some(&c.display), Some(c.shape)),
-        ServiceKind::RatingNumerical(c) => (Some(&c.display), Some(c.shape)),
+    let (display, appearance) = match &service.kind {
+        ServiceKind::RatingLike(c) => (Some(&c.display), Some(&c.appearance)),
+        ServiceKind::RatingNumerical(c) => (Some(&c.display), Some(&c.appearance)),
         ServiceKind::RatingIncDec(display) => (Some(display), None),
         _ => (None, None),
     };
@@ -62,18 +62,8 @@ pub fn describe(service: &Service) -> Map<String, Json> {
             "show_in_thumbnail_even_when_null".into(),
             json!(display.show_in_thumbnail_even_when_null),
         );
-        if let Some(shape) = shape {
-            let svg = match &service.kind {
-                ServiceKind::RatingLike(c) => c.rating_svg.is_some(),
-                ServiceKind::RatingNumerical(c) => c.rating_svg.is_some(),
-                _ => false,
-            };
-            let label = if svg {
-                "svg"
-            } else {
-                shape.name().unwrap_or("circle")
-            };
-            d.insert("star_shape".into(), json!(label));
+        if let Some(appearance) = appearance {
+            d.insert("star_shape".into(), json!(appearance.label()));
         }
         d.insert(
             "colours".into(),

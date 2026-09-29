@@ -30,8 +30,7 @@ rusqlite.workspace = true
 [dev-dependencies]
 http-body-util.workspace = true
 tempfile.workspace = true
-tar.workspace = true
-flate2.workspace = true
+hydrus-testkit.workspace = true
 sha2.workspace = true
 toml.workspace = true
 

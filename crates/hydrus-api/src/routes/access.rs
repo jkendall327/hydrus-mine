@@ -24,7 +24,11 @@ pub async fn verify_access_key(
     req: ApiRequest,
 ) -> ApiResult<ApiResponse> {
     let perms = app.authenticate(&req)?;
-    let basic: Vec<u8> = perms.basic.iter().copied().map(u8::from).collect();
+    let basic: Vec<u8> = if perms.permits_everything {
+        Permission::ALL.iter().copied().map(u8::from).collect()
+    } else {
+        perms.basic.iter().copied().map(u8::from).collect()
+    };
     Ok(ApiResponse::json(
         json!({
             "name": perms.name,
