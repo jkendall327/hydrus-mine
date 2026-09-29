@@ -3479,10 +3479,10 @@
    "has_icc_profile": false,
    "has_transparency": false,
    "hashes": {
-    "md5": "b32fb2dca69e35b4cfbdebb40657a2e9",
-    "sha1": "e9b184ea692b0ebeda2f2c6726b9da4f06ec9d78",
-    "sha256": "8c707e909b7d8ee9f1f988c2516ec233639155b3992560a7c884e8e448b8c43b",
-    "sha512": "bccedc7f60f1a86f3cbca82c38e93d7b56e3fba244bb33ea1aa1b392386e82585fec7199950e9feb173393a5651fc2a49c7ae75dee6b3fe62c776932e18a133e"
+    "md5": "93e60aeef4855f5c0fb24c2158111eff",
+    "sha1": "aca959b8a526f61ba92bb54a0d1d360aad08de80",
+    "sha256": "7a02039a11180e0ca89ec5a9ead651725b69f308bcc0b25bc74428bae501bae2",
+    "sha512": "e752a72d77c783a39958cc917e429d104daf3c758eb637c8bf49388d47d292dad46f8a2e5f567555d235792620b46caffab527ec239a0cb956c629ba00a4199c"
    },
    "info": {
     "duration_ms": 400,
@@ -6242,15 +6242,54 @@
    "mime": 22
   },
   {
+   "decoded": {
+    "blurhash": "UVF5K#,7#;*ZMJO0W?PL~XnxWYmd9vSQW?S|",
+    "sha256": "b5128c69e0b1d97acfd9e3a0b023017c7f9765ccd1792264fa1229af99422c1d",
+    "shape": [
+     48,
+     64,
+     3
+    ]
+   },
    "file": "jxl_still.jxl",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": true,
+   "has_transparency": false,
    "hashes": {
     "md5": "ca3b61aecd0b3b68bbfd4b72bc42820e",
     "sha1": "ec9194224b3e1e8935e8f3e29bc2baea7627a3be",
     "sha256": "7d8809a2a2c79d0c9326e485d69f82447a55d0dca4cfc201822f607590d32448",
     "sha512": "0e101e2b583ffc60b8307165bd595e7f6b295ab002b936cdf123bfd49a426b8612fe9cc0d9452dbfac4316986f1878530b70ebcc4277d07f43db9673aff4fce7"
    },
-   "info_error": "UnsupportedFileException",
-   "mime": 85
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": 48,
+    "mime": 85,
+    "num_frames": null,
+    "num_words": null,
+    "size": 1484,
+    "width": 64
+   },
+   "mime": 85,
+   "perceptual_hashes": [
+    "ae79847706667784"
+   ],
+   "pixel_hash": "b5128c69e0b1d97acfd9e3a0b023017c7f9765ccd1792264fa1229af99422c1d",
+   "thumbnail": {
+    "blurhash": "UVF5K#,7#;*ZMJO0W?PL~XnxWYmd9vSQW?S|",
+    "channels": 3,
+    "format": "jpeg",
+    "height": 48,
+    "is_default": false,
+    "pixels_sha256": "b5128c69e0b1d97acfd9e3a0b023017c7f9765ccd1792264fa1229af99422c1d",
+    "target": [
+     64,
+     48
+    ],
+    "width": 64
+   }
   },
   {
    "decoded": {
@@ -7287,16 +7326,127 @@
    }
   },
   {
+   "file": "pdf_empty_title.pdf",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_transparency": false,
+   "hashes": {
+    "md5": "213b6f11c53fa0491cc762d30871d14d",
+    "sha1": "985a91b9523a306ad47f45c8599ce09c4e40770e",
+    "sha256": "541f01069f2752fe7087c990729b91aeca3c0d3517d70a77a445bff8c33f9010",
+    "sha512": "2c9db965e5d2b2d33c71e06bce16b4bbe3e957d04d67ea64487b37e13fbf2ead256afbc10b1700d2628a9236800d7f4b81b07c8ee813d5f5c76dd87504b96e27"
+   },
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": 1251,
+    "mime": 10,
+    "num_frames": null,
+    "num_words": 0,
+    "size": 759,
+    "width": 836
+   },
+   "mime": 10,
+   "thumbnail": {
+    "blurhash": "c00000fQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    "channels": 3,
+    "format": "jpeg",
+    "height": 125,
+    "is_default": false,
+    "pixels_sha256": "9d58e8c9c07ff08d040e3270866c60a47f4b6480ce7a82cb6f0684c0ad34a5cb",
+    "target": [
+     83,
+     125
+    ],
+    "width": 83
+   }
+  },
+  {
+   "file": "pdf_encrypted_owner.pdf",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": true,
+   "has_icc_profile": false,
+   "has_transparency": false,
+   "hashes": {
+    "md5": "4d3aa21df7960015df99ee16c0ab64db",
+    "sha1": "4fda17afda691d7eabb589d3c26b6d20205823ee",
+    "sha256": "c7910401aab80f969ea549ba59a9ce4f04c23aef92f25a4e210a0745961d1999",
+    "sha512": "4e1a42d98e0ae73188d441fe2fe94bdfca0a208e49e54403febf6d0c8093125a3ceee13ddd58a9e4e3574a27a18b3ffe403eeff92d28198341f79e9e4a5bd72a"
+   },
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": 3508,
+    "mime": 10,
+    "num_frames": null,
+    "num_words": 2,
+    "size": 977,
+    "width": 2479
+   },
+   "mime": 10,
+   "thumbnail": {
+    "blurhash": "c00000fQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    "channels": 3,
+    "format": "jpeg",
+    "height": 125,
+    "is_default": false,
+    "pixels_sha256": "8ec8d677b0280efeddd04d0b25d8b80fa50a9825382fa93a17d61c4ca002b1ad",
+    "target": [
+     88,
+     125
+    ],
+    "width": 88
+   }
+  },
+  {
+   "file": "pdf_encrypted_user.pdf",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_transparency": false,
+   "hashes": {
+    "md5": "9e44c354869a66b68758d1fe2c3cba5b",
+    "sha1": "cf5f02a2419f563643784762807f500a56590d59",
+    "sha256": "0a8825391c657fafb9dc9ffe91f08f9beda5d2e3956b8943af2000d74070e42f",
+    "sha512": "a46165aea760be9c24a4e32a8d37b3ff3c14c373633d8f9212eeafeecb9128c3a12f1dc58dd641b0012549717b0f89897c40e5bc5290b781f0576bc0c39cb01e"
+   },
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": null,
+    "mime": 10,
+    "num_frames": null,
+    "num_words": null,
+    "size": 977,
+    "width": null
+   },
+   "mime": 10,
+   "thumbnail": {
+    "blurhash": "UiLzXDMd00Mxm,$*xat78_-pxuWV%2bHNGae",
+    "channels": 4,
+    "format": "png",
+    "height": 125,
+    "is_default": true,
+    "pixels_sha256": "574bf5acd012228f9876cbc5bce11d6f29619dd77f493404c424952883f8bdca",
+    "target": [
+     125,
+     125
+    ],
+    "width": 125
+   }
+  },
+  {
    "file": "pdf_image.pdf",
    "has_exif": false,
    "has_human_readable_embedded_metadata": false,
    "has_icc_profile": false,
    "has_transparency": false,
    "hashes": {
-    "md5": "5593fa07020e70481b37c8ddc3840479",
-    "sha1": "8070e14f3667b16548390e6bd6b26a6a7a53ef3c",
-    "sha256": "afb1936c0d4cc93bf952379f2176f6d30e0d1d9104c58e6b84f6fe305cef6e8c",
-    "sha512": "90bc0f7615bd3d5a920a24a224501ebfe2663c64749d3e39fe21bf08ad24d5627d525d38b9bd035f298fb0c959f8040414c9d555fe8fca69c99a0f56a8bf8945"
+    "md5": "ec833bed418926c6451f36fef4847927",
+    "sha1": "f85cdfd72e0f72d179063a2987389465f9d5cefc",
+    "sha256": "87b2269cf631bfd77cf2d9b72905fb4606504d160e2ddeb7cdb4815458dd0b40",
+    "sha512": "a69505ae58a518f0715d5328a1c158f9ab9f08aa143f35d1dc66e9c8ade7126db09639f42b2285c92991402c03ba0afa549a961d91abfa0cab130250b2b6199b"
    },
    "info": {
     "duration_ms": null,
@@ -7319,6 +7469,80 @@
     "target": [
      150,
      112
+    ],
+    "width": 150
+   }
+  },
+  {
+   "file": "pdf_keywords_only.pdf",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": true,
+   "has_icc_profile": false,
+   "has_transparency": false,
+   "hashes": {
+    "md5": "d12f81eef93bedbee11e287bf2792930",
+    "sha1": "e7a4b11cc9b4c6cfd81155f7acd1f91359fff704",
+    "sha256": "0632398cdf126cfa280104293ff0451cedcf48d4e5ccfd24c0214262bc6cfb68",
+    "sha512": "85f53975d4de63f023a84697b5bfcf7a7956c9332d0f3bf396806a3382d4bb802ff1e6339b29177765a22a5d86703127a869fa386efec1881624407a3fb9c584"
+   },
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": 3508,
+    "mime": 10,
+    "num_frames": null,
+    "num_words": 0,
+    "size": 747,
+    "width": 2479
+   },
+   "mime": 10,
+   "thumbnail": {
+    "blurhash": "c00000fQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    "channels": 3,
+    "format": "jpeg",
+    "height": 125,
+    "is_default": false,
+    "pixels_sha256": "8ec8d677b0280efeddd04d0b25d8b80fa50a9825382fa93a17d61c4ca002b1ad",
+    "target": [
+     88,
+     125
+    ],
+    "width": 88
+   }
+  },
+  {
+   "file": "pdf_multipage.pdf",
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": true,
+   "has_icc_profile": false,
+   "has_transparency": false,
+   "hashes": {
+    "md5": "90454ea687bcb1d619a31a79fb0abb54",
+    "sha1": "7ac77e6081244ce2509a4bc8b14429e92c2d9186",
+    "sha256": "7e93d7a3f29527f60bd406fb85e3b9d72deb6f856b4cf2bb366dad1da1fcc88c",
+    "sha512": "7e27340ed89d95c789f92c890d6b678f964364f196691aa0f8569caec9499543c4c022aa720c7d836826c9432989a38408c955f8f9b79afba19b97a06cd445a4"
+   },
+   "info": {
+    "duration_ms": null,
+    "has_audio": false,
+    "height": 2252,
+    "mime": 10,
+    "num_frames": null,
+    "num_words": 39,
+    "size": 1537,
+    "width": 2767
+   },
+   "mime": 10,
+   "thumbnail": {
+    "blurhash": "U00000fQfQfQfQfQfQfQfQfQfQfQfQfQfQfQ",
+    "channels": 4,
+    "format": "png",
+    "height": 122,
+    "is_default": false,
+    "pixels_sha256": "ef6ca4c22125b212144522eb0ff58cdea585e5e5585c19cbb65748fa8f2419aa",
+    "target": [
+     150,
+     122
     ],
     "width": 150
    }

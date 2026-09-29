@@ -1,9 +1,19 @@
-//! SVG size as the reference client gets it from Qt's
-//! `QSvgRenderer.defaultSize()`: the root `width`/`height` in pixels (Qt's
-//! 90 dpi unit conversions), else the `viewBox` size, rounded like
-//! `QSizeF::toSize()`.
+//! SVG files: the reference uses Qt's `QSvgRenderer`.
+//!
+//! - Resolution: `QSvgRenderer.defaultSize()`, the root `width`/`height` in
+//!   pixels (Qt's 90 dpi unit conversions), else the `viewBox` size, rounded
+//!   like `QSizeF::toSize()`. Exact for the common cases.
+//! - Thumbnails: rendered with resvg into a transparent canvas of the
+//!   target size, aspect ratio kept and centred as Qt's `KeepAspectRatio`
+//!   does. Pixels differ from Qt's rasteriser.
+
+use std::sync::{Arc, OnceLock};
+
+use resvg::{tiny_skia, usvg};
 
 use crate::formats::archive::with_xml;
+use crate::formats::guarded;
+use crate::imaging::Raster;
 
 /// `qRound`: round half away from zero.
 fn q_round(v: f64) -> i64 {
@@ -68,6 +78,56 @@ pub(crate) fn resolution(data: &[u8]) -> Option<(u32, u32)> {
         let h = dim("height", view_box.map(|v| v.1)).or(view_box.map(|v| v.1))?;
         let (w, h) = (q_round(w), q_round(h));
         Some((u32::try_from(w).ok()?, u32::try_from(h).ok()?))
+    })
+}
+
+/// System fonts, loaded once: text in SVGs renders with them, as with Qt.
+fn fonts() -> Arc<usvg::fontdb::Database> {
+    static FONTS: OnceLock<Arc<usvg::fontdb::Database>> = OnceLock::new();
+    FONTS
+        .get_or_init(|| {
+            let mut db = usvg::fontdb::Database::new();
+            db.load_system_fonts();
+            Arc::new(db)
+        })
+        .clone()
+}
+
+/// `GenerateThumbnailNumPyFromSVGPath`: the drawing fitted into `target`,
+/// centred, on transparent black.
+pub(crate) fn render(data: &[u8], target: (u32, u32)) -> Option<Raster> {
+    guarded(|| {
+        let options = usvg::Options {
+            dpi: 90.0,
+            fontdb: fonts(),
+            // embedded (data: URL) images only; never read other files
+            image_href_resolver: usvg::ImageHrefResolver {
+                resolve_string: Box::new(|_, _| None),
+                ..usvg::ImageHrefResolver::default()
+            },
+            ..usvg::Options::default()
+        };
+        let tree = usvg::Tree::from_data(data, &options).ok()?;
+        let size = tree.size();
+        let (tw, th) = (target.0 as f32, target.1 as f32);
+        let scale = (tw / size.width()).min(th / size.height());
+        let dx = (tw - size.width() * scale) / 2.0;
+        let dy = (th - size.height() * scale) / 2.0;
+        let mut pixmap = tiny_skia::Pixmap::new(target.0, target.1)?;
+        resvg::render(
+            &tree,
+            tiny_skia::Transform::from_row(scale, 0.0, 0.0, scale, dx, dy),
+            &mut pixmap.as_mut(),
+        );
+        let pixels = pixmap
+            .pixels()
+            .iter()
+            .flat_map(|p| {
+                let c = p.demultiply();
+                [c.red(), c.green(), c.blue(), c.alpha()]
+            })
+            .collect();
+        Raster::new(target.0, target.1, 4, pixels).ok()
     })
 }
 

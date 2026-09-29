@@ -212,7 +212,7 @@ pub(crate) fn default_thumbnail(mime: Mime, target: (u32, u32)) -> Result<Raster
         }
     }
     let (cw, ch) = (cw.max(1), ch.max(1));
-    let resized = cv::resize(&icon, cw, ch, Interpolation::Lanczos4);
+    let resized = crate::imaging::resample::resize_lanczos(&icon, cw, ch);
     if (cw, ch) == (tw, th) {
         return Ok(resized);
     }

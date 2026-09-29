@@ -29,6 +29,9 @@ plist.workspace = true
 roxmltree.workspace = true
 flate2.workspace = true
 lzma-rs.workspace = true
+hayro.workspace = true
+kurbo.workspace = true
+resvg.workspace = true
 
 [dev-dependencies]
 hex.workspace = true

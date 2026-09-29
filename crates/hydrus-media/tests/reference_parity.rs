@@ -5,6 +5,9 @@
 //! `oracle/fixtures/media.json`. These tests run the same files through this
 //! crate and compare. Needs `ffmpeg` on PATH (the same build the fixtures
 //! were recorded with, for the ffmpeg-derived values).
+//!
+//! Everything must match exactly except the differences listed in
+//! [`KNOWN_DIFFERENCES`], each with its reason; see the crate README.
 
 use std::collections::BTreeMap;
 use std::path::PathBuf;
@@ -40,7 +43,8 @@ fn error_name(e: &MediaError) -> &'static str {
 /// Differences found for one file, by category.
 #[derive(Default, Debug)]
 struct Report {
-    mismatches: BTreeMap<&'static str, Vec<String>>,
+    /// category -> (file, detail)
+    mismatches: BTreeMap<&'static str, Vec<(String, String)>>,
     counts: BTreeMap<&'static str, (usize, usize)>,
     phash_distances: Vec<(String, u32)>,
 }
@@ -61,7 +65,7 @@ impl Report {
             self.mismatches
                 .entry(category)
                 .or_default()
-                .push(format!("{file}: {}", detail()));
+                .push((file.to_owned(), detail()));
         }
     }
 
@@ -270,6 +274,87 @@ fn check_file(tools: &MediaTools, rec: &Value) -> Report {
     r
 }
 
+/// Pixel values come from a different decoder than the reference's, so
+/// pixel-derived values are close but not equal.
+const APPROXIMATE_PIXELS: &[&str] = &[
+    "decoded pixels",
+    "decoded blurhash",
+    "pixel hash",
+    "perceptual hash",
+    "thumbnail pixels",
+    "thumbnail blurhash",
+];
+
+/// Only the thumbnail is rasterised by other code (Qt there, resvg/hayro here).
+const APPROXIMATE_RENDER: &[&str] = &["thumbnail pixels", "thumbnail blurhash"];
+
+/// (file, categories allowed to differ, why)
+const KNOWN_DIFFERENCES: &[(&str, &[&str], &str)] = &[
+    (
+        "avif_still.avif",
+        APPROXIMATE_PIXELS,
+        "AVIF decoded by ffmpeg, not libavif+libyuv",
+    ),
+    (
+        "avif_alpha.avif",
+        APPROXIMATE_PIXELS,
+        "AVIF decoded by ffmpeg, not libavif+libyuv",
+    ),
+    (
+        "avif_alpha.avif",
+        &["has_transparency", "thumbnail format"],
+        "ffmpeg 6 does not decode AVIF alpha planes",
+    ),
+    (
+        "jxl_still.jxl",
+        APPROXIMATE_PIXELS,
+        "JPEG XL decoded by ffmpeg's libjxl, not pillow-jxl's",
+    ),
+    ("heic_still.heic", APPROXIMATE_PIXELS, "no HEIF decoder"),
+    ("heic_alpha.heic", APPROXIMATE_PIXELS, "no HEIF decoder"),
+    (
+        "heic_still.heic",
+        &["thumbnail default", "thumbnail format"],
+        "no HEIF decoder: default thumbnail",
+    ),
+    (
+        "heic_alpha.heic",
+        &["thumbnail default", "has_transparency"],
+        "no HEIF decoder: default thumbnail",
+    ),
+    (
+        "pdf_image.pdf",
+        APPROXIMATE_RENDER,
+        "rendered by hayro, not pdfium",
+    ),
+    (
+        "pdf_text.pdf",
+        APPROXIMATE_RENDER,
+        "rendered by hayro, not pdfium",
+    ),
+    (
+        "pdf_multipage.pdf",
+        APPROXIMATE_RENDER,
+        "rendered by hayro, not pdfium",
+    ),
+    (
+        "svg_sized.svg",
+        APPROXIMATE_RENDER,
+        "rendered by resvg, not Qt",
+    ),
+    (
+        "svg_viewbox.svg",
+        APPROXIMATE_RENDER,
+        "rendered by resvg, not Qt",
+    ),
+];
+
+fn is_known(file: &str, category: &str) -> bool {
+    KNOWN_DIFFERENCES
+        .iter()
+        .any(|(f, cats, _)| *f == file && cats.contains(&category))
+}
+
 #[test]
 fn corpus_matches_reference() {
     let json = fixture();
@@ -281,17 +366,38 @@ fn corpus_matches_reference() {
         .map(|rec| check_file(&tools, rec))
         .reduce(Report::default, Report::merge);
     for (category, (ok, total)) in &report.counts {
-        println!("{category:>40}: {ok}/{total}");
+        println!("{category:>40}: {ok}/{total} exact");
     }
+    let mut unexpected = Vec::new();
     for (category, list) in &report.mismatches {
-        for m in list {
-            println!("MISMATCH [{category}] {m}");
+        for (file, detail) in list {
+            let known = is_known(file, category);
+            println!(
+                "{} [{category}] {file}: {detail}",
+                if known {
+                    "known difference"
+                } else {
+                    "MISMATCH"
+                }
+            );
+            if !known {
+                unexpected.push(format!("[{category}] {file}: {detail}"));
+            }
         }
     }
-    let mut d = report.phash_distances.clone();
-    d.sort();
-    let nonzero: Vec<_> = d.iter().filter(|(_, x)| *x > 0).collect();
-    println!("phash nonzero distances: {nonzero:?}");
+    let mut distances = report.phash_distances.clone();
+    distances.sort();
+    let exact = distances.iter().filter(|(_, d)| *d == 0).count();
+    let off: Vec<_> = distances.iter().filter(|(_, d)| *d > 0).collect();
+    println!(
+        "perceptual hashes: {exact}/{} bit-exact; hamming distances of the rest: {off:?}",
+        distances.len()
+    );
+    assert!(
+        unexpected.is_empty(),
+        "unexpected differences:\n{}",
+        unexpected.join("\n")
+    );
 }
 
 #[test]

@@ -19,6 +19,7 @@ pub(crate) mod decode;
 pub(crate) mod exif;
 pub(crate) mod icc;
 pub(crate) mod pil;
+pub(crate) mod resample;
 
 use crate::error::{MediaError, Result};
 

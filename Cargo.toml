@@ -66,6 +66,9 @@ plist = { version = "1", default-features = false }
 roxmltree = "0.21"
 flate2 = "1"
 lzma-rs = "0.3"
+hayro = "0.7"
+kurbo = "0.13"
+resvg = "0.48"
 
 [workspace.lints.rust]
 unsafe_code = "deny"

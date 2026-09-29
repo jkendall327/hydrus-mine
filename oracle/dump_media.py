@@ -35,6 +35,7 @@ import struct
 import subprocess
 import sys
 import tempfile
+import time
 import uuid
 import zipfile
 import zlib
@@ -181,6 +182,19 @@ def zip_bytes( entries, first_stored = False ):
 
 # ---------------------------------------------------------------------------
 # hand-rolled containers
+
+def zero_isobmff_times( data ):
+    """Blank the creation/modification times libavif writes into mvhd/tkhd/mdhd."""
+    data = bytearray( data )
+    for kind in ( b'mvhd', b'tkhd', b'mdhd' ):
+        at = data.find( kind )
+        while at != -1:
+            version = data[ at + 4 ]
+            width = 8 if version == 1 else 4
+            data[ at + 8 : at + 8 + 2 * width ] = bytes( 2 * width )
+            at = data.find( kind, at + 4 )
+    return bytes( data )
+
 
 def interlaced_png( arr ):
     """8-bit RGB Adam7 PNG (neither Pillow nor OpenCV write interlaced PNGs)."""
@@ -372,6 +386,90 @@ def set_zip_encrypted_flag( data ):
     return bytes( b )
 
 
+PDF_PAD = bytes.fromhex( '28BF4E5E4E758A4164004E56FFFA01082E2E00B6D0683E802F0CA9FE6453697A' )
+
+
+def rc4( key, data ):
+    s = list( range( 256 ) )
+    j = 0
+    for i in range( 256 ):
+        j = ( j + s[ i ] + key[ i % len( key ) ] ) % 256
+        s[ i ], s[ j ] = s[ j ], s[ i ]
+    out = bytearray()
+    i = j = 0
+    for byte in data:
+        i = ( i + 1 ) % 256
+        j = ( j + s[ i ] ) % 256
+        s[ i ], s[ j ] = s[ j ], s[ i ]
+        out.append( byte ^ s[ ( s[ i ] + s[ j ] ) % 256 ] )
+    return bytes( out )
+
+
+def pdf_literal( text ):
+    return b'(' + text.replace( b'\\', b'\\\\' ).replace( b'(', b'\\(' ).replace( b')', b'\\)' ) + b')'
+
+
+def pdf_document( objects, info = None, user_password = None, owner_password = b'owner' ):
+    """A classic-xref PDF. `objects` are 1-indexed bodies: bytes, or (dict_bytes, stream_data)
+    for streams (Length is added). Strings to encrypt are given as ('str', bytes). With
+    `user_password` set, everything is RC4-40 encrypted (standard security handler, R2)."""
+    file_id = hashlib.md5( b'hydrus-rs oracle' ).digest()
+    key = None
+    extra = []
+    if user_password is not None:
+        permissions = -4
+        o_key = hashlib.md5( ( owner_password + PDF_PAD )[ : 32 ] ).digest()[ : 5 ]
+        o_entry = rc4( o_key, ( user_password + PDF_PAD )[ : 32 ] )
+        key = hashlib.md5( ( user_password + PDF_PAD )[ : 32 ] + o_entry + struct.pack( '<i', permissions ) + file_id ).digest()[ : 5 ]
+        u_entry = rc4( key, PDF_PAD )
+        extra.append( b'<< /Filter /Standard /V 1 /R 2 /O <' + o_entry.hex().encode() + b'> /U <' + u_entry.hex().encode() + b'> /P ' + str( permissions ).encode() + b' >>' )
+    all_objects = list( objects ) + ( [ info ] if info is not None else [] ) + extra
+    info_num = len( objects ) + 1 if info is not None else None
+    encrypt_num = len( all_objects ) if extra else None
+
+    def crypt( num, data ):
+        if key is None or num == encrypt_num:
+            return data
+        obj_key = hashlib.md5( key + struct.pack( '<I', num )[ : 3 ] + b'\x00\x00' ).digest()[ : 10 ]
+        return rc4( obj_key, data )
+
+    def render( num, value ):
+        if isinstance( value, tuple ) and value[ 0 ] == 'str':
+            return b'<' + crypt( num, value[ 1 ] ).hex().encode() + b'>'
+        if isinstance( value, list ):
+            return b''.join( render( num, v ) for v in value )
+        return value
+
+    out = b'%PDF-1.4\n%\xe2\xe3\xcf\xd3\n'
+    offsets = []
+    for ( i, body ) in enumerate( all_objects ):
+        num = i + 1
+        offsets.append( len( out ) )
+        if isinstance( body, tuple ) and body[ 0 ] != 'str':
+            ( d, data ) = body
+            data = crypt( num, data )
+            body = d[ : -2 ] + b' /Length ' + str( len( data ) ).encode() + b' >>\nstream\n' + data + b'\nendstream'
+        else:
+            body = render( num, body )
+        out += f'{num} 0 obj\n'.encode() + body + b'\nendobj\n'
+    xref = len( out )
+    out += f'xref\n0 {len( all_objects ) + 1}\n0000000000 65535 f \n'.encode()
+    for off in offsets:
+        out += f'{off:010d} 00000 n \n'.encode()
+    trailer = f'<< /Size {len( all_objects ) + 1} /Root 1 0 R'.encode()
+    if info_num:
+        trailer += f' /Info {info_num} 0 R'.encode()
+    if encrypt_num:
+        trailer += f' /Encrypt {encrypt_num} 0 R'.encode()
+    trailer += b' /ID [<' + file_id.hex().encode() + b'> <' + file_id.hex().encode() + b'>] >>'
+    out += b'trailer\n' + trailer + f'\nstartxref\n{xref}\n%%EOF\n'.encode()
+    return out
+
+
+HELVETICA = b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>'
+TIMES = b'<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman /Encoding /WinAnsiEncoding >>'
+
+
 def text_pdf( words ):
     """A one-page PDF with a line of Helvetica text, 400x300pt."""
     content = 'BT /F1 18 Tf 20 150 Td ({}) Tj ET'.format( words ).encode( 'latin-1' )
@@ -394,6 +492,46 @@ def text_pdf( words ):
         out += f'{off:010d} 00000 n \n'.encode()
     out += f'trailer\n<< /Size {len( objs ) + 1} /Root 1 0 R /Info 6 0 R >>\nstartxref\n{xref}\n%%EOF\n'.encode()
     return out
+
+
+def multi_page_pdf():
+    """Two pages: inherited MediaBox, a CropBox, /Rotate, compressed content, several
+    lines, TJ kerning and word gaps made by positioning alone."""
+    page1 = b'\n'.join( [
+        b'BT /F1 14 Tf 16 TL 60 700 Td (The quick brown fox) Tj T* (jumps over the lazy dog.) Tj',
+        b'0 -32 Td [(Kern)-40(ed te)-30(xt)-600(and a gap)] TJ',
+        b'0 -20 Td (positioned) Tj 90 0 Td (words) Tj 45 0 Td (here) Tj',
+        b"(and a quote op) ' ET",
+        b'BT /F2 11 Tf 1 0 0 1 60 560 Tm (Times: caf\xe9, na\xefve, \x93quoted\x94 \x97 dash) Tj ET',
+        b'BT /F2 11 Tf 1 0 0 1 60 540 Tm (hyphen-ated_under score 3.14 50% x/y) Tj ET',
+    ] )
+    page2 = b'BT /F1 20 Tf 100 100 Td (Second page!) Tj ET\nBT /F1 20 Tf 100 60 Td (  spaced   out  ) Tj ET'
+    resources = b'/Resources << /Font << /F1 5 0 R /F2 6 0 R >> >>'
+    objs = [
+        b'<< /Type /Catalog /Pages 2 0 R >>',
+        b'<< /Type /Pages /Kids [3 0 R 4 0 R] /Count 2 /MediaBox [0 0 612 792] /Rotate 90 >>',
+        b'<< /Type /Page /Parent 2 0 R /CropBox [36 36 576.5 700] /Contents 7 0 R ' + resources + b' >>',
+        b'<< /Type /Page /Parent 2 0 R /Rotate 0 /Contents 8 0 R ' + resources + b' >>',
+        HELVETICA,
+        TIMES,
+        ( b'<< /Filter /FlateDecode >>', zlib.compress( page1 ) ),
+        ( b'<< >>', page2 ),
+    ]
+    info = [ b'<< /Title ', ( 'str', b'\xfe\xff' + 'Ünïcødé title'.encode( 'utf-16-be' ) ), b' /Producer (not counted) >>' ]
+    return pdf_document( objs, info = info )
+
+
+def blank_pdf( info = None, user_password = None, media_box = b'[0 0 595 842]', rotate = b'' ):
+    content = b'BT /F1 12 Tf 50 50 Td (' + ( b'secret words' if user_password is not None else b'' ) + b') Tj ET'
+    objs = [
+        b'<< /Type /Catalog /Pages 2 0 R >>',
+        b'<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        b'<< /Type /Page /Parent 2 0 R /MediaBox ' + media_box + rotate + b' /Contents 4 0 R /Resources << /Font << /F1 5 0 R >> >> >>',
+        ( b'<< >>', content ),
+        HELVETICA,
+    ]
+    return pdf_document( objs, info = info, user_password = user_password )
+
 
 # ---------------------------------------------------------------------------
 # the corpus
@@ -587,7 +725,9 @@ def gen_misc_images():
     pil( photo( 160, 120, 144 ) ).save( out_path( 'avif_still.avif' ), quality = 60 )
     pil( rgba( 96, 80, 145 ) ).save( out_path( 'avif_alpha.avif' ), quality = 60 )
     frames = [ pil( photo( 64, 48, 146 + i ) ) for i in range( 4 ) ]
-    frames[ 0 ].save( out_path( 'avif_sequence.avifs' ), 'AVIF', save_all = True, append_images = frames[ 1 : ], duration = 100, quality = 50 )
+    buf = io.BytesIO()
+    frames[ 0 ].save( buf, 'AVIF', save_all = True, append_images = frames[ 1 : ], duration = 100, quality = 50 )
+    write_bytes( 'avif_sequence.avifs', zero_isobmff_times( buf.getvalue() ) )
     import pillow_heif
     pillow_heif.register_heif_opener()
     pil( photo( 160, 120, 150 ) ).save( out_path( 'heic_still.heic' ), quality = 60 )
@@ -698,9 +838,15 @@ def gen_documents():
     write_bytes( 'doc_legacy.doc', b'\xDB\xA5\x2D\x00' + bytes( range( 256 ) ) * 4 )
     write_bytes( 'ppt_legacy.ppt', b'\xED\xDE\xAD\x0B' + bytes( range( 256 ) ) * 4 )
     buf = io.BytesIO()
-    pil( photo( 200, 150, 240 ) ).save( buf, 'PDF', resolution = 72 )
+    fixed_time = time.gmtime( 1577836800 )
+    pil( photo( 200, 150, 240 ) ).save( buf, 'PDF', resolution = 72, creationDate = fixed_time, modDate = fixed_time )
     write_bytes( 'pdf_image.pdf', buf.getvalue() )
     write_bytes( 'pdf_text.pdf', text_pdf( 'Hello there, this is a small test document!' ) )
+    write_bytes( 'pdf_multipage.pdf', multi_page_pdf() )
+    write_bytes( 'pdf_keywords_only.pdf', blank_pdf( info = [ b'<< /Keywords ', ( 'str', b'tag, another' ), b' >>' ] ) )
+    write_bytes( 'pdf_empty_title.pdf', blank_pdf( info = b'<< /Title () /Creator (a program) >>', media_box = b'[0 0 300.25 200.75]', rotate = b' /Rotate -90' ) )
+    write_bytes( 'pdf_encrypted_owner.pdf', blank_pdf( info = [ b'<< /Author ', ( 'str', b'someone' ), b' >>' ], user_password = b'' ) )
+    write_bytes( 'pdf_encrypted_user.pdf', blank_pdf( info = [ b'<< /Author ', ( 'str', b'someone' ), b' >>' ], user_password = b'secret' ) )
     write_bytes( 'rtf.rtf', b'{\\rtf1\\ansi\\deff0 {\\fonttbl {\\f0 Times;}} Hello RTF}' )
     write_bytes( 'djvu.djvu', b'AT&TFORM\x00\x00\x00\x40DJVUINFO\x00\x00\x00\x0a' + bytes( range( 80 ) ) )
     write_bytes( 'exe.exe', b'MZ\x90\x00\x03\x00\x00\x00\x04\x00' + bytes( range( 200 ) ) )

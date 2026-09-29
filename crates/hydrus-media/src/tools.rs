@@ -11,10 +11,10 @@ use crate::error::{MediaError, Result};
 use crate::ffmpeg::video::{VideoRenderer, py_int};
 use crate::ffmpeg::{Ffmpeg, parse};
 use crate::formats::archive::{self, Zip};
-use crate::formats::{apng, clip, flash, gif, isobmff, ole, pdn, psd, svg, webp};
+use crate::formats::{apng, clip, flash, gif, isobmff, ole, pdf, pdn, psd, svg, webp};
 use crate::hashes::{self, FileHashes};
 use crate::imaging::decode::{self, InfoValue, Opened};
-use crate::imaging::{Raster, cv::Interpolation};
+use crate::imaging::{Raster, resample};
 use crate::thumbnail::{self, Thumbnail, ThumbnailSpec};
 use crate::{blurhash, detect, mimes, phash};
 
@@ -182,7 +182,12 @@ impl MediaTools {
                 );
             }
             Mime::ImageSvg => set_size(&mut info, svg::resolution(&std::fs::read(path)?)),
-            Mime::ApplicationPdf => {}
+            Mime::ApplicationPdf => {
+                if let Some(doc) = pdf::Document::open(std::fs::read(path)?) {
+                    info.num_words = Some(doc.word_count());
+                    set_size(&mut info, doc.resolution());
+                }
+            }
             Mime::ApplicationPptx => {
                 if let Some(mut z) = Zip::open(path) {
                     set_size(&mut info, archive::pptx_resolution(&mut z));
@@ -419,10 +424,7 @@ impl MediaTools {
         // PIL's `image.resize(target, LANCZOS)` then strip useless alpha
         let pil_resize = |bytes: &[u8]| -> Option<Raster> {
             let raster = raster_from_bytes(bytes, false).ok()?;
-            Some(
-                thumbnail::resize(&raster, target, Some(Interpolation::Lanczos4))
-                    .strip_useless_alpha(),
-            )
+            Some(resample::resize_lanczos(&raster, target.0, target.1).strip_useless_alpha())
         };
         if mimes::is_image(mime) || mime == Mime::AnimationWebp {
             return match decoded {
@@ -497,6 +499,12 @@ impl MediaTools {
                 None => self.load_image(path, mime).ok().map(static_image),
             },
             Mime::ApplicationPptx => pil_resize(&Zip::open(path)?.read("docProps/thumbnail.jpeg")?),
+            Mime::ImageSvg => {
+                svg::render(&std::fs::read(path).ok()?, target).map(Raster::strip_useless_alpha)
+            }
+            Mime::ApplicationPdf => pdf::Document::open(std::fs::read(path).ok()?)?
+                .render_first_page(target)
+                .map(Raster::strip_useless_alpha),
             _ => None,
         }
     }
@@ -526,6 +534,11 @@ impl MediaTools {
                 flags.has_human_readable_embedded_metadata =
                     mimes::is_pil_heif(mime) && item.has_nclx;
             }
+            return flags;
+        }
+        if mime == Mime::ApplicationPdf {
+            flags.has_human_readable_embedded_metadata =
+                pdf::Document::open(data).is_some_and(|doc| doc.has_human_readable_metadata());
             return flags;
         }
         if mime == Mime::ApplicationPsd {
