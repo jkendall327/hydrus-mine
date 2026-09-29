@@ -136,22 +136,40 @@ pub async fn file_metadata(
             app.access.check_can_see(&perms, &hash_ids)?;
 
             let snapshot = app.store.snapshot();
-            let batch = app
-                .store
-                .read(|c| media::load(c, &snapshot.services, Some(&snapshot.display), &hash_ids))?;
-            let by_hash: HashMap<Sha256, &MediaResult> =
-                batch.results.iter().map(|m| (m.hash, m)).collect();
-            let rows: Vec<Json> = hashes
-                .iter()
-                .map(|h| match by_hash.get(h) {
-                    None => media_json::missing_row(h),
-                    Some(m) if only_identifiers => {
-                        json!({ "file_id": m.hash_id.get(), "hash": h.to_hex() })
-                    }
-                    Some(m) if only_basic => media_json::basic_row(m, opts.include_blurhash),
-                    Some(m) => media_json::full_row(&snapshot, m, &batch.tags, opts),
-                })
-                .collect();
+            let rows: Vec<Json> = if only_identifiers {
+                // known hashes only; nothing else to load
+                hashes
+                    .iter()
+                    .map(|h| match ids.get(h) {
+                        Some(id) => json!({ "file_id": id.get(), "hash": h.to_hex() }),
+                        None => media_json::missing_row(h),
+                    })
+                    .collect()
+            } else if only_basic {
+                let results = app.store.read(|c| media::load_basic(c, &hash_ids))?;
+                let by_hash: HashMap<Sha256, &MediaResult> =
+                    results.iter().map(|m| (m.hash, m)).collect();
+                hashes
+                    .iter()
+                    .map(|h| match by_hash.get(h) {
+                        Some(m) => media_json::basic_row(m, opts.include_blurhash),
+                        None => media_json::missing_row(h),
+                    })
+                    .collect()
+            } else {
+                let batch = app.store.read(|c| {
+                    media::load(c, &snapshot.services, Some(&snapshot.display), &hash_ids)
+                })?;
+                let by_hash: HashMap<Sha256, &MediaResult> =
+                    batch.results.iter().map(|m| (m.hash, m)).collect();
+                hashes
+                    .iter()
+                    .map(|h| match by_hash.get(h) {
+                        Some(m) => media_json::full_row(&snapshot, m, &batch.tags, opts),
+                        None => media_json::missing_row(h),
+                    })
+                    .collect()
+            };
             let mut body = serde_json::Map::new();
             body.insert("metadata".into(), Json::Array(rows));
             if include_services_object {

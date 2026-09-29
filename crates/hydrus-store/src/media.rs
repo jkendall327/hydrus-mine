@@ -194,29 +194,32 @@ pub fn current_in(
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
-pub fn load(
-    conn: &Connection,
-    registry: &ServiceRegistry,
-    display: Option<&DisplayGraphs>,
-    hash_ids: &[HashId],
-) -> Result<MediaBatch> {
+/// Load only what `only_return_basic_information` needs: hashes and file
+/// properties. Much cheaper than [`load`] for files with many tags.
+pub fn load_basic(conn: &Connection, hash_ids: &[HashId]) -> Result<Vec<MediaResult>> {
     let hashes = master::hashes(conn, hash_ids)?;
     let mut results: Vec<MediaResult> = hash_ids
         .iter()
         .filter_map(|id| hashes.get(id).map(|h| MediaResult::new(*id, *h)))
         .collect();
+    load_info(conn, &mut results)?;
+    Ok(results)
+}
+
+/// Fill in each result's file properties.
+fn load_info(conn: &Connection, results: &mut [MediaResult]) -> Result<()> {
     let index: HashMap<HashId, usize> = results
         .iter()
         .enumerate()
         .map(|(i, r)| (r.hash_id, i))
         .collect();
-    let ids = id_array(hash_ids);
+    let ids: Vec<HashId> = results.iter().map(|r| r.hash_id).collect();
+    let ids = id_array(&ids);
     let mut with = |id: HashId, f: &mut dyn FnMut(&mut MediaResult)| {
         if let Some(&i) = index.get(&id) {
             f(&mut results[i]);
         }
     };
-
     {
         let mut stmt = conn.prepare_cached(
             "SELECT hash_id, size, mime, width, height, duration_ms, num_frames, has_audio, num_words, forced_mime,
@@ -245,6 +248,33 @@ pub fn load(
             with(r.get(0)?, &mut |m| m.info = Some(info.clone()));
         }
     }
+    Ok(())
+}
+
+pub fn load(
+    conn: &Connection,
+    registry: &ServiceRegistry,
+    display: Option<&DisplayGraphs>,
+    hash_ids: &[HashId],
+) -> Result<MediaBatch> {
+    let hashes = master::hashes(conn, hash_ids)?;
+    let mut results: Vec<MediaResult> = hash_ids
+        .iter()
+        .filter_map(|id| hashes.get(id).map(|h| MediaResult::new(*id, *h)))
+        .collect();
+    load_info(conn, &mut results)?;
+    let index: HashMap<HashId, usize> = results
+        .iter()
+        .enumerate()
+        .map(|(i, r)| (r.hash_id, i))
+        .collect();
+    let ids = id_array(hash_ids);
+    let mut with = |id: HashId, f: &mut dyn FnMut(&mut MediaResult)| {
+        if let Some(&i) = index.get(&id) {
+            f(&mut results[i]);
+        }
+    };
+
     {
         let mut stmt =
             conn.prepare_cached("SELECT hash_id, service_id, added_ms FROM file_domain_current WHERE hash_id IN rarray(?)")?;
