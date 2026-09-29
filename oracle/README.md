@@ -4,8 +4,8 @@ Tooling that runs the **reference implementation** (the Python hydrus client
 in `hydrus/`) to record ground truth for the Rust implementation's tests.
 
 Nothing in the Rust test suite runs Python: the outputs of these scripts are
-committed under `oracle/fixtures/` (and later `oracle/recordings/`). Re-running
-a script and committing a changed fixture is a deliberate, reviewable act.
+committed under `oracle/fixtures/` and `oracle/recordings/`. Re-running a
+script and committing a changed fixture is a deliberate, reviewable act.
 
 ## Setup
 
@@ -23,8 +23,11 @@ export QT_QPA_PLATFORM=offscreen
 |---|---|
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
+| `dump_system_predicates.py` | `fixtures/system_predicates.json`: search predicate parsing (system predicates and Client API tag lists) over a large corpus |
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
+| `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
+| `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
 
 ## The driver
 
@@ -38,15 +41,16 @@ per process; use `run_in_subprocess` for more.
 Fixture databases are populated through the same paths real use takes: the
 Client API wherever possible, and controller `Write` commands for the rest
 (services, siblings/parents, display application, similar-file search).
-| `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
-| `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
 
 ## Conformance scenarios
 
-A scenario is a list of HTTP requests against a fixture database. Read-only
-scenarios are replayed on one shared boot; each mutating scenario gets a fresh
-copy of its fixture. The Rust conformance runner replays the same JSON against
-an imported copy of the same fixture and diffs the responses.
+A scenario is a list of HTTP requests against a fixture database. Every
+scenario is recorded on a fresh boot of a fresh copy of its fixture: even
+"read-only" requests can have side effects in the reference (asking for an
+unknown hash's thumbnail assigns it a file id), so sharing boots would make
+recordings depend on scenario order. The Rust conformance runner
+(`crates/hydrus-api/tests/conformance.rs`) replays the same JSON against an
+imported copy of the same fixture and diffs the responses.
 
 Request placeholders: `{MEDIA}` becomes the absolute path of
 `fixtures/import_media`. Response normalisation: the recording db dir's
@@ -54,5 +58,4 @@ absolute path becomes `{DB_DIR}`, and `{MEDIA}` likewise. Binary bodies are
 recorded as sha256 + length.
 
 Where the reference is wrong (a bug users would not rely on), the Rust side
-does not copy it: the runner's reviewed exceptions list records the step,
-what we do instead, and why (mirrored in `docs/rust/DIFFERENCES.md`).
+does not copy it: the difference is recorded in `docs/rust/DIFFERENCES.md`.
