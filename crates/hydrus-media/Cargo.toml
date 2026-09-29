@@ -1,0 +1,39 @@
+[package]
+name = "hydrus-media"
+description = "File type detection, metadata, hashes, thumbnails and similarity hashes, matching the reference client."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+hydrus-core.workspace = true
+thiserror.workspace = true
+serde_json.workspace = true
+regex.workspace = true
+sha2.workspace = true
+sha1.workspace = true
+md-5.workspace = true
+rusqlite.workspace = true
+tempfile.workspace = true
+turbojpeg.workspace = true
+lcms2.workspace = true
+png.workspace = true
+weezl.workspace = true
+image-webp.workspace = true
+tiff.workspace = true
+qoi.workspace = true
+zip.workspace = true
+cfb.workspace = true
+plist.workspace = true
+roxmltree.workspace = true
+flate2.workspace = true
+lzma-rs.workspace = true
+
+[dev-dependencies]
+hex.workspace = true
+serde.workspace = true
+rayon.workspace = true
+
+[lints]
+workspace = true

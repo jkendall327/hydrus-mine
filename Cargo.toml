@@ -49,6 +49,24 @@ rand = "0.10"
 bytes = "1"
 ciborium = "0.2"
 
+# media (hydrus-media)
+# libjpeg-turbo, built from source: Pillow decodes with libjpeg-turbo and pure
+# Rust decoders differ by +-4 per channel, which breaks pixel-hash parity.
+turbojpeg = { version = "1.5", default-features = false, features = ["cmake"] }
+# LittleCMS, vendored: Pillow normalises ICC-tagged images with LittleCMS.
+lcms2 = { version = "6", features = ["static"] }
+png = "0.18"
+weezl = "0.1"
+image-webp = "0.2"
+tiff = { version = "0.11", default-features = false, features = ["deflate", "lzw", "fax"] }
+qoi = "0.4"
+zip = { version = "8", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+cfb = "0.15"
+plist = { version = "1", default-features = false }
+roxmltree = "0.21"
+flate2 = "1"
+lzma-rs = "0.3"
+
 [workspace.lints.rust]
 unsafe_code = "deny"
 missing_debug_implementations = "warn"
