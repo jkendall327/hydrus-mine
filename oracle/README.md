@@ -23,3 +23,18 @@ export QT_QPA_PLATFORM=offscreen
 |---|---|
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
+| `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
+| `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
+
+## The driver
+
+`hydrus_driver.py` boots the unmodified reference client **in-process** with an
+offscreen Qt platform, then runs a hook on a worker thread with the live
+controller and the client's own Client API (enabled on a local port with fixed
+oracle access keys). When the hook returns, the client shuts down through its
+normal SIGTERM path and the driver waits for the database to close. One boot
+per process; use `run_in_subprocess` for more.
+
+Fixture databases are populated through the same paths real use takes: the
+Client API wherever possible, and controller `Write` commands for the rest
+(services, siblings/parents, display application, similar-file search).
