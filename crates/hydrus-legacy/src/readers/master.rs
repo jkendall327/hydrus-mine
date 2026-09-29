@@ -132,8 +132,9 @@ impl LegacyDb {
                 table: &format!("{table} AS t"),
                 keys: &["t.tag_id"],
                 columns: &["n.namespace", "s.subtag"],
-                join: "JOIN external_master.namespaces AS n USING (namespace_id) \
-                       JOIN external_master.subtags AS s USING (subtag_id)",
+                // LEFT JOIN: a dangling definition is an error, not a missing row
+                join: "LEFT JOIN external_master.namespaces AS n USING (namespace_id) \
+                       LEFT JOIN external_master.subtags AS s USING (subtag_id)",
             },
             Box::new(|row| {
                 let namespace: String = column(row, 1, "tags")?;

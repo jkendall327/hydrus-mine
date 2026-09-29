@@ -82,8 +82,23 @@ impl<'db, T> Rows<'db, T> {
         }
     }
 
-    fn fetch(&mut self) -> Result<()> {
+    /// Fetch the next batch into the buffer. A failure ends the iteration
+    /// after the rows fetched before it.
+    fn fetch(&mut self) {
         let batch_size = self.db.batch_size();
+        let mut out = Vec::with_capacity(batch_size.min(65_536));
+        match self.fetch_into(batch_size, &mut out) {
+            Ok(()) if out.len() == batch_size => {}
+            Ok(()) => self.finished = true,
+            Err(e) => {
+                out.push(Err(e));
+                self.finished = true;
+            }
+        }
+        self.buffer = out.into_iter();
+    }
+
+    fn fetch_into(&mut self, batch_size: usize, out: &mut Vec<Result<T>>) -> Result<()> {
         let (sql, mut params) = match &self.last_key {
             None => (&self.first_sql, Vec::new()),
             Some(key) => (
@@ -96,7 +111,6 @@ impl<'db, T> Rows<'db, T> {
         ));
         let mut statement = self.db.connection().prepare_cached(sql)?;
         let mut rows = statement.query(rusqlite::params_from_iter(params))?;
-        let mut out = Vec::with_capacity(batch_size.min(65_536));
         while let Some(row) = rows.next()? {
             let key = (0..self.key_len)
                 .map(|i| row.get::<_, i64>(i))
@@ -107,10 +121,6 @@ impl<'db, T> Rows<'db, T> {
             self.last_key = Some(key);
             out.push((self.map)(row));
         }
-        if out.len() < batch_size {
-            self.finished = true;
-        }
-        self.buffer = out.into_iter();
         Ok(())
     }
 }
@@ -126,10 +136,7 @@ impl<T> Iterator for Rows<'_, T> {
             if self.finished {
                 return None;
             }
-            if let Err(e) = self.fetch() {
-                self.finished = true;
-                return Some(Err(e));
-            }
+            self.fetch();
         }
     }
 }

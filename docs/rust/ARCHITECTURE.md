@@ -112,6 +112,7 @@ unknown or not-yet-supported objects are preserved verbatim in a
 | `hydrus-search` | Predicates, the system-predicate text parser, query planning and execution. |
 | `hydrus-api` | The Client API HTTP server. |
 | `hydrus-cli` | The `hydrus` binary: `serve`, `import-legacy`, maintenance commands. |
+| `hydrus-testkit` | Dev-only test helpers: extracting fixture databases, loading fixture JSON. |
 | `xtask` | Project automation: parity ratchet, conformance runs, benchmarks. |
 
 The GUI is deliberately last; see the tracking issue on GUI technology.

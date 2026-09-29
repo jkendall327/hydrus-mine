@@ -3,7 +3,7 @@
 use hydrus_core::{ServiceId, ServiceKey, ServiceType};
 
 use super::column;
-use crate::db::LegacyDb;
+use crate::db::{LegacyDb, ServiceInfo};
 use crate::error::{LegacyError, Result};
 use crate::objects::ServiceConfig;
 use crate::serialisable::SerialisableObject;
@@ -31,8 +31,8 @@ impl LegacyDb {
         let mut rows = statement.query([])?;
         let mut services = Vec::new();
         while let Some(row) = rows.next()? {
-            let id: ServiceId = column(row, 0, "services")?;
-            let info = self.service_info(id)?.clone();
+            let info = ServiceInfo::from_row(row)?;
+            let id = info.id;
             let location = format!("services row {id} ({})", info.name);
             let text: String = column(row, 4, "services")?;
             let dictionary = SerialisableObject::from_tuple_str(&text)

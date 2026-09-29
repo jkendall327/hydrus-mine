@@ -25,6 +25,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
+| `dump_legacy_expectations.py` | `fixtures/legacy_db/<name>.expected.json`: what the reference reads from a fixture database, for `hydrus-legacy`'s tests |
 
 ## The driver
 

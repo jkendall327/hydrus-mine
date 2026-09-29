@@ -105,6 +105,26 @@ pub struct ServiceInfo {
     pub name: String,
 }
 
+impl ServiceInfo {
+    /// Decode `service_id, service_key, service_type, name` columns.
+    pub(crate) fn from_row(row: &rusqlite::Row<'_>) -> Result<ServiceInfo> {
+        let id: ServiceId = row.get(0)?;
+        let code: i64 = row.get(2)?;
+        let service_type = u8::try_from(code)
+            .ok()
+            .and_then(ServiceType::from_code)
+            .ok_or_else(|| {
+                LegacyError::bad_value("services", format!("service {id} has unknown type {code}"))
+            })?;
+        Ok(ServiceInfo {
+            id,
+            key: row.get(1)?,
+            service_type,
+            name: row.get(3)?,
+        })
+    }
+}
+
 /// A read-only view of a reference (v688) client database directory.
 #[derive(Debug)]
 pub struct LegacyDb {
@@ -202,6 +222,8 @@ impl LegacyDb {
     /// client is writing. (In WAL mode, commits spanning several of the
     /// four files are atomic per file only, so a snapshot taken while the
     /// reference is mid-commit may see one file's half.)
+    ///
+    /// Snapshots do not nest: taking a second while one is held fails.
     pub fn snapshot(&self) -> Result<Snapshot<'_>> {
         let transaction = self.connection.unchecked_transaction()?;
         // a WAL read snapshot starts at the first read of each file
@@ -243,33 +265,12 @@ impl LegacyDb {
         let mut statement = self.connection.prepare(
             "SELECT service_id, service_key, service_type, name FROM main.services ORDER BY service_id",
         )?;
-        let rows = statement.query_map([], |row| {
-            Ok((
-                row.get::<_, ServiceId>(0)?,
-                row.get::<_, ServiceKey>(1)?,
-                row.get::<_, i64>(2)?,
-                row.get::<_, String>(3)?,
-            ))
-        })?;
-        rows.map(|row| {
-            let (id, key, code, name) = row?;
-            let service_type = u8::try_from(code)
-                .ok()
-                .and_then(ServiceType::from_code)
-                .ok_or_else(|| {
-                    LegacyError::bad_value(
-                        "services",
-                        format!("service {id} has unknown type {code}"),
-                    )
-                })?;
-            Ok(ServiceInfo {
-                id,
-                key,
-                service_type,
-                name,
-            })
-        })
-        .collect()
+        let mut rows = statement.query([])?;
+        let mut services = Vec::new();
+        while let Some(row) = rows.next()? {
+            services.push(ServiceInfo::from_row(row)?);
+        }
+        Ok(services)
     }
 
     /// Whether `schema.table` exists.
@@ -410,6 +411,9 @@ fn cannot_create_wal_files(error: &LegacyError, db_dir: &Path) -> bool {
 /// safe in a URI path.
 fn sqlite_uri(path: &Path, mode: OpenMode) -> String {
     let text = path.to_string_lossy().replace('\\', "/");
+    // canonicalised Windows paths are "verbatim" (\\?\C:\...), which SQLite
+    // does not understand
+    let text = text.strip_prefix("//?/").unwrap_or(&text);
     let mut uri = String::from("file:");
     // Windows drive paths need a leading slash: file:/C:/...
     if !text.starts_with('/') {
@@ -457,6 +461,10 @@ mod tests {
         assert_eq!(
             sqlite_uri(Path::new("/x/é.db"), OpenMode::Immutable),
             "file:/x/%C3%A9.db?mode=ro&immutable=1"
+        );
+        assert_eq!(
+            sqlite_uri(Path::new(r"\\?\C:\hydrus db\client.db"), OpenMode::Shared),
+            "file:/C:/hydrus%20db/client.db?mode=ro"
         );
     }
 }
