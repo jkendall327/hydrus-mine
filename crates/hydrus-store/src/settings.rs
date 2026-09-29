@@ -7,6 +7,7 @@ use rusqlite::{Connection, OptionalExtension, params};
 use serde::Serialize;
 use serde::de::DeserializeOwned;
 
+use hydrus_core::CanvasType;
 use hydrus_core::thumbnail::ThumbnailSettings;
 
 use crate::error::Result;
@@ -26,6 +27,27 @@ pub struct FavouriteTags(pub Vec<String>);
 
 impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
+}
+
+/// Which viewers' statistics count as "views" and "view time" when a search
+/// or sort does not name viewers (the reference's
+/// `file_viewing_stats_interesting_canvas_types` option).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct ViewingStatsSettings {
+    pub interesting_canvases: Vec<CanvasType>,
+}
+
+impl Default for ViewingStatsSettings {
+    /// The reference's default: the media viewer and the Client API.
+    fn default() -> Self {
+        Self {
+            interesting_canvases: vec![CanvasType::MediaViewer, CanvasType::ClientApi],
+        }
+    }
+}
+
+impl Setting for ViewingStatsSettings {
+    const KEY: &'static str = "viewing_stats";
 }
 
 pub fn get<S: Setting>(conn: &Connection) -> Result<S> {

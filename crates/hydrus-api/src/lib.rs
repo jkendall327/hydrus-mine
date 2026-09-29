@@ -57,7 +57,7 @@ impl AppState {
 
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
-    use routes::{access, files};
+    use routes::{access, files, search};
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -65,6 +65,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/get_services", get(access::get_services))
         .route("/get_service", get(access::get_service))
         .route("/add_tags/clean_tags", get(access::clean_tags))
+        .route("/get_files/search_files", get(search::search_files))
         .route("/get_files/file_metadata", get(files::file_metadata))
         .route("/get_files/file_hashes", get(files::file_hashes))
         .route("/get_files/file", get(files::file))

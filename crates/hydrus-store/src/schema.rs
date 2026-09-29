@@ -134,6 +134,9 @@ CREATE INDEX files_flag_exif ON files (hash_id) WHERE flags & 1;
 CREATE INDEX files_flag_icc ON files (hash_id) WHERE flags & 2;
 CREATE INDEX files_flag_hrm ON files (hash_id) WHERE flags & 4;
 CREATE INDEX files_flag_transparency ON files (hash_id) WHERE flags & 8;
+CREATE INDEX files_flag_xmp ON files (hash_id) WHERE flags & 16;
+CREATE INDEX files_flag_iptc ON files (hash_id) WHERE flags & 32;
+CREATE INDEX files_flag_software_source ON files (hash_id) WHERE flags & 64;
 
 CREATE TABLE file_perceptual_hashes (
     hash_id INTEGER NOT NULL,
@@ -159,6 +162,7 @@ CREATE TABLE file_domain_deleted (
     PRIMARY KEY (service_id, hash_id)
 ) STRICT, WITHOUT ROWID;
 CREATE INDEX file_domain_deleted_hash ON file_domain_deleted (hash_id);
+CREATE INDEX file_domain_deleted_time ON file_domain_deleted (service_id, deleted_ms);
 
 CREATE TABLE file_domain_pending (
     service_id INTEGER NOT NULL,
@@ -394,6 +398,15 @@ CREATE TABLE cache_subtag_words (
     PRIMARY KEY (word, subtag_id)
 ) STRICT, WITHOUT ROWID;
 CREATE INDEX cache_subtag_words_subtag ON cache_subtag_words (subtag_id);
+
+-- subtags whose searchable form differs from the subtag itself, keyed by
+-- that form, so a search for 'blue eyes' also finds 'blue_eyes'
+CREATE TABLE cache_searchable_subtags (
+    searchable TEXT NOT NULL,
+    subtag_id INTEGER NOT NULL,
+    PRIMARY KEY (searchable, subtag_id)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX cache_searchable_subtags_subtag ON cache_searchable_subtags (subtag_id);
 
 -- integer-valued subtags, for 'system:tag as number'
 CREATE TABLE cache_integer_subtags (

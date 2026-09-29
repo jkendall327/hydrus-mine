@@ -1,6 +1,6 @@
 [package]
 name = "hydrus-search"
-description = "File search predicates, the system-predicate text parser, and (later) query planning and execution."
+description = "File search: predicates, the system-predicate text parser, and query planning and execution."
 version.workspace = true
 edition.workspace = true
 rust-version.workspace = true
@@ -8,6 +8,11 @@ license.workspace = true
 
 [dependencies]
 hydrus-core.workspace = true
+hydrus-store.workspace = true
+rusqlite.workspace = true
+roaring.workspace = true
+jiff.workspace = true
+rand.workspace = true
 thiserror.workspace = true
 hex.workspace = true
 regex.workspace = true
@@ -17,6 +22,8 @@ serde_json.workspace = true
 [dev-dependencies]
 serde_json.workspace = true
 proptest.workspace = true
+hydrus-testkit.workspace = true
+tempfile.workspace = true
 
 [lints]
 workspace = true

@@ -8,9 +8,9 @@ use std::collections::BTreeSet;
 
 use serde_json::{Value as Json, json};
 
-use hydrus_core::ServiceType;
 use hydrus_core::tag_filter::{FilterRule, TagFilter};
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
+use hydrus_core::{CanvasType, ServiceType};
 use hydrus_legacy::LegacyDb;
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
@@ -21,7 +21,7 @@ use crate::services::{
     LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay,
     RepositoryConfig, Rgb, ServerConfig, ServiceKind, StarAppearance, StarShape,
 };
-use crate::settings::{FavouriteTags, Setting};
+use crate::settings::{FavouriteTags, Setting, ViewingStatsSettings};
 
 /// Decode everything the importer needs from the reference install `db`.
 pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
@@ -62,6 +62,26 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
+        }
+        if let Some(codes) = options
+            .integer_lists
+            .get("file_viewing_stats_interesting_canvas_types")
+        {
+            let interesting_canvases = codes
+                .iter()
+                .map(|&code| {
+                    u8::try_from(code)
+                        .ok()
+                        .and_then(CanvasType::from_code)
+                        .ok_or_else(|| StoreError::Invalid(format!("unknown canvas type {code}")))
+                })
+                .collect::<Result<_>>()?;
+            insert_setting(
+                &mut input,
+                &ViewingStatsSettings {
+                    interesting_canvases,
+                },
+            )?;
         }
     }
     insert_setting(&mut input, &thumbnails)?;

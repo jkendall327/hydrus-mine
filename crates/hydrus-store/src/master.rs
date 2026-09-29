@@ -169,8 +169,15 @@ pub(crate) fn index_subtag(conn: &Connection, id: SubtagId, subtag: &str) -> Res
     let mut insert_word = conn.prepare_cached(
         "INSERT OR IGNORE INTO cache_subtag_words (word, subtag_id) VALUES (?, ?)",
     )?;
-    for word in text::words(&text::searchable_subtag(subtag)) {
+    let searchable = text::searchable_subtag(subtag);
+    for word in text::words(&searchable) {
         insert_word.execute(params![word, id])?;
+    }
+    if searchable != subtag {
+        conn.prepare_cached(
+            "INSERT OR IGNORE INTO cache_searchable_subtags (searchable, subtag_id) VALUES (?, ?)",
+        )?
+        .execute(params![searchable, id])?;
     }
     if let Some(value) = text::integer_subtag(subtag) {
         conn.prepare_cached(
@@ -411,6 +418,18 @@ mod tests {
             .collect::<rusqlite::Result<_>>()
             .unwrap();
         assert_eq!(words, ["0012", "blue", "eyes"]);
+        let searchable: Vec<String> = c
+            .prepare("SELECT searchable FROM cache_searchable_subtags")
+            .unwrap()
+            .query_map([], |r| r.get(0))
+            .unwrap()
+            .collect::<rusqlite::Result<_>>()
+            .unwrap();
+        assert_eq!(
+            searchable,
+            ["blue eyes"],
+            "only subtags that change are indexed"
+        );
         let value: i64 = c
             .query_row("SELECT value FROM cache_integer_subtags", [], |r| r.get(0))
             .unwrap();

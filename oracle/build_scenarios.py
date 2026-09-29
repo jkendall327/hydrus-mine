@@ -207,6 +207,176 @@ def search_scenarios():
     return scenario( 'search', 'file searches: tags, siblings, parents, wildcards, domains, system predicates, sorts', s, read_only = True )
 
 
+def fixture_similarity_data():
+    """A pixel hash and a perceptual hash of jpeg_02.jpg's family, read from
+    the fixture database, for system:similar to data."""
+
+    import sqlite3
+    import tarfile
+    import tempfile
+
+    with tempfile.TemporaryDirectory() as d:
+
+        with tarfile.open( os.path.join( HERE, 'fixtures', 'legacy_db', 'basic.tar.gz' ) ) as t:
+
+            for name in ( 'client.db', 'client.master.db' ):
+
+                t.extract( name, d )
+
+
+
+        c = sqlite3.connect( os.path.join( d, 'client.db' ) )
+        c.execute( 'ATTACH ? AS m', ( os.path.join( d, 'client.master.db' ), ) )
+
+        wanted = bytes.fromhex( BY_NAME[ 'jpeg_02.jpg' ] )
+
+        ( pixel_hash, ) = c.execute( 'SELECT p.hash FROM m.hashes f JOIN pixel_hash_map x ON x.hash_id = f.hash_id JOIN m.hashes p ON p.hash_id = x.pixel_hash_id WHERE f.hash = ?', ( wanted, ) ).fetchone()
+        ( phash, ) = c.execute( 'SELECT p.phash FROM m.hashes f JOIN m.shape_perceptual_hash_map x ON x.hash_id = f.hash_id JOIN m.shape_perceptual_hashes p USING ( phash_id ) WHERE f.hash = ?', ( wanted, ) ).fetchone()
+
+        c.close()
+
+
+    return ( pixel_hash.hex(), phash.hex() )
+
+
+def search_more_scenarios():
+    """Sorts and predicates the first search scenario does not cover."""
+
+    import hashlib
+
+    s = []
+
+    for t in ( 1, 7, 10, 11, 12, 14, 15, 17, 18, 19, 21, 22, 23, 24, 25, 26, 27 ):
+
+        for asc in ( True, False ):
+
+            s.append( search( [ 'system:everything' ], file_sort_type = t, file_sort_asc = asc ) )
+
+
+
+    # import time sorts in other domains
+    s.append( search( [ 'system:everything' ], file_sort_type = 2, file_sort_asc = False, file_service_key = KEYS[ 'trash' ] ) )
+    s.append( search( [ 'system:everything' ], file_sort_type = 2, deleted_file_service_key = KEYS[ 'my_files' ] ) )
+    s.append( search( [ 'system:everything' ], file_sort_type = 2, file_service_keys = [ KEYS[ 'art' ], KEYS[ 'trash' ] ] ) )
+
+    ( pixel_hash, phash ) = fixture_similarity_data()
+    md5 = hashlib.md5( open( os.path.join( HERE, 'fixtures', 'import_media', 'jpeg_03.jpg' ), 'rb' ).read() ).hexdigest()
+
+    predicates = [
+        # file properties
+        'system:framerate < 30', 'system:framerate > 5', 'system:num frames > 10', 'system:number of frames < 2', 'system:has frames',
+        'system:num urls > 2', 'system:num urls = 0', 'system:has urls', 'system:no urls', 'system:num urls ~= 2',
+        'system:has transparency', 'system:no transparency', 'system:has forced filetype', 'system:no forced filetype',
+        'system:has xmp', 'system:no iptc', 'system:has software/source metadata', 'system:no human-readable metadata',
+        'system:has width', 'system:no height', 'system:has words', 'system:width = 0', 'system:height <= 200', 'system:width >= 1000',
+        'system:width ~= 640', 'system:height != 480', 'system:duration ~= 2 seconds',
+        'system:filesize != 5 KB', 'system:filesize > 0 B', 'system:num pixels ~= 300 kilopixels', 'system:num pixels = 307200 pixels', 'system:num pixels != 307200 pixels',
+        'system:ratio ~= 4:3', 'system:ratio is square', 'system:ratio is portrait', 'system:ratio is landscape', 'system:ratio = 4:3',
+        'system:filetype = image/png', 'system:filetype = static gif', 'system:filetype != image', 'system:filetype = image project file', 'system:filetype = archive, pdf',
+        # times
+        'system:archived time > 2025-01-01', 'system:archived time < 2025-01-01', 'system:archived time ~= 2026-09-20',
+        'system:time imported < 100 years', 'system:time imported > 100 years', 'system:time imported ~= 2026-09-20',
+        'system:modified date > 2020-09-15', 'system:modified date < 2020-09-15', 'system:modified time ~= 2020-09-20',
+        'system:last viewed time > 2023-01-01', 'system:last viewed time < 3 years',
+        # hashes and similar files
+        f'system:hash = {md5} md5', f'system:hash != {BY_NAME[ "jpeg_00.jpg" ]}',
+        f'system:similar to {BY_NAME[ "jpeg_02.jpg" ]} distance 20', f'system:similar to data {pixel_hash}', f'system:similar to data {phash} distance 4',
+        # file services
+        'system:file service is pending to my files', 'system:file service is not pending to my files', 'system:file service currently in my files', 'system:file service is not currently in trash',
+        'system:file service currently in no such service',
+        # tag counts
+        'system:number of character tags > 0', 'system:number of series tags = 1', 'system:number of unnamespaced tags ~= 3', 'system:number of filename tags = 0',
+        'system:number of tags < 3', 'system:number of tags != 4', 'system:number of tags ~= 5', 'system:number of page tags > 0',
+        # views
+        'system:views ~= 5', 'system:views < 3', 'system:viewtime < 3 seconds', 'system:views in preview > 0', 'system:viewtime in media, preview ~= 10 seconds', 'system:views in client api = 0',
+        # relationships
+        'system:num file relationships < 2 duplicates', 'system:num file relationships ~= 1 alternates', 'system:num file relationships > 1 potential duplicates', 'system:num file relationships = 0 false positives',
+        # tag as number
+        'system:tag as number page ~= 10', 'system:tag as number page > 10', 'system:tag as number volume < 5', 'system:tag as number * > 5',
+        # urls and notes
+        'system:has domain donmai.us', 'system:does not have domain example.com', 'system:has url matching regex \\d{4}$', 'system:has url matching regex post/[0-4]$',
+        'system:has note with name nope', 'system:no note with name translation', 'system:num notes ~= 2', 'system:num notes < 2',
+        # ratings
+        'system:rating for stars ~= 3/5', 'system:rating for stars < 2/5', 'system:rating for stars > 1/5', 'system:rating for stars = 5/5', 'system:rating for stars is like',
+        'system:rating for favourites = 1/5', 'system:does not have a rating for stars',
+        'system:rating for counter < 5', 'system:rating for counter > 5', 'system:rating for counter = 0', 'system:has a rating for counter', 'system:does not have a rating for counter',
+        'system:rating for no such service > 1/5',
+        'system:all ratings rated', 'system:any ratings rated', 'system:all ratings not rated', 'system:any ratings not rated',
+        'system:all like/dislike ratings rated', 'system:any inc/dec ratings rated', 'system:only favourites rated', 'system:only favourites, stars rated', 'system:only stars not rated',
+        'system:only favourites (amongst favourites, stars) rated',
+        # advanced tags
+        'system:has tag in "my tags", ignoring siblings/parents: "samus"',
+        'system:has tag in "my tags": "samus"',
+        'system:has tag in "my tags": "series:metroid"',
+        'system:has tag in "downloader tags": "series:metroid"',
+        'system:has tag in "all known tags", ignoring siblings/parents: "character:samus aran"',
+        'system:has tag with status in deleted: "blue eyes"',
+        'system:has tag with status in deleted, current: "blue eyes"',
+        'system:does not have tag in "my tags": "safe"',
+        'system:has tag in "no such service": "safe"',
+    ]
+
+    for text in predicates:
+
+        s.append( search( [ text ], file_sort_type = 20 ) )
+
+
+    tag_searches = [
+        [ '*:*' ], [ 'character:*' ], [ 'char*:*' ], [ '*s*' ], [ 'blue *' ], [ 'b*e*' ], [ '*:blue eyes' ], [ '*:blue_eyes' ],
+        [ '-*eyes' ], [ '-series:*' ], [ 'sa*e' ], [ 'series:the legend*' ], [ 'キャラ*:*' ], [ '*:初音*' ], [ 'éc*' ], [ '*:canonical' ],
+        [ 'safe', '-series:*' ], [ 'meta:*', '-meta:lowres' ], [ 'studio:*' ], [ 'studio:nintendo', '-character:*' ],
+        [ [ '-safe', 'smile' ] ], [ [ 'system:archive', 'character:*' ], '-smile' ], [ [ 'blue eyes', [ 'smile', 'explicit' ] ] ],
+        [ [ 'system:width > 1000', 'system:has audio', '-safe' ], 'system:no duration' ],
+        [ 'safe', 'system:limit = 4' ], [ 'system:everything', 'system:limit = 100' ], [ 'system:limit = 0' ],
+    ]
+
+    for tags in tag_searches:
+
+        s.append( search( tags, file_sort_type = 20 ) )
+
+
+    # tag and file domains
+    for ( tag_service, file_service ) in ( ( 'second_tags', 'art' ), ( 'my_tags', 'trash' ) ):
+
+        for tags in ( [ 'system:everything' ], [ 'safe' ], [ 'system:no tags' ], [ 'system:number of tags > 3' ] ):
+
+            s.append( search( tags, file_sort_type = 20, tag_service_key = KEYS[ tag_service ], file_service_key = KEYS[ file_service ] ) )
+
+
+
+    # the reference cannot sort "all known files" results, so compare them as sets
+    # (its tag counts there are of storage tags, as it has no display cache for it)
+    for tag_service in ( 'my_tags', 'downloader_tags' ):
+
+        for tags in ( [ 'system:everything' ], [ 'safe' ], [ 'system:no tags' ], [ 'filename:*' ] ):
+
+            s.append( search( tags, compare = 'unordered_lists', file_sort_type = 20, tag_service_key = KEYS[ tag_service ], file_service_key = KEYS[ 'all_known_files' ] ) )
+
+
+
+    s.append( search( [ 'blue eyes' ], file_sort_type = 20, include_current_tags = False ) )
+    s.append( search( [ 'system:has tags' ], file_sort_type = 20, include_pending_tags = False ) )
+    s.append( search( [ 'system:no tags' ], file_sort_type = 20, include_current_tags = False, include_pending_tags = False ) )
+    s.append( search( [ 'series:metroid' ], file_sort_type = 20, tag_service_name = 'my tags' ) )
+    s.append( search( [ 'safe' ], file_sort_type = 20, file_service_name = 'art' ) )
+    s.append( search( [ 'safe' ], file_sort_type = 20, tag_service_name = 'no such service' ) )
+    s.append( search( [ 'safe' ], file_sort_type = 20, file_service_key = KEYS[ 'my_tags' ] ) )
+    s.append( search( [ 'safe' ], file_sort_type = 99 ) )
+    s.append( search( [ 'safe' ], file_sort_type = 20, deleted_file_service_keys = [ KEYS[ 'my_files' ], KEYS[ 'trash' ] ] ) )
+    s.append( get( '/get_files/search_files', tags = [] ) )
+    s.append( get( '/get_files/search_files', tags = [ 'safe' ], return_file_ids = False, return_hashes = True, file_sort_type = 20 ) )
+    s.append( get( '/get_files/search_files', tags = [ 'safe' ], file_sort_asc = False ) )
+    s.append( search( [ '-' ] ) )
+
+    # restricted key permissions
+    for tags in ( [ 'safe', 'blue eyes' ], [ 'safe', 'system:inbox' ], [ 'safe*' ], [ '-safe' ], [ [ 'safe', 'smile' ] ], [ 'safe', '-smile' ], [ 'blue eyes', '-safe' ] ):
+
+        s.append( search( tags, file_sort_type = 20, key = 'restricted' ) )
+
+
+    return scenario( 'search_more', 'more file searches: every sort, more predicates, wildcards, domains and permissions', s, read_only = True )
+
+
 def metadata_scenarios():
 
     s = []
@@ -433,7 +603,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios()
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios()
 
     for sc in scenarios:
 

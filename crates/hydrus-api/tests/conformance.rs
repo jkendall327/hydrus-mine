@@ -8,7 +8,8 @@
 //! Normalisation (the reviewed list of what we don't compare):
 //! - error responses compare status and `exception_type`, not message text;
 //! - absolute paths of the db dir and media dir are placeholders;
-//! - steps marked `unordered_lists` compare arrays as multisets.
+//! - steps marked `unordered_lists` compare arrays as multisets;
+//! - the steps in [`KNOWN_DIFFERENCES`] are not compared at all.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -21,6 +22,69 @@ use serde_json::Value as Json;
 use tower::ServiceExt as _;
 
 mod common;
+
+/// A recorded step whose reference response is a reference bug we
+/// deliberately don't reproduce. Every entry must also be described in
+/// `docs/rust/DIFFERENCES.md`. Keep this list short.
+struct KnownDifference {
+    scenario: &'static str,
+    step: usize,
+    /// A fragment of the step's request, so that a rebuilt scenario cannot
+    /// silently skip a different step.
+    request: &'static str,
+    reason: &'static str,
+}
+
+const KNOWN_DIFFERENCES: &[KnownDifference] = &[
+    KnownDifference {
+        scenario: "search",
+        step: 10,
+        request: "file_sort_type=9&file_sort_asc=true",
+        reason: "the reference ignores sorting by number of tags in the Client API; we sort",
+    },
+    KnownDifference {
+        scenario: "search",
+        step: 11,
+        request: "file_sort_type=9&file_sort_asc=false",
+        reason: "the reference ignores sorting by number of tags in the Client API; we sort",
+    },
+    KnownDifference {
+        scenario: "search",
+        step: 12,
+        request: "file_sort_type=13&file_sort_asc=true",
+        reason: "the reference ignores sorting by audio in the Client API; we sort",
+    },
+    KnownDifference {
+        scenario: "search",
+        step: 13,
+        request: "file_sort_type=13&file_sort_asc=false",
+        reason: "the reference ignores sorting by audio in the Client API; we sort",
+    },
+    KnownDifference {
+        scenario: "search_more",
+        step: 118,
+        request: "tag+as+number+page+%7E%3D+10",
+        reason: "\"tag as number ≈\" needs one tag in range; the reference accepts two tags, one above and one below",
+    },
+    KnownDifference {
+        scenario: "search_more",
+        step: 158,
+        request: "status+in+deleted%3A",
+        reason: "the reference searches pending tags when asked for deleted displayed tags",
+    },
+    KnownDifference {
+        scenario: "search_more",
+        step: 159,
+        request: "status+in+deleted%2C+current",
+        reason: "the reference searches pending tags when asked for deleted displayed tags",
+    },
+];
+
+fn known_difference(scenario: &str, step: usize) -> Option<&'static KnownDifference> {
+    KNOWN_DIFFERENCES
+        .iter()
+        .find(|k| k.scenario == scenario && k.step == step)
+}
 
 fn repo_root() -> PathBuf {
     Path::new(env!("CARGO_MANIFEST_DIR"))
@@ -132,6 +196,8 @@ struct Outcome {
     endpoint: String,
     passed: bool,
     detail: String,
+    /// Why this step is not compared, for [`KNOWN_DIFFERENCES`].
+    skipped: Option<&'static str>,
 }
 
 async fn replay_step(
@@ -233,6 +299,7 @@ async fn replay_step(
         endpoint: path,
         passed: problems.is_empty(),
         detail: format!("{} {uri}: {}", step["method"], problems.join("; ")),
+        skipped: None,
     }
 }
 
@@ -288,13 +355,27 @@ async fn replay_recorded_scenarios() {
         };
         let router = hydrus_api::router(Arc::clone(&fixture.state));
         let db_dir = fixture.legacy_dir.path().to_string_lossy().into_owned();
-        for (step, recorded) in scenario["steps"]
+        for (index, (step, recorded)) in scenario["steps"]
             .as_array()
             .unwrap()
             .iter()
             .zip(recording["responses"].as_array().unwrap())
+            .enumerate()
         {
-            outcomes.push(replay_step(&router, step, recorded, &manifest, &db_dir).await);
+            let mut outcome = replay_step(&router, step, recorded, &manifest, &db_dir).await;
+            if let Some(known) = known_difference(name, index) {
+                assert!(
+                    outcome.detail.contains(known.request),
+                    "KNOWN_DIFFERENCES is stale: {name} step {index} is now {}",
+                    outcome.detail
+                );
+                assert!(
+                    !outcome.passed,
+                    "{name} step {index} now matches the reference; remove it from KNOWN_DIFFERENCES"
+                );
+                outcome.skipped = Some(known.reason);
+            }
+            outcomes.push(outcome);
         }
     }
 
@@ -303,6 +384,10 @@ async fn replay_recorded_scenarios() {
     let mut regressions = Vec::new();
     let verbose = std::env::var_os("CONFORMANCE_VERBOSE").is_some();
     for o in &outcomes {
+        if let Some(reason) = o.skipped {
+            eprintln!("  skipped (known difference: {reason}): {}", o.detail);
+            continue;
+        }
         let entry = per_endpoint.entry(o.endpoint.clone()).or_default();
         entry.1 += 1;
         if o.passed {
@@ -316,10 +401,14 @@ async fn replay_recorded_scenarios() {
             }
         }
     }
-    let passed = outcomes.iter().filter(|o| o.passed).count();
+    let skipped = outcomes.iter().filter(|o| o.skipped.is_some()).count();
+    let passed = outcomes
+        .iter()
+        .filter(|o| o.passed && o.skipped.is_none())
+        .count();
     eprintln!(
-        "conformance: {passed}/{} recorded steps match the reference",
-        outcomes.len()
+        "conformance: {passed}/{} recorded steps match the reference ({skipped} known differences not compared)",
+        outcomes.len() - skipped
     );
     for (endpoint, (ok, total)) in &per_endpoint {
         let mark = if done.contains(endpoint) {

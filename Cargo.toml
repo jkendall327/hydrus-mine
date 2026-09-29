@@ -60,6 +60,8 @@ ciborium = "0.2"
 base64 = "0.22"
 # the legacy `options` table is PyYAML output; we use the event parser only
 yaml-rust2 = { version = "0.13", default-features = false }
+# civil time in the user's time zone, for date searches
+jiff = "0.2"
 
 [workspace.lints.rust]
 unsafe_code = "deny"
