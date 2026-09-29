@@ -10,5 +10,11 @@
     "done": 0,
     "partial": 0,
     "done_items": []
+  },
+  "system_predicate": {
+    "total": 45,
+    "done": 0,
+    "partial": 43,
+    "done_items": []
   }
 }
