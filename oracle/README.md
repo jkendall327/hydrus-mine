@@ -23,3 +23,4 @@ export QT_QPA_PLATFORM=offscreen
 |---|---|
 | `dump_constants.py` | `fixtures/constants.json`: file types, service types, enum codes |
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
+| `dump_system_predicates.py` | `fixtures/system_predicates.json`: search predicate parsing (system predicates and Client API tag lists) over a large corpus |
