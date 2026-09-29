@@ -526,3 +526,41 @@ proptest! {
         w.assert_counts_match_rebuild();
     }
 }
+
+#[test]
+fn file_info_round_trips() {
+    use hydrus_core::time::TimestampMs;
+    use hydrus_core::{Mime, Sha256};
+
+    use crate::media::{FileFlags, FileInfo};
+
+    let w = world();
+    let info = FileInfo {
+        size: 12_345,
+        mime: Mime::ImagePng,
+        original_mime: Some(Mime::ImageJpeg),
+        width: Some(640),
+        height: Some(480),
+        duration_ms: None,
+        num_frames: None,
+        has_audio: false,
+        num_words: None,
+        file_modified: Some(TimestampMs::from_millis(1_600_000_000_123)),
+        pixel_hash: Some(Sha256([7; 32])),
+        blurhash: Some("LEHV6nWB2yk8pyo0adR*.7kCMdnj".into()),
+        flags: FileFlags(FileFlags::EXIF | FileFlags::TRANSPARENCY),
+    };
+    let mut c = w.writer();
+    let id = crate::master::intern_hash(c.conn(), &Sha256([1; 32])).unwrap();
+    c.add_file_info(id, &info, false).unwrap();
+    // an existing record is kept unless overwriting
+    let other = FileInfo {
+        size: 1,
+        ..info.clone()
+    };
+    c.add_file_info(id, &other, false).unwrap();
+    c.add_files(w.roles.local[0], &[(id, Some(5))]).unwrap();
+    c.finish().unwrap();
+    let batch = crate::media::load(&w.conn, &w.snap.services, None, &[id]).unwrap();
+    assert_eq!(batch.results[0].info.as_ref(), Some(&info));
+}

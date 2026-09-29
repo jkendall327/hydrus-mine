@@ -289,3 +289,47 @@ impl ContentWriter<'_> {
         Ok(())
     }
 }
+
+impl ContentWriter<'_> {
+    /// Record a file's properties. An existing record is kept unless
+    /// `overwrite` (the reference only overwrites when regenerating metadata).
+    pub fn add_file_info(
+        &mut self,
+        hash: HashId,
+        info: &crate::media::FileInfo,
+        overwrite: bool,
+    ) -> Result<()> {
+        let (detected, forced) = match info.original_mime {
+            Some(original) => (original, Some(info.mime)),
+            None => (info.mime, None),
+        };
+        let verb = if overwrite {
+            "INSERT OR REPLACE"
+        } else {
+            "INSERT OR IGNORE"
+        };
+        self.conn
+            .prepare_cached(&format!(
+                "{verb} INTO files (hash_id, size, mime, width, height, duration_ms, num_frames, has_audio,
+                     num_words, forced_mime, file_modified_ms, pixel_hash, blurhash, flags)
+                 VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14)"
+            ))?
+            .execute(params![
+                hash,
+                i64::try_from(info.size).unwrap_or(i64::MAX),
+                detected.code(),
+                info.width,
+                info.height,
+                info.duration_ms.and_then(|d| i64::try_from(d).ok()),
+                info.num_frames.and_then(|n| i64::try_from(n).ok()),
+                info.has_audio,
+                info.num_words.and_then(|n| i64::try_from(n).ok()),
+                forced.map(hydrus_core::Mime::code),
+                info.file_modified.map(hydrus_core::time::TimestampMs::millis),
+                info.pixel_hash.map(|h| h.0.to_vec()),
+                info.blurhash,
+                info.flags.0,
+            ])?;
+        Ok(())
+    }
+}
