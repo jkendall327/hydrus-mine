@@ -138,7 +138,8 @@ status = "todo"
 
 [[api]]
 path = "/get_files/search_files"
-status = "todo"
+status = "partial"
+notes = "every read-only recorded step passes; steps after add_tags/archive/delete wait for those endpoints (their states are checked by executor tests); URL class predicates unsupported"
 
 [[api]]
 path = "/get_files/thumbnail"
@@ -661,269 +662,229 @@ status = "todo"
 [[system_predicate]]
 name = "everything"
 reference_type = 4
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "inbox"
 reference_type = 5
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "archive"
 reference_type = 6
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "num_tags"
 reference_type = 8
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "limit"
 reference_type = 9
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "size"
 reference_type = 10
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "import_time"
 reference_type = 11
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "modified_time"
 reference_type = 35
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "last_viewed_time"
 reference_type = 43
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "archived_time"
 reference_type = 47
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "hash"
 reference_type = 12
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "width"
 reference_type = 13
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "height"
 reference_type = 14
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "ratio"
 reference_type = 15
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "duration"
 reference_type = 16
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "framerate"
 reference_type = 36
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "num_frames"
 reference_type = 37
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "num_pixels"
 reference_type = 24
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_audio"
 reference_type = 34
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_transparency"
 reference_type = 50
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_exif"
 reference_type = 46
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_xmp"
 reference_type = 67
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_iptc"
 reference_type = 68
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_human_readable_embedded_metadata"
 reference_type = 44
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_software_source"
 reference_type = 69
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_icc_profile"
 reference_type = 41
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_forced_filetype"
 reference_type = 51
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "mime"
 reference_type = 17
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "rating"
 reference_type = 18
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "rating_advanced"
 reference_type = 66
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "similar_to_files"
 reference_type = 19
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "similar_to_data"
 reference_type = 48
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "local"
 reference_type = 20
-status = "todo"
-notes = "in the model; the reference has no text syntax for it; execution pending"
+status = "done"
+notes = "no text syntax; covered by executor tests"
 
 [[system_predicate]]
 name = "not_local"
 reference_type = 21
-status = "todo"
-notes = "in the model; the reference has no text syntax for it; execution pending"
+status = "done"
+notes = "no text syntax; covered by executor tests"
 
 [[system_predicate]]
 name = "num_words"
 reference_type = 22
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "num_notes"
 reference_type = 38
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "has_note_name"
 reference_type = 40
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "num_urls"
 reference_type = 52
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "known_urls"
 reference_type = 28
 status = "partial"
-notes = "parsed; execution pending"
+notes = "executed; URL class rules are refused until URL classes are supported"
 
 [[system_predicate]]
 name = "file_service"
 reference_type = 23
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "tag_advanced"
 reference_type = 54
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
+notes = "deleted/petitioned statuses of displayed tags follow sibling chains, see DIFFERENCES.md"
 
 [[system_predicate]]
 name = "tag_as_number"
 reference_type = 27
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
+notes = "'~=' needs one tag in range, see DIFFERENCES.md"
 
 [[system_predicate]]
 name = "file_relationships_count"
 reference_type = 26
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "file_relationships_king"
 reference_type = 32
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
 
 [[system_predicate]]
 name = "file_viewing_stats"
 reference_type = 29
-status = "partial"
-notes = "parsed; execution pending"
+status = "done"
