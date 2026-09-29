@@ -20,6 +20,8 @@ crossbeam-channel.workspace = true
 hex.workspace = true
 roaring.workspace = true
 rayon.workspace = true
+regex.workspace = true
+rand.workspace = true
 
 [dev-dependencies]
 criterion.workspace = true

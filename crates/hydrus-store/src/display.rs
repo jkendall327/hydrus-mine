@@ -194,6 +194,19 @@ impl DisplayGraph {
         out
     }
 
+    /// Whether `tag` shares a sibling chain with at least one other tag.
+    pub fn in_sibling_chain(&self, tag: TagId) -> bool {
+        self.bad_to_ideal.contains_key(&tag) || self.ideal_to_bads.contains_key(&tag)
+    }
+
+    /// Every tag that is in a sibling chain with another tag.
+    pub fn sibling_chained_tags(&self) -> impl Iterator<Item = TagId> + '_ {
+        self.bad_to_ideal
+            .keys()
+            .chain(self.ideal_to_bads.keys())
+            .copied()
+    }
+
     /// Ancestors of `tag`'s ideal.
     pub fn ancestors(&self, tag: TagId) -> &[TagId] {
         self.ancestors

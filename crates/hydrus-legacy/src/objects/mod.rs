@@ -17,10 +17,12 @@
 //! | [`MediaSort`], [`MediaCollect`], [`TagSort`] | 49, 78, 101 | 1-3, 1-2, 1 |
 //! | [`LocationContext`], [`TagContext`] | 103, 80 | 1, 1-2 |
 //! | [`ClientOptions`] | 22 | 8 (every v688 database; see its docs) |
+//! | [`domain::url_class_settings`] (domain manager: URL classes, parser links) | 53 | 7 (URL classes 15; see its docs) |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 mod client_api;
 mod client_options;
+pub mod domain;
 mod favourites;
 mod legacy_options;
 mod location;

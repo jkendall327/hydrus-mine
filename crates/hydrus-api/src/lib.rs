@@ -13,7 +13,9 @@ use axum::routing::get;
 use hydrus_store::Store;
 
 pub mod auth;
+pub mod domains;
 pub mod error;
+pub mod file_filter;
 pub mod location;
 pub mod media_json;
 pub mod params;
@@ -60,7 +62,7 @@ impl AppState {
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
-    use routes::{access, add_files, add_tags, files, metadata, search};
+    use routes::{access, add_files, add_tags, files, metadata, relationships, search, tags, urls};
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -102,6 +104,11 @@ pub fn router(state: Arc<AppState>) -> Router {
             post(metadata::set_file_viewtime),
         )
         .route("/get_files/search_files", get(search::search_files))
+        .route("/add_tags/search_tags", get(tags::search_tags))
+        .route(
+            "/add_tags/get_siblings_and_parents",
+            get(tags::get_siblings_and_parents),
+        )
         .route("/get_files/file_metadata", get(files::file_metadata))
         .route("/get_files/file_hashes", get(files::file_hashes))
         .route("/get_files/file", get(files::file))
@@ -111,6 +118,20 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route(
             "/get_files/local_file_storage_locations",
             get(files::local_file_storage_locations),
+        )
+        .route("/add_urls/get_url_info", get(urls::get_url_info))
+        .route("/add_urls/get_url_files", get(urls::get_url_files))
+        .route(
+            "/manage_file_relationships/get_file_relationships",
+            get(relationships::get_file_relationships),
+        )
+        .route(
+            "/manage_file_relationships/get_potentials_count",
+            get(relationships::get_potentials_count),
+        )
+        .route(
+            "/manage_file_relationships/get_potential_pairs",
+            get(relationships::get_potential_pairs),
         )
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())

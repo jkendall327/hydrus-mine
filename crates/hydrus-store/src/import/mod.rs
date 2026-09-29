@@ -39,6 +39,8 @@ pub struct ImportInput {
     pub api_permissions: Vec<ApiPermissionsRow>,
     /// Typed settings to store under `settings`, as JSON.
     pub settings: BTreeMap<String, serde_json::Value>,
+    /// Things that could not be converted (they are still kept verbatim).
+    pub warnings: Vec<String>,
 }
 
 /// One Client API access key, as stored natively.
@@ -58,6 +60,8 @@ pub struct ImportReport {
     pub rows: BTreeMap<String, u64>,
     pub services: usize,
     pub tag_services: usize,
+    /// Settings that could not be converted and were only kept verbatim.
+    pub warnings: Vec<String>,
 }
 
 /// Import the reference install whose database directory is `source_dir`
@@ -200,7 +204,10 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     }
 
     let fingerprint = SourceFingerprint::take(source_dir)?;
-    let mut report = ImportReport::default();
+    let mut report = ImportReport {
+        warnings: input.warnings.clone(),
+        ..ImportReport::default()
+    };
     let tx = conn.transaction()?;
     let mut copier = Copier {
         conn: &tx,

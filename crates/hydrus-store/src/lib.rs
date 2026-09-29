@@ -2,10 +2,12 @@
 //!
 //! See `docs/rust/STORE.md` for the schema design and consistency rules.
 
+pub mod autocomplete;
 pub mod conn;
 pub mod content;
 pub mod counts;
 pub mod display;
+pub mod duplicates;
 pub mod error;
 pub mod import;
 pub mod maintenance;
@@ -19,6 +21,7 @@ pub mod store;
 pub mod synth;
 pub mod text;
 pub mod transfer;
+pub mod urls;
 
 pub use conn::{Db, WriteCtx};
 pub use error::{Result, StoreError};

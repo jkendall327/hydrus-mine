@@ -19,6 +19,8 @@ pub struct MetadataOptions {
     pub include_milliseconds: bool,
     pub include_blurhash: bool,
     pub hide_service_keys_tags: bool,
+    /// Classify each known URL (`detailed_url_information`).
+    pub detailed_urls: bool,
 }
 
 /// Seconds as the API reports them: whole seconds, or float seconds when
@@ -201,6 +203,12 @@ pub fn full_row(
         row.insert(name.into(), json!(flags.has(flag)));
     }
     row.insert("known_urls".into(), json!(m.urls));
+    if opts.detailed_urls {
+        row.insert(
+            "detailed_known_urls".into(),
+            detailed_urls(snapshot, &m.urls),
+        );
+    }
     row.insert("ipfs_multihashes".into(), json!({}));
 
     let mut ratings = Map::new();
@@ -306,4 +314,29 @@ fn canvas_name(canvas: CanvasType) -> &'static str {
         CanvasType::ClientApi => "client api viewer",
         CanvasType::Dialog => "dialog",
     }
+}
+
+/// Each URL normalised and classified, as `/add_urls/get_url_info` does;
+/// URLs that can't be normalised are left out, as the reference does.
+fn detailed_urls(snapshot: &Snapshot, urls: &[String]) -> Json {
+    let classes = &snapshot.url_classes;
+    let mut out = Vec::new();
+    for url in urls {
+        let Ok(normalised) = classes.normalise(url, false) else {
+            continue;
+        };
+        let capability = classes.parse_capability(&normalised);
+        let mut detail = json!({
+            "normalised_url": normalised,
+            "url_type": capability.url_type.code(),
+            "url_type_string": capability.url_type.name(),
+            "match_name": capability.match_name,
+            "can_parse": capability.parser.is_ok(),
+        });
+        if let Err(reason) = capability.parser {
+            detail["cannot_parse_reason"] = json!(reason);
+        }
+        out.push(detail);
+    }
+    Json::Array(out)
 }

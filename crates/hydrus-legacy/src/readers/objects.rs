@@ -246,6 +246,15 @@ impl LegacyDb {
         )
     }
 
+    /// The URL classes and parser links of the network domain manager
+    /// (type 53).
+    pub fn url_class_settings(&self) -> Result<Option<hydrus_core::url::UrlClassSettings>> {
+        self.singleton(
+            SerialisableType(53),
+            crate::objects::domain::url_class_settings,
+        )
+    }
+
     /// Tag display filters and autocomplete options (type 79).
     pub fn tag_display_manager(&self) -> Result<Option<TagDisplayManager>> {
         self.singleton(

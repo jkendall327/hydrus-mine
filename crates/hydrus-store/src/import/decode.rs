@@ -16,6 +16,8 @@ use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
 
 use super::{ApiPermissionsRow, ImportInput, settingless_kind};
+use crate::autocomplete::{AutocompleteRules, AutocompleteSettings};
+use crate::duplicates::DuplicateFilterSettings;
 use crate::error::{Result, StoreError};
 use crate::services::{
     LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay,
@@ -82,9 +84,58 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 .collect::<Result<_>>()?;
         }
         insert_setting(&mut input, &viewing)?;
+        if let Some(&size) = options.integers.get("duplicate_filter_max_batch_size") {
+            insert_setting(
+                &mut input,
+                &DuplicateFilterSettings {
+                    max_batch_size: positive(size, "duplicate filter batch size")?,
+                },
+            )?;
+        }
     }
     insert_setting(&mut input, &thumbnails)?;
+    if let Some(manager) = db.tag_display_manager()? {
+        insert_setting(&mut input, &autocomplete_settings(&manager))?;
+    }
+    match db.url_class_settings() {
+        Ok(Some(mut url_classes)) => {
+            url_classes.collapse_leading_slashes = options
+                .as_ref()
+                .and_then(|o| o.booleans.get("remove_leading_url_double_slashes").copied())
+                .unwrap_or(false);
+            insert_setting(&mut input, &url_classes)?;
+        }
+        Ok(None) => {}
+        // e.g. URL classes stored at an old version: the verbatim copy is
+        // kept, and URLs are treated as unclassified until support is added
+        Err(e) => input
+            .warnings
+            .push(format!("URL classes were not converted: {e}")),
+    }
     Ok(input)
+}
+
+/// Each tag service's autocomplete search rules. (The options that only
+/// shape the GUI's autocomplete widget are not carried over.)
+fn autocomplete_settings(manager: &legacy::TagDisplayManager) -> AutocompleteSettings {
+    let services = manager
+        .autocomplete_options
+        .iter()
+        .map(|o| {
+            (
+                o.service_key.to_hex(),
+                AutocompleteRules {
+                    search_namespaces_into_full_tags: o.search_namespaces_into_full_tags,
+                    unnamespaced_search_gives_any_namespace_wildcards: o
+                        .unnamespaced_search_gives_any_namespace_wildcards,
+                    namespace_bare_fetch_all_allowed: o.namespace_bare_fetch_all_allowed,
+                    namespace_fetch_all_allowed: o.namespace_fetch_all_allowed,
+                    fetch_all_allowed: o.fetch_all_allowed,
+                },
+            )
+        })
+        .collect();
+    AutocompleteSettings { services }
 }
 
 fn insert_setting<S: Setting>(input: &mut ImportInput, value: &S) -> Result<()> {

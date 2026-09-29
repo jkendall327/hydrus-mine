@@ -110,6 +110,7 @@ pub async fn file_metadata(
         include_milliseconds: p.or("include_milliseconds", false)?,
         include_blurhash: p.or("include_blurhash", false)?,
         hide_service_keys_tags: p.or("hide_service_keys_tags", true)?,
+        detailed_urls: p.or("detailed_url_information", false)?,
     };
     let params = req.params.clone();
     let encoding = req.response_encoding;

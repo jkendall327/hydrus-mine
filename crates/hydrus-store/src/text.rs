@@ -35,6 +35,13 @@ pub fn searchable_subtag(subtag: &str) -> String {
         .join(" ")
 }
 
+/// The form of a whole tag used for autocomplete matching: the namespace as
+/// is, the subtag in its [searchable](searchable_subtag) form.
+pub fn searchable_tag(tag: &str) -> String {
+    let (namespace, subtag) = hydrus_core::tag::split_tag(tag);
+    hydrus_core::tag::combine_tag(namespace, &searchable_subtag(subtag))
+}
+
 /// Whether FTS4's simple tokenizer treats `c` as part of a word.
 pub fn is_word_char(c: char) -> bool {
     c.is_ascii_alphanumeric() || u32::from(c) >= 128

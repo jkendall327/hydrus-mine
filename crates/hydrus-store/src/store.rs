@@ -19,6 +19,7 @@ use crate::services::{self, ServiceRegistry};
 use crate::settings;
 use crate::storage::FileStorage;
 use hydrus_core::thumbnail::ThumbnailSettings;
+use hydrus_core::url::{UrlClassSettings, UrlClasses};
 
 /// Name of the database file inside a store directory.
 pub const DB_FILE_NAME: &str = "hydrus.db";
@@ -30,6 +31,8 @@ pub struct Snapshot {
     pub display: DisplayGraphs,
     pub storage: FileStorage,
     pub thumbnails: ThumbnailSettings,
+    /// The client's URL classes, ready for matching.
+    pub url_classes: UrlClasses,
 }
 
 impl Snapshot {
@@ -38,11 +41,13 @@ impl Snapshot {
         let display = DisplayGraphs::load(conn, &services)?;
         let storage = FileStorage::load(conn)?;
         let thumbnails = settings::get(conn)?;
+        let url_classes = UrlClasses::new(settings::get::<UrlClassSettings>(conn)?);
         Ok(Self {
             services,
             display,
             storage,
             thumbnails,
+            url_classes,
         })
     }
 }
