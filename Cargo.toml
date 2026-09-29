@@ -90,7 +90,12 @@ lto = "thin"
 codegen-units = 4
 debug = "line-tables-only"
 
+[profile.dev]
+# Full debug info makes target/ many gigabytes; line tables keep backtraces.
+debug = "line-tables-only"
+
 [profile.dev.package."*"]
 # Dependencies (image decoders, sqlite) are painfully slow unoptimised; tests
 # touch real images and databases, so optimise deps even in dev builds.
 opt-level = 2
+debug = false
