@@ -38,3 +38,21 @@ per process; use `run_in_subprocess` for more.
 Fixture databases are populated through the same paths real use takes: the
 Client API wherever possible, and controller `Write` commands for the rest
 (services, siblings/parents, display application, similar-file search).
+| `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
+| `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
+
+## Conformance scenarios
+
+A scenario is a list of HTTP requests against a fixture database. Read-only
+scenarios are replayed on one shared boot; each mutating scenario gets a fresh
+copy of its fixture. The Rust conformance runner replays the same JSON against
+an imported copy of the same fixture and diffs the responses.
+
+Request placeholders: `{MEDIA}` becomes the absolute path of
+`fixtures/import_media`. Response normalisation: the recording db dir's
+absolute path becomes `{DB_DIR}`, and `{MEDIA}` likewise. Binary bodies are
+recorded as sha256 + length.
+
+Where the reference is wrong (a bug users would not rely on), the Rust side
+does not copy it: the runner's reviewed exceptions list records the step,
+what we do instead, and why (mirrored in `docs/rust/DIFFERENCES.md`).

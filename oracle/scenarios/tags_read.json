@@ -1,0 +1,615 @@
+{
+ "name": "tags_read",
+ "description": "autocomplete, siblings/parents lookup, favourites",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "blue"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "blue"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "blue*"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "blue*"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "b"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "b"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "bl"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "bl"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "samus"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "samus"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "character:"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "character:"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "character:*"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "character:*"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "series:met"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "series:met"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "page:"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "page:"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "*eyes"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "*eyes"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "キャラ"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "キャラ"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "::"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "::"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "no such"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "no such"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "ÉCL"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "ÉCL"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "-blue"
+    ],
+    [
+     "tag_display_type",
+     "storage"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "-blue"
+    ],
+    [
+     "tag_display_type",
+     "display"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "b"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "b"
+    ],
+    [
+     "tag_service_key",
+     "646f776e6c6f616465722074616773"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "b"
+    ],
+    [
+     "tag_service_key",
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "s"
+    ],
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "s"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "s"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "safe"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/get_siblings_and_parents",
+   "query": [
+    [
+     "tags",
+     "[\"blue eyes\", \"blue_eyes\", \"bleu eyes\", \"samus\", \"character:samus aran\", \"series:metroid\", \"studio:nintendo\", \"unrelated\", \"second:tag\", \"filename:jpeg_00\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/get_favourite_tags",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

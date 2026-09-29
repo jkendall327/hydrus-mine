@@ -1,0 +1,287 @@
+{
+ "name": "add_tags",
+ "description": "adding and removing tags, then reading them back",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_tags": {
+     "6c6f63616c2074616773": [
+      "new tag",
+      "Blue_Eyes",
+      "character:link",
+      "  spaced  out  "
+     ]
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"new tag\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"blue eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"studio:nintendo\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/search_tags",
+   "query": [
+    [
+     "search",
+     "new"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+    ],
+    "service_keys_to_actions_to_tags": {
+     "6c6f63616c2074616773": {
+      "1": [
+       "new tag",
+       "safe"
+      ]
+     },
+     "646f776e6c6f616465722074616773": {
+      "0": [
+       "added via actions"
+      ]
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\", \"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"new tag\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_tags": {
+     "6c6f63616c2074616773": [
+      "new tag"
+     ]
+    },
+    "override_previously_deleted_mappings": false
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_tags": {
+     "6c6f63616c2074616773": [
+      "new tag"
+     ]
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_tags": {
+     "616c6c206b6e6f776e2074616773": [
+      "bad"
+     ]
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_tags": {
+     "6c6f63616c2074616773": [
+      "x"
+     ]
+    }
+   },
+   "key": "restricted"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/set_favourite_tags",
+   "json": {
+    "set": [
+     "favourite one",
+     "favourite two"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/get_favourite_tags",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/set_favourite_tags",
+   "json": {
+    "add": [
+     "favourite three"
+    ],
+    "remove": [
+     "favourite one"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/get_favourite_tags",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

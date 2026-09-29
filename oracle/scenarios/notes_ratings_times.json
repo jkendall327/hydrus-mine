@@ -1,0 +1,223 @@
+{
+ "name": "notes_ratings_times",
+ "description": "notes, ratings, viewing stats and timestamps",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/add_notes/set_notes",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "notes": {
+     "new": "hello",
+     "comment": "overwritten?"
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_notes/set_notes",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "notes": {
+     "new": "hello again"
+    },
+    "merge_cleverly": true,
+    "extend_existing_note_if_possible": true,
+    "conflict_resolution": 3
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ],
+    [
+     "include_notes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_notes/delete_notes",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "note_names": [
+     "new",
+     "missing"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ],
+    [
+     "include_notes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_ratings/set_rating",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "rating_service_key": "6661766f757269746573",
+    "rating": null
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_ratings/set_rating",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "rating_service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+    "rating": 5
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_ratings/set_rating",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "rating_service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+    "rating": 42
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_ratings/set_rating",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "rating_service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+    "rating": 9
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_ratings/set_rating",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "rating_service_key": "6661766f757269746573",
+    "rating": 3
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/increment_file_viewtime",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "canvas_type": 4,
+    "views": 2,
+    "viewtime": 3.5,
+    "timestamp_ms": 1750000000000
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/set_file_viewtime",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "canvas_type": 0,
+    "views": 10,
+    "viewtime": 60.0,
+    "timestamp_ms": 1750000000001
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/set_time",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "timestamp_ms": 1500000000000,
+    "timestamp_type": 0,
+    "domain": "example.org"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/set_time",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "timestamp": 1400000000.5,
+    "timestamp_type": 1
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/set_time",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "timestamp_ms": 1300000000000,
+    "timestamp_type": 3,
+    "file_service_key": "6c6f63616c2066696c6573"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/set_time",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "timestamp_ms": null,
+    "timestamp_type": 0,
+    "domain": "example.org"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ],
+    [
+     "include_milliseconds",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

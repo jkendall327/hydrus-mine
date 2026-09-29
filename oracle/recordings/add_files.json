@@ -1,0 +1,88 @@
+{
+ "recorded_at_ms": 1790707391503,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "hydrus_version": 688,
+    "note": "file recognised: Imported at 2026-09-29 18:38:55, which was 4 minutes 16 seconds ago before this check.",
+    "status": 2,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "hydrus_version": 688,
+    "note": "file recognised: Imported at 2026-09-29 18:38:56, which was 4 minutes 15 seconds ago before this check.",
+    "status": 2,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "hydrus_version": 688,
+    "note": "file recognised: Deleted from the client 2026-09-29 18:38:57 (fixture: fully deleted), which was 4 minutes 14 seconds ago before this check.",
+    "status": 3,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Path \"/definitely/not/here.png\" does not exist!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "hydrus_version": 688,
+    "perceptual_hashes": [
+     "c85f9359a4b2ada4"
+    ],
+    "pixel_hash": "cef682dfac77ee593e55b1cdb939fda265bc7d8d6922788c6a7f86addd74b754",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "hydrus_version": 688,
+    "perceptual_hashes": [
+     "9fe0e10f3998c28f"
+    ],
+    "pixel_hash": "6da526e0f87fc22c51c094158f76d9ddac1a00257e5724c936302d28f93dbe69",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "hydrus_version": 688,
+    "note": "file recognised: Imported at 2026-09-29 18:38:55, which was 4 minutes 16 seconds ago before this check.",
+    "status": 2,
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "add_files"
+}

@@ -1,0 +1,59 @@
+{
+ "name": "add_files",
+ "description": "importing files by path and by upload, duplicates, deleted files, bad input",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/add_files/add_file",
+   "json": {
+    "path": "{MEDIA}/jpeg_05.jpg"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/add_file",
+   "body_file": "import_media/png_alpha_01.png",
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/add_file",
+   "body_file": "import_media/../import_media/webp_animated.webp",
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/add_file",
+   "json": {
+    "path": "/definitely/not/here.png"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/generate_hashes",
+   "json": {
+    "path": "{MEDIA}/jpeg_00.jpg"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/generate_hashes",
+   "body_file": "import_media/png_00.png",
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/add_file",
+   "json": {
+    "path": "{MEDIA}/jpeg_00.jpg",
+    "file_service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+   },
+   "key": "full"
+  }
+ ]
+}

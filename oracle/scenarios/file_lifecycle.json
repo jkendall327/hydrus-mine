@@ -1,0 +1,212 @@
+{
+ "name": "file_lifecycle",
+ "description": "archive, trash, undelete, migrate, physical delete, clear deletion records",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/add_files/archive_files",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/unarchive_files",
+   "json": {
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\", \"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:inbox\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/delete_files",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "reason": "conformance test"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/undelete_files",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/migrate_files",
+   "json": {
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "file_service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/delete_files",
+   "json": {
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "file_service_key": "616c6c206c6f63616c2066696c6573"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/clear_file_deletion_record",
+   "json": {
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/migrate_files",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "file_service_key": "616c6c206b6e6f776e2074616773"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/delete_files",
+   "json": {
+    "hash": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  }
+ ]
+}

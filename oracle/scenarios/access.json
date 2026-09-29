@@ -1,0 +1,155 @@
+{
+ "name": "access",
+ "description": "versions, access keys, services, cleaning",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/api_version",
+   "query": [],
+   "key": "none",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "none",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "abababababababababababababababababababababababababababababababab",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "not hex",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_services",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_services",
+   "query": [],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_name",
+     "my tags"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_key",
+     "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_key",
+     "6661766f757269746573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_key",
+     "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_name",
+     "no such service"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_service",
+   "query": [
+    [
+     "service_key",
+     "ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/no/such/endpoint",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_tags/clean_tags",
+   "query": [
+    [
+     "tags",
+     "[\" Blue_Eyes \", \"system:inbox\", \":D\", \"Character:Samus Aran\", \"\", \"-negated\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

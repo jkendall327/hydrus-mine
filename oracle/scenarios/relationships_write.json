@@ -1,0 +1,78 @@
+{
+ "name": "relationships_write",
+ "description": "setting duplicate relationships and kings",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "hash_b": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "relationship": 2,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c\", \"9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_kings",
+   "json": {
+    "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c\", \"9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/remove_potentials",
+   "json": {
+    "hashes": [
+     "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

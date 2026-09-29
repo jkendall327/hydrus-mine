@@ -1,0 +1,915 @@
+{
+ "recorded_at_ms": 1790707384565,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "basic_permissions": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5,
+     6,
+     7,
+     8,
+     9,
+     10,
+     11,
+     12,
+     13
+    ],
+    "human_description": "API Permissions (oracle): can do anything",
+    "hydrus_version": 688,
+    "name": "oracle",
+    "permits_everything": true,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "basic_permissions": [
+     3
+    ],
+    "human_description": "API Permissions (oracle restricted): search for and fetch files: Can search: only allowing safe",
+    "hydrus_version": 688,
+    "name": "oracle restricted",
+    "permits_everything": false,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Did not find an entry for that access key!",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Problem parsing Hydrus-Client-API-Access-Key!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "all_known_files": [
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     }
+    ],
+    "all_known_tags": [
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     }
+    ],
+    "all_local_files": [
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     }
+    ],
+    "all_local_media": [
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     }
+    ],
+    "file_repositories": [],
+    "hydrus_version": 688,
+    "local_files": [
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    ],
+    "local_tags": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     }
+    ],
+    "local_updates": [
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     }
+    ],
+    "services": {
+     "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
+      "name": "second tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "616c6c206b6e6f776e2066696c6573": {
+      "name": "all known files",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     "616c6c206b6e6f776e2074616773": {
+      "name": "all known tags",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "646f776e6c6f616465722074616773": {
+      "name": "downloader tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "6661766f757269746573": {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "6c6f63616c2074616773": {
+      "name": "my tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "7265706f7369746f72792075706461746573": {
+      "name": "repository updates",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     "7472617368": {
+      "name": "trash",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     },
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": {
+      "name": "art",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     }
+    },
+    "services_v2": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "service_key": "6661766f757269746573",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     },
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "tag_repositories": [],
+    "trash": [
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "all_known_files": [
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     }
+    ],
+    "all_known_tags": [
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     }
+    ],
+    "all_local_files": [
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     }
+    ],
+    "all_local_media": [
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     }
+    ],
+    "file_repositories": [],
+    "hydrus_version": 688,
+    "local_files": [
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    ],
+    "local_tags": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     }
+    ],
+    "local_updates": [
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     }
+    ],
+    "services": {
+     "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
+      "name": "second tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "616c6c206b6e6f776e2066696c6573": {
+      "name": "all known files",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     "616c6c206b6e6f776e2074616773": {
+      "name": "all known tags",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "646f776e6c6f616465722074616773": {
+      "name": "downloader tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "6661766f757269746573": {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "6c6f63616c2074616773": {
+      "name": "my tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "7265706f7369746f72792075706461746573": {
+      "name": "repository updates",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     "7472617368": {
+      "name": "trash",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     },
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": {
+      "name": "art",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     }
+    },
+    "services_v2": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "service_key": "6661766f757269746573",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     },
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "tag_repositories": [],
+    "trash": [
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "my tags",
+     "service_key": "6c6f63616c2074616773",
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "stars",
+     "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+     "type": 6,
+     "type_pretty": "local numerical rating service"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "favourites",
+     "service_key": "6661766f757269746573",
+     "type": 7,
+     "type_pretty": "local like/dislike rating service"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "counter",
+     "service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+     "type": 22,
+     "type_pretty": "local inc/dec rating service"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, did not find a service with name \"no such service\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, did not find a service with key \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "text/html",
+   "status": 404,
+   "text": "\n<html>\n  <head><title>404 - No Such Resource</title></head>\n  <body>\n    <h1>No Such Resource</h1>\n    <p>Sorry. No luck finding that resource.</p>\n  </body>\n</html>\n"
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "tags": [
+     "::d",
+     "blue_eyes",
+     "character:samus aran",
+     "inbox",
+     "negated"
+    ],
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "access"
+}
