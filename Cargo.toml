@@ -69,6 +69,7 @@ lzma-rs = "0.3"
 hayro = "0.7"
 kurbo = "0.13"
 resvg = "0.48"
+lz4_flex = { version = "0.14", default-features = false, features = ["std", "safe-decode", "safe-encode"] }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

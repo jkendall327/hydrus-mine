@@ -12,6 +12,7 @@ pub(crate) mod pdf;
 pub(crate) mod pdn;
 pub(crate) mod psd;
 pub(crate) mod svg;
+pub(crate) mod update;
 pub(crate) mod webp;
 
 /// Run a third-party parser or renderer on untrusted input without letting a

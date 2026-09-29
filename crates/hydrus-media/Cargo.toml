@@ -32,6 +32,7 @@ lzma-rs.workspace = true
 hayro.workspace = true
 kurbo.workspace = true
 resvg.workspace = true
+lz4_flex.workspace = true
 
 [dev-dependencies]
 hex.workspace = true

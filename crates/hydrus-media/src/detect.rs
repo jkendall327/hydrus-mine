@@ -13,7 +13,7 @@ use hydrus_core::Mime;
 
 use crate::error::{MediaError, Result};
 use crate::ffmpeg::{Ffmpeg, parse};
-use crate::formats::{apng, archive, gif, ole, webp};
+use crate::formats::{apng, archive, gif, ole, update, webp};
 use crate::text;
 
 /// What a header match means before any closer inspection.
@@ -229,7 +229,7 @@ pub(crate) fn detect(ffmpeg: &Ffmpeg, path: &Path, look_for_hydrus_updates: bool
     }
     if look_for_hydrus_updates
         && size < 64 * 1024 * 1024
-        && let Some(m) = hydrus_update_mime(&std::fs::read(path)?)
+        && let Some(m) = update::mime(&std::fs::read(path)?)
     {
         return Ok(m);
     }
@@ -393,26 +393,6 @@ pub(crate) fn mime_from_ffmpeg(ffmpeg: &Ffmpeg, path: &Path) -> Result<Mime> {
         Mime::ApplicationUnknown
     };
     Ok(mime)
-}
-
-/// Repository update files: zlib-compressed JSON serialisable tuples of type
-/// 34 (content update) or 36 (definitions update). This checks the shape of
-/// the tuple, not every field the reference's deserialiser would.
-fn hydrus_update_mime(data: &[u8]) -> Option<Mime> {
-    let mut json = Vec::new();
-    flate2::read::ZlibDecoder::new(data)
-        .read_to_end(&mut json)
-        .ok()?;
-    let value: serde_json::Value = serde_json::from_slice(&json).ok()?;
-    let tuple = value.as_array()?;
-    if !(tuple.len() == 3 || tuple.len() == 4) {
-        return None;
-    }
-    match tuple.first()?.as_u64()? {
-        34 => Some(Mime::ApplicationHydrusUpdateContent),
-        36 => Some(Mime::ApplicationHydrusUpdateDefinitions),
-        _ => None,
-    }
 }
 
 #[cfg(test)]
