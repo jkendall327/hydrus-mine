@@ -84,3 +84,7 @@ uv.lock
 
 .cache
 shell.nix
+
+# rust
+/target/
+**/*.rs.bk

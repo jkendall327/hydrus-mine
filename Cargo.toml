@@ -1,0 +1,82 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "xtask"]
+default-members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "WTFPL"
+repository = "https://github.com/jkendall327/hydrus-mine"
+
+[workspace.dependencies]
+# internal
+hydrus-core = { path = "crates/hydrus-core" }
+hydrus-legacy = { path = "crates/hydrus-legacy" }
+hydrus-store = { path = "crates/hydrus-store" }
+hydrus-media = { path = "crates/hydrus-media" }
+hydrus-search = { path = "crates/hydrus-search" }
+hydrus-api = { path = "crates/hydrus-api" }
+
+# external
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+hex = "0.4"
+regex = "1"
+once_cell = "1"
+parking_lot = "0.12"
+crossbeam-channel = "0.5"
+rayon = "1"
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.8", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.7", features = ["cors", "trace", "compression-full"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+rusqlite = { version = "0.40", features = ["bundled", "array", "functions", "blob", "backup", "limits"] }
+sha2 = "0.11"
+sha1 = "0.11"
+md-5 = "0.11"
+roaring = "0.11"
+clap = { version = "4", features = ["derive"] }
+tempfile = "3"
+proptest = "1"
+criterion = { version = "0.8", features = ["html_reports"] }
+rand = "0.10"
+bytes = "1"
+ciborium = "0.2"
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# pedantic lints we deliberately allow
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+similar_names = "allow"
+too_many_lines = "allow"
+doc_markdown = "allow"
+struct_excessive_bools = "allow"
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+# Dependencies (image decoders, sqlite) are painfully slow unoptimised; tests
+# touch real images and databases, so optimise deps even in dev builds.
+opt-level = 2
