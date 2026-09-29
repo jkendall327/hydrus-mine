@@ -14,6 +14,7 @@ Usage: python oracle/make_bench_db.py <out db dir> [files] [tags_per_file]
 
 import collections
 import hashlib
+import json
 import os
 import random
 import sys
@@ -150,6 +151,11 @@ def main():
 
 
     timings = hydrus_driver.run_client( out, lambda s: populate( s, n_files, tags_per_file ) )
+
+    with open( os.path.join( out, 'bench.json' ), 'w' ) as f:
+
+        json.dump( { 'files': n_files, 'tags_per_file': tags_per_file, 'timings': timings }, f )
+
 
     mappings = n_files * tags_per_file
     t = timings[ 'files_and_tags' ]
