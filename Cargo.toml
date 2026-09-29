@@ -18,6 +18,7 @@ hydrus-store = { path = "crates/hydrus-store" }
 hydrus-media = { path = "crates/hydrus-media" }
 hydrus-search = { path = "crates/hydrus-search" }
 hydrus-api = { path = "crates/hydrus-api" }
+hydrus-testkit = { path = "crates/hydrus-testkit" }
 
 # external
 anyhow = "1"
@@ -57,6 +58,8 @@ percent-encoding = "2"
 http-body-util = "0.1"
 ciborium = "0.2"
 base64 = "0.22"
+# the legacy `options` table is PyYAML output; we use the event parser only
+yaml-rust2 = { version = "0.13", default-features = false }
 
 [workspace.lints.rust]
 unsafe_code = "deny"

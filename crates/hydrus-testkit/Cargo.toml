@@ -1,0 +1,17 @@
+[package]
+name = "hydrus-testkit"
+description = "Test-only helpers shared by hydrus crates: reference fixtures and databases."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+flate2.workspace = true
+serde_json.workspace = true
+tar.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true
