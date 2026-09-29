@@ -9,6 +9,8 @@ license.workspace = true
 [dependencies]
 hydrus-core.workspace = true
 hydrus-store.workspace = true
+hydrus-import.workspace = true
+hydrus-media.workspace = true
 hydrus-search.workspace = true
 axum.workspace = true
 tokio.workspace = true
@@ -27,6 +29,8 @@ percent-encoding.workspace = true
 parking_lot.workspace = true
 rand.workspace = true
 rusqlite.workspace = true
+
+tempfile.workspace = true
 
 [dev-dependencies]
 http-body-util.workspace = true

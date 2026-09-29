@@ -33,12 +33,19 @@ use request::ApiRequest;
 pub struct AppState {
     pub store: Arc<Store>,
     pub access: AccessRegistry,
+    pub importer: hydrus_import::FileImporter,
 }
 
 impl AppState {
     pub fn new(store: Arc<Store>) -> hydrus_store::Result<Arc<Self>> {
         let access = store.read(AccessRegistry::load)?;
-        Ok(Arc::new(Self { store, access }))
+        let importer =
+            hydrus_import::FileImporter::new(Arc::clone(&store), hydrus_media::MediaTools::new());
+        Ok(Arc::new(Self {
+            store,
+            access,
+            importer,
+        }))
     }
 
     /// Who is making this request.
@@ -91,6 +98,11 @@ pub fn router(state: Arc<AppState>) -> Router {
             post(add_files::clear_file_deletion_record),
         )
         .route("/add_files/migrate_files", post(add_files::migrate_files))
+        .route("/add_files/add_file", post(add_files::add_file))
+        .route(
+            "/add_files/generate_hashes",
+            post(add_files::generate_hashes),
+        )
         .route("/add_notes/set_notes", post(metadata::set_notes))
         .route("/add_notes/delete_notes", post(metadata::delete_notes))
         .route("/edit_ratings/set_rating", post(metadata::set_rating))

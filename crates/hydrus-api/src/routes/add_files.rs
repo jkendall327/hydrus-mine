@@ -229,3 +229,121 @@ pub async fn migrate_files(
     })
     .await
 }
+
+/// A file named by a request: uploaded in the body, or a `path` on this
+/// machine (which must exist and be a file).
+enum GivenFile {
+    Upload(axum::body::Bytes),
+    Path(std::path::PathBuf),
+}
+
+fn given_file(req: &ApiRequest) -> ApiResult<GivenFile> {
+    if let Some(bytes) = &req.upload {
+        return Ok(GivenFile::Upload(bytes.clone()));
+    }
+    let path: String = req.params.required("path")?;
+    let path = std::path::PathBuf::from(path);
+    if !path.exists() {
+        return Err(ApiError::bad_request(format!(
+            "Path \"{}\" does not exist!",
+            path.display()
+        )));
+    }
+    if !path.is_file() {
+        return Err(ApiError::bad_request(format!(
+            "Path \"{}\" is not a file!",
+            path.display()
+        )));
+    }
+    Ok(GivenFile::Path(path))
+}
+
+pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiResult<ApiResponse> {
+    let perms = app.authenticate(&req)?;
+    perms.check(Permission::AddFiles)?;
+    let file = given_file(&req)?;
+    let params = req.params.clone();
+    let delete_after = params.or("delete_after_successful_import", false)?;
+    let encoding = req.response_encoding;
+    let result = app
+        .blocking(move |app| {
+            let mut options = hydrus_import::FileImportOptions::default();
+            let snap = app.store.snapshot();
+            if let Some(domains) = location::parse(&snap, &params, false)? {
+                for &d in &domains.current {
+                    if snap.services.get(d)?.service_type() != ServiceType::LocalFileDomain {
+                        return Err(ApiError::bad_request(
+                            "Sorry, any custom file domain here must only declare local file domains.",
+                        ));
+                    }
+                }
+                options.destinations = domains.current;
+            }
+            let result = match &file {
+                GivenFile::Upload(bytes) => app.importer.import_bytes(bytes, &options),
+                GivenFile::Path(path) => app.importer.import_path(path, &options),
+            }
+            .map_err(|e| ApiError::server(e.to_string()))?;
+            if let GivenFile::Path(path) = &file
+                && delete_after
+                && result.status.is_successful()
+            {
+                let _ = std::fs::remove_file(path);
+            }
+            Ok(result)
+        })
+        .await?;
+    Ok(ApiResponse::Json(
+        serde_json::json!({
+            "status": result.status.code(),
+            "hash": result.hash.map(|h| h.to_hex()),
+            "note": result.note,
+        }),
+        encoding,
+    ))
+}
+
+pub async fn generate_hashes(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    let perms = app.authenticate(&req)?;
+    perms.check(Permission::AddFiles)?;
+    let file = given_file(&req)?;
+    let encoding = req.response_encoding;
+    let body = app
+        .blocking(move |app| {
+            // work on a copy, as the reference does, so the source can change
+            let temp =
+                tempfile::NamedTempFile::new().map_err(|e| ApiError::server(e.to_string()))?;
+            match &file {
+                GivenFile::Upload(bytes) => std::fs::write(temp.path(), bytes),
+                GivenFile::Path(path) => std::fs::copy(path, temp.path()).map(|_| ()),
+            }
+            .map_err(|e| ApiError::server(e.to_string()))?;
+            let tools = app.importer.tools();
+            let hashes = hydrus_media::hash_file(temp.path())
+                .map_err(|e| ApiError::server(e.to_string()))?;
+            let mut body = serde_json::Map::new();
+            body.insert("hash".into(), hashes.sha256.to_hex().into());
+            if let Ok(mime) = tools.detect_mime(temp.path()) {
+                if hydrus_media::mimes::has_perceptual_hash(mime) {
+                    let phashes: Vec<String> = tools
+                        .perceptual_hashes(temp.path(), mime)
+                        .iter()
+                        .map(|p| hex::encode(p.0))
+                        .collect();
+                    body.insert("perceptual_hashes".into(), phashes.into());
+                }
+                if hydrus_media::mimes::can_have_pixel_hash(mime)
+                    && let Ok(info) = tools.inspect_as(temp.path(), mime)
+                    && let Some(pixel) = tools.pixel_hash(temp.path(), &info)
+                {
+                    body.insert("pixel_hash".into(), pixel.to_hex().into());
+                }
+            }
+            Ok(serde_json::Value::Object(body))
+        })
+        .await?;
+    Ok(ApiResponse::Json(body, encoding))
+}

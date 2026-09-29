@@ -1202,6 +1202,8 @@ dependencies = [
  "hex",
  "http-body-util",
  "hydrus-core",
+ "hydrus-import",
+ "hydrus-media",
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
@@ -1255,6 +1257,21 @@ dependencies = [
  "sha2",
  "thiserror 2.0.21",
  "unicode-normalization",
+]
+
+[[package]]
+name = "hydrus-import"
+version = "0.1.0"
+dependencies = [
+ "hydrus-core",
+ "hydrus-media",
+ "hydrus-store",
+ "hydrus-testkit",
+ "rusqlite",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tracing",
 ]
 
 [[package]]

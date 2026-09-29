@@ -73,13 +73,24 @@ pub fn files_for_urls(
         out.push(UrlFile {
             hash_id: id,
             hash,
-            state: file_state(conn, storage, trash, id)?,
+            state: state_in(conn, storage, trash, id)?,
         });
     }
     Ok(out)
 }
 
-fn file_state(
+/// What the client knows about a file: imported, trashed, deleted or unknown.
+pub fn file_state(
+    conn: &Connection,
+    services: &ServiceRegistry,
+    hash_id: HashId,
+) -> Result<FileState> {
+    let storage = service_of(services, |k| matches!(k, ServiceKind::LocalFileStorage));
+    let trash = service_of(services, |k| matches!(k, ServiceKind::Trash));
+    state_in(conn, storage, trash, hash_id)
+}
+
+fn state_in(
     conn: &Connection,
     storage: Option<ServiceId>,
     trash: Option<ServiceId>,

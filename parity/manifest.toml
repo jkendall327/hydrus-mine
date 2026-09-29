@@ -8,7 +8,7 @@
 
 [[api]]
 path = "/add_files/add_file"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/archive_files"
@@ -24,7 +24,7 @@ status = "done"
 
 [[api]]
 path = "/add_files/generate_hashes"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/migrate_files"

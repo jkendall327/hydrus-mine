@@ -116,11 +116,12 @@ impl Store {
             )
         })?;
         if empty {
-            db.write(|ctx| {
+            let media = dir.join("client_files");
+            db.write(move |ctx| {
                 for (key, name, kind) in services::default_services() {
                     services::insert(ctx.conn(), &key, &name, &kind)?;
                 }
-                Ok(())
+                create_default_storage(ctx.conn(), &media)
             })?;
         }
         let snapshot = db.read(Snapshot::load)?;
@@ -197,6 +198,24 @@ impl Store {
             Ok(result)
         })
     }
+}
+
+/// A new store keeps its media in one location, `client_files`, with the
+/// reference's default layout (256 file and 256 thumbnail subfolders).
+fn create_default_storage(conn: &Connection, media: &Path) -> Result<()> {
+    conn.execute(
+        "INSERT INTO storage_locations (location_id, path, ideal_weight, max_bytes, is_thumbnail_override)
+         VALUES (1, ?1, 1, NULL, 0)",
+        [media.to_string_lossy()],
+    )?;
+    let mut stmt =
+        conn.prepare("INSERT INTO storage_subfolders (prefix, location_id) VALUES (?1, 1)")?;
+    for kind in ['f', 't'] {
+        for byte in 0..=255u8 {
+            stmt.execute([format!("{kind}{byte:02x}")])?;
+        }
+    }
+    Ok(())
 }
 
 fn reader_count() -> usize {
