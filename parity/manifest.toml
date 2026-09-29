@@ -52,7 +52,7 @@ status = "todo"
 
 [[api]]
 path = "/add_tags/clean_tags"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/get_favourite_tags"
@@ -88,7 +88,7 @@ status = "todo"
 
 [[api]]
 path = "/api_version"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/client_info"
@@ -148,7 +148,7 @@ status = "todo"
 
 [[api]]
 path = "/get_service"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_service_rating_svg"
@@ -156,7 +156,7 @@ status = "todo"
 
 [[api]]
 path = "/get_services"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_cookies/get_cookies"
@@ -304,11 +304,12 @@ status = "todo"
 
 [[api]]
 path = "/session_key"
-status = "todo"
+status = "partial"
+notes = "implemented; no recorded scenario yet"
 
 [[api]]
 path = "/verify_access_key"
-status = "todo"
+status = "done"
 
 # File types the reference client can import.
 

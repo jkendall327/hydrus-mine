@@ -9,7 +9,9 @@ pub mod hash;
 pub mod ids;
 pub mod mime;
 pub mod service;
+pub mod sort;
 pub mod tag;
+pub mod tag_filter;
 pub mod time;
 
 pub use content::{
@@ -23,6 +25,7 @@ pub use ids::{
 pub use mime::Mime;
 pub use service::{ServiceKey, ServiceType};
 pub use tag::Tag;
+pub use tag_filter::{FilterRule, TagFilter};
 pub use time::TimestampMs;
 
 /// The reference implementation version whose behaviour and on-disk format

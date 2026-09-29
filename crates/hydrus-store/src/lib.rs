@@ -10,7 +10,9 @@ pub mod import;
 pub mod master;
 pub mod schema;
 pub mod services;
+pub mod store;
 pub mod text;
 
 pub use conn::{Db, WriteCtx};
 pub use error::{Result, StoreError};
+pub use store::{Snapshot, Store};

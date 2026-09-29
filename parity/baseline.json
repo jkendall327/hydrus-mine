@@ -1,9 +1,15 @@
 {
   "api": {
     "total": 76,
-    "done": 0,
-    "partial": 0,
-    "done_items": []
+    "done": 5,
+    "partial": 1,
+    "done_items": [
+      "/add_tags/clean_tags",
+      "/api_version",
+      "/get_service",
+      "/get_services",
+      "/verify_access_key"
+    ]
   },
   "filetype": {
     "total": 68,
