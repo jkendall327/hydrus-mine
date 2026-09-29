@@ -15,6 +15,9 @@ use crate::conn::{Db, WriteCtx};
 use crate::display::DisplayGraphs;
 use crate::error::Result;
 use crate::services::{self, ServiceRegistry};
+use crate::settings;
+use crate::storage::FileStorage;
+use hydrus_core::thumbnail::ThumbnailSettings;
 
 /// Name of the database file inside a store directory.
 pub const DB_FILE_NAME: &str = "hydrus.db";
@@ -24,13 +27,22 @@ pub const DB_FILE_NAME: &str = "hydrus.db";
 pub struct Snapshot {
     pub services: ServiceRegistry,
     pub display: DisplayGraphs,
+    pub storage: FileStorage,
+    pub thumbnails: ThumbnailSettings,
 }
 
 impl Snapshot {
     pub fn load(conn: &Connection) -> Result<Self> {
         let services = ServiceRegistry::load(conn)?;
         let display = DisplayGraphs::load(conn, &services)?;
-        Ok(Self { services, display })
+        let storage = FileStorage::load(conn)?;
+        let thumbnails = settings::get(conn)?;
+        Ok(Self {
+            services,
+            display,
+            storage,
+            thumbnails,
+        })
     }
 }
 

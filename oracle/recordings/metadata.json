@@ -1,5 +1,5 @@
 {
- "recorded_at_ms": 1790707384714,
+ "recorded_at_ms": 1790709732568,
  "reference_version": 688,
  "responses": [
   {
@@ -22935,99 +22935,8 @@
     "hydrus_version": 688,
     "metadata": [
      {
-      "blurhash": null,
-      "duration": null,
-      "ext": "",
-      "file_id": 64,
-      "file_services": {
-       "current": {},
-       "deleted": {}
-      },
-      "file_viewing_statistics": [
-       {
-        "canvas_type": 0,
-        "canvas_type_pretty": "media viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       },
-       {
-        "canvas_type": 1,
-        "canvas_type_pretty": "preview viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       },
-       {
-        "canvas_type": 4,
-        "canvas_type_pretty": "client api viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       }
-      ],
-      "filetype_enum": 101,
-      "filetype_forced": false,
-      "filetype_human": "unknown filetype",
-      "has_audio": null,
-      "has_exif": false,
-      "has_human_readable_embedded_metadata": false,
-      "has_icc_profile": false,
-      "has_iptc": false,
-      "has_software_source": false,
-      "has_transparency": false,
-      "has_xmp": false,
-      "hash": "abababababababababababababababababababababababababababababababab",
-      "height": null,
-      "ipfs_multihashes": {},
-      "is_deleted": false,
-      "is_inbox": false,
-      "is_local": false,
-      "is_trashed": false,
-      "known_urls": [],
-      "mime": "unknown filetype",
-      "num_frames": null,
-      "num_words": null,
-      "pixel_hash": null,
-      "ratings": {
-       "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": null,
-       "6661766f757269746573": null,
-       "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": 0
-      },
-      "size": null,
-      "tags": {
-       "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
-        "display_tags": {},
-        "name": "second tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       },
-       "616c6c206b6e6f776e2074616773": {
-        "display_tags": {},
-        "name": "all known tags",
-        "storage_tags": {},
-        "type": 10,
-        "type_pretty": "virtual combined tag domain"
-       },
-       "646f776e6c6f616465722074616773": {
-        "display_tags": {},
-        "name": "downloader tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       },
-       "6c6f63616c2074616773": {
-        "display_tags": {},
-        "name": "my tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       }
-      },
-      "time_modified": null,
-      "time_modified_details": {},
-      "width": null
+      "file_id": null,
+      "hash": "abababababababababababababababababababababababababababababababab"
      }
     ],
     "services": {
@@ -23312,99 +23221,8 @@
     "hydrus_version": 688,
     "metadata": [
      {
-      "blurhash": null,
-      "duration": null,
-      "ext": "",
-      "file_id": 64,
-      "file_services": {
-       "current": {},
-       "deleted": {}
-      },
-      "file_viewing_statistics": [
-       {
-        "canvas_type": 0,
-        "canvas_type_pretty": "media viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       },
-       {
-        "canvas_type": 1,
-        "canvas_type_pretty": "preview viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       },
-       {
-        "canvas_type": 4,
-        "canvas_type_pretty": "client api viewer",
-        "last_viewed_timestamp": null,
-        "views": 0,
-        "viewtime": 0.0
-       }
-      ],
-      "filetype_enum": 101,
-      "filetype_forced": false,
-      "filetype_human": "unknown filetype",
-      "has_audio": null,
-      "has_exif": false,
-      "has_human_readable_embedded_metadata": false,
-      "has_icc_profile": false,
-      "has_iptc": false,
-      "has_software_source": false,
-      "has_transparency": false,
-      "has_xmp": false,
-      "hash": "abababababababababababababababababababababababababababababababab",
-      "height": null,
-      "ipfs_multihashes": {},
-      "is_deleted": false,
-      "is_inbox": false,
-      "is_local": false,
-      "is_trashed": false,
-      "known_urls": [],
-      "mime": "unknown filetype",
-      "num_frames": null,
-      "num_words": null,
-      "pixel_hash": null,
-      "ratings": {
-       "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": null,
-       "6661766f757269746573": null,
-       "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": 0
-      },
-      "size": null,
-      "tags": {
-       "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
-        "display_tags": {},
-        "name": "second tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       },
-       "616c6c206b6e6f776e2074616773": {
-        "display_tags": {},
-        "name": "all known tags",
-        "storage_tags": {},
-        "type": 10,
-        "type_pretty": "virtual combined tag domain"
-       },
-       "646f776e6c6f616465722074616773": {
-        "display_tags": {},
-        "name": "downloader tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       },
-       "6c6f63616c2074616773": {
-        "display_tags": {},
-        "name": "my tags",
-        "storage_tags": {},
-        "type": 5,
-        "type_pretty": "local tag domain"
-       }
-      },
-      "time_modified": null,
-      "time_modified_details": {},
-      "width": null
+      "file_id": null,
+      "hash": "abababababababababababababababababababababababababababababababab"
      }
     ],
     "services": {

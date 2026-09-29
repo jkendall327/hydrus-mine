@@ -8,8 +8,11 @@ pub mod display;
 pub mod error;
 pub mod import;
 pub mod master;
+pub mod media;
 pub mod schema;
 pub mod services;
+pub mod settings;
+pub mod storage;
 pub mod store;
 pub mod text;
 

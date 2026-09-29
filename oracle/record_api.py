@@ -3,8 +3,8 @@
 
 For each scenario in oracle/scenarios/, unpack its fixture database, boot the
 reference client on it with the Client API enabled, send every step, and
-write oracle/recordings/<scenario>.json. Read-only scenarios share a boot;
-mutating ones get a fresh fixture each.
+write oracle/recordings/<scenario>.json. Every scenario gets a fresh boot on a
+fresh copy of its fixture.
 
 Placeholders substituted in request bodies before sending:
     {MEDIA}   absolute path of oracle/fixtures/import_media
@@ -276,19 +276,15 @@ def main():
 
     scenarios = load_scenarios( args )
 
-    read_only = [ sc[ 'name' ] for sc in scenarios if sc[ 'read_only' ] ]
-    mutating = [ sc[ 'name' ] for sc in scenarios if not sc[ 'read_only' ] ]
-
     import hydrus_driver
 
-    if read_only:
+    # One fresh boot per scenario: even "read-only" requests can have side
+    # effects in the reference (e.g. asking for an unknown hash's thumbnail
+    # assigns it a file id), so sharing a boot would make recordings depend
+    # on scenario order.
+    for sc in scenarios:
 
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', *read_only )
-
-
-    for name in mutating:
-
-        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', name )
+        hydrus_driver.run_in_subprocess( os.path.abspath( __file__ ), '--child', sc[ 'name' ] )
 
 
 

@@ -112,23 +112,25 @@ status = "todo"
 
 [[api]]
 path = "/get_files/file"
-status = "todo"
+status = "partial"
+notes = "conformant except after deletes (needs write endpoints); no Range support yet"
 
 [[api]]
 path = "/get_files/file_hashes"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_files/file_metadata"
-status = "todo"
+status = "partial"
+notes = "read path conformant; needs write endpoints for mutating scenarios, url classes for detailed_url_information"
 
 [[api]]
 path = "/get_files/file_path"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_files/local_file_storage_locations"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_files/render"
@@ -140,11 +142,11 @@ status = "todo"
 
 [[api]]
 path = "/get_files/thumbnail"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_files/thumbnail_path"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_service"

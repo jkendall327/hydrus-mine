@@ -1,11 +1,16 @@
 {
   "api": {
     "total": 76,
-    "done": 5,
-    "partial": 1,
+    "done": 10,
+    "partial": 3,
     "done_items": [
       "/add_tags/clean_tags",
       "/api_version",
+      "/get_files/file_hashes",
+      "/get_files/file_path",
+      "/get_files/local_file_storage_locations",
+      "/get_files/thumbnail",
+      "/get_files/thumbnail_path",
       "/get_service",
       "/get_services",
       "/verify_access_key"

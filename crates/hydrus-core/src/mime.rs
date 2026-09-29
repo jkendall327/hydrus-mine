@@ -179,6 +179,67 @@ impl Mime {
         self.extension().unwrap_or("")
     }
 
+    /// Whether files of this type get a rendered thumbnail (others show a
+    /// type icon).
+    pub const fn has_thumbnail(self) -> bool {
+        matches!(
+            self,
+            Mime::ImageJpeg
+                | Mime::ImagePng
+                | Mime::AnimationGif
+                | Mime::ImageBmp
+                | Mime::ApplicationFlash
+                | Mime::ImageIcon
+                | Mime::VideoFlv
+                | Mime::ApplicationPdf
+                | Mime::AudioMp3
+                | Mime::VideoMp4
+                | Mime::AudioOgg
+                | Mime::AudioFlac
+                | Mime::AudioWma
+                | Mime::VideoWmv
+                | Mime::VideoMkv
+                | Mime::VideoWebm
+                | Mime::AnimationApng
+                | Mime::VideoMpeg
+                | Mime::VideoMov
+                | Mime::VideoAvi
+                | Mime::ImageWebp
+                | Mime::ImageTiff
+                | Mime::ApplicationPsd
+                | Mime::AudioM4a
+                | Mime::VideoRealmedia
+                | Mime::AudioRealmedia
+                | Mime::AudioTrueaudio
+                | Mime::ApplicationClip
+                | Mime::AudioWave
+                | Mime::VideoOgv
+                | Mime::AudioMkv
+                | Mime::AudioMp4
+                | Mime::AudioWavpack
+                | Mime::ApplicationKrita
+                | Mime::ImageSvg
+                | Mime::ImageHeif
+                | Mime::ImageHeifSequence
+                | Mime::ImageHeic
+                | Mime::ImageHeicSequence
+                | Mime::ImageAvif
+                | Mime::ImageAvifSequence
+                | Mime::ImageGif
+                | Mime::ApplicationProcreate
+                | Mime::ImageQoi
+                | Mime::ApplicationEpub
+                | Mime::ApplicationCbz
+                | Mime::AnimationUgoira
+                | Mime::ApplicationPptx
+                | Mime::AnimationWebp
+                | Mime::ImageJxl
+                | Mime::ApplicationPaintDotNet
+                | Mime::AnimationJxl
+                | Mime::ImageOpenraster
+        )
+    }
+
     /// All concrete types belonging to a general class.
     pub fn members_of_class(class: Mime) -> impl Iterator<Item = Mime> {
         Mime::ALL
@@ -227,6 +288,11 @@ mod tests {
             assert_eq!(mime.extension(), ext, "{mime:?}");
             let general = m["general"].as_u64().map(|g| u8::try_from(g).unwrap());
             assert_eq!(mime.general_class().map(Mime::code), general, "{mime:?}");
+            assert_eq!(
+                mime.has_thumbnail(),
+                m["has_thumbnail"].as_bool().unwrap(),
+                "{mime:?}"
+            );
         }
     }
 

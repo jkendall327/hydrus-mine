@@ -12,6 +12,7 @@ pub mod service;
 pub mod sort;
 pub mod tag;
 pub mod tag_filter;
+pub mod thumbnail;
 pub mod time;
 
 pub use content::{

@@ -14,6 +14,7 @@ use hydrus_store::Store;
 
 pub mod auth;
 pub mod error;
+pub mod media_json;
 pub mod params;
 pub mod request;
 pub mod routes;
@@ -56,7 +57,7 @@ impl AppState {
 
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
-    use routes::access;
+    use routes::{access, files};
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -64,6 +65,16 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/get_services", get(access::get_services))
         .route("/get_service", get(access::get_service))
         .route("/add_tags/clean_tags", get(access::clean_tags))
+        .route("/get_files/file_metadata", get(files::file_metadata))
+        .route("/get_files/file_hashes", get(files::file_hashes))
+        .route("/get_files/file", get(files::file))
+        .route("/get_files/thumbnail", get(files::thumbnail))
+        .route("/get_files/file_path", get(files::file_path))
+        .route("/get_files/thumbnail_path", get(files::thumbnail_path))
+        .route(
+            "/get_files/local_file_storage_locations",
+            get(files::local_file_storage_locations),
+        )
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())
         .with_state(state)

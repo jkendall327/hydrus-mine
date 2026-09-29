@@ -11,6 +11,7 @@ use std::rc::Rc;
 use rusqlite::types::Value;
 use rusqlite::{Connection, OptionalExtension, params};
 
+use hydrus_core::HashKind;
 use hydrus_core::{
     HashId, LabelId, NamespaceId, NoteId, Sha256, SubtagId, Tag, TagId, TextId, UrlDomainId, UrlId,
 };
@@ -73,6 +74,35 @@ pub fn hashes(conn: &Connection, ids: &[HashId]) -> Result<HashMap<HashId, Sha25
         conn.prepare_cached("SELECT hash_id, sha256 FROM hashes WHERE hash_id IN rarray(?)")?;
     let rows = stmt.query_map([id_array(ids)], |r| Ok((r.get(0)?, r.get(1)?)))?;
     Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
+/// Translate hashes of one kind to another (e.g. sha256 to md5) for files we
+/// know both of. Unknown hashes are omitted.
+pub fn convert_hashes(
+    conn: &Connection,
+    from: HashKind,
+    to: HashKind,
+    hashes: &[Vec<u8>],
+) -> Result<Vec<(Vec<u8>, Vec<u8>)>> {
+    let column = |kind: HashKind| match kind {
+        HashKind::Sha256 => "h.sha256",
+        HashKind::Md5 => "d.md5",
+        HashKind::Sha1 => "d.sha1",
+        HashKind::Sha512 => "d.sha512",
+    };
+    let (from_col, to_col) = (column(from), column(to));
+    let mut stmt = conn.prepare_cached(&format!(
+        "SELECT {from_col}, {to_col} FROM hashes h JOIN hash_digests d USING (hash_id)
+         WHERE {from_col} IN rarray(?) AND {to_col} IS NOT NULL"
+    ))?;
+    let array = blob_array(hashes.iter().cloned());
+    let found: HashMap<Vec<u8>, Vec<u8>> = stmt
+        .query_map([array], |r| Ok((r.get(0)?, r.get(1)?)))?
+        .collect::<rusqlite::Result<_>>()?;
+    Ok(hashes
+        .iter()
+        .filter_map(|h| found.get(h).map(|to| (h.clone(), to.clone())))
+        .collect())
 }
 
 // tags -----------------------------------------------------------------------
