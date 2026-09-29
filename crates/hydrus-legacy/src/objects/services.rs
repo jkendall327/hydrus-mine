@@ -229,9 +229,9 @@ pub struct ClientApiServiceConfig {
     pub external_host_override: Option<String>,
     pub external_port_override: Option<i64>,
     /// Bandwidth usage history (type 39), kept verbatim.
-    pub bandwidth_tracker: Option<SerialisableObject>,
+    pub bandwidth_tracker: SerialisableObject,
     /// Bandwidth limits (type 38), kept verbatim.
-    pub bandwidth_rules: Option<SerialisableObject>,
+    pub bandwidth_rules: SerialisableObject,
 }
 
 /// Where a remote service lives and how to authenticate (type 35).
@@ -261,7 +261,7 @@ pub struct RestrictedConfig {
     pub next_account_sync: i64,
     pub network_sync_paused: bool,
     /// Options the server sent, verbatim (a dictionary object).
-    pub service_options: Option<SerialisableObject>,
+    pub service_options: SerialisableObject,
 }
 
 /// Settings of a repository service.
@@ -386,6 +386,24 @@ fn object(settings: &Settings<'_>, key: &str) -> DecodeResult<Option<Serialisabl
     }
 }
 
+/// A fresh `HydrusNetworking.BandwidthTracker()`: ten empty usage buckets.
+const EMPTY_BANDWIDTH_TRACKER: &str = "[39, 1, [[], [], [], [], [], [], [], [], [], []]]";
+/// A fresh `HydrusNetworking.BandwidthRules()`: no limits.
+const EMPTY_BANDWIDTH_RULES: &str = "[38, 1, []]";
+const EMPTY_DICTIONARY: &str = "[21, 2, []]";
+
+/// A setting holding an object, or the reference's default object.
+fn object_or(
+    settings: &Settings<'_>,
+    key: &str,
+    default: &str,
+) -> DecodeResult<SerialisableObject> {
+    match object(settings, key)? {
+        Some(object) => Ok(object),
+        None => SerialisableObject::from_tuple_str(default),
+    }
+}
+
 fn rgb(value: &PyJson) -> DecodeResult<Rgb> {
     let channels = tuple::<3>(KIND, value, "colour")?;
     let mut out = [0u8; 3];
@@ -507,8 +525,8 @@ fn client_api(settings: &Settings<'_>) -> DecodeResult<ClientApiServiceConfig> {
             opt_int(KIND, v, "external_port_override")
         })?
         .flatten(),
-        bandwidth_tracker: object(settings, "bandwidth_tracker")?,
-        bandwidth_rules: object(settings, "bandwidth_rules")?,
+        bandwidth_tracker: object_or(settings, "bandwidth_tracker", EMPTY_BANDWIDTH_TRACKER)?,
+        bandwidth_rules: object_or(settings, "bandwidth_rules", EMPTY_BANDWIDTH_RULES)?,
     })
 }
 
@@ -574,7 +592,7 @@ fn restricted(
         })?
         .unwrap_or(0),
         network_sync_paused,
-        service_options: object(settings, "service_options")?,
+        service_options: object_or(settings, "service_options", EMPTY_DICTIONARY)?,
     })
 }
 

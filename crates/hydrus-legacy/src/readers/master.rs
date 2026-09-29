@@ -185,8 +185,9 @@ impl LegacyDb {
         self.id_value_rows("notes", "note_id", "note")
     }
 
-    /// Blurhashes of files (`blurhashes`).
-    pub fn blurhashes(&self) -> Result<Rows<'_, (HashId, String)>> {
+    /// Blurhashes of files (`blurhashes`). Files with no visual content
+    /// (audio, archives) have a row with no blurhash.
+    pub fn blurhashes(&self) -> Result<Rows<'_, (HashId, Option<String>)>> {
         self.id_value_rows("blurhashes", "hash_id", "blurhash")
     }
 

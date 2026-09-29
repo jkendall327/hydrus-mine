@@ -434,6 +434,21 @@ mod tests {
     use super::*;
 
     #[test]
+    fn the_connection_refuses_every_write() {
+        let dir = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(dir.path()).unwrap();
+        for sql in [
+            "INSERT INTO main.file_inbox (hash_id) VALUES (1234)",
+            "DELETE FROM external_mappings.current_mappings_9",
+            "UPDATE external_master.hashes SET hash = NULL",
+            "CREATE TABLE main.scratch (x)",
+            "DROP TABLE external_caches.file_maintenance_jobs",
+        ] {
+            assert!(db.connection().execute(sql, []).is_err(), "{sql} succeeded");
+        }
+    }
+
+    #[test]
     fn uri_escaping() {
         assert_eq!(
             sqlite_uri(Path::new("/a b/c?d#e%f/client.db"), OpenMode::Shared),
