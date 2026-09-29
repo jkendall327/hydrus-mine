@@ -60,11 +60,11 @@ status = "done"
 
 [[api]]
 path = "/add_tags/get_siblings_and_parents"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/search_tags"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/set_favourite_tags"
@@ -80,11 +80,12 @@ status = "todo"
 
 [[api]]
 path = "/add_urls/get_url_files"
-status = "todo"
+status = "partial"
+notes = "the remaining recorded step follows /add_urls/associate_url"
 
 [[api]]
 path = "/add_urls/get_url_info"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/api_version"
@@ -191,15 +192,16 @@ status = "todo"
 
 [[api]]
 path = "/manage_file_relationships/get_file_relationships"
-status = "todo"
+status = "partial"
+notes = "the remaining recorded steps follow relationship writes"
 
 [[api]]
 path = "/manage_file_relationships/get_potential_pairs"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/get_potentials_count"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/get_random_potentials"
