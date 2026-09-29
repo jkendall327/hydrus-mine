@@ -8,6 +8,7 @@ pub mod counts;
 pub mod display;
 pub mod error;
 pub mod import;
+pub mod maintenance;
 pub mod master;
 pub mod media;
 pub mod schema;
@@ -16,6 +17,7 @@ pub mod settings;
 pub mod storage;
 pub mod store;
 pub mod text;
+pub mod transfer;
 
 pub use conn::{Db, WriteCtx};
 pub use error::{Result, StoreError};

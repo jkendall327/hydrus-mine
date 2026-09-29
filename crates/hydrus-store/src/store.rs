@@ -47,12 +47,54 @@ impl Snapshot {
     }
 }
 
+/// Files whose media someone is writing or deleting on disk right now.
+///
+/// An importer claims a file before writing it into storage and holds the
+/// claim until the database knows about it; the purge job only deletes
+/// unclaimed files. So a file being re-imported is never purged under it.
+#[derive(Debug, Default, Clone)]
+pub struct MediaClaims(Arc<parking_lot::Mutex<std::collections::HashSet<hydrus_core::Sha256>>>);
+
+/// Held while a file's media is being written or deleted.
+#[derive(Debug)]
+pub struct MediaClaim {
+    claims: MediaClaims,
+    hash: hydrus_core::Sha256,
+}
+
+impl MediaClaims {
+    /// Claim `hash`, or `None` if someone else holds it.
+    pub fn try_claim(&self, hash: hydrus_core::Sha256) -> Option<MediaClaim> {
+        self.0.lock().insert(hash).then(|| MediaClaim {
+            claims: self.clone(),
+            hash,
+        })
+    }
+
+    /// Claim `hash`, waiting for any other holder to finish.
+    pub fn claim(&self, hash: hydrus_core::Sha256) -> MediaClaim {
+        loop {
+            if let Some(claim) = self.try_claim(hash) {
+                return claim;
+            }
+            std::thread::sleep(std::time::Duration::from_millis(5));
+        }
+    }
+}
+
+impl Drop for MediaClaim {
+    fn drop(&mut self) {
+        self.claims.0.lock().remove(&self.hash);
+    }
+}
+
 /// A hydrus-rs database directory, open.
 #[derive(Debug)]
 pub struct Store {
     dir: PathBuf,
     db: Db,
     snapshot: Arc<ArcSwap<Snapshot>>,
+    claims: MediaClaims,
 }
 
 impl Store {
@@ -81,11 +123,17 @@ impl Store {
             dir: dir.to_path_buf(),
             db,
             snapshot: Arc::new(ArcSwap::from_pointee(snapshot)),
+            claims: MediaClaims::default(),
         }))
     }
 
     pub fn dir(&self) -> &Path {
         &self.dir
+    }
+
+    /// Claims on files whose media is being written or deleted.
+    pub fn media_claims(&self) -> MediaClaims {
+        self.claims.clone()
     }
 
     /// The current in-memory state.

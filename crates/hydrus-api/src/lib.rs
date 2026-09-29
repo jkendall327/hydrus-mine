@@ -19,6 +19,7 @@ pub mod media_json;
 pub mod params;
 pub mod request;
 pub mod routes;
+pub mod server;
 pub mod services_json;
 
 use auth::{AccessPermissions, AccessRegistry};
