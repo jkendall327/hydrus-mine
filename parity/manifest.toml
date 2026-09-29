@@ -321,217 +321,221 @@ status = "done"
 [[filetype]]
 name = "jpeg"
 code = 1
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "png"
 code = 2
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "animated gif"
 code = 3
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "bitmap"
 code = 4
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "flash"
 code = 5
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "icon"
 code = 7
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "flv"
 code = 9
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "pdf"
 code = 10
-status = "todo"
+status = "partial"
+notes = "rendering differs slightly from the reference (thumbnail pixels, blurhash)"
 
 [[filetype]]
 name = "zip"
 code = 11
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "mp3"
 code = 13
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "mp4"
 code = 14
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "ogg"
 code = 15
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "flac"
 code = 16
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "wma"
 code = 17
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "wmv"
 code = 18
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "matroska"
 code = 20
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "webm"
 code = 21
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "apng"
 code = 23
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "mpeg"
 code = 25
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "quicktime"
 code = 26
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "avi"
 code = 27
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "application/hydrus-update-definitions"
 code = 28
-status = "todo"
+status = "partial"
+notes = "detected by unit tests; not in the reference media corpus"
 
 [[filetype]]
 name = "application/hydrus-update-content"
 code = 29
-status = "todo"
+status = "partial"
+notes = "detected by unit tests; not in the reference media corpus"
 
 [[filetype]]
 name = "rar"
 code = 31
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "7z"
 code = 32
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "webp"
 code = 33
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "tiff"
 code = 34
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "psd"
 code = 35
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "m4a"
 code = 36
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "realvideo"
 code = 37
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "realaudio"
 code = 38
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "tta"
 code = 39
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "clip"
 code = 45
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "wave"
 code = 46
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "ogv"
 code = 47
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "matroska audio"
 code = 48
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "mp4 audio"
 code = 49
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "wavpack"
 code = 53
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "sai2"
 code = 54
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "krita"
 code = 55
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "svg"
 code = 56
-status = "todo"
+status = "partial"
+notes = "rendering differs slightly from the reference (thumbnail pixels, blurhash)"
 
 [[filetype]]
 name = "xcf"
 code = 57
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "gzip"
 code = 58
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "heif"
@@ -546,7 +550,8 @@ status = "todo"
 [[filetype]]
 name = "heic"
 code = 63
-status = "todo"
+status = "partial"
+notes = "no HEIC decoder yet: no pixel hash or perceptual hash; thumbnail falls back to the default"
 
 [[filetype]]
 name = "heic sequence"
@@ -556,97 +561,99 @@ status = "todo"
 [[filetype]]
 name = "avif"
 code = 65
-status = "todo"
+status = "partial"
+notes = "a different AVIF decoder: pixels differ slightly, so pixel hashes and some perceptual hashes differ"
 
 [[filetype]]
 name = "avif sequence"
 code = 66
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "static gif"
 code = 68
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "procreate"
 code = 69
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "qoi"
 code = 70
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "epub"
 code = 71
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "djvu"
 code = 72
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "cbz"
 code = 73
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "ugoira"
 code = 74
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "rtf"
 code = 75
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "docx"
 code = 76
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "xlsx"
 code = 77
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "pptx"
 code = 78
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "doc"
 code = 80
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "xls"
 code = 81
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "ppt"
 code = 82
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "animated webp"
 code = 83
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "jxl"
 code = 85
-status = "todo"
+status = "partial"
+notes = "a different JPEG XL decoder: pixels differ slightly, so pixel hashes differ"
 
 [[filetype]]
 name = "paint.net"
 code = 86
-status = "todo"
+status = "done"
 
 [[filetype]]
 name = "animated jxl"
@@ -656,7 +663,7 @@ status = "todo"
 [[filetype]]
 name = "ora"
 code = 89
-status = "todo"
+status = "done"
 
 
 # System predicates: one per reference PREDICATE_TYPE_SYSTEM_* search type.
