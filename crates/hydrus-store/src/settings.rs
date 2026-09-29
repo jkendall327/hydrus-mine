@@ -28,6 +28,10 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+impl Setting for hydrus_core::url::UrlClassSettings {
+    const KEY: &'static str = "url_classes";
+}
+
 pub fn get<S: Setting>(conn: &Connection) -> Result<S> {
     let value: Option<String> = conn
         .prepare_cached("SELECT value FROM settings WHERE key = ?")?

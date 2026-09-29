@@ -8,7 +8,10 @@
 //! Normalisation (the reviewed list of what we don't compare):
 //! - error responses compare status and `exception_type`, not message text;
 //! - absolute paths of the db dir and media dir are placeholders;
-//! - steps marked `unordered_lists` compare arrays as multisets.
+//! - steps marked `unordered_lists` compare arrays as multisets;
+//! - how long ago something happened, in human-readable notes ("which was
+//!   43 minutes ago before this check"), depends on when the recording was
+//!   made, so that phrase is a placeholder.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -69,15 +72,55 @@ fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
     }
 }
 
+/// Replace the time-relative phrase of notes like "Imported at <time>, which
+/// was 43 minutes 52 seconds ago before this check." with a placeholder.
+fn mask_time_deltas(value: &mut Json) {
+    const START: &str = "which was ";
+    const END: &str = " before this check";
+    match value {
+        Json::String(s) => {
+            if let Some(i) = s.find(START)
+                && let Some(j) = s[i..].find(END)
+            {
+                s.replace_range(i + START.len()..i + j, "{TIME_DELTA}");
+            }
+        }
+        Json::Array(items) => items.iter_mut().for_each(mask_time_deltas),
+        Json::Object(map) => map.values_mut().for_each(mask_time_deltas),
+        _ => {}
+    }
+}
+
 /// Sort every array, for comparing collections whose order is unspecified.
 fn sort_arrays(value: &mut Json) {
     match value {
         Json::Array(items) => {
             items.iter_mut().for_each(sort_arrays);
-            items.sort_by_key(ToString::to_string);
+            items.sort_by_cached_key(canonical);
         }
         Json::Object(map) => map.values_mut().for_each(sort_arrays),
         _ => {}
+    }
+}
+
+/// A JSON value's text with object keys in sorted order, so equal values
+/// sort equally whatever order their keys were written in.
+fn canonical(value: &Json) -> String {
+    match value {
+        Json::Array(items) => {
+            let inner: Vec<String> = items.iter().map(canonical).collect();
+            format!("[{}]", inner.join(","))
+        }
+        Json::Object(map) => {
+            let mut entries: Vec<(&String, &Json)> = map.iter().collect();
+            entries.sort_by(|a, b| a.0.cmp(b.0));
+            let inner: Vec<String> = entries
+                .into_iter()
+                .map(|(k, v)| format!("{}:{}", Json::String(k.clone()), canonical(v)))
+                .collect();
+            format!("{{{}}}", inner.join(","))
+        }
+        other => other.to_string(),
     }
 }
 
@@ -200,6 +243,8 @@ async fn replay_step(
             Ok(actual) => {
                 let mut actual = unsubstitute(actual, db_dir, &media);
                 let mut expected = expected.clone();
+                mask_time_deltas(&mut actual);
+                mask_time_deltas(&mut expected);
                 if expected.get("exception_type").is_some() {
                     // errors: compare the class, not the wording
                     for v in [&mut actual, &mut expected] {
@@ -213,6 +258,9 @@ async fn replay_step(
                     sort_arrays(&mut expected);
                 }
                 if let Some(d) = first_difference(&expected, &actual, "$") {
+                    if std::env::var_os("CONFORMANCE_DUMP").is_some() {
+                        eprintln!("ACTUAL {}", truncate(&actual.to_string()));
+                    }
                     problems.push(d);
                 }
             }

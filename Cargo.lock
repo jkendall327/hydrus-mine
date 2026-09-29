@@ -731,6 +731,7 @@ dependencies = [
  "hex",
  "http-body-util",
  "hydrus-core",
+ "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
  "parking_lot",
@@ -753,13 +754,20 @@ dependencies = [
 name = "hydrus-core"
 version = "0.1.0"
 dependencies = [
+ "base64",
+ "fancy-regex",
  "hex",
+ "md-5",
  "proptest",
+ "rand 0.10.3",
  "regex",
  "rusqlite",
  "serde",
  "serde_json",
+ "sha1",
+ "sha2",
  "thiserror",
+ "unicode-normalization",
 ]
 
 [[package]]
@@ -803,6 +811,8 @@ dependencies = [
  "hydrus-testkit",
  "parking_lot",
  "proptest",
+ "rand 0.10.3",
+ "regex",
  "roaring",
  "rusqlite",
  "serde",
@@ -942,6 +952,16 @@ name = "matchit"
 version = "0.8.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "47e1ffaa40ddd1f3ed91f717a33c8c0ee23fff369e3aa8772b9605cc1d22f4c3"
+
+[[package]]
+name = "md-5"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "69b6441f590336821bb897fb28fc622898ccceb1d6cea3fde5ea86b090c4de98"
+dependencies = [
+ "cfg-if",
+ "digest",
+]
 
 [[package]]
 name = "memchr"
@@ -1350,6 +1370,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "sha1"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aacc4cc499359472b4abe1bf11d0b12e688af9a805fa5e3016f9a386dc2d0214"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+ "digest",
+]
+
+[[package]]
 name = "sha2"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1493,6 +1524,12 @@ dependencies = [
  "quote",
  "syn 3.0.6",
 ]
+
+[[package]]
+name = "tinyvec"
+version = "1.13.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fd3ca314f692efd6c868f8408f53fe444634a845f96c028b97d35f6a1f79f0ee"
 
 [[package]]
 name = "tokio"
@@ -1672,6 +1709,15 @@ name = "unicode-ident"
 version = "1.0.26"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d245f478577f809a851594d02313b640fb437e0bb33866753cff937863096954"
+
+[[package]]
+name = "unicode-normalization"
+version = "0.1.25"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5fd4f6878c9cb28d874b009da9e8d183b5abc80117c40bbd187a1fde336be6e8"
+dependencies = [
+ "tinyvec",
+]
 
 [[package]]
 name = "utf8parse"

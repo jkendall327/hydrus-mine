@@ -19,6 +19,8 @@ arc-swap.workspace = true
 crossbeam-channel.workspace = true
 hex.workspace = true
 roaring.workspace = true
+regex.workspace = true
+rand.workspace = true
 
 [dev-dependencies]
 hydrus-testkit.workspace = true
