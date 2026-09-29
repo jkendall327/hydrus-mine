@@ -888,6 +888,11 @@ pub(crate) mod tests {
             input.settings["thumbnails"],
             serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100})
         );
+        // recorded, counting the media viewer and the Client API
+        assert_eq!(
+            input.settings["file_viewing_statistics"],
+            serde_json::json!({"active": true, "interesting_canvases": [0, 4]})
+        );
     }
 
     #[test]

@@ -12,7 +12,8 @@
 //! - in scenarios that write, times from while the scenario ran (a deletion
 //!   time, an archive time, ...) are `{NOW}` on both sides, recognised by a
 //!   time-like key and a value at or after the scenario's start;
-//! - `known_differences.toml` lists recorded reference bugs we don't copy.
+//! - `known_differences.toml` lists recorded reference bugs we don't copy:
+//!   JSON paths left out of one step's comparison, or whole steps skipped.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -78,8 +79,16 @@ fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
 struct KnownDifference {
     scenario: String,
     step: usize,
+    /// A fragment of the step's request, so a rebuilt scenario can't make
+    /// an entry silently apply to a different step.
+    #[serde(default)]
+    request: Option<String>,
+    /// JSON paths left out of the comparison.
+    #[serde(default)]
     ignore: Vec<String>,
-    #[allow(dead_code)] // documentation for reviewers
+    /// Don't compare the step at all.
+    #[serde(default)]
+    skip: bool,
     reason: String,
 }
 
@@ -233,6 +242,8 @@ struct Outcome {
     endpoint: String,
     passed: bool,
     detail: String,
+    /// Why this step is not compared (`known_differences.toml`).
+    skipped: Option<String>,
 }
 
 async fn replay_step(
@@ -348,6 +359,7 @@ async fn replay_step(
         endpoint: path,
         passed: problems.is_empty(),
         detail: format!("{} {uri}: {}", step["method"], problems.join("; ")),
+        skipped: None,
     }
 }
 
@@ -418,17 +430,35 @@ async fn replay_recorded_scenarios() {
             .zip(recording["responses"].as_array().unwrap())
             .enumerate()
         {
-            let ignored: Vec<String> = differences
+            let known: Vec<&KnownDifference> = differences
                 .iter()
                 .filter(|d| &d.scenario == name && d.step == index)
+                .collect();
+            let ignored: Vec<String> = known
+                .iter()
                 .flat_map(|d| d.ignore.iter().cloned())
                 .collect();
-            outcomes.push(
-                replay_step(
-                    &router, step, recorded, &manifest, &db_dir, now_window, &ignored,
-                )
-                .await,
-            );
+            let mut outcome = replay_step(
+                &router, step, recorded, &manifest, &db_dir, now_window, &ignored,
+            )
+            .await;
+            for k in &known {
+                if let Some(request) = &k.request {
+                    assert!(
+                        outcome.detail.contains(request.as_str()),
+                        "known_differences.toml is stale: {name} step {index} is now {}",
+                        outcome.detail
+                    );
+                }
+                if k.skip {
+                    assert!(
+                        !outcome.passed,
+                        "{name} step {index} now matches the reference; remove it from known_differences.toml"
+                    );
+                    outcome.skipped = Some(k.reason.clone());
+                }
+            }
+            outcomes.push(outcome);
         }
     }
 
@@ -437,6 +467,10 @@ async fn replay_recorded_scenarios() {
     let mut regressions = Vec::new();
     let verbose = std::env::var_os("CONFORMANCE_VERBOSE").is_some();
     for o in &outcomes {
+        if let Some(reason) = &o.skipped {
+            eprintln!("  skipped (known difference: {reason}): {}", o.detail);
+            continue;
+        }
         let entry = per_endpoint.entry(o.endpoint.clone()).or_default();
         entry.1 += 1;
         if o.passed {
@@ -450,10 +484,14 @@ async fn replay_recorded_scenarios() {
             }
         }
     }
-    let passed = outcomes.iter().filter(|o| o.passed).count();
+    let skipped = outcomes.iter().filter(|o| o.skipped.is_some()).count();
+    let passed = outcomes
+        .iter()
+        .filter(|o| o.passed && o.skipped.is_none())
+        .count();
     eprintln!(
-        "conformance: {passed}/{} recorded steps match the reference",
-        outcomes.len()
+        "conformance: {passed}/{} recorded steps match the reference ({skipped} known differences not compared)",
+        outcomes.len() - skipped
     );
     for (endpoint, (ok, total)) in &per_endpoint {
         let mark = if done.contains(endpoint) {

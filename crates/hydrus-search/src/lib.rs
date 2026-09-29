@@ -40,11 +40,15 @@
 //! for the deliberate differences listed in this crate's README.
 //! [`parse_api_search`] parses the Client API's JSON `tags` list.
 //!
-//! Query execution is not implemented yet.
+//! # Execution
+//!
+//! [`search_files`] runs a [`FileSearchContext`] against the native store
+//! and sorts the results; see the [`exec`] module for how.
 
 pub mod api;
 pub mod context;
 pub mod error;
+pub mod exec;
 pub mod filetype;
 pub mod number;
 pub mod parse;
@@ -54,6 +58,7 @@ pub mod time;
 pub use api::parse_api_search;
 pub use context::{FileSearchContext, LocationContext, TagContext};
 pub use error::{ApiSearchError, ParseError, ParseErrorKind};
+pub use exec::{Clock, FileSort, SearchError, SortBy, SortOrder, search_files};
 pub use filetype::FiletypeSet;
 pub use number::{
     Comparison, DEFAULT_APPROX_PERCENT, NumberOp, NumberTest, RatingOp, RatioOp, TagNumberOp,

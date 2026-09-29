@@ -1,9 +1,12 @@
 # Recorded reference responses we deliberately don't match, with why.
 #
-# Each entry names a scenario step (0-based) and JSON paths removed from both
-# the recorded and the actual response before comparing. Keep this list short:
-# every entry is a reference bug users wouldn't rely on, and is also written
-# up in docs/rust/DIFFERENCES.md.
+# Each entry names a scenario step (0-based) and either JSON paths removed
+# from both the recorded and the actual response before comparing (`ignore`),
+# or `skip = true` to not compare the step at all (the runner fails if a
+# skipped step starts matching). `request` is a fragment of the step's
+# request, checked so a rebuilt scenario can't silently shift an entry.
+# Keep this list short: every entry is a reference bug users wouldn't rely
+# on, and is also written up in docs/rust/DIFFERENCES.md.
 
 [[difference]]
 scenario = "file_lifecycle"
@@ -22,3 +25,52 @@ reason = """Clearing a deletion record clears it from every local domain, combin
 local storage in the reference's database (and resyncs "deleted from anywhere"), but its in-memory \
 media cache only forgets the local domains and local storage records, so until a restart it still \
 reports the combined local media deletion and "deleted from anywhere". We report the database state."""
+
+[[difference]]
+scenario = "search"
+step = 10
+request = "file_sort_type=9&file_sort_asc=true"
+skip = true
+reason = "the reference ignores sorting by number of tags in the Client API; we sort"
+
+[[difference]]
+scenario = "search"
+step = 11
+request = "file_sort_type=9&file_sort_asc=false"
+skip = true
+reason = "the reference ignores sorting by number of tags in the Client API; we sort"
+
+[[difference]]
+scenario = "search"
+step = 12
+request = "file_sort_type=13&file_sort_asc=true"
+skip = true
+reason = "the reference ignores sorting by audio in the Client API; we sort"
+
+[[difference]]
+scenario = "search"
+step = 13
+request = "file_sort_type=13&file_sort_asc=false"
+skip = true
+reason = "the reference ignores sorting by audio in the Client API; we sort"
+
+[[difference]]
+scenario = "search_more"
+step = 118
+request = "tag+as+number+page+%7E%3D+10"
+skip = true
+reason = "\"tag as number ≈\" needs one tag in range; the reference accepts two tags, one above and one below"
+
+[[difference]]
+scenario = "search_more"
+step = 158
+request = "status+in+deleted%3A"
+skip = true
+reason = "the reference searches pending tags when asked for deleted displayed tags"
+
+[[difference]]
+scenario = "search_more"
+step = 159
+request = "status+in+deleted%2C+current"
+skip = true
+reason = "the reference searches pending tags when asked for deleted displayed tags"

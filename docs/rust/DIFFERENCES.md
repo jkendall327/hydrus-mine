@@ -40,6 +40,21 @@ The last three are covered by the crate's unit tests.
   iterates a string character by character.
 - **Advanced tag statuses are a set**, so a status named twice is stored once.
 
+## Search execution (`hydrus-search::exec`)
+
+Checked by the conformance runner: the recorded steps are listed, with these
+reasons, in `crates/hydrus-api/tests/known_differences.toml`, and the runner
+fails if one starts matching.
+
+- **Every sort the Client API accepts is applied.** The reference accepts
+  sorting by number of tags and by has-audio, then returns the files
+  unsorted (its database only applies a fixed list of "simple" sorts).
+- **`system:tag as number` with `≈` needs one tag in range.** The reference
+  tests "above the lower bound" and "below the upper bound" separately, so a
+  file tagged `page:5` and `page:20` matches `page ≈ 10`.
+- **"Deleted" in `system:has tag with status` means deleted** for display
+  tags too; the reference searches pending tags instead.
+
 ## File lifecycle (`hydrus-store::content`)
 
 Checked by the property tests in `crates/hydrus-store/src/content/tests.rs`
