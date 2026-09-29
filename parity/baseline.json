@@ -1,10 +1,19 @@
 {
   "api": {
     "total": 76,
-    "done": 10,
+    "done": 19,
     "partial": 3,
     "done_items": [
+      "/add_files/archive_files",
+      "/add_files/clear_file_deletion_record",
+      "/add_files/delete_files",
+      "/add_files/migrate_files",
+      "/add_files/unarchive_files",
+      "/add_files/undelete_files",
+      "/add_tags/add_tags",
       "/add_tags/clean_tags",
+      "/add_tags/get_favourite_tags",
+      "/add_tags/set_favourite_tags",
       "/api_version",
       "/get_files/file_hashes",
       "/get_files/file_path",

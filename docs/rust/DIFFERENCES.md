@@ -39,3 +39,23 @@ The last three are covered by the crate's unit tests.
 - **The Client API `tags` parameter must be a JSON list.** The reference
   iterates a string character by character.
 - **Advanced tag statuses are a set**, so a status named twice is stored once.
+
+## File lifecycle (`hydrus-store::content`)
+
+Checked by the property tests in `crates/hydrus-store/src/content/tests.rs`
+(the umbrella domains always equal their definitions) and by the Client API
+conformance runner, which skips exactly the recorded fields listed in
+`crates/hydrus-api/tests/known_differences.toml`.
+
+- **"Deleted from anywhere" is always the union of deletion records.**
+  Deleting a file from a domain it isn't in (a pre-emptive delete, which
+  blocks a future import) records the deletion; the reference then leaves the
+  file out of its combined deleted domain until a full resync. We add it
+  straight away.
+- **File metadata reflects the database, not a stale cache.** The reference
+  serves file metadata from an in-memory cache that some writes update
+  incompletely until the next restart: purging a file from local storage
+  archives it but the cache has no archive time, and clearing a deletion
+  record leaves the cache reporting the combined-local-media deletion and
+  "deleted from anywhere" membership that the database no longer has. We
+  have no such cache and report what the reference reports after a restart.

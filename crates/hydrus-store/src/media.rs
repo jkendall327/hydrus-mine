@@ -178,6 +178,22 @@ fn opt_u64(v: Option<i64>) -> Option<u64> {
 
 /// Load media results for `hash_ids` (in that order; ids without a hash are
 /// skipped).
+/// Which of `hashes` are currently in file domain `domain`.
+pub fn current_in(
+    conn: &Connection,
+    domain: ServiceId,
+    hashes: &[HashId],
+) -> Result<std::collections::HashSet<HashId>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT hash_id FROM file_domain_current WHERE service_id = ?1 AND hash_id IN rarray(?2)",
+    )?;
+    let rows = stmt.query_map(
+        rusqlite::params![domain, crate::master::id_array(hashes)],
+        |r| r.get(0),
+    )?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 pub fn load(
     conn: &Connection,
     registry: &ServiceRegistry,

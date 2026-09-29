@@ -61,7 +61,12 @@ impl<'c> WriteCtx<'c> {
 /// A queued write, type-erased. Running it returns whether it succeeded, the
 /// effects it registered, and a reply function to call once the batch
 /// outcome is known.
-type Job = Box<dyn FnOnce(&Connection) -> JobOutcome + Send>;
+struct Job {
+    run: Box<dyn FnOnce(&Connection) -> JobOutcome + Send>,
+    /// Commit in a batch of its own. For writes whose post-commit effects
+    /// (e.g. publishing a new in-memory snapshot) later writes must see.
+    barrier: bool,
+}
 
 struct JobOutcome {
     succeeded: bool,
@@ -153,8 +158,25 @@ impl Db {
         &self,
         f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
     ) -> Result<R> {
+        self.submit(f, false)
+    }
+
+    /// Like [`Db::write`], but the write commits in a batch of its own, and
+    /// its post-commit effects have run before any later write starts.
+    pub fn write_alone<R: Send + 'static>(
+        &self,
+        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+    ) -> Result<R> {
+        self.submit(f, true)
+    }
+
+    fn submit<R: Send + 'static>(
+        &self,
+        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+        barrier: bool,
+    ) -> Result<R> {
         let (reply_tx, reply_rx) = crossbeam_channel::bounded::<Result<R>>(1);
-        let job: Job = Box::new(move |conn| {
+        let run = Box::new(move |conn: &Connection| {
             let mut ctx = WriteCtx {
                 conn,
                 effects: Vec::new(),
@@ -177,6 +199,7 @@ impl Db {
                 }),
             }
         });
+        let job = Job { run, barrier };
         self.writer
             .jobs
             .as_ref()
@@ -215,7 +238,9 @@ impl Drop for PooledReader<'_> {
 }
 
 fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
-    while let Ok(first) = jobs.recv() {
+    // a barrier job that arrived while a batch was open waits for the next one
+    let mut carried: Option<Job> = None;
+    while let Some(first) = carried.take().or_else(|| jobs.recv().ok()) {
         let batch_started = Instant::now();
         let mut outcomes = Vec::new();
 
@@ -226,9 +251,15 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
             continue;
         }
 
+        let alone = first.barrier;
         outcomes.push(run_job(conn, first));
-        while outcomes.len() < MAX_BATCH_JOBS && batch_started.elapsed() < MAX_BATCH_TIME {
+        while !alone && outcomes.len() < MAX_BATCH_JOBS && batch_started.elapsed() < MAX_BATCH_TIME
+        {
             match jobs.try_recv() {
+                Ok(job) if job.barrier => {
+                    carried = Some(job);
+                    break;
+                }
                 Ok(job) => outcomes.push(run_job(conn, job)),
                 Err(_) => break,
             }
@@ -259,7 +290,7 @@ fn run_job(conn: &Connection, job: Job) -> JobOutcome {
     if let Err(e) = conn.execute_batch("SAVEPOINT job") {
         tracing::error!(error = %e, "could not open savepoint");
     }
-    let outcome = job(conn);
+    let outcome = (job.run)(conn);
     let end = if outcome.succeeded {
         "RELEASE job"
     } else {

@@ -1,0 +1,24 @@
+# Recorded reference responses we deliberately don't match, with why.
+#
+# Each entry names a scenario step (0-based) and JSON paths removed from both
+# the recorded and the actual response before comparing. Keep this list short:
+# every entry is a reference bug users wouldn't rely on, and is also written
+# up in docs/rust/DIFFERENCES.md.
+
+[[difference]]
+scenario = "file_lifecycle"
+step = 12
+ignore = ["$.metadata[0].time_archived"]
+reason = """Deleting a file from local storage archives it and records the archive time in the \
+reference's database, but its in-memory media cache only flips the inbox flag, so until a restart it \
+reports no archive time. We report the recorded time (what the reference shows after a restart)."""
+
+[[difference]]
+scenario = "file_lifecycle"
+step = 15
+# the archive time too, as in step 12
+ignore = ["$.metadata[0].file_services", "$.metadata[0].is_deleted", "$.metadata[0].time_archived"]
+reason = """Clearing a deletion record clears it from every local domain, combined local media and \
+local storage in the reference's database (and resyncs "deleted from anywhere"), but its in-memory \
+media cache only forgets the local domains and local storage records, so until a restart it still \
+reports the combined local media deletion and "deleted from anywhere". We report the database state."""

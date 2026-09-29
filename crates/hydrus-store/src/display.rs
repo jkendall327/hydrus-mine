@@ -170,6 +170,15 @@ impl DisplayGraph {
         self.bad_to_ideal.is_empty() && self.ancestors.is_empty()
     }
 
+    /// Whether the graph says anything about `tag`. If not, `tag` displays
+    /// as itself and no other tag displays as it.
+    pub fn touches(&self, tag: TagId) -> bool {
+        self.bad_to_ideal.contains_key(&tag)
+            || self.ideal_to_bads.contains_key(&tag)
+            || self.ancestors.contains_key(&tag)
+            || self.descendants.contains_key(&tag)
+    }
+
     /// The tag `tag` displays as, ignoring parents.
     pub fn ideal(&self, tag: TagId) -> TagId {
         self.bad_to_ideal.get(&tag).copied().unwrap_or(tag)

@@ -8,7 +8,11 @@
 //! Normalisation (the reviewed list of what we don't compare):
 //! - error responses compare status and `exception_type`, not message text;
 //! - absolute paths of the db dir and media dir are placeholders;
-//! - steps marked `unordered_lists` compare arrays as multisets.
+//! - steps marked `unordered_lists` compare arrays as multisets;
+//! - in scenarios that write, times from while the scenario ran (a deletion
+//!   time, an archive time, ...) are `{NOW}` on both sides, recognised by a
+//!   time-like key and a value at or after the scenario's start;
+//! - `known_differences.toml` lists recorded reference bugs we don't copy.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -66,6 +70,103 @@ fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
                 .collect(),
         ),
         other => other,
+    }
+}
+
+/// A recorded response we deliberately don't match (`known_differences.toml`).
+#[derive(Debug, serde::Deserialize)]
+struct KnownDifference {
+    scenario: String,
+    step: usize,
+    ignore: Vec<String>,
+    #[allow(dead_code)] // documentation for reviewers
+    reason: String,
+}
+
+fn known_differences() -> Vec<KnownDifference> {
+    #[derive(serde::Deserialize)]
+    struct File {
+        difference: Vec<KnownDifference>,
+    }
+    let text = std::fs::read_to_string(
+        Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/known_differences.toml"),
+    )
+    .unwrap();
+    toml::from_str::<File>(&text).unwrap().difference
+}
+
+/// Remove the value at `path` (`$.a.b[0].c`) if present.
+fn remove_path(value: &mut Json, path: &str) {
+    let mut segments = Vec::new();
+    for part in path
+        .trim_start_matches('$')
+        .split('.')
+        .filter(|p| !p.is_empty())
+    {
+        let (name, indices) = part
+            .split_once('[')
+            .map_or((part, ""), |(n, rest)| (n, rest));
+        if !name.is_empty() {
+            segments.push(Json::String(name.to_owned()));
+        }
+        for index in indices.split('[').filter(|i| !i.is_empty()) {
+            segments.push(Json::from(
+                index.trim_end_matches(']').parse::<u64>().unwrap(),
+            ));
+        }
+    }
+    let Some((last, parents)) = segments.split_last() else {
+        return;
+    };
+    let mut current = value;
+    for segment in parents {
+        let next = match segment {
+            Json::String(key) => current.get_mut(key.as_str()),
+            index => current.get_mut(index.as_u64().unwrap() as usize),
+        };
+        match next {
+            Some(v) => current = v,
+            None => return,
+        }
+    }
+    match (current, last) {
+        (Json::Object(map), Json::String(key)) => {
+            map.remove(key);
+        }
+        (Json::Array(items), index) => {
+            let i = index.as_u64().unwrap() as usize;
+            if i < items.len() {
+                items.remove(i);
+            }
+        }
+        _ => {}
+    }
+}
+
+/// Replace times at or after `start_ms` under time-like keys with `{NOW}`.
+fn normalise_now(value: &mut Json, start_ms: i64) {
+    const SLACK_MS: i64 = 2_000;
+    const DAY_MS: i64 = 86_400_000;
+    let is_now = |v: &Json| {
+        v.as_f64().is_some_and(|n| {
+            // seconds or milliseconds
+            let lo = (start_ms - SLACK_MS) as f64;
+            let hi = (start_ms + DAY_MS) as f64;
+            (lo..hi).contains(&n) || (lo / 1000.0..hi / 1000.0).contains(&n)
+        })
+    };
+    match value {
+        Json::Array(items) => items.iter_mut().for_each(|v| normalise_now(v, start_ms)),
+        Json::Object(map) => {
+            for (key, v) in map.iter_mut() {
+                if (key.contains("time") || key.contains("viewed")) && is_now(v) {
+                    *v = Json::String("{NOW}".into());
+                } else {
+                    normalise_now(v, start_ms);
+                }
+            }
+        }
+        _ => {}
     }
 }
 
@@ -140,6 +241,9 @@ async fn replay_step(
     recorded: &Json,
     manifest: &Json,
     db_dir: &str,
+    // (recording started, replay started) for scenarios that write
+    now_window: Option<(i64, i64)>,
+    ignored_paths: &[String],
 ) -> Outcome {
     let media = media_dir().to_string_lossy().into_owned();
     let path = step["path"].as_str().unwrap().to_owned();
@@ -208,6 +312,14 @@ async fn replay_step(
                         }
                     }
                 }
+                for path in ignored_paths {
+                    remove_path(&mut expected, path);
+                    remove_path(&mut actual, path);
+                }
+                if let Some((recorded_start, replay_start)) = now_window {
+                    normalise_now(&mut expected, recorded_start);
+                    normalise_now(&mut actual, replay_start);
+                }
                 if step["compare"].as_str() == Some("unordered_lists") {
                     sort_arrays(&mut actual);
                     sort_arrays(&mut expected);
@@ -268,6 +380,7 @@ async fn replay_recorded_scenarios() {
         .collect();
     names.sort();
 
+    let differences = known_differences();
     let shared = common::imported_store("basic");
     let mut outcomes = Vec::new();
     for name in &names {
@@ -280,21 +393,39 @@ async fn replay_recorded_scenarios() {
         )
         .unwrap();
         let fresh;
-        let fixture = if scenario["read_only"].as_bool().unwrap() {
+        let read_only = scenario["read_only"].as_bool().unwrap();
+        let fixture = if read_only {
             &shared
         } else {
             fresh = common::imported_store("basic");
             &fresh
         };
+        let now_window = (!read_only).then(|| {
+            (
+                recording["recorded_at_ms"].as_i64().unwrap(),
+                hydrus_core::time::TimestampMs::now().millis(),
+            )
+        });
         let router = hydrus_api::router(Arc::clone(&fixture.state));
         let db_dir = fixture.legacy_dir.path().to_string_lossy().into_owned();
-        for (step, recorded) in scenario["steps"]
+        for (index, (step, recorded)) in scenario["steps"]
             .as_array()
             .unwrap()
             .iter()
             .zip(recording["responses"].as_array().unwrap())
+            .enumerate()
         {
-            outcomes.push(replay_step(&router, step, recorded, &manifest, &db_dir).await);
+            let ignored: Vec<String> = differences
+                .iter()
+                .filter(|d| &d.scenario == name && d.step == index)
+                .flat_map(|d| d.ignore.iter().cloned())
+                .collect();
+            outcomes.push(
+                replay_step(
+                    &router, step, recorded, &manifest, &db_dir, now_window, &ignored,
+                )
+                .await,
+            );
         }
     }
 

@@ -12,15 +12,15 @@ status = "todo"
 
 [[api]]
 path = "/add_files/archive_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/clear_file_deletion_record"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/delete_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/generate_hashes"
@@ -28,15 +28,15 @@ status = "todo"
 
 [[api]]
 path = "/add_files/migrate_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/unarchive_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_files/undelete_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_notes/delete_notes"
@@ -48,7 +48,7 @@ status = "todo"
 
 [[api]]
 path = "/add_tags/add_tags"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/clean_tags"
@@ -56,7 +56,7 @@ status = "done"
 
 [[api]]
 path = "/add_tags/get_favourite_tags"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/get_siblings_and_parents"
@@ -68,7 +68,7 @@ status = "todo"
 
 [[api]]
 path = "/add_tags/set_favourite_tags"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_urls/add_url"

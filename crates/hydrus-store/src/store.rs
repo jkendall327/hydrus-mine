@@ -12,6 +12,7 @@ use arc_swap::ArcSwap;
 use rusqlite::Connection;
 
 use crate::conn::{Db, WriteCtx};
+use crate::content::ContentWriter;
 use crate::display::DisplayGraphs;
 use crate::error::Result;
 use crate::services::{self, ServiceRegistry};
@@ -106,16 +107,40 @@ impl Store {
     }
 
     /// Run a write that changes services or tag relations, republishing the
-    /// in-memory snapshot once it commits.
+    /// in-memory snapshot once it commits. It commits alone, so every write
+    /// queued after it sees the new snapshot.
     pub fn write_and_refresh<R: Send + 'static>(
         &self,
         f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
     ) -> Result<R> {
         let snapshot = Arc::clone(&self.snapshot);
-        self.db.write(move |ctx| {
+        self.db.write_alone(move |ctx| {
             let result = f(ctx)?;
             let fresh = Snapshot::load(ctx.conn())?;
             ctx.after_commit(move || snapshot.store(Arc::new(fresh)));
+            Ok(result)
+        })
+    }
+}
+
+impl Store {
+    /// Run content changes in one write: `f` gets a [`ContentWriter`] over
+    /// the current snapshot, and derived data is flushed before commit.
+    pub fn write_content<R: Send + 'static>(
+        &self,
+        f: impl FnOnce(&mut ContentWriter<'_>) -> Result<R> + Send + 'static,
+    ) -> Result<R> {
+        let snapshot = Arc::clone(&self.snapshot);
+        self.db.write(move |ctx| {
+            // loaded on the writer thread: it reflects every committed write
+            let snap = snapshot.load_full();
+            let mut writer = ContentWriter::new(
+                ctx.conn(),
+                &snap,
+                hydrus_core::time::TimestampMs::now().millis(),
+            )?;
+            let result = f(&mut writer)?;
+            writer.finish()?;
             Ok(result)
         })
     }

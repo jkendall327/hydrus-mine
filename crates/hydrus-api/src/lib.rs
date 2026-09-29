@@ -14,6 +14,7 @@ use hydrus_store::Store;
 
 pub mod auth;
 pub mod error;
+pub mod location;
 pub mod media_json;
 pub mod params;
 pub mod request;
@@ -57,7 +58,8 @@ impl AppState {
 
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
-    use routes::{access, files};
+    use axum::routing::post;
+    use routes::{access, add_files, add_tags, files};
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -65,6 +67,27 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/get_services", get(access::get_services))
         .route("/get_service", get(access::get_service))
         .route("/add_tags/clean_tags", get(access::clean_tags))
+        .route("/add_tags/add_tags", post(add_tags::add_tags))
+        .route(
+            "/add_tags/get_favourite_tags",
+            get(add_tags::get_favourite_tags),
+        )
+        .route(
+            "/add_tags/set_favourite_tags",
+            post(add_tags::set_favourite_tags),
+        )
+        .route("/add_files/archive_files", post(add_files::archive_files))
+        .route(
+            "/add_files/unarchive_files",
+            post(add_files::unarchive_files),
+        )
+        .route("/add_files/delete_files", post(add_files::delete_files))
+        .route("/add_files/undelete_files", post(add_files::undelete_files))
+        .route(
+            "/add_files/clear_file_deletion_record",
+            post(add_files::clear_file_deletion_record),
+        )
+        .route("/add_files/migrate_files", post(add_files::migrate_files))
         .route("/get_files/file_metadata", get(files::file_metadata))
         .route("/get_files/file_hashes", get(files::file_hashes))
         .route("/get_files/file", get(files::file))

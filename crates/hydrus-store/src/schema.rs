@@ -180,6 +180,13 @@ CREATE TABLE file_deletion_reasons (
     reason_id INTEGER NOT NULL
 ) STRICT;
 
+-- files that left local storage; a maintenance job deletes them from disk
+-- (never inline in the write, so a rolled-back or undone delete loses nothing)
+CREATE TABLE deferred_physical_deletes (
+    hash_id INTEGER PRIMARY KEY,
+    queued_ms INTEGER NOT NULL
+) STRICT;
+
 CREATE TABLE file_inbox (
     hash_id INTEGER PRIMARY KEY
 ) STRICT;
