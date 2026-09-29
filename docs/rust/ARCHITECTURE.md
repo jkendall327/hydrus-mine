@@ -115,7 +115,7 @@ unknown or not-yet-supported objects are preserved verbatim in a
 | `hydrus-testkit` | Dev-only test helpers: extracting fixture databases, loading fixture JSON. |
 | `xtask` | Project automation: parity ratchet, conformance runs, benchmarks. |
 
-The GUI is deliberately last; see the tracking issue on GUI technology.
+The GUI is deliberately last; see `DECISIONS_NEEDED.md` for the open choice of GUI technology.
 
 ## Testing layers
 
