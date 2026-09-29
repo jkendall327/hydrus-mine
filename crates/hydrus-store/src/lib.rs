@@ -3,8 +3,10 @@
 //! See `docs/rust/STORE.md` for the schema design and consistency rules.
 
 pub mod conn;
+pub mod counts;
 pub mod display;
 pub mod error;
+pub mod import;
 pub mod master;
 pub mod schema;
 pub mod services;

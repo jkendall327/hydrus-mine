@@ -21,6 +21,8 @@ roaring.workspace = true
 [dev-dependencies]
 tempfile.workspace = true
 proptest.workspace = true
+tar.workspace = true
+flate2.workspace = true
 
 [lints]
 workspace = true
