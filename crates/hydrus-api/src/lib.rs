@@ -59,7 +59,7 @@ impl AppState {
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
-    use routes::{access, add_files, add_tags, files};
+    use routes::{access, add_files, add_tags, files, metadata};
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -88,6 +88,18 @@ pub fn router(state: Arc<AppState>) -> Router {
             post(add_files::clear_file_deletion_record),
         )
         .route("/add_files/migrate_files", post(add_files::migrate_files))
+        .route("/add_notes/set_notes", post(metadata::set_notes))
+        .route("/add_notes/delete_notes", post(metadata::delete_notes))
+        .route("/edit_ratings/set_rating", post(metadata::set_rating))
+        .route("/edit_times/set_time", post(metadata::set_time))
+        .route(
+            "/edit_times/increment_file_viewtime",
+            post(metadata::increment_file_viewtime),
+        )
+        .route(
+            "/edit_times/set_file_viewtime",
+            post(metadata::set_file_viewtime),
+        )
         .route("/get_files/file_metadata", get(files::file_metadata))
         .route("/get_files/file_hashes", get(files::file_hashes))
         .route("/get_files/file", get(files::file))

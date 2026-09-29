@@ -28,6 +28,22 @@ impl Setting for FavouriteTags {
     const KEY: &'static str = "favourite_tags";
 }
 
+/// Whether file viewing statistics are recorded.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct FileViewingStatistics {
+    pub active: bool,
+}
+
+impl Default for FileViewingStatistics {
+    fn default() -> Self {
+        Self { active: true }
+    }
+}
+
+impl Setting for FileViewingStatistics {
+    const KEY: &'static str = "file_viewing_statistics";
+}
+
 pub fn get<S: Setting>(conn: &Connection) -> Result<S> {
     let value: Option<String> = conn
         .prepare_cached("SELECT value FROM settings WHERE key = ?")?

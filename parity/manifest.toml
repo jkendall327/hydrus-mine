@@ -40,11 +40,11 @@ status = "done"
 
 [[api]]
 path = "/add_notes/delete_notes"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_notes/set_notes"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_tags/add_tags"
@@ -96,19 +96,19 @@ status = "todo"
 
 [[api]]
 path = "/edit_ratings/set_rating"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/edit_times/increment_file_viewtime"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/edit_times/set_file_viewtime"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/edit_times/set_time"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_files/file"

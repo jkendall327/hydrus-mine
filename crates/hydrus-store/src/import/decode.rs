@@ -21,7 +21,7 @@ use crate::services::{
     LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay,
     RepositoryConfig, Rgb, ServerConfig, ServiceKind, StarAppearance, StarShape,
 };
-use crate::settings::{FavouriteTags, Setting};
+use crate::settings::{FavouriteTags, FileViewingStatistics, Setting};
 
 /// Decode everything the importer needs from the reference install `db`.
 pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
@@ -62,6 +62,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
+        }
+        if let Some(&active) = options.booleans.get("file_viewing_statistics_active") {
+            insert_setting(&mut input, &FileViewingStatistics { active })?;
         }
     }
     insert_setting(&mut input, &thumbnails)?;

@@ -12,6 +12,7 @@
 
 mod files;
 mod mappings;
+mod metadata;
 mod tally;
 
 use std::collections::HashSet;
@@ -26,6 +27,7 @@ use crate::store::Snapshot;
 
 pub use files::AddRows;
 pub use mappings::MappingAction;
+pub use metadata::FileTime;
 
 use tally::Tally;
 

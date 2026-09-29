@@ -118,6 +118,32 @@ pub enum Value {
     ByteDict(Vec<(Vec<u8>, Json)>),
 }
 
+/// A parameter that may be absent, explicitly `null`, or have a value.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Nullable<T> {
+    Absent,
+    Null,
+    Value(T),
+}
+
+impl<T> Nullable<T> {
+    /// The value, if there is one.
+    pub fn value(self) -> Option<T> {
+        match self {
+            Nullable::Value(v) => Some(v),
+            Nullable::Absent | Nullable::Null => None,
+        }
+    }
+
+    pub fn map<U>(self, f: impl FnOnce(T) -> U) -> Nullable<U> {
+        match self {
+            Nullable::Absent => Nullable::Absent,
+            Nullable::Null => Nullable::Null,
+            Nullable::Value(v) => Nullable::Value(f(v)),
+        }
+    }
+}
+
 /// The parameters of one request.
 #[derive(Debug, Clone, Default, PartialEq)]
 pub struct Params {
@@ -354,10 +380,16 @@ impl Params {
             .is_some_and(|v| !matches!(v, Value::Json(Json::Null)))
     }
 
+    /// A parameter's value; `null` counts as absent.
     pub fn raw(&self, name: &str) -> Option<&Value> {
         self.values
             .get(name)
             .filter(|v| !matches!(v, Value::Json(Json::Null)))
+    }
+
+    /// A parameter's value, including an explicit `null`.
+    pub fn raw_or_null(&self, name: &str) -> Option<&Value> {
+        self.values.get(name)
     }
 
     pub fn insert(&mut self, name: impl Into<String>, value: Value) {
@@ -386,6 +418,17 @@ impl Params {
     pub fn required<T: FromParam>(&self, name: &str) -> ApiResult<T> {
         self.optional(name)?.ok_or_else(|| {
             ApiError::bad_request(format!("The required parameter \"{name}\" was missing!"))
+        })
+    }
+
+    /// A parameter that may be given as `null`.
+    pub fn nullable<T: FromParam>(&self, name: &str) -> ApiResult<Nullable<T>> {
+        Ok(match self.raw_or_null(name) {
+            None => Nullable::Absent,
+            Some(Value::Json(Json::Null)) => Nullable::Null,
+            Some(_) => self
+                .optional(name)?
+                .map_or(Nullable::Absent, Nullable::Value),
         })
     }
 

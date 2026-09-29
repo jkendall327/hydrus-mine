@@ -291,7 +291,10 @@ async fn replay_step(
     let expected_status = recorded["status"].as_u64().unwrap() as u16;
     let mut problems = Vec::new();
     if status != expected_status {
-        problems.push(format!("status: expected {expected_status} got {status}"));
+        problems.push(format!(
+            "status: expected {expected_status} got {status} ({})",
+            truncate(&String::from_utf8_lossy(&bytes))
+        ));
     }
     let expected_type = recorded["content_type"].as_str().unwrap_or("");
     if content_type != expected_type {

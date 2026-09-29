@@ -4,3 +4,4 @@ pub mod access;
 pub mod add_files;
 pub mod add_tags;
 pub mod files;
+pub mod metadata;

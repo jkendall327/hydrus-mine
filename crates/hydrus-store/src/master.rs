@@ -351,7 +351,7 @@ string_table!(
     "label"
 );
 string_table!(
-    intern_note,
+    intern_note_text,
     note_id,
     notes,
     NoteId,
@@ -359,6 +359,17 @@ string_table!(
     "note_id",
     "note"
 );
+
+/// Intern a note's text, adding new texts to the note full-text index.
+pub fn intern_note(conn: &Connection, note: &str) -> Result<NoteId> {
+    if let Some(id) = note_id(conn, note)? {
+        return Ok(id);
+    }
+    let id = intern_note_text(conn, note)?;
+    conn.prepare_cached("INSERT INTO cache_note_fts (rowid, note) VALUES (?1, ?2)")?
+        .execute(rusqlite::params![id, note])?;
+    Ok(id)
+}
 
 fn last_id<I: From<u32>>(conn: &Connection) -> Result<I> {
     let raw = conn.last_insert_rowid();

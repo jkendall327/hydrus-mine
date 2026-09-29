@@ -59,3 +59,9 @@ conformance runner, which skips exactly the recorded fields listed in
   record leaves the cache reporting the combined-local-media deletion and
   "deleted from anywhere" membership that the database no longer has. We
   have no such cache and report what the reference reports after a restart.
+
+## Client API input checking (`hydrus-api`)
+
+- **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or
+  `false` for a numerical or inc/dec rating service (Python counts a bool as
+  an int, so the reference stores `true` as one star).

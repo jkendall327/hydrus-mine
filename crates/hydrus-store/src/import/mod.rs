@@ -752,6 +752,9 @@ impl Copier<'_> {
             let (id, subtag) = row?;
             master::index_subtag(self.conn, id, &subtag)?;
         }
+        self.conn.execute_batch(
+            "INSERT INTO cache_note_fts (rowid, note) SELECT note_id, note FROM notes",
+        )?;
         counts::rebuild_all(self.conn)?;
         Ok(())
     }

@@ -8,6 +8,7 @@ pub mod content;
 pub mod hash;
 pub mod ids;
 pub mod mime;
+pub mod notes;
 pub mod service;
 pub mod sort;
 pub mod tag;
