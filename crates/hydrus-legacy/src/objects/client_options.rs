@@ -14,6 +14,7 @@
 use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
+use hydrus_core::subscriptions::CheckerOptions;
 
 use super::duplicates::DuplicateMergeOptions;
 use super::location::LocationContext;
@@ -62,6 +63,11 @@ pub struct ClientOptions {
     /// Duplicate metadata merge options by `HC.DUPLICATE_*` relationship
     /// (better, same quality, alternate); `None` if not stored.
     pub duplicate_action_options: Option<BTreeMap<i64, DuplicateMergeOptions>>,
+    /// New subscriptions' and new watchers' checker timings (`misc`'s
+    /// `default_subscription_checker_options` and
+    /// `default_thread_watcher_options`).
+    pub default_subscription_checker_options: Option<CheckerOptions>,
+    pub default_watcher_checker_options: Option<CheckerOptions>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -137,6 +143,14 @@ impl ClientOptions {
                 LocationContext::from_object,
             )?,
             duplicate_action_options: duplicate_action_options(&settings)?,
+            default_subscription_checker_options: misc_checker(
+                &settings,
+                "default_subscription_checker_options",
+            )?,
+            default_watcher_checker_options: misc_checker(
+                &settings,
+                "default_thread_watcher_options",
+            )?,
             dictionary: dictionary.clone(),
         };
         Ok(options)
@@ -325,6 +339,19 @@ fn default_tag_sorts(settings: &Settings<'_>) -> DecodeResult<BTreeMap<i64, TagS
             ))
         })
         .collect()
+}
+
+/// A checker options object in the `misc` group.
+fn misc_checker(settings: &Settings<'_>, name: &str) -> DecodeResult<Option<CheckerOptions>> {
+    let Some(meta) = settings.get("misc") else {
+        return Ok(None);
+    };
+    for (key, value) in dictionary_pairs(expect_object(meta, "misc")?)?.iter() {
+        if key.as_str() == Some(name) {
+            return super::subscriptions::checker_options(expect_object(value, name)?).map(Some);
+        }
+    }
+    Ok(None)
 }
 
 fn duplicate_action_options(

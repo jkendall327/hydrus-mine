@@ -35,6 +35,35 @@ impl Default for CheckerOptions {
     }
 }
 
+/// The checker timings new subscriptions and new watchers start with (the
+/// client options' `default_subscription_checker_options` and
+/// `default_thread_watcher_options`).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct CheckerDefaults {
+    pub subscriptions: CheckerOptions,
+    pub watchers: CheckerOptions,
+}
+
+impl Default for CheckerDefaults {
+    /// The reference's: "artist subscription" and "thread".
+    fn default() -> Self {
+        Self {
+            subscriptions: CheckerOptions {
+                intended_files_per_check: 4.0,
+                never_faster_than: 86400,
+                never_slower_than: 90 * 86400,
+                death_file_velocity: (1, 180 * 86400),
+            },
+            watchers: CheckerOptions {
+                intended_files_per_check: 4.0,
+                never_faster_than: 300,
+                never_slower_than: 86400,
+                death_file_velocity: (1, 3 * 86400),
+            },
+        }
+    }
+}
+
 /// What the timing needs to know about one found file.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeedTime {

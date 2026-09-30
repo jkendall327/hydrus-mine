@@ -88,6 +88,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 .collect::<Result<_>>()?;
         }
         insert_setting(&mut input, &viewing)?;
+        let mut checkers = hydrus_core::subscriptions::CheckerDefaults::default();
+        if let Some(c) = &options.default_subscription_checker_options {
+            checkers.subscriptions = c.clone();
+        }
+        if let Some(c) = &options.default_watcher_checker_options {
+            checkers.watchers = c.clone();
+        }
+        insert_setting(&mut input, &checkers)?;
         if let Some(stored) = &options.duplicate_action_options {
             let merge = duplicate_merge_settings(stored, &mut input.warnings)?;
             insert_setting(&mut input, &merge)?;
@@ -643,6 +651,18 @@ mod tests {
         let downloaders: hydrus_parse::Downloaders =
             serde_json::from_value(input.settings["downloaders"].clone()).unwrap();
         assert!(downloaders.unconverted.is_empty());
+    }
+
+    #[test]
+    fn a_new_clients_checker_timings_are_our_defaults() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let decoded: hydrus_core::subscriptions::CheckerDefaults =
+            serde_json::from_value(input.settings["checker_defaults"].clone()).unwrap();
+        assert_eq!(
+            decoded,
+            hydrus_core::subscriptions::CheckerDefaults::default()
+        );
     }
 
     #[test]

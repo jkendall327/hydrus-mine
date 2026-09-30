@@ -30,6 +30,8 @@ pub struct GalleryOutcome {
     pub added_new_gallery_pages: bool,
     pub can_search_for_more_files: bool,
     pub stop_reason: String,
+    /// The page's title, if its parser finds one.
+    pub title: Option<String>,
 }
 
 /// What became of a gallery page's file seeds.
@@ -391,6 +393,7 @@ impl Downloader {
                 false,
             ));
         }
+        outcome.title = hydrus_parse::content::title(&posts);
         let mut file_seeds = seeds_from_posts(classes, &posts, &url_for_child_referral);
         for child in &mut file_seeds {
             give_file_seed_my_info(classes, seed, child, &url_for_child_referral);

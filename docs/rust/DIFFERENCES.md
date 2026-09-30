@@ -136,8 +136,11 @@ merges come from the in-memory cache described below.
   options' size limits.
 - **Only the default bandwidth rules apply** (one request a second per site,
   five overall); rules you set yourself are not migrated yet.
-- **Watchable URLs sent by `/add_urls/add_url` are refused** until thread
-  watchers are supported.
+- **Watchers are grouped by page name only.** A watchable URL sent by
+  `/add_urls/add_url` starts a watcher on the named watcher "page" (by
+  default "watcher") as the reference's does, but there are no pages to
+  show yet, and a check that errors pauses the watcher without the
+  reference's five-second status display.
 - **Subscription messages go to the log** (and the subscription runner's
   status) rather than popups, until there is a GUI; so do new files a
   subscription would publish to a popup button or page.

@@ -115,3 +115,56 @@ async fn urls_go_to_named_queues_with_their_tags() {
         assert_eq!(body["error"], why, "{body}");
     }
 }
+
+/// A thread URL starts a watcher on the "watcher" page (the downloader is
+/// not started here, so nothing is fetched).
+#[tokio::test]
+async fn watchable_urls_start_watchers() {
+    use hydrus_core::url::strings::StringMatch;
+    use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlType};
+
+    let fixture = common::imported_store("basic");
+    let store = fixture.state.store.clone();
+    let class = UrlClass {
+        name: "board thread".into(),
+        key: vec![0xcf],
+        url_type: UrlType::Watchable,
+        preferred_scheme: "https".into(),
+        domain_mask: DomainMask::new(vec!["board.example".into()], vec![], false, false),
+        path_components: vec![
+            (StringMatch::fixed("thread"), None),
+            (StringMatch::any(), None),
+        ],
+        ..UrlClass::default()
+    };
+    let settings = UrlClassSettings {
+        parser_links: vec![(hex::encode(&class.key), Some("ad".into()))],
+        parser_keys: vec!["ad".into()],
+        url_classes: vec![class],
+        collapse_leading_slashes: false,
+    };
+    store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
+        .unwrap();
+    let router = hydrus_api::router(fixture.state.clone());
+    let (status, body) = add_url(
+        &router,
+        &json!({"url": "https://board.example/thread/123", "filterable_tags": ["op"]}),
+    )
+    .await;
+    assert_eq!(status, 200, "{body}");
+    assert_eq!(
+        body["human_result_text"],
+        "\"board thread\" URL added successfully."
+    );
+    let watchers = store
+        .read(|conn| queues::queues(conn, Some(QueueKind::Watcher)))
+        .unwrap();
+    assert_eq!(watchers.len(), 1);
+    assert_eq!(watchers[0].name, "watcher");
+    let state = hydrus_download::queue::watcher_state(&watchers[0]).unwrap();
+    assert_eq!(state.url, "https://board.example/thread/123");
+    assert_eq!(state.external_filterable_tags, ["op".to_owned()].into());
+    // the reference's default thread timing
+    assert_eq!(state.checker.never_faster_than, 300);
+}

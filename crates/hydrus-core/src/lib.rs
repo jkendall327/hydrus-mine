@@ -22,6 +22,7 @@ pub mod tag_filter;
 pub mod thumbnail;
 pub mod time;
 pub mod url;
+pub mod watchers;
 
 pub use content::{
     CanvasType, ContentStatus, ContentType, ContentUpdateAction, DuplicateType, TimestampType,

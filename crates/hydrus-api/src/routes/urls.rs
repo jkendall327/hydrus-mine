@@ -258,15 +258,9 @@ pub async fn add_url(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRe
             capability.match_name
         )));
     }
-    if capability.url_type == UrlType::Watchable {
-        return Err(ApiError::bad_request(format!(
-            "\"{}\" is a watchable URL, and hydrus-rs cannot watch threads yet.",
-            capability.match_name
-        )));
-    }
     if !matches!(
         capability.url_type,
-        UrlType::Unknown | UrlType::File | UrlType::Post | UrlType::Gallery
+        UrlType::Unknown | UrlType::File | UrlType::Post | UrlType::Gallery | UrlType::Watchable
     ) {
         return Err(ApiError::bad_request(format!(
             "\"{}\" URL was accepted but not added successfully--could not find/generate a new downloader page for it.",
@@ -275,17 +269,19 @@ pub async fn add_url(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRe
     }
     let match_name = capability.match_name.clone();
     let normalised = url.clone();
+    let watchable = capability.url_type == UrlType::Watchable;
     app.blocking(move |app| {
+        let caller = if watchable {
+            CallerType::WatcherUrls
+        } else {
+            CallerType::PostUrls
+        };
         let slice = match destinations {
             None => None,
             Some(destinations) => {
                 let full = downloads
                     .downloader()
-                    .full_options(
-                        CallerType::PostUrls,
-                        &ImportOptionsSlice::default(),
-                        &[&url],
-                    )
+                    .full_options(caller, &ImportOptionsSlice::default(), &[&url])
                     .map_err(|e| ApiError::server(e.to_string()))?;
                 let mut locations = full.locations;
                 locations.destinations = destinations;
@@ -295,12 +291,25 @@ pub async fn add_url(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRe
                 })
             }
         };
-        let queue = downloads
-            .url_queue_for(page_name.as_deref(), page_key.as_deref(), slice.as_ref())
-            .map_err(|e| ApiError::server(e.to_string()))?;
-        downloads
-            .pend_urls(queue.id, &[url], &filterable_tags, &additional_tags)
-            .map_err(|e| ApiError::server(e.to_string()))?;
+        if watchable {
+            downloads
+                .watch(
+                    &url,
+                    page_name.as_deref(),
+                    page_key.as_deref(),
+                    slice.as_ref(),
+                    &filterable_tags,
+                    &additional_tags,
+                )
+                .map_err(|e| ApiError::server(e.to_string()))?;
+        } else {
+            let queue = downloads
+                .url_queue_for(page_name.as_deref(), page_key.as_deref(), slice.as_ref())
+                .map_err(|e| ApiError::server(e.to_string()))?;
+            downloads
+                .pend_urls(queue.id, &[url], &filterable_tags, &additional_tags)
+                .map_err(|e| ApiError::server(e.to_string()))?;
+        }
         let _ = &app;
         Ok(())
     })

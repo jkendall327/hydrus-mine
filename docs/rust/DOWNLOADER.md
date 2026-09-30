@@ -5,8 +5,10 @@ subscriptions work: `/add_urls/add_url` (Hydrus Companion's "send to
 hydrus") downloads posts and files into named queues, and subscriptions
 (migrated with their history) are checked on their schedule while `hydrus
 serve` runs. `hydrus subscriptions <store> ...` lists subscriptions and adds
-many queries at once. Gallery-search queues and watchers are next. Tracked as
-task "Downloader engine".
+many queries at once. Thread URLs sent to `/add_urls/add_url` start
+watchers, which check the thread on the reference's timing until it 404s
+or goes quiet. Gallery-search queues are next. Tracked as task "Downloader
+engine".
 
 ## Goal
 

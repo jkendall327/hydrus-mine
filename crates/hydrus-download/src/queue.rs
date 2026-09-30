@@ -13,7 +13,9 @@ use parking_lot::Mutex;
 use tokio::sync::Notify;
 
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
+use hydrus_core::subscriptions::{CheckerDefaults, SeedTime};
 use hydrus_core::url::UrlType;
+use hydrus_core::watchers::{CheckerStatus, WatcherState};
 use hydrus_net::Job;
 use hydrus_store::StoreError;
 use hydrus_store::queues::{
@@ -76,9 +78,11 @@ impl QueueRunner {
         let all = self
             .downloader
             .store
-            .read(|conn| queues::queues(conn, Some(QueueKind::Urls)))?;
+            .read(|conn| queues::queues(conn, None))?;
         for queue in all {
-            self.wake(queue.id);
+            if matches!(queue.kind, QueueKind::Urls | QueueKind::Watcher) {
+                self.wake(queue.id);
+            }
         }
         Ok(())
     }
@@ -217,7 +221,207 @@ impl QueueRunner {
         Ok(added)
     }
 
+    /// Watch a thread (`MultipleWatcherImport.AddURL` on the page from
+    /// `GetOrMakeMultipleWatcherPage`): a new watcher on the watcher page
+    /// with this page key, else this name, else any, preferring pages with
+    /// the same import options; nothing new if the page already watches it.
+    /// Returns the watcher's queue, and whether it is new.
+    pub fn watch(
+        self: &Arc<Self>,
+        url: &str,
+        name: Option<&str>,
+        page_key: Option<&[u8]>,
+        options: Option<&ImportOptionsSlice>,
+        filterable_tags: &BTreeSet<String>,
+        additional_tags: &[(String, BTreeSet<String>)],
+    ) -> Result<(Queue, bool), StoreError> {
+        let store = &self.downloader.store;
+        let snapshot = store.snapshot();
+        let url = snapshot
+            .url_classes
+            .normalise(url, true)
+            .unwrap_or_else(|_| url.to_owned());
+        let all = store.read(|conn| queues::queues(conn, Some(QueueKind::Watcher)))?;
+        let mut pages: Vec<(Option<Vec<u8>>, String, ImportOptionsSlice)> = Vec::new();
+        for q in &all {
+            let page = (q.page_key.clone(), q.name.clone(), q.options.clone());
+            if !pages.contains(&page) {
+                pages.push(page);
+            }
+        }
+        if let Some(key) = page_key.filter(|k| pages.iter().any(|p| p.0.as_deref() == Some(*k))) {
+            pages.retain(|p| p.0.as_deref() == Some(key));
+        } else if let Some(name) = name {
+            pages.retain(|p| p.1 == name);
+        }
+        if let Some(options) = options {
+            pages.retain(|p| p.2 == *options);
+        }
+        let (key, name, options) = pages.into_iter().next().unwrap_or_else(|| {
+            (
+                page_key.map(<[u8]>::to_vec),
+                name.unwrap_or(DEFAULT_WATCHER_PAGE_NAME).to_owned(),
+                options.cloned().unwrap_or_default(),
+            )
+        });
+        if let Some(existing) = all.into_iter().find(|q| {
+            q.page_key == key
+                && q.name == name
+                && q.options == options
+                && watcher_state(q).is_some_and(|w| w.url == url)
+        }) {
+            self.wake(existing.id);
+            return Ok((existing, false));
+        }
+        let checkers: CheckerDefaults = store.read(hydrus_store::settings::get)?;
+        let mut state = WatcherState::new(url, checkers.watchers, now());
+        state.external_filterable_tags.clone_from(filterable_tags);
+        state.external_additional_tags = additional_tags.to_vec();
+        let extra = serde_json::to_value(&state).expect("plain data serialises");
+        let queue = store.write(move |ctx| {
+            let id = queues::create_queue(
+                ctx.conn(),
+                QueueKind::Watcher,
+                &name,
+                key.as_deref(),
+                &options,
+                now(),
+            )?;
+            queues::set_queue_extra(ctx.conn(), id, &extra)?;
+            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
+        })?;
+        self.wake(queue.id);
+        Ok((queue, true))
+    }
+
+    /// Check a watcher's thread now (`WatcherImport.CheckNow`).
+    pub fn check_watcher_now(self: &Arc<Self>, queue: i64) -> Result<(), StoreError> {
+        let store = &self.downloader.store;
+        let Some(q) = store.read(|conn| queues::queue(conn, queue))? else {
+            return Ok(());
+        };
+        let Some(mut state) = watcher_state(&q) else {
+            return Ok(());
+        };
+        let times = seed_times(&store.read(|conn| queues::file_seeds(conn, queue))?);
+        state.check_now(&times, now());
+        save_watcher_state(store, queue, &state)?;
+        self.wake(queue);
+        Ok(())
+    }
+
+    /// `_CheckWatchableURL`: read the thread for new files, then time the
+    /// next check.
+    async fn check_watcher(&self, queue: &Queue, mut state: WatcherState, handle: &Handle) {
+        let store = &self.downloader.store;
+        let job = Job::new();
+        *handle.job.lock() = Some(Arc::clone(&job));
+        handle.status.lock().files_status = "checking".into();
+        let new_seed = NewGallerySeed {
+            url: state.url.clone(),
+            can_generate_more_pages: false,
+            referral_url: None,
+            meta: GallerySeedMeta {
+                external_filterable_tags: state.external_filterable_tags.clone(),
+                external_additional_tags: state.external_additional_tags.clone(),
+                run_token: hex::encode(rand_token()),
+                ..GallerySeedMeta::default()
+            },
+        };
+        let queue_id = queue.id;
+        let seed = store.write(move |ctx| {
+            // a check that never finished (say, the client was closed)
+            while let Some(mut old) = queues::next_gallery_seed(ctx.conn(), queue_id)? {
+                set_gallery_status(&mut old, SeedStatus::Vetoed, "check never finished".into());
+                queues::update_gallery_seed(ctx.conn(), &old)?;
+            }
+            queues::add_gallery_seeds(ctx.conn(), queue_id, &[new_seed], None, now())?;
+            queues::next_gallery_seed(ctx.conn(), queue_id)
+        });
+        let mut seed = match seed {
+            Ok(Some(seed)) => seed,
+            Ok(None) => {
+                *handle.job.lock() = None;
+                return;
+            }
+            Err(e) => {
+                *handle.job.lock() = None;
+                tracing::error!(queue_id, "adding a watcher's check: {e}");
+                return;
+            }
+        };
+        let mut sink = QueueSink {
+            queue: queue_id,
+            max_new_urls: None,
+        };
+        let mut seen = BTreeSet::new();
+        let result = self
+            .downloader
+            .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
+            .await;
+        *handle.job.lock() = None;
+        match result {
+            Ok(outcome) => {
+                if let Some(title) = outcome.title {
+                    title
+                        .lines()
+                        .next()
+                        .unwrap_or_default()
+                        .clone_into(&mut state.subject);
+                }
+                if outcome.result_404 {
+                    state.checking_paused = true;
+                    state.status = CheckerStatus::NotFound;
+                }
+                if seed.status == SeedStatus::Error {
+                    state.checking_paused = true;
+                }
+            }
+            Err(WorkError::Network(e)) => {
+                state.delay(self.network_error_delay as i64, &e.to_string(), now());
+                set_gallery_status(&mut seed, SeedStatus::Error, e.to_string());
+            }
+            Err(e) => set_gallery_status(&mut seed, SeedStatus::Error, e.to_string()),
+        }
+        let t = now();
+        state.check_now = false;
+        state.last_check_time = t;
+        let saved = seed.clone();
+        let files = store.write(move |ctx| {
+            queues::update_gallery_seed(ctx.conn(), &saved)?;
+            queues::file_seeds(ctx.conn(), queue_id)
+        });
+        let times = match files {
+            Ok(files) => seed_times(&files),
+            Err(e) => {
+                tracing::error!(queue_id, "saving a watcher's check: {e}");
+                return;
+            }
+        };
+        state.update_next_check_time(&times, t);
+        // `_Compact`: the gallery log keeps its latest 500 checks
+        let before = t - 2 * state.checker.death_file_velocity_period();
+        let compacted = store.write(move |ctx| {
+            let galleries = queues::gallery_seeds(ctx.conn(), queue_id)?;
+            let entries: Vec<(bool, i64)> = galleries
+                .iter()
+                .map(|g| (g.status == SeedStatus::Unknown, g.created))
+                .collect();
+            let drop: Vec<i64> =
+                hydrus_core::subscriptions::compact_gallery_log(&entries, 500, before)
+                    .into_iter()
+                    .map(|i| galleries[i].id)
+                    .collect();
+            queues::remove_gallery_seeds_by_id(ctx.conn(), &drop)
+        });
+        if let Err(e) = compacted.and_then(|()| save_watcher_state(store, queue_id, &state)) {
+            tracing::error!(queue_id, "saving a watcher: {e}");
+        }
+        handle.status.lock().files_status.clear();
+    }
+
     async fn run(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
+        let mut first_pass = true;
         loop {
             let store = &self.downloader.store;
             let queue = match store.read(|conn| queues::queue(conn, queue_id)) {
@@ -238,7 +442,29 @@ impl QueueRunner {
                 }
                 handle.status.lock().delayed_until = None;
             }
-            if !queue.gallery_paused {
+            let mut watcher = None;
+            if queue.kind == QueueKind::Watcher {
+                let Some(mut state) = watcher_state(&queue) else {
+                    return;
+                };
+                if first_pass {
+                    // (`Start`: the timing is worked out afresh)
+                    first_pass = false;
+                    let seeds = store.read(|conn| queues::file_seeds(conn, queue_id));
+                    if let Ok(seeds) = seeds {
+                        state.update_next_check_time(&seed_times(&seeds), now());
+                        if let Err(e) = save_watcher_state(store, queue_id, &state) {
+                            tracing::error!(queue_id, "saving a watcher: {e}");
+                        }
+                    }
+                }
+                if state.check_due(now()) {
+                    self.check_watcher(&queue, state, handle).await;
+                    continue;
+                }
+                watcher = Some(state);
+            }
+            if queue.kind != QueueKind::Watcher && !queue.gallery_paused {
                 match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
                     Ok(Some(gallery_seed)) => {
                         self.work_on_gallery_seed(gallery_seed, handle).await;
@@ -252,7 +478,10 @@ impl QueueRunner {
                     }
                 }
             }
-            let next = if queue.files_paused {
+            let files_blocked = watcher
+                .as_ref()
+                .is_some_and(|w| !w.can_do_network_work(now()));
+            let next = if queue.files_paused || files_blocked {
                 None
             } else {
                 match store.read(|conn| queues::next_file_seed(conn, queue_id)) {
@@ -265,9 +494,18 @@ impl QueueRunner {
             };
             let Some(seed) = next else {
                 handle.status.lock().files_status.clear();
-                // idle until more work arrives (or check back in a while)
+                // idle until more work arrives, the next check, or a while
+                let mut wait = 600;
+                if let Some(w) = &watcher
+                    && !w.checking_paused
+                    && w.status == CheckerStatus::Ok
+                {
+                    let due = w.next_check_time.max(w.no_work_until) + 1;
+                    wait = (due - now()).clamp(1, 600);
+                }
                 let _ =
-                    tokio::time::timeout(Duration::from_secs(600), handle.wake.notified()).await;
+                    tokio::time::timeout(Duration::from_secs(wait as u64), handle.wake.notified())
+                        .await;
                 continue;
             };
             let did_work = self.work_on_file_seed(&queue, seed, handle).await;
@@ -320,17 +558,21 @@ impl QueueRunner {
         let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
             .chain(seed.referral_url.as_deref())
             .collect();
-        let options =
-            match self
-                .downloader
-                .full_options(CallerType::PostUrls, &queue.options, &lookup)
-            {
-                Ok(o) => o,
-                Err(e) => {
-                    tracing::error!("import options: {e}");
-                    return false;
-                }
-            };
+        let caller = if queue.kind == QueueKind::Watcher {
+            CallerType::WatcherUrls
+        } else {
+            CallerType::PostUrls
+        };
+        let options = match self
+            .downloader
+            .full_options(caller, &queue.options, &lookup)
+        {
+            Ok(o) => o,
+            Err(e) => {
+                tracing::error!("import options: {e}");
+                return false;
+            }
+        };
         let job = Job::new();
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
@@ -361,4 +603,33 @@ impl QueueRunner {
 /// A random 32-byte token (the reference's `HydrusData.GenerateKey`).
 fn rand_token() -> [u8; 32] {
     rand::random()
+}
+
+/// The name of a new watcher page (the reference's).
+pub const DEFAULT_WATCHER_PAGE_NAME: &str = "watcher";
+
+/// A watcher queue's state.
+pub fn watcher_state(queue: &Queue) -> Option<WatcherState> {
+    (queue.kind == QueueKind::Watcher)
+        .then(|| serde_json::from_value(queue.extra.clone()).ok())
+        .flatten()
+}
+
+fn save_watcher_state(
+    store: &hydrus_store::Store,
+    queue: i64,
+    state: &WatcherState,
+) -> Result<(), StoreError> {
+    let extra = serde_json::to_value(state).expect("plain data serialises");
+    store.write(move |ctx| queues::set_queue_extra(ctx.conn(), queue, &extra))
+}
+
+fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
+    seeds
+        .iter()
+        .map(|s| SeedTime {
+            source_time: s.source_time,
+            created: s.created,
+        })
+        .collect()
 }

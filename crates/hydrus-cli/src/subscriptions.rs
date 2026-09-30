@@ -223,9 +223,12 @@ fn add(
         let Some((gug_key, gug_name)) = gug else {
             bail!("\"{name}\" is a new subscription: say which --downloader it uses");
         };
+        let checkers: hydrus_core::subscriptions::CheckerDefaults =
+            store.read(hydrus_store::settings::get)?;
         let mut settings = SubscriptionSettings {
             gug_key,
             gug_name,
+            checker: checkers.subscriptions,
             ..SubscriptionSettings::default()
         };
         if let Some(n) = initial_limit {
