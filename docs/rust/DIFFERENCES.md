@@ -317,6 +317,17 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
   pixels.
 - **Ugoiras are not rendered yet** (a 400 says so).
 
+## Popups (`/manage_popups/*`)
+
+Checked by the `popups` conformance scenario.
+
+- **Every popup is in view**, and a dismissed one leaves the list at once
+  (the reference's GUI shows a limited number, and clears dismissed popups
+  on its next refresh, within a second or so).
+- **Only popups made through the API are listed.** The reference also lists
+  its own jobs (downloads, maintenance, errors) as popups; hydrus-rs logs
+  those instead, so far.
+
 ## Repositories (`/manage_services/*`)
 
 - **Pending content can't be committed.** hydrus-rs doesn't talk to

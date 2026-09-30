@@ -19,8 +19,13 @@
 //! - how long ago something happened, in human-readable notes ("which was
 //!   43 minutes ago before this check"), depends on when the recording was
 //!   made, so that phrase is a placeholder;
-//! - a step's `random` keys (session keys, boot ids) compare by type, and
-//!   strings by length.
+//! - a step's `random` paths (session keys, boot ids, popup keys) compare by
+//!   type, and strings by length.
+//!
+//! Steps can `capture` values from a response (`{"NAME": "a.path"}`) for
+//! later steps to use as `{NAME}`. `sleep` steps are replayed only if marked
+//! `replay` (most only give the reference's GUI time to catch up while
+//! recording).
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -45,13 +50,27 @@ fn media_dir() -> PathBuf {
     repo_root().join("oracle/fixtures/import_media")
 }
 
-fn substitute(value: &Json, media: &str) -> Json {
+/// Fill in `{MEDIA}`, and `{NAME}`s captured from earlier responses.
+fn fill(text: &str, media: &str, variables: &HashMap<String, String>) -> String {
+    let mut text = text.replace("{MEDIA}", media);
+    for (name, value) in variables {
+        text = text.replace(&format!("{{{name}}}"), value);
+    }
+    text
+}
+
+fn substitute(value: &Json, media: &str, variables: &HashMap<String, String>) -> Json {
     match value {
-        Json::String(s) => Json::String(s.replace("{MEDIA}", media)),
-        Json::Array(items) => Json::Array(items.iter().map(|v| substitute(v, media)).collect()),
+        Json::String(s) => Json::String(fill(s, media, variables)),
+        Json::Array(items) => Json::Array(
+            items
+                .iter()
+                .map(|v| substitute(v, media, variables))
+                .collect(),
+        ),
         Json::Object(map) => Json::Object(
             map.iter()
-                .map(|(k, v)| (k.clone(), substitute(v, media)))
+                .map(|(k, v)| (k.clone(), substitute(v, media, variables)))
                 .collect(),
         ),
         other => other.clone(),
@@ -113,6 +132,25 @@ fn known_differences() -> Vec<KnownDifference> {
     )
     .unwrap();
     toml::from_str::<File>(&text).unwrap().difference
+}
+
+/// Mask the random values at a dotted path, where `*` is every item of a
+/// list or every value of an object.
+fn mask_random_at(value: &mut Json, path: &[&str]) {
+    let Some((first, rest)) = path.split_first() else {
+        *value = mask_random(value);
+        return;
+    };
+    match (value, *first) {
+        (Json::Array(items), "*") => items.iter_mut().for_each(|v| mask_random_at(v, rest)),
+        (Json::Object(map), "*") => map.values_mut().for_each(|v| mask_random_at(v, rest)),
+        (Json::Object(map), key) => {
+            if let Some(v) = map.get_mut(key) {
+                mask_random_at(v, rest);
+            }
+        }
+        _ => {}
+    }
 }
 
 /// What can be compared of a random value: its type, and a string's length.
@@ -318,6 +356,7 @@ struct Outcome {
     skipped: Option<String>,
 }
 
+#[allow(clippy::too_many_arguments)]
 async fn replay_step(
     router: &axum::Router,
     step: &Json,
@@ -327,14 +366,27 @@ async fn replay_step(
     // (recording started, replay started) for scenarios that write
     now_window: Option<(i64, i64)>,
     ignored_paths: &[String],
+    variables: &mut HashMap<String, String>,
 ) -> Outcome {
+    if let Some(seconds) = step["sleep"].as_f64() {
+        // most sleeps only give the reference's GUI time to catch up
+        if step["replay"].as_bool() == Some(true) {
+            tokio::time::sleep(std::time::Duration::from_secs_f64(seconds)).await;
+        }
+        return Outcome {
+            endpoint: "(sleep)".into(),
+            passed: true,
+            detail: "sleep".into(),
+            skipped: None,
+        };
+    }
     let media = media_dir().to_string_lossy().into_owned();
     let path = step["path"].as_str().unwrap().to_owned();
     let mut uri = path.clone();
     if let Some(query) = step["query"].as_array().filter(|q| !q.is_empty()) {
         let mut encoder = form_urlencoded::Serializer::new(String::new());
         for pair in query {
-            let value = pair[1].as_str().unwrap().replace("{MEDIA}", &media);
+            let value = fill(pair[1].as_str().unwrap(), &media, variables);
             encoder.append_pair(pair[0].as_str().unwrap(), &value);
         }
         uri = format!("{uri}?{}", encoder.finish());
@@ -353,7 +405,7 @@ async fn replay_step(
     }
     let body = if let Some(json) = step.get("json") {
         builder = builder.header("Content-Type", "application/json");
-        Body::from(substitute(json, &media).to_string())
+        Body::from(substitute(json, &media, variables).to_string())
     } else if let Some(file) = step["body_file"].as_str() {
         builder = builder.header("Content-Type", "application/octet-stream");
         Body::from(std::fs::read(repo_root().join("oracle/fixtures").join(file)).unwrap())
@@ -391,6 +443,16 @@ async fn replay_step(
     if let Some(expected) = recorded.get("json") {
         match serde_json::from_slice::<Json>(&bytes) {
             Ok(actual) => {
+                for (name, path) in step["capture"].as_object().into_iter().flatten() {
+                    let mut value = &actual;
+                    for part in path.as_str().unwrap().split('.') {
+                        value = match part.parse::<usize>() {
+                            Ok(i) if value.is_array() => &value[i],
+                            _ => &value[part],
+                        };
+                    }
+                    variables.insert(name.clone(), value.as_str().unwrap_or_default().to_owned());
+                }
                 let mut actual = unsubstitute(actual, db_dir, &media);
                 let mut expected = expected.clone();
                 mask_time_deltas(&mut actual);
@@ -411,12 +473,10 @@ async fn replay_step(
                     normalise_now(&mut expected, recorded_start);
                     normalise_now(&mut actual, replay_start);
                 }
-                for key in step["random"].as_array().into_iter().flatten() {
-                    let key = key.as_str().unwrap();
+                for path in step["random"].as_array().into_iter().flatten() {
+                    let path: Vec<&str> = path.as_str().unwrap().split('.').collect();
                     for v in [&mut actual, &mut expected] {
-                        if let Some(value) = v.get_mut(key) {
-                            *value = mask_random(value);
-                        }
+                        mask_random_at(v, &path);
                     }
                 }
                 if step["compare"].as_str() == Some("unordered_lists") {
@@ -526,6 +586,7 @@ async fn replay_recorded_scenarios() {
             )
         });
         let router = hydrus_api::router(Arc::clone(&fixture.state));
+        let mut variables = HashMap::new();
         let db_dir = fixture.legacy_dir.path().to_string_lossy().into_owned();
         for (index, (step, recorded)) in scenario["steps"]
             .as_array()
@@ -545,7 +606,14 @@ async fn replay_recorded_scenarios() {
                 .flat_map(|d| d.ignore.iter().cloned())
                 .collect();
             let mut outcome = replay_step(
-                &router, step, recorded, &manifest, &db_dir, now_window, &ignored,
+                &router,
+                step,
+                recorded,
+                &manifest,
+                &db_dir,
+                now_window,
+                &ignored,
+                &mut variables,
             )
             .await;
             outcome.detail = format!("[{name} #{index}] {}", outcome.detail);

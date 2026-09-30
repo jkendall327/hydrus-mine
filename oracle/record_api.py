@@ -51,21 +51,40 @@ def load_scenarios( names ):
     return [ json.load( open( os.path.join( SCENARIOS_DIR, n + '.json' ) ) ) for n in ( names or all_names ) ]
 
 
-def substitute( value ):
+def substitute( value, variables = None ):
+    """Fill in {MEDIA}, and {NAME}s captured from earlier responses."""
 
     if isinstance( value, str ):
 
-        return value.replace( '{MEDIA}', MEDIA_DIR )
+        value = value.replace( '{MEDIA}', MEDIA_DIR )
+
+        for ( name, captured ) in ( variables or {} ).items():
+
+            value = value.replace( '{' + name + '}', captured )
+
+
+        return value
 
 
     if isinstance( value, list ):
 
-        return [ substitute( v ) for v in value ]
+        return [ substitute( v, variables ) for v in value ]
 
 
     if isinstance( value, dict ):
 
-        return { k: substitute( v ) for ( k, v ) in value.items() }
+        return { k: substitute( v, variables ) for ( k, v ) in value.items() }
+
+
+    return value
+
+
+def resolve( value, path ):
+    """The value at a dotted path (`job_status.key`, `items.0.name`)."""
+
+    for part in path.split( '.' ):
+
+        value = value[ int( part ) ] if isinstance( value, list ) else value[ part ]
 
 
     return value
@@ -141,7 +160,19 @@ def run_steps( session, scenario, manifest ):
 
     responses = []
 
+    variables = {}
+
     for step in scenario[ 'steps' ]:
+
+        if 'sleep' in step:
+
+            # give the reference's GUI time to catch up
+            time.sleep( step[ 'sleep' ] )
+
+            responses.append( { 'status': 0, 'content_type': '', 'sleep': step[ 'sleep' ] } )
+
+            continue
+
 
         api = hydrus_driver.Api( session.port, access_key = None )
         headers = {}
@@ -155,14 +186,14 @@ def run_steps( session, scenario, manifest ):
         
         headers.update( step.get( 'headers', {} ) )
 
-        query = [ ( k, substitute( v ) ) for ( k, v ) in step.get( 'query', [] ) ]
+        query = [ ( k, substitute( v, variables ) ) for ( k, v ) in step.get( 'query', [] ) ]
 
         data = None
         json_body = None
 
         if 'json' in step:
 
-            json_body = substitute( step[ 'json' ] )
+            json_body = substitute( step[ 'json' ], variables )
 
         elif 'body_file' in step:
 
@@ -197,6 +228,11 @@ def run_steps( session, scenario, manifest ):
 
         response = { 'status': status, 'content_type': content_type.split( ';' )[0].strip() }
         response.update( describe_body( content_type, body, db_dir ) )
+
+        for ( name, path ) in step.get( 'capture', {} ).items():
+
+            variables[ name ] = resolve( response[ 'json' ], path )
+
 
         responses.append( response )
 

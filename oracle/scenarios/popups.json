@@ -1,0 +1,320 @@
+{
+ "name": "popups",
+ "description": "popup messages",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {
+    "status_title": "a title",
+    "status_text_1": "one",
+    "popup_gauge_1": [
+     1,
+     3
+    ],
+    "api_data": {
+     "x": 1
+    }
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ],
+   "capture": {
+    "P1": "job_status.key"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {
+    "status_title": "ongoing",
+    "is_cancellable": true,
+    "is_pausable": true
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ],
+   "capture": {
+    "P2": "job_status.key"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ],
+    "files_label": "some files",
+    "attached_files_mergable": true
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ],
+   "capture": {
+    "P3": "job_status.key"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {
+    "popup_gauge_1": [
+     1
+    ]
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/add_popup",
+   "json": {},
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "sleep": 1.5
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/update_popup",
+   "json": {
+    "job_status_key": "{P2}",
+    "status_text_1": "working",
+    "status_text_2": "hard",
+    "popup_gauge_2": [
+     2,
+     5
+    ]
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/update_popup",
+   "json": {
+    "job_status_key": "{P2}",
+    "status_text_2": null,
+    "status_title": null
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/update_popup",
+   "json": {
+    "job_status_key": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/update_popup",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/cancel_popup",
+   "json": {
+    "job_status_key": "{P2}"
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/call_user_callable",
+   "json": {
+    "job_status_key": "{P2}"
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "sleep": 1.5
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/finish_popup",
+   "json": {
+    "job_status_key": "{P1}"
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/dismiss_popup",
+   "json": {
+    "job_status_key": "{P1}"
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "sleep": 1.5
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_popups/finish_and_dismiss_popup",
+   "json": {
+    "job_status_key": "{P3}",
+    "seconds": 2
+   },
+   "key": "full",
+   "random": [
+    "job_status.key",
+    "job_status.creation_time"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "sleep": 4,
+   "replay": true
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [
+    [
+     "only_in_view",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_popups/get_popups",
+   "query": [],
+   "key": "restricted",
+   "compare": "exact",
+   "random": [
+    "job_statuses.*.key",
+    "job_statuses.*.creation_time"
+   ]
+  }
+ ]
+}

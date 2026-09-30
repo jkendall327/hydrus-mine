@@ -259,35 +259,35 @@ status = "todo"
 
 [[api]]
 path = "/manage_popups/add_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/call_user_callable"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/cancel_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/dismiss_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/finish_and_dismiss_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/finish_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/get_popups"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/update_popup"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_services/commit_pending"

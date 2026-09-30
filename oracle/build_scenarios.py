@@ -832,6 +832,70 @@ def services_scenarios():
     return scenario( 'manage_services', 'pending counts, forgetting pending content, committing', steps, read_only = False, fixture = 'repositories' )
 
 
+def popup_scenarios():
+
+    h = [ BY_NAME[ f'jpeg_{i:02}.jpg' ] for i in range( 2 ) ]
+    one = [ 'job_status.key', 'job_status.creation_time' ]
+    every = [ 'job_statuses.*.key', 'job_statuses.*.creation_time' ]
+
+    def add( body, name = None ):
+
+        step = random( post( '/manage_popups/add_popup', body ), *one )
+
+        if name is not None:
+
+            step[ 'capture' ] = { name : 'job_status.key' }
+
+
+        return step
+
+
+    def popups( **params ):
+
+        return random( get( '/manage_popups/get_popups', **params ), *every )
+
+
+    def on( path, name, **body ):
+
+        return random( post( f'/manage_popups/{path}', { 'job_status_key' : '{' + name + '}', **body } ), *one )
+
+
+    pause = { 'sleep' : 1.5 }
+
+    steps = [
+        popups(),
+        add( { 'status_title' : 'a title', 'status_text_1' : 'one', 'popup_gauge_1' : [ 1, 3 ], 'api_data' : { 'x' : 1 } }, 'P1' ),
+        add( { 'status_title' : 'ongoing', 'is_cancellable' : True, 'is_pausable' : True }, 'P2' ),
+        add( { 'hashes' : [ h[ 0 ], h[ 1 ], h[ 0 ] ], 'files_label' : 'some files', 'attached_files_mergable' : True }, 'P3' ),
+        add( { 'hashes' : [ h[ 0 ] ] } ),
+        add( { 'popup_gauge_1' : [ 1 ] } ),
+        add( {} ),
+        pause,
+        popups(),
+        on( 'update_popup', 'P2', status_text_1 = 'working', status_text_2 = 'hard', popup_gauge_2 = [ 2, 5 ] ),
+        on( 'update_popup', 'P2', status_text_2 = None, status_title = None ),
+        post( '/manage_popups/update_popup', { 'job_status_key' : 'ab' * 32 } ),
+        post( '/manage_popups/update_popup', {} ),
+        on( 'cancel_popup', 'P2' ),
+        on( 'call_user_callable', 'P2' ),
+        pause,
+        popups(),
+        on( 'finish_popup', 'P1' ),
+        on( 'dismiss_popup', 'P1' ),
+        pause,
+        popups(),
+        on( 'finish_and_dismiss_popup', 'P3', seconds = 2 ),
+        popups(),
+        # a wait that matters: the popup is dismissed after two seconds
+        { 'sleep' : 4, 'replay' : True },
+        popups(),
+        popups( only_in_view = True ),
+        random( get( '/manage_popups/get_popups', key = 'restricted' ), *every ),
+    ]
+
+    return scenario( 'popups', 'popup messages', steps, read_only = False )
+
+
 def client_options_scenarios():
 
     steps = [
@@ -947,7 +1011,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios(), client_options_scenarios() ]
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios(), client_options_scenarios(), popup_scenarios() ]
 
     for sc in scenarios:
 

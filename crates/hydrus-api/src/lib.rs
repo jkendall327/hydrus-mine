@@ -19,6 +19,7 @@ pub mod file_filter;
 pub mod location;
 pub mod media_json;
 pub mod params;
+pub mod popups;
 pub mod request;
 pub mod routes;
 pub mod server;
@@ -43,6 +44,8 @@ pub struct AppState {
     pub locked: std::sync::atomic::AtomicBool,
     /// Holds the database paused while it is locked.
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
+    /// Popup messages (`/manage_popups/*`).
+    pub popups: popups::Popups,
     /// Identifies this run of the client (`/client_info`).
     pub boot_id: [u8; 32],
     pub boot_time_ms: i64,
@@ -79,6 +82,7 @@ impl AppState {
             subscriptions,
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
+            popups: popups::Popups::default(),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
         }))
@@ -106,8 +110,8 @@ impl AppState {
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
     use routes::{
-        access, add_files, add_tags, database, files, metadata, network, relationships, search,
-        services, tags, urls,
+        access, add_files, add_tags, database, files, metadata, network, popups, relationships,
+        search, services, tags, urls,
     };
     Router::new()
         .route("/api_version", get(access::api_version))
@@ -232,6 +236,20 @@ pub fn router(state: Arc<AppState>) -> Router {
             "/manage_services/commit_pending",
             post(services::commit_pending),
         )
+        .route("/manage_popups/add_popup", post(popups::add_popup))
+        .route("/manage_popups/update_popup", post(popups::update_popup))
+        .route("/manage_popups/cancel_popup", post(popups::cancel_popup))
+        .route("/manage_popups/dismiss_popup", post(popups::dismiss_popup))
+        .route("/manage_popups/finish_popup", post(popups::finish_popup))
+        .route(
+            "/manage_popups/finish_and_dismiss_popup",
+            post(popups::finish_and_dismiss_popup),
+        )
+        .route(
+            "/manage_popups/call_user_callable",
+            post(popups::call_user_callable),
+        )
+        .route("/manage_popups/get_popups", get(popups::get_popups))
         .route("/manage_database/mr_bones", get(database::mr_bones))
         .route(
             "/manage_database/get_client_options",

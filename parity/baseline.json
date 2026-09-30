@@ -1,7 +1,7 @@
 {
   "api": {
     "total": 76,
-    "done": 58,
+    "done": 66,
     "partial": 3,
     "done_items": [
       "/add_files/add_file",
@@ -58,6 +58,14 @@
       "/manage_headers/get_headers",
       "/manage_headers/set_headers",
       "/manage_headers/set_user_agent",
+      "/manage_popups/add_popup",
+      "/manage_popups/call_user_callable",
+      "/manage_popups/cancel_popup",
+      "/manage_popups/dismiss_popup",
+      "/manage_popups/finish_and_dismiss_popup",
+      "/manage_popups/finish_popup",
+      "/manage_popups/get_popups",
+      "/manage_popups/update_popup",
       "/manage_services/forget_pending",
       "/manage_services/get_pending_counts",
       "/session_key",
