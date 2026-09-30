@@ -117,6 +117,21 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .warnings
             .push(format!("URL classes were not converted: {e}")),
     }
+    match db.downloaders() {
+        Ok(Some(downloaders)) => {
+            for u in &downloaders.unconverted {
+                input.warnings.push(format!(
+                    "The {} \"{}\" was not converted: {}",
+                    u.kind, u.name, u.reason
+                ));
+            }
+            insert_setting(&mut input, &downloaders)?;
+        }
+        Ok(None) => {}
+        Err(e) => input.warnings.push(format!(
+            "Downloaders (GUGs and parsers) were not converted: {e}"
+        )),
+    }
     Ok(input)
 }
 

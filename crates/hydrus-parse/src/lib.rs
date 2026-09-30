@@ -3,10 +3,12 @@
 
 pub mod content;
 pub mod dom;
+pub mod downloaders;
 pub mod formula;
 pub mod text;
 
 pub use content::{
     ContentKind, ContentParser, PageParser, ParseFailure, ParsedContent, ParsedPost,
 };
+pub use downloaders::{Downloaders, Unconverted};
 pub use formula::{Formula, FormulaKind, ParseError, ParsingContext};

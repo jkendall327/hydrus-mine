@@ -12,6 +12,8 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::LazyLock;
 
+use serde::{Deserialize, Serialize};
+
 use hydrus_core::pybytes::{b64decode, fromhex};
 use hydrus_core::tag::Tag;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
@@ -37,7 +39,8 @@ pub mod url_type {
 pub const TIMESTAMP_MODIFIED_DOMAIN: i64 = 0;
 
 /// What a content parser's results are.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum ContentKind {
     Url {
         url_type: i64,
@@ -73,7 +76,7 @@ pub enum ContentKind {
     },
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct ContentParser {
     pub name: String,
     pub kind: ContentKind,
@@ -364,7 +367,7 @@ pub fn title(posts: &[ParsedPost]) -> Option<String> {
 }
 
 /// A page parser.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct PageParser {
     pub name: String,
     /// The reference's parser key, in hex.
@@ -377,7 +380,7 @@ pub struct PageParser {
 }
 
 /// Splits a page into posts and parses each with its own page parser.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct SubsidiaryPageParser {
     pub formula: Formula,
     /// Newest post first, by the site's post time.

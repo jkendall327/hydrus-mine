@@ -255,6 +255,11 @@ impl LegacyDb {
         )
     }
 
+    /// The network domain manager's GUGs and page parsers (type 53).
+    pub fn downloaders(&self) -> Result<Option<hydrus_parse::Downloaders>> {
+        self.singleton(SerialisableType(53), crate::objects::parsers::downloaders)
+    }
+
     /// The network domain manager's custom HTTP headers (type 53).
     pub fn custom_headers(&self) -> Result<Option<Vec<crate::objects::domain::CustomHeader>>> {
         self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)

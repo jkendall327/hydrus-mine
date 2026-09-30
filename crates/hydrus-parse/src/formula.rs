@@ -8,6 +8,8 @@
 
 use std::collections::BTreeMap;
 
+use serde::{Deserialize, Serialize};
+
 use hydrus_core::pyjson::PyJson;
 use hydrus_core::sort::human_sort;
 use hydrus_core::url::strings::{StringMatch, StringProcessor};
@@ -24,14 +26,15 @@ pub type ParsingContext = BTreeMap<String, String>;
 pub struct ParseError(pub String);
 
 /// A formula, with its name and the processing of what it finds.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Formula {
     pub name: String,
     pub kind: FormulaKind,
     pub processor: StringProcessor,
 }
 
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum FormulaKind {
     /// Walk the HTML with tag rules, then take something from each tag.
     Html {
@@ -61,7 +64,8 @@ pub enum FormulaKind {
 }
 
 /// What an HTML formula takes from each tag it finds.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum HtmlContent {
     Attribute(String),
     /// The text inside.
@@ -71,7 +75,7 @@ pub enum HtmlContent {
 }
 
 /// One step of walking an HTML tree.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct HtmlRule {
     pub walk: HtmlWalk,
     pub tag_name: Option<String>,
@@ -79,7 +83,8 @@ pub struct HtmlRule {
     pub text_match: Option<StringMatch>,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum HtmlWalk {
     Descendants(TagSearch),
     NextSiblings(TagSearch),
@@ -91,7 +96,7 @@ pub enum HtmlWalk {
 }
 
 /// Which of the found tags to keep.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct TagSearch {
     pub attrs: Vec<(String, String)>,
     /// Keep only this one (negative counts from the end, as in Python).
@@ -99,7 +104,8 @@ pub struct TagSearch {
 }
 
 /// One step of walking JSON.
-#[derive(Debug, Clone, PartialEq)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum JsonRule {
     /// Values of the object's keys that match, by key.
     DictKey(StringMatch),
@@ -115,7 +121,8 @@ pub enum JsonRule {
     Deminify(i64),
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum JsonContent {
     /// Scalars, as text.
     Strings,

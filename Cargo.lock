@@ -1346,6 +1346,7 @@ dependencies = [
  "hydrus-core",
  "markup5ever_rcdom",
  "regex",
+ "serde",
  "serde_json",
  "thiserror 2.0.21",
 ]
@@ -1380,6 +1381,7 @@ dependencies = [
  "hex",
  "hydrus-core",
  "hydrus-legacy",
+ "hydrus-parse",
  "hydrus-testkit",
  "parking_lot",
  "proptest",

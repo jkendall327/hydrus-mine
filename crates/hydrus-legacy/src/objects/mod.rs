@@ -21,6 +21,7 @@
 //! | [`domain::url_class_settings`] (domain manager: URL classes, parser links) | 53 | 7 (URL classes 15; see its docs) |
 //! | [`NetworkSession`] (cookies; a pickled jar, see [`crate::pickle`]) | 96 | 1, 2 |
 //! | [`domain::custom_headers`] (domain manager: custom HTTP headers) | 53 | 7 |
+//! | [`parsers::downloaders`] (domain manager: GUGs 69/70, page parsers 58 with content parsers 30, subsidiary parsers 135 and formulas) | 53 | 7 (GUGs 1, page parsers 3, content parsers 7; see [`parsers`]) |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 mod client_api;

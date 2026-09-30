@@ -1,9 +1,9 @@
 //! The network domain manager (type 53): the client's URL classes and which
 //! parser each is linked to, decoded into `hydrus_core::url` types.
 //!
-//! Only what URL handling needs is decoded; the rest of the manager
-//! (downloaders, import options, headers) stays in the verbatim copy the
-//! importer keeps. Every object is accepted at the version v688 writes;
+//! Only what URL handling needs is decoded here; custom headers are below,
+//! GUGs and parsers in [`super::parsers`], and the rest of the manager
+//! (default import options) stays in the verbatim copy the importer keeps. Every object is accepted at the version v688 writes;
 //! the few older versions with trivial upgrades are upgraded, anything else
 //! is refused (the verbatim copy is kept either way).
 
