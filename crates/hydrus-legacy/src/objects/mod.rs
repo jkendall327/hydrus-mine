@@ -27,6 +27,7 @@
 //! | [`subscriptions::query_log`] (a query's history: gallery log 67 of gallery seeds 66, file seed cache 8 of file seeds 57) | 86 | 1 (gallery seeds 1-4, file seed cache 8, file seeds 1-8) |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
+pub mod auto_resolution;
 mod client_api;
 mod client_options;
 pub mod domain;
