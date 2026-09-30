@@ -4,6 +4,7 @@ use std::sync::Arc;
 
 use axum::extract::State;
 
+use hydrus_core::import_options::{CallerType, ImportOptionsManager};
 use hydrus_core::{HashId, ServiceId, ServiceType, Sha256};
 use hydrus_store::master;
 
@@ -267,8 +268,13 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
     let encoding = req.response_encoding;
     let result = app
         .blocking(move |app| {
-            let mut options = hydrus_import::FileImportOptions::default();
             let snap = app.store.snapshot();
+            let manager: ImportOptionsManager = app
+                .store
+                .read(hydrus_store::settings::get)
+                .map_err(|e| ApiError::server(e.to_string()))?;
+            let full = manager.full(CallerType::ClientApi, None, &[]);
+            let mut options = hydrus_import::FileImportOptions::from_full(&full, &snap.services);
             if let Some(domains) = location::parse(&snap, &params, false)? {
                 for &d in &domains.current {
                     if snap.services.get(d)?.service_type() != ServiceType::LocalFileDomain {

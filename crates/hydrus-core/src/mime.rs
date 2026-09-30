@@ -241,6 +241,20 @@ impl Mime {
     }
 
     /// All concrete types belonging to a general class.
+    /// The general classes of file type (`HC.GENERAL_CLASSES_OF_FILETYPE`;
+    /// "any file" is not one of them).
+    pub const fn general_classes() -> [Mime; 7] {
+        [
+            Mime::GeneralApplication,
+            Mime::GeneralAudio,
+            Mime::GeneralImage,
+            Mime::GeneralVideo,
+            Mime::GeneralAnimation,
+            Mime::GeneralApplicationArchive,
+            Mime::GeneralImageProject,
+        ]
+    }
+
     pub fn members_of_class(class: Mime) -> impl Iterator<Item = Mime> {
         Mime::ALL
             .iter()

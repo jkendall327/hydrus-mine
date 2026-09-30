@@ -255,6 +255,16 @@ impl LegacyDb {
         )
     }
 
+    /// The import options manager: import option defaults (type 144).
+    pub fn import_options_manager(
+        &self,
+    ) -> Result<Option<hydrus_core::import_options::ImportOptionsManager>> {
+        self.singleton(
+            SerialisableType(144),
+            crate::objects::import_options::manager,
+        )
+    }
+
     /// The network domain manager's GUGs and page parsers (type 53).
     pub fn downloaders(&self) -> Result<Option<hydrus_parse::Downloaders>> {
         self.singleton(SerialisableType(53), crate::objects::parsers::downloaders)

@@ -58,6 +58,11 @@ impl Setting for hydrus_core::url::UrlClassSettings {
     const KEY: &'static str = "url_classes";
 }
 
+/// Import option defaults.
+impl Setting for hydrus_core::import_options::ImportOptionsManager {
+    const KEY: &'static str = "import_options";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_parse::Downloaders {
     const KEY: &'static str = "downloaders";

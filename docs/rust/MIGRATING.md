@@ -37,9 +37,14 @@ viewing statistics, URL classes, autocomplete rules, and the duplicate
 filter's batch size and metadata merge options (what "this is better" copies
 or moves between files), and the network side: custom HTTP headers (e.g. a
 User-Agent your browser extension set) and every site's cookies, less those
-that had expired. Configuration hydrus-rs doesn't
-use yet (downloaders, pages, the GUI's options) is kept verbatim inside the
-new store, so later versions can pick it up without a re-import.
+that had expired. Your import options come across too (the defaults for
+each kind of import, per URL class, and your favourites), so the Client
+API's file imports already follow your file filtering and destination
+settings, and your downloaders' parsers and gallery URL generators are
+converted for the downloader (a definition that can't be converted is
+reported and kept). Configuration hydrus-rs doesn't use yet (subscriptions,
+pages, the GUI's options) is kept verbatim inside the new store, so later
+versions can pick it up without a re-import.
 
 Autocomplete counts and other caches are rebuilt rather than copied.
 

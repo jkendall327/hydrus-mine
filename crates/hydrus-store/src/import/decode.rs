@@ -117,6 +117,14 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .warnings
             .push(format!("URL classes were not converted: {e}")),
     }
+    match db.import_options_manager() {
+        Ok(Some(manager)) => insert_setting(&mut input, &manager)?,
+        // (every v688 database has one; a new client's defaults are used)
+        Ok(None) => {}
+        Err(e) => input.warnings.push(format!(
+            "Import options were not converted, so the defaults apply: {e}"
+        )),
+    }
     match db.downloaders() {
         Ok(Some(downloaders)) => {
             for u in &downloaders.unconverted {
@@ -452,6 +460,20 @@ mod tests {
         let decoded: DuplicateMergeSettings =
             serde_json::from_value(input.settings["duplicate_merge"].clone()).unwrap();
         assert_eq!(decoded, DuplicateMergeSettings::default());
+    }
+
+    #[test]
+    fn a_new_clients_import_options_and_downloaders_convert() {
+        use hydrus_core::import_options::ImportOptionsManager;
+
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let decoded: ImportOptionsManager =
+            serde_json::from_value(input.settings["import_options"].clone()).unwrap();
+        assert_eq!(decoded, ImportOptionsManager::default());
+        let downloaders: hydrus_parse::Downloaders =
+            serde_json::from_value(input.settings["downloaders"].clone()).unwrap();
+        assert!(downloaders.unconverted.is_empty());
     }
 
     #[test]

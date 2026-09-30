@@ -49,6 +49,54 @@ impl Default for FileImportOptions {
 }
 
 impl FileImportOptions {
+    /// The file filtering and location parts of a full set of import
+    /// options. Destinations that no longer exist are left out.
+    pub fn from_full(
+        full: &hydrus_core::import_options::FullImportOptions,
+        services: &ServiceRegistry,
+    ) -> Self {
+        let filtering = &full.file_filtering;
+        let locations = &full.locations;
+        let summary: BTreeSet<Mime> = filtering
+            .filetypes
+            .iter()
+            .filter_map(|&code| Mime::from_code(code))
+            .collect();
+        let everything = summary.contains(&Mime::GeneralFile)
+            || Mime::general_classes().iter().all(|c| summary.contains(c));
+        let allowed_mimes = (!everything).then(|| {
+            summary
+                .iter()
+                .flat_map(|&m| {
+                    if m.is_general_class() {
+                        Mime::members_of_class(m).collect::<Vec<_>>()
+                    } else {
+                        vec![m]
+                    }
+                })
+                .collect()
+        });
+        let destinations = locations
+            .destinations
+            .iter()
+            .filter_map(|key| hydrus_core::ServiceKey::from_hex(key).ok())
+            .filter_map(|key| services.by_key(&key).ok().map(|s| s.id))
+            .collect();
+        Self {
+            exclude_deleted: filtering.exclude_deleted,
+            allowed_mimes,
+            min_size: filtering.min_size,
+            max_size: filtering.max_size,
+            max_gif_size: filtering.max_gif_size,
+            min_resolution: filtering.min_resolution,
+            max_resolution: filtering.max_resolution,
+            destinations,
+            automatically_archive: locations.automatically_archive,
+            destinations_for_already_in_db: locations.destinations_for_already_in_db,
+            archive_already_in_db: locations.archive_already_in_db,
+        }
+    }
+
     /// The local file domains new files go to.
     pub fn destinations(&self, services: &ServiceRegistry) -> Vec<ServiceId> {
         if self.destinations.is_empty() {

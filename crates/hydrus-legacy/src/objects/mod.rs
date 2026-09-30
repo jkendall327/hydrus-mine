@@ -22,6 +22,7 @@
 //! | [`NetworkSession`] (cookies; a pickled jar, see [`crate::pickle`]) | 96 | 1, 2 |
 //! | [`domain::custom_headers`] (domain manager: custom HTTP headers) | 53 | 7 |
 //! | [`parsers::downloaders`] (domain manager: GUGs 69/70, page parsers 58 with content parsers 30, subsidiary parsers 135 and formulas) | 53 | 7 (GUGs 1, page parsers 3, content parsers 7; see [`parsers`]) |
+//! | [`import_options::manager`] (import option defaults; see [`import_options`]) | 144 | 1 |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 mod client_api;
@@ -29,6 +30,7 @@ mod client_options;
 pub mod domain;
 mod duplicates;
 mod favourites;
+pub mod import_options;
 mod legacy_options;
 mod location;
 pub mod parsers;

@@ -7,6 +7,7 @@
 pub mod content;
 pub mod hash;
 pub mod ids;
+pub mod import_options;
 pub mod mime;
 pub mod notes;
 pub mod numbers;
