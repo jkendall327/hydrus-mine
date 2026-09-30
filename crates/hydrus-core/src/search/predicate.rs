@@ -13,14 +13,14 @@
 use std::collections::BTreeSet;
 use std::fmt;
 
-use hydrus_core::{
+use crate::{
     ContentStatus, DuplicateType, HashKind, Md5, PerceptualHash, ServiceKey, ServiceType, Sha1,
     Sha256, Sha512, Tag,
 };
 
-use crate::filetype::FiletypeSet;
-use crate::number::{Comparison, NumberTest, RatingOp, RatioOp, TagNumberOp};
-use crate::time::{TimeKind, TimeTest};
+use crate::search::filetype::FiletypeSet;
+use crate::search::number::{Comparison, NumberTest, RatingOp, RatioOp, TagNumberOp};
+use crate::search::time::{TimeKind, TimeTest};
 
 /// One term of a file search. A search matches the files that satisfy all of
 /// its predicates.
@@ -56,12 +56,12 @@ impl Wildcard {
 
     /// The namespace part (before the first colon), or `""`.
     pub fn namespace(&self) -> &str {
-        hydrus_core::tag::split_tag(&self.0).0
+        crate::tag::split_tag(&self.0).0
     }
 
     /// The subtag part.
     pub fn subtag(&self) -> &str {
-        hydrus_core::tag::split_tag(&self.0).1
+        crate::tag::split_tag(&self.0).1
     }
 }
 
@@ -386,11 +386,11 @@ pub enum ViewCanvas {
 }
 
 impl ViewCanvas {
-    pub const fn canvas_type(self) -> hydrus_core::CanvasType {
+    pub const fn canvas_type(self) -> crate::CanvasType {
         match self {
-            ViewCanvas::MediaViewer => hydrus_core::CanvasType::MediaViewer,
-            ViewCanvas::Preview => hydrus_core::CanvasType::Preview,
-            ViewCanvas::ClientApi => hydrus_core::CanvasType::ClientApi,
+            ViewCanvas::MediaViewer => crate::CanvasType::MediaViewer,
+            ViewCanvas::Preview => crate::CanvasType::Preview,
+            ViewCanvas::ClientApi => crate::CanvasType::ClientApi,
         }
     }
 }

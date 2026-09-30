@@ -3,10 +3,10 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::ServiceKey;
-use hydrus_core::service::builtin_keys;
+use crate::ServiceKey;
+use crate::service::builtin_keys;
 
-use crate::predicate::Predicate;
+use crate::search::predicate::Predicate;
 
 /// The file domains a search covers: files currently in any of `current`, or
 /// deleted from any of `deleted`.

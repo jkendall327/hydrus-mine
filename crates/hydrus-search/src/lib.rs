@@ -46,14 +46,16 @@
 //! and sorts the results; see the [`exec`] module for how.
 
 pub mod api;
-pub mod context;
+pub use hydrus_core::search::context;
 pub mod error;
 pub mod exec;
-pub mod filetype;
-pub mod number;
+pub use hydrus_core::search::filetype;
+#[cfg(test)]
+mod filetype_tests;
+pub use hydrus_core::search::number;
 pub mod parse;
-pub mod predicate;
-pub mod time;
+pub use hydrus_core::search::predicate;
+pub use hydrus_core::search::time;
 
 pub use api::parse_api_search;
 pub use context::{FileSearchContext, LocationContext, TagContext};

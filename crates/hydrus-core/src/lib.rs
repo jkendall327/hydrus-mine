@@ -14,6 +14,7 @@ pub mod numbers;
 pub mod pybytes;
 pub mod pyhtml;
 pub mod pyjson;
+pub mod search;
 pub mod service;
 pub mod sort;
 pub mod subscriptions;

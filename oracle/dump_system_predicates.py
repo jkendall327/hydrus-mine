@@ -431,7 +431,16 @@ def parse_one( text ):
         return { 'ok' : False, 'stage' : stage, 'error' : str( e ) }
 
 
-    return { 'ok' : True, 'predicate' : norm_predicate( predicate ) }
+    # the stored form, as hydrus keeps it in rules and favourite searches
+    # (not for URL class predicates: the URL classes here are stubs)
+    result = { 'ok' : True, 'predicate' : norm_predicate( predicate ) }
+
+    if not isinstance( getattr( predicate, '_value', None ), tuple ) or 'url_class' not in predicate.GetValue():
+
+        result[ 'serialised' ] = json.loads( json.dumps( predicate.GetSerialisableTuple() ) )
+
+
+    return result
 
 
 def parse_with_clock( text ):

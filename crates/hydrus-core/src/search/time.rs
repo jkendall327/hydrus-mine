@@ -9,7 +9,7 @@
 
 use std::fmt;
 
-use crate::number::Comparison;
+use crate::search::number::Comparison;
 
 /// Which timestamp of a file a time predicate tests.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
