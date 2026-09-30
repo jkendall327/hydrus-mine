@@ -6,6 +6,8 @@ on:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
   pull_request:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+  # (from the Actions tab, e.g. to build on Windows and macOS before a PR)
+  workflow_dispatch:
 
 concurrency:
   group: rust-${{ github.ref }}
@@ -36,8 +38,11 @@ jobs:
       - name: parity ratchet
         run: cargo xtask ratchet --check
 
-  # the owner may build on either; the Linux job above is the full check
+  # the owner may build on either; the Linux job above is the full check.
+  # These are slow, so they run for pull requests and on request, not on
+  # every push.
   other-platforms:
+    if: github.event_name != 'push'
     strategy:
       fail-fast: false
       matrix:
