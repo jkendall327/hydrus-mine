@@ -115,6 +115,44 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             similar.during_idle = b;
         }
         insert_setting(&mut input, &similar)?;
+        let mut auto = crate::duplicates::auto::AutoResolutionSettings::default();
+        for (key, field) in [
+            (
+                "duplicates_auto_resolution_during_active",
+                &mut auto.during_active,
+            ),
+            (
+                "duplicates_auto_resolution_during_idle",
+                &mut auto.during_idle,
+            ),
+        ] {
+            if let Some(&b) = options.booleans.get(key) {
+                *field = b;
+            }
+        }
+        for (key, field) in [
+            (
+                "duplicates_auto_resolution_work_time_ms_active",
+                &mut auto.work_time_ms_active,
+            ),
+            (
+                "duplicates_auto_resolution_work_time_ms_idle",
+                &mut auto.work_time_ms_idle,
+            ),
+            (
+                "duplicates_auto_resolution_rest_percentage_active",
+                &mut auto.rest_percentage_active,
+            ),
+            (
+                "duplicates_auto_resolution_rest_percentage_idle",
+                &mut auto.rest_percentage_idle,
+            ),
+        ] {
+            if let Some(&n) = options.integers.get(key) {
+                *field = u32::try_from(n).unwrap_or(0);
+            }
+        }
+        insert_setting(&mut input, &auto)?;
         let mut checkers = hydrus_core::subscriptions::CheckerDefaults::default();
         if let Some(c) = &options.default_subscription_checker_options {
             checkers.subscriptions = c.clone();
@@ -219,8 +257,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     Ok(input)
 }
 
-/// A duplicates auto-resolution rule, or why it can't be converted.
-pub(crate) fn auto_resolution_rule(
+/// A stored duplicates auto-resolution rule in our model, or why it can't
+/// be converted. Warnings about details that were dropped are added to
+/// `warnings`.
+pub fn auto_resolution_rule(
     r: &legacy::auto_resolution::AutoResolutionRule,
     warnings: &mut Vec<String>,
 ) -> std::result::Result<crate::duplicates::auto::Rule, String> {

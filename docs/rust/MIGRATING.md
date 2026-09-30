@@ -46,7 +46,13 @@ reported and kept). Subscriptions come across with their settings, their
 queries' timing and state, and each query's full history (the files and
 gallery pages it has seen, with their status and notes), so nothing is
 downloaded twice; `hydrus serve` checks them on their schedule, and `hydrus
-subscriptions <store> list` shows them. Configuration hydrus-rs doesn't use
+subscriptions <store> list` shows them. Duplicates auto-resolution rules come
+across with their progress: every pair's status for every rule (searched,
+tested, waiting for your approval, denied) and each rule's log of what it
+did, so no rule redoes its work; `hydrus duplicates <store> rules` shows
+them, and `hydrus serve` carries on running them. Rules that compare the
+files' content (visual similarity, jpeg quality) search but don't test yet,
+so their pairs wait rather than being judged. Configuration hydrus-rs doesn't use
 yet (pages, the GUI's options) is kept verbatim inside the new store, so
 later versions can pick it up without a re-import.
 

@@ -1404,7 +1404,9 @@ dependencies = [
  "hydrus-api",
  "hydrus-core",
  "hydrus-download",
+ "hydrus-duplicates",
  "hydrus-parse",
+ "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
  "tempfile",
@@ -1455,6 +1457,25 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.21",
  "tokio",
+ "tracing",
+]
+
+[[package]]
+name = "hydrus-duplicates"
+version = "0.1.0"
+dependencies = [
+ "hydrus-core",
+ "hydrus-import",
+ "hydrus-legacy",
+ "hydrus-media",
+ "hydrus-search",
+ "hydrus-store",
+ "hydrus-testkit",
+ "jiff",
+ "rand 0.10.3",
+ "rusqlite",
+ "serde_json",
+ "tempfile",
  "tracing",
 ]
 

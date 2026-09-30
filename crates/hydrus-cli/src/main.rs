@@ -18,6 +18,7 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 /// The reference client's default Client API port.
 const DEFAULT_PORT: u16 = 45869;
 
+mod duplicates;
 mod gallery;
 mod subscriptions;
 
@@ -71,6 +72,14 @@ enum Command {
         dir: PathBuf,
         #[command(subcommand)]
         action: subscriptions::Action,
+    },
+    /// Duplicates auto-resolution: rules' progress, and approving or denying
+    /// the pairs semi-automatic rules are waiting on.
+    Duplicates {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: duplicates::Action,
     },
 }
 
@@ -130,6 +139,15 @@ fn main() -> Result<()> {
                 );
             }
             subscriptions::run(&dir, action)
+        }
+        Command::Duplicates { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            duplicates::run(&dir, action)
         }
         Command::Purge { dir } => {
             let store = Store::open(&dir)?;
@@ -289,6 +307,60 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                     }
                     _ => tokio::time::sleep(Duration::from_secs(30)).await,
                 }
+            }
+        });
+        // duplicates auto-resolution: bursts of work with rests between, as
+        // the reference's manager does (it counts us as always active)
+        let resolver = store.clone();
+        tokio::spawn(async move {
+            loop {
+                let store = resolver.clone();
+                let settings: hydrus_store::duplicates::auto::AutoResolutionSettings = match store
+                    .read(hydrus_store::settings::get)
+                {
+                    Ok(s) => s,
+                    Err(e) => {
+                        tracing::error!(error = %e, "reading the auto-resolution settings failed");
+                        tokio::time::sleep(Duration::from_secs(600)).await;
+                        continue;
+                    }
+                };
+                if !settings.during_active {
+                    tokio::time::sleep(Duration::from_secs(10)).await;
+                    continue;
+                }
+                let budget = Duration::from_millis(u64::from(settings.work_time_ms_active));
+                let started = std::time::Instant::now();
+                let done = tokio::task::spawn_blocking(move || {
+                    hydrus_duplicates::work_rules(
+                        &store,
+                        budget,
+                        &mut hydrus_duplicates::Shuffle,
+                        &hydrus_search::Clock::system(),
+                    )
+                })
+                .await;
+                let rest = match done {
+                    Ok(Ok(done)) if done.more_to_do => {
+                        tracing::debug!(?done, "auto-resolution worked");
+                        let worked = started.elapsed().min(budget * 5);
+                        worked * settings.rest_percentage_active / 100
+                    }
+                    Ok(Ok(done)) => {
+                        if done != hydrus_duplicates::WorkDone::default() {
+                            tracing::debug!(?done, "auto-resolution worked");
+                        }
+                        // the reference rests ten minutes unless woken by
+                        // new pairs; checking every minute stands in for that
+                        Duration::from_secs(60)
+                    }
+                    Ok(Err(e)) => {
+                        tracing::error!(error = %e, "duplicates auto-resolution failed");
+                        Duration::from_secs(600)
+                    }
+                    Err(_) => Duration::from_secs(600),
+                };
+                tokio::time::sleep(rest.max(Duration::from_millis(100))).await;
             }
         });
         // queues made by other processes (the command line)

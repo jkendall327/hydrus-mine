@@ -21,6 +21,7 @@ hydrus-download = { path = "crates/hydrus-download" }
 hydrus-media = { path = "crates/hydrus-media" }
 hydrus-import = { path = "crates/hydrus-import" }
 hydrus-search = { path = "crates/hydrus-search" }
+hydrus-duplicates = { path = "crates/hydrus-duplicates" }
 hydrus-api = { path = "crates/hydrus-api" }
 hydrus-testkit = { path = "crates/hydrus-testkit" }
 

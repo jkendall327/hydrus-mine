@@ -328,9 +328,12 @@ pub struct PotentialPair {
     pub smaller_king: HashId,
     pub larger_king: HashId,
     pub distance: u32,
+    /// The groups (the pair's key).
+    pub groups: (i64, i64),
 }
 
 struct PairRow {
+    groups: (i64, i64),
     smaller_king: HashId,
     larger_king: HashId,
     distance: u32,
@@ -342,7 +345,8 @@ struct PairRow {
 fn pairs_in_scope(conn: &Connection, scope: &FileScope) -> Result<Vec<PairRow>> {
     let mut stmt = conn.prepare_cached(
         "SELECT gs.king_hash_id, gl.king_hash_id, p.distance,
-                fs.pixel_hash IS NOT NULL AND fs.pixel_hash = fl.pixel_hash AND fs.width = fl.width
+                fs.pixel_hash IS NOT NULL AND fs.pixel_hash = fl.pixel_hash AND fs.width = fl.width,
+                p.smaller_group_id, p.larger_group_id
          FROM potential_pairs p
          JOIN dup_groups gs ON gs.group_id = p.smaller_group_id
          JOIN dup_groups gl ON gl.group_id = p.larger_group_id
@@ -352,6 +356,7 @@ fn pairs_in_scope(conn: &Connection, scope: &FileScope) -> Result<Vec<PairRow>> 
     let rows: Vec<PairRow> = stmt
         .query_map([], |r| {
             Ok(PairRow {
+                groups: (r.get(4)?, r.get(5)?),
                 smaller_king: r.get(0)?,
                 larger_king: r.get(1)?,
                 distance: r.get(2)?,
@@ -425,6 +430,7 @@ pub fn potential_pairs(
             smaller_king: r.smaller_king,
             larger_king: r.larger_king,
             distance: r.distance,
+            groups: r.groups,
         })
         .collect())
 }

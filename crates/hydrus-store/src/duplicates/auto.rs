@@ -31,6 +31,39 @@ use hydrus_core::{DuplicateType, HashId};
 use super::{FileScope, MergeOptions, PairSearchKind, PixelDuplicates};
 use crate::error::{Result, StoreError};
 
+/// When auto-resolution works, and how hard (the reference's
+/// `duplicates_auto_resolution_*` options).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct AutoResolutionSettings {
+    pub during_active: bool,
+    pub during_idle: bool,
+    /// How long one burst of work may take.
+    pub work_time_ms_active: u32,
+    pub work_time_ms_idle: u32,
+    /// Rest after a burst, as a percentage of the time it took.
+    pub rest_percentage_active: u32,
+    pub rest_percentage_idle: u32,
+}
+
+impl Default for AutoResolutionSettings {
+    /// The reference's defaults.
+    fn default() -> Self {
+        Self {
+            during_active: true,
+            during_idle: true,
+            work_time_ms_active: 100,
+            work_time_ms_idle: 1000,
+            rest_percentage_active: 900,
+            rest_percentage_idle: 100,
+        }
+    }
+}
+
+impl crate::settings::Setting for AutoResolutionSettings {
+    const KEY: &'static str = "duplicates_auto_resolution";
+}
+
 /// A rule.
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct Rule {
@@ -522,6 +555,17 @@ pub fn set_status(
     Ok(())
 }
 
+/// Drop pairs from a rule's queue (they are no longer potential pairs).
+pub fn remove_pairs(conn: &Connection, rule_id: i64, pairs: &[GroupPair]) -> Result<()> {
+    let mut stmt = conn.prepare_cached(
+        "DELETE FROM dup_auto_pairs WHERE rule_id = ? AND smaller_group_id = ? AND larger_group_id = ?",
+    )?;
+    for &(a, b) in pairs {
+        stmt.execute(params![rule_id, a, b])?;
+    }
+    Ok(())
+}
+
 /// A pair passed a semi-automatic rule's test: it waits, with A and B.
 pub fn set_ready_to_action(
     conn: &Connection,
@@ -608,6 +652,7 @@ pub fn actioned(
 
 /// A file's metadata changed (its facts were regenerated): its pairs are
 /// searched and tested again by every rule (`ResetFileSearchProgress`).
+/// File maintenance that regenerates metadata must call this.
 pub fn reset_file_search_progress(conn: &Connection, hash_id: HashId) -> Result<()> {
     let group: Option<i64> = conn
         .query_row(

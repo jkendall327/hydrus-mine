@@ -26,6 +26,8 @@ use crate::{counts, master, queues, schema, subscriptions};
 
 mod decode;
 
+pub use decode::auto_resolution_rule;
+
 pub use decode::decode_input;
 
 /// Reference schema version this importer understands.

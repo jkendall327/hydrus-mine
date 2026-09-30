@@ -129,6 +129,39 @@ search.
   distances, the pair gets the smaller.** The reference records whichever
   its tree walk reached first.
 
+## Duplicates auto-resolution (`hydrus-duplicates`)
+
+Checked by `crates/hydrus-duplicates/tests/reference_run.rs` on
+`oracle/fixtures/auto_resolution_run.json` (the reference's suggested rules,
+some fully automatic, run over generated pixel-perfect and near-duplicate
+families, with an approval and a denial in between), and the reference's
+database after that run migrated (`legacy_db/auto_resolution.tar.gz`).
+Stored rules are checked by `oracle/fixtures/auto_resolution.json`, and the
+in-memory predicate tests their comparators use by
+`oracle/fixtures/media_tests.json`.
+
+- **Pairs are tested in order of their kings' hashes.** The reference tests a
+  rule's pairs in whatever order its table gives. The order matters when
+  actions interact (a merge changes which pairs are left), so both sides
+  are pinned to the same order when recording.
+- **A pair's orientation is random, as in the reference**, when both ways
+  round pass; tests pin it (no shuffle) on both sides.
+- **A rule's queue is reconciled with the potential pairs before it works.**
+  The reference moves pairs between statuses whenever potential pairs change
+  anywhere. The queue a rule works from is the same either way; the counts
+  shown between runs can lag until the rule next works.
+- **Comparisons that read file content are not done yet.** Rules with a
+  visual-duplicates, jpeg-quality or progressive-jpeg comparator search, but
+  leave their matching pairs untested (neither failed nor actioned) until
+  those comparisons are implemented.
+- **Time budget.** Without a GUI we are never idle: the active-time work and
+  rest settings apply, and a rule with nothing to do is checked every
+  minute rather than woken by new pairs.
+- **URL class predicates match by the class's name** as it is now; the
+  reference tests the copy of the class stored in the rule.
+- **Ratings in a rule's searches are not supported yet**; such a rule is
+  reported at migration and left behind.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server
