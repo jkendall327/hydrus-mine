@@ -19,6 +19,7 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 const DEFAULT_PORT: u16 = 45869;
 
 mod duplicates;
+mod folders;
 mod gallery;
 mod subscriptions;
 
@@ -72,6 +73,14 @@ enum Command {
         dir: PathBuf,
         #[command(subcommand)]
         action: subscriptions::Action,
+    },
+    /// Import folders: list them, check one now, pause, resume, or run one
+    /// here. A running `serve` checks them when due.
+    ImportFolders {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: folders::Action,
     },
     /// Duplicates auto-resolution: rules' progress, and approving or denying
     /// the pairs semi-automatic rules are waiting on.
@@ -139,6 +148,15 @@ fn main() -> Result<()> {
                 );
             }
             subscriptions::run(&dir, action)
+        }
+        Command::ImportFolders { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            folders::run(&dir, action)
         }
         Command::Duplicates { dir, action } => {
             if !dir.join(DB_FILE_NAME).exists() {
@@ -363,6 +381,41 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 tokio::time::sleep(rest.max(Duration::from_millis(100))).await;
             }
         });
+        // import folders, each checked when due
+        if let Some(downloads) = state.downloads.clone() {
+            tokio::spawn(async move {
+                let mut schedule = hydrus_download::folders::ImportFolderSchedule::new();
+                loop {
+                    let downloader = std::sync::Arc::clone(downloads.downloader());
+                    let done = tokio::task::spawn_blocking(move || {
+                        let result = hydrus_download::folders::work_due_import_folders(
+                            &downloader,
+                            &mut schedule,
+                        );
+                        (schedule, result)
+                    })
+                    .await;
+                    let wait = match done {
+                        // (checking at least every minute, to notice folders
+                        // changed from the command line)
+                        Ok((kept, Ok(seconds))) => {
+                            schedule = kept;
+                            seconds.clamp(1, 60)
+                        }
+                        Ok((kept, Err(e))) => {
+                            schedule = kept;
+                            tracing::error!(error = %e, "import folders failed");
+                            1800
+                        }
+                        Err(_) => {
+                            schedule = hydrus_download::folders::ImportFolderSchedule::new();
+                            1800
+                        }
+                    };
+                    tokio::time::sleep(Duration::from_secs(wait.unsigned_abs())).await;
+                }
+            });
+        }
         // queues made by other processes (the command line)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {

@@ -7,6 +7,7 @@
 //! files (the Client API, import folders, downloaders) goes through here.
 
 pub mod options;
+pub mod paths;
 pub mod status;
 
 use std::path::{Path, PathBuf};
@@ -42,6 +43,10 @@ pub struct ImportResult {
     pub mime: Option<Mime>,
     /// Human-readable detail, as the reference words it.
     pub note: String,
+    /// Set when the reference's import job would have raised (a file it
+    /// can't import): the exception's message, which is what a file seed
+    /// notes (and a seed then keeps no hash).
+    pub raised: Option<String>,
 }
 
 /// Imports files into a store.
@@ -117,6 +122,7 @@ impl FileImporter {
             hash: Some(*hash),
             mime,
             note,
+            raised: None,
         };
         // the database says we have it, but the file is gone: import again
         if let (ImportStatus::SuccessfulButRedundant, Some(mime)) = (result.status, mime)
@@ -177,6 +183,7 @@ impl FileImporter {
                 hash: Some(hash),
                 mime: Some(mime),
                 note,
+                raised: None,
             });
         }
 
@@ -227,6 +234,7 @@ impl FileImporter {
             hash: Some(hash),
             mime: Some(mime),
             note: String::new(),
+            raised: None,
         })
     }
 
@@ -266,16 +274,24 @@ fn unknown(hash: Sha256) -> ImportResult {
         hash: Some(hash),
         mime: None,
         note: String::new(),
+        raised: None,
     }
 }
 
 /// A file the media tools couldn't handle, as the reference reports it.
 fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
+    let raised = match error {
+        MediaError::Unsupported { reason, .. } => reason.clone(),
+        MediaError::ZeroSize => "File is of zero length!".into(),
+        MediaError::Damaged(message) => message.clone(),
+        other => other.to_string(),
+    };
     ImportResult {
         status: ImportStatus::Error,
         hash: Some(hash),
         mime: None,
         note: error.to_string(),
+        raised: Some(raised),
     }
 }
 

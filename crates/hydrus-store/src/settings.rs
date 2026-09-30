@@ -54,6 +54,37 @@ impl Setting for FileViewingStatistics {
     const KEY: &'static str = "file_viewing_statistics";
 }
 
+/// Import and export folders, and deleting files outside the store
+/// (`pause_import_folders_sync`, `pause_export_folders_sync`,
+/// `copy_import_files_to_temp_dir`, and the old options'
+/// `delete_to_recycle_bin`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FolderSettings {
+    pub pause_import_folders: bool,
+    pub pause_export_folders: bool,
+    /// Import a copy of each file, so the original is never held open.
+    pub copy_import_files_to_temp_dir: bool,
+    /// Deleted files go to the recycle bin (or are deleted for good if
+    /// that fails), rather than straight away.
+    pub delete_to_recycle_bin: bool,
+}
+
+impl Default for FolderSettings {
+    fn default() -> Self {
+        Self {
+            pause_import_folders: false,
+            pause_export_folders: false,
+            copy_import_files_to_temp_dir: true,
+            delete_to_recycle_bin: true,
+        }
+    }
+}
+
+impl Setting for FolderSettings {
+    const KEY: &'static str = "folders";
+}
+
 impl Setting for hydrus_core::url::UrlClassSettings {
     const KEY: &'static str = "url_classes";
 }

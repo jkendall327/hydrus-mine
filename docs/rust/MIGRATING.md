@@ -51,7 +51,12 @@ across with their progress: every pair's status for every rule (searched,
 tested, waiting for your approval, denied) and each rule's log of what it
 did, so no rule redoes its work; `hydrus duplicates <store> rules` shows
 them, and `hydrus serve` carries on running them, including rules that
-compare the files' content (visual similarity, jpeg quality). Configuration hydrus-rs doesn't use
+compare the files' content (visual similarity, jpeg quality). Import folders
+come across with their sidecar routing, filename tagging, actions and
+schedule, and the files each has already seen, so nothing is imported twice;
+`hydrus serve` checks them when they are due, and `hydrus import-folders
+<store> list` shows them. A folder's path (and where it moves files) is kept
+as it was, so it must be where the new install can reach it. Configuration hydrus-rs doesn't use
 yet (pages, the GUI's options) is kept verbatim inside the new store, so
 later versions can pick it up without a re-import.
 

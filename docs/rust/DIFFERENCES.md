@@ -170,6 +170,36 @@ in-memory predicate tests their comparators use by
 - **Ratings in a rule's searches are not supported yet**; such a rule is
   reported at migration and left behind.
 
+## Import folders and sidecars (`hydrus-download::folders`, `hydrus-parse::sidecar`)
+
+Checked by `crates/hydrus-download/tests/import_folder.rs` on
+`oracle/fixtures/import_folder_run.json` (a folder with `.txt` and `.json`
+sidecars, filename tagging, a duplicate, an unsupported file, a file still
+being written and a subfolder, whose new files are moved and duplicates
+deleted), migrated from the reference's database before its run; by
+`crates/hydrus-legacy/tests/sidecars.rs` on `oracle/fixtures/sidecars.json`
+(400 random routers between sidecars, run on random sidecar files); and by
+`crates/hydrus-legacy/tests/string_processing.rs` on
+`oracle/fixtures/string_processing.json` (sorting and tag filtering steps).
+
+- **Files are always imported from a copy**, as the reference does with its
+  default "copy files to a temporary folder before importing" on; turning
+  that off has no effect.
+- **Filename tags aren't filtered by "storage" tag display filters.** The
+  reference applies them, but its interface has no way to set one.
+- **Import folders last saved before v7 of the format aren't converted**
+  (they are reported). The reference saves a folder each time it checks it,
+  so a folder in use is at the current version.
+- **Progress is saved after every file**, rather than every ten minutes.
+- **No popups or pages.** Without a GUI, "show a popup while working" and
+  "publish files to a page or popup button" do nothing; what a check found
+  and imported is logged.
+- **Changes from the command line are noticed within a minute** (the
+  reference is told of changes by its dialogs).
+- **Among tags whose human-sort keys are equal** (e.g. `straße` and
+  `strasse`), a tag filter step's order is ours; the reference's is Python's
+  set order, which differs from run to run.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server

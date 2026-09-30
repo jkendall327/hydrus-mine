@@ -1,0 +1,321 @@
+//! Files outside the store, as import and export folders handle them: the
+//! reference's `ClientFiles.GetAllFilePaths` and the `HydrusPaths` helpers
+//! they use. Paths are strings, as in the reference (a name that isn't
+//! UTF-8 is skipped).
+
+use std::collections::HashSet;
+use std::io;
+use std::path::{Component, Path, PathBuf};
+
+use hydrus_core::sort::human_sort;
+
+/// `os.path.normpath`, lexically.
+fn normpath(path: &Path) -> PathBuf {
+    let mut out = PathBuf::new();
+    for component in path.components() {
+        match component {
+            Component::CurDir => {}
+            Component::ParentDir => {
+                if !out.pop() {
+                    out.push("..");
+                }
+            }
+            other => out.push(other),
+        }
+    }
+    out
+}
+
+/// `has_sidecar_ext`: the extensions sidecars have (case matters).
+fn has_sidecar_ext(path: &str) -> bool {
+    [".txt", ".json", ".xml"]
+        .iter()
+        .any(|ext| path.ends_with(ext))
+}
+
+/// `get_comparable_sidecar_prefix`: the path up to its name's first dot.
+fn comparable_sidecar_prefix(path: &str) -> String {
+    let p = Path::new(path);
+    let name = p.file_name().and_then(|n| n.to_str()).unwrap_or(path);
+    let stem = name.split_once('.').map_or(name, |(stem, _)| stem);
+    match p.parent() {
+        Some(dir) if !dir.as_os_str().is_empty() => dir.join(stem).to_string_lossy().into_owned(),
+        _ => stem.to_owned(),
+    }
+}
+
+/// `GetAllFilePaths`: the files under `root` (or `root` itself if it is a
+/// file), in human order, split into files and the sidecars beside them (a
+/// `.txt`, `.json` or `.xml` whose name before its first dot is also some
+/// other file's).
+pub fn all_file_paths(
+    root: &str,
+    search_subdirectories: bool,
+) -> io::Result<(Vec<String>, Vec<String>)> {
+    let mut all = Vec::new();
+    // (path, the directories above it, to stop following links back up)
+    let mut jobs: Vec<(PathBuf, HashSet<PathBuf>)> = vec![(PathBuf::from(root), HashSet::new())];
+    while !jobs.is_empty() {
+        let mut next = Vec::new();
+        for (path, parents) in jobs {
+            if !path.is_dir() {
+                if let Some(p) = path.to_str() {
+                    all.push(p.to_owned());
+                }
+                continue;
+            }
+            for entry in std::fs::read_dir(&path)? {
+                let entry = entry?;
+                let entry_path = entry.path();
+                // (following links, as os.scandir's is_dir and is_file do)
+                let Ok(meta) = std::fs::metadata(&entry_path) else {
+                    continue;
+                };
+                if meta.is_dir() {
+                    if search_subdirectories && !parents.contains(&normpath(&entry_path)) {
+                        let mut sub_parents = parents.clone();
+                        sub_parents.insert(normpath(&path));
+                        next.push((entry_path, sub_parents));
+                    }
+                } else if meta.is_file()
+                    && let Some(p) = entry_path.to_str()
+                {
+                    all.push(p.to_owned());
+                }
+            }
+        }
+        jobs = next;
+    }
+    human_sort(&mut all);
+    let prefixes: HashSet<String> = all
+        .iter()
+        .filter(|p| !has_sidecar_ext(p))
+        .map(|p| comparable_sidecar_prefix(p))
+        .collect();
+    let (sidecars, files) = all
+        .into_iter()
+        .partition(|p| has_sidecar_ext(p) && prefixes.contains(&comparable_sidecar_prefix(p)));
+    Ok((files, sidecars))
+}
+
+/// `FilterOlderModifiedFiles`: the paths last modified before `grace`
+/// seconds ago.
+pub fn filter_older_modified(paths: Vec<String>, grace: i64, now: i64) -> Vec<String> {
+    let only_older_than = (now - grace) as f64;
+    paths
+        .into_iter()
+        .filter(|p| {
+            std::fs::metadata(p)
+                .and_then(|m| m.modified())
+                .ok()
+                .and_then(|t| t.duration_since(std::time::UNIX_EPOCH).ok())
+                .is_some_and(|d| d.as_secs_f64() < only_older_than)
+        })
+        .collect()
+}
+
+/// `PathIsFree`: whether nothing else seems to have the file open (on
+/// Windows, renaming an open file to itself fails).
+pub fn path_is_free(path: &str) -> bool {
+    let Ok(meta) = std::fs::metadata(path) else {
+        return false;
+    };
+    if !meta.permissions().readonly() {
+        return std::fs::rename(path, path).is_ok();
+    }
+    std::fs::File::open(path).is_ok()
+}
+
+/// `os.path.splitext` on a whole path: `(root, ext)`.
+fn split_ext(path: &str) -> (&str, &str) {
+    let name_start = path.rfind(std::path::is_separator).map_or(0, |i| i + 1);
+    let name = &path[name_start..];
+    match name.rfind('.') {
+        Some(i) if name[..i].chars().any(|c| c != '.') => {
+            (&path[..name_start + i], &path[name_start + i..])
+        }
+        _ => (path, ""),
+    }
+}
+
+/// `AppendPathUntilNoConflicts`: `name.jpg`, else `name_0.jpg`,
+/// `name_1.jpg`, ...
+pub fn append_path_until_no_conflicts(path: &str) -> String {
+    let (root, ext) = split_ext(path);
+    let mut candidate = path.to_owned();
+    let mut i = 0;
+    while Path::new(&candidate).exists() {
+        candidate = format!("{root}_{i}{ext}");
+        i += 1;
+    }
+    candidate
+}
+
+fn same_file(a: &std::fs::Metadata, b: &std::fs::Metadata) -> bool {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::MetadataExt;
+        a.dev() == b.dev() && a.ino() == b.ino()
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = (a, b);
+        false
+    }
+}
+
+fn whole_seconds(meta: &std::fs::Metadata) -> Option<i64> {
+    let modified = meta.modified().ok()?;
+    Some(match modified.duration_since(std::time::UNIX_EPOCH) {
+        Ok(d) => d.as_secs() as i64,
+        Err(e) => -(e.duration().as_secs_f64().ceil() as i64),
+    })
+}
+
+/// Move a file, across devices too (`shutil.move`).
+fn move_file(source: &str, dest: &str) -> io::Result<()> {
+    if std::fs::rename(source, dest).is_ok() {
+        return Ok(());
+    }
+    std::fs::copy(source, dest)?;
+    if let Ok(meta) = std::fs::metadata(source)
+        && let Ok(modified) = meta.modified()
+    {
+        let _ = std::fs::File::options()
+            .write(true)
+            .open(dest)
+            .and_then(|f| f.set_modified(modified));
+    }
+    std::fs::remove_file(source)
+}
+
+/// `MergeFile`: move `source` to `dest`, unless `dest` already has the same
+/// size and modified second, when `source` is just deleted. Whether a move
+/// happened.
+pub fn merge_file(source: &str, dest: &str) -> io::Result<bool> {
+    let source_meta = std::fs::metadata(source).map_err(|e| {
+        if e.kind() == io::ErrorKind::NotFound {
+            io::Error::other(format!(
+                "Cannot file-merge \"{source}\" to \"{dest}\"--the source does not exist!"
+            ))
+        } else {
+            e
+        }
+    })?;
+    if source_meta.is_dir() {
+        return Err(io::Error::other(format!(
+            "Cannot file-merge \"{source}\" to \"{dest}\"--the source is a directory, not a file!"
+        )));
+    }
+    if let Ok(dest_meta) = std::fs::metadata(dest) {
+        if dest_meta.is_dir() {
+            return Err(io::Error::other(format!(
+                "Cannot file-merge \"{source}\" to \"{dest}\"--the destination is a directory, not a file!"
+            )));
+        }
+        if same_file(&source_meta, &dest_meta) {
+            return Err(io::Error::other(format!(
+                "Woah, \"{source}\" and \"{dest}\" are the same file!"
+            )));
+        }
+        if source_meta.len() == dest_meta.len()
+            && whole_seconds(&source_meta) == whole_seconds(&dest_meta)
+        {
+            delete_path(source)?;
+            return Ok(false);
+        }
+    }
+    move_file(source, dest)?;
+    Ok(true)
+}
+
+/// `HydrusPaths.DeletePath`: delete a file (a link itself, not its target)
+/// for good; nothing if it isn't there.
+pub fn delete_path(path: &str) -> io::Result<()> {
+    match std::fs::symlink_metadata(path) {
+        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
+        Err(e) => Err(e),
+        Ok(meta) if meta.is_dir() => std::fs::remove_dir_all(path),
+        Ok(_) => std::fs::remove_file(path),
+    }
+}
+
+/// `ClientPaths.DeletePath`: to the recycle bin if asked (falling back to
+/// deleting for good, as the reference does when recycling fails), else
+/// for good.
+pub fn delete_or_recycle(path: &str, recycle: bool) -> io::Result<()> {
+    if !recycle {
+        return delete_path(path);
+    }
+    if std::fs::symlink_metadata(path).is_err() {
+        return Ok(());
+    }
+    match trash::delete(path) {
+        Ok(()) => Ok(()),
+        Err(e) => {
+            tracing::warn!("could not recycle {path:?} ({e}); deleting it instead");
+            delete_path(path)
+        }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn sidecars_are_told_apart_from_files() {
+        let dir = tempfile::tempdir().unwrap();
+        let d = dir.path();
+        std::fs::create_dir(d.join("sub")).unwrap();
+        for name in [
+            "a.jpg",
+            "a.jpg.txt",
+            "a.json",
+            "b.txt",
+            "page 10.png",
+            "page 2.png",
+            "c.TXT",
+        ] {
+            std::fs::write(d.join(name), b"x").unwrap();
+        }
+        std::fs::write(d.join("sub").join("x.gif"), b"x").unwrap();
+        let (files, sidecars) = all_file_paths(d.to_str().unwrap(), true).unwrap();
+        let names = |v: &[String]| -> Vec<String> {
+            v.iter()
+                .map(|p| {
+                    Path::new(p)
+                        .strip_prefix(d)
+                        .unwrap()
+                        .to_string_lossy()
+                        .into_owned()
+                })
+                .collect()
+        };
+        let sep = std::path::MAIN_SEPARATOR;
+        assert_eq!(
+            names(&files),
+            vec![
+                "a.jpg",
+                "b.txt",
+                "c.TXT",
+                "page 2.png",
+                "page 10.png",
+                &format!("sub{sep}x.gif")
+            ]
+        );
+        assert_eq!(names(&sidecars), vec!["a.jpg.txt", "a.json"]);
+        let (files, _) = all_file_paths(d.to_str().unwrap(), false).unwrap();
+        assert_eq!(files.len(), 5);
+    }
+
+    #[test]
+    fn conflicting_names_get_numbers() {
+        let dir = tempfile::tempdir().unwrap();
+        let p = dir.path().join("f.jpg");
+        std::fs::write(&p, b"x").unwrap();
+        std::fs::write(dir.path().join("f_0.jpg"), b"x").unwrap();
+        let got = append_path_until_no_conflicts(p.to_str().unwrap());
+        assert!(got.ends_with("f_1.jpg"), "{got}");
+    }
+}

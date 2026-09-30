@@ -325,6 +325,16 @@ pub fn gallery_seed(object: &SerialisableObject) -> DecodeResult<LegacyGallerySe
     })
 }
 
+/// Decode a file seed cache (8, v8; older caches predate the current
+/// subscription system and import folders).
+pub fn file_seed_cache(cache: &SerialisableObject) -> DecodeResult<Vec<LegacyFileSeed>> {
+    expect(cache, FILE_SEED_CACHE, &[8])?;
+    nested_list(FILE_SEED_CACHE, &cache.info(), "file seed cache")?
+        .iter()
+        .map(file_seed)
+        .collect()
+}
+
 /// Decode a query's log container.
 pub fn query_log(object: &SerialisableObject) -> DecodeResult<QueryLog> {
     let k = LOG_CONTAINER;
@@ -334,20 +344,14 @@ pub fn query_log(object: &SerialisableObject) -> DecodeResult<QueryLog> {
         .clone()
         .ok_or_else(|| malformed(k, "query log has no name"))?;
     let info = object.info();
-    let [gallery_log, file_seed_cache] = tuple::<2>(k, &info, "query log")?;
+    let [gallery_log, file_seed_cache_value] = tuple::<2>(k, &info, "query log")?;
     let gallery_log = nested(k, gallery_log, "gallery log")?;
     expect(&gallery_log, GALLERY_LOG, &[1])?;
     let gallery_seeds = nested_list(GALLERY_LOG, &gallery_log.info(), "gallery log")?
         .iter()
         .map(gallery_seed)
         .collect::<DecodeResult<_>>()?;
-    let cache = nested(k, file_seed_cache, "file seed cache")?;
-    // (older caches predate the current subscription system)
-    expect(&cache, FILE_SEED_CACHE, &[8])?;
-    let file_seeds = nested_list(FILE_SEED_CACHE, &cache.info(), "file seed cache")?
-        .iter()
-        .map(file_seed)
-        .collect::<DecodeResult<_>>()?;
+    let file_seeds = file_seed_cache(&nested(k, file_seed_cache_value, "file seed cache")?)?;
     Ok(QueryLog {
         name,
         gallery_seeds,

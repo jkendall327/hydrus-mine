@@ -33,6 +33,7 @@ mod client_options;
 pub mod domain;
 mod duplicates;
 mod favourites;
+pub mod import_folders;
 pub mod import_options;
 pub mod legacy_import_options;
 mod legacy_options;

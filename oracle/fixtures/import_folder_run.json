@@ -1,0 +1,748 @@
+{
+ "dupe": "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+ "folder": "/tmp/hydrus_import_folder_9q28rfla/in",
+ "in_after": {
+  "notes.txt": 43,
+  "recent.png": 10637
+ },
+ "metadata": [
+  {
+   "blurhash": "UPDm5.03xivi9Dc6rWR.;uJPoRxt*{O=srjF",
+   "duration": null,
+   "ext": ".gif",
+   "file_id": 1,
+   "file_services": {
+    "current": {
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "time_imported": 1790755621,
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "time_imported": 1790755621,
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "time_imported": 1790755621,
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    },
+    "deleted": {}
+   },
+   "file_viewing_statistics": [
+    {
+     "canvas_type": 0,
+     "canvas_type_pretty": "media viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 1,
+     "canvas_type_pretty": "preview viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 4,
+     "canvas_type_pretty": "client api viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    }
+   ],
+   "filetype_enum": 68,
+   "filetype_forced": false,
+   "filetype_human": "static gif",
+   "has_audio": false,
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_transparency": false,
+   "has_xmp": false,
+   "hash": "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+   "height": 160,
+   "ipfs_multihashes": {},
+   "is_deleted": false,
+   "is_inbox": true,
+   "is_local": true,
+   "is_trashed": false,
+   "known_urls": [],
+   "mime": "image/gif",
+   "notes": {},
+   "num_frames": null,
+   "num_words": null,
+   "pixel_hash": "8e1b1f1aec70070cf5aa2865f65cb4cd992c48a9510d6fa9bfb8ed0d2e3145ba",
+   "ratings": {
+    "6661766f757269746573": null
+   },
+   "size": 3316,
+   "tags": {
+    "616c6c206b6e6f776e2074616773": {
+     "display_tags": {
+      "0": [
+       "filename:dupe",
+       "folder:in",
+       "from the drop box",
+       "should not matter"
+      ]
+     },
+     "name": "all known tags",
+     "storage_tags": {
+      "0": [
+       "filename:dupe",
+       "folder:in",
+       "from the drop box",
+       "should not matter"
+      ]
+     },
+     "type": 10,
+     "type_pretty": "virtual combined tag domain"
+    },
+    "646f776e6c6f616465722074616773": {
+     "display_tags": {},
+     "name": "downloader tags",
+     "storage_tags": {},
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "6c6f63616c2074616773": {
+     "display_tags": {
+      "0": [
+       "filename:dupe",
+       "folder:in",
+       "from the drop box",
+       "should not matter"
+      ]
+     },
+     "name": "my tags",
+     "storage_tags": {
+      "0": [
+       "filename:dupe",
+       "folder:in",
+       "from the drop box",
+       "should not matter"
+      ]
+     },
+     "type": 5,
+     "type_pretty": "local tag domain"
+    }
+   },
+   "thumbnail_height": 125,
+   "thumbnail_width": 125,
+   "time_modified": 1600000000,
+   "time_modified_details": {
+    "local": 1600000000
+   },
+   "width": 160
+  },
+  {
+   "blurhash": "UiKvp+0xvrxr0dJR%ZRk?imxNFW.RlXfR-oM",
+   "duration": null,
+   "ext": ".jpg",
+   "file_id": 5,
+   "file_services": {
+    "current": {
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "time_imported": 1790755626,
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "time_imported": 1790755626,
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "time_imported": 1790755626,
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    },
+    "deleted": {}
+   },
+   "file_viewing_statistics": [
+    {
+     "canvas_type": 0,
+     "canvas_type_pretty": "media viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 1,
+     "canvas_type_pretty": "preview viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 4,
+     "canvas_type_pretty": "client api viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    }
+   ],
+   "filetype_enum": 1,
+   "filetype_forced": false,
+   "filetype_human": "jpeg",
+   "has_audio": false,
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_transparency": false,
+   "has_xmp": false,
+   "hash": "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13",
+   "height": 160,
+   "ipfs_multihashes": {},
+   "is_deleted": false,
+   "is_inbox": true,
+   "is_local": true,
+   "is_trashed": false,
+   "known_urls": [],
+   "mime": "image/jpeg",
+   "notes": {
+    "comment": "the first line",
+    "comment (1)": "the second line"
+   },
+   "num_frames": null,
+   "num_words": null,
+   "pixel_hash": "fb0152d3a042092a10cae5089bfdfa84981f671456869a9147f892280a17e41a",
+   "ratings": {
+    "6661766f757269746573": null
+   },
+   "size": 3975,
+   "tags": {
+    "616c6c206b6e6f776e2074616773": {
+     "display_tags": {
+      "0": [
+       "filename:b p12",
+       "folder:in",
+       "from the drop box",
+       "page:12",
+       "series:metroid"
+      ]
+     },
+     "name": "all known tags",
+     "storage_tags": {
+      "0": [
+       "filename:b p12",
+       "folder:in",
+       "from the drop box",
+       "page:12",
+       "series:metroid"
+      ]
+     },
+     "type": 10,
+     "type_pretty": "virtual combined tag domain"
+    },
+    "646f776e6c6f616465722074616773": {
+     "display_tags": {},
+     "name": "downloader tags",
+     "storage_tags": {},
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "6c6f63616c2074616773": {
+     "display_tags": {
+      "0": [
+       "filename:b p12",
+       "folder:in",
+       "from the drop box",
+       "page:12",
+       "series:metroid"
+      ]
+     },
+     "name": "my tags",
+     "storage_tags": {
+      "0": [
+       "filename:b p12",
+       "folder:in",
+       "from the drop box",
+       "page:12",
+       "series:metroid"
+      ]
+     },
+     "type": 5,
+     "type_pretty": "local tag domain"
+    }
+   },
+   "thumbnail_height": 125,
+   "thumbnail_width": 125,
+   "time_modified": 1600000000,
+   "time_modified_details": {
+    "local": 1600000000
+   },
+   "width": 160
+  },
+  {
+   "blurhash": "ULDSLutWa1IK%--@RbR4?itFneIK%Ux+V@V#",
+   "duration": null,
+   "ext": ".png",
+   "file_id": 3,
+   "file_services": {
+    "current": {
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "time_imported": 1790755626,
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "time_imported": 1790755626,
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "time_imported": 1790755626,
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    },
+    "deleted": {}
+   },
+   "file_viewing_statistics": [
+    {
+     "canvas_type": 0,
+     "canvas_type_pretty": "media viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 1,
+     "canvas_type_pretty": "preview viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 4,
+     "canvas_type_pretty": "client api viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    }
+   ],
+   "filetype_enum": 2,
+   "filetype_forced": false,
+   "filetype_human": "png",
+   "has_audio": false,
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_transparency": false,
+   "has_xmp": false,
+   "hash": "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511",
+   "height": 160,
+   "ipfs_multihashes": {},
+   "is_deleted": false,
+   "is_inbox": true,
+   "is_local": true,
+   "is_trashed": false,
+   "known_urls": [
+    "https://example.com/a%20b",
+    "https://example.com/post/1",
+    "not a url"
+   ],
+   "mime": "image/png",
+   "notes": {},
+   "num_frames": null,
+   "num_words": null,
+   "pixel_hash": "f5fadebb14387d70301b0ca8564e70d76cc9ad373cac9a94b769c73140edd7fa",
+   "ratings": {
+    "6661766f757269746573": null
+   },
+   "size": 8076,
+   "tags": {
+    "616c6c206b6e6f776e2074616773": {
+     "display_tags": {
+      "0": [
+       "blue eyes",
+       "character:samus aran",
+       "filename:a",
+       "folder:in",
+       "from the drop box",
+       "page 2",
+       "page 10"
+      ]
+     },
+     "name": "all known tags",
+     "storage_tags": {
+      "0": [
+       "blue eyes",
+       "character:samus aran",
+       "filename:a",
+       "folder:in",
+       "from the drop box",
+       "page 2",
+       "page 10"
+      ]
+     },
+     "type": 10,
+     "type_pretty": "virtual combined tag domain"
+    },
+    "646f776e6c6f616465722074616773": {
+     "display_tags": {},
+     "name": "downloader tags",
+     "storage_tags": {},
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "6c6f63616c2074616773": {
+     "display_tags": {
+      "0": [
+       "blue eyes",
+       "character:samus aran",
+       "filename:a",
+       "folder:in",
+       "from the drop box",
+       "page 2",
+       "page 10"
+      ]
+     },
+     "name": "my tags",
+     "storage_tags": {
+      "0": [
+       "blue eyes",
+       "character:samus aran",
+       "filename:a",
+       "folder:in",
+       "from the drop box",
+       "page 2",
+       "page 10"
+      ]
+     },
+     "type": 5,
+     "type_pretty": "local tag domain"
+    }
+   },
+   "thumbnail_height": 125,
+   "thumbnail_width": 125,
+   "time_modified": 1500000000,
+   "time_modified_details": {
+    "local": 1500000000
+   },
+   "width": 160
+  },
+  {
+   "blurhash": "UoHB[r*{o.N40iO7W9n,-onhRXTCVjxqotRj",
+   "duration": null,
+   "ext": ".png",
+   "file_id": 7,
+   "file_services": {
+    "current": {
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "time_imported": 1790755626,
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "time_imported": 1790755626,
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "time_imported": 1790755626,
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    },
+    "deleted": {}
+   },
+   "file_viewing_statistics": [
+    {
+     "canvas_type": 0,
+     "canvas_type_pretty": "media viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 1,
+     "canvas_type_pretty": "preview viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 4,
+     "canvas_type_pretty": "client api viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    }
+   ],
+   "filetype_enum": 2,
+   "filetype_forced": false,
+   "filetype_human": "png",
+   "has_audio": false,
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_transparency": false,
+   "has_xmp": false,
+   "hash": "997d86c5cfcda3ba9e0612511436d8897255bb98e289e24d7bfda8e53f8a19da",
+   "height": 160,
+   "ipfs_multihashes": {},
+   "is_deleted": false,
+   "is_inbox": true,
+   "is_local": true,
+   "is_trashed": false,
+   "known_urls": [],
+   "mime": "image/png",
+   "notes": {},
+   "num_frames": null,
+   "num_words": null,
+   "pixel_hash": "eb234fabd09a9ae7a3d11d001422198a14b51ab3465ef3cebd01512a19bd764a",
+   "ratings": {
+    "6661766f757269746573": null
+   },
+   "size": 10598,
+   "tags": {
+    "616c6c206b6e6f776e2074616773": {
+     "display_tags": {
+      "0": [
+       "::)",
+       "filename:c",
+       "folder:sub",
+       "from the drop box",
+       "ümlaut"
+      ]
+     },
+     "name": "all known tags",
+     "storage_tags": {
+      "0": [
+       "::)",
+       "filename:c",
+       "folder:sub",
+       "from the drop box",
+       "ümlaut"
+      ]
+     },
+     "type": 10,
+     "type_pretty": "virtual combined tag domain"
+    },
+    "646f776e6c6f616465722074616773": {
+     "display_tags": {},
+     "name": "downloader tags",
+     "storage_tags": {},
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "6c6f63616c2074616773": {
+     "display_tags": {
+      "0": [
+       "::)",
+       "filename:c",
+       "folder:sub",
+       "from the drop box",
+       "ümlaut"
+      ]
+     },
+     "name": "my tags",
+     "storage_tags": {
+      "0": [
+       "::)",
+       "filename:c",
+       "folder:sub",
+       "from the drop box",
+       "ümlaut"
+      ]
+     },
+     "type": 5,
+     "type_pretty": "local tag domain"
+    }
+   },
+   "thumbnail_height": 125,
+   "thumbnail_width": 125,
+   "time_modified": 1600000000,
+   "time_modified_details": {
+    "local": 1600000000
+   },
+   "width": 160
+  },
+  {
+   "blurhash": "ULDSLutWa1IK%--@RbR4?itFneIK%Ux+V@V#",
+   "duration": null,
+   "ext": ".bmp",
+   "file_id": 9,
+   "file_services": {
+    "current": {
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "time_imported": 1790755627,
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "time_imported": 1790755627,
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "time_imported": 1790755627,
+      "type": 2,
+      "type_pretty": "local file domain"
+     }
+    },
+    "deleted": {}
+   },
+   "file_viewing_statistics": [
+    {
+     "canvas_type": 0,
+     "canvas_type_pretty": "media viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 1,
+     "canvas_type_pretty": "preview viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    },
+    {
+     "canvas_type": 4,
+     "canvas_type_pretty": "client api viewer",
+     "last_viewed_timestamp": null,
+     "views": 0,
+     "viewtime": 0.0
+    }
+   ],
+   "filetype_enum": 4,
+   "filetype_forced": false,
+   "filetype_human": "bitmap",
+   "has_audio": false,
+   "has_exif": false,
+   "has_human_readable_embedded_metadata": false,
+   "has_icc_profile": false,
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_transparency": false,
+   "has_xmp": false,
+   "hash": "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674",
+   "height": 160,
+   "ipfs_multihashes": {},
+   "is_deleted": false,
+   "is_inbox": true,
+   "is_local": true,
+   "is_trashed": false,
+   "known_urls": [],
+   "mime": "image/bmp",
+   "notes": {},
+   "num_frames": null,
+   "num_words": null,
+   "pixel_hash": "f5fadebb14387d70301b0ca8564e70d76cc9ad373cac9a94b769c73140edd7fa",
+   "ratings": {
+    "6661766f757269746573": null
+   },
+   "size": 76854,
+   "tags": {
+    "616c6c206b6e6f776e2074616773": {
+     "display_tags": {
+      "0": [
+       "d",
+       "filename:d",
+       "folder:deeper",
+       "from the drop box"
+      ]
+     },
+     "name": "all known tags",
+     "storage_tags": {
+      "0": [
+       "d",
+       "filename:d",
+       "folder:deeper",
+       "from the drop box"
+      ]
+     },
+     "type": 10,
+     "type_pretty": "virtual combined tag domain"
+    },
+    "646f776e6c6f616465722074616773": {
+     "display_tags": {},
+     "name": "downloader tags",
+     "storage_tags": {},
+     "type": 5,
+     "type_pretty": "local tag domain"
+    },
+    "6c6f63616c2074616773": {
+     "display_tags": {
+      "0": [
+       "d",
+       "filename:d",
+       "folder:deeper",
+       "from the drop box"
+      ]
+     },
+     "name": "my tags",
+     "storage_tags": {
+      "0": [
+       "d",
+       "filename:d",
+       "folder:deeper",
+       "from the drop box"
+      ]
+     },
+     "type": 5,
+     "type_pretty": "local tag domain"
+    }
+   },
+   "thumbnail_height": 125,
+   "thumbnail_width": 125,
+   "time_modified": 1600000000,
+   "time_modified_details": {
+    "local": 1600000000
+   },
+   "width": 160
+  }
+ ],
+ "moved": "/tmp/hydrus_import_folder_9q28rfla/moved",
+ "moved_after": {
+  "a.png": 8076,
+  "a.png.json": 126,
+  "a.png.time.txt": 10,
+  "a.png.txt": 48,
+  "b p12.jpg": 3975,
+  "b p12.jpg.txt": 14,
+  "b p12.notes.txt": 30,
+  "c.png": 10598,
+  "c.png.txt": 12,
+  "d.bmp": 76854
+ },
+ "seeds": [
+  [
+   "notes.txt",
+   4,
+   "Unknown filetype!",
+   null
+  ]
+ ]
+}

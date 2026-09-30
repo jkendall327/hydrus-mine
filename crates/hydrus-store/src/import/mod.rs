@@ -49,11 +49,23 @@ pub struct ImportInput {
     pub cookies: Vec<(NetworkContext, Cookie)>,
     /// Subscriptions; their queries' histories are copied during the import.
     pub subscriptions: Vec<SubscriptionInput>,
+    /// Import folders, with the files each has seen.
+    pub import_folders: Vec<ImportFolderInput>,
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
+}
+
+/// An import folder to import.
+#[derive(Debug, Clone, PartialEq)]
+pub struct ImportFolderInput {
+    pub name: String,
+    pub settings: hydrus_parse::folders::ImportFolderSettings,
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
+    pub paused: bool,
+    pub file_seeds: Vec<crate::queues::FileSeed>,
 }
 
 /// A subscription to import.
@@ -247,6 +259,7 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.settings(input)?;
     copier.network(input)?;
     copier.subscriptions(input)?;
+    copier.import_folders(input)?;
     copier.auto_resolution(input)?;
     copier.derived()?;
     tx.commit()?;
@@ -888,6 +901,33 @@ impl Copier<'_> {
         {
             *self.report.rows.entry(table.into()).or_default() += n;
         }
+        Ok(())
+    }
+
+    /// Import folders, with the files each has seen (so nothing is
+    /// imported twice).
+    fn import_folders(&mut self, input: &ImportInput) -> Result<()> {
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs() as i64);
+        let (mut folders, mut seeds) = (0u64, 0u64);
+        for f in &input.import_folders {
+            let Some(id) = crate::import_folders::create_import_folder(
+                self.conn,
+                &f.name,
+                &f.settings,
+                &f.options,
+                f.paused,
+                now,
+            )?
+            else {
+                continue;
+            };
+            folders += 1;
+            seeds += queues::restore_file_seeds(self.conn, id, &f.file_seeds)? as u64;
+        }
+        *self.report.rows.entry("import_folders".into()).or_default() += folders;
+        *self.report.rows.entry("file_seeds".into()).or_default() += seeds;
         Ok(())
     }
 

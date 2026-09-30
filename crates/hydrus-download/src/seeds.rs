@@ -447,7 +447,7 @@ impl Downloader {
     }
 
     /// `Import`: import a downloaded file and take its result.
-    fn import_file(
+    pub(crate) fn import_file(
         &self,
         seed: &mut FileSeed,
         path: &std::path::Path,
@@ -455,6 +455,10 @@ impl Downloader {
     ) -> Result<(), Stop> {
         let file_options = FileImportOptions::from_full(options, &self.store.snapshot().services);
         let result = self.importer.import_path(path, &file_options)?;
+        if let Some(message) = result.raised {
+            // the reference's import raised, before the seed took the hash
+            return Err(Stop::Error(message));
+        }
         set_status(seed, seed_status(result.status), result.note);
         if let Some(hash) = result.hash {
             seed.meta.set_hash("sha256", hash.to_hex());

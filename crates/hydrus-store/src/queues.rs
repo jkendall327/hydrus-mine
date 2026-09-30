@@ -23,6 +23,8 @@ pub enum QueueKind {
     Gallery,
     Watcher,
     Subscription,
+    /// An import folder (its settings are the queue's extra).
+    ImportFolder,
 }
 
 impl QueueKind {
@@ -32,6 +34,7 @@ impl QueueKind {
             QueueKind::Gallery => "gallery",
             QueueKind::Watcher => "watcher",
             QueueKind::Subscription => "subscription",
+            QueueKind::ImportFolder => "import_folder",
         }
     }
 
@@ -41,6 +44,7 @@ impl QueueKind {
             "gallery" => QueueKind::Gallery,
             "watcher" => QueueKind::Watcher,
             "subscription" => QueueKind::Subscription,
+            "import_folder" => QueueKind::ImportFolder,
             _ => return None,
         })
     }

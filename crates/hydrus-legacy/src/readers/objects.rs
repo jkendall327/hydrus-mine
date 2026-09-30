@@ -330,6 +330,30 @@ impl LegacyDb {
             .collect())
     }
 
+    /// Every import folder (type 19), decoded; a folder that cannot be
+    /// decoded is an error in its slot.
+    pub fn import_folders(
+        &self,
+    ) -> Result<
+        Vec<(
+            String,
+            Result<crate::objects::import_folders::LegacyImportFolder>,
+        )>,
+    > {
+        Ok(self
+            .latest_named(SerialisableType(19))?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named import folder {:?}", row.name);
+                let decoded = row
+                    .parse()
+                    .and_then(|object| crate::objects::import_folders::import_folder(&object))
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
+            })
+            .collect())
+    }
+
     /// Every duplicates auto-resolution rule (type 128), decoded; a rule
     /// that cannot be decoded is an error in its slot.
     pub fn auto_resolution_rules(

@@ -20,6 +20,7 @@ fn unknown() -> ImportResult {
         hash: None,
         mime: None,
         note: String::new(),
+        raised: None,
     }
 }
 

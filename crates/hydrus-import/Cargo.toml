@@ -14,6 +14,7 @@ rusqlite.workspace = true
 thiserror.workspace = true
 tracing.workspace = true
 tempfile.workspace = true
+trash.workspace = true
 
 [dev-dependencies]
 hydrus-testkit.workspace = true

@@ -52,6 +52,35 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     }
     insert_setting(&mut input, &gallery)?;
 
+    let mut folders = crate::settings::FolderSettings::default();
+    if let Some(value) = legacy_options
+        .get("delete_to_recycle_bin")
+        .and_then(hydrus_legacy::objects::YamlValue::as_bool)
+    {
+        folders.delete_to_recycle_bin = value;
+    }
+    if let Some(options) = &options {
+        for (key, field) in [
+            (
+                "pause_import_folders_sync",
+                &mut folders.pause_import_folders,
+            ),
+            (
+                "pause_export_folders_sync",
+                &mut folders.pause_export_folders,
+            ),
+            (
+                "copy_import_files_to_temp_dir",
+                &mut folders.copy_import_files_to_temp_dir,
+            ),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &folders)?;
+
     let mut thumbnails = ThumbnailSettings::default();
     if let Some((w, h)) = legacy_options.thumbnail_dimensions() {
         thumbnails.bounding_width = positive(w, "thumbnail width")?;
@@ -235,6 +264,36 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         Err(e) => input
             .warnings
             .push(format!("Subscriptions were not converted: {e}")),
+    }
+    match db.import_folders() {
+        Ok(folders) => {
+            for (name, decoded) in folders {
+                match decoded {
+                    Ok(f) => {
+                        let warnings = &mut input.warnings;
+                        let file_seeds = f
+                            .file_seeds
+                            .iter()
+                            .filter_map(|seed| file_seed(seed, None, warnings))
+                            .collect();
+                        input.import_folders.push(super::ImportFolderInput {
+                            name: f.name,
+                            settings: f.settings,
+                            options: f.options,
+                            paused: f.paused,
+                            file_seeds,
+                        });
+                    }
+                    Err(e) => input.warnings.push(format!(
+                        "Import folder \"{name}\" could not be read, so it was not converted (the original \
+                         is kept): {e}"
+                    )),
+                }
+            }
+        }
+        Err(e) => input
+            .warnings
+            .push(format!("Import folders were not converted: {e}")),
     }
     match db.auto_resolution_rules() {
         Ok(rules) => {
