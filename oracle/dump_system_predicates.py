@@ -166,6 +166,18 @@ class StubServicesManager( object ):
         return self._keys_to_services[ service_key ].GetName()
 
 
+    def GetNameSafe( self, service_key ):
+
+        try:
+
+            return self.GetName( service_key )
+
+        except HydrusExceptions.DataMissing:
+
+            return 'unknown service'
+
+
+
     def GetService( self, service_key ):
 
         return self._keys_to_services[ service_key ]
@@ -440,7 +452,18 @@ def parse_one( text ):
         result[ 'serialised' ] = json.loads( json.dumps( predicate.GetSerialisableTuple() ) )
 
 
+    result[ '_predicate' ] = predicate
+
     return result
+
+
+def texts( predicate ):
+
+    # how the reference writes the predicate: plainly, and as its GUI lists it
+    return {
+        'text' : predicate.ToString( with_count = False ),
+        'text_for_user' : predicate.ToString( with_count = False, render_for_user = True ),
+    }
 
 
 def parse_with_clock( text ):
@@ -455,7 +478,15 @@ def parse_with_clock( text ):
 
     FROZEN_DATEPARSER.now = BASE_NOW
 
+    predicate = result.pop( '_predicate', None )
+    alternate.pop( '_predicate', None )
+
     result[ 'depends_on_now' ] = json.dumps( result, sort_keys = True ) != json.dumps( alternate, sort_keys = True )
+
+    if predicate is not None:
+
+        result.update( texts( predicate ) )
+
 
     return result
 
@@ -475,9 +506,9 @@ def parse_api_tags( tags ):
         return { 'ok' : False, 'stage' : stage, 'error' : str( e ) }
 
 
-    normalised = sorted( ( norm_predicate( p ) for p in predicates ), key = lambda d: json.dumps( d, sort_keys = True ) )
+    described = sorted( ( ( norm_predicate( p ), texts( p ) ) for p in predicates ), key = lambda pair: json.dumps( pair[0], sort_keys = True ) )
 
-    return { 'ok' : True, 'predicates' : normalised }
+    return { 'ok' : True, 'predicates' : [ d for ( d, _ ) in described ], 'texts' : [ t for ( _, t ) in described ] }
 
 
 # ---------------------------------------------------------------------------
