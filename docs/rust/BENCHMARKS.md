@@ -78,7 +78,8 @@ by `oracle/make_bench_db.py` (records only, no media; skewed tag popularity,
 namespaces, siblings and parents). Medians of five runs after a warm-up.
 
 50,000 files, about 1,000,000 mappings (the reference wrote it at 343 files
-and 6,869 mappings a second):
+and 6,869 mappings a second; measured before hydrus-rs cached file domains
+between searches, see below):
 
 | request | reference | hydrus-rs | speed-up |
 |---|---|---|---|
@@ -94,3 +95,39 @@ and 6,869 mappings a second):
 | search_files, everything | 114.5 ms | 38.1 ms | 3x |
 | add_tags, 1 file, 5 tags | 4.6 ms | 1.0 ms | 4x |
 | add_tags, 100 files, 1 tag | 5.4 ms | 1.3 ms | 4x |
+
+400,000 files, about 8,000,000 mappings, with duplicates at the target
+install's scale added by `oracle/add_bench_duplicates.py`: every file in a
+duplicate group, 100,000 of them in groups of two or three, and 23,344
+potential pairs (12,648 at distance 0, 8,831 at 1-2, 1,865 at 3-4). The
+reference wrote the library at 171 files a second.
+
+| request | reference | hydrus-rs | speed-up |
+|---|---|---|---|
+| get_services | 2.0 ms | 0.7 ms | 3x |
+| file_metadata, 1 file | 4.9 ms | 2.0 ms | 2x |
+| file_metadata, 100 files | 51.0 ms | 19.2 ms | 3x |
+| file_metadata, 100 files, basic | 6.5 ms | 2.2 ms | 3x |
+| search_tags "tag number 1" | 374.0 ms | 113.8 ms | 3x |
+| search_tags "character:*" | 1.7 ms | 0.7 ms | 3x |
+| search_files, popular tag (141,000 files) | 392.5 ms | 30.1 ms | 13x |
+| search_files, 2 tags | 39.5 ms | 10.4 ms | 4x |
+| search_files, tag + system | 383.6 ms | 33.2 ms | 12x |
+| search_files, everything | 983.1 ms | 31.6 ms | 31x |
+| add_tags, 1 file, 5 tags | 4.4 ms | 1.3 ms | 3x |
+| add_tags, 100 files, 1 tag | 6.4 ms | 1.4 ms | 4x |
+| potentials count | 203.8 ms | 6.9 ms | 30x |
+| potentials count, distance 0 | 157.1 ms | 5.7 ms | 27x |
+| potentials count, popular tag | 438.6 ms | 32.8 ms | 13x |
+| potential pairs, batch of 50 | 58.7 ms | 13.8 ms | 4x |
+| potential pairs, group mode | 7267.6 ms | 13.6 ms | 533x |
+| random potentials | 329.4 ms | 37.4 ms | 9x |
+| file_relationships, 100 files | 13.5 ms | 11.7 ms | 1x |
+
+These are warm figures: each request is repeated, and hydrus-rs keeps each
+file domain's files, its import order and the potential pairs in memory
+until a write changes them (see STORE.md). The first search of a domain
+after a write loads it again, which at 400,000 files costs about 30 ms for
+its files and 50 ms for its import order; loading the potential pairs costs
+about 70 ms. A popular-tag search with nothing cached takes 113 ms.
+
