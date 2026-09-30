@@ -8,8 +8,11 @@ as you like.
 ## Steps
 
 1. Update the old client to v688 and close it cleanly.
-2. Build hydrus-rs: `cargo build --release` (the binary is
-   `target/release/hydrus`).
+2. Build hydrus-rs: `cargo build --release` (the binaries are
+   `target/release/hydrus` and the desktop client `target/release/hydrus-gui`).
+   On Linux the desktop client needs fontconfig's development files (e.g.
+   `libfontconfig1-dev`); `cargo build --release -p hydrus-cli` builds just
+   the command line without them.
 3. Import:
 
    ```sh

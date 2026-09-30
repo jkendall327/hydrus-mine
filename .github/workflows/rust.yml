@@ -25,8 +25,8 @@ jobs:
           toolchain: '1.94'
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - name: install media tools
-        run: sudo apt-get update && sudo apt-get install -y ffmpeg
+      - name: install media tools, and fontconfig for the GUI
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
       - name: fmt
         run: cargo fmt --all --check
       - name: clippy
