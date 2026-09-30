@@ -915,3 +915,50 @@ fn file_paths_match_the_reference() {
         );
     }
 }
+
+/// Cookie jars pickled by the reference's Python (protocols 2-5, and whole
+/// pickled sessions) read back to the cookies Python reads from them.
+#[test]
+fn pickled_cookie_jars_read_like_python() {
+    use hydrus_legacy::objects::jar_cookies;
+    use hydrus_legacy::pickle;
+
+    let recorded = hydrus_testkit::fixture_json("cookie_jars.json");
+    for case in recorded["cases"].as_array().unwrap() {
+        let bytes = hex::decode(case["pickle"].as_str().unwrap()).unwrap();
+        let value = pickle::read(&bytes).unwrap();
+        let jar = if case["what"] == "session" {
+            value.state().unwrap().get("cookies").unwrap().clone()
+        } else {
+            value
+        };
+        let cookies = jar_cookies(&jar).unwrap();
+        let got: Vec<serde_json::Value> = cookies
+            .iter()
+            .map(|c| {
+                let rest: serde_json::Map<String, serde_json::Value> = c
+                    .rest
+                    .iter()
+                    .map(|(k, v)| (k.clone(), serde_json::json!(v)))
+                    .collect();
+                serde_json::json!({
+                    "name": c.name,
+                    "value": c.value,
+                    "domain": c.domain,
+                    "path": c.path,
+                    "expires": c.expires,
+                    "secure": c.secure,
+                    "discard": c.expires.is_none(),
+                    "rest": rest,
+                })
+            })
+            .collect();
+        assert_eq!(
+            serde_json::Value::Array(got),
+            case["cookies"],
+            "{} at protocol {}",
+            case["what"],
+            case["protocol"]
+        );
+    }
+}

@@ -228,33 +228,6 @@ pub fn ensure_url_is_encoded(
     })
 }
 
-/// The domain one level up (`maps.google.com` -> `google.com`).
-fn next_level_domain(domain: &str) -> &str {
-    domain.split_once('.').map_or("", |(_, rest)| rest)
-}
-
-/// The registrable domain, approximated as the last two labels (the
-/// reference consults the public suffix list; see `docs/rust/DIFFERENCES.md`).
-fn second_level_domain(domain: &str) -> &str {
-    let mut domain = domain;
-    while domain.matches('.').count() > 1 {
-        domain = next_level_domain(domain);
-    }
-    domain
-}
-
-/// `www.example.com` -> `example.com`; other domains unchanged.
-pub fn remove_www(domain: &str) -> &str {
-    if domain != second_level_domain(domain)
-        && domain.matches('.').count() > 1
-        && domain.starts_with("www")
-    {
-        next_level_domain(domain)
-    } else {
-        domain
-    }
-}
-
 /// Every form a URL may have been stored under: as given, normalised (for
 /// the server and not), http/https swapped, with or without `www`, with a
 /// legacy leading `//` of the path collapsed, and with or without a
@@ -296,7 +269,7 @@ pub fn search_urls(url: &str, normalised: &[String]) -> Vec<String> {
         }
         // (like the reference, this also yields the URL without `;params`)
         let alternative = if parts.netloc.starts_with("www") {
-            remove_www(&parts.netloc).to_owned()
+            super::psl::remove_www(&parts.netloc).to_owned()
         } else {
             format!("www.{}", parts.netloc)
         };
@@ -351,6 +324,7 @@ mod tests {
 
     #[test]
     fn www_is_removed_from_subdomains_only() {
+        use crate::url::psl::remove_www;
         assert_eq!(remove_www("www.example.com"), "example.com");
         assert_eq!(remove_www("example.com"), "example.com");
         assert_eq!(remove_www("www.com"), "www.com");

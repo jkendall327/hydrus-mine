@@ -255,6 +255,41 @@ impl LegacyDb {
         )
     }
 
+    /// The network domain manager's custom HTTP headers (type 53).
+    pub fn custom_headers(&self) -> Result<Option<Vec<crate::objects::domain::CustomHeader>>> {
+        self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)
+    }
+
+    /// Every network session with its cookies (named objects of type 96,
+    /// the latest of each name).
+    pub fn network_sessions(&self) -> Result<Vec<crate::objects::NetworkSession>> {
+        let mut latest: std::collections::BTreeMap<String, StoredNamedObject> =
+            std::collections::BTreeMap::new();
+        for row in self.json_dumps_named()? {
+            let row = row?;
+            if row.kind != SerialisableType(96) {
+                continue;
+            }
+            if latest
+                .get(&row.name)
+                .is_none_or(|kept| kept.timestamp <= row.timestamp)
+            {
+                latest.insert(row.name.clone(), row);
+            }
+        }
+        latest
+            .into_values()
+            .map(|row| {
+                let location = format!("json_dumps_named session {:?}", row.name);
+                let object = row
+                    .parse()
+                    .map_err(|e| LegacyError::serialisable(&location, e))?;
+                crate::objects::NetworkSession::from_object(&object)
+                    .map_err(|e| LegacyError::serialisable(&location, e))
+            })
+            .collect()
+    }
+
     /// Tag display filters and autocomplete options (type 79).
     pub fn tag_display_manager(&self) -> Result<Option<TagDisplayManager>> {
         self.singleton(

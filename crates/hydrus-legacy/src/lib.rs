@@ -62,6 +62,7 @@ pub mod db;
 pub mod error;
 pub mod objects;
 pub mod paths;
+pub mod pickle;
 pub mod pyjson;
 pub mod readers;
 pub mod rows;

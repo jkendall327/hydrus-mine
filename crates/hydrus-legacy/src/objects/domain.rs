@@ -86,6 +86,55 @@ fn opt_count(kind: SerialisableType, value: &PyJson, what: &str) -> DecodeResult
         .transpose()
 }
 
+/// A custom HTTP header sent in a network context.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct CustomHeader {
+    /// `CC.NETWORK_CONTEXT_*`: 0 global, 2 domain, ...
+    pub context_type: i64,
+    /// The domain for domain contexts; hex for byte-keyed contexts; `None`
+    /// for the global context.
+    pub context_data: Option<String>,
+    pub name: String,
+    pub value: String,
+    /// `ClientNetworkingDomain.VALID_*`: 0 denied, 1 approved, 2 pending.
+    pub approval: i64,
+    pub reason: String,
+}
+
+const NETWORK_CONTEXT: SerialisableType = SerialisableType(47);
+
+/// Decode the domain manager's custom HTTP headers, in stored order.
+pub fn custom_headers(object: &SerialisableObject) -> DecodeResult<Vec<CustomHeader>> {
+    let k = DOMAIN_MANAGER;
+    expect(object, k, &[7])?;
+    let info = object.info();
+    let [.., headers] = tuple::<9>(k, &info, "domain manager")?;
+    let mut out = Vec::new();
+    for entry in list(k, headers, "custom headers")? {
+        let [context, dict] = tuple::<2>(k, entry, "custom header entry")?;
+        let context = SerialisableObject::from_tuple(context)
+            .map_err(|e| malformed(k, format!("network context: {e}")))?;
+        expect(&context, NETWORK_CONTEXT, &[2])?;
+        let context_info = context.info();
+        let [context_type, context_data] = tuple::<2>(NETWORK_CONTEXT, &context_info, "context")?;
+        let context_type = int(NETWORK_CONTEXT, context_type, "context type")?;
+        let context_data = opt_string(NETWORK_CONTEXT, context_data, "context data")?;
+        for header in list(k, dict, "headers")? {
+            let [name, row] = tuple::<2>(k, header, "header")?;
+            let [value, approval, reason] = tuple::<3>(k, row, "header value")?;
+            out.push(CustomHeader {
+                context_type,
+                context_data: context_data.clone(),
+                name: string(k, name, "header name")?,
+                value: string(k, value, "header value")?,
+                approval: int(k, approval, "header approval")?,
+                reason: string(k, reason, "header reason")?,
+            });
+        }
+    }
+    Ok(out)
+}
+
 /// Decode the domain manager's URL class configuration. The caller adds the
 /// client option `collapse_leading_slashes`.
 pub fn url_class_settings(object: &SerialisableObject) -> DecodeResult<UrlClassSettings> {

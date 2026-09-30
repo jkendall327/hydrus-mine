@@ -11,6 +11,7 @@
 
 pub mod class;
 pub mod functions;
+pub mod psl;
 pub mod pyurl;
 pub mod registry;
 pub mod strings;

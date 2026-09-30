@@ -19,6 +19,8 @@
 //! | [`ClientOptions`] | 22 | 8 (every v688 database; see its docs) |
 //! | [`DuplicateMergeOptions`] / [`NoteImportOptions`] (in the client options) | 43 / 153 | 8 / 1 |
 //! | [`domain::url_class_settings`] (domain manager: URL classes, parser links) | 53 | 7 (URL classes 15; see its docs) |
+//! | [`NetworkSession`] (cookies; a pickled jar, see [`crate::pickle`]) | 96 | 1, 2 |
+//! | [`domain::custom_headers`] (domain manager: custom HTTP headers) | 53 | 7 |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 mod client_api;
@@ -29,6 +31,7 @@ mod favourites;
 mod legacy_options;
 mod location;
 mod services;
+mod sessions;
 mod sort;
 mod tag_display;
 mod tag_filter;
@@ -46,6 +49,7 @@ pub use services::{
     RepositoryConfig, RepositoryMetadata, RepositoryUpdatePeriod, RestrictedConfig, Rgb,
     ServiceConfig, StarAppearance, StarShape, repository_metadata,
 };
+pub use sessions::{NetworkSession, StoredCookie, jar_cookies};
 pub use sort::{MediaCollect, MediaSort, MediaSortType, SortOrder, TagSort};
 pub use tag_display::{TagAutocompleteOptions, TagDisplayManager};
 pub use tag_filter::{CompiledTagFilter, TagFilter, TagRule};
