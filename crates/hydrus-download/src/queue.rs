@@ -20,7 +20,7 @@ use hydrus_store::queues::{
     self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
 };
 
-use crate::gallery::{FileSink, set_gallery_status};
+use crate::gallery::{QueueSink, set_gallery_status};
 use crate::seeds::new_url_seed;
 use crate::{Downloader, WorkError, now};
 
@@ -283,14 +283,14 @@ impl QueueRunner {
         let job = Job::new();
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "reading a gallery page".into();
-        let sink = FileSink {
+        let mut sink = QueueSink {
             queue: seed.queue_id,
             max_new_urls: None,
         };
         let mut seen = BTreeSet::new();
         let result = self
             .downloader
-            .work_on_gallery_url(&mut seed, &mut seen, &sink, &job)
+            .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
         *handle.job.lock() = None;
         match result {

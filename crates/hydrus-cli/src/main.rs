@@ -18,6 +18,8 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 /// The reference client's default Client API port.
 const DEFAULT_PORT: u16 = 45869;
 
+mod subscriptions;
+
 #[derive(Parser)]
 #[command(name = "hydrus", version, about = "A fast, native hydrus client.")]
 struct Cli {
@@ -53,6 +55,14 @@ enum Command {
     },
     /// Delete from disk the files that were deleted from local storage.
     Purge { dir: PathBuf },
+    /// Manage subscriptions: list them, add many queries at once, check,
+    /// pause and resume. A running `serve` picks changes up within minutes.
+    Subscriptions {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: subscriptions::Action,
+    },
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -94,6 +104,15 @@ fn main() -> Result<()> {
             files,
         } => import_legacy(&source, &dest, files.into()),
         Command::Serve { dir, port, bind } => run_server(&dir, port, bind),
+        Command::Subscriptions { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            subscriptions::run(&dir, action)
+        }
         Command::Purge { dir } => {
             let store = Store::open(&dir)?;
             let report = hydrus_store::maintenance::purge_deleted_media(&store, usize::MAX)?;
@@ -228,6 +247,9 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
             && let Err(e) = downloads.start_all()
         {
             tracing::error!(error = %e, "starting the download queues failed");
+        }
+        if let Some(subscriptions) = &state.subscriptions {
+            subscriptions.start();
         }
         println!("Client API at http://{}", options.addr);
         serve(state, &options, async {

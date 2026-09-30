@@ -6,7 +6,9 @@ use std::collections::{BTreeMap, BTreeSet};
 
 use rusqlite::OptionalExtension;
 
-use hydrus_core::import_options::{FullImportOptions, ImportedAs, ServiceTagImportOptions};
+use hydrus_core::import_options::{
+    FullImportOptions, ImportedAs, ServiceTagImportOptions, TagImportOptions,
+};
 use hydrus_core::url::functions::check_full_url;
 use hydrus_core::{ContentStatus, HashId, ServiceId, Sha256, Tag};
 use hydrus_import::FileImportOptions;
@@ -304,5 +306,69 @@ impl Downloader {
             Ok(())
         })?;
         Ok(did_work)
+    }
+
+    /// Add a subscription query's own tags to what a seed imported
+    /// (`GetContentUpdatePackage` with no downloaded tags); whether any were
+    /// added.
+    pub(crate) fn write_query_tags(
+        &self,
+        seed: &FileSeed,
+        tags: &TagImportOptions,
+    ) -> Result<bool, WorkError> {
+        let writes = seed.status.is_successful() || seed.status == SeedStatus::Deleted;
+        if !writes || !tags.has_additional_tags() {
+            return Ok(false);
+        }
+        let Some(hash) = seed
+            .meta
+            .hash("sha256")
+            .and_then(|h| hex::decode(h).ok())
+            .and_then(|b| Sha256::from_slice(&b).ok())
+        else {
+            return Ok(false);
+        };
+        let Some(facts) = self.file_facts(&hash)? else {
+            return Ok(false);
+        };
+        let imported = match seed.status {
+            SeedStatus::SuccessfulAndNew => Some(ImportedAs::New),
+            SeedStatus::SuccessfulButRedundant if facts.inbox => Some(ImportedAs::AlreadyInInbox),
+            SeedStatus::SuccessfulButRedundant => Some(ImportedAs::AlreadyInArchive),
+            _ => None,
+        };
+        let snapshot = self.store.snapshot();
+        let none = BTreeSet::new();
+        let mut service_tags: Vec<(ServiceId, bool, BTreeSet<String>)> = Vec::new();
+        for service in snapshot.services.tag_services() {
+            let Some(rules) = tags.service(&service.key.to_hex()) else {
+                continue;
+            };
+            let found = self.service_tags(service.id, rules, imported, &facts, &none, &none)?;
+            if !found.is_empty() {
+                let pend = matches!(service.kind, ServiceKind::TagRepository(_));
+                service_tags.push((service.id, pend, found));
+            }
+        }
+        if service_tags.is_empty() {
+            return Ok(false);
+        }
+        let id = facts.hash_id;
+        self.store.write_content(move |w| {
+            for (service, pend, tags) in &service_tags {
+                let action = if *pend {
+                    MappingAction::Pend
+                } else {
+                    MappingAction::Add
+                };
+                for tag in tags {
+                    let Some(tag) = Tag::new(tag) else { continue };
+                    let tag_id = master::intern_tag(w.conn(), &tag)?;
+                    w.update_mappings(*service, &action, tag_id, &[id])?;
+                }
+            }
+            Ok(())
+        })?;
+        Ok(true)
     }
 }

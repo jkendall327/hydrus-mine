@@ -45,9 +45,10 @@ converted for the downloader (a definition that can't be converted is
 reported and kept). Subscriptions come across with their settings, their
 queries' timing and state, and each query's full history (the files and
 gallery pages it has seen, with their status and notes), so nothing is
-downloaded twice. Configuration hydrus-rs doesn't use yet (pages, the GUI's
-options) is kept verbatim inside the new store, so later versions can pick
-it up without a re-import.
+downloaded twice; `hydrus serve` checks them on their schedule, and `hydrus
+subscriptions <store> list` shows them. Configuration hydrus-rs doesn't use
+yet (pages, the GUI's options) is kept verbatim inside the new store, so
+later versions can pick it up without a re-import.
 
 Autocomplete counts and other caches are rebuilt rather than copied.
 

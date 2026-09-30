@@ -32,6 +32,7 @@ mod gallery;
 mod predict;
 pub mod queue;
 mod seeds;
+pub mod subscriptions;
 
 pub use gallery::GalleryOutcome;
 pub use queue::{QueueRunner, UrlQueueStatus};

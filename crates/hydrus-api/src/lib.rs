@@ -36,6 +36,8 @@ pub struct AppState {
     pub importer: hydrus_import::FileImporter,
     /// The downloader's URL queues (`/add_urls/add_url`).
     pub downloads: Option<Arc<hydrus_download::QueueRunner>>,
+    /// Runs subscriptions as they come due.
+    pub subscriptions: Option<Arc<hydrus_download::subscriptions::SubscriptionRunner>>,
 }
 
 impl AppState {
@@ -58,11 +60,15 @@ impl AppState {
                     // the reference's default `downloader_network_error_delay`
                     hydrus_download::QueueRunner::new(Arc::new(downloader), 90 * 60)
                 });
+        let subscriptions = downloads.as_ref().map(|runner| {
+            hydrus_download::subscriptions::SubscriptionRunner::new(Arc::clone(runner.downloader()))
+        });
         Ok(Arc::new(Self {
             store,
             access,
             importer,
             downloads,
+            subscriptions,
         }))
     }
 

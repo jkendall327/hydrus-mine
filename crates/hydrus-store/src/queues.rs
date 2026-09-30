@@ -387,6 +387,24 @@ pub fn delete_queue(conn: &Connection, id: i64) -> Result<()> {
     Ok(())
 }
 
+/// Drop file seeds by id (history compaction).
+pub fn remove_file_seeds_by_id(conn: &Connection, ids: &[i64]) -> Result<()> {
+    let mut stmt = conn.prepare_cached("DELETE FROM file_seeds WHERE seed_id = ?")?;
+    for id in ids {
+        stmt.execute([id])?;
+    }
+    Ok(())
+}
+
+/// Drop gallery seeds by id (history compaction).
+pub fn remove_gallery_seeds_by_id(conn: &Connection, ids: &[i64]) -> Result<()> {
+    let mut stmt = conn.prepare_cached("DELETE FROM gallery_seeds WHERE seed_id = ?")?;
+    for id in ids {
+        stmt.execute([id])?;
+    }
+    Ok(())
+}
+
 // file seeds -------------------------------------------------------------------
 
 const FILE_SEED_COLUMNS: &str = "seed_id, queue_id, seed_type, data, data_for_comparison, created, \

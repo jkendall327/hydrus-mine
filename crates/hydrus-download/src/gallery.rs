@@ -32,11 +32,95 @@ pub struct GalleryOutcome {
     pub stop_reason: String,
 }
 
-/// Where a gallery page's file seeds go, and when to stop.
-pub(crate) struct FileSink {
+/// What became of a gallery page's file seeds.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub(crate) struct PageTaken {
+    pub added: usize,
+    pub already_in: usize,
+    pub can_search_for_more_files: bool,
+    pub stop_reason: String,
+}
+
+/// Where a gallery page's file seeds go, and whether to read on
+/// (`file_seeds_callable`).
+pub(crate) trait PageSink: Send {
+    fn take(
+        &mut self,
+        downloader: &Downloader,
+        seeds: Vec<NewFileSeed>,
+    ) -> Result<PageTaken, WorkError>;
+}
+
+/// A gallery page's file seeds go to a queue, up to a file limit
+/// (`UpdateFileSeedCacheWithFileSeeds`).
+pub(crate) struct QueueSink {
     pub queue: i64,
     /// Stop after this many new URLs (a gallery search's file limit).
     pub max_new_urls: Option<usize>,
+}
+
+impl PageSink for QueueSink {
+    fn take(
+        &mut self,
+        downloader: &Downloader,
+        seeds: Vec<NewFileSeed>,
+    ) -> Result<PageTaken, WorkError> {
+        let known = KnownSeeds::load(downloader, self.queue)?;
+        let classes = &downloader.store.snapshot().url_classes;
+        let mut taken = PageTaken {
+            can_search_for_more_files: true,
+            ..PageTaken::default()
+        };
+        let mut fresh = Vec::new();
+        for seed in seeds {
+            if self.max_new_urls.is_some_and(|max| taken.added >= max) {
+                taken.can_search_for_more_files = false;
+                taken.stop_reason = "hit file limit".into();
+                break;
+            }
+            if known.has(classes, &seed) {
+                taken.already_in += 1;
+            } else {
+                taken.added += 1;
+                fresh.push(seed);
+            }
+        }
+        let queue = self.queue;
+        downloader
+            .store
+            .write(move |ctx| queues::add_file_seeds(ctx.conn(), queue, &fresh, false, now()))?;
+        Ok(taken)
+    }
+}
+
+/// A queue's file seeds, to check new ones against (`HasFileSeed`).
+pub(crate) struct KnownSeeds(BTreeSet<(i64, String)>);
+
+impl KnownSeeds {
+    pub fn load(downloader: &Downloader, queue: i64) -> Result<Self, WorkError> {
+        Ok(Self(
+            downloader
+                .store
+                .read(|conn| queues::file_seeds(conn, queue))?
+                .into_iter()
+                .map(|s| (s.seed_type as i64, s.data_for_comparison))
+                .collect(),
+        ))
+    }
+
+    /// Whether the queue has this seed, under any form its URL may have
+    /// been stored under.
+    pub fn has(&self, classes: &UrlClasses, seed: &NewFileSeed) -> bool {
+        let kind = seed.seed_type as i64;
+        if seed.seed_type == queues::SeedType::Path {
+            return self.0.contains(&(kind, seed.data_for_comparison.clone()));
+        }
+        classes
+            .search_urls(&seed.data_for_comparison)
+            .into_iter()
+            .map(|url| classes.normalise(&url, false).unwrap_or(url))
+            .any(|key| self.0.contains(&(kind, key)))
+    }
 }
 
 /// `CanOnlyGenerateGalleryURLs`: the parser's URLs are all gallery URLs.
@@ -191,7 +275,7 @@ impl Downloader {
         &self,
         seed: &mut GallerySeed,
         seen: &mut BTreeSet<String>,
-        sink: &FileSink,
+        sink: &mut dyn PageSink,
         job: &Job,
     ) -> Result<GalleryOutcome, WorkError> {
         seen.insert(seed.url.clone());
@@ -220,7 +304,7 @@ impl Downloader {
         &self,
         seed: &GallerySeed,
         seen: &mut BTreeSet<String>,
-        sink: &FileSink,
+        sink: &mut dyn PageSink,
         job: &Job,
         outcome: &mut GalleryOutcome,
     ) -> Result<(SeedStatus, String), GalleryStop> {
@@ -274,7 +358,7 @@ impl Downloader {
             } else {
                 let mut child = new_url_seed(classes, &actual);
                 give_file_seed_my_info(classes, seed, &mut child, &url_for_child_referral);
-                self.add_to_sink(sink, vec![child], outcome)?;
+                self.take_page(sink, vec![child], outcome)?;
                 return Ok((
                     SeedStatus::SuccessfulAndNew,
                     "was redirected to a non-gallery url, which has been queued as a file import"
@@ -312,7 +396,7 @@ impl Downloader {
             give_file_seed_my_info(classes, seed, child, &url_for_child_referral);
         }
         outcome.num_urls_total = file_seeds.len();
-        self.add_to_sink(sink, file_seeds, outcome)?;
+        self.take_page(sink, file_seeds, outcome)?;
         let mut note = format!(
             "{} new urls found",
             human_int(outcome.num_urls_added as u64)
@@ -444,40 +528,17 @@ impl Downloader {
         Ok((SeedStatus::SuccessfulAndNew, note))
     }
 
-    /// `UpdateFileSeedCacheWithFileSeeds`: add file seeds the queue doesn't
-    /// have, up to the file limit.
-    fn add_to_sink(
+    fn take_page(
         &self,
-        sink: &FileSink,
+        sink: &mut dyn PageSink,
         seeds: Vec<NewFileSeed>,
         outcome: &mut GalleryOutcome,
     ) -> Result<(), WorkError> {
-        let existing: BTreeSet<String> = self
-            .store
-            .read(|conn| queues::file_seeds(conn, sink.queue))?
-            .into_iter()
-            .map(|s| s.data_for_comparison)
-            .collect();
-        let mut fresh = Vec::new();
-        for seed in seeds {
-            if sink
-                .max_new_urls
-                .is_some_and(|max| outcome.num_urls_added >= max)
-            {
-                outcome.can_search_for_more_files = false;
-                outcome.stop_reason = "hit file limit".into();
-                break;
-            }
-            if existing.contains(&seed.data_for_comparison) {
-                outcome.num_urls_already_in_queue += 1;
-            } else {
-                outcome.num_urls_added += 1;
-                fresh.push(seed);
-            }
-        }
-        let queue = sink.queue;
-        self.store
-            .write(move |ctx| queues::add_file_seeds(ctx.conn(), queue, &fresh, false, now()))?;
+        let taken = sink.take(self, seeds)?;
+        outcome.num_urls_added = taken.added;
+        outcome.num_urls_already_in_queue = taken.already_in;
+        outcome.can_search_for_more_files = taken.can_search_for_more_files;
+        outcome.stop_reason = taken.stop_reason;
         Ok(())
     }
 }

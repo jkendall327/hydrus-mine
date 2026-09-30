@@ -138,6 +138,18 @@ merges come from the in-memory cache described below.
   five overall); rules you set yourself are not migrated yet.
 - **Watchable URLs sent by `/add_urls/add_url` are refused** until thread
   watchers are supported.
+- **Subscription messages go to the log** (and the subscription runner's
+  status) rather than popups, until there is a GUI; so do new files a
+  subscription would publish to a popup button or page.
+- **Subscriptions follow the default per-site pacing.** The reference's
+  bandwidth rules for subscriptions, and its "go ahead anyway after 30
+  seconds" for subscription requests, don't apply yet.
+- **A subscription stops getting files from a site after three connection
+  failures in ten minutes** (the reference's defaults) and tries again an
+  hour later. The reference counts those failures across the whole client;
+  we count them within one subscription's run.
+- **Subscription changes made from the command line reach a running
+  `hydrus serve` within five minutes.**
 
 ## URL classes
 

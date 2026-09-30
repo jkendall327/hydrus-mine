@@ -1,9 +1,12 @@
 # Downloader design
 
-Status: parsing, the HTTP engine, import options and URL queues work:
-`/add_urls/add_url` (Hydrus Companion's "send to hydrus") downloads posts
-and files into named queues. Gallery searches, watchers and subscriptions
-are next. Tracked as task "Downloader engine".
+Status: parsing, the HTTP engine, import options, URL queues and
+subscriptions work: `/add_urls/add_url` (Hydrus Companion's "send to
+hydrus") downloads posts and files into named queues, and subscriptions
+(migrated with their history) are checked on their schedule while `hydrus
+serve` runs. `hydrus subscriptions <store> ...` lists subscriptions and adds
+many queries at once. Gallery-search queues and watchers are next. Tracked as
+task "Downloader engine".
 
 ## Goal
 
@@ -94,11 +97,14 @@ show named queues as pages.
    layers them), queue tables, the URL worker, URL queues and
    `/add_urls/add_url`. **Done.** Then gallery pages (including gallery
    URLs sent to URL queues) and GUG searches; watchers.
-4. Subscriptions and migrating them with their history. Migration and
-   the reference's check timing are **done** (oracle-tested: every saved
-   version of seeds and subscriptions, old-style import options of every
-   version the reference upgrades from, and 200 random timing cases). Next: running them on
-   schedule, then adding many queries at once.
+4. Subscriptions and migrating them with their history. **Done**:
+   migration (oracle-tested: every saved version of seeds and
+   subscriptions, old-style import options of every version the reference
+   upgrades from), the reference's check timing and history compaction
+   (oracle-tested), syncing (the reference's "caught up" and file limit
+   rules) and file work, run on schedule; bulk-adding queries from the
+   command line. End to end against a local booru; the comparison with the
+   reference on the same site is task "End-to-end downloader oracle".
 
 Login scripts are not planned: logins come from cookies (Companion sends
 them), which already migrate and work. A migrated downloader that names a

@@ -1,7 +1,6 @@
 //! Import statuses and the notes the reference gives them.
 
 use hydrus_core::TimestampMs;
-use hydrus_core::numbers::human_int;
 use hydrus_store::urls::FileState;
 
 /// What happened to (or is known about) a file being imported, with the
@@ -116,47 +115,7 @@ pub fn pretty_delta(t: TimestampMs, now: TimestampMs, just_now_threshold: i64) -
 }
 
 fn delta_text(seconds: i64) -> String {
-    if seconds >= 60 {
-        const MINUTE: f64 = 60.0;
-        const HOUR: f64 = 60.0 * MINUTE;
-        const DAY: f64 = 24.0 * HOUR;
-        const YEAR: f64 = 365.25 * DAY;
-        const MONTH: f64 = YEAR / 12.0;
-        let mut rest = seconds as f64;
-        let mut parts: Vec<String> = Vec::new();
-        for (name, unit) in [
-            ("year", YEAR),
-            ("month", MONTH),
-            ("day", DAY),
-            ("hour", HOUR),
-            ("minute", MINUTE),
-            ("second", 1.0),
-        ] {
-            let mut quantity = (rest / unit).floor();
-            rest %= unit;
-            if name == "month" && quantity > 11.0 {
-                quantity = 11.0;
-            }
-            if quantity > 0.0 {
-                let n = quantity as u64;
-                parts.push(format!(
-                    "{} {name}{}",
-                    human_int(n),
-                    if n > 1 { "s" } else { "" }
-                ));
-                if parts.len() == 2 {
-                    break;
-                }
-            } else if !parts.is_empty() {
-                break;
-            }
-        }
-        parts.join(" ")
-    } else if seconds > 1 {
-        format!("{seconds} seconds")
-    } else {
-        "1 second".into()
-    }
+    hydrus_core::time::pretty_time_delta(seconds, false)
 }
 
 #[cfg(test)]
