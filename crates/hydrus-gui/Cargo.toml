@@ -1,0 +1,31 @@
+[package]
+name = "hydrus-gui"
+description = "The hydrus-rs desktop client (Slint)."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "hydrus-gui"
+path = "src/main.rs"
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-store.workspace = true
+hydrus-search.workspace = true
+hydrus-media.workspace = true
+anyhow.workspace = true
+serde_json.workspace = true
+slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software"] }
+
+[build-dependencies]
+slint-build = "1.18"
+
+[dev-dependencies]
+hydrus-testkit.workspace = true
+png.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

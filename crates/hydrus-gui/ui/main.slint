@@ -1,0 +1,122 @@
+// The main window: for now one search page, laid out as the reference's
+// (a sidebar with the search, and the thumbnail grid), and a status bar.
+
+import { LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
+
+export struct Thumbnail {
+    image: image,
+    selected: bool,
+}
+
+component Predicate inherits Rectangle {
+    in property <string> text;
+    callback remove();
+    height: 22px;
+    background: touch.has-hover ? #e8e8e8 : transparent;
+    Text {
+        x: 4px;
+        text: root.text;
+        vertical-alignment: center;
+        overflow: elide;
+        width: parent.width - 8px;
+    }
+    touch := TouchArea {
+        // as in the reference, double-clicking a predicate removes it
+        double-clicked => { root.remove(); }
+    }
+}
+
+component ThumbnailGrid inherits ScrollView {
+    in property <[Thumbnail]> thumbnails;
+    in property <length> thumbnail-size: 150px;
+    in property <length> gap: 4px;
+    callback clicked(int);
+    property <length> cell: self.thumbnail-size + self.gap;
+    property <int> columns: max(1, floor((self.visible-width - self.gap) / self.cell));
+    viewport-height: ceil(self.thumbnails.length / self.columns) * self.cell + self.gap;
+    viewport-width: self.visible-width;
+    for thumbnail[i] in root.thumbnails: Rectangle {
+        x: root.gap + mod(i, root.columns) * root.cell;
+        y: root.gap + floor(i / root.columns) * root.cell;
+        width: root.thumbnail-size;
+        height: root.thumbnail-size;
+        border-width: thumbnail.selected ? 2px : 1px;
+        border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
+        background: #ffffff;
+        Image {
+            x: 2px;
+            y: 2px;
+            width: parent.width - 4px;
+            height: parent.height - 4px;
+            source: thumbnail.image;
+            image-fit: contain;
+        }
+        TouchArea {
+            clicked => { root.clicked(i); }
+        }
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "hydrus-rs";
+    preferred-width: 1100px;
+    preferred-height: 700px;
+    background: #f4f4f4;
+
+    in property <[string]> predicates;
+    in property <[Thumbnail]> thumbnails;
+    in property <string> status;
+    in property <string> error;
+    in-out property <string> search-text;
+
+    callback add-predicate(string);
+    callback remove-predicate(int);
+    callback thumbnail-clicked(int);
+
+    VerticalLayout {
+        HorizontalLayout {
+            VerticalBox {
+                width: 260px;
+                LineEdit {
+                    placeholder-text: "search";
+                    text <=> root.search-text;
+                    accepted(text) => {
+                        root.add-predicate(text);
+                        root.search-text = "";
+                    }
+                }
+                if root.error != "": Text {
+                    text: root.error;
+                    color: #b00020;
+                    wrap: word-wrap;
+                }
+                Rectangle {
+                    border-width: 1px;
+                    border-color: #c8c8c8;
+                    background: #ffffff;
+                    VerticalLayout {
+                        padding: 2px;
+                        alignment: start;
+                        for predicate[i] in root.predicates: Predicate {
+                            text: predicate;
+                            remove => { root.remove-predicate(i); }
+                        }
+                    }
+                }
+            }
+            ThumbnailGrid {
+                thumbnails: root.thumbnails;
+                clicked(i) => { root.thumbnail-clicked(i); }
+            }
+        }
+        Rectangle {
+            height: 24px;
+            background: #e6e6e6;
+            Text {
+                x: 6px;
+                text: root.status;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

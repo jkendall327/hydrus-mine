@@ -2,7 +2,17 @@
 
 The last phase of the roadmap (DECISIONS.md): the desktop client, in Slint.
 This is the map of the reference's Qt GUI (v688) that the work starts from,
-and how we mean to go about it. Nothing here is built yet.
+and how we mean to go about it.
+
+## Where it stands
+
+`hydrus-gui <store>` opens one search page: type a tag or system predicate
+and press enter to add it (double-click one to remove it), and the matching
+files' thumbnails fill the grid, newest import first, with the count in the
+status bar. `crates/hydrus-gui/tests/search_page.rs` drives the page and
+draws the window headless (the screenshot lands in `target/tmp/`). Not yet:
+autocomplete, sort and collect, the media viewer, more pages, loading
+thumbnails as they scroll into view (a page shows its first 1,000 files).
 
 ## Size
 
