@@ -43,7 +43,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_import_options.py` | `fixtures/import_options.json`: import option defaults and layering |
 | `dump_subscriptions.py` | `fixtures/subscriptions.json`: subscriptions and their queries' history as stored |
 | `dump_sidecars.py` | `fixtures/sidecars.json`: sidecar routing between sidecar files |
-| `dump_auto_resolution.py` | `fixtures/auto_resolution.json`: duplicates auto-resolution rules as stored |
+| `dump_auto_resolution.py` | `fixtures/auto_resolution.json`: duplicates auto-resolution rules as stored, including the owner's own (`fixtures/user_auto_resolution_rules.txt`, as their client stored them) |
 | `dump_visual_data.py` | `fixtures/visual_data.json`: the visual-duplicates computations, stage by stage |
 | `dump_client_options_defaults.py` | `crates/hydrus-legacy/src/objects/client_options_defaults.json`: a new client's options object |
 | `dump_casefold.py` | `crates/hydrus-core/src/casefold_table.rs`: Python's `str.casefold`, as a table |

@@ -7,6 +7,10 @@ tuple, with a plain description of what it holds (for the decoder test).
 Rules are also written at older versions (v1, v2) by undoing the
 reference's upgrades, to check those are read the same.
 
+Also the owner's own rules, as their client stored them
+(fixtures/user_auto_resolution_rules.txt: a line per rule, `name|version|
+serialised info`), with what the reference reads from each.
+
 Usage: QT_QPA_PLATFORM=offscreen python oracle/dump_auto_resolution.py
 """
 
@@ -23,6 +27,7 @@ sys.path.insert( 0, HERE )
 import hydrus_driver
 
 OUT = os.path.join( HERE, 'fixtures', 'auto_resolution.json' )
+USER_RULES = os.path.join( HERE, 'fixtures', 'user_auto_resolution_rules.txt' )
 
 
 def describe_search( fsc ):
@@ -229,6 +234,27 @@ def dump( session ):
             v2_expected = dict( expected, operation_mode = 1 )
 
             out.append( { 'stored' : [ kind, name, 2, v2 ], 'expected' : v2_expected } )
+
+
+
+    from hydrus.core import HydrusSerialisable
+
+    with open( USER_RULES, encoding = 'utf-8' ) as f:
+
+        for line in f:
+
+            if line.strip() == '':
+
+                continue
+
+
+            ( name, version, info ) = line.rstrip( '\n' ).split( '|', 2 )
+
+            stored = [ HydrusSerialisable.SERIALISABLE_TYPE_DUPLICATES_AUTO_RESOLUTION_RULE, name, int( version ), json.loads( info ) ]
+
+            rule = HydrusSerialisable.CreateFromSerialisableTuple( stored )
+
+            out.append( { 'stored' : stored, 'expected' : describe( rule ), 'source' : 'owner' } )
 
 
 

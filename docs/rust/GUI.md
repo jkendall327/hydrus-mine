@@ -152,9 +152,13 @@ autocomplete options, sessions, shortcut sets, recent tags.
    settings as they left them. The one planned redesign, a more ergonomic
    duplicate filter, comes after the reference's behaviour is matched.
 
+## Decisions
+
+- **Video and animation: embed mpv** (as the reference can), for now; the
+  owner's choice. Decoding with ffmpeg and drawing frames ourselves (the
+  reference's native renderer) may come later.
+
 ## Open questions
 
-- Video and animation: embed mpv (as the reference can) or decode with
-  ffmpeg ourselves and draw frames (as its native renderer does)?
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.

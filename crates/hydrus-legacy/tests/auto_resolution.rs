@@ -1,8 +1,9 @@
 //! Duplicates auto-resolution rules as the reference stores them
 //! (`oracle/fixtures/auto_resolution.json`, made by
 //! `oracle/dump_auto_resolution.py`): its suggested rules and rules using
-//! every comparator and setting, at v3 and as v1/v2 stored them, decode to
-//! what the reference holds.
+//! every comparator and setting, at v3 and as v1/v2 stored them, and the
+//! owner's own rules as their client stored them, decode to what the
+//! reference holds.
 
 use hydrus_legacy::objects::FileSearchContext;
 use hydrus_legacy::objects::auto_resolution::{AutoResolutionRule, Comparator};

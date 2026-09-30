@@ -1286,8 +1286,9 @@ mod tests {
 
     use super::*;
 
-    /// Every rule the reference stores (its suggestions and rules using
-    /// every comparator; `oracle/dump_auto_resolution.py`) converts.
+    /// Every rule the reference stores (its suggestions, rules using every
+    /// comparator, and the owner's own; `oracle/dump_auto_resolution.py`)
+    /// converts.
     #[test]
     fn auto_resolution_rules_convert() {
         use crate::duplicates::auto::{Comparator, OperationMode, RuleAction};
