@@ -7,6 +7,7 @@
 //! the few older versions with trivial upgrades are upgraded, anything else
 //! is refused (the verbatim copy is kept either way).
 
+use hydrus_core::url::class::{GalleryIndex, GalleryIndexPosition, Referral, ReferralMode};
 use hydrus_core::url::strings::{
     Conversion, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep, PyRegex,
     StringConverter, StringMatch, StringProcessor,
@@ -205,7 +206,8 @@ fn parser_key(object: &SerialisableObject) -> DecodeResult<String> {
     hex_bytes(PAGE_PARSER, key, "parser key").map(hex::encode)
 }
 
-fn url_class(object: &SerialisableObject) -> DecodeResult<UrlClass> {
+/// Decode a URL class.
+pub fn url_class(object: &SerialisableObject) -> DecodeResult<UrlClass> {
     let k = URL_CLASS;
     expect(object, k, &[15])?;
     let name = object
@@ -272,13 +274,35 @@ fn url_class(object: &SerialisableObject) -> DecodeResult<UrlClass> {
         })
         .collect::<DecodeResult<Vec<_>>>()?;
     let no_more_parameters_than_this = b(no_more_params, "no more parameters")?;
-    let other = PyJson::List(vec![
-        send_referral_url.clone(),
-        referral_url_converter.clone(),
-        gallery_index_type.clone(),
-        gallery_index_identifier.clone(),
-        gallery_index_delta.clone(),
-    ]);
+    let code = int(k, send_referral_url, "send referral url")?;
+    let referral = Referral {
+        mode: ReferralMode::from_code(code)
+            .ok_or_else(|| malformed(k, format!("unknown referral url mode {code}")))?,
+        converter: string_converter(&nested(
+            k,
+            referral_url_converter,
+            "referral url converter",
+        )?)?,
+    };
+    let gallery_index = match opt_int(k, gallery_index_type, "gallery index type")? {
+        None => None,
+        Some(kind) => Some(GalleryIndex {
+            position: match kind {
+                0 => GalleryIndexPosition::PathComponent(int(
+                    k,
+                    gallery_index_identifier,
+                    "gallery index path component",
+                )?),
+                1 => GalleryIndexPosition::Parameter(string(
+                    k,
+                    gallery_index_identifier,
+                    "gallery index parameter",
+                )?),
+                other => return Err(malformed(k, format!("unknown gallery index type {other}"))),
+            },
+            delta: int(k, gallery_index_delta, "gallery index delta")?,
+        }),
+    };
     Ok(UrlClass {
         name,
         key: hex_bytes(k, key, "url class key")?,
@@ -305,7 +329,8 @@ fn url_class(object: &SerialisableObject) -> DecodeResult<UrlClass> {
         header_overrides,
         api_lookup_converter: string_converter(&nested(k, api_lookup_converter, "api converter")?)?,
         example_url: string(k, example_url, "example url")?,
-        other: other.to_python_string(),
+        referral,
+        gallery_index,
     })
 }
 

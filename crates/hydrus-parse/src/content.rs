@@ -14,6 +14,7 @@ use std::sync::LazyLock;
 
 use serde::{Deserialize, Serialize};
 
+use hydrus_core::numbers::py_int;
 use hydrus_core::pybytes::{b64decode, fromhex};
 use hydrus_core::tag::Tag;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
@@ -21,7 +22,7 @@ use hydrus_core::url::pyurl::urljoin;
 use hydrus_core::url::strings::{StringConverter, StringMatch};
 
 use crate::formula::{Formula, ParseError, ParsingContext};
-use crate::text::{clean_note_text, html_unescape, py_strip};
+use crate::text::{clean_note_text, html_unescape};
 
 /// `HC.URL_TYPE_*` for parsed URLs.
 pub mod url_type {
@@ -175,27 +176,6 @@ impl ContentParser {
                 .collect(),
         })
     }
-}
-
-/// Python's `int(text)` for plain decimal text (surrounding whitespace,
-/// a sign, `_` between digits).
-fn py_int(text: &str) -> Option<i64> {
-    let t = py_strip(text);
-    let (negative, digits) = match t.as_bytes().first() {
-        Some(b'-') => (true, &t[1..]),
-        Some(b'+') => (false, &t[1..]),
-        _ => (false, t),
-    };
-    if digits.is_empty()
-        || digits.starts_with('_')
-        || digits.ends_with('_')
-        || digits.contains("__")
-        || !digits.chars().all(|c| c.is_ascii_digit() || c == '_')
-    {
-        return None;
-    }
-    let value: i64 = digits.replace('_', "").parse().ok()?;
-    Some(if negative { -value } else { value })
 }
 
 impl ParsedPost {

@@ -9,6 +9,7 @@ use serde::{Deserialize, Serialize};
 use super::functions::{Query, ensure_url_is_encoded, parse_url, path_components};
 use super::pyurl::{UrlParts, urlunparse};
 use super::strings::{StringConverter, StringMatch, StringProcessor, translate_python_regex};
+use crate::numbers::py_int;
 
 /// What kind of page a URL is. Codes match the reference.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
@@ -290,9 +291,61 @@ pub struct UrlClass {
     /// Turns a URL into the URL to actually fetch (an API or redirect).
     pub api_lookup_converter: StringConverter,
     pub example_url: String,
-    /// Settings this crate doesn't use yet (referral URLs, gallery page
-    /// indices), as the reference's JSON.
-    pub other: String,
+    /// What requests for this class's URLs send as their referral URL.
+    pub referral: Referral,
+    /// Where a gallery URL keeps its page number, to make the next page's.
+    pub gallery_index: Option<GalleryIndex>,
+}
+
+/// What a request sends as its referral URL (`Referer`).
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+pub struct Referral {
+    pub mode: ReferralMode,
+    /// Makes a referral URL from the URL being requested.
+    pub converter: StringConverter,
+}
+
+/// The reference's `SEND_REFERRAL_URL_*`, in code order.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ReferralMode {
+    /// The page the URL was found on, if known.
+    #[default]
+    OnlyIfProvided,
+    Never,
+    /// The converter's, if the page the URL was found on isn't known.
+    ConverterIfNoneProvided,
+    /// Always the converter's.
+    OnlyConverter,
+}
+
+impl ReferralMode {
+    pub fn from_code(code: i64) -> Option<Self> {
+        Some(match code {
+            0 => Self::OnlyIfProvided,
+            1 => Self::Never,
+            2 => Self::ConverterIfNoneProvided,
+            3 => Self::OnlyConverter,
+            _ => return None,
+        })
+    }
+}
+
+/// Where a gallery URL keeps its page number, and how much the next page
+/// adds to it.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GalleryIndex {
+    pub position: GalleryIndexPosition,
+    pub delta: i64,
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum GalleryIndexPosition {
+    /// A path component, by index (negative from the end, as in Python).
+    PathComponent(i64),
+    /// A query parameter, by name.
+    Parameter(String),
 }
 
 mod hex_bytes {
@@ -501,6 +554,95 @@ impl UrlClass {
             .map_err(|e| UrlClassError(e.to_string()))
     }
 
+    /// The referral URL to send when requesting `url`, given the page it
+    /// was found on (if known).
+    pub fn referral_url(
+        &self,
+        url: &str,
+        given: Option<&str>,
+        collapse_leading_slashes: bool,
+    ) -> Option<String> {
+        let converted = || {
+            self.normalise(url, true, collapse_leading_slashes)
+                .ok()
+                .and_then(|request_url| self.referral.converter.convert(&request_url).ok())
+        };
+        match self.referral.mode {
+            ReferralMode::OnlyIfProvided => given.map(str::to_owned),
+            ReferralMode::Never => None,
+            ReferralMode::ConverterIfNoneProvided => match given {
+                Some(given) => Some(given.to_owned()),
+                None => converted(),
+            },
+            // (a converter that fails falls back to the given URL)
+            ReferralMode::OnlyConverter => converted().or_else(|| given.map(str::to_owned)),
+        }
+    }
+
+    /// Whether this class can make the next page of one of its galleries.
+    pub fn can_generate_next_gallery_page(&self) -> bool {
+        self.url_type == UrlType::Gallery && self.gallery_index.is_some()
+    }
+
+    /// The next page of a gallery URL: its page number moved on by the
+    /// class's delta.
+    pub fn next_gallery_page(
+        &self,
+        url: &str,
+        collapse_leading_slashes: bool,
+    ) -> Result<String, UrlClassError> {
+        let Some(index) = &self.gallery_index else {
+            return fail("Did not understand the next gallery page rules!");
+        };
+        let url = self.normalise(url, true, collapse_leading_slashes)?;
+        let parts = parse_url(&url).map_err(|e| UrlClassError(e.to_string()))?;
+        let not_an_integer =
+            || fail("Could not generate next gallery page--index component was not an integer!");
+        let mut path = parts.path.clone();
+        let mut query_text = parts.query.clone();
+        match &index.position {
+            GalleryIndexPosition::PathComponent(i) => {
+                let mut components = path_components(&parts.path, collapse_leading_slashes);
+                let len = components.len() as i64;
+                let at = if *i < 0 { len + i } else { *i };
+                if at < 0 || at >= len {
+                    return fail(
+                        "Could not generate next gallery page--not enough path components!",
+                    );
+                }
+                let component = &mut components[at as usize];
+                let Some(page) = py_int(component) else {
+                    return not_an_integer();
+                };
+                *component = (page + index.delta).to_string();
+                path = format!("/{}", components.join("/"));
+            }
+            GalleryIndexPosition::Parameter(name) => {
+                let mut query = Query::parse(&parts.query);
+                let Some(value) = query.get(name) else {
+                    return fail(format!(
+                        "Could not generate next gallery page--did not find {name} in parameters!"
+                    ));
+                };
+                let Some(page) = py_int(value) else {
+                    return not_an_integer();
+                };
+                query.set(name, (page + index.delta).to_string());
+                if !self.has_single_value_parameters {
+                    query.single_values.clear();
+                }
+                let order = (!self.alphabetise_get_parameters).then_some(query.order.as_slice());
+                query_text = query.to_text(order);
+            }
+        }
+        Ok(urlunparse(&UrlParts {
+            path,
+            params: String::new(),
+            query: query_text,
+            ..parts
+        }))
+    }
+
     /// Classes with more specific rules are tried first.
     pub fn sorting_key(&self, collapse_leading_slashes: bool) -> [usize; 6] {
         let required_path = self
@@ -580,7 +722,8 @@ pub(crate) mod tests {
             header_overrides: Vec::new(),
             api_lookup_converter: StringConverter::default(),
             example_url: "https://gelbooru.com/index.php?page=post&s=view&id=123".into(),
-            other: String::new(),
+            referral: Referral::default(),
+            gallery_index: None,
         }
     }
 

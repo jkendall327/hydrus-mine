@@ -14,6 +14,27 @@ pub fn human_int(n: u64) -> String {
     out
 }
 
+/// Python's `int(text)` for an `i64`: surrounding whitespace allowed, a
+/// sign, digits with single underscores between them.
+pub fn py_int(text: &str) -> Option<i64> {
+    let t = text.trim_matches(|c: char| c.is_whitespace() || matches!(c, '\u{1c}'..='\u{1f}'));
+    let (negative, digits) = match t.as_bytes().first() {
+        Some(b'-') => (true, &t[1..]),
+        Some(b'+') => (false, &t[1..]),
+        _ => (false, t),
+    };
+    if digits.is_empty()
+        || digits.starts_with('_')
+        || digits.ends_with('_')
+        || digits.contains("__")
+        || !digits.chars().all(|c| c.is_ascii_digit() || c == '_')
+    {
+        return None;
+    }
+    let value: i64 = digits.replace('_', "").parse().ok()?;
+    Some(if negative { -value } else { value })
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

@@ -159,6 +159,24 @@ impl UrlClasses {
             .map_err(|e| UrlClassError(format!("Could not find a URL class for {url}!\n\n{e}")))
     }
 
+    /// The referral URL to send when requesting `url`, given the page it
+    /// was found on (if known).
+    pub fn referral_url(&self, url: &str, given: Option<&str>) -> Option<String> {
+        match self.class_for(url) {
+            None => given.map(str::to_owned),
+            Some(class) => class.referral_url(url, given, self.collapse()),
+        }
+    }
+
+    /// The next page of a gallery URL, if its URL class knows how to make
+    /// one.
+    pub fn next_gallery_page(&self, url: &str) -> Option<Result<String, UrlClassError>> {
+        let class = self.class_for(url)?;
+        class
+            .can_generate_next_gallery_page()
+            .then(|| class.next_gallery_page(url, self.collapse()))
+    }
+
     /// What kind of URL this is and whether a parser can read it.
     pub fn parse_capability(&self, url: &str) -> ParseCapability {
         let Some(class) = self.class_for(url) else {

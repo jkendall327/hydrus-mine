@@ -111,6 +111,12 @@ merges come from the in-memory cache described below.
   easy to get wrong: siblings and parents only apply to a file's current and
   pending tags; its "display" deleted and petitioned tags are its storage ones.
 
+## URL classes
+
+- **A URL missing a required query parameter is reported by that
+  parameter's name.** The reference's message names whichever parameter
+  its loop looked at last (which varies from run to run).
+
 ## Downloader parsing (`hydrus-parse`)
 
 Checked by `crates/hydrus-legacy/tests/formulas.rs` on
