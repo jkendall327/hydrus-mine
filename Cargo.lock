@@ -1470,6 +1470,7 @@ dependencies = [
  "hydrus-media",
  "hydrus-net",
  "hydrus-parse",
+ "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
  "parking_lot",

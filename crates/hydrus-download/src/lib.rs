@@ -28,6 +28,7 @@ use hydrus_store::queues::SeedStatus;
 use hydrus_store::{Store, StoreError};
 
 mod content;
+pub mod export;
 pub mod folders;
 mod gallery;
 mod predict;

@@ -259,6 +259,319 @@ pub fn delete_or_recycle(path: &str, recycle: bool) -> io::Result<()> {
     }
 }
 
+/// `MirrorFile`: copy `source` to `dest` (keeping its modified time)
+/// unless `dest` already has the same size and modified second. Whether a
+/// copy happened.
+pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
+    let source_meta = std::fs::metadata(source).map_err(|e| {
+        if e.kind() == io::ErrorKind::NotFound {
+            io::Error::other(format!(
+                "Cannot file-mirror \"{source}\" to \"{dest}\"--the source does not exist!"
+            ))
+        } else {
+            e
+        }
+    })?;
+    if source_meta.is_dir() {
+        return Err(io::Error::other(format!(
+            "Cannot file-mirror \"{source}\" to \"{dest}\"--the source is a directory, not a file!"
+        )));
+    }
+    if let Ok(dest_meta) = std::fs::metadata(dest) {
+        if dest_meta.is_dir() {
+            return Err(io::Error::other(format!(
+                "Cannot file-mirror \"{source}\" to \"{dest}\"--the destination is a directory, not a file!"
+            )));
+        }
+        if same_file(&source_meta, &dest_meta)
+            || (source_meta.len() == dest_meta.len()
+                && whole_seconds(&source_meta) == whole_seconds(&dest_meta))
+        {
+            return Ok(false);
+        }
+        if dest_meta.permissions().readonly() {
+            let mut permissions = dest_meta.permissions();
+            #[allow(clippy::permissions_set_readonly_false)]
+            permissions.set_readonly(false);
+            let _ = std::fs::set_permissions(dest, permissions);
+        }
+    }
+    std::fs::copy(source, dest)?;
+    if let Ok(modified) = source_meta.modified() {
+        let _ = std::fs::File::options()
+            .write(true)
+            .open(dest)
+            .and_then(|f| f.set_modified(modified));
+    }
+    Ok(true)
+}
+
+/// `TryToGiveFileNicePermissionBits`: make sure the owner can read and
+/// write the file and others can read it (0644).
+pub fn give_nice_permission_bits(path: &str) {
+    #[cfg(unix)]
+    {
+        use std::os::unix::fs::PermissionsExt;
+        if let Ok(meta) = std::fs::metadata(path) {
+            let bits = meta.permissions().mode();
+            let desired = 0o644;
+            if bits & desired != desired {
+                let _ =
+                    std::fs::set_permissions(path, std::fs::Permissions::from_mode(bits | desired));
+            }
+        }
+    }
+    #[cfg(not(unix))]
+    {
+        if let Ok(meta) = std::fs::metadata(path)
+            && meta.permissions().readonly()
+        {
+            let mut permissions = meta.permissions();
+            #[allow(clippy::permissions_set_readonly_false)]
+            permissions.set_readonly(false);
+            let _ = std::fs::set_permissions(path, permissions);
+        }
+    }
+}
+
+/// `GetFileSystemType`: the type of the filesystem `path` is on, as psutil
+/// reports it (Linux: from the mount table; the longest mount point that
+/// prefixes the path, physical filesystems first). `None` elsewhere.
+pub fn file_system_type(path: &str) -> Option<String> {
+    if !cfg!(target_os = "linux") {
+        return None;
+    }
+    let physical: HashSet<String> = std::fs::read_to_string("/proc/filesystems")
+        .ok()?
+        .lines()
+        .filter_map(|line| match line.strip_prefix("nodev") {
+            None => Some(line.trim().to_owned()),
+            Some(rest) if rest.trim() == "zfs" => Some("zfs".into()),
+            Some(_) => None,
+        })
+        .collect();
+    let mounts = std::fs::read_to_string("/proc/self/mounts").ok()?;
+    let unescape = |s: &str| -> String {
+        s.replace("\\040", " ")
+            .replace("\\011", "\t")
+            .replace("\\012", "\n")
+            .replace("\\134", "\\")
+    };
+    let entries: Vec<(String, String, String)> = mounts
+        .lines()
+        .filter_map(|line| {
+            let mut fields = line.split(' ');
+            let device = fields.next()?.to_owned();
+            let mountpoint = unescape(fields.next()?);
+            let fstype = fields.next()?.to_owned();
+            Some((device, mountpoint, fstype))
+        })
+        .collect();
+    let path = path.to_lowercase();
+    for scan_all in [false, true] {
+        let mut candidates: Vec<&(String, String, String)> = entries
+            .iter()
+            .filter(|(device, _, fstype)| {
+                scan_all || (!device.is_empty() && device != "none" && physical.contains(fstype))
+            })
+            .collect();
+        candidates.sort_by_key(|(_, mountpoint, _)| std::cmp::Reverse(mountpoint.len()));
+        if let Some((_, _, fstype)) = candidates
+            .iter()
+            .find(|(_, mountpoint, _)| path.starts_with(&mountpoint.to_lowercase()))
+        {
+            return Some(fstype.clone());
+        }
+    }
+    None
+}
+
+/// Whether filenames under `dir` must follow Windows rules (on Windows, or
+/// on a filesystem Windows made).
+pub fn needs_ntfs_rules(dir: &str, always: bool) -> bool {
+    if always {
+        return true;
+    }
+    let Some(fst) = file_system_type(dir) else {
+        return false;
+    };
+    let fst = fst.to_lowercase();
+    let fst = fst.strip_prefix("fuse.").unwrap_or(&fst);
+    matches!(
+        fst,
+        "ntfs" | "exfat" | "vfat" | "msdos" | "fat" | "fat32" | "cifs" | "smbfs" | "fuseblk"
+    )
+}
+
+fn windows_rules(force_ntfs: bool) -> bool {
+    cfg!(windows) || force_ntfs
+}
+
+const NTFS_DISALLOWED: &[&str] = &[
+    "con", "prn", "aux", "nul", "com1", "com2", "com3", "com4", "com5", "com6", "com7", "com8",
+    "com9", "lpt1", "lpt2", "lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9",
+];
+
+/// `SanitizeFilename`.
+pub fn sanitize_filename(name: &str, force_ntfs: bool) -> String {
+    if !windows_rules(force_ntfs) {
+        return name.replace('/', "_").trim().to_owned();
+    }
+    let mut clean: String = name
+        .chars()
+        .map(|c| if "\\/:*?\"<>|".contains(c) { '_' } else { c })
+        .collect();
+    while clean.ends_with('.') || clean.ends_with(' ') {
+        clean.pop();
+    }
+    let mut clean = clean.trim().to_owned();
+    while NTFS_DISALLOWED.contains(&clean.to_lowercase().as_str()) {
+        clean.pop();
+    }
+    clean
+}
+
+fn too_long(name: &str, limit: i64, force_ntfs: bool) -> bool {
+    let len = if windows_rules(force_ntfs) {
+        name.chars().count()
+    } else {
+        name.len()
+    };
+    len as i64 > limit
+}
+
+fn pop_char(s: &mut String) {
+    s.pop();
+}
+
+fn max_path(path_limit: Option<i64>, force_ntfs: bool) -> i64 {
+    match path_limit {
+        Some(n) => n,
+        None if windows_rules(force_ntfs) => 260,
+        None if cfg!(target_os = "macos") => 1024,
+        None => 4096,
+    }
+}
+
+fn length(s: &str, force_ntfs: bool) -> i64 {
+    if windows_rules(force_ntfs) {
+        s.chars().count() as i64
+    } else {
+        s.len() as i64
+    }
+}
+
+/// `ElideSubdirsSafely`.
+fn elide_subdirs(
+    destination: &str,
+    subdirs: &str,
+    path_limit: Option<i64>,
+    dirname_limit: Option<i64>,
+    force_ntfs: bool,
+) -> Result<String, String> {
+    if subdirs.is_empty() {
+        return Ok(String::new());
+    }
+    let max_path = max_path(path_limit, force_ntfs);
+    let max_dirname = dirname_limit.unwrap_or(if windows_rules(force_ntfs) { 128 } else { 256 });
+    let dirnames: Vec<&str> = subdirs.split(std::path::MAIN_SEPARATOR).collect();
+    let n = dirnames.len() as i64;
+    // (the reference measures the destination in characters here, even
+    // where it counts names in bytes)
+    let typical_filename = max_path / 4;
+    let left = max_path - destination.chars().count() as i64 - typical_filename - n - 10;
+    let per_dirname = left / n;
+    if per_dirname < 4 {
+        return Err(
+            "Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!".into(),
+        );
+    }
+    let per_dirname = per_dirname.min(max_dirname);
+    let mut elided = Vec::new();
+    for dirname in dirnames {
+        let mut d = sanitize_filename(dirname, force_ntfs);
+        if d.is_empty() {
+            d = "empty".into();
+        }
+        while too_long(&d, per_dirname, force_ntfs) {
+            pop_char(&mut d);
+            d = sanitize_filename(&d, force_ntfs);
+        }
+        let mut d = d.trim().to_owned();
+        if d.is_empty() {
+            d = "truncated".into();
+        }
+        elided.push(d);
+    }
+    Ok(elided.join(std::path::MAIN_SEPARATOR_STR))
+}
+
+/// `ElideFilenameSafely`: `(subdirs, filename)` shortened and cleaned to
+/// fit the limits; `ext` is the extension to come.
+#[allow(clippy::too_many_arguments)]
+pub fn elide_filename(
+    destination: &str,
+    subdirs: &str,
+    base: &str,
+    ext: &str,
+    path_limit: Option<i64>,
+    dirname_limit: Option<i64>,
+    filename_limit: i64,
+    force_ntfs: bool,
+) -> Result<(String, String), String> {
+    let too_long_path = || {
+        "Sorry, it looks like the combined export filename or directory would be too long! Try shortening the export directory name!".to_owned()
+    };
+    let base = if base.is_empty() { "empty" } else { base };
+    let subdirs = elide_subdirs(destination, subdirs, path_limit, dirname_limit, force_ntfs)?;
+    let destination = if subdirs.is_empty() {
+        destination.to_owned()
+    } else {
+        Path::new(destination)
+            .join(&subdirs)
+            .to_string_lossy()
+            .into_owned()
+    };
+    let mut filename_limit = filename_limit;
+    let max_path = max_path(path_limit, force_ntfs);
+    if windows_rules(force_ntfs) {
+        let max_path = max_path - 10;
+        let with_full = destination.chars().count() as i64 + 1 + filename_limit;
+        if with_full > max_path {
+            filename_limit -= with_full - max_path;
+            if filename_limit <= 10 {
+                return Err(too_long_path());
+            }
+        }
+    } else {
+        let max_path = max_path - 20;
+        let with_full = destination.len() as i64 + 1 + filename_limit;
+        if with_full > max_path {
+            filename_limit -= with_full - max_path;
+            if filename_limit <= 18 {
+                return Err(too_long_path());
+            }
+        }
+    }
+    filename_limit -= length(ext, force_ntfs);
+    let too_long_name = || {
+        "Sorry, it looks like the export filename would be too long! Try shortening the export phrase or directory!".to_owned()
+    };
+    if filename_limit <= 0 {
+        return Err(too_long_name());
+    }
+    let mut name = sanitize_filename(base, force_ntfs);
+    while too_long(&name, filename_limit, force_ntfs) {
+        pop_char(&mut name);
+        name = sanitize_filename(&name, force_ntfs);
+    }
+    let name = name.trim().to_owned();
+    if name.is_empty() {
+        return Err(too_long_name());
+    }
+    Ok((subdirs, name))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;

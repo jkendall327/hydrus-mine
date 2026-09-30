@@ -32,6 +32,7 @@ mod client_api;
 mod client_options;
 pub mod domain;
 mod duplicates;
+pub mod export_folders;
 mod favourites;
 pub mod import_folders;
 pub mod import_options;

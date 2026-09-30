@@ -330,6 +330,30 @@ impl LegacyDb {
             .collect())
     }
 
+    /// Every export folder (type 16), decoded; a folder that cannot be
+    /// decoded is an error in its slot.
+    pub fn export_folders(
+        &self,
+    ) -> Result<
+        Vec<(
+            String,
+            Result<crate::objects::export_folders::LegacyExportFolder>,
+        )>,
+    > {
+        Ok(self
+            .latest_named(SerialisableType(16))?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named export folder {:?}", row.name);
+                let decoded = row
+                    .parse()
+                    .and_then(|object| crate::objects::export_folders::export_folder(&object))
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
+            })
+            .collect())
+    }
+
     /// Every import folder (type 19), decoded; a folder that cannot be
     /// decoded is an error in its slot.
     pub fn import_folders(

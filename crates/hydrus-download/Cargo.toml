@@ -11,6 +11,7 @@ hydrus-core.workspace = true
 hydrus-store.workspace = true
 hydrus-net.workspace = true
 hydrus-parse.workspace = true
+hydrus-search.workspace = true
 hydrus-import.workspace = true
 hydrus-media.workspace = true
 thiserror.workspace = true

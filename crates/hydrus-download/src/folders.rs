@@ -24,10 +24,10 @@ use crate::seeds::{Stop, set_status};
 use crate::{Downloader, WorkError, now};
 
 /// A file's own metadata in the store, for routers' media ends.
-struct StoreMedia<'a> {
-    store: &'a Store,
-    hash_id: HashId,
-    now: i64,
+pub(crate) struct StoreMedia<'a> {
+    pub(crate) store: &'a Store,
+    pub(crate) hash_id: HashId,
+    pub(crate) now: i64,
 }
 
 fn media_error(e: impl std::fmt::Display) -> SidecarError {

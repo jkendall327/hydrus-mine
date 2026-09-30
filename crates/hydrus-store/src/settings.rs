@@ -85,6 +85,46 @@ impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }
 
+/// Export folders.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
+pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);
+
+impl Setting for ExportFolders {
+    const KEY: &'static str = "export_folders";
+}
+
+/// How exported files are named (`export_phrase` and the export character
+/// limits; `always_apply_ntfs_export_filename_rules`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ExportSettings {
+    /// The phrase new export folders start with.
+    pub phrase: String,
+    /// The longest whole path (none: the platform's).
+    pub path_character_limit: Option<i64>,
+    /// The longest directory name (none: the platform's).
+    pub dirname_character_limit: Option<i64>,
+    pub filename_character_limit: i64,
+    /// Name files for Windows even on other systems.
+    pub always_apply_ntfs_rules: bool,
+}
+
+impl Default for ExportSettings {
+    fn default() -> Self {
+        Self {
+            phrase: "{hash}".into(),
+            path_character_limit: None,
+            dirname_character_limit: None,
+            filename_character_limit: 220,
+            always_apply_ntfs_rules: false,
+        }
+    }
+}
+
+impl Setting for ExportSettings {
+    const KEY: &'static str = "export";
+}
+
 impl Setting for hydrus_core::url::UrlClassSettings {
     const KEY: &'static str = "url_classes";
 }

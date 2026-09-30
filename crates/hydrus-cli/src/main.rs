@@ -82,6 +82,14 @@ enum Command {
         #[command(subcommand)]
         action: folders::Action,
     },
+    /// Export folders: list them, or run one now. A running `serve` runs
+    /// them when due.
+    ExportFolders {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: folders::ExportAction,
+    },
     /// Duplicates auto-resolution: rules' progress, and approving or denying
     /// the pairs semi-automatic rules are waiting on.
     Duplicates {
@@ -157,6 +165,15 @@ fn main() -> Result<()> {
                 );
             }
             folders::run(&dir, action)
+        }
+        Command::ExportFolders { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            folders::run_export(&dir, action)
         }
         Command::Duplicates { dir, action } => {
             if !dir.join(DB_FILE_NAME).exists() {
@@ -416,6 +433,37 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 }
             });
         }
+        // export folders, each run when due (looked at every three minutes)
+        let exporter = store.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_secs(5)).await;
+            loop {
+                let store = exporter.clone();
+                let done = tokio::task::spawn_blocking(move || {
+                    hydrus_download::export::work_export_folders(&store)
+                })
+                .await;
+                match done {
+                    Ok(Ok(runs)) => {
+                        for (name, run) in runs {
+                            if let Some(e) = &run.error {
+                                tracing::error!(folder = %name, error = %e, "export folder failed");
+                            } else {
+                                tracing::info!(
+                                    folder = %name,
+                                    exported = run.copied,
+                                    removed = run.deleted_paths,
+                                    "export folder ran"
+                                );
+                            }
+                        }
+                    }
+                    Ok(Err(e)) => tracing::error!(error = %e, "export folders failed"),
+                    Err(_) => {}
+                }
+                tokio::time::sleep(Duration::from_secs(180)).await;
+            }
+        });
         // queues made by other processes (the command line)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {

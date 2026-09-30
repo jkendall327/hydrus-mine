@@ -143,3 +143,87 @@ fn set_paused(store: &Store, name: &str, paused: bool) -> Result<()> {
     println!("{name:?} {}", if paused { "paused" } else { "resumed" });
     Ok(())
 }
+
+#[derive(Subcommand)]
+pub enum ExportAction {
+    /// Every export folder: its path, search, naming and schedule.
+    List,
+    /// Run a folder at the next chance (a running `serve` looks every three
+    /// minutes).
+    RunNow { name: String },
+    /// Run a folder now, in this process, whether or not it is due.
+    Run { name: String },
+}
+
+pub fn run_export(dir: &Path, action: ExportAction) -> Result<()> {
+    use hydrus_store::settings::ExportFolders;
+    let store = Store::open(dir)?;
+    let mut folders: ExportFolders = store.read(hydrus_store::settings::get)?;
+    match action {
+        ExportAction::List => {
+            if folders.0.is_empty() {
+                println!("no export folders");
+            }
+            for f in &folders.0 {
+                let kind = match f.export_type {
+                    hydrus_parse::folders::ExportType::Regular => "regular",
+                    hydrus_parse::folders::ExportType::Synchronise => "synchronise",
+                };
+                let schedule = if f.run_regularly {
+                    format!("every {}s", f.period)
+                } else {
+                    "only when asked".into()
+                };
+                println!("{} ({kind}, {schedule}): {}", f.name, f.path);
+                println!(
+                    "  named {:?}{}{}; {} sidecar routers; {} predicates",
+                    f.phrase,
+                    if f.export_symlinks { ", as links" } else { "" },
+                    if f.delete_from_client_after_export {
+                        ", deleting from the client after"
+                    } else {
+                        ""
+                    },
+                    f.routers.len(),
+                    f.search.predicates.len()
+                );
+                if !f.last_error.is_empty() {
+                    println!("  last error: {}", f.last_error);
+                }
+            }
+            Ok(())
+        }
+        ExportAction::RunNow { name } | ExportAction::Run { name }
+            if !folders.0.iter().any(|f| f.name == name) =>
+        {
+            bail!("there is no export folder called {name:?}")
+        }
+        ExportAction::RunNow { name } => {
+            for f in &mut folders.0 {
+                if f.name == name {
+                    f.run_now = true;
+                }
+            }
+            store.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &folders))?;
+            println!("{name:?} will run at the next chance");
+            Ok(())
+        }
+        ExportAction::Run { name } => {
+            for f in &mut folders.0 {
+                if f.name == name {
+                    f.run_now = true;
+                }
+            }
+            store.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &folders))?;
+            let run = hydrus_download::export::work_on_export_folder(&store, &name)?;
+            if let Some(error) = &run.error {
+                bail!("{name:?} failed (and will no longer run regularly): {error}");
+            }
+            println!(
+                "{name:?}: {} files exported ({} copied or linked), {} old files removed, {} deleted from the client",
+                run.exported, run.copied, run.deleted_paths, run.deleted_from_client
+            );
+            Ok(())
+        }
+    }
+}

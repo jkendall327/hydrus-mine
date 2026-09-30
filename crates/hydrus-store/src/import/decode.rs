@@ -80,6 +80,31 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &folders)?;
+    let mut export = crate::settings::ExportSettings::default();
+    if let Some(options) = &options {
+        if let Some(phrase) = options.strings.get("export_phrase") {
+            export.phrase.clone_from(phrase);
+        }
+        if let Some(&n) = options.integers.get("export_filename_character_limit") {
+            export.filename_character_limit = n;
+        }
+        if let Some(&n) = options.noneable_integers.get("export_path_character_limit") {
+            export.path_character_limit = n;
+        }
+        if let Some(&n) = options
+            .noneable_integers
+            .get("export_dirname_character_limit")
+        {
+            export.dirname_character_limit = n;
+        }
+        if let Some(&b) = options
+            .booleans
+            .get("always_apply_ntfs_export_filename_rules")
+        {
+            export.always_apply_ntfs_rules = b;
+        }
+    }
+    insert_setting(&mut input, &export)?;
 
     let mut thumbnails = ThumbnailSettings::default();
     if let Some((w, h)) = legacy_options.thumbnail_dimensions() {
@@ -264,6 +289,47 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         Err(e) => input
             .warnings
             .push(format!("Subscriptions were not converted: {e}")),
+    }
+    match db.export_folders() {
+        Ok(folders) => {
+            let mut converted = Vec::new();
+            for (name, decoded) in folders {
+                let folder = decoded.map_err(|e| e.to_string()).and_then(|f| {
+                    Ok(hydrus_parse::folders::ExportFolder {
+                        search: file_search(&f.search)?,
+                        name: f.name,
+                        path: f.path,
+                        export_type: if f.export_type == 1 {
+                            hydrus_parse::folders::ExportType::Synchronise
+                        } else {
+                            hydrus_parse::folders::ExportType::Regular
+                        },
+                        delete_from_client_after_export: f.delete_from_client_after_export,
+                        export_symlinks: f.export_symlinks,
+                        routers: f.routers,
+                        run_regularly: f.run_regularly,
+                        period: f.period,
+                        phrase: f.phrase,
+                        last_checked: f.last_checked,
+                        run_now: f.run_now,
+                        last_error: f.last_error,
+                        show_working_popup: f.show_working_popup,
+                        overwrite_sidecars_on_next_run: f.overwrite_sidecars_on_next_run,
+                        always_overwrite_sidecars: f.always_overwrite_sidecars,
+                    })
+                });
+                match folder {
+                    Ok(f) => converted.push(f),
+                    Err(e) => input.warnings.push(format!(
+                        "Export folder \"{name}\" was not converted (the original is kept): {e}"
+                    )),
+                }
+            }
+            insert_setting(&mut input, &crate::settings::ExportFolders(converted))?;
+        }
+        Err(e) => input
+            .warnings
+            .push(format!("Export folders were not converted: {e}")),
     }
     match db.import_folders() {
         Ok(folders) => {

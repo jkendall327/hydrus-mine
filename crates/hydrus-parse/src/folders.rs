@@ -266,3 +266,100 @@ mod tests {
         assert_eq!(split_ext("a.tar.gz"), "a.tar");
     }
 }
+
+/// `HC.EXPORT_FOLDER_TYPE_*`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum ExportType {
+    /// Files are added; nothing is removed.
+    #[default]
+    Regular,
+    /// The folder is made to hold exactly the search's files (and their
+    /// sidecars): anything else in it is deleted.
+    Synchronise,
+}
+
+/// An export folder (`ClientExportingFiles.ExportFolder`).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct ExportFolder {
+    pub name: String,
+    pub path: String,
+    pub export_type: ExportType,
+    /// Delete the files from the client once exported (never when
+    /// synchronising).
+    pub delete_from_client_after_export: bool,
+    /// Link to the files in the client's storage instead of copying them.
+    pub export_symlinks: bool,
+    pub search: hydrus_core::search::context::FileSearchContext,
+    /// Sidecars (or other metadata) to write with each file.
+    pub routers: Vec<Router>,
+    pub run_regularly: bool,
+    /// Seconds between runs.
+    pub period: i64,
+    /// How files are named (`[namespace]`, `{hash}`, `(tag)`, ...).
+    pub phrase: String,
+    pub last_checked: i64,
+    pub run_now: bool,
+    pub last_error: String,
+    pub show_working_popup: bool,
+    pub overwrite_sidecars_on_next_run: bool,
+    pub always_overwrite_sidecars: bool,
+}
+
+impl ExportFolder {
+    /// `DoWork`'s test: whether a run is due.
+    pub fn is_due(&self, now: i64) -> bool {
+        (self.run_regularly && now > self.last_checked + self.period) || self.run_now
+    }
+}
+
+/// A piece of an export phrase (`ParseExportPhrase`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PhraseTerm {
+    /// Literal text.
+    Text(String),
+    /// `[namespace]`: the file's tags in the namespace, as subtags.
+    Namespace(String),
+    /// `{hash}`, `{tags}`, `{nn tags}`, `{file_id}`, `{#}` (anything else
+    /// gives nothing).
+    Predicate(String),
+    /// `(tag)`: the tag's subtag, if the file has that subtag as a tag.
+    Tag(String),
+}
+
+/// `ParseExportPhrase`: split out `[...]`, then `{...}`, then `(...)`.
+/// An opening bracket without its closing one is an error.
+pub fn parse_export_phrase(phrase: &str) -> Result<Vec<PhraseTerm>, String> {
+    fn split(
+        terms: Vec<PhraseTerm>,
+        open: char,
+        close: char,
+        make: fn(String) -> PhraseTerm,
+    ) -> Result<Vec<PhraseTerm>, String> {
+        let mut out = Vec::new();
+        for term in terms {
+            let PhraseTerm::Text(mut text) = term else {
+                out.push(term);
+                continue;
+            };
+            while let Some((pre, rest)) = text.split_once(open) {
+                let Some((inner, rest)) = rest.split_once(close) else {
+                    return Err(
+                        "Could not parse that phrase: not enough values to unpack (expected 2, got 1)"
+                            .to_owned(),
+                    );
+                };
+                out.push(PhraseTerm::Text(pre.to_owned()));
+                out.push(make(inner.to_owned()));
+                let rest = rest.to_owned();
+                text = rest;
+            }
+            out.push(PhraseTerm::Text(text));
+        }
+        Ok(out)
+    }
+    let terms = vec![PhraseTerm::Text(phrase.to_owned())];
+    let terms = split(terms, '[', ']', PhraseTerm::Namespace)?;
+    let terms = split(terms, '{', '}', PhraseTerm::Predicate)?;
+    split(terms, '(', ')', PhraseTerm::Tag)
+}

@@ -200,6 +200,21 @@ deleted), migrated from the reference's database before its run; by
   `strasse`), a tag filter step's order is ours; the reference's is Python's
   set order, which differs from run to run.
 
+Export folders (`hydrus-download::export`) are checked by
+`crates/hydrus-download/tests/export_folder.rs` on
+`oracle/fixtures/export_folder_run.json`: a regular export into subfolders
+named by a phrase with `.txt` and nested `.json` sidecars, a synchronising
+export of symlinks (clearing out what else was there), and an export that
+deletes its files from the client, migrated from the reference's database.
+
+- **Which filesystem a folder is on** decides whether filenames follow
+  Windows rules. On Linux it is read from the mount table, as psutil
+  does; on macOS it isn't known (so only Windows itself, or the "always"
+  option, applies those rules), as when psutil can't tell.
+- **Searches with "OR" as the search type** run as "AND" (every predicate
+  must match); the reference's export folder dialog doesn't offer "OR".
+- **No popups.** What a run exported and removed is logged.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server

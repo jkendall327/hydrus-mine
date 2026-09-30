@@ -56,7 +56,15 @@ come across with their sidecar routing, filename tagging, actions and
 schedule, and the files each has already seen, so nothing is imported twice;
 `hydrus serve` checks them when they are due, and `hydrus import-folders
 <store> list` shows them. A folder's path (and where it moves files) is kept
-as it was, so it must be where the new install can reach it. Configuration hydrus-rs doesn't use
+as it was, so it must be where the new install can reach it. Export folders
+come across with their search, naming phrase, sidecars and schedule (and the
+export naming options); `hydrus serve` runs them when due, and `hydrus
+export-folders <store> list` shows them. A symlinking export folder's existing
+links still point into the old install's file storage: with `--files
+in-place`, `hardlink` or `copy` they keep working (as long as the old files
+stay), but after `--files move` they are broken, and, as in hydrus, a
+broken link where an export goes makes the folder fail. Empty such a folder
+before its first run after a move, and it is linked afresh. Configuration hydrus-rs doesn't use
 yet (pages, the GUI's options) is kept verbatim inside the new store, so
 later versions can pick it up without a re-import.
 
