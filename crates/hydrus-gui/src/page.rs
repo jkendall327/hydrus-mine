@@ -35,8 +35,10 @@ impl std::fmt::Debug for SearchPage {
 
 impl SearchPage {
     pub fn new(store: Arc<Store>) -> Self {
+        let mut autocomplete = Autocomplete::new(store.clone());
+        autocomplete.clear();
         Self {
-            autocomplete: Autocomplete::new(store.clone()),
+            autocomplete,
             store,
             predicates: Vec::new(),
             results: Vec::new(),

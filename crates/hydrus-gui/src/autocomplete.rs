@@ -1,6 +1,7 @@
 //! The search box's autocomplete: the tags matching what has been typed,
 //! with their counts, as the reference's read autocomplete lists them
-//! (display tags, all known tags, in all my files).
+//! (display tags, all known tags, in all my files); and before anything is
+//! typed, the system predicates that need no more input, with theirs.
 
 use std::sync::Arc;
 
@@ -87,6 +88,9 @@ impl Autocomplete {
     }
 
     fn search(&self) -> Option<Vec<Suggestion>> {
+        if self.text.trim().is_empty() {
+            return self.system_predicates();
+        }
         let input = AutocompleteInput::parse(&self.text);
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
@@ -134,6 +138,47 @@ impl Autocomplete {
                     predicate: format!("{sign}{}", m.tag),
                 })
                 .collect(),
+        )
+    }
+
+    /// `system:everything`, `system:inbox` and `system:archive`, with how
+    /// many files each finds in all my files (`_GetFileSystemPredicates`).
+    fn system_predicates(&self) -> Option<Vec<Suggestion>> {
+        let snapshot = self.store.snapshot();
+        let domain = snapshot
+            .services
+            .builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)
+            .ok()?
+            .id;
+        let (everything, inbox): (i64, i64) = self
+            .store
+            .read(|conn| {
+                let everything = conn.query_row(
+                    "SELECT count(*) FROM file_domain_current WHERE service_id = ?",
+                    [domain],
+                    |r| r.get(0),
+                )?;
+                let inbox = conn.query_row(
+                    "SELECT count(*) FROM file_inbox AS i
+                     JOIN file_domain_current AS d ON d.hash_id = i.hash_id AND d.service_id = ?",
+                    [domain],
+                    |r| r.get(0),
+                )?;
+                Ok((everything, inbox))
+            })
+            .ok()?;
+        Some(
+            [
+                ("system:everything", everything),
+                ("system:inbox", inbox),
+                ("system:archive", everything - inbox),
+            ]
+            .into_iter()
+            .map(|(predicate, count)| Suggestion {
+                label: format!("{predicate} ({count})"),
+                predicate: predicate.to_owned(),
+            })
+            .collect(),
         )
     }
 }

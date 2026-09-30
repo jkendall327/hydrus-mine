@@ -23,8 +23,24 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
 
     let mut page = SearchPage::new(store.clone());
     assert!(page.results().is_empty(), "nothing until searched");
-    page.add_predicate("system:everything");
+    // before anything is typed, the system predicates that need nothing more
+    let offered: Vec<String> = page
+        .autocomplete()
+        .suggestions()
+        .iter()
+        .map(|s| s.predicate.clone())
+        .collect();
+    assert_eq!(
+        offered,
+        ["system:everything", "system:inbox", "system:archive"]
+    );
+    page.enter();
     let everything = page.results().len();
+    assert_eq!(page.predicates(), ["system:everything"]);
+    assert_eq!(
+        page.autocomplete().suggestions()[0].label,
+        format!("system:everything ({everything})")
+    );
     assert!(everything > 10, "{everything}");
     assert_eq!(page.status(), format!("{everything} files"));
 

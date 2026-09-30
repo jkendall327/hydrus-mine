@@ -6,7 +6,10 @@ and how we mean to go about it.
 
 ## Where it stands
 
-`hydrus-gui <store>` opens one search page. Typing in the search box lists
+`hydrus-gui <store>` opens one search page. With nothing typed, the search
+box offers `system:everything`, `system:inbox` and `system:archive` with how
+many files each finds (the reference also offers the system predicates that
+open an editor; not yet). Typing in the search box lists
 the matching tags with their counts (display tags, all known tags, all my
 files; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
