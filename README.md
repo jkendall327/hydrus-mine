@@ -1,3 +1,18 @@
+## This fork: hydrus-rs
+
+This repository also holds **hydrus-rs**, a reimplementation of the hydrus client in Rust (`crates/`). It aims to behave as hydrus v688 does, and checks that against the Python client itself: the scripts in `oracle/` run the Python code in `hydrus/` and record what it does, and the Rust tests compare against those recordings. The Python code is upstream hydrus, kept unchanged as the reference.
+
+What it does so far:
+
+- **Imports a v688 install** without changing it: files (used in place, hardlinked, copied or moved), tags with their siblings and parents, notes, ratings, URLs, file relationships, subscriptions with their histories, import and export folders, duplicates auto-resolution rules, downloader queues and the last session's pages.
+- **Serves the Client API** (`hydrus serve`) with the same port, access keys and services, for Hydrus Companion and other tools: every endpoint except `/manage_pages`, two of them with small gaps (see `parity/manifest.toml`).
+- **Runs the background work hydrus runs:** downloaders, subscriptions, thread watchers, import and export folders, the similar-files search and duplicates auto-resolution.
+- **A desktop client** (`hydrus-gui`), early: the last session's pages, search pages with autocomplete, sorting and a thumbnail grid, and a media viewer for images.
+
+To try it, see [docs/rust/MIGRATING.md](docs/rust/MIGRATING.md). [docs/rust/DIFFERENCES.md](docs/rust/DIFFERENCES.md) lists where it knowingly behaves differently from hydrus, [docs/rust/ARCHITECTURE.md](docs/rust/ARCHITECTURE.md) explains how it is built, and [docs/rust/DECISIONS.md](docs/rust/DECISIONS.md) records what was decided and the roadmap.
+
+The rest of this README is hydrus's own.
+
 ## Hydrus Network (Client and Server)
 
 The hydrus network client is a file-management application written for internet-fluent media nerds who have large file collections. It browses with tags instead of folders, a little like a booru on your desktop. If they wish, users can easily share tags anonymously through a public server. Everything is free, no ads, and privacy is the first concern. If you have 10,000+ files and cannot find anything, hydrus might help!
