@@ -16,10 +16,73 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2];
+const MIGRATIONS: &[&str] = &[V1, V2, V3];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
+
+/// Import queues: URL lists, gallery searches, watchers and subscription
+/// queries, with their file and gallery seeds as rows (`queues.rs`).
+const V3: &str = r"
+CREATE TABLE import_queues (
+    queue_id INTEGER PRIMARY KEY,
+    -- 'urls', 'gallery', 'watcher' or 'subscription'
+    kind TEXT NOT NULL,
+    name TEXT NOT NULL,
+    -- a page key the Client API can name it by
+    page_key BLOB,
+    created INTEGER NOT NULL,
+    files_paused INTEGER NOT NULL DEFAULT 0,
+    gallery_paused INTEGER NOT NULL DEFAULT 0,
+    -- this importer's own import options (JSON)
+    options TEXT NOT NULL DEFAULT '{}',
+    -- what else its kind keeps (JSON)
+    extra TEXT NOT NULL DEFAULT '{}'
+) STRICT;
+
+CREATE INDEX import_queues_by_name ON import_queues (kind, name);
+
+CREATE TABLE file_seeds (
+    seed_id INTEGER PRIMARY KEY,
+    queue_id INTEGER NOT NULL,
+    -- order within the queue (a child is inserted after its parent)
+    position REAL NOT NULL,
+    -- 0: a path, 1: a URL
+    seed_type INTEGER NOT NULL,
+    data TEXT NOT NULL,
+    -- what makes two seeds the same (the URL normalised for storage)
+    data_for_comparison TEXT NOT NULL,
+    created INTEGER NOT NULL,
+    modified INTEGER NOT NULL,
+    source_time INTEGER,
+    -- CC.STATUS_*
+    status INTEGER NOT NULL,
+    note TEXT NOT NULL,
+    referral_url TEXT,
+    -- request headers, tags, notes, URLs and hashes gathered so far (JSON)
+    metadata TEXT NOT NULL,
+    UNIQUE (queue_id, seed_type, data_for_comparison)
+) STRICT;
+
+CREATE INDEX file_seeds_by_status ON file_seeds (queue_id, status, position);
+
+CREATE TABLE gallery_seeds (
+    seed_id INTEGER PRIMARY KEY,
+    queue_id INTEGER NOT NULL,
+    position REAL NOT NULL,
+    url TEXT NOT NULL,
+    can_generate_more_pages INTEGER NOT NULL,
+    created INTEGER NOT NULL,
+    modified INTEGER NOT NULL,
+    status INTEGER NOT NULL,
+    note TEXT NOT NULL,
+    referral_url TEXT,
+    -- request headers, tags to pass on, run token (JSON)
+    metadata TEXT NOT NULL
+) STRICT;
+
+CREATE INDEX gallery_seeds_by_status ON gallery_seeds (queue_id, status, position);
+";
 
 /// Network sessions' cookies and custom HTTP headers (`network.rs`).
 const V2: &str = r"
