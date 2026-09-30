@@ -15,6 +15,7 @@ use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
 
+use super::duplicates::DuplicateMergeOptions;
 use super::location::LocationContext;
 use super::services::Rgb;
 use super::sort::{MediaCollect, MediaSort, TagSort};
@@ -58,6 +59,9 @@ pub struct ClientOptions {
     pub default_tag_sorts: BTreeMap<i64, TagSort>,
     pub default_collect: Option<MediaCollect>,
     pub default_local_location_context: Option<LocationContext>,
+    /// Duplicate metadata merge options by `HC.DUPLICATE_*` relationship
+    /// (better, same quality, alternate); `None` if not stored.
+    pub duplicate_action_options: Option<BTreeMap<i64, DuplicateMergeOptions>>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -132,6 +136,7 @@ impl ClientOptions {
                 "default_local_location_context",
                 LocationContext::from_object,
             )?,
+            duplicate_action_options: duplicate_action_options(&settings)?,
             dictionary: dictionary.clone(),
         };
         Ok(options)
@@ -320,4 +325,26 @@ fn default_tag_sorts(settings: &Settings<'_>) -> DecodeResult<BTreeMap<i64, TagS
             ))
         })
         .collect()
+}
+
+fn duplicate_action_options(
+    settings: &Settings<'_>,
+) -> DecodeResult<Option<BTreeMap<i64, DuplicateMergeOptions>>> {
+    let Some(meta) = settings.get("duplicate_action_options") else {
+        return Ok(None);
+    };
+    dictionary_pairs(expect_object(meta, "duplicate_action_options")?)?
+        .iter()
+        .map(|(kind, options)| {
+            let kind = kind
+                .as_json()
+                .and_then(PyJson::as_i64)
+                .ok_or_else(|| malformed(KIND, "duplicate type is not an integer"))?;
+            Ok((
+                kind,
+                DuplicateMergeOptions::from_object(expect_object(options, "merge options")?)?,
+            ))
+        })
+        .collect::<DecodeResult<_>>()
+        .map(Some)
 }

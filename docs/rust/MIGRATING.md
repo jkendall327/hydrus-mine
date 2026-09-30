@@ -31,7 +31,11 @@ Everything in the database: files and their domains, tags on every tag
 service, siblings and parents and how they apply, notes, ratings, URLs,
 timestamps, viewing statistics, duplicate and alternate groups, Client API
 access keys and their permissions, and services with their keys (so tools
-that remember service keys keep working). Configuration hydrus-rs doesn't
+that remember service keys keep working). Of the options, those hydrus-rs
+already uses come across as its own settings: thumbnail size, favourite tags,
+viewing statistics, URL classes, autocomplete rules, and the duplicate
+filter's batch size and metadata merge options (what "this is better" copies
+or moves between files). Configuration hydrus-rs doesn't
 use yet (downloaders, pages, the GUI's options) is kept verbatim inside the
 new store, so later versions can pick it up without a re-import.
 

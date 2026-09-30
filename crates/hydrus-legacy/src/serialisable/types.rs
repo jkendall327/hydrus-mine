@@ -25,6 +25,7 @@ impl SerialisableType {
     pub const METADATA: Self = Self(37);
     pub const BANDWIDTH_RULES: Self = Self(38);
     pub const BANDWIDTH_TRACKER: Self = Self(39);
+    pub const DUPLICATE_CONTENT_MERGE_OPTIONS: Self = Self(43);
     pub const TAG_FILTER: Self = Self(44);
     pub const MEDIA_SORT: Self = Self(49);
     pub const CLIENT_API_MANAGER: Self = Self(75);
@@ -39,6 +40,7 @@ impl SerialisableType {
     pub const GUI_SESSION_CONTAINER: Self = Self(104);
     pub const GUI_SESSION_PAGE_DATA: Self = Self(105);
     pub const DUPLICATES_AUTO_RESOLUTION_RULE: Self = Self(128);
+    pub const NOTE_IMPORT_OPTIONS: Self = Self(153);
 
     pub const fn code(self) -> u16 {
         self.0

@@ -306,9 +306,11 @@ def run_phase( phase_name, seed, out_path ):
 
         def settle():
 
+            # the reference commits between jobs, after a job that asks for it:
+            # once a second job has run, the first one's commit has happened
             time.sleep( 0.05 )
             controller.ForceDatabaseCommit()
-            time.sleep( 0.05 )
+            controller.WriteSynchronous( 'null' )
 
 
         for ( path, body ) in seed_steps:
@@ -331,7 +333,10 @@ def run_phase( phase_name, seed, out_path ):
             steps.append( { 'relationship': row, 'state': snapshot( db_dir, pool ) } )
 
 
-        return { 'name': phase_name, 'settings': settings, 'pool': pool, 'seed_steps': [ { 'path': p, 'json': b } for ( p, b ) in seed_steps ], 'initial': initial, 'steps': steps }
+        # the options as the reference serialises them, for the importer's tests
+        legacy = { str( duplicate_type ): options.GetSerialisableTuple() for ( duplicate_type, options ) in ( reference_options or {} ).items() }
+
+        return { 'name': phase_name, 'settings': settings, 'legacy_options': legacy, 'pool': pool, 'seed_steps': [ { 'path': p, 'json': b } for ( p, b ) in seed_steps ], 'initial': initial, 'steps': steps }
 
 
     result = hydrus_driver.run_client( db_dir, hook, port = PORT )

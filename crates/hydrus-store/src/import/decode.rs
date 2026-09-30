@@ -10,14 +10,14 @@ use serde_json::{Value as Json, json};
 
 use hydrus_core::tag_filter::{FilterRule, TagFilter};
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
-use hydrus_core::{CanvasType, ServiceType};
+use hydrus_core::{CanvasType, DuplicateType, ServiceType};
 use hydrus_legacy::LegacyDb;
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
 
 use super::{ApiPermissionsRow, ImportInput, settingless_kind};
 use crate::autocomplete::{AutocompleteRules, AutocompleteSettings};
-use crate::duplicates::DuplicateFilterSettings;
+use crate::duplicates::{DuplicateFilterSettings, DuplicateMergeSettings, MergeOptions};
 use crate::error::{Result, StoreError};
 use crate::services::{
     LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay,
@@ -84,6 +84,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 .collect::<Result<_>>()?;
         }
         insert_setting(&mut input, &viewing)?;
+        if let Some(stored) = &options.duplicate_action_options {
+            let merge = duplicate_merge_settings(stored, &mut input.warnings)?;
+            insert_setting(&mut input, &merge)?;
+        }
         if let Some(&size) = options.integers.get("duplicate_filter_max_batch_size") {
             insert_setting(
                 &mut input,
@@ -236,16 +240,110 @@ fn appearance(appearance: &legacy::StarAppearance) -> Result<StarAppearance> {
         .map_or_else(StarAppearance::default, StarAppearance::Svg))
 }
 
-fn api_permissions(p: &legacy::ApiPermissions) -> ApiPermissionsRow {
-    let codes: BTreeSet<i64> = p.basic_permissions.iter().map(|p| p.code()).collect();
+fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
     let mut filter = TagFilter::new();
-    for (slice, rule) in p.search_tag_filter.effective_rules() {
+    for (slice, rule) in legacy.effective_rules() {
         let rule = match rule {
             TagRule::Allow => FilterRule::Whitelist,
             TagRule::Block => FilterRule::Blacklist,
         };
         filter.set_rule(slice, rule);
     }
+    filter
+}
+
+/// The duplicate filter's metadata merge options. Relationships without
+/// stored options merge nothing, as in the reference.
+fn duplicate_merge_settings(
+    stored: &std::collections::BTreeMap<i64, legacy::DuplicateMergeOptions>,
+    warnings: &mut Vec<String>,
+) -> Result<DuplicateMergeSettings> {
+    use crate::duplicates::merge::{ArchiveSync, MergeAction, RatingMerge, SyncAction, TagMerge};
+    use hydrus_core::notes::{NoteConflict, NoteMerge};
+    use legacy::MergeAction as Legacy;
+
+    let action = |a: Legacy| match a {
+        Legacy::Copy => Some(MergeAction::Copy),
+        Legacy::Move => Some(MergeAction::Move),
+        Legacy::TwoWay => Some(MergeAction::TwoWay),
+        Legacy::None => None,
+    };
+    // the reference only copies URLs and modified dates; "move" does nothing
+    let sync = |a: Legacy| match a {
+        Legacy::Copy => Some(SyncAction::Copy),
+        Legacy::TwoWay => Some(SyncAction::TwoWay),
+        Legacy::Move | Legacy::None => None,
+    };
+    let mut convert = |code: i64, label: &str| -> Result<MergeOptions> {
+        let Some(o) = stored.get(&code) else {
+            return Ok(MergeOptions::default());
+        };
+        let notes = &o.note_import;
+        if !notes.name_whitelist.is_empty()
+            || notes.all_name_override.is_some()
+            || !notes.names_to_name_overrides.is_empty()
+        {
+            warnings.push(format!(
+                "the {label} duplicate merge options' note name filters and renames were dropped (the reference's editor doesn't show them)"
+            ));
+        }
+        let note_merge = if notes.get_notes && o.sync_notes != Legacy::None {
+            let conflict = NoteConflict::from_code(notes.conflict_resolution).ok_or_else(|| {
+                StoreError::Invalid(format!(
+                    "unknown note conflict resolution {}",
+                    notes.conflict_resolution
+                ))
+            })?;
+            Some(NoteMerge {
+                extend_existing: notes.extend_existing_note_if_possible,
+                conflict,
+            })
+        } else {
+            None
+        };
+        Ok(MergeOptions {
+            tags: o
+                .tag_services
+                .iter()
+                .filter_map(|(service, a, filter)| {
+                    action(*a).map(|action| TagMerge {
+                        service: service.clone(),
+                        action,
+                        filter: tag_filter(filter),
+                    })
+                })
+                .collect(),
+            ratings: o
+                .rating_services
+                .iter()
+                .filter_map(|(service, a)| {
+                    action(*a).map(|action| RatingMerge {
+                        service: service.clone(),
+                        action,
+                    })
+                })
+                .collect(),
+            notes: action(o.sync_notes),
+            note_merge,
+            archive: match o.sync_archive {
+                legacy::ArchiveSync::None => ArchiveSync::Never,
+                legacy::ArchiveSync::IfOneDoBoth => ArchiveSync::IfEither,
+                legacy::ArchiveSync::DoBothRegardless => ArchiveSync::Always,
+            },
+            urls: sync(o.sync_urls),
+            file_modified: sync(o.sync_file_modified_date),
+        })
+    };
+    Ok(DuplicateMergeSettings {
+        better: convert(DuplicateType::Better.code().into(), "better")?,
+        same_quality: convert(DuplicateType::SameQuality.code().into(), "same quality")?,
+        alternate: convert(DuplicateType::Alternate.code().into(), "alternate")?,
+    })
+}
+
+fn api_permissions(p: &legacy::ApiPermissions) -> ApiPermissionsRow {
+    let codes: BTreeSet<i64> = p.basic_permissions.iter().map(|p| p.code()).collect();
+    let filter = tag_filter(&p.search_tag_filter);
     ApiPermissionsRow {
         access_key: p.access_key.clone(),
         name: p.name.clone(),
@@ -253,5 +351,55 @@ fn api_permissions(p: &legacy::ApiPermissions) -> ApiPermissionsRow {
         permissions: json!(codes),
         search_tag_filter: (filter != TagFilter::default())
             .then(|| serde_json::to_value(&filter).expect("a tag filter serialises")),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::collections::BTreeMap;
+
+    use hydrus_legacy::serialisable::SerialisableObject;
+
+    use super::*;
+
+    #[test]
+    fn a_new_clients_merge_options_are_our_defaults() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let decoded: DuplicateMergeSettings =
+            serde_json::from_value(input.settings["duplicate_merge"].clone()).unwrap();
+        assert_eq!(decoded, DuplicateMergeSettings::default());
+    }
+
+    /// Custom options as the reference serialised them
+    /// (`oracle/dump_duplicate_merges.py`), against what the oracle's
+    /// merges were checked with.
+    #[test]
+    fn custom_merge_options_convert() {
+        let recorded = hydrus_testkit::fixture_json("duplicate_merges.json");
+        let phase = recorded["phases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|p| p["name"] == "custom")
+            .unwrap();
+        let stored: BTreeMap<i64, legacy::DuplicateMergeOptions> = phase["legacy_options"]
+            .as_object()
+            .unwrap()
+            .iter()
+            .map(|(kind, tuple)| {
+                let object = SerialisableObject::from_tuple_str(&tuple.to_string()).unwrap();
+                (
+                    kind.parse().unwrap(),
+                    legacy::DuplicateMergeOptions::from_object(&object).unwrap(),
+                )
+            })
+            .collect();
+        let mut warnings = Vec::new();
+        let converted = duplicate_merge_settings(&stored, &mut warnings).unwrap();
+        let expected: DuplicateMergeSettings =
+            serde_json::from_value(phase["settings"].clone()).unwrap();
+        assert_eq!(converted, expected);
+        assert!(warnings.is_empty());
     }
 }
