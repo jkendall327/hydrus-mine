@@ -14,7 +14,12 @@ search, its sort and the files it showed, not searched again until its
 search changes (and then only if it is synchronised). Downloader pages and
 the pages we don't open yet show their files, and say what they are.
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. The pages are saved as the last session
+again, as the reference does. Ctrl+T or F9 opens a new search page (on
+"my files", the reference's default) at the far right of the current
+notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
+the right (or left) being shown, as in the reference; downloader pages
+can't be closed yet, since their queues would run on without them. The
+pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
 
@@ -47,8 +52,9 @@ to the first as in the reference, and escape closes it. Images are shown
 whole; other files by their thumbnail for now.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
-screenshots land in `target/tmp/`). Not yet: adding and closing pages,
-system predicates in the autocomplete, collect, the viewer's hover frames
+screenshots land in `target/tmp/`). Not yet: the reference's page chooser
+(new pages are always search pages), reopening closed pages, system
+predicates in the autocomplete, collect, the viewer's hover frames
 and animation or video, downloader pages' own panels.
 
 ## Size

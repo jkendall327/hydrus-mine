@@ -222,3 +222,118 @@ fn the_last_session_opens_as_it_was_left() {
     let colours: std::collections::HashSet<&[u8]> = pixels.chunks(4).collect();
     assert!(colours.len() > 1000, "{} colours", colours.len());
 }
+
+/// New pages go at the far right of the current notebook and are shown;
+/// closing a page shows the one to its right (or left, if it was last);
+/// downloader pages stay; the top notebook always has a page.
+#[test]
+fn pages_open_and_close_as_the_reference_does() {
+    let (_dirs, store) = store();
+    let search = |name: &str| {
+        page(
+            name,
+            PageContent::Search {
+                search: FileSearchContext::default(),
+                synchronised: true,
+                sort: None,
+            },
+        )
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![
+            search("a"),
+            page(
+                "pages",
+                PageContent::Pages(vec![
+                    search("b"),
+                    page(
+                        "threads",
+                        PageContent::Downloader {
+                            kind: DownloaderKind::Watchers,
+                            queues: vec![],
+                            sort: None,
+                        },
+                    ),
+                ]),
+            ),
+            search("c"),
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let names =
+        |pages: &Pages| -> Vec<Vec<String>> { pages.tabs().into_iter().map(|t| t.names).collect() };
+    let shown = |pages: &Pages| pages.shown().name.clone();
+
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.select(0, 1);
+    assert_eq!(shown(&pages), "b");
+    pages.new_search_page();
+    assert_eq!(names(&pages)[1], ["b", "threads", "files"]);
+    assert_eq!(shown(&pages), "files");
+    assert!(pages.current().borrow().results().is_empty());
+
+    // the last page closed: the one to its left
+    pages.close_shown().unwrap();
+    assert_eq!(shown(&pages), "threads");
+    assert!(pages.close_shown().is_err(), "a downloader page stays");
+    pages.select(1, 0);
+    pages.close_shown().unwrap();
+    assert_eq!(names(&pages)[1], ["threads"]);
+    // at the top, the one to its right
+    pages.select(0, 0);
+    pages.close_shown().unwrap();
+    assert_eq!(names(&pages)[0], ["pages", "c"]);
+    assert_eq!(shown(&pages), "threads");
+    pages.select(0, 1);
+    pages.close_shown().unwrap();
+    assert_eq!(names(&pages)[0], ["pages"]);
+    // closed pages are gone from the saved session too
+    pages.save(1).unwrap();
+    let again = Pages::open(store.clone()).unwrap();
+    assert_eq!(
+        names(&again),
+        [vec!["pages".to_owned()], vec!["threads".to_owned()]]
+    );
+
+    // the window: ctrl+t / F9 and ctrl+w, and middle-clicking a tab
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let top = |ui: &MainWindow| -> Vec<String> {
+        let row = ui.get_tab_rows().row_data(0).unwrap();
+        (0..row.names.row_count())
+            .map(|i| row.names.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    ui.invoke_tab_chosen(0, 0);
+    ui.invoke_new_page();
+    assert_eq!(ui.get_tab_rows().row_data(1).unwrap().selected, 1);
+    assert_eq!(bound.pages.borrow().shown().name, "files");
+    ui.invoke_close_page();
+    assert_eq!(bound.pages.borrow().shown().name, "threads");
+    ui.invoke_close_page();
+    assert!(ui.get_error().contains("downloader"));
+    ui.set_error("".into());
+    ui.invoke_close_tab(0, 0);
+    assert!(
+        ui.get_error().contains("downloader"),
+        "nor a notebook holding one"
+    );
+    // a tab other than the one shown closes without changing what is shown
+    ui.invoke_new_page();
+    ui.invoke_tab_chosen(1, 0);
+    ui.invoke_close_tab(1, 1);
+    assert_eq!(bound.pages.borrow().shown().name, "threads");
+    assert_eq!(top(&ui), ["pages"]);
+
+    // the top notebook is never without a page
+    let store = bound.current.borrow().borrow().store().clone();
+    let mut pages = Pages::single(hydrus_gui::SearchPage::new(store));
+    let first = pages.shown().key;
+    pages.close_shown().unwrap();
+    assert_eq!(names(&pages), [vec!["files".to_owned()]]);
+    assert_ne!(pages.shown().key, first);
+}

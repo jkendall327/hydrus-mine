@@ -64,6 +64,8 @@ component Tab inherits Rectangle {
     in property <string> text;
     in property <bool> selected;
     callback chosen();
+    // as in the reference, a middle click closes a page
+    callback close();
     height: 26px;
     width: label.preferred-width + 20px;
     background: root.selected ? #ffffff : touch.has-hover ? #e8e8e8 : #dcdcdc;
@@ -77,6 +79,11 @@ component Tab inherits Rectangle {
     }
     touch := TouchArea {
         clicked => { root.chosen(); }
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.middle && event.kind == PointerEventKind.up) {
+                root.close();
+            }
+        }
     }
 }
 
@@ -148,6 +155,12 @@ export component MainWindow inherits Window {
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
+    // a notebook's tab was middle-clicked
+    callback close-tab(int, int);
+    // the reference's main window shortcuts: ctrl+t and F9 open a page,
+    // ctrl+w closes the page shown
+    callback new-page();
+    callback close-page();
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
@@ -163,131 +176,148 @@ export component MainWindow inherits Window {
     out property <int> grid-columns: grid.columns;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
-    VerticalLayout {
-        for row[level] in root.tab-rows: HorizontalLayout {
-            padding-left: 4px;
-            padding-top: 2px;
-            spacing: 2px;
-            alignment: start;
-            for name[index] in row.names: Tab {
-                text: name;
-                selected: index == row.selected;
-                chosen => { root.tab-chosen(level, index); }
+    // the main window's shortcuts, whatever has the keyboard
+    FocusScope {
+        width: 100%;
+        height: 100%;
+        capture-key-pressed(event) => {
+            if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
+                root.new-page();
+                return accept;
             }
+            if (event.modifiers.control && (event.text == "w" || event.text == "W")) {
+                root.close-page();
+                return accept;
+            }
+            reject
         }
-        HorizontalLayout {
-            if root.note != "": VerticalBox {
-                width: 300px;
+        VerticalLayout {
+            for row[level] in root.tab-rows: HorizontalLayout {
+                padding-left: 4px;
+                padding-top: 2px;
+                spacing: 2px;
                 alignment: start;
+                for name[index] in row.names: Tab {
+                    text: name;
+                    selected: index == row.selected;
+                    chosen => { root.tab-chosen(level, index); }
+                    close => { root.close-tab(level, index); }
+                }
+            }
+            HorizontalLayout {
+                if root.note != "": VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    Text {
+                        text: root.note;
+                        wrap: word-wrap;
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.note == "": VerticalBox {
+                    width: 300px;
+                    // the sort control, as at the top of the reference's sidebar
+                    HorizontalLayout {
+                        spacing: 4px;
+                        ComboBox {
+                            model: root.sort-names;
+                            current-index: root.sort-index;
+                            selected => { root.sort-chosen(self.current-index); }
+                        }
+                        ComboBox {
+                            width: 130px;
+                            model: root.order-names;
+                            current-index: root.order-index;
+                            selected => { root.order-chosen(self.current-index); }
+                        }
+                    }
+                    FocusScope {
+                        height: search.preferred-height;
+                        // up and down move through the suggestions, as in the reference
+                        capture-key-pressed(event) => {
+                            if (event.text == Key.UpArrow) {
+                                root.move-highlight(-1);
+                                return accept;
+                            }
+                            if (event.text == Key.DownArrow) {
+                                root.move-highlight(1);
+                                return accept;
+                            }
+                            reject
+                        }
+                        search := LineEdit {
+                            width: 100%;
+                            placeholder-text: "search";
+                            text <=> root.search-text;
+                            edited(text) => { root.search-edited(text); }
+                            accepted(text) => { root.search-accepted(); }
+                        }
+                    }
+                    if root.suggestions.length > 0: Rectangle {
+                        border-width: 1px;
+                        border-color: #c8c8c8;
+                        background: #ffffff;
+                        height: min(root.suggestions.length, 12) * 22px + 4px;
+                        VerticalLayout {
+                            padding: 2px;
+                            alignment: start;
+                            for suggestion[i] in root.suggestions: Rectangle {
+                                height: 22px;
+                                background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
+                                Text {
+                                    x: 4px;
+                                    text: suggestion;
+                                    vertical-alignment: center;
+                                    overflow: elide;
+                                    width: parent.width - 8px;
+                                }
+                                pick := TouchArea {
+                                    clicked => { root.suggestion-chosen(i); }
+                                }
+                            }
+                        }
+                    }
+                    if root.error != "": Text {
+                        text: root.error;
+                        color: #b00020;
+                        wrap: word-wrap;
+                    }
+                    Rectangle {
+                        border-width: 1px;
+                        border-color: #c8c8c8;
+                        background: #ffffff;
+                        height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
+                        VerticalLayout {
+                            padding: 2px;
+                            alignment: start;
+                            for predicate[i] in root.predicates: Predicate {
+                                text: predicate;
+                                remove => { root.remove-predicate(i); }
+                            }
+                        }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                grid := ThumbnailGrid {
+                    rows: root.thumbnail-rows;
+                    clicked(i) => { root.thumbnail-clicked(i); }
+                    activated(i) => { root.thumbnail-activated(i); }
+                }
+            }
+            Rectangle {
+                height: 24px;
+                background: #e6e6e6;
                 Text {
-                    text: root.note;
-                    wrap: word-wrap;
+                    x: 6px;
+                    text: root.status;
+                    vertical-alignment: center;
                 }
-                TagList {
-                    tags: root.tags;
-                    activated(i) => { root.tag-activated(i); }
-                }
-            }
-            if root.note == "": VerticalBox {
-                width: 300px;
-                // the sort control, as at the top of the reference's sidebar
-                HorizontalLayout {
-                    spacing: 4px;
-                    ComboBox {
-                        model: root.sort-names;
-                        current-index: root.sort-index;
-                        selected => { root.sort-chosen(self.current-index); }
-                    }
-                    ComboBox {
-                        width: 130px;
-                        model: root.order-names;
-                        current-index: root.order-index;
-                        selected => { root.order-chosen(self.current-index); }
-                    }
-                }
-                FocusScope {
-                    height: search.preferred-height;
-                    // up and down move through the suggestions, as in the reference
-                    capture-key-pressed(event) => {
-                        if (event.text == Key.UpArrow) {
-                            root.move-highlight(-1);
-                            return accept;
-                        }
-                        if (event.text == Key.DownArrow) {
-                            root.move-highlight(1);
-                            return accept;
-                        }
-                        reject
-                    }
-                    search := LineEdit {
-                        width: 100%;
-                        placeholder-text: "search";
-                        text <=> root.search-text;
-                        edited(text) => { root.search-edited(text); }
-                        accepted(text) => { root.search-accepted(); }
-                    }
-                }
-                if root.suggestions.length > 0: Rectangle {
-                    border-width: 1px;
-                    border-color: #c8c8c8;
-                    background: #ffffff;
-                    height: min(root.suggestions.length, 12) * 22px + 4px;
-                    VerticalLayout {
-                        padding: 2px;
-                        alignment: start;
-                        for suggestion[i] in root.suggestions: Rectangle {
-                            height: 22px;
-                            background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
-                            Text {
-                                x: 4px;
-                                text: suggestion;
-                                vertical-alignment: center;
-                                overflow: elide;
-                                width: parent.width - 8px;
-                            }
-                            pick := TouchArea {
-                                clicked => { root.suggestion-chosen(i); }
-                            }
-                        }
-                    }
-                }
-                if root.error != "": Text {
-                    text: root.error;
-                    color: #b00020;
-                    wrap: word-wrap;
-                }
-                Rectangle {
-                    border-width: 1px;
-                    border-color: #c8c8c8;
-                    background: #ffffff;
-                    height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
-                    VerticalLayout {
-                        padding: 2px;
-                        alignment: start;
-                        for predicate[i] in root.predicates: Predicate {
-                            text: predicate;
-                            remove => { root.remove-predicate(i); }
-                        }
-                    }
-                }
-                TagList {
-                    tags: root.tags;
-                    activated(i) => { root.tag-activated(i); }
-                }
-            }
-            grid := ThumbnailGrid {
-                rows: root.thumbnail-rows;
-                clicked(i) => { root.thumbnail-clicked(i); }
-                activated(i) => { root.thumbnail-activated(i); }
-            }
-        }
-        Rectangle {
-            height: 24px;
-            background: #e6e6e6;
-            Text {
-                x: 6px;
-                text: root.status;
-                vertical-alignment: center;
             }
         }
     }

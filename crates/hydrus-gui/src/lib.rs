@@ -98,20 +98,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         move || current.borrow().clone()
     };
-    window.on_tab_chosen({
+    // change the pages, then show whichever page is now shown; a change
+    // that can't be made says why
+    let change_pages = {
         let pages = pages.clone();
         let current = current.clone();
         let rows = rows.clone();
         let weak = window.as_weak();
         let shown = shown.clone();
-        move |level, index| {
-            let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) else {
-                return;
-            };
-            let opened = {
+        move |change: &dyn Fn(&mut Pages) -> Result<(), String>| {
+            let (result, opened) = {
                 let mut pages = pages.borrow_mut();
-                pages.select(level, index);
-                pages.current()
+                let result = change(&mut pages);
+                (result, pages.current())
             };
             *current.borrow_mut() = opened.clone();
             rows.set_page(opened);
@@ -119,6 +118,43 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 show_tabs(&window, &pages.borrow());
             }
             shown(false);
+            if let (Err(e), Some(window)) = (result, weak.upgrade()) {
+                window.set_error(e.into());
+            }
+        }
+    };
+    window.on_tab_chosen({
+        let change_pages = change_pages.clone();
+        move |level, index| {
+            let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) else {
+                return;
+            };
+            change_pages(&|pages| {
+                pages.select(level, index);
+                Ok(())
+            });
+        }
+    });
+    window.on_new_page({
+        let change_pages = change_pages.clone();
+        move || {
+            change_pages(&|pages| {
+                pages.new_search_page();
+                Ok(())
+            });
+        }
+    });
+    window.on_close_page({
+        let change_pages = change_pages.clone();
+        move || change_pages(&Pages::close_shown)
+    });
+    window.on_close_tab({
+        let change_pages = change_pages.clone();
+        move |level, index| {
+            let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) else {
+                return;
+            };
+            change_pages(&|pages| pages.close(level, index));
         }
     });
     window.on_search_edited({

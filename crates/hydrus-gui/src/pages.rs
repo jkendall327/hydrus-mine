@@ -235,14 +235,118 @@ impl Pages {
     }
 }
 
-/// A new search page, as the reference makes one: "files", searching
-/// everything in the default domains.
+impl Pages {
+    /// The notebook `depth` levels down the way to the page shown.
+    fn notebook_mut(&mut self, depth: usize) -> &mut Vec<Page> {
+        let mut pages = &mut self.session.pages;
+        for &i in &self.path[..depth] {
+            match &mut pages[i].content {
+                PageContent::Pages(children) => pages = children,
+                _ => unreachable!("the path runs through notebooks"),
+            }
+        }
+        pages
+    }
+
+    /// Where a new page goes: into the notebook shown if it is an empty
+    /// one, else beside the page shown.
+    fn current_depth(&self) -> usize {
+        match &self.shown().content {
+            PageContent::Pages(children) if children.is_empty() => self.path.len(),
+            _ => self.path.len() - 1,
+        }
+    }
+
+    /// Open a new search page (the reference's page chooser's "file search"
+    /// on its default domain, "my files"), at the far right of the current
+    /// notebook as the reference's default puts it, and show it.
+    pub fn new_search_page(&mut self) {
+        let depth = self.current_depth();
+        let pages = self.notebook_mut(depth);
+        pages.push(new_search_page());
+        let index = pages.len() - 1;
+        self.path.truncate(depth);
+        self.path.push(index);
+    }
+
+    /// Close the page shown (or the empty notebook shown).
+    pub fn close_shown(&mut self) -> Result<(), String> {
+        let depth = self.path.len() - 1;
+        self.close(depth, self.path[depth])
+    }
+
+    /// Close the `index`th tab of the notebook `depth` levels down the way
+    /// to the page shown (a notebook closes with its pages). If it was
+    /// shown, the one to its right is shown (or, if it was last, its left),
+    /// as the reference does. Downloader pages are kept: their queues would
+    /// run on without them.
+    pub fn close(&mut self, depth: usize, index: usize) -> Result<(), String> {
+        fn has_downloader(page: &Page) -> bool {
+            match &page.content {
+                PageContent::Downloader { .. } => true,
+                PageContent::Pages(children) => children.iter().any(has_downloader),
+                _ => false,
+            }
+        }
+        fn keys(page: &Page, out: &mut Vec<PageKey>) {
+            out.push(page.key);
+            if let PageContent::Pages(children) = &page.content {
+                for child in children {
+                    keys(child, out);
+                }
+            }
+        }
+        if depth >= self.path.len() {
+            return Ok(());
+        }
+        let shown = self.path[depth];
+        let pages = self.notebook_mut(depth);
+        let Some(page) = pages.get(index) else {
+            return Ok(());
+        };
+        if has_downloader(page) {
+            return Err(
+                "downloader pages can't be closed yet: `hydrus serve` runs their queues".into(),
+            );
+        }
+        let closed = pages.remove(index);
+        let remaining = pages.len();
+        let mut closed_keys = Vec::new();
+        keys(&closed, &mut closed_keys);
+        for key in closed_keys {
+            self.open.remove(&key);
+        }
+        if index < shown {
+            self.path[depth] -= 1;
+        } else if index == shown {
+            if remaining > 0 {
+                self.select(depth, index.min(remaining - 1));
+            } else if depth > 0 {
+                // the notebook it was in is shown, empty
+                self.path.truncate(depth);
+            } else {
+                // as the reference, never without a page
+                self.session.pages.push(new_search_page());
+                self.path = vec![0];
+            }
+        }
+        Ok(())
+    }
+}
+
+/// A new search page, as the reference makes one: "files", searching "my
+/// files" and all known tags.
 fn new_search_page() -> Page {
     Page {
         key: PageKey::random(),
         name: "files".into(),
         content: PageContent::Search {
-            search: FileSearchContext::default(),
+            search: FileSearchContext {
+                location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
+                )),
+                ..FileSearchContext::default()
+            },
             synchronised: true,
             sort: None,
         },
