@@ -468,11 +468,15 @@ fn done_endpoints() -> Vec<String> {
 #[tokio::test(flavor = "multi_thread", worker_threads = 4)]
 async fn replay_recorded_scenarios() {
     let root = repo_root();
-    let manifest: Json = serde_json::from_str(
-        &std::fs::read_to_string(root.join("oracle/fixtures/legacy_db/basic.manifest.json"))
+    let load_manifest = |fixture: &str| -> Json {
+        serde_json::from_str(
+            &std::fs::read_to_string(
+                root.join(format!("oracle/fixtures/legacy_db/{fixture}.manifest.json")),
+            )
             .unwrap(),
-    )
-    .unwrap();
+        )
+        .unwrap()
+    };
     let mut names: Vec<String> = std::fs::read_dir(root.join("oracle/scenarios"))
         .unwrap()
         .map(|e| {
@@ -491,7 +495,8 @@ async fn replay_recorded_scenarios() {
     }
 
     let differences = known_differences();
-    let shared = common::imported_store("basic");
+    // read-only scenarios share one import of their fixture
+    let mut shared: HashMap<String, common::Fixture> = HashMap::new();
     let mut outcomes = Vec::new();
     for name in &names {
         let scenario: Json = serde_json::from_str(
@@ -504,10 +509,14 @@ async fn replay_recorded_scenarios() {
         .unwrap();
         let fresh;
         let read_only = scenario["read_only"].as_bool().unwrap();
+        let fixture_name = scenario["fixture"].as_str().unwrap_or("basic");
+        let manifest = load_manifest(fixture_name);
         let fixture = if read_only {
-            &shared
+            shared
+                .entry(fixture_name.to_owned())
+                .or_insert_with(|| common::imported_store(fixture_name))
         } else {
-            fresh = common::imported_store("basic");
+            fresh = common::imported_store(fixture_name);
             &fresh
         };
         let now_window = (!read_only).then(|| {

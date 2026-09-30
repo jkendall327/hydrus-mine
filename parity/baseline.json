@@ -1,8 +1,8 @@
 {
   "api": {
     "total": 76,
-    "done": 55,
-    "partial": 2,
+    "done": 57,
+    "partial": 3,
     "done_items": [
       "/add_files/add_file",
       "/add_files/archive_files",
@@ -57,6 +57,8 @@
       "/manage_headers/get_headers",
       "/manage_headers/set_headers",
       "/manage_headers/set_user_agent",
+      "/manage_services/forget_pending",
+      "/manage_services/get_pending_counts",
       "/session_key",
       "/verify_access_key"
     ]

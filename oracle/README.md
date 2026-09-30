@@ -25,6 +25,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_tag_cleaning.py` | `fixtures/tag_cleaning.json`: tag cleaning on awkward inputs |
 | `dump_system_predicates.py` | `fixtures/system_predicates.json`: search predicate parsing (system predicates and Client API tag lists) over a large corpus |
 | `make_import_media.py` | `fixtures/import_media/`: small deterministic media corpus (committed) |
+| `make_repository_fixture.py` | `fixtures/legacy_db/repositories.tar.gz` + manifest: `basic` with a tag and a file repository holding pending content |
 | `make_fixture_db.py` | `fixtures/legacy_db/<name>.tar.gz` + `.manifest.json`: a populated reference database |
 | `dump_legacy_expectations.py` | `fixtures/legacy_db/<name>.expected.json`: what the reference reads from a fixture database, for `hydrus-legacy`'s tests |
 | `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |

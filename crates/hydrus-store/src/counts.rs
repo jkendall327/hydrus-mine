@@ -53,6 +53,26 @@ pub fn rebuild_all(conn: &Connection) -> Result<()> {
     Ok(())
 }
 
+/// Rebuild one tag service's counts, with the display graphs as they are.
+pub fn rebuild_display_service(
+    conn: &Connection,
+    registry: &ServiceRegistry,
+    service: ServiceId,
+    graphs: &DisplayGraphs,
+) -> Result<()> {
+    let all_known_files = registry
+        .of_type(hydrus_core::ServiceType::CombinedFile)
+        .next()
+        .map(|s| s.id);
+    rebuild_service(
+        conn,
+        service,
+        &graphs.get(service),
+        all_known_files,
+        &counted_domains(registry),
+    )
+}
+
 /// Rebuild one tag service's storage and display counts.
 pub fn rebuild_service(
     conn: &Connection,

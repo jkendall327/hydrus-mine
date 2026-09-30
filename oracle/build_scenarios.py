@@ -799,6 +799,39 @@ def file_range_scenarios():
     return scenario( 'file_ranges', 'byte ranges of files', steps, read_only = True )
 
 
+def services_scenarios():
+
+    tag_repo = '7a6' * 21 + '7'
+    file_repo = 'f11e' * 16
+    h = [ BY_NAME[ f'jpeg_{i:02}.jpg' ] for i in range( 3 ) ]
+    counts = '/manage_services/get_pending_counts'
+
+    steps = [
+        get( counts ),
+        get( counts, key = 'restricted' ),
+        metadata( h ),
+        post( '/add_tags/add_tags', { 'hashes': h, 'service_keys_to_actions_to_tags': { tag_repo: { '2': [ 'another pended tag' ] } } } ),
+        post( '/add_tags/add_tags', { 'hash': h[ 0 ], 'service_keys_to_actions_to_tags': { tag_repo: { '3': [ 'pended tag' ] } } } ),
+        get( counts ),
+        post( '/manage_services/forget_pending', { 'service_key': tag_repo } ),
+        get( counts ),
+        metadata( h ),
+        post( '/manage_services/forget_pending', { 'service_key': file_repo } ),
+        get( counts ),
+        metadata( h ),
+        post( '/manage_services/forget_pending', { 'service_key': KEYS[ 'my_tags' ] } ),
+        post( '/manage_services/forget_pending', { 'service_key': 'ab' * 32 } ),
+        post( '/manage_services/forget_pending', {} ),
+        post( '/manage_services/forget_pending', { 'service_key': tag_repo }, key = 'restricted' ),
+        post( '/manage_services/commit_pending', { 'service_key': KEYS[ 'my_tags' ] } ),
+        post( '/manage_services/commit_pending', { 'service_key': 'ab' * 32 } ),
+        post( '/manage_services/commit_pending', { 'service_key': tag_repo }, key = 'restricted' ),
+        get( '/get_services' ),
+    ]
+
+    return scenario( 'manage_services', 'pending counts, forgetting pending content, committing', steps, read_only = False, fixture = 'repositories' )
+
+
 def access_more_scenarios():
 
     svg = '/get_service_rating_svg'
@@ -904,7 +937,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios() ]
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios() ]
 
     for sc in scenarios:
 

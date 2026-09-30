@@ -9,5 +9,6 @@ pub mod metadata;
 pub mod network;
 pub mod relationships;
 pub mod search;
+pub mod services;
 pub mod tags;
 pub mod urls;

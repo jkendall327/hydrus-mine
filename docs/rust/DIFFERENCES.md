@@ -317,6 +317,14 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
   pixels.
 - **Ugoiras are not rendered yet** (a 400 says so).
 
+## Repositories (`/manage_services/*`)
+
+- **Pending content can't be committed.** hydrus-rs doesn't talk to
+  repository servers (the PTR, file repositories), so `commit_pending`
+  checks the request as the reference does and then refuses it (422).
+  Pending counts and forgetting pending content work as in the reference
+  (the `manage_services` scenario, on the `repositories` fixture).
+
 ## Locking the database (`/manage_database/lock_on`)
 
 - **The database stays open while locked.** The reference closes its

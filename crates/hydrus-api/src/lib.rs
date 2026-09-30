@@ -107,7 +107,7 @@ pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
     use routes::{
         access, add_files, add_tags, database, files, metadata, network, relationships, search,
-        tags, urls,
+        services, tags, urls,
     };
     Router::new()
         .route("/api_version", get(access::api_version))
@@ -219,6 +219,18 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route(
             "/manage_headers/set_user_agent",
             post(network::set_user_agent),
+        )
+        .route(
+            "/manage_services/get_pending_counts",
+            get(services::get_pending_counts),
+        )
+        .route(
+            "/manage_services/forget_pending",
+            post(services::forget_pending),
+        )
+        .route(
+            "/manage_services/commit_pending",
+            post(services::commit_pending),
         )
         .route("/manage_database/mr_bones", get(database::mr_bones))
         .route(

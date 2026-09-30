@@ -291,15 +291,16 @@ status = "todo"
 
 [[api]]
 path = "/manage_services/commit_pending"
-status = "todo"
+status = "partial"
+notes = "checked as the reference checks it, then refused (422): hydrus-rs does not upload to repositories"
 
 [[api]]
 path = "/manage_services/forget_pending"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_services/get_pending_counts"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/request_new_permissions"

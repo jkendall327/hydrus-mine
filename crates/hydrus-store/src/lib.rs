@@ -15,6 +15,7 @@ pub mod maintenance;
 pub mod master;
 pub mod media;
 pub mod network;
+pub mod pending;
 pub mod queues;
 pub mod schema;
 pub mod services;

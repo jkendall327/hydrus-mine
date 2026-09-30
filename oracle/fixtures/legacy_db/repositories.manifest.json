@@ -1,0 +1,233 @@
+{
+ "access_keys": {
+  "full": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+  "restricted": "fedcba9876543210fedcba9876543210fedcba9876543210fedcba9876543210"
+ },
+ "files": [
+  {
+   "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+   "import_status": 1,
+   "name": "apng_animated.png",
+   "note": ""
+  },
+  {
+   "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+   "import_status": 1,
+   "name": "archive.zip",
+   "note": ""
+  },
+  {
+   "hash": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+   "import_status": 1,
+   "name": "audio.flac",
+   "note": ""
+  },
+  {
+   "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+   "import_status": 1,
+   "name": "audio.mp3",
+   "note": ""
+  },
+  {
+   "hash": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+   "import_status": 1,
+   "name": "bitmap.bmp",
+   "note": ""
+  },
+  {
+   "hash": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+   "import_status": 1,
+   "name": "document.pdf",
+   "note": ""
+  },
+  {
+   "hash": "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+   "import_status": 1,
+   "name": "dupe_jpeg_02.png",
+   "note": ""
+  },
+  {
+   "hash": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+   "import_status": 1,
+   "name": "dupe_jpeg_02_q60.jpg",
+   "note": ""
+  },
+  {
+   "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+   "import_status": 1,
+   "name": "dupe_jpeg_02_small.jpg",
+   "note": ""
+  },
+  {
+   "hash": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "import_status": 1,
+   "name": "gif_animated.gif",
+   "note": ""
+  },
+  {
+   "hash": "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+   "import_status": 1,
+   "name": "gif_static.gif",
+   "note": ""
+  },
+  {
+   "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "import_status": 1,
+   "name": "jpeg_00.jpg",
+   "note": ""
+  },
+  {
+   "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+   "import_status": 1,
+   "name": "jpeg_01.jpg",
+   "note": ""
+  },
+  {
+   "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+   "import_status": 1,
+   "name": "jpeg_02.jpg",
+   "note": ""
+  },
+  {
+   "hash": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+   "import_status": 1,
+   "name": "jpeg_03.jpg",
+   "note": ""
+  },
+  {
+   "hash": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+   "import_status": 1,
+   "name": "jpeg_04.jpg",
+   "note": ""
+  },
+  {
+   "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+   "import_status": 1,
+   "name": "jpeg_05.jpg",
+   "note": ""
+  },
+  {
+   "hash": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+   "import_status": 1,
+   "name": "jpeg_06.jpg",
+   "note": ""
+  },
+  {
+   "hash": "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+   "import_status": 1,
+   "name": "jpeg_07.jpg",
+   "note": ""
+  },
+  {
+   "hash": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+   "import_status": 1,
+   "name": "jpeg_08.jpg",
+   "note": ""
+  },
+  {
+   "hash": "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+   "import_status": 1,
+   "name": "jpeg_09.jpg",
+   "note": ""
+  },
+  {
+   "hash": "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+   "import_status": 1,
+   "name": "jpeg_10.jpg",
+   "note": ""
+  },
+  {
+   "hash": "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+   "import_status": 1,
+   "name": "jpeg_11.jpg",
+   "note": ""
+  },
+  {
+   "hash": "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+   "import_status": 1,
+   "name": "png_00.png",
+   "note": ""
+  },
+  {
+   "hash": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+   "import_status": 1,
+   "name": "png_01.png",
+   "note": ""
+  },
+  {
+   "hash": "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+   "import_status": 1,
+   "name": "png_02.png",
+   "note": ""
+  },
+  {
+   "hash": "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+   "import_status": 1,
+   "name": "png_03.png",
+   "note": ""
+  },
+  {
+   "hash": "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+   "import_status": 1,
+   "name": "png_alpha_00.png",
+   "note": ""
+  },
+  {
+   "hash": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+   "import_status": 1,
+   "name": "png_alpha_01.png",
+   "note": ""
+  },
+  {
+   "hash": "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+   "import_status": 1,
+   "name": "png_alpha_02.png",
+   "note": ""
+  },
+  {
+   "hash": "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+   "import_status": 1,
+   "name": "tiff_image.tiff",
+   "note": ""
+  },
+  {
+   "hash": "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+   "import_status": 1,
+   "name": "video_silent.webm",
+   "note": ""
+  },
+  {
+   "hash": "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+   "import_status": 1,
+   "name": "video_with_audio.mp4",
+   "note": ""
+  },
+  {
+   "hash": "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+   "import_status": 1,
+   "name": "webp_alpha.webp",
+   "note": ""
+  },
+  {
+   "hash": "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+   "import_status": 1,
+   "name": "webp_animated.webp",
+   "note": ""
+  },
+  {
+   "hash": "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+   "import_status": 1,
+   "name": "webp_static.webp",
+   "note": ""
+  }
+ ],
+ "reference_version": 688,
+ "service_keys": {
+  "art": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+  "counter": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+  "file_repository": "f11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11e",
+  "second_tags": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+  "stars": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+  "tag_repository": "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+ }
+}
