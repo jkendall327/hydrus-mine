@@ -8,11 +8,18 @@ as you like.
 ## Steps
 
 1. Update the old client to v688 and close it cleanly.
-2. Build hydrus-rs: `cargo build --release` (the binaries are
-   `target/release/hydrus` and the desktop client `target/release/hydrus-gui`).
-   On Linux the desktop client needs fontconfig's development files (e.g.
-   `libfontconfig1-dev`); `cargo build --release -p hydrus-cli` builds just
-   the command line without them.
+2. Build hydrus-rs. Install Rust with [rustup](https://rustup.rs) (the
+   repository pins the version, which rustup fetches on the first build),
+   and a C toolchain: on Windows, Visual Studio's Build Tools with "Desktop
+   development with C++" (rustup's installer offers them); on macOS, `xcode-select
+   --install`; on Linux, a C compiler, `pkg-config` and fontconfig's
+   development files for the desktop client (e.g. `build-essential
+   pkg-config libfontconfig1-dev`). SQLite is built in. Then, in the
+   repository, `cargo build --release`: the binaries are
+   `target/release/hydrus` and the desktop client `target/release/hydrus-gui`
+   (`.exe` on Windows). `cargo build --release -p hydrus-cli` builds just the
+   command line. Video and audio need `ffmpeg` on your `PATH` (for their
+   metadata and thumbnails, as hydrus does); images don't.
 3. Import:
 
    ```sh
