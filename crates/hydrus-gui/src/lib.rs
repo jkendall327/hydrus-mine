@@ -20,6 +20,7 @@ pub mod autocomplete;
 mod grid;
 pub mod headless;
 mod page;
+pub mod sort;
 mod viewer;
 
 pub use grid::ThumbnailRows;
@@ -120,9 +121,38 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
     });
     window.on_remove_predicate({
         let page = page.clone();
+        let shown = shown.clone();
         move |index| {
             page.borrow_mut()
                 .remove_predicate(usize::try_from(index).unwrap_or(usize::MAX));
+            shown(true);
+        }
+    });
+    let choices = sort::choices();
+    let names: Vec<SharedString> = choices.iter().map(|c| c.name.as_str().into()).collect();
+    window.set_sort_names(ModelRc::new(VecModel::from(names)));
+    window.on_sort_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        let choices = choices.clone();
+        move |index| {
+            if let Some(choice) = usize::try_from(index).ok().and_then(|i| choices.get(i)) {
+                page.borrow_mut().set_sort_by(choice.by);
+                shown(true);
+            }
+        }
+    });
+    window.on_order_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |index| {
+            use hydrus_search::SortOrder;
+            let order = if index == 0 {
+                SortOrder::Ascending
+            } else {
+                SortOrder::Descending
+            };
+            page.borrow_mut().set_sort_order(order);
             shown(true);
         }
     });
@@ -231,4 +261,14 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_predicates(ModelRc::new(VecModel::from(predicates)));
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
+    let sort = page.sort();
+    let choices = sort::choices();
+    if let Some(i) = choices.iter().position(|c| c.by == sort.by) {
+        window.set_sort_index(i32::try_from(i).unwrap_or(0));
+        let orders: Vec<SharedString> = choices[i].orders.iter().map(|&o| o.into()).collect();
+        window.set_order_names(ModelRc::new(VecModel::from(orders)));
+        window.set_order_index(i32::from(
+            sort.order == hydrus_search::SortOrder::Descending,
+        ));
+    }
 }

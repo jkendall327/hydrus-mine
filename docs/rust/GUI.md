@@ -6,7 +6,10 @@ and how we mean to go about it.
 
 ## Where it stands
 
-`hydrus-gui <store>` opens one search page. With nothing typed, the search
+`hydrus-gui <store>` opens one search page. At the top of its sidebar, the
+sort control offers every sort type named and ordered as in the reference,
+each with its two orders ("oldest first", "newest first"...); choosing a
+type picks its default order, as the reference does. With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds (the reference also offers the system predicates that
 open an editor; not yet). Typing in the search box lists
@@ -24,7 +27,7 @@ to the first as in the reference, and escape closes it. Images are shown
 whole; other files by their thumbnail for now.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and draws the
 window headless (the screenshot lands in `target/tmp/`). Not yet: system
-predicates in the autocomplete, sort and collect, the viewer's hover
+predicates in the autocomplete, collect, the viewer's hover
 frames and animation or video, more pages, decoding off the UI thread.
 
 ## Size

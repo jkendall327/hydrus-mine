@@ -1,7 +1,7 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+import { ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 
 export { MediaViewerWindow } from "viewer.slint";
 
@@ -77,6 +77,10 @@ export component MainWindow inherits Window {
     preferred-height: 700px;
     background: #f4f4f4;
 
+    in property <[string]> sort-names;
+    in property <int> sort-index;
+    in property <[string]> order-names;
+    in property <int> order-index;
     in property <[string]> predicates;
     in property <[string]> suggestions;
     in property <int> highlighted: -1;
@@ -85,6 +89,8 @@ export component MainWindow inherits Window {
     in property <string> error;
     in-out property <string> search-text;
 
+    callback sort-chosen(int);
+    callback order-chosen(int);
     callback search-edited(string);
     callback search-accepted();
     callback move-highlight(int);
@@ -100,7 +106,22 @@ export component MainWindow inherits Window {
     VerticalLayout {
         HorizontalLayout {
             VerticalBox {
-                width: 260px;
+                width: 300px;
+                // the sort control, as at the top of the reference's sidebar
+                HorizontalLayout {
+                    spacing: 4px;
+                    ComboBox {
+                        model: root.sort-names;
+                        current-index: root.sort-index;
+                        selected => { root.sort-chosen(self.current-index); }
+                    }
+                    ComboBox {
+                        width: 130px;
+                        model: root.order-names;
+                        current-index: root.order-index;
+                        selected => { root.order-chosen(self.current-index); }
+                    }
+                }
                 FocusScope {
                     height: search.preferred-height;
                     // up and down move through the suggestions, as in the reference

@@ -7,6 +7,7 @@ use std::rc::Rc;
 use slint::{ComponentHandle as _, Model as _};
 
 use hydrus_gui::{MainWindow, MediaViewer, SearchPage, bind, headless};
+use hydrus_search::{SortBy, SortOrder};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
@@ -87,6 +88,22 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     );
     page.type_text("");
 
+    // sorting: a new type comes with its default order
+    let newest_first = page.results().to_vec();
+    page.set_sort_order(SortOrder::Ascending);
+    let oldest_first: Vec<_> = page.results().to_vec();
+    assert_eq!(
+        oldest_first.iter().rev().copied().collect::<Vec<_>>(),
+        newest_first
+    );
+    page.set_sort_by(SortBy::FileSize);
+    assert_eq!(page.sort().order, SortOrder::Descending, "largest first");
+    assert_eq!(page.results().len(), everything);
+    page.set_sort_by(SortBy::Width);
+    assert_eq!(page.sort().order, SortOrder::Ascending, "slimmest first");
+    page.set_sort_by(SortBy::ImportTime);
+    assert_eq!(page.results(), newest_first);
+
     let thumbnails = page
         .results()
         .iter()
@@ -119,6 +136,13 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));
     assert_eq!(ui.get_predicates().row_count(), 1);
+    let sort_names = ui.get_sort_names();
+    let import_time = (0..sort_names.row_count())
+        .find(|&i| sort_names.row_data(i).unwrap() == "time: import time")
+        .unwrap();
+    assert_eq!(ui.get_sort_index(), i32::try_from(import_time).unwrap());
+    assert_eq!(ui.get_order_names().row_data(1).unwrap(), "newest first");
+    assert_eq!(ui.get_order_index(), 1);
     ui.invoke_thumbnail_clicked(0);
     // (the screenshot shows the autocomplete too)
     ui.invoke_search_edited("samus".into());

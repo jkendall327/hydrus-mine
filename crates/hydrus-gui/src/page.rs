@@ -16,7 +16,8 @@ pub struct SearchPage {
     autocomplete: Autocomplete,
     /// As typed: tags, and system predicates such as `system:inbox`.
     predicates: Vec<String>,
-    /// Newest import first.
+    sort: FileSort,
+    /// In the sort's order.
     results: Vec<HashId>,
     selected: Option<usize>,
     error: Option<String>,
@@ -41,6 +42,11 @@ impl SearchPage {
             autocomplete,
             store,
             predicates: Vec::new(),
+            // the reference's default: newest import first
+            sort: FileSort {
+                by: SortBy::ImportTime,
+                order: SortOrder::Descending,
+            },
             results: Vec::new(),
             selected: None,
             error: None,
@@ -57,6 +63,26 @@ impl SearchPage {
 
     pub fn results(&self) -> &[HashId] {
         &self.results
+    }
+
+    pub fn sort(&self) -> FileSort {
+        self.sort
+    }
+
+    /// Sort by `by`, in its default order (as the reference's sort control
+    /// does when the type changes).
+    pub fn set_sort_by(&mut self, by: SortBy) {
+        let order = crate::sort::choices()
+            .into_iter()
+            .find(|c| c.by == by)
+            .map_or(SortOrder::Ascending, |c| c.default_order);
+        self.sort = FileSort { by, order };
+        self.search();
+    }
+
+    pub fn set_sort_order(&mut self, order: SortOrder) {
+        self.sort.order = order;
+        self.search();
     }
 
     pub fn selected(&self) -> Option<usize> {
@@ -152,10 +178,7 @@ impl SearchPage {
             predicates,
             ..FileSearchContext::default()
         };
-        let sort = FileSort {
-            by: SortBy::ImportTime,
-            order: SortOrder::Descending,
-        };
+        let sort = self.sort;
         let snapshot = self.store.snapshot();
         let clock = Clock::system();
         match self
