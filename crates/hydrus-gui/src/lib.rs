@@ -6,7 +6,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use slint::{ModelRc, SharedPixelBuffer, SharedString, VecModel};
+use slint::{ModelRc, SharedString, VecModel};
 
 /// The UI compiled from `ui/` (generated code).
 #[allow(missing_debug_implementations)]
@@ -22,6 +22,7 @@ pub mod headless;
 mod page;
 mod pages;
 pub mod sort;
+mod thumbnails;
 mod viewer;
 
 pub use grid::ThumbnailRows;
@@ -37,6 +38,8 @@ pub struct Bound {
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+    /// Shows thumbnails as they are decoded (held to keep it running).
+    _thumbnails: Rc<slint::Timer>,
 }
 
 impl std::fmt::Debug for Bound {
@@ -51,23 +54,7 @@ impl std::fmt::Debug for Bound {
 
 /// A decoded image as Slint shows it.
 pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
-    let (width, height) = (raster.width(), raster.height());
-    match raster.channels() {
-        4 => slint::Image::from_rgba8(SharedPixelBuffer::clone_from_slice(
-            raster.data(),
-            width,
-            height,
-        )),
-        3 => slint::Image::from_rgb8(SharedPixelBuffer::clone_from_slice(
-            raster.data(),
-            width,
-            height,
-        )),
-        _ => {
-            let rgb: Vec<u8> = raster.data().iter().flat_map(|&v| [v, v, v]).collect();
-            slint::Image::from_rgb8(SharedPixelBuffer::clone_from_slice(&rgb, width, height))
-        }
-    }
+    thumbnails::Pixels::new(raster).image()
 }
 
 /// Show `pages` in `window`, and let the window change them.
@@ -78,6 +65,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let rows = Rc::new(ThumbnailRows::new(first));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
+    let thumbnails = Rc::new(slint::Timer::default());
+    thumbnails.start(
+        slint::TimerMode::Repeated,
+        std::time::Duration::from_millis(25),
+        {
+            let rows = rows.clone();
+            move || {
+                rows.receive();
+            }
+        },
+    );
     show_tabs(window, &pages.borrow());
     refresh(window, &current.borrow().borrow());
 
@@ -237,6 +235,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         current,
         rows,
         viewer,
+        _thumbnails: thumbnails,
     }
 }
 

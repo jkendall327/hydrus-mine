@@ -32,17 +32,17 @@ system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
 and double-clicking one removes it. The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
-the rows in view exist, and a thumbnail is decoded when its row first comes
-into view. Double-clicking a thumbnail opens the media viewer in its own
+the rows in view exist, and a thumbnail is read and decoded off the UI
+thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
 to the first as in the reference, and escape closes it. Images are shown
 whole; other files by their thumbnail for now.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
-screenshots land in `target/tmp/`). Not yet: adding and closing pages, system predicates in the autocomplete, collect, the viewer's
-hover frames and animation or video, downloader pages' own panels, decoding
-off the UI thread.
+screenshots land in `target/tmp/`). Not yet: adding and closing pages,
+system predicates in the autocomplete, collect, the viewer's hover frames
+and animation or video, downloader pages' own panels.
 
 ## Size
 

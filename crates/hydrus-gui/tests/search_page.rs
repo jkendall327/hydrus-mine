@@ -143,6 +143,17 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));
     assert_eq!(ui.get_predicates().row_count(), 1);
+    // a row is made at once, with blanks until its thumbnails are decoded
+    // (off the UI thread)
+    let sizes = |rows: &hydrus_gui::ThumbnailRows| -> Vec<u32> {
+        let row = rows.row_data(0).unwrap();
+        (0..row.thumbnails.row_count())
+            .map(|i| row.thumbnails.row_data(i).unwrap().image.size().width)
+            .collect()
+    };
+    assert!(sizes(&bound.rows).iter().all(|&w| w == 0));
+    bound.rows.wait();
+    assert!(sizes(&bound.rows).iter().any(|&w| w > 0));
     let sort_names = ui.get_sort_names();
     let import_time = (0..sort_names.row_count())
         .find(|&i| sort_names.row_data(i).unwrap() == "time: import time")
@@ -162,6 +173,10 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     // in a row; the second shows them)
     headless::render(&main_window, width, height);
     assert!(ui.get_grid_columns() > 1);
+    // (the second asks for the thumbnails in view, decoded off the UI
+    // thread; the third shows them)
+    headless::render(&main_window, width, height);
+    bound.rows.wait();
     let pixels = headless::render(&main_window, width, height);
     // only the rows in view were decoded
     let cached = bound.rows.cached();

@@ -2467,6 +2467,7 @@ name = "hydrus-gui"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "crossbeam-channel",
  "hydrus-core",
  "hydrus-media",
  "hydrus-search",

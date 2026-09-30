@@ -359,12 +359,6 @@ impl SearchPage {
 
     /// A file's thumbnail, decoded; `None` if it has none on disk.
     pub fn thumbnail(&self, id: HashId) -> Option<hydrus_media::Raster> {
-        let hash = self
-            .store
-            .read(|conn| hydrus_store::master::hash(conn, id))
-            .ok()??;
-        let path = self.store.snapshot().storage.thumbnail_path(&hash)?;
-        let bytes = std::fs::read(path).ok()?;
-        hydrus_media::decode_image(&bytes).ok()
+        crate::thumbnails::thumbnail(&self.store, id)
     }
 }

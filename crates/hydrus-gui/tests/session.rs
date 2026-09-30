@@ -213,6 +213,8 @@ fn the_last_session_opens_as_it_was_left() {
     let main_window = windows.get(0).unwrap();
     let (width, height) = (1100, 700);
     headless::render(&main_window, width, height);
+    headless::render(&main_window, width, height);
+    bound.rows.wait();
     let pixels = headless::render(&main_window, width, height);
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
     headless::save_png(&shots.join("session.png"), &pixels, width, height).unwrap();

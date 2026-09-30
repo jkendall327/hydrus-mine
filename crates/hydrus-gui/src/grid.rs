@@ -1,15 +1,18 @@
 //! The thumbnail grid's rows, made as the grid scrolls to them: the grid is
-//! a list of rows (so only the visible ones exist), and a row's thumbnails
-//! are decoded when the grid first asks for it, then kept.
+//! a list of rows (so only the visible ones exist). A row's thumbnails are
+//! decoded off the UI thread when the grid first asks for them, shown as
+//! they arrive ([`ThumbnailRows::receive`]), then kept.
 
 use std::cell::{Cell, RefCell};
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::rc::Rc;
+use std::time::Duration;
 
 use slint::{Model, ModelNotify, ModelRc, ModelTracker, VecModel};
 
 use hydrus_core::HashId;
 
+use crate::thumbnails::ThumbnailLoader;
 use crate::{SearchPage, Thumbnail, ThumbnailRow};
 
 /// Decoded thumbnails kept; past this, the cache starts afresh.
@@ -19,6 +22,10 @@ pub struct ThumbnailRows {
     page: RefCell<Rc<RefCell<SearchPage>>>,
     columns: Cell<usize>,
     cache: RefCell<HashMap<HashId, slint::Image>>,
+    loader: ThumbnailLoader,
+    /// Thumbnails asked for and not yet decoded, with where the grid last
+    /// showed each file.
+    pending: RefCell<HashMap<HashId, usize>>,
     notify: ModelNotify,
 }
 
@@ -27,18 +34,71 @@ impl std::fmt::Debug for ThumbnailRows {
         f.debug_struct("ThumbnailRows")
             .field("columns", &self.columns.get())
             .field("cached", &self.cache.borrow().len())
+            .field("pending", &self.pending.borrow().len())
             .finish_non_exhaustive()
     }
 }
 
 impl ThumbnailRows {
     pub fn new(page: Rc<RefCell<SearchPage>>) -> Self {
+        let workers = std::thread::available_parallelism().map_or(2, |n| n.get().min(4));
+        let loader = ThumbnailLoader::new(page.borrow().store(), workers);
         Self {
             page: RefCell::new(page),
             columns: Cell::new(1),
             cache: RefCell::default(),
+            loader,
+            pending: RefCell::default(),
             notify: ModelNotify::default(),
         }
+    }
+
+    /// Show the thumbnails decoded since last asked; how many.
+    pub fn receive(&self) -> usize {
+        let mut received = Vec::new();
+        while let Some(result) = self.loader.try_receive() {
+            received.push(result);
+        }
+        self.show(received)
+    }
+
+    /// Wait for every thumbnail asked for (for tests: the window's event
+    /// loop otherwise collects them as they come).
+    pub fn wait(&self) {
+        while !self.pending.borrow().is_empty() {
+            let Some(result) = self.loader.receive_timeout(Duration::from_secs(30)) else {
+                return;
+            };
+            self.show(vec![result]);
+        }
+    }
+
+    fn show(&self, received: Vec<(HashId, Option<crate::thumbnails::Pixels>)>) -> usize {
+        let count = received.len();
+        let mut rows = BTreeSet::new();
+        {
+            let mut cache = self.cache.borrow_mut();
+            let mut pending = self.pending.borrow_mut();
+            for (id, pixels) in received {
+                if cache.len() >= CACHED {
+                    cache.clear();
+                }
+                cache.insert(
+                    id,
+                    pixels
+                        .map(crate::thumbnails::Pixels::image)
+                        .unwrap_or_default(),
+                );
+                if let Some(index) = pending.remove(&id) {
+                    rows.insert(index / self.columns.get());
+                }
+            }
+        }
+        let row_count = self.row_count();
+        for row in rows.into_iter().filter(|&row| row < row_count) {
+            self.notify.row_changed(row);
+        }
+        count
     }
 
     /// The grid's width changed how many thumbnails fit in a row.
@@ -71,21 +131,15 @@ impl ThumbnailRows {
         self.notify.row_changed(index / self.columns.get());
     }
 
-    fn image(&self, page: &SearchPage, id: HashId) -> slint::Image {
+    /// The file's thumbnail if decoded; otherwise a blank, and it is asked for.
+    fn image(&self, id: HashId, index: usize) -> slint::Image {
         if let Some(image) = self.cache.borrow().get(&id) {
             return image.clone();
         }
-        let image = page
-            .thumbnail(id)
-            .as_ref()
-            .map(crate::image)
-            .unwrap_or_default();
-        let mut cache = self.cache.borrow_mut();
-        if cache.len() >= CACHED {
-            cache.clear();
+        if self.pending.borrow_mut().insert(id, index).is_none() {
+            self.loader.request(id);
         }
-        cache.insert(id, image.clone());
-        image
+        slint::Image::default()
     }
 }
 
@@ -113,7 +167,7 @@ impl Model for ThumbnailRows {
         let end = (start + columns).min(results.len());
         let thumbnails: Vec<Thumbnail> = (start..end)
             .map(|i| Thumbnail {
-                image: self.image(&page, results[i]),
+                image: self.image(results[i], i),
                 selected: page.selected() == Some(i),
             })
             .collect();
