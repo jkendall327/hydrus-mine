@@ -72,7 +72,7 @@ show named queues as pages.
 | cookies, custom headers | done |
 | bandwidth rules (and recent usage) | settings (+ usage rows) |
 | subscriptions: queries, their file seed caches and gallery logs, check timings | done (`subscriptions` and `subscription_queries`, each query's history an import queue); old-style import options on subscriptions last saved before hydrus v670 are converted as the reference converts them |
-| watchers and URL/gallery pages open in the GUI session | named queues |
+| watchers and URL/gallery pages open in the GUI session | done: the session hydrus opens with; a queue per URL page, gallery search and watcher, named after its page |
 
 ## Testing
 

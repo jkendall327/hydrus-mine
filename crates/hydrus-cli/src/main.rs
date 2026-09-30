@@ -22,6 +22,7 @@ mod api_keys;
 mod duplicates;
 mod folders;
 mod gallery;
+mod queues;
 mod subscriptions;
 
 #[derive(Parser)]
@@ -99,6 +100,14 @@ enum Command {
         #[command(subcommand)]
         action: api_keys::Action,
     },
+    /// The downloaders' queues: URL downloaders, gallery searches and
+    /// watchers, by page.
+    Queues {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: queues::Action,
+    },
     /// Duplicates auto-resolution: rules' progress, and approving or denying
     /// the pairs semi-automatic rules are waiting on.
     Duplicates {
@@ -165,6 +174,15 @@ fn main() -> Result<()> {
                 );
             }
             subscriptions::run(&dir, action)
+        }
+        Command::Queues { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            queues::run(&dir, action)
         }
         Command::ImportFolders { dir, action } => {
             if !dir.join(DB_FILE_NAME).exists() {

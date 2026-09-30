@@ -290,6 +290,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .warnings
             .push(format!("Subscriptions were not converted: {e}")),
     }
+    downloader_pages(db, &legacy_options, &mut input);
     match db.export_folders() {
         Ok(folders) => {
             let mut converted = Vec::new();
@@ -992,6 +993,130 @@ fn api_permissions(p: &legacy::ApiPermissions) -> ApiPermissionsRow {
         permissions: json!(codes),
         search_tag_filter: (filter != TagFilter::default())
             .then(|| serde_json::to_value(&filter).expect("a tag filter serialises")),
+    }
+}
+
+/// The downloader pages open in the session the reference opens with
+/// (`default_gui_session`, "last session" unless changed).
+fn downloader_pages(
+    db: &LegacyDb,
+    legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    input: &mut ImportInput,
+) {
+    use hydrus_legacy::objects::gui_sessions::{PageContent, page_data};
+    let name = legacy_options
+        .get("default_gui_session")
+        .and_then(hydrus_legacy::objects::YamlValue::as_str)
+        .unwrap_or("last session");
+    if name == "just a blank page" {
+        return;
+    }
+    let (session, pages) = match db.gui_session(name) {
+        Ok(Some(found)) => found,
+        Ok(None) => return,
+        Err(e) => {
+            input.warnings.push(format!(
+                "Session \"{name}\" could not be read, so its downloader pages were not carried \
+                 over (the original is kept): {e}"
+            ));
+            return;
+        }
+    };
+    for hash in session.top.page_data_hashes() {
+        let Some(stored) = pages.get(hash) else {
+            input.warnings.push(format!(
+                "A page of session \"{name}\" has lost its data, so it was not carried over"
+            ));
+            continue;
+        };
+        let page = match stored.parse().and_then(|object| page_data(&object)) {
+            Ok(data) => data.page,
+            Err(e) => {
+                input.warnings.push(format!(
+                    "A page of session \"{name}\" could not be read, so its work was not carried \
+                     over (the original is kept): {e}"
+                ));
+                continue;
+            }
+        };
+        let queues = match page.content {
+            PageContent::Urls(u) => vec![super::PageQueueInput {
+                options: u.import_options,
+                files_paused: u.paused,
+                gallery_paused: u.paused,
+                created: None,
+                state: super::PageQueueState::Urls,
+                file_seeds: u.file_seeds,
+                gallery_seeds: u.gallery_seeds,
+            }],
+            PageContent::Gallery(m) => m
+                .gallery_imports
+                .into_iter()
+                .map(|g| super::PageQueueInput {
+                    options: g.import_options,
+                    files_paused: g.files_paused,
+                    gallery_paused: g.gallery_paused,
+                    created: Some(g.created),
+                    state: super::PageQueueState::Gallery(hydrus_core::gallery::GallerySearch {
+                        query: g.query,
+                        source_name: g.source_name,
+                        file_limit: g.file_limit.and_then(|n| u64::try_from(n).ok()),
+                        num_new_urls_found: u64::try_from(g.num_new_urls_found).unwrap_or(0),
+                        num_urls_found: u64::try_from(g.num_urls_found).unwrap_or(0),
+                    }),
+                    file_seeds: g.file_seeds,
+                    gallery_seeds: g.gallery_seeds,
+                })
+                .collect(),
+            PageContent::Watchers(m) => m
+                .watchers
+                .into_iter()
+                // a watcher not yet given a thread has nothing to do
+                .filter(|w| !w.url.is_empty())
+                .map(|w| {
+                    use hydrus_core::watchers::{CheckerStatus, WatcherState};
+                    let state = WatcherState {
+                        url: w.url,
+                        subject: w.subject,
+                        checker: w.checker,
+                        last_check_time: w.last_check_time,
+                        next_check_time: 0,
+                        check_now: false,
+                        checking_paused: w.checking_paused,
+                        status: match w.checking_status {
+                            1 => CheckerStatus::Dead,
+                            2 => CheckerStatus::NotFound,
+                            _ => CheckerStatus::Ok,
+                        },
+                        no_work_until: w.no_work_until,
+                        no_work_until_reason: w.no_work_until_reason,
+                        created: w.created,
+                        external_filterable_tags: w.external_filterable_tags.into_iter().collect(),
+                        external_additional_tags: w
+                            .external_additional_tags
+                            .into_iter()
+                            .map(|(key, tags)| (key, tags.into_iter().collect()))
+                            .collect(),
+                    };
+                    super::PageQueueInput {
+                        options: w.import_options,
+                        files_paused: w.files_paused,
+                        gallery_paused: false,
+                        created: Some(w.created),
+                        state: super::PageQueueState::Watcher(state),
+                        file_seeds: w.file_seeds,
+                        gallery_seeds: w.gallery_seeds,
+                    }
+                })
+                .collect(),
+            PageContent::Other => continue,
+        };
+        if !queues.is_empty() {
+            input.downloader_pages.push(super::DownloaderPageInput {
+                name: page.name,
+                queues,
+            });
+        }
     }
 }
 

@@ -64,9 +64,16 @@ links still point into the old install's file storage: with `--files
 in-place`, `hardlink` or `copy` they keep working (as long as the old files
 stay), but after `--files move` they are broken, and, as in hydrus, a
 broken link where an export goes makes the folder fail. Empty such a folder
-before its first run after a move, and it is linked afresh. Configuration hydrus-rs doesn't use
-yet (pages, the GUI's options) is kept verbatim inside the new store, so
-later versions can pick it up without a re-import.
+before its first run after a move, and it is linked afresh. The downloader
+pages open in the session hydrus opens with ("last session" unless you
+changed it) come across as queues named after their pages: a URL
+downloader page as one queue, a gallery downloader page as one per search,
+a watcher page as one per watcher, each with every URL, file and gallery
+page it held and whether it was paused; `hydrus serve` carries on with
+them, and `hydrus queues <store> list` shows them. Configuration hydrus-rs
+doesn't use yet (the rest of your sessions, the GUI's options) is kept
+verbatim inside the new store, so later versions can pick it up without a
+re-import.
 
 Client API access keys come across, so your browser extension and other
 tools keep working. `hydrus api-keys <store>` lists, adds and removes keys;

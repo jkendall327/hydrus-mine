@@ -51,6 +51,8 @@ pub struct ImportInput {
     pub subscriptions: Vec<SubscriptionInput>,
     /// Import folders, with the files each has seen.
     pub import_folders: Vec<ImportFolderInput>,
+    /// Downloader pages open in the session the reference opens with.
+    pub downloader_pages: Vec<DownloaderPageInput>,
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
@@ -76,6 +78,38 @@ pub struct SubscriptionInput {
     /// Each query's state, with the name its history is stored under in the
     /// source's `json_dumps_named`.
     pub queries: Vec<(String, QueryState)>,
+}
+
+/// A downloader page open in the session the reference opens with. Its
+/// work carries over as queues named after the page: a URL page's one
+/// queue, a gallery page's searches or a watcher page's watchers.
+#[derive(Debug, Clone, PartialEq)]
+pub struct DownloaderPageInput {
+    pub name: String,
+    pub queues: Vec<PageQueueInput>,
+}
+
+/// One of a downloader page's queues.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PageQueueInput {
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
+    pub files_paused: bool,
+    pub gallery_paused: bool,
+    /// Seconds (`None` for a URL page, which doesn't keep one).
+    pub created: Option<i64>,
+    pub state: PageQueueState,
+    pub file_seeds: Vec<hydrus_legacy::objects::subscriptions::LegacyFileSeed>,
+    pub gallery_seeds: Vec<hydrus_legacy::objects::subscriptions::LegacyGallerySeed>,
+}
+
+/// What kind of queue, with its state.
+#[derive(Debug, Clone, PartialEq)]
+pub enum PageQueueState {
+    Urls,
+    Gallery(hydrus_core::gallery::GallerySearch),
+    /// Its next check is timed when imported, from its files, as the
+    /// reference times it when the page starts.
+    Watcher(hydrus_core::watchers::WatcherState),
 }
 
 /// One Client API access key, as stored natively.
@@ -259,6 +293,7 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.settings(input)?;
     copier.network(input)?;
     copier.subscriptions(input)?;
+    copier.downloader_pages(input)?;
     copier.import_folders(input)?;
     copier.auto_resolution(input)?;
     copier.derived()?;
@@ -904,6 +939,79 @@ impl Copier<'_> {
         Ok(())
     }
 
+    /// Downloader pages' queues, with their files and gallery pages.
+    fn downloader_pages(&mut self, input: &ImportInput) -> Result<()> {
+        let url_classes = input
+            .settings
+            .get(<hydrus_core::url::UrlClassSettings as crate::settings::Setting>::KEY)
+            .and_then(|v| serde_json::from_value(v.clone()).ok())
+            .map(hydrus_core::url::UrlClasses::new);
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs() as i64);
+        let mut counts = [0u64; 3];
+        for page in &input.downloader_pages {
+            for q in &page.queues {
+                let kind = match q.state {
+                    PageQueueState::Urls => queues::QueueKind::Urls,
+                    PageQueueState::Gallery(_) => queues::QueueKind::Gallery,
+                    PageQueueState::Watcher(_) => queues::QueueKind::Watcher,
+                };
+                let id = queues::create_queue(
+                    self.conn,
+                    kind,
+                    &page.name,
+                    None,
+                    &q.options,
+                    q.created.unwrap_or(now),
+                )?;
+                queues::set_paused(self.conn, id, Some(q.files_paused), Some(q.gallery_paused))?;
+                let warnings = &mut self.report.warnings;
+                let files: Vec<_> = q
+                    .file_seeds
+                    .iter()
+                    .filter_map(|f| decode::file_seed(f, url_classes.as_ref(), warnings))
+                    .collect();
+                let galleries: Vec<_> = q
+                    .gallery_seeds
+                    .iter()
+                    .map(|g| decode::gallery_seed(g, warnings))
+                    .collect();
+                counts[1] += queues::restore_file_seeds(self.conn, id, &files)? as u64;
+                queues::restore_gallery_seeds(self.conn, id, &galleries)?;
+                counts[2] += galleries.len() as u64;
+                let extra = match &q.state {
+                    PageQueueState::Urls => None,
+                    PageQueueState::Gallery(search) => Some(serde_json::to_value(search)),
+                    PageQueueState::Watcher(state) => {
+                        let mut state = state.clone();
+                        let times: Vec<_> = files
+                            .iter()
+                            .map(|s| hydrus_core::subscriptions::SeedTime {
+                                source_time: s.source_time,
+                                created: s.created,
+                            })
+                            .collect();
+                        state.update_next_check_time(&times, now);
+                        Some(serde_json::to_value(state))
+                    }
+                };
+                if let Some(extra) = extra {
+                    let extra = extra.expect("plain data serialises");
+                    queues::set_queue_extra(self.conn, id, &extra)?;
+                }
+                counts[0] += 1;
+            }
+        }
+        for (table, n) in ["import_queues", "file_seeds", "gallery_seeds"]
+            .into_iter()
+            .zip(counts)
+        {
+            *self.report.rows.entry(table.into()).or_default() += n;
+        }
+        Ok(())
+    }
+
     /// Import folders, with the files each has seen (so nothing is
     /// imported twice).
     fn import_folders(&mut self, input: &ImportInput) -> Result<()> {
@@ -1412,6 +1520,226 @@ mod network_tests {
             "filterable": g.meta.external_filterable_tags,
             "additional": g.meta.external_additional_tags.iter().cloned().collect::<BTreeMap<_, _>>(),
         })
+    }
+
+    /// The page data hashes of a session tree (as the oracle records it), in
+    /// order.
+    fn page_hashes(node: &serde_json::Value, out: &mut Vec<String>) {
+        match node.get("pages") {
+            Some(pages) => {
+                for page in pages.as_array().unwrap() {
+                    page_hashes(page, out);
+                }
+            }
+            None => out.push(node["page_data_hash"].as_str().unwrap().to_owned()),
+        }
+    }
+
+    /// A session made by the reference (`oracle/dump_gui_sessions.py`)
+    /// planted in a reference database as its last session (over an older
+    /// save of it): each downloader page's work comes over as queues named
+    /// after the page, in the session's order, with their files and gallery
+    /// pages.
+    #[test]
+    fn imports_downloader_pages_from_the_last_session() {
+        use crate::queues::QueueKind;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["sessions"].as_array().unwrap();
+        let queue_count = |session: &serde_json::Value| -> usize {
+            session["facts"]["pages"]
+                .as_object()
+                .unwrap()
+                .values()
+                .map(|p| {
+                    let v = &p["page"]["variables"];
+                    usize::from(v.get("urls_import").is_some())
+                        + v.get("multiple_gallery_import")
+                            .map_or(0, |m| m["gallery_imports"].as_array().unwrap().len())
+                        + v.get("multiple_watcher_import").map_or(0, |m| {
+                            m["watchers"]
+                                .as_array()
+                                .unwrap()
+                                .iter()
+                                .filter(|w| w["url"] != "")
+                                .count()
+                        })
+                })
+                .sum()
+        };
+        // the session with the most work, over an older save of another
+        let (chosen, older) = {
+            let mut by_work: Vec<&serde_json::Value> = sessions.iter().collect();
+            by_work.sort_by_key(|s| std::cmp::Reverse(queue_count(s)));
+            (by_work[0], by_work[1])
+        };
+        assert!(queue_count(chosen) >= 3);
+        {
+            let conn = Connection::open(source.path().join("client.db")).unwrap();
+            // (the fixture's client saved its own last session when it closed)
+            let latest: i64 = conn
+                .query_row("SELECT coalesce(max(timestamp_ms), 0) FROM json_dumps_named WHERE dump_type = 104", [], |r| r.get(0))
+                .unwrap();
+            for (session, timestamp) in [(older, latest + 1), (chosen, latest + 2)] {
+                let container = &session["container"];
+                conn.execute(
+                    "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, 'last session', ?, ?, ?)",
+                    params![container[2].as_i64(), timestamp, container[3].to_string()],
+                )
+                .unwrap();
+                for (hash, stored) in session["page_data"].as_object().unwrap() {
+                    conn.execute(
+                        "INSERT OR IGNORE INTO json_dumps_hashed (hash, dump_type, version, dump) VALUES (?, ?, ?, ?)",
+                        params![
+                            hex::decode(hash).unwrap(),
+                            stored[0].as_i64(),
+                            stored[1].as_i64(),
+                            stored[2].to_string()
+                        ],
+                    )
+                    .unwrap();
+                }
+            }
+        }
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+
+        // what the reference had, in the session's order
+        let mut hashes = Vec::new();
+        page_hashes(&chosen["facts"]["tree"], &mut hashes);
+        let mut expected = Vec::new();
+        for hash in &hashes {
+            let page = &chosen["facts"]["pages"][hash]["page"];
+            let name = page["name"].clone();
+            let variables = &page["variables"];
+            if let Some(u) = variables.get("urls_import") {
+                expected.push((
+                    QueueKind::Urls,
+                    name.clone(),
+                    u.clone(),
+                    u["paused"].clone(),
+                    u["paused"].clone(),
+                ));
+            }
+            if let Some(m) = variables.get("multiple_gallery_import") {
+                for g in m["gallery_imports"].as_array().unwrap() {
+                    expected.push((
+                        QueueKind::Gallery,
+                        name.clone(),
+                        g.clone(),
+                        g["files_paused"].clone(),
+                        g["gallery_paused"].clone(),
+                    ));
+                }
+            }
+            if let Some(m) = variables.get("multiple_watcher_import") {
+                for w in m["watchers"]
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .filter(|w| w["url"] != "")
+                {
+                    expected.push((
+                        QueueKind::Watcher,
+                        name.clone(),
+                        w.clone(),
+                        w["files_paused"].clone(),
+                        false.into(),
+                    ));
+                }
+            }
+        }
+
+        let conn = Connection::open(&dest).unwrap();
+        let imported: Vec<_> = crate::queues::queues(&conn, None)
+            .unwrap()
+            .into_iter()
+            .filter(|q| {
+                matches!(
+                    q.kind,
+                    QueueKind::Urls | QueueKind::Gallery | QueueKind::Watcher
+                )
+            })
+            .collect();
+        assert_eq!(imported.len(), expected.len());
+        let options = |value: &serde_json::Value| {
+            hydrus_legacy::objects::import_options::slice(
+                &hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+                    &value.to_string(),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        for (queue, (kind, name, facts, files_paused, gallery_paused)) in
+            imported.iter().zip(&expected)
+        {
+            assert_eq!(queue.kind, *kind);
+            assert_eq!(queue.name, *name);
+            assert_eq!(queue.files_paused, *files_paused);
+            assert_eq!(queue.gallery_paused, *gallery_paused);
+            assert_eq!(queue.options, options(&facts["import_options"]));
+            let files: Vec<_> = crate::queues::file_seeds(&conn, queue.id)
+                .unwrap()
+                .iter()
+                .map(file_seed_facts)
+                .collect();
+            let galleries: Vec<_> = crate::queues::gallery_seeds(&conn, queue.id)
+                .unwrap()
+                .iter()
+                .map(gallery_seed_facts)
+                .collect();
+            assert_eq!(serde_json::json!(files), facts["file_seeds"]);
+            assert_eq!(serde_json::json!(galleries), facts["gallery_seeds"]);
+            match kind {
+                QueueKind::Gallery => {
+                    assert_eq!(queue.created, facts["created"]);
+                    assert_eq!(
+                        queue.extra,
+                        serde_json::json!({
+                            "query": facts["query"],
+                            "source_name": facts["source_name"],
+                            "file_limit": facts["file_limit"],
+                            "num_new_urls_found": facts["num_new_urls_found"],
+                            "num_urls_found": facts["num_urls_found"],
+                        })
+                    );
+                }
+                QueueKind::Watcher => {
+                    let state: hydrus_core::watchers::WatcherState =
+                        serde_json::from_value(queue.extra.clone()).unwrap();
+                    assert_eq!(state.url, facts["url"]);
+                    assert_eq!(state.subject, facts["subject"]);
+                    assert_eq!(state.last_check_time, facts["last_check_time"]);
+                    assert_eq!(state.no_work_until, facts["no_work_until"]);
+                    assert_eq!(state.no_work_until_reason, facts["no_work_until_reason"]);
+                    assert_eq!(state.created, facts["created"]);
+                    assert_eq!(
+                        serde_json::json!(state.external_filterable_tags),
+                        facts["filterable"]
+                    );
+                    assert_eq!(
+                        serde_json::json!(
+                            state
+                                .external_additional_tags
+                                .iter()
+                                .cloned()
+                                .collect::<BTreeMap<_, _>>()
+                        ),
+                        facts["additional"]
+                    );
+                    // timed when imported, as the reference times it when the page starts
+                    assert!(state.next_check_time > 0);
+                    // a thread that was dead or gone stays paused
+                    if facts["checking_status"] != 0 {
+                        assert!(state.checking_paused);
+                    }
+                }
+                _ => assert_eq!(queue.extra, serde_json::json!({})),
+            }
+        }
     }
 
     /// Subscriptions made by the reference (`oracle/dump_subscriptions.py`)

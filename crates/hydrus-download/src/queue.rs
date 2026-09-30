@@ -722,17 +722,7 @@ fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
 /// The name of a new gallery downloader page.
 pub const DEFAULT_GALLERY_PAGE_NAME: &str = "gallery";
 
-/// A gallery search's state (`GalleryImport`).
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-pub struct GallerySearch {
-    pub query: String,
-    /// The downloader's name.
-    pub source_name: String,
-    /// Stop reading pages after this many new files (`None`: no limit).
-    pub file_limit: Option<u64>,
-    pub num_new_urls_found: u64,
-    pub num_urls_found: u64,
-}
+pub use hydrus_core::gallery::GallerySearch;
 
 /// A gallery search queue's state.
 pub fn gallery_search(queue: &Queue) -> Option<GallerySearch> {

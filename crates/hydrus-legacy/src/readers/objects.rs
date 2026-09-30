@@ -295,6 +295,43 @@ impl LegacyDb {
         Ok(latest.into_values().collect())
     }
 
+    /// The latest save of the GUI session `name` (type 104), and the stored
+    /// data of its pages by hash (a page whose data is missing is left out).
+    /// `None` if there is no such session.
+    #[allow(clippy::type_complexity)]
+    pub fn gui_session(
+        &self,
+        name: &str,
+    ) -> Result<
+        Option<(
+            crate::objects::gui_sessions::LegacySession,
+            std::collections::HashMap<Vec<u8>, StoredHashedObject>,
+        )>,
+    > {
+        let Some(row) = self
+            .latest_named(SerialisableType(104))?
+            .into_iter()
+            .find(|row| row.name == name)
+        else {
+            return Ok(None);
+        };
+        let location = format!("json_dumps_named session {name:?}");
+        let session = row
+            .parse()
+            .and_then(|object| crate::objects::gui_sessions::session(&object))
+            .map_err(|e| LegacyError::serialisable(&location, e))?;
+        let wanted: std::collections::HashSet<&[u8]> =
+            session.top.page_data_hashes().into_iter().collect();
+        let mut pages = std::collections::HashMap::new();
+        for row in self.json_dumps_hashed()? {
+            let row = row?;
+            if wanted.contains(row.hash.as_bytes().as_slice()) {
+                pages.insert(row.hash.as_bytes().to_vec(), row);
+            }
+        }
+        Ok(Some((session, pages)))
+    }
+
     /// Every network session with its cookies (named objects of type 96,
     /// the latest of each name).
     pub fn network_sessions(&self) -> Result<Vec<crate::objects::NetworkSession>> {

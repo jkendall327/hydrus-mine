@@ -6,6 +6,7 @@
 
 pub mod casefold;
 pub mod content;
+pub mod gallery;
 pub mod hash;
 pub mod ids;
 pub mod import_options;
