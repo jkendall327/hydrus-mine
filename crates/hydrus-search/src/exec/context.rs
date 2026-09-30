@@ -21,6 +21,15 @@ use super::time::Clock;
 use super::{Result, SearchError};
 use crate::context::{FileSearchContext, LocationContext, TagContext};
 
+/// Whether to check `candidates` files against a file domain of `size`
+/// files one by one rather than load the whole domain. Checking a file costs
+/// about eight scanned rows (measured at 400,000 files), but a loaded domain
+/// is kept for later searches until a write changes it, so loading is worth
+/// it well before the costs are equal.
+pub(crate) fn probe_domain(candidates: u64, size: u64) -> bool {
+    candidates.saturating_mul(16) < size
+}
+
 /// A file domain table: files currently in, or deleted from, a service.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct DomainTable {
@@ -249,14 +258,9 @@ impl<'a> Env<'a> {
             Domain::Tables { tables, .. } => {
                 let mut total = 0u64;
                 for t in tables {
-                    let n: i64 = self
-                        .conn
-                        .prepare_cached(&format!(
-                            "SELECT count(*) FROM {} WHERE service_id = ?",
-                            t.table()
-                        ))?
-                        .query_row([t.service], |r| r.get(0))?;
-                    total += n.max(0) as u64;
+                    total += self
+                        .cache
+                        .size_estimate(self.conn, t.service, t.deleted)?;
                 }
                 Some(total)
             }
@@ -276,9 +280,10 @@ impl<'a> Env<'a> {
         let probe = match self.strategy {
             Strategy::AlwaysProbe => true,
             Strategy::AlwaysScan => false,
-            Strategy::Auto => match self.domain_size()? {
-                Some(size) => (set.len() as f64) * sql::PROBE_COST < size as f64,
-                None => true,
+            Strategy::Auto => match (&self.domain, self.domain_size()?) {
+                (Domain::Tables { .. }, Some(size)) => probe_domain(set.len(), size),
+                (_, Some(size)) => (set.len() as f64) * sql::PROBE_COST < size as f64,
+                (_, None) => true,
             },
         };
         if !probe {

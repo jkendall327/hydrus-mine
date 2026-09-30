@@ -57,6 +57,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_import_folder.py` | `fixtures/import_folder_run.json` + `legacy_db/import_folder.tar.gz`: an import folder run |
 | `record_export_folder.py` | `fixtures/export_folder_run.json` + `legacy_db/export_folder.tar.gz`: export folder runs |
 | `make_bench_db.py` | a large synthetic library in the reference, for benchmarks |
+| `add_bench_duplicates.py` | duplicate groups and potential pairs at the target install's scale, added to a benchmark library |
 | `bench_api.py` | timings of a Client API request mix against the reference and hydrus-rs |
 
 ## The driver

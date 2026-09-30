@@ -29,6 +29,17 @@ type ByGeneration<K, V> = Mutex<HashMap<K, (i64, Arc<V>)>>;
 pub struct DomainCache {
     entries: ByGeneration<Key, RoaringBitmap>,
     import_orders: ByGeneration<ServiceId, Vec<u32>>,
+    /// Each domain's size when last loaded or counted, whatever the
+    /// generation: domains change size slowly, so it is a good estimate.
+    sizes: Mutex<HashMap<Key, u64>>,
+}
+
+fn table(deleted: bool) -> &'static str {
+    if deleted {
+        "file_domain_deleted"
+    } else {
+        "file_domain_current"
+    }
 }
 
 impl DomainCache {
@@ -81,21 +92,19 @@ impl Domains<'_> {
         if let Some(files) = self.cached(service, deleted) {
             return Ok(files);
         }
-        let table = if deleted {
-            "file_domain_deleted"
-        } else {
-            "file_domain_current"
-        };
-        let mut stmt =
-            conn.prepare_cached(&format!("SELECT hash_id FROM {table} WHERE service_id = ?"))?;
+        let mut stmt = conn.prepare_cached(&format!(
+            "SELECT hash_id FROM {} WHERE service_id = ?",
+            table(deleted)
+        ))?;
         let mut files = RoaringBitmap::new();
         let mut rows = stmt.query([service])?;
         while let Some(row) = rows.next()? {
             files.insert(row.get(0)?);
         }
         let files = Arc::new(files);
-        let mut entries = self.cache.entries.lock();
         let key = (service, deleted);
+        self.cache.sizes.lock().insert(key, files.len());
+        let mut entries = self.cache.entries.lock();
         // an older read must not displace a newer one's bitmap
         if entries
             .get(&key)
@@ -104,6 +113,27 @@ impl Domains<'_> {
             entries.insert(key, (self.generation, Arc::clone(&files)));
         }
         Ok(files)
+    }
+
+    /// Roughly how many files a domain has (or has deleted): exact if its
+    /// files are cached for this read, else as last seen, else counted.
+    pub fn size_estimate(&self, conn: &Connection, service: ServiceId, deleted: bool) -> Result<u64> {
+        if let Some(files) = self.cached(service, deleted) {
+            return Ok(files.len());
+        }
+        let key = (service, deleted);
+        if let Some(&size) = self.cache.sizes.lock().get(&key) {
+            return Ok(size);
+        }
+        let size: i64 = conn
+            .prepare_cached(&format!(
+                "SELECT count(*) FROM {} WHERE service_id = ?",
+                table(deleted)
+            ))?
+            .query_row([service], |r| r.get(0))?;
+        let size = u64::try_from(size).unwrap_or(0);
+        self.cache.sizes.lock().insert(key, size);
+        Ok(size)
     }
 
     /// [`Self::import_order`], if it is already cached for this read.

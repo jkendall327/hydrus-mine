@@ -62,6 +62,14 @@ def request_mix( n_files ):
         ( 'search_files, everything', 'GET', '/get_files/search_files', { 'tags': json.dumps( [ 'system:everything' ] ) } ),
         ( 'add_tags, 1 file, 5 tags', 'POST', '/add_tags/add_tags', { 'hash': one, 'service_keys_to_tags': { '6c6f63616c2074616773': [ 'bench:a', 'bench:b', 'bench:c', 'bench:d', 'bench:e' ] } } ),
         ( 'add_tags, 100 files, 1 tag', 'POST', '/add_tags/add_tags', { 'hashes': hundred, 'service_keys_to_tags': { '6c6f63616c2074616773': [ 'bench:bulk' ] } } ),
+        # the duplicate filter's reads (add_bench_duplicates.py gives the library some)
+        ( 'potentials count', 'GET', '/manage_file_relationships/get_potentials_count', {} ),
+        ( 'potentials count, distance 0', 'GET', '/manage_file_relationships/get_potentials_count', { 'max_hamming_distance': '0' } ),
+        ( 'potentials count, popular tag', 'GET', '/manage_file_relationships/get_potentials_count', { 'tags_1': json.dumps( [ 'tag number 0' ] ) } ),
+        ( 'potential pairs, batch of 50', 'GET', '/manage_file_relationships/get_potential_pairs', { 'max_num_pairs': '50' } ),
+        ( 'potential pairs, group mode', 'GET', '/manage_file_relationships/get_potential_pairs', { 'group_mode': 'true' } ),
+        ( 'random potentials', 'GET', '/manage_file_relationships/get_random_potentials', {} ),
+        ( 'file_relationships, 100 files', 'GET', '/manage_file_relationships/get_file_relationships', { 'hashes': json.dumps( hundred ) } ),
     ]
 
 

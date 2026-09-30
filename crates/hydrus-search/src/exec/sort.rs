@@ -186,11 +186,8 @@ fn import_order(
         // a hundredth of reading its import time
         return Ok((files.len() >= order.len() as u64 / 100).then_some(order));
     }
-    let domain_size = match cache.cached(service, false) {
-        Some(domain) => Some(domain.len()),
-        None => sql::table_rows(env.conn, "file_domain_current"),
-    };
-    if env.prefer_probe(files.len(), domain_size) {
+    let size = cache.size_estimate(env.conn, service, false)?;
+    if super::context::probe_domain(files.len(), size) {
         return Ok(None);
     }
     Ok(Some(cache.import_order(env.conn, service)?))

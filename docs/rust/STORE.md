@@ -122,3 +122,9 @@ membership or import times increments in the same transaction
 must call `domains::changed`). A read looks up the counter inside its own
 transaction, so it only uses cached data that matches its WAL snapshot, even
 while writes commit around it.
+
+A search loads a domain into the cache once it would otherwise check more
+than a sixteenth of the domain's files one by one (a check costs about eight
+scanned rows, and a loaded domain serves later searches too). To decide that
+without counting the domain every time, the cache remembers each domain's
+size as last seen, whatever the generation.
