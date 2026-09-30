@@ -31,11 +31,13 @@ pub mod ffmpeg;
 mod formats;
 pub mod hashes;
 mod imaging;
+pub mod jpeg;
 pub mod mimes;
 mod phash;
 mod text;
 mod thumbnail;
 mod tools;
+pub mod visual;
 
 pub use blurhash::blurhash;
 pub use error::MediaError;
@@ -62,6 +64,9 @@ pub fn decode_image(data: &[u8]) -> error::Result<Raster> {
 pub mod resample {
     use crate::imaging::cv;
     pub use crate::imaging::cv::Interpolation;
+    pub use crate::imaging::cvx::{
+        gaussian_blur_f32, gaussian_blur_u8, resize_area_f32, rgb_to_lab,
+    };
 
     /// `cv2.resize(image, (width, height), interpolation=...)`.
     pub fn resize(

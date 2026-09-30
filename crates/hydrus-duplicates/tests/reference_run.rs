@@ -5,10 +5,6 @@
 //! worked until no rule has work, must leave every pair with the same status
 //! for every rule, the same actioned logs, the same duplicate groups and
 //! kings, the same potential pairs and the same files deleted.
-//!
-//! Rules with comparators that read file content (visual duplicates, jpeg
-//! quality) are not tested yet: for those only the search is compared, and
-//! the pairs the reference tested wait untested here.
 
 use std::collections::{BTreeMap, BTreeSet};
 use std::sync::Arc;
@@ -189,24 +185,6 @@ fn rules_do_what_the_reference_did() {
         let ours = statuses(&store, *rule_id);
         let theirs: BTreeMap<String, Vec<Vec<String>>> =
             serde_json::from_value(case["statuses"].clone()).unwrap();
-        let untestable = rule
-            .comparators
-            .iter()
-            .any(hydrus_duplicates::selector::needs_file_content);
-        if untestable {
-            // only the search: what the reference tested waits here
-            let mut matched: Vec<Vec<String>> = ["not_tested", "failed", "pending"]
-                .iter()
-                .flat_map(|k| theirs[*k].iter().cloned())
-                .collect();
-            matched.sort();
-            if ours["not_tested"] != matched || ours["does_not_match"] != theirs["does_not_match"] {
-                report.push_str(&format!(
-                    "{name}: search differs\n  ours {ours:?}\n  theirs {theirs:?}\n"
-                ));
-            }
-            continue;
-        }
         if ours != theirs {
             report.push_str(&format!(
                 "{name}: statuses differ\n  ours   {ours:?}\n  theirs {theirs:?}\n"

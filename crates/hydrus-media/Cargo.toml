@@ -36,6 +36,7 @@ lz4_flex.workspace = true
 
 [dev-dependencies]
 hex.workspace = true
+base64.workspace = true
 serde.workspace = true
 rayon.workspace = true
 

@@ -307,6 +307,7 @@ pub fn work_rules(
 ) -> Result<WorkDone> {
     let stop_at = Instant::now() + budget;
     let mut done = WorkDone::default();
+    let mut content = crate::content::StoreContent::new(store);
     let mut rules = store.read(auto::rules)?;
     rules.sort_by_cached_key(|(_, r)| hydrus_core::sort::human_sort_key(&r.name));
     for (rule_id, rule) in rules {
@@ -345,10 +346,6 @@ pub fn work_rules(
         }
 
         // test
-        if rule.comparators.iter().any(selector::needs_file_content) {
-            tracing::debug!(rule = %rule.name, "this rule needs file content comparisons, which are not supported yet");
-            continue;
-        }
         // pairs are tested in order of their kings' hashes (the reference
         // takes them in whatever order its table gives)
         let mut untested = store
@@ -385,7 +382,24 @@ pub fn work_rules(
                 continue;
             };
             done.tested += 1;
-            match selector::matching_ab(&rule.comparators, f1, f2, orientation.swap(), clock) {
+            let (one, two) = (
+                selector::File {
+                    id: first,
+                    facts: f1,
+                },
+                selector::File {
+                    id: second,
+                    facts: f2,
+                },
+            );
+            match selector::matching_ab(
+                &rule.comparators,
+                one,
+                two,
+                orientation.swap(),
+                clock,
+                &mut content,
+            ) {
                 None => store.write(move |ctx| {
                     auto::set_status(ctx.conn(), rule_id, &[pair], PairStatus::FailedTest)
                 })?,

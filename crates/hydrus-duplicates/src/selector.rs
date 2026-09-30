@@ -2,23 +2,29 @@
 //! (the reference's `PairSelector.GetMatchingAB` and the comparators'
 //! `Test`).
 
+use hydrus_core::{HashId, Mime};
+use hydrus_media::jpeg::JpegQuality;
 use hydrus_search::Clock;
 use hydrus_search::media::{self, FileFacts};
-use hydrus_store::duplicates::auto::{Comparator, LookingAt, PairTest};
+use hydrus_store::duplicates::auto::{Comparator, LookingAt, OneFileTest, PairTest};
 
-/// Whether a comparator needs the files' content (image data, jpeg
-/// quantisation tables), which isn't supported yet: a rule with one does
-/// its search but tests nothing, so its pairs wait rather than fail.
-pub fn needs_file_content(c: &Comparator) -> bool {
-    match c {
-        Comparator::OneFileHardcoded { .. }
-        | Comparator::VisualDuplicates { .. }
-        | Comparator::Pair(PairTest::AHasClearlyBetterJpegQuality) => true,
-        Comparator::Or(members) | Comparator::And(members) => {
-            members.iter().any(needs_file_content)
-        }
-        _ => false,
-    }
+/// What the comparators that read a file's content ask for.
+pub trait FileContent {
+    /// The jpeg's encoding quality (unreadable: no quality, not
+    /// progressive).
+    fn jpeg_quality(&mut self, file: HashId) -> JpegQuality;
+    /// How confident the regional comparison is that two images are
+    /// visual duplicates (`VISUAL_DUPLICATES_RESULT_*`); none if either
+    /// can't be read or they fail the simple comparison first, which the
+    /// reference counts as a failed test whatever the threshold.
+    fn visual_confidence(&mut self, a: HashId, b: HashId) -> Option<u8>;
+}
+
+/// One file of a pair.
+#[derive(Debug, Clone, Copy)]
+pub struct File<'a> {
+    pub id: HashId,
+    pub facts: &'a FileFacts,
 }
 
 /// `IsFast`: cheap enough to try first.
@@ -63,9 +69,14 @@ fn order_does_not_matter(c: &Comparator) -> bool {
     }
 }
 
-/// `Test(A, B)`. Comparators needing file content ([`needs_file_content`])
-/// never pass.
-pub fn test(c: &Comparator, a: &FileFacts, b: &FileFacts, clock: &Clock) -> bool {
+/// `Test(A, B)`.
+pub fn test(
+    c: &Comparator,
+    a: File<'_>,
+    b: File<'_>,
+    clock: &Clock,
+    content: &mut dyn FileContent,
+) -> bool {
     match c {
         Comparator::OneFileMetadata {
             looking_at,
@@ -73,10 +84,22 @@ pub fn test(c: &Comparator, a: &FileFacts, b: &FileFacts, clock: &Clock) -> bool
         } => {
             let matches = |f: &FileFacts| predicates.iter().all(|p| media::test(p, f, clock));
             match looking_at {
-                LookingAt::A => matches(a),
-                LookingAt::B => matches(b),
-                LookingAt::Either => matches(a) || matches(b),
+                LookingAt::A => matches(a.facts),
+                LookingAt::B => matches(b.facts),
+                LookingAt::Either => matches(a.facts) || matches(b.facts),
             }
+        }
+        Comparator::OneFileHardcoded { looking_at, test } => {
+            let files: &[File<'_>] = match looking_at {
+                LookingAt::A => &[a],
+                LookingAt::B => &[b],
+                LookingAt::Either => &[a, b],
+            };
+            let want = *test == OneFileTest::JpegIsProgressive;
+            files.iter().any(|f| {
+                f.facts.mime == Some(Mime::ImageJpeg)
+                    && content.jpeg_quality(f.id).progressive == want
+            })
         }
         Comparator::RelativeFileInfo {
             property,
@@ -84,17 +107,38 @@ pub fn test(c: &Comparator, a: &FileFacts, b: &FileFacts, clock: &Clock) -> bool
             multiplier,
             delta,
         } => {
-            let (Some(va), Some(vb)) = (media::extract(*property, a), media::extract(*property, b))
-            else {
+            let (Some(va), Some(vb)) = (
+                media::extract(*property, a.facts),
+                media::extract(*property, b.facts),
+            ) else {
                 return false;
             };
             media::number_test(test.op, vb * multiplier + *delta as f64, Some(va))
         }
-        Comparator::Pair(test) => pair_test(*test, a, b),
-        Comparator::OneFileHardcoded { .. } | Comparator::VisualDuplicates { .. } => false,
-        Comparator::Or(members) => members.iter().any(|m| test(m, a, b, clock)),
+        Comparator::Pair(PairTest::AHasClearlyBetterJpegQuality) => {
+            if a.facts.mime != Some(Mime::ImageJpeg) || b.facts.mime != Some(Mime::ImageJpeg) {
+                return false;
+            }
+            match (
+                content.jpeg_quality(a.id).quality,
+                content.jpeg_quality(b.id).quality,
+            ) {
+                (Some(qa), Some(qb)) if qa > 0.0 && qb > 0.0 => qa / qb < 0.7,
+                _ => false,
+            }
+        }
+        Comparator::Pair(test) => pair_test(*test, a.facts, b.facts),
+        Comparator::VisualDuplicates { confidence } => {
+            let image = |f: File<'_>| f.facts.mime.is_some_and(hydrus_media::mimes::is_image);
+            image(a)
+                && image(b)
+                && content
+                    .visual_confidence(a.id, b.id)
+                    .is_some_and(|c| c >= *confidence)
+        }
+        Comparator::Or(members) => members.iter().any(|m| test(m, a, b, clock, content)),
         Comparator::And(members) => {
-            !members.is_empty() && members.iter().all(|m| test(m, a, b, clock))
+            !members.is_empty() && members.iter().all(|m| test(m, a, b, clock, content))
         }
     }
 }
@@ -118,8 +162,7 @@ fn pair_test(t: PairTest, a: &FileFacts, b: &FileFacts) -> bool {
         .iter()
         .all(|&(a, b)| a || !b),
         PairTest::AHasIccProfileIfBDoes => !b.has_icc_profile || a.has_icc_profile,
-        // needs the jpeg quantisation tables
-        PairTest::AHasClearlyBetterJpegQuality => false,
+        PairTest::AHasClearlyBetterJpegQuality => unreachable!("tested with the files' content"),
     }
 }
 
@@ -129,10 +172,11 @@ fn pair_test(t: PairTest, a: &FileFacts, b: &FileFacts) -> bool {
 /// means the first given file is A.
 pub fn matching_ab(
     comparators: &[Comparator],
-    first: &FileFacts,
-    second: &FileFacts,
+    first: File<'_>,
+    second: File<'_>,
     swap: bool,
     clock: &Clock,
+    content: &mut dyn FileContent,
 ) -> Option<bool> {
     let (one, two) = if swap {
         (second, first)
@@ -155,8 +199,8 @@ pub fn matching_ab(
     };
     let (fast_symmetric, fast_directed) = split(&fast);
     let (slow_symmetric, slow_directed) = split(&slow);
-    let all = |list: &[Comparator], a: &FileFacts, b: &FileFacts| {
-        list.iter().all(|c| test(c, a, b, clock))
+    let mut all = |list: &[Comparator], a: File<'_>, b: File<'_>| {
+        list.iter().all(|c| test(c, a, b, clock, content))
     };
 
     let mut one_two = true;

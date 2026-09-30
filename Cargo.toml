@@ -128,3 +128,8 @@ debug = "line-tables-only"
 # touch real images and databases, so optimise deps even in dev builds.
 opt-level = 2
 debug = false
+
+[profile.dev.package.hydrus-media]
+# Likewise our own pixel work: visual-duplicates tests filter 2048x2048
+# float images, which takes minutes unoptimised.
+opt-level = 2

@@ -4,6 +4,7 @@
 //! does. The rules and their pair queues are stored by
 //! `hydrus_store::duplicates::auto`; this crate runs them.
 
+pub mod content;
 pub mod engine;
 pub mod selector;
 

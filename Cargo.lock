@@ -1515,6 +1515,7 @@ dependencies = [
 name = "hydrus-media"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "cfb",
  "flate2",
  "hayro",

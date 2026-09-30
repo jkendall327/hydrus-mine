@@ -150,10 +150,18 @@ in-memory predicate tests their comparators use by
   The reference moves pairs between statuses whenever potential pairs change
   anywhere. The queue a rule works from is the same either way; the counts
   shown between runs can lag until the rule next works.
-- **Comparisons that read file content are not done yet.** Rules with a
-  visual-duplicates, jpeg-quality or progressive-jpeg comparator search, but
-  leave their matching pairs untested (neither failed nor actioned) until
-  those comparisons are implemented.
+- **Visual duplicates are computed bit for bit as the reference does**
+  (`crates/hydrus-media/tests/visual_data.rs` on
+  `oracle/fixtures/visual_data.json`): OpenCV's 8-bit blur, area resize and
+  RGB to Lab conversion (with its own cube root) are reproduced exactly,
+  and the edge map's float blur and resize in the operation order of
+  OpenCV's AVX2/FMA build, so every histogram, edge map and verdict matches.
+  On a CPU without AVX2 and FMA the reference's OpenCV takes other code
+  paths and its floats can differ in the last bit; ours are the same on any
+  CPU (only slower there).
+- **Jpeg quality is read from the file's header** (its quantisation tables
+  and sampling factors, as Pillow reads them), for "A has clearly better
+  jpeg quality" and "is a progressive jpeg".
 - **Time budget.** Without a GUI we are never idle: the active-time work and
   rest settings apply, and a rule with nothing to do is checked every
   minute rather than woken by new pairs.

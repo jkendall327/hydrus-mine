@@ -200,19 +200,7 @@ fn list(store: &Store) -> Result<()> {
             OperationMode::FullyAutomatic => "fully automatic",
         };
         let paused = if rule.paused { ", paused" } else { "" };
-        let untestable = rule
-            .comparators
-            .iter()
-            .any(hydrus_duplicates::selector::needs_file_content);
-        println!(
-            "{} ({mode}{paused}){}",
-            rule.name,
-            if untestable {
-                " [compares file content, which is not supported yet: searches only]"
-            } else {
-                ""
-            }
-        );
+        println!("{} ({mode}{paused})", rule.name);
         for status in PairStatus::ALL {
             let n = counts[&status];
             if n > 0 {

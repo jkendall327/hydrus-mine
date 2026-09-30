@@ -15,6 +15,7 @@
 //!   rounding, so perceptual hashes are bit-exact.
 
 pub(crate) mod cv;
+pub(crate) mod cvx;
 pub(crate) mod decode;
 pub(crate) mod exif;
 pub(crate) mod icc;
