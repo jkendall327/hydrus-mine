@@ -408,14 +408,20 @@ fn action_seed(
         _ => return Ok(()),
     };
     let path = &seed.data;
-    let sidecars: Vec<String> = folder
+    // in the order they are read (lower-case extension first), so that where
+    // the filesystem ignores case, the sidecar moves under the name that
+    // matched first rather than whichever sorts first
+    let mut sidecars: Vec<String> = Vec::new();
+    for sidecar in folder
         .settings
         .routers
         .iter()
         .flat_map(|r| r.possible_sidecar_paths(path))
-        .collect::<BTreeSet<_>>()
-        .into_iter()
-        .collect();
+    {
+        if !sidecars.contains(&sidecar) {
+            sidecars.push(sidecar);
+        }
+    }
     let is_file = |p: &str| std::path::Path::new(p).exists() && !std::path::Path::new(p).is_dir();
     match action {
         FolderAction::Ignore => return Ok(()),

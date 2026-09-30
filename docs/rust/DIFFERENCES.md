@@ -225,6 +225,11 @@ deletes its files from the client, migrated from the reference's database.
   must match); the reference's export folder dialog doesn't offer "OR".
 - **No popups.** What a run exported and removed is logged.
 
+- **Where the filesystem ignores case, a moved sidecar keeps the
+  lower-case spelling** (`a.png.txt`): both spellings seem to exist there,
+  and we take them in the order sidecars are read. The reference, written
+  for Linux, takes them in its set's order, so either may win.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server
