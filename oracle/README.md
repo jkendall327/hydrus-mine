@@ -45,6 +45,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_sidecars.py` | `fixtures/sidecars.json`: sidecar routing between sidecar files |
 | `dump_auto_resolution.py` | `fixtures/auto_resolution.json`: duplicates auto-resolution rules as stored |
 | `dump_visual_data.py` | `fixtures/visual_data.json`: the visual-duplicates computations, stage by stage |
+| `dump_client_options_defaults.py` | `crates/hydrus-legacy/src/objects/client_options_defaults.json`: a new client's options object |
 | `dump_casefold.py` | `crates/hydrus-core/src/casefold_table.rs`: Python's `str.casefold`, as a table |
 | `record_media_tests.py` | `fixtures/media_tests.json`: in-memory predicate tests on the `basic` fixture's files |
 | `record_rating_svg.py` | `fixtures/rating_svg.json`: rating services' SVG icons (bundled, custom, missing) |

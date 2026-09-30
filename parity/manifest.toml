@@ -175,7 +175,7 @@ status = "done"
 
 [[api]]
 path = "/manage_database/get_client_options"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_database/lock_off"

@@ -157,6 +157,87 @@ impl ClientOptions {
     }
 }
 
+impl ClientOptions {
+    /// The options of a new reference client
+    /// (`oracle/dump_client_options_defaults.py`).
+    pub fn defaults() -> DecodeResult<Self> {
+        let object =
+            SerialisableObject::from_tuple_str(include_str!("client_options_defaults.json"))?;
+        Self::from_object(&object)
+    }
+
+    /// Fill in what isn't stored from `defaults`, as the reference does when
+    /// it loads options: each group that is a dictionary gains the keys it
+    /// lacks, and a missing group is taken whole. (An empty list here counts
+    /// as missing.)
+    pub fn fill_defaults(&mut self, defaults: &ClientOptions) {
+        fn keys<V: Clone>(stored: &mut BTreeMap<String, V>, defaults: &BTreeMap<String, V>) {
+            for (k, v) in defaults {
+                stored.entry(k.clone()).or_insert_with(|| v.clone());
+            }
+        }
+        fn whole<T: Clone>(stored: &mut Option<T>, default: Option<&T>) {
+            if stored.is_none() {
+                *stored = default.cloned();
+            }
+        }
+        fn list<T: Clone>(stored: &mut Vec<T>, default: &[T]) {
+            if stored.is_empty() {
+                stored.extend_from_slice(default);
+            }
+        }
+        keys(&mut self.booleans, &defaults.booleans);
+        keys(&mut self.integers, &defaults.integers);
+        keys(&mut self.noneable_integers, &defaults.noneable_integers);
+        keys(&mut self.floats, &defaults.floats);
+        keys(&mut self.strings, &defaults.strings);
+        keys(&mut self.noneable_strings, &defaults.noneable_strings);
+        keys(&mut self.keys, &defaults.keys);
+        keys(&mut self.key_lists, &defaults.key_lists);
+        keys(&mut self.string_lists, &defaults.string_lists);
+        keys(&mut self.integer_lists, &defaults.integer_lists);
+        keys(&mut self.colours, &defaults.colours);
+        keys(
+            &mut self.favourite_tag_filters,
+            &defaults.favourite_tag_filters,
+        );
+        for (k, v) in &defaults.default_tag_sorts {
+            self.default_tag_sorts
+                .entry(*k)
+                .or_insert_with(|| v.clone());
+        }
+        if self.suggested_tags_favourites.is_empty() {
+            self.suggested_tags_favourites
+                .clone_from(&defaults.suggested_tags_favourites);
+        }
+        list(&mut self.media_zooms, &defaults.media_zooms);
+        list(&mut self.slideshow_durations, &defaults.slideshow_durations);
+        list(
+            &mut self.default_namespace_sorts,
+            &defaults.default_namespace_sorts,
+        );
+        whole(&mut self.default_sort, defaults.default_sort.as_ref());
+        whole(&mut self.fallback_sort, defaults.fallback_sort.as_ref());
+        whole(&mut self.default_collect, defaults.default_collect.as_ref());
+        whole(
+            &mut self.default_local_location_context,
+            defaults.default_local_location_context.as_ref(),
+        );
+        whole(
+            &mut self.duplicate_action_options,
+            defaults.duplicate_action_options.as_ref(),
+        );
+        whole(
+            &mut self.default_subscription_checker_options,
+            defaults.default_subscription_checker_options.as_ref(),
+        );
+        whole(
+            &mut self.default_watcher_checker_options,
+            defaults.default_watcher_checker_options.as_ref(),
+        );
+    }
+}
+
 /// A group of named plain values, e.g. `booleans`.
 struct NamedGroup {
     entries: Vec<(String, PyJson)>,
@@ -374,4 +455,17 @@ fn duplicate_action_options(
         })
         .collect::<DecodeResult<_>>()
         .map(Some)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::ClientOptions;
+
+    #[test]
+    fn the_new_client_defaults_decode() {
+        let defaults = ClientOptions::defaults().unwrap();
+        assert!(defaults.booleans.len() > 200);
+        assert!(defaults.default_sort.is_some());
+        assert_eq!(defaults.default_tag_sorts.len(), 4);
+    }
 }

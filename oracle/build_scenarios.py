@@ -832,6 +832,16 @@ def services_scenarios():
     return scenario( 'manage_services', 'pending counts, forgetting pending content, committing', steps, read_only = False, fixture = 'repositories' )
 
 
+def client_options_scenarios():
+
+    steps = [
+        get( '/manage_database/get_client_options' ),
+        get( '/manage_database/get_client_options', key = 'restricted' ),
+    ]
+
+    return scenario( 'client_options', 'the client\'s options', steps, read_only = True )
+
+
 def access_more_scenarios():
 
     svg = '/get_service_rating_svg'
@@ -937,7 +947,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios() ]
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios(), client_options_scenarios() ]
 
     for sc in scenarios:
 

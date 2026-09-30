@@ -1,0 +1,1109 @@
+{
+ "recorded_at_ms": 1790787649198,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "old_options": {
+     "animation_start_position": 0.0,
+     "confirm_archive": true,
+     "confirm_client_exit": false,
+     "confirm_trash": true,
+     "default_gui_session": "last session",
+     "delete_to_recycle_bin": true,
+     "export_path": null,
+     "gallery_file_limit": 2000,
+     "hide_preview": false,
+     "hpos": 400,
+     "idle_mouse_period": 600,
+     "idle_normal": true,
+     "idle_period": 1800,
+     "idle_shutdown": 2,
+     "idle_shutdown_max_minutes": 5,
+     "namespace_colours": {
+      "": [
+       0,
+       111,
+       250
+      ],
+      "character": [
+       0,
+       170,
+       0
+      ],
+      "creator": [
+       170,
+       0,
+       0
+      ],
+      "meta": [
+       0,
+       0,
+       0
+      ],
+      "null": [
+       114,
+       160,
+       193
+      ],
+      "person": [
+       0,
+       128,
+       0
+      ],
+      "series": [
+       170,
+       0,
+       170
+      ],
+      "studio": [
+       128,
+       0,
+       0
+      ],
+      "system": [
+       153,
+       101,
+       21
+      ]
+     },
+     "password": null,
+     "proxy": null,
+     "regex_favourites": [
+      [
+       "[1-9]+\\d*(?=.{4}$)",
+       "…0074.jpg -> 74"
+      ],
+      [
+       "[^/]+(?=\\s-)",
+       "E:\\my collection\\author name - v4c1p0074.jpg -> author name"
+      ]
+     ],
+     "remove_filtered_files": false,
+     "remove_trashed_files": false,
+     "thumbnail_dimensions": [
+      150,
+      125
+     ],
+     "trash_max_age": 72,
+     "trash_max_size": 2048,
+     "vpos": -240
+    },
+    "options": {
+     "booleans": {
+      "ac_select_first_with_count": false,
+      "activate_main_gui_on_focusing_viewer_close": false,
+      "activate_main_gui_on_viewer_close": false,
+      "activate_window_on_tag_search_page_activation": false,
+      "advanced_mode": false,
+      "allow_blurhash_fallback": true,
+      "allow_comic_book_archive_detection": true,
+      "allow_remove_on_manage_tags_input": false,
+      "always_apply_ntfs_export_filename_rules": false,
+      "always_loop_gifs": true,
+      "always_show_iso_time": false,
+      "always_show_system_tray_icon": false,
+      "always_start_media_viewers_always_on_top": false,
+      "always_start_media_viewers_frameless": false,
+      "always_start_media_windows_tied_to_pauseplay_state": false,
+      "anchor_canvas_drags": true,
+      "animated_scanbar_pop_in_requires_focus": true,
+      "archive_delete_commit_panel_delays_multiple_delete_choices": true,
+      "autocomplete_float_main_gui": true,
+      "boot_with_network_traffic_paused": false,
+      "call_mouse_buttons_primary_secondary": false,
+      "close_client_to_system_tray": false,
+      "collapse_eye_menu_hovers": true,
+      "collapse_eye_menu_rendering": true,
+      "collapse_eye_menu_window": true,
+      "command_palette_fav_searches_open_new_page": true,
+      "command_palette_initially_show_all_pages": true,
+      "command_palette_initially_show_favourite_searches": false,
+      "command_palette_initially_show_history": true,
+      "command_palette_show_main_menu": false,
+      "command_palette_show_media_menu": false,
+      "command_palette_show_page_of_pages": false,
+      "confirm_all_page_closes": false,
+      "confirm_multiple_local_file_services_copy": true,
+      "confirm_multiple_local_file_services_move": true,
+      "confirm_non_empty_downloader_page_close": true,
+      "copy_import_files_to_temp_dir": true,
+      "copy_notes_dialog_copy_all": true,
+      "copy_notes_dialog_copy_json": true,
+      "copy_notes_quick_click_only_copies_text": false,
+      "database_deferred_delete_maintenance_during_active": true,
+      "database_deferred_delete_maintenance_during_idle": true,
+      "decorate_page_of_pages_tab_names": true,
+      "default_search_synchronised": true,
+      "deferred_file_deletes_in_normal_time": true,
+      "delete_files_after_export": false,
+      "delete_lock_for_archived_files": false,
+      "delete_lock_reinbox_deletees_after_archive_delete": false,
+      "delete_lock_reinbox_deletees_after_duplicate_filter": false,
+      "delete_lock_reinbox_deletees_in_auto_resolution": false,
+      "disable_get_safe_position_test": false,
+      "disable_notes_hover_in_media_viewer": false,
+      "disable_page_tab_dnd": false,
+      "disable_tags_hover_in_media_viewer": false,
+      "disable_top_right_hover_in_media_viewer": false,
+      "disallow_media_drags_on_duration_media": false,
+      "discord_dnd_fix": false,
+      "do_human_sort_on_hdd_file_import_paths": true,
+      "do_icc_profile_normalisation": true,
+      "do_macos_debug_dialog_menus": false,
+      "do_not_do_chmod_mode": false,
+      "do_not_setgeometry_on_an_mpv": false,
+      "do_sleep_check": true,
+      "draw_bottom_right_index_in_media_viewer_background": true,
+      "draw_notes_hover_in_media_viewer_background": true,
+      "draw_tags_hover_in_media_viewer_background": true,
+      "draw_thumbnail_numerical_ratings_collapsed_always": false,
+      "draw_thumbnail_rating_background": true,
+      "draw_top_hover_in_media_viewer_background": true,
+      "draw_top_right_hover_in_media_viewer_background": true,
+      "draw_top_right_hover_in_preview_window_background": true,
+      "draw_transparency_checkerboard_as_greenscreen": false,
+      "draw_transparency_checkerboard_media_canvas": false,
+      "draw_transparency_checkerboard_media_canvas_duplicates": true,
+      "duplicates_auto_resolution_during_active": true,
+      "duplicates_auto_resolution_during_idle": true,
+      "elide_page_tab_names": true,
+      "enable_truncated_images_pil": true,
+      "expand_parents_on_storage_autocomplete_taglists": true,
+      "expand_parents_on_storage_taglists": true,
+      "fade_sibling_connector": true,
+      "fade_thumbnails": true,
+      "file_info_line_consider_archived_interesting": true,
+      "file_info_line_consider_archived_time_interesting": true,
+      "file_info_line_consider_file_services_import_times_interesting": false,
+      "file_info_line_consider_file_services_interesting": false,
+      "file_info_line_consider_trash_reason_interesting": false,
+      "file_info_line_consider_trash_time_interesting": false,
+      "file_maintenance_during_active": true,
+      "file_maintenance_during_idle": true,
+      "file_system_waits_on_wakeup": false,
+      "file_viewing_statistics_active": true,
+      "file_viewing_statistics_active_on_archive_delete_filter": true,
+      "file_viewing_statistics_active_on_dupe_filter": false,
+      "focus_media_tab_on_viewer_close_if_possible": false,
+      "focus_media_thumb_on_viewer_close": true,
+      "focus_preview_on_ctrl_click": false,
+      "focus_preview_on_ctrl_click_only_static": false,
+      "focus_preview_on_shift_click": false,
+      "focus_preview_on_shift_click_only_static": false,
+      "force_animation_scanbar_show": false,
+      "force_enter_on_radio_buttons_to_do_dialog_ok": true,
+      "force_hide_page_signal_on_new_page": false,
+      "freeze_message_manager_when_main_gui_minimised": false,
+      "freeze_message_manager_when_mouse_on_other_monitor": false,
+      "fuzzy_relocate_on_get_safe_position_test": true,
+      "fuzzy_relocate_on_get_safe_position_test_only_for_self_sizing_media_viewer_canvas": false,
+      "global_audio_mute": false,
+      "hide_canvas_drags": true,
+      "hide_duplicates_needs_work_message_when_reasonably_caught_up": true,
+      "hide_uninteresting_modified_time": true,
+      "highlight_new_query": true,
+      "highlight_new_watcher": true,
+      "hover_window_duplicates_always_on_top": true,
+      "hover_windows_need_window_focus_to_pop_in": true,
+      "import_options_simple_mode": true,
+      "import_page_progress_display": true,
+      "load_images_with_pil": true,
+      "maintain_similar_files_duplicate_pairs_during_active": false,
+      "maintain_similar_files_duplicate_pairs_during_idle": false,
+      "maintain_trash_in_normal_time": true,
+      "make_child_frames_qt_tool": true,
+      "manage_tags_show_deleted_mappings": false,
+      "media_viewer_audio_mute": false,
+      "media_viewer_lock_current_pan": false,
+      "media_viewer_lock_current_zoom": false,
+      "media_viewer_lock_current_zoom_type": false,
+      "media_viewer_recenter_media_on_window_resize": true,
+      "media_viewer_set_default_viewer_zoom_type_from_menu": false,
+      "media_viewer_uses_its_own_audio_volume": false,
+      "media_viewer_window_always_on_top": false,
+      "menu_choice_buttons_can_mouse_scroll": true,
+      "minimise_client_to_system_tray": false,
+      "minimise_client_to_system_tray_bugfix_deferred_state_set": false,
+      "minimise_client_to_system_tray_bugfix_restore_after_show": false,
+      "mpv_allow_crashy_files_silently": false,
+      "mpv_available_at_start": true,
+      "mpv_destruction_test": false,
+      "mpv_loop_playlist_instead_of_file": false,
+      "mpv_null_audio_on_silent_media": false,
+      "notify_client_api_cookies": false,
+      "on_shift_click_move_ghost_focus_to_last_hit": false,
+      "only_save_last_session_during_idle": false,
+      "only_show_delete_from_all_local_domains_when_filtering": false,
+      "open_files_to_duplicate_filter_uses_all_my_files": true,
+      "options_search_bar_top_of_window": true,
+      "override_bandwidth_on_file_urls_from_post_urls": true,
+      "override_stylesheet_colours": false,
+      "page_drag_change_tab_normally": true,
+      "page_drag_change_tab_with_shift": true,
+      "page_drop_chase_normally": true,
+      "page_drop_chase_with_shift": false,
+      "pause_all_file_queues": false,
+      "pause_all_gallery_searches": false,
+      "pause_all_new_network_traffic": true,
+      "pause_all_paged_importers": false,
+      "pause_all_watcher_checkers": false,
+      "pause_export_folders_sync": false,
+      "pause_import_folders_sync": false,
+      "pause_repo_sync": false,
+      "pause_subs_sync": false,
+      "persist_media_window_mpv": false,
+      "persist_media_window_qt_media_player": false,
+      "popup_message_force_min_width": false,
+      "potential_duplicate_pairs_search_can_do_file_search_based_optimisation": true,
+      "potential_duplicate_pairs_search_context_panel_stops_to_estimate": true,
+      "potential_duplicate_pairs_search_starts_paused": false,
+      "prefix_hash_when_copying": false,
+      "preview_audio_mute": false,
+      "preview_uses_its_own_audio_volume": true,
+      "preview_window_hover_top_right_shows_popup": true,
+      "process_subs_in_random_order": true,
+      "qt_media_player_no_audio_device": false,
+      "qt_media_player_null_audio_on_silent_media": false,
+      "qt_media_player_opengl_test": false,
+      "refresh_search_page_on_system_limited_sort_changed": true,
+      "remember_last_advanced_file_deletion_reason": true,
+      "remember_last_advanced_file_deletion_special_action": false,
+      "remember_options_window_panel": true,
+      "remove_filtered_files_even_when_skipped": false,
+      "remove_leading_url_double_slashes": false,
+      "remove_local_domain_moved_files": false,
+      "rename_page_of_pages_on_pick_new": false,
+      "rename_page_of_pages_on_send": false,
+      "replace_percent_twenty_with_space_in_gug_input": false,
+      "replace_tag_emojis_with_boxes": false,
+      "replace_tag_underscores_with_spaces": false,
+      "save_default_tag_service_tab_on_change": true,
+      "save_media_viewer_window_size_and_position_on_close": false,
+      "save_page_sort_on_change": false,
+      "saving_sash_positions_on_exit": true,
+      "secret_discord_dnd_fix": false,
+      "set_requests_ca_bundle_env": false,
+      "set_search_focus_on_page_change": false,
+      "shortcuts_merge_non_number_numpad": true,
+      "show_all_my_files_on_page_chooser": true,
+      "show_all_my_files_on_page_chooser_at_top": false,
+      "show_deleted_on_file_seed_short_summary": false,
+      "show_destination_page_when_dnd_url": true,
+      "show_extended_single_file_info_in_status_bar": true,
+      "show_file_lookup_script_tags": false,
+      "show_local_files_on_page_chooser": false,
+      "show_local_files_on_page_chooser_at_top": false,
+      "show_namespaces": true,
+      "show_new_on_file_seed_short_summary": false,
+      "show_number_namespaces": true,
+      "show_parent_decorators_on_storage_autocomplete_taglists": true,
+      "show_parent_decorators_on_storage_taglists": true,
+      "show_related_tags": true,
+      "show_session_size_warnings": true,
+      "show_sibling_decorators_on_storage_autocomplete_taglists": true,
+      "show_sibling_decorators_on_storage_taglists": true,
+      "show_subtag_number_namespaces": true,
+      "show_system_everything": true,
+      "show_unmatched_urls_in_media_viewer": false,
+      "skip_yesno_on_write_autocomplete_multiline_paste": false,
+      "slideshow_always_play_duration_media_once_through": false,
+      "slideshows_progress_randomly": false,
+      "start_client_in_system_tray": false,
+      "start_note_editing_at_end": true,
+      "tag_display_maintenance_during_active": true,
+      "tag_display_maintenance_during_idle": true,
+      "test_thumbnails_graphics_view": true,
+      "touchscreen_canvas_drags_unanchor": false,
+      "treeview_alternating_row_colours": false,
+      "treeview_always_expand_to_current_tab_after_reset": false,
+      "treeview_animate_current_node": true,
+      "treeview_collapse_all_children_upon_parent_closed": false,
+      "treeview_controls_at_top": false,
+      "treeview_expanding_panel_at_top": false,
+      "treeview_hides_tabs": false,
+      "treeview_history_box_pinned": false,
+      "treeview_sidebar_can_collapse": false,
+      "use_advanced_file_deletion_dialog": false,
+      "use_custom_sibling_connector_colour": false,
+      "use_legacy_mpv_mediator": false,
+      "use_listbook_for_tag_service_panels": false,
+      "use_native_menubar": false,
+      "use_nice_resolution_strings": true,
+      "use_qt_file_dialogs": false,
+      "use_qt_locale_for_human_int": false,
+      "use_system_ffmpeg": false,
+      "verify_regular_https": true,
+      "watch_clipboard_for_other_recognised_urls": false,
+      "watch_clipboard_for_watcher_urls": false,
+      "wheel_scrolls_tab_bar": false,
+      "yes_no_on_remove_on_manage_tags": true
+     },
+     "colors": {
+      "darkmode": {
+       "0": [
+        64,
+        64,
+        72
+       ],
+       "1": [
+        112,
+        128,
+        144
+       ],
+       "10": [
+        52,
+        52,
+        52
+       ],
+       "11": [
+        112,
+        128,
+        144
+       ],
+       "12": [
+        35,
+        38,
+        41
+       ],
+       "2": [
+        64,
+        13,
+        2
+       ],
+       "3": [
+        171,
+        39,
+        79
+       ],
+       "4": [
+        145,
+        163,
+        176
+       ],
+       "5": [
+        223,
+        227,
+        230
+       ],
+       "6": [
+        248,
+        208,
+        204
+       ],
+       "7": [
+        227,
+        66,
+        52
+       ],
+       "8": [
+        52,
+        52,
+        52
+       ],
+       "9": [
+        83,
+        98,
+        103
+       ]
+      },
+      "default": {
+       "0": [
+        255,
+        255,
+        255
+       ],
+       "1": [
+        217,
+        242,
+        255
+       ],
+       "10": [
+        255,
+        255,
+        255
+       ],
+       "11": [
+        0,
+        0,
+        0
+       ],
+       "12": [
+        255,
+        255,
+        255
+       ],
+       "2": [
+        32,
+        32,
+        36
+       ],
+       "3": [
+        64,
+        64,
+        72
+       ],
+       "4": [
+        223,
+        227,
+        230
+       ],
+       "5": [
+        1,
+        17,
+        26
+       ],
+       "6": [
+        248,
+        208,
+        204
+       ],
+       "7": [
+        227,
+        66,
+        52
+       ],
+       "8": [
+        255,
+        255,
+        255
+       ],
+       "9": [
+        235,
+        248,
+        255
+       ]
+      }
+     },
+     "default_local_location_context": {
+      "current_service_keys": [
+       "6c6f63616c2066696c6573"
+      ],
+      "deleted_service_keys": []
+     },
+     "default_namespace_sorts": [
+      {
+       "namespaces": [
+        "series",
+        "creator",
+        "title",
+        "volume",
+        "chapter",
+        "page"
+       ],
+       "sort_metatype": "namespaces",
+       "sort_order": 0,
+       "tag_context": {
+        "display_service_key": "616c6c206b6e6f776e2074616773",
+        "include_current_tags": true,
+        "include_pending_tags": true,
+        "service_key": "616c6c206b6e6f776e2074616773"
+       },
+       "tag_display_type": 1
+      },
+      {
+       "namespaces": [
+        "creator",
+        "series",
+        "title",
+        "volume",
+        "chapter",
+        "page"
+       ],
+       "sort_metatype": "namespaces",
+       "sort_order": 0,
+       "tag_context": {
+        "display_service_key": "616c6c206b6e6f776e2074616773",
+        "include_current_tags": true,
+        "include_pending_tags": true,
+        "service_key": "616c6c206b6e6f776e2074616773"
+       },
+       "tag_display_type": 1
+      }
+     ],
+     "default_sort": {
+      "sort_metatype": "system",
+      "sort_order": 0,
+      "sort_type": 0,
+      "tag_context": {
+       "display_service_key": "616c6c206b6e6f776e2074616773",
+       "include_current_tags": true,
+       "include_pending_tags": true,
+       "service_key": "616c6c206b6e6f776e2074616773"
+      }
+     },
+     "default_tag_sort": {
+      "group_by": 2,
+      "sort_order": 0,
+      "sort_type": 0,
+      "use_siblings": true
+     },
+     "default_tag_sort_media_vewier_manage_tags": {
+      "group_by": 2,
+      "sort_order": 0,
+      "sort_type": 0,
+      "use_siblings": true
+     },
+     "default_tag_sort_media_viewer": {
+      "group_by": 2,
+      "sort_order": 0,
+      "sort_type": 0,
+      "use_siblings": true
+     },
+     "default_tag_sort_search_page": {
+      "group_by": 2,
+      "sort_order": 0,
+      "sort_type": 0,
+      "use_siblings": true
+     },
+     "default_tag_sort_search_page_manage_tags": {
+      "group_by": 2,
+      "sort_order": 0,
+      "sort_type": 0,
+      "use_siblings": true
+     },
+     "fallback_sort": {
+      "sort_metatype": "system",
+      "sort_order": 0,
+      "sort_type": 2,
+      "tag_context": {
+       "display_service_key": "616c6c206b6e6f776e2074616773",
+       "include_current_tags": true,
+       "include_pending_tags": true,
+       "service_key": "616c6c206b6e6f776e2074616773"
+      }
+     },
+     "integers": {
+      "ac_read_list_height_num_chars": 22,
+      "ac_write_list_height_num_chars": 11,
+      "active_search_predicates_height_num_chars": 6,
+      "animated_scanbar_height": 20,
+      "animated_scanbar_nub_width": 10,
+      "close_page_focus_goes": 1,
+      "command_palette_num_chars_for_results_threshold": 1,
+      "connection_error_wait_time": 15,
+      "default_new_page_goes": 3,
+      "deferred_table_delete_rest_percentage_idle": 10,
+      "deferred_table_delete_rest_percentage_normal": 1000,
+      "deferred_table_delete_rest_percentage_work_hard": 10,
+      "deferred_table_delete_work_time_ms_idle": 20000,
+      "deferred_table_delete_work_time_ms_normal": 250,
+      "deferred_table_delete_work_time_ms_work_hard": 5000,
+      "domain_network_infrastructure_error_number": 3,
+      "domain_network_infrastructure_error_time_delta": 600,
+      "downloader_network_error_delay": 5400,
+      "duplicate_comparison_score_has_audio": 20,
+      "duplicate_comparison_score_higher_filesize": 10,
+      "duplicate_comparison_score_higher_jpeg_quality": 10,
+      "duplicate_comparison_score_higher_resolution": 20,
+      "duplicate_comparison_score_more_tags": 8,
+      "duplicate_comparison_score_much_higher_filesize": 20,
+      "duplicate_comparison_score_much_higher_jpeg_quality": 20,
+      "duplicate_comparison_score_much_higher_resolution": 50,
+      "duplicate_comparison_score_nicer_ratio": 10,
+      "duplicate_comparison_score_older": 4,
+      "duplicate_filter_max_batch_size": 100,
+      "duplicate_filter_prefetch_num_pairs": 3,
+      "duplicates_auto_resolution_rest_percentage_active": 900,
+      "duplicates_auto_resolution_rest_percentage_idle": 100,
+      "duplicates_auto_resolution_work_time_ms_active": 100,
+      "duplicates_auto_resolution_work_time_ms_idle": 1000,
+      "export_filename_character_limit": 220,
+      "ffmpeg_subprocess_timeout": 15,
+      "file_has_transparency_strictness": 2,
+      "file_maintenance_active_throttle_files": 1,
+      "file_maintenance_active_throttle_time_delta": 20,
+      "file_maintenance_idle_throttle_files": 1,
+      "file_maintenance_idle_throttle_time_delta": 2,
+      "file_viewing_stats_menu_display": 2,
+      "forgive_frame_gubbins_fuzzy_padding": 40,
+      "gallery_page_status_update_time_minimum_ms": 1000,
+      "gallery_page_status_update_time_ratio_denominator": 30,
+      "gallery_page_wait_period_pages": 15,
+      "gallery_page_wait_period_subscriptions": 5,
+      "global_audio_volume": 70,
+      "human_bytes_sig_figs": 3,
+      "ideal_tile_dimension": 768,
+      "image_cache_prefetch_limit_percentage": 25,
+      "image_cache_size": 1073741824,
+      "image_cache_storage_limit_percentage": 25,
+      "image_cache_timeout": 600,
+      "image_tile_cache_size": 268435456,
+      "image_tile_cache_timeout": 300,
+      "last_selected_import_options_container_panel_options_type": 4,
+      "last_session_save_period_minutes": 5,
+      "max_connection_attempts_allowed": 5,
+      "max_network_jobs": 15,
+      "max_network_jobs_per_domain": 3,
+      "max_page_name_chars": 20,
+      "max_request_attempts_allowed_get": 5,
+      "max_simultaneous_subscriptions": 1,
+      "media_viewer_audio_volume": 70,
+      "media_viewer_default_zoom_type_override": 0,
+      "media_viewer_prefetch_num_next": 3,
+      "media_viewer_prefetch_num_previous": 2,
+      "media_viewer_tags_scrolling_behaviour": 2,
+      "media_viewer_zoom_center": 2,
+      "ms_to_wait_between_physical_file_deletes": 600,
+      "network_timeout": 10,
+      "notebook_tab_alignment": 0,
+      "num_recent_petition_reasons": 5,
+      "number_of_gui_session_backups": 10,
+      "page_file_count_display": 3,
+      "page_nav_history_max_entries": 100,
+      "page_sidebar_alignment": 1,
+      "popup_message_character_width": 56,
+      "potential_duplicates_search_rest_percentage_active": 1900,
+      "potential_duplicates_search_rest_percentage_idle": 50,
+      "potential_duplicates_search_work_time_ms_active": 100,
+      "potential_duplicates_search_work_time_ms_idle": 5000,
+      "preview_audio_volume": 70,
+      "preview_default_zoom_type_override": 0,
+      "related_tags_concurrence_threshold_percent": 6,
+      "related_tags_search_1_duration_ms": 250,
+      "related_tags_search_2_duration_ms": 2000,
+      "related_tags_search_3_duration_ms": 6000,
+      "repository_processing_rest_percentage_idle": 5,
+      "repository_processing_rest_percentage_normal": 10,
+      "repository_processing_rest_percentage_very_idle": 3,
+      "repository_processing_work_time_ms_idle": 10000,
+      "repository_processing_work_time_ms_normal": 500,
+      "repository_processing_work_time_ms_very_idle": 30000,
+      "serverside_bandwidth_wait_time": 60,
+      "shutdown_work_period": 86400,
+      "similar_files_duplicate_pairs_search_distance": 0,
+      "subscription_network_error_delay": 43200,
+      "subscription_other_error_delay": 129600,
+      "suggested_tags_width": 300,
+      "system_busy_cpu_percent": 50,
+      "tag_display_processing_rest_percentage_idle": 3,
+      "tag_display_processing_rest_percentage_normal": 9900,
+      "tag_display_processing_rest_percentage_work_hard": 5,
+      "tag_display_processing_work_time_ms_idle": 15000,
+      "tag_display_processing_work_time_ms_normal": 100,
+      "tag_display_processing_work_time_ms_work_hard": 5000,
+      "tag_list_tag_display_type_media_viewer_hover": 2,
+      "tag_list_tag_display_type_sidebar": 3,
+      "thread_slots_gallery_files": 15,
+      "thread_slots_gallery_search": 5,
+      "thread_slots_misc": 10,
+      "thread_slots_watcher_check": 5,
+      "thread_slots_watcher_files": 15,
+      "thumbnail_border": 1,
+      "thumbnail_cache_size": 33554432,
+      "thumbnail_cache_timeout": 86400,
+      "thumbnail_dpr_percent": 100,
+      "thumbnail_margin": 2,
+      "thumbnail_scale_type": 0,
+      "thumbnail_visibility_scroll_percent": 75,
+      "treeview_indentation": 20,
+      "treeview_row_height": 20,
+      "video_buffer_size": 100663296,
+      "video_thumbnail_percentage_in": 35,
+      "wake_delay_period": 15,
+      "watcher_page_status_update_time_minimum_ms": 1000,
+      "watcher_page_status_update_time_ratio_denominator": 30,
+      "watcher_page_wait_period": 5,
+      "zoom_switch_command": 91
+     },
+     "keys": {
+      "default_gug_key": "7defb53765dc02f7367d3fbcc4baa24cb6190ea157bcf89d14c1472af2d02576",
+      "default_tag_service_search_page": "616c6c206b6e6f776e2074616773",
+      "default_tag_service_tab": "6c6f63616c2074616773",
+      "options_ratings_panel_template_service_key": "726174696e67732070726576696577206f626a6563742073657276696365"
+     },
+     "media_zooms": [
+      0.01,
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.3,
+      0.5,
+      0.7,
+      0.8,
+      0.9,
+      1.0,
+      1.1,
+      1.2,
+      1.5,
+      2.0,
+      3.0,
+      5.0,
+      10.0,
+      20.0
+     ],
+     "noneable_integers": {
+      "animated_scanbar_hide_height": 5,
+      "command_palette_limit_favourite_searches_results": null,
+      "command_palette_limit_history_results": 10,
+      "command_palette_limit_page_results": null,
+      "duplicate_background_switch_intensity_a": 0,
+      "duplicate_background_switch_intensity_b": 3,
+      "duplicate_filter_auto_commit_batch_size": 1,
+      "export_dirname_character_limit": null,
+      "export_path_character_limit": null,
+      "file_viewing_statistics_media_max_time_ms": 600000,
+      "file_viewing_statistics_media_min_time_ms": 2000,
+      "file_viewing_statistics_preview_max_time_ms": 60000,
+      "file_viewing_statistics_preview_min_time_ms": 5000,
+      "forced_search_limit": null,
+      "idle_mode_client_api_timeout": null,
+      "last_backup_time": null,
+      "last_review_bandwidth_search_distance": 604800,
+      "media_viewer_cursor_autohide_time_ms": 700,
+      "num_recent_tags": 20,
+      "num_recent_tags_in_quick_dialog": 10,
+      "num_to_show_in_ac_dropdown_children_tab": 40,
+      "number_of_unselected_medias_to_present_tags_for": 4096,
+      "slideshow_long_duration_overspill_percentage": 50,
+      "slideshow_short_duration_cutoff_percentage": 75,
+      "slideshow_short_duration_loop_percentage": 20,
+      "slideshow_short_duration_loop_seconds": 10,
+      "subscription_file_error_cancel_threshold": 5,
+      "system_busy_cpu_count": 1,
+      "treeview_alignment": null
+     },
+     "noneable_strings": {
+      "backup_path": null,
+      "curl_cffi_definition": null,
+      "favourite_file_lookup_script": null,
+      "http_proxy": null,
+      "https_proxy": null,
+      "last_advanced_file_deletion_reason": null,
+      "last_advanced_file_deletion_special_action": null,
+      "last_png_export_dir": null,
+      "media_background_bmp_path": null,
+      "mpv_preferred_audio_device": null,
+      "no_proxy": "127.0.0.1",
+      "or_connector_custom_namespace_colour": "system",
+      "qt_media_player_preferred_audio_device_id_hex": null,
+      "qt_media_player_preferred_audio_device_name": null,
+      "qt_style_name": null,
+      "qt_stylesheet_name": null,
+      "sibling_connector_custom_namespace_colour": "system",
+      "suggested_tags_layout": "notebook"
+     },
+     "slideshow_durations": [
+      1.0,
+      5.0,
+      10.0,
+      30.0,
+      60.0
+     ],
+     "strings": {
+      "app_display_name": "hydrus client",
+      "current_colourset": "default",
+      "default_gug_name": "",
+      "default_suggested_tags_notebook_page": "related",
+      "discord_dnd_filename_pattern": "{hash}",
+      "export_phrase": "{hash}",
+      "favourite_simple_downloader_formula": "all files linked by images in page",
+      "has_audio_label": "🔊",
+      "has_duration_label": " ⏵ ",
+      "last_incremental_tagging_namespace": "page",
+      "last_incremental_tagging_prefix": "",
+      "last_incremental_tagging_suffix": "",
+      "last_options_window_panel": "gui",
+      "namespace_connector": ":",
+      "or_connector": " OR ",
+      "page_of_pages_decorator": " ↓",
+      "pause_character": "⏸",
+      "sibling_connector": " → ",
+      "stop_character": "⏹",
+      "thumbnail_scroll_rate": "1.0"
+     },
+     "suggested_tags_favourites": {}
+    },
+    "services": {
+     "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
+      "name": "second tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "616c6c206b6e6f776e2066696c6573": {
+      "name": "all known files",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     "616c6c206b6e6f776e2074616773": {
+      "name": "all known tags",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "646f776e6c6f616465722074616773": {
+      "name": "downloader tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "6661766f757269746573": {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "6c6f63616c2074616773": {
+      "name": "my tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "7265706f7369746f72792075706461746573": {
+      "name": "repository updates",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     "7472617368": {
+      "name": "trash",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     },
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": {
+      "name": "art",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     }
+    },
+    "services_v2": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "service_key": "6661766f757269746573",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     },
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage database",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  }
+ ],
+ "scenario": "client_options"
+}

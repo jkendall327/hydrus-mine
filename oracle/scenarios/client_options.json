@@ -1,0 +1,22 @@
+{
+ "name": "client_options",
+ "description": "the client's options",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_database/get_client_options",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/get_client_options",
+   "query": [],
+   "key": "restricted",
+   "compare": "exact"
+  }
+ ]
+}

@@ -104,3 +104,14 @@ step = 12
 skip = true
 reason = """A suffix range longer than the file: the reference fails (500, seeking before the start). \
 We send the whole file, as HTTP asks."""
+
+[[difference]]
+scenario = "client_options"
+step = 0
+ignore = [
+    "$.options.booleans.maintain_similar_files_duplicate_pairs_during_active",
+    "$.options.booleans.maintain_similar_files_duplicate_pairs_during_idle",
+]
+reason = """Not a difference: the oracle driver turns off the reference's background similar-files \
+search by changing these options in memory while recording, so the recording shows it off; the \
+database, and the migrated copy we report from, keep the stored setting."""

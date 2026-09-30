@@ -1,7 +1,7 @@
 {
   "api": {
     "total": 76,
-    "done": 57,
+    "done": 58,
     "partial": 3,
     "done_items": [
       "/add_files/add_file",
@@ -44,6 +44,7 @@
       "/manage_cookies/get_cookies",
       "/manage_cookies/set_cookies",
       "/manage_database/force_commit",
+      "/manage_database/get_client_options",
       "/manage_database/lock_off",
       "/manage_database/lock_on",
       "/manage_database/mr_bones",

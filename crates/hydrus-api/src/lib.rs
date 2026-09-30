@@ -234,6 +234,10 @@ pub fn router(state: Arc<AppState>) -> Router {
         )
         .route("/manage_database/mr_bones", get(database::mr_bones))
         .route(
+            "/manage_database/get_client_options",
+            get(database::get_client_options),
+        )
+        .route(
             "/manage_database/force_commit",
             post(database::force_commit),
         )

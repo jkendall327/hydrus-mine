@@ -93,6 +93,219 @@ pub async fn force_commit(
         .await
 }
 
+/// The client's options: the old-style ones the reference still has, and
+/// the options object, as migrated (with a new client's defaults for what
+/// wasn't stored).
+pub async fn get_client_options(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    use hydrus_legacy::objects::{ClientOptions, LegacyOptions};
+    use hydrus_legacy::serialisable::{SerialisableObject, SerialisableType};
+
+    app.authenticate(&req)?.check(Permission::ManageDatabase)?;
+    let encoding = req.response_encoding;
+    app.clone()
+        .blocking(move |app| {
+            let unreadable = |e: &dyn std::fmt::Display| {
+                ApiError::server(format!("Could not read the client's options: {e}"))
+            };
+            let (stored, old) = app.store.read(|conn| {
+                Ok((
+                    hydrus_store::legacy::singleton(
+                        conn,
+                        u32::from(SerialisableType::CLIENT_OPTIONS.0),
+                    )?,
+                    hydrus_store::legacy::old_options(conn)?,
+                ))
+            })?;
+            let defaults = ClientOptions::defaults().map_err(|e| unreadable(&e))?;
+            let options = match stored {
+                Some((version, dump)) => {
+                    let object = SerialisableObject::from_stored(
+                        SerialisableType::CLIENT_OPTIONS,
+                        None,
+                        version,
+                        &dump,
+                    )
+                    .map_err(|e| unreadable(&e))?;
+                    let mut options =
+                        ClientOptions::from_object(&object).map_err(|e| unreadable(&e))?;
+                    options.fill_defaults(&defaults);
+                    options
+                }
+                None => defaults,
+            };
+            let old = LegacyOptions::parse(old.as_deref()).map_err(|e| unreadable(&e))?;
+            let old_options: serde_json::Map<String, serde_json::Value> = old
+                .api_entries()
+                .map(|(k, v)| (k.to_owned(), options_json::yaml(v)))
+                .collect();
+            let snapshot = app.store.snapshot();
+            let registry = &snapshot.services;
+            Ok(ApiResponse::Json(
+                json!({
+                    "old_options": old_options,
+                    "options": options_json::options(&options, registry),
+                    "services": crate::services_json::services_dict(registry),
+                    "services_v2": crate::services_json::services_list(registry),
+                }),
+                encoding,
+            ))
+        })
+        .await
+}
+
+/// The Client API's forms of option values (`ToDictForAPI`).
+mod options_json {
+    use serde_json::{Map, Value as Json, json};
+
+    use hydrus_core::ServiceKey;
+    use hydrus_legacy::objects::{
+        ClientOptions, LocationContext, MediaSort, MediaSortType, TagContext, TagSort, YamlValue,
+    };
+    use hydrus_store::services::ServiceRegistry;
+
+    /// A legacy YAML value as Python's `json` writes it (tuples as lists,
+    /// mapping keys as strings).
+    pub fn yaml(value: &YamlValue) -> Json {
+        match value {
+            YamlValue::None => Json::Null,
+            YamlValue::Bool(b) => json!(b),
+            YamlValue::Int(i) => json!(i),
+            YamlValue::Float(f) => json!(f),
+            YamlValue::Str(s) => json!(s),
+            YamlValue::Bytes(b) => json!(String::from_utf8_lossy(b)),
+            YamlValue::List(items) | YamlValue::Tuple(items) => {
+                Json::Array(items.iter().map(yaml).collect())
+            }
+            YamlValue::Map(entries) => Json::Object(
+                entries
+                    .iter()
+                    .map(|(k, v)| {
+                        let key = match k {
+                            YamlValue::None => "null".to_owned(),
+                            YamlValue::Bool(b) => b.to_string(),
+                            YamlValue::Str(s) => s.clone(),
+                            other => yaml(other).to_string(),
+                        };
+                        (key, yaml(v))
+                    })
+                    .collect(),
+            ),
+        }
+    }
+
+    fn tag_context(c: &TagContext) -> Json {
+        json!({
+            "service_key": c.service_key.to_hex(),
+            "include_current_tags": c.include_current_tags,
+            "include_pending_tags": c.include_pending_tags,
+            "display_service_key": c.display_service_key.to_hex(),
+        })
+    }
+
+    fn media_sort(sort: &MediaSort) -> Json {
+        let mut out = json!({
+            "sort_order": sort.sort_order.code(),
+            "tag_context": tag_context(&sort.tag_context),
+        });
+        match &sort.sort_type {
+            MediaSortType::System(code) => {
+                out["sort_metatype"] = json!("system");
+                out["sort_type"] = json!(code);
+            }
+            MediaSortType::Namespaces {
+                namespaces,
+                tag_display_type,
+            } => {
+                out["sort_metatype"] = json!("namespaces");
+                out["namespaces"] = json!(namespaces);
+                out["tag_display_type"] = json!(tag_display_type);
+            }
+            MediaSortType::Rating(key) => {
+                out["sort_metatype"] = json!("rating");
+                out["service_key"] = json!(key.to_hex());
+            }
+        }
+        out
+    }
+
+    fn tag_sort(sort: &TagSort) -> Json {
+        json!({
+            "sort_type": sort.sort_type,
+            "sort_order": sort.sort_order.code(),
+            "use_siblings": sort.use_siblings,
+            "group_by": sort.group_by,
+        })
+    }
+
+    /// `GetDefaultLocalLocationContext`: services that no longer exist are
+    /// dropped, and if none are left it is all local media.
+    fn location(context: Option<&LocationContext>, registry: &ServiceRegistry) -> Json {
+        let exists = |k: &&ServiceKey| registry.by_key(k).is_ok();
+        let (current, deleted): (Vec<&ServiceKey>, Vec<&ServiceKey>) = match context {
+            Some(c) => (
+                c.current.iter().filter(exists).collect(),
+                c.deleted.iter().filter(exists).collect(),
+            ),
+            None => (Vec::new(), Vec::new()),
+        };
+        if current.is_empty() && deleted.is_empty() {
+            return json!({
+                "current_service_keys": [hex::encode(hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)],
+                "deleted_service_keys": [],
+            });
+        }
+        json!({
+            "current_service_keys": current.iter().map(|k| k.to_hex()).collect::<Vec<_>>(),
+            "deleted_service_keys": deleted.iter().map(|k| k.to_hex()).collect::<Vec<_>>(),
+        })
+    }
+
+    pub fn options(o: &ClientOptions, registry: &ServiceRegistry) -> Json {
+        // CC.TAG_PRESENTATION_*
+        let tag_sort_at = |at: i64| o.default_tag_sorts.get(&at).map_or(Json::Null, tag_sort);
+        let colours: Map<String, Json> = o
+            .colours
+            .iter()
+            .map(|(set, colours)| {
+                let colours: Map<String, Json> = colours
+                    .iter()
+                    .map(|(code, rgb)| (code.to_string(), json!(rgb)))
+                    .collect();
+                (set.clone(), Json::Object(colours))
+            })
+            .collect();
+        let favourites: Map<String, Json> = o
+            .suggested_tags_favourites
+            .iter()
+            .map(|(k, tags)| (k.to_hex(), json!(tags)))
+            .collect();
+        json!({
+            "booleans": o.booleans,
+            "strings": o.strings,
+            "noneable_strings": o.noneable_strings,
+            "integers": o.integers,
+            "noneable_integers": o.noneable_integers,
+            "keys": o.keys.iter().map(|(k, v)| (k.clone(), json!(hex::encode(v)))).collect::<Map<String, Json>>(),
+            "colors": colours,
+            "media_zooms": o.media_zooms,
+            "slideshow_durations": o.slideshow_durations,
+            "default_namespace_sorts": o.default_namespace_sorts.iter().map(media_sort).collect::<Vec<_>>(),
+            "default_sort": o.default_sort.as_ref().map_or(Json::Null, media_sort),
+            "default_tag_sort": tag_sort_at(0),
+            "default_tag_sort_search_page": tag_sort_at(0),
+            "default_tag_sort_search_page_manage_tags": tag_sort_at(1),
+            "default_tag_sort_media_viewer": tag_sort_at(2),
+            "default_tag_sort_media_vewier_manage_tags": tag_sort_at(3),
+            "fallback_sort": o.fallback_sort.as_ref().map_or(Json::Null, media_sort),
+            "suggested_tags_favourites": favourites,
+            "default_local_location_context": location(o.default_local_location_context.as_ref(), registry),
+        })
+    }
+}
+
 /// Counts, sizes, views and duplicates of the files a search finds
 /// (`ClientDB._GetBonedStats`).
 pub async fn mr_bones(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiResult<ApiResponse> {

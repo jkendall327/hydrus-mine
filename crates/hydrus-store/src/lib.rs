@@ -11,6 +11,7 @@ pub mod duplicates;
 pub mod error;
 pub mod import;
 pub mod import_folders;
+pub mod legacy;
 pub mod maintenance;
 pub mod master;
 pub mod media;
