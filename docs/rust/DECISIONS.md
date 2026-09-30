@@ -34,3 +34,10 @@ record of what was decided, and why the roadmap looks the way it does.
 Deprioritised: tag repository sync, the hydrus server, file repositories and
 IPFS. Their data and settings are still imported verbatim, so nothing is lost
 if they're wanted later.
+
+**Fidelity first.** The goal is an accurate copy of hydrus as a trustworthy
+base; changes to how things behave come later, on top of it. The owner's
+own use (duplicates at distance 0 and 2, auto-resolution rules, subscriptions,
+watchers, an import folder as a drop box, a symlinking export folder) sets
+priorities, never semantics. The one planned redesign, a more ergonomic
+duplicate filter, comes after the reference's filter behaviour is matched.

@@ -3,6 +3,25 @@
 Measured in the development container (4 cores, SSD-backed, release builds),
 with SQLite `synchronous=FULL`: every write is durable before it returns.
 
+## The target install
+
+Counts from the owner's main hydrus install (v682), which sizes what has
+to be fast:
+
+| what | count |
+|---|---|
+| files ever imported | 746,437 |
+| files with a perceptual hash / distinct hashes | 441,707 / 414,569 |
+| files searched for similar files at distance 2 / 4 / not yet | 174,528 / 101,504 / 50,084 |
+| potential duplicate pairs (distance 0 / 1-2 / over 2, max 4) | 23,344 (12,648 / 8,831 / 1,865) |
+| duplicate groups | 385,346 |
+| duplicates auto-resolution rules | 5 |
+| tags / URLs | 542,985 / 1,918,810 |
+| subscriptions / their queries' histories | 14 / 344 (117 MB serialised) |
+| import folders / export folders | 1 / 1 |
+
+Searches for similar files are mostly at distance 0 and 2.
+
 ## Store micro-benchmarks
 
 `cargo bench -p hydrus-store` (criterion) runs against a synthetic library
