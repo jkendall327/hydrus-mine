@@ -133,6 +133,7 @@ fn matching_pairs(
     let two_filter = two.as_ref().map(in_set);
     let pairs = duplicates::potential_pairs(
         conn,
+        snapshot,
         &PotentialsSearch {
             scope: scope.clone(),
             kind: search.kind,

@@ -54,6 +54,23 @@ impl DomainCache {
     }
 }
 
+/// Whether data read on `conn` may be cached for other reads: only a
+/// reader's, which sees committed data. A write's own uncommitted changes
+/// could be rolled back, and the generation they bumped reused.
+pub(crate) fn may_cache(conn: &Connection) -> bool {
+    conn.pragma_query_value(None, "query_only", |r| r.get::<_, bool>(0))
+        .unwrap_or(false)
+}
+
+/// Whether to check `candidates` files against a domain of `size` files one
+/// by one rather than load the whole domain. Checking a file costs about
+/// eight scanned rows (measured at 400,000 files), but a loaded domain is
+/// kept for later reads until a write changes it, so loading is worth it
+/// well before the costs are equal.
+pub fn probe_is_cheaper(candidates: u64, size: u64) -> bool {
+    candidates.saturating_mul(16) < size
+}
+
 /// Record, in a write's transaction, that it changed domain membership or
 /// import times.
 /// [`crate::content::ContentWriter`] does this; a write that changes the domain tables
@@ -104,6 +121,9 @@ impl Domains<'_> {
         let files = Arc::new(files);
         let key = (service, deleted);
         self.cache.sizes.lock().insert(key, files.len());
+        if !may_cache(conn) {
+            return Ok(files);
+        }
         let mut entries = self.cache.entries.lock();
         // an older read must not displace a newer one's bitmap
         if entries
@@ -160,6 +180,9 @@ impl Domains<'_> {
             .collect::<rusqlite::Result<_>>()?;
         rows.sort_unstable();
         let order = Arc::new(rows.into_iter().map(|(_, id)| id).collect::<Vec<u32>>());
+        if !may_cache(conn) {
+            return Ok(order);
+        }
         let mut orders = self.cache.import_orders.lock();
         if orders
             .get(&service)

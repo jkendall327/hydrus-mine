@@ -456,6 +456,7 @@ mod tests {
                 ctx.conn().execute_batch(
                     "DELETE FROM potential_pairs; UPDATE similar_search_status SET searched_distance = NULL;",
                 )?;
+                crate::duplicates::cache::changed(ctx.conn())?;
                 crate::settings::set(
                     ctx.conn(),
                     &SimilarFilesSettings {

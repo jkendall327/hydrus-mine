@@ -21,14 +21,7 @@ use super::time::Clock;
 use super::{Result, SearchError};
 use crate::context::{FileSearchContext, LocationContext, TagContext};
 
-/// Whether to check `candidates` files against a file domain of `size`
-/// files one by one rather than load the whole domain. Checking a file costs
-/// about eight scanned rows (measured at 400,000 files), but a loaded domain
-/// is kept for later searches until a write changes it, so loading is worth
-/// it well before the costs are equal.
-pub(crate) fn probe_domain(candidates: u64, size: u64) -> bool {
-    candidates.saturating_mul(16) < size
-}
+pub(crate) use hydrus_store::domains::probe_is_cheaper as probe_domain;
 
 /// A file domain table: files currently in, or deleted from, a service.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]

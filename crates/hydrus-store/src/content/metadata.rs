@@ -334,6 +334,16 @@ impl ContentWriter<'_> {
                 info.blurhash,
                 info.flags.0,
             ])?;
+        // cached potential pairs hold their kings' sizes and pixel hashes
+        let grouped: bool = self.conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM dup_group_members WHERE hash_id = ?1)
+                 OR EXISTS (SELECT 1 FROM dup_groups WHERE king_hash_id = ?1)",
+            [hash],
+            |r| r.get(0),
+        )?;
+        if grouped {
+            crate::duplicates::cache::changed(self.conn)?;
+        }
         Ok(())
     }
 }

@@ -128,3 +128,14 @@ than a sixteenth of the domain's files one by one (a check costs about eight
 scanned rows, and a loaded domain serves later searches too). To decide that
 without counting the domain every time, the cache remembers each domain's
 size as last seen, whatever the generation.
+
+### Cached potential pairs
+
+Every duplicate filter request (counting pairs, fetching a batch, picking a
+random group) looks at all potential pairs, and reading them joins four
+tables per pair. `duplicates/cache.rs` keeps them, with what ordering needs
+about each pair's kings (size, resolution, pixel duplicates), under
+`duplicates_generation`, which every write to pairs, groups or a grouped
+file's properties increments in its transaction. Only reads fill either
+cache: a write's uncommitted state could be rolled back and its generation
+number reused.

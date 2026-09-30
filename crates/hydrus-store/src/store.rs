@@ -15,6 +15,7 @@ use crate::conn::{Db, WriteCtx};
 use crate::content::ContentWriter;
 use crate::display::DisplayGraphs;
 use crate::domains::DomainCache;
+use crate::duplicates::cache::PairCache;
 use crate::error::Result;
 use crate::services::{self, ServiceRegistry};
 use crate::settings;
@@ -36,6 +37,8 @@ pub struct Snapshot {
     pub url_classes: UrlClasses,
     /// The files of each file domain, shared by every snapshot of a store.
     pub domains: Arc<DomainCache>,
+    /// The potential duplicate pairs, shared by every snapshot of a store.
+    pub duplicates: Arc<PairCache>,
 }
 
 impl Snapshot {
@@ -52,6 +55,7 @@ impl Snapshot {
             thumbnails,
             url_classes,
             domains: Arc::default(),
+            duplicates: Arc::default(),
         })
     }
 }
@@ -184,7 +188,9 @@ impl Store {
             // a service's files go with it, and its id may be used again
             crate::domains::changed(ctx.conn())?;
             let mut fresh = Snapshot::load(ctx.conn())?;
-            fresh.domains = Arc::clone(&snapshot.load().domains);
+            let old = snapshot.load();
+            fresh.domains = Arc::clone(&old.domains);
+            fresh.duplicates = Arc::clone(&old.duplicates);
             ctx.after_commit(move || snapshot.store(Arc::new(fresh)));
             Ok(result)
         })

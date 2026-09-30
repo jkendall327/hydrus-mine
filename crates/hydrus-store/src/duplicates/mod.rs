@@ -20,10 +20,13 @@ use rusqlite::{Connection, OptionalExtension, params};
 
 use hydrus_core::{HashId, ServiceId};
 
+use self::cache::{FileShape, PairRow};
 use crate::error::Result;
 use crate::master::id_array;
+use crate::store::Snapshot;
 
 pub mod auto;
+pub mod cache;
 pub mod merge;
 pub mod write;
 
@@ -332,40 +335,15 @@ pub struct PotentialPair {
     pub groups: (i64, i64),
 }
 
-struct PairRow {
-    groups: (i64, i64),
-    smaller_king: HashId,
-    larger_king: HashId,
-    distance: u32,
-    pixel_duplicate: bool,
-}
-
-/// Every potential pair whose kings are both in scope, with whether the
-/// kings are pixel duplicates (same pixel hash and width).
-fn pairs_in_scope(conn: &Connection, scope: &FileScope) -> Result<Vec<PairRow>> {
-    let mut stmt = conn.prepare_cached(
-        "SELECT gs.king_hash_id, gl.king_hash_id, p.distance,
-                fs.pixel_hash IS NOT NULL AND fs.pixel_hash = fl.pixel_hash AND fs.width = fl.width,
-                p.smaller_group_id, p.larger_group_id
-         FROM potential_pairs p
-         JOIN dup_groups gs ON gs.group_id = p.smaller_group_id
-         JOIN dup_groups gl ON gl.group_id = p.larger_group_id
-         LEFT JOIN files fs ON fs.hash_id = gs.king_hash_id
-         LEFT JOIN files fl ON fl.hash_id = gl.king_hash_id",
-    )?;
-    let rows: Vec<PairRow> = stmt
-        .query_map([], |r| {
-            Ok(PairRow {
-                groups: (r.get(4)?, r.get(5)?),
-                smaller_king: r.get(0)?,
-                larger_king: r.get(1)?,
-                distance: r.get(2)?,
-                pixel_duplicate: r.get::<_, Option<bool>>(3)?.unwrap_or(false),
-            })
-        })?
-        .collect::<rusqlite::Result<_>>()?;
+/// Every potential pair whose kings are both in scope.
+fn pairs_in_scope(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    scope: &FileScope,
+) -> Result<Vec<PairRow>> {
+    let rows = snapshot.duplicates.rows(conn)?;
     if matches!(scope, FileScope::AllKnownFiles) {
-        return Ok(rows);
+        return Ok(rows.to_vec());
     }
     let kings: Vec<HashId> = rows
         .iter()
@@ -373,20 +351,80 @@ fn pairs_in_scope(conn: &Connection, scope: &FileScope) -> Result<Vec<PairRow>> 
         .collect::<BTreeSet<_>>()
         .into_iter()
         .collect();
-    let visible = scope.filter(conn, &kings)?;
+    let visible = visible_files(conn, snapshot, scope, &kings)?;
     Ok(rows
-        .into_iter()
+        .iter()
         .filter(|r| visible.contains(&r.smaller_king) && visible.contains(&r.larger_king))
+        .copied()
+        .collect())
+}
+
+/// Which of `files` are in `scope`: from the cached domains when they are
+/// cached or worth loading, else by looking each file up.
+fn visible_files(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    scope: &FileScope,
+    files: &[HashId],
+) -> Result<HashSet<HashId>> {
+    let FileScope::Domains { current, deleted } = scope else {
+        return scope.filter(conn, files);
+    };
+    let domains = snapshot.domains.for_read(conn)?;
+    let mut bitmaps = Vec::new();
+    for (services, is_deleted) in [(current, false), (deleted, true)] {
+        for &service in services {
+            let bitmap = if let Some(bitmap) = domains.cached(service, is_deleted) {
+                bitmap
+            } else {
+                let size = domains.size_estimate(conn, service, is_deleted)?;
+                if crate::domains::probe_is_cheaper(files.len() as u64, size) {
+                    return scope.filter(conn, files);
+                }
+                domains.files(conn, service, is_deleted)?
+            };
+            bitmaps.push(bitmap);
+        }
+    }
+    Ok(files
+        .iter()
+        .copied()
+        .filter(|h| bitmaps.iter().any(|b| b.contains(h.get())))
         .collect())
 }
 
 /// The potential pairs a search finds.
 pub fn potential_pairs(
     conn: &Connection,
+    snapshot: &Snapshot,
     search: &PotentialsSearch<'_>,
 ) -> Result<Vec<PotentialPair>> {
-    let rows: Vec<PairRow> = pairs_in_scope(conn, &search.scope)?
-        .into_iter()
+    let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
+    Ok(matching(conn, search, &in_scope)?
+        .iter()
+        .map(PotentialPair::from)
+        .collect())
+}
+
+impl From<&PairRow> for PotentialPair {
+    fn from(r: &PairRow) -> Self {
+        PotentialPair {
+            smaller_king: r.smaller_king,
+            larger_king: r.larger_king,
+            distance: r.distance,
+            groups: r.groups,
+        }
+    }
+}
+
+/// The pairs of `rows` (pairs in the search's scope) the search finds.
+fn matching(
+    conn: &Connection,
+    search: &PotentialsSearch<'_>,
+    rows: &[PairRow],
+) -> Result<Vec<PairRow>> {
+    let rows: Vec<PairRow> = rows
+        .iter()
         .filter(|r| match search.pixel_duplicates {
             PixelDuplicates::Required => r.pixel_duplicate,
             PixelDuplicates::Allowed => r.distance <= search.max_hamming_distance,
@@ -394,6 +432,7 @@ pub fn potential_pairs(
                 r.distance <= search.max_hamming_distance && !r.pixel_duplicate
             }
         })
+        .copied()
         .collect();
     if rows.is_empty() {
         return Ok(Vec::new());
@@ -426,12 +465,6 @@ pub fn potential_pairs(
                 }
             }
         })
-        .map(|r| PotentialPair {
-            smaller_king: r.smaller_king,
-            larger_king: r.larger_king,
-            distance: r.distance,
-            groups: r.groups,
-        })
         .collect())
 }
 
@@ -457,46 +490,28 @@ pub enum PairSelection {
     Group,
 }
 
-/// Size and resolution of a file, for ordering pairs.
-#[derive(Debug, Clone, Copy, Default)]
-struct FileShape {
-    size: u64,
-    pixels: u64,
-}
-
-fn file_shapes(conn: &Connection, hash_ids: &[HashId]) -> Result<HashMap<HashId, FileShape>> {
-    let mut stmt = conn.prepare_cached(
-        "SELECT hash_id, size, coalesce(width, 0) * coalesce(height, 0) FROM files WHERE hash_id IN rarray(?)",
-    )?;
-    let rows = stmt.query_map([id_array(hash_ids)], |r| {
-        Ok((
-            r.get(0)?,
-            FileShape {
-                size: r.get::<_, i64>(1)?.max(0) as u64,
-                pixels: r.get::<_, i64>(2)?.max(0) as u64,
-            },
-        ))
-    })?;
-    Ok(rows.collect::<rusqlite::Result<_>>()?)
-}
-
 /// Potential pairs for a duplicate filter: the pairs `search` finds, chosen
 /// and ordered as asked, each as `(a, b)` with the likely better file first.
 pub fn select_pairs(
     conn: &Connection,
+    snapshot: &Snapshot,
     search: &PotentialsSearch<'_>,
     order: PairOrder,
     ascending: bool,
     selection: PairSelection,
 ) -> Result<Vec<(HashId, HashId)>> {
-    let mut pairs = potential_pairs(conn, search)?;
-    let kings: Vec<HashId> = pairs
+    let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
+    let rows = matching(conn, search, &in_scope)?;
+    let shapes: HashMap<HashId, FileShape> = rows
         .iter()
-        .flat_map(|p| [p.smaller_king, p.larger_king])
-        .collect::<BTreeSet<_>>()
-        .into_iter()
+        .flat_map(|r| {
+            [
+                (r.smaller_king, r.smaller_shape),
+                (r.larger_king, r.larger_shape),
+            ]
+        })
         .collect();
-    let shapes = file_shapes(conn, &kings)?;
+    let mut pairs: Vec<PotentialPair> = rows.iter().map(PotentialPair::from).collect();
     let shape = |h: HashId| shapes.get(&h).copied().unwrap_or_default();
     // a missing or zero size counts as 1, as in the reference
     let size = |h: HashId| shape(h).size.max(1);
@@ -544,10 +559,8 @@ pub fn select_pairs(
         PairSelection::Group => match pairs.first() {
             None => Vec::new(),
             Some(first) => {
-                let network = potential_network(
-                    &pairs_in_scope(conn, &search.scope)?,
-                    [first.smaller_king, first.larger_king],
-                );
+                let network =
+                    potential_network(&in_scope, [first.smaller_king, first.larger_king]);
                 pairs
                     .into_iter()
                     .filter(|p| {
@@ -601,17 +614,16 @@ fn potential_network(rows: &[PairRow], start: [HashId; 2]) -> HashSet<HashId> {
 /// duplicates. Empty if the search finds nothing.
 pub fn random_potential_group(
     conn: &Connection,
+    snapshot: &Snapshot,
     search: &PotentialsSearch<'_>,
 ) -> Result<Vec<HashId>> {
     use rand::seq::IndexedRandom as _;
-    let pairs = potential_pairs(conn, search)?;
+    let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
+    let pairs = matching(conn, search, &in_scope)?;
     let Some(chosen) = pairs.choose(&mut rand::rng()) else {
         return Ok(Vec::new());
     };
-    let network = potential_network(
-        &pairs_in_scope(conn, &search.scope)?,
-        [chosen.smaller_king, chosen.larger_king],
-    );
+    let network = potential_network(&in_scope, [chosen.smaller_king, chosen.larger_king]);
     let kings: BTreeSet<HashId> = pairs
         .iter()
         .filter(|p| network.contains(&p.smaller_king) && network.contains(&p.larger_king))

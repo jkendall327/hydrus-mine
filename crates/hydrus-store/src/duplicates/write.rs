@@ -61,6 +61,7 @@ impl<'c> RelationshipWriter<'c> {
 
     /// Set the relationship between files `a` and `b`.
     pub fn set_pair(&self, relationship: PairRelationship, a: HashId, b: HashId) -> Result<()> {
+        super::cache::changed(self.conn)?;
         let mut group_a = self.group_or_create(a)?;
         let mut group_b = self.group_or_create(b)?;
         self.delete_potentials(&[ordered(group_a, group_b)])?;
@@ -123,6 +124,7 @@ impl<'c> RelationshipWriter<'c> {
 
     /// Make `hash_id` the king of its duplicate group.
     pub fn set_king(&self, hash_id: HashId) -> Result<()> {
+        super::cache::changed(self.conn)?;
         let group = self.group_or_create(hash_id)?;
         self.set_king_of(group, hash_id)
     }
@@ -130,6 +132,7 @@ impl<'c> RelationshipWriter<'c> {
     /// Drop every potential pair involving `hash_id`'s duplicate group.
     pub fn remove_potentials(&self, hash_id: HashId) -> Result<()> {
         if let Some(group) = super::group_of(self.conn, hash_id)? {
+            super::cache::changed(self.conn)?;
             self.delete_potentials_of(group)?;
         }
         Ok(())
@@ -140,6 +143,9 @@ impl<'c> RelationshipWriter<'c> {
     /// duplicate of `hash_id`'s (`AddPotentialDuplicates`), the first
     /// distance found for a group standing.
     pub fn add_similar_files(&self, hash_id: HashId, found: &[(HashId, u32)]) -> Result<()> {
+        if !found.is_empty() {
+            super::cache::changed(self.conn)?;
+        }
         let group = self.group_or_create(hash_id)?;
         let mut others: Vec<(GroupId, u32)> = Vec::new();
         for &(other, distance) in found {

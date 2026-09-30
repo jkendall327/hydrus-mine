@@ -324,7 +324,7 @@ pub async fn get_potentials_count(
             let snapshot = app.store.snapshot();
             let parsed = parse_potentials(&snapshot, &params)?;
             let count = parsed.with_search(app, &snapshot, |conn, search| {
-                Ok(duplicates::potential_pairs(conn, search)?.len())
+                Ok(duplicates::potential_pairs(conn, &snapshot, search)?.len())
             })?;
             Ok(ApiResponse::Json(
                 json!({ "potential_duplicates_count": count }),
@@ -373,7 +373,7 @@ pub async fn get_potential_pairs(
                     };
                     PairSelection::Batch { max }
                 };
-                let pairs = duplicates::select_pairs(conn, search, order, ascending, selection)?;
+                let pairs = duplicates::select_pairs(conn, &snapshot, search, order, ascending, selection)?;
                 let ids: Vec<HashId> = pairs.iter().flat_map(|&(a, b)| [a, b]).collect();
                 let hashes = master::hashes(conn, &ids)?;
                 Ok(pairs
@@ -404,7 +404,7 @@ pub async fn get_random_potentials(
             let snapshot = app.store.snapshot();
             let parsed = parse_potentials(&snapshot, &params)?;
             let hashes = parsed.with_search(app, &snapshot, |conn, search| {
-                let group = duplicates::random_potential_group(conn, search)?;
+                let group = duplicates::random_potential_group(conn, &snapshot, search)?;
                 let hashes = master::hashes(conn, &group)?;
                 Ok(group
                     .iter()
