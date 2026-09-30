@@ -5,7 +5,8 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_search::{
-    Clock, FileSearchContext, FileSort, SortBy, SortOrder, parse_api_search, search_files,
+    Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
+    parse_api_search, predicate_text, search_files,
 };
 use hydrus_store::Store;
 
@@ -14,8 +15,7 @@ use crate::autocomplete::Autocomplete;
 pub struct SearchPage {
     store: Arc<Store>,
     autocomplete: Autocomplete,
-    /// As typed: tags, and system predicates such as `system:inbox`.
-    predicates: Vec<String>,
+    predicates: Vec<Predicate>,
     sort: FileSort,
     /// In the sort's order.
     results: Vec<HashId>,
@@ -57,8 +57,18 @@ impl SearchPage {
         &self.store
     }
 
-    pub fn predicates(&self) -> &[String] {
-        &self.predicates
+    /// The predicates, written as the reference writes them.
+    pub fn predicates(&self) -> Vec<String> {
+        let snapshot = self.store.snapshot();
+        let viewing = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let context = TextContext::from_store(&snapshot.services, &viewing);
+        self.predicates
+            .iter()
+            .map(|p| predicate_text(p, &context))
+            .collect()
     }
 
     pub fn results(&self) -> &[HashId] {
@@ -129,20 +139,26 @@ impl SearchPage {
         }
     }
 
-    /// Add a predicate as typed and search again; whether it was taken. One
-    /// that doesn't parse is refused with the reason; one already there is
-    /// not added twice.
+    /// Add a predicate as typed (a tag, or a system predicate such as
+    /// `system:inbox`) and search again; whether it was taken. One that
+    /// doesn't parse is refused with the reason; one already there is not
+    /// added twice.
     pub fn add_predicate(&mut self, text: &str) -> bool {
         let text = text.trim();
         if text.is_empty() {
             return false;
         }
-        if let Err(e) = parse_api_search(&serde_json::json!([text])) {
-            self.error = Some(e.to_string());
-            return false;
-        }
-        if !self.predicates.iter().any(|p| p == text) {
-            self.predicates.push(text.to_owned());
+        let parsed = match parse_api_search(&serde_json::json!([text])) {
+            Ok(parsed) => parsed,
+            Err(e) => {
+                self.error = Some(e.to_string());
+                return false;
+            }
+        };
+        for predicate in parsed {
+            if !self.predicates.contains(&predicate) {
+                self.predicates.push(predicate);
+            }
         }
         self.search();
         true
@@ -167,15 +183,8 @@ impl SearchPage {
         if self.predicates.is_empty() {
             return;
         }
-        let predicates = match parse_api_search(&serde_json::json!(self.predicates)) {
-            Ok(predicates) => predicates,
-            Err(e) => {
-                self.error = Some(e.to_string());
-                return;
-            }
-        };
         let search = FileSearchContext {
-            predicates,
+            predicates: self.predicates.clone(),
             ..FileSearchContext::default()
         };
         let sort = self.sort;

@@ -484,6 +484,8 @@ pub enum ServiceSelection {
     Types(BTreeSet<ServiceType>),
     /// Service names, lowercased; resolved among local rating services.
     Names(BTreeSet<String>),
+    /// Services by key, as stored searches name them.
+    Keys(BTreeSet<ServiceKey>),
 }
 
 impl ServiceSelection {

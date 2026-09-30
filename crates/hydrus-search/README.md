@@ -27,6 +27,22 @@ Current result: 7,965 inputs; 7,518 identical (4,296 same predicate, 3,222
 rejected by both), 447 documented deviations, 0 unexplained. All 60 Client
 API tag lists identical.
 
+## Writing predicates
+
+`predicate_text` writes a predicate as the reference writes it (its
+`Predicate.ToString` without a count, as a search page lists it):
+`system:width > 1,920`, `system:import time: since 60 days ago`,
+`character:*anything*`, `a OR b` with the members in the reference's order.
+`tests/predicate_text.rs` checks it against the reference's text for every
+predicate the reference parsed (decoded from the form it stored, so parsing
+differences don't enter into it; 4,604 predicates, all identical) and for
+the Client API tag lists. It needs the client's services and viewing options
+(`TextContext`) to name services and default canvases. Where our predicates
+hold what the reference's cannot, the text extends its wording: an age in
+minutes or seconds, a service name no service has (written as named), and
+`num file relationships ≠ n` (the reference fails to write it; we write
+"has not n").
+
 ## Supported syntax
 
 Everything the reference's `SystemPredicateParser` accepts, with the same

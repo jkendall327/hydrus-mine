@@ -16,8 +16,9 @@ open an editor; not yet). Typing in the search box lists
 the matching tags with their counts (display tags, all known tags, all my
 files; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
-system predicate; a leading hyphen excludes. Double-clicking a predicate
-removes it. The matching files' thumbnails fill the grid, newest import
+system predicate; a leading hyphen excludes. Predicates are listed as the
+reference writes them (`system:width>1920` shows as `system:width > 1,920`),
+and double-clicking one removes it. The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is decoded when its row first comes
 into view. Double-clicking a thumbnail opens the media viewer in its own

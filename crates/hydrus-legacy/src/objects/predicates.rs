@@ -7,36 +7,53 @@
 //! upgrade chain (v1-7) only reshaped a few types' values and is applied
 //! inline.
 //!
-//! Not decoded: ratings (a stored rating is a fraction of the service's
-//! scale, which our predicate holds as stars, so it needs the service) and
-//! the GUI's placeholder types (`system:dimensions`, `system:time` and the
-//! like, which are menus, not searches). They are errors, so the caller can
-//! say which search it could not bring over.
+//! A stored rating on a numerical service is a fraction of the service's
+//! scale, which our predicate holds as stars, so decoding one needs the
+//! service's scale ([`predicate_with_scales`]). Not decoded: the retired
+//! "any rating" type and the GUI's placeholder types (`system:dimensions`,
+//! `system:time` and the like, which are menus, not searches). They are
+//! errors, so the caller can say which search it could not bring over.
 
 use std::collections::BTreeSet;
 use std::str::FromStr;
 
 use hydrus_core::search::filetype::FiletypeSet;
-use hydrus_core::search::number::{Comparison, NumberOp, NumberTest, RatioOp, TagNumberOp};
+use hydrus_core::search::number::{
+    Comparison, NumberOp, NumberTest, RatingOp, RatioOp, TagNumberOp,
+};
 use hydrus_core::search::predicate::{
-    FileHashes, FileProperty, NamespaceFilter, NumericProperty, PixelUnit, Predicate, Relationship,
-    ServiceRef, SizeUnit, SystemPredicate, TagDisplayType, UrlRule, ViewCanvas, ViewCanvases,
-    ViewingStat, Wildcard,
+    FileHashes, FileProperty, NamespaceFilter, NumericProperty, PixelUnit, Predicate, RatingLogic,
+    RatingTest, Relationship, ServiceRef, ServiceSelection, SizeUnit, SystemPredicate,
+    TagDisplayType, UrlRule, ViewCanvas, ViewCanvases, ViewingStat, Wildcard,
 };
 use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
-use hydrus_core::{ContentStatus, DuplicateType, Mime, Tag};
+use hydrus_core::{ContentStatus, DuplicateType, Mime, ServiceKey, ServiceType, Tag};
 
 use crate::objects::util::{
-    DecodeResult, boolean, float, int, list, list_items, malformed, nested, service_key, string,
-    tuple,
+    DecodeResult, boolean, float, int, list, list_items, malformed, nested, service_key,
+    service_keys, string, tuple,
 };
 use crate::pyjson::PyJson;
 use crate::serialisable::{Meta, SerialisableObject, SerialisableType};
 
 const KIND: SerialisableType = SerialisableType::PREDICATE;
 
-/// Decode a stored predicate.
+/// The scale of a numerical rating service: its number of stars, and
+/// whether zero stars is a rating.
+pub type StarScale = (u64, bool);
+
+/// Decode a stored predicate. A rating on a numerical service decodes only
+/// at the top or bottom of its scale; see [`predicate_with_scales`].
 pub fn predicate(object: &SerialisableObject) -> DecodeResult<Predicate> {
+    predicate_with_scales(object, &|_| None)
+}
+
+/// Decode a stored predicate, given the scale of each numerical rating
+/// service (`None` for other services).
+pub fn predicate_with_scales(
+    object: &SerialisableObject,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> DecodeResult<Predicate> {
     object.expect_kind(KIND)?;
     object.check_not_future()?;
     let info = object.info();
@@ -50,6 +67,7 @@ pub fn predicate(object: &SerialisableObject) -> DecodeResult<Predicate> {
         int(KIND, kind, "predicate type")?,
         value,
         inclusive,
+        scales,
     )
 }
 
@@ -63,7 +81,13 @@ fn unsupported(what: &str) -> crate::serialisable::SerialisableError {
 }
 
 #[allow(clippy::too_many_lines)]
-fn decode(version: u32, kind: i64, value: &PyJson, inclusive: bool) -> DecodeResult<Predicate> {
+fn decode(
+    version: u32,
+    kind: i64,
+    value: &PyJson,
+    inclusive: bool,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> DecodeResult<Predicate> {
     use SystemPredicate as S;
     let system = |p: SystemPredicate| Ok(Predicate::System(p));
     match kind {
@@ -188,7 +212,32 @@ fn decode(version: u32, kind: i64, value: &PyJson, inclusive: bool) -> DecodeRes
                 inclusive,
             })
         }
-        18 | 55 | 66 => Err(unsupported("rating")),
+        18 => {
+            let [op, value, key] = tuple::<3>(KIND, value, "rating")?;
+            let service = service_key(KIND, key, "rating service")?;
+            let test = rating_test(op, value, scales(&service))?;
+            system(S::Rating {
+                service: ServiceRef::Key(service),
+                test,
+            })
+        }
+        55 => Err(unsupported("\"any rating\"")),
+        66 => {
+            let [logic, primary, secondary, rated] = tuple::<4>(KIND, value, "advanced rating")?;
+            let logic = match int(KIND, logic, "logical operator")? {
+                0 => RatingLogic::All,
+                1 => RatingLogic::Any,
+                2 => RatingLogic::Only {
+                    amongst: service_selection(secondary)?,
+                },
+                other => return Err(malformed(KIND, format!("unknown logical operator {other}"))),
+            };
+            system(S::RatingAdvanced {
+                logic,
+                services: service_selection(primary)?,
+                rated: boolean(KIND, rated, "rated")?,
+            })
+        }
         19 => {
             let [hashes, distance] = tuple::<2>(KIND, value, "similar files")?;
             let hashes: Vec<&PyJson> = match hashes {
@@ -307,7 +356,7 @@ fn decode(version: u32, kind: i64, value: &PyJson, inclusive: bool) -> DecodeRes
             let predicates = items
                 .iter()
                 .map(|item| match item {
-                    Meta::Object(object) => predicate(object),
+                    Meta::Object(object) => predicate_with_scales(object, scales),
                     _ => Err(malformed(KIND, "an OR member is not a predicate")),
                 })
                 .collect::<DecodeResult<_>>()?;
@@ -424,6 +473,81 @@ fn count_value(value: &PyJson, what: &str) -> DecodeResult<u64> {
         ));
     }
     Ok(n as u64)
+}
+
+/// A stored rating test: `"rated"` or `"not rated"`, a count (an int), or
+/// a rating (a float, a fraction of the service's scale).
+#[allow(clippy::float_cmp)] // the ends of a scale are stored exactly
+fn rating_test(op: &PyJson, value: &PyJson, scale: Option<StarScale>) -> DecodeResult<RatingTest> {
+    let op = match string(KIND, op, "operator")?.as_str() {
+        "=" => RatingOp::Equal,
+        "<" => RatingOp::Less,
+        ">" => RatingOp::Greater,
+        "\u{2264}" => RatingOp::LessOrEqual,
+        "\u{2265}" => RatingOp::GreaterOrEqual,
+        "\u{2248}" => RatingOp::Approx,
+        other => {
+            return Err(malformed(
+                KIND,
+                format!("unknown rating operator {other:?}"),
+            ));
+        }
+    };
+    match value {
+        PyJson::Str(s) if s == "rated" => Ok(RatingTest::Rated),
+        PyJson::Str(s) if s == "not rated" => Ok(RatingTest::NotRated),
+        PyJson::Int(_) => Ok(RatingTest::Count {
+            op,
+            value: count_value(value, "rating")?,
+        }),
+        PyJson::Float(rating) => match scale {
+            Some((num_stars, allow_zero)) => Ok(RatingTest::Stars {
+                op,
+                stars: rating_to_stars(num_stars, allow_zero, *rating),
+                out_of: num_stars,
+            }),
+            None if op == RatingOp::Equal && *rating == 1.0 => Ok(RatingTest::Liked),
+            None if op == RatingOp::Equal && *rating == 0.0 => Ok(RatingTest::Disliked),
+            None => Err(malformed(
+                KIND,
+                "a rating between the ends of a scale needs its service's number of stars",
+            )),
+        },
+        other => Err(malformed(KIND, format!("unknown rating {other:?}"))),
+    }
+}
+
+/// `ClientRatings.ConvertRatingToStars`.
+fn rating_to_stars(num_stars: u64, allow_zero: bool, rating: f64) -> u64 {
+    let stars = if allow_zero {
+        (rating * num_stars as f64).round_ties_even()
+    } else {
+        (rating * num_stars.saturating_sub(1) as f64).round_ties_even() + 1.0
+    };
+    stars.max(0.0) as u64
+}
+
+/// A stored `ServiceSpecifier`: service types, or else service keys.
+fn service_selection(value: &PyJson) -> DecodeResult<ServiceSelection> {
+    let object = nested(KIND, value, "service specifier")?;
+    object.expect_kind(SerialisableType::SERVICE_SPECIFIER)?;
+    let info = object.info();
+    let [types, keys] = tuple::<2>(SerialisableType::SERVICE_SPECIFIER, &info, "specifier")?;
+    let types = list(KIND, types, "service types")?;
+    if types.is_empty() {
+        Ok(ServiceSelection::Keys(
+            service_keys(KIND, keys, "service keys")?
+                .into_iter()
+                .collect(),
+        ))
+    } else {
+        Ok(ServiceSelection::Types(
+            types
+                .iter()
+                .map(|t| code_of(t, "service type", ServiceType::from_code))
+                .collect::<DecodeResult<_>>()?,
+        ))
+    }
 }
 
 fn comparison(value: &PyJson) -> DecodeResult<Comparison> {

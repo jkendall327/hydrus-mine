@@ -13,7 +13,7 @@ export component MediaViewerWindow inherits Window {
 
     callback next();
     callback previous();
-    callback close();
+    callback close-requested();
 
     forward-focus: keys;
     keys := FocusScope {
@@ -27,7 +27,7 @@ export component MediaViewerWindow inherits Window {
                 return accept;
             }
             if (event.text == Key.Escape) {
-                root.close();
+                root.close-requested();
                 return accept;
             }
             reject

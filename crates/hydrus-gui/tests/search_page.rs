@@ -60,6 +60,16 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(inbox <= everything);
     page.remove_predicate(1);
     assert_eq!(page.results().len(), everything);
+    // listed as the reference writes them
+    page.add_predicate("system:width>1920");
+    assert_eq!(page.predicates()[1], "system:width > 1,920");
+    page.add_predicate("system:width > 1920");
+    assert_eq!(
+        page.predicates().len(),
+        2,
+        "the same predicate, typed differently"
+    );
+    page.remove_predicate(1);
 
     // autocomplete: tags matching what's typed, with counts; enter adds the
     // highlighted one and empties the box
@@ -183,6 +193,6 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(covered > 800 * 600 / 2, "{covered} pixels");
     viewer.invoke_next();
     assert_eq!(viewer.get_caption(), format!("4/{everything}"));
-    viewer.invoke_close();
+    viewer.invoke_close_requested();
     assert!(bound.viewer.borrow().is_none());
 }

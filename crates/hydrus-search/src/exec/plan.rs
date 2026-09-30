@@ -874,6 +874,10 @@ fn rating_services<'e>(
             }
             Ok(out)
         }
+        ServiceSelection::Keys(keys) => keys
+            .iter()
+            .map(|key| resolve_service(env, &ServiceRef::Key(key.clone()), local, "rating"))
+            .collect(),
     }
 }
 

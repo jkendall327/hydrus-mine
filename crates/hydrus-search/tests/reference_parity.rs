@@ -21,6 +21,8 @@ use std::path::PathBuf;
 
 use serde_json::{Value, json};
 
+use hydrus_core::ServiceKey;
+
 use hydrus_search::{
     CalendarDelta, FileHashes, FileProperty, NumberOp, NumericProperty, ParseErrorKind, Predicate,
     RatingLogic, RatingTest, ServiceRef, ServiceSelection, SystemPredicate, TagDisplayType,
@@ -283,6 +285,7 @@ fn selection_json(
                 keys.push(service.key.clone());
             }
         }
+        Some(ServiceSelection::Keys(k)) => keys = k.iter().map(ServiceKey::to_hex).collect(),
     }
     types.sort_unstable();
     keys.sort();
@@ -925,13 +928,20 @@ fn api_searches_match_the_reference() {
 }
 
 /// Stored predicates (the reference's serialised form of each predicate it
-/// parsed) decode to what the reference parsed. Ratings are not decoded yet
-/// (see `hydrus_legacy::objects::predicates`), and URL class predicates are
-/// not recorded (the fixture's URL classes are stubs).
+/// parsed) decode to what the reference parsed, ratings given their
+/// services' scales. URL class predicates are not recorded (the fixture's URL
+/// classes are stubs).
 #[test]
 fn stored_predicates_decode_to_what_the_reference_parsed() {
     let fixture = fixture();
     let registry = Registry::new(&fixture);
+    let scales = |key: &ServiceKey| {
+        registry
+            .services
+            .iter()
+            .find(|s| s.key == key.to_hex())
+            .and_then(|s| Some((s.num_stars?, s.allow_zero?)))
+    };
     let mut report = String::new();
     let (mut decoded, mut ratings) = (0, 0);
     for case in fixture["system_predicates"].as_array().unwrap() {
@@ -943,9 +953,17 @@ fn stored_predicates_decode_to_what_the_reference_parsed() {
         )
         .expect("a serialised tuple");
         let expected = canonical(&case["predicate"]);
-        match hydrus_legacy::objects::predicates::predicate(&stored) {
+        match hydrus_legacy::objects::predicates::predicate_with_scales(&stored, &scales) {
             Ok(pred) => {
                 decoded += 1;
+                if matches!(
+                    pred,
+                    Predicate::System(
+                        SystemPredicate::Rating { .. } | SystemPredicate::RatingAdvanced { .. }
+                    )
+                ) {
+                    ratings += 1;
+                }
                 let mut ours = predicate_json(&registry, &pred).map(|v| canonical(&v));
                 // a stored age is kept as stored (the parser's ages are
                 // normalised to days and hours at "now" by `time_json`)
@@ -968,11 +986,7 @@ fn stored_predicates_decode_to_what_the_reference_parsed() {
                 }
             }
             Err(e) => {
-                if expected["type"] == "system_rating"
-                    || expected["type"] == "system_rating_advanced"
-                {
-                    ratings += 1;
-                } else if matches!(
+                if matches!(
                     compare(&registry, case),
                     Outcome::WrongHashLength | Outcome::NumberTooLarge | Outcome::UnsupportedDate
                 ) {
@@ -983,7 +997,8 @@ fn stored_predicates_decode_to_what_the_reference_parsed() {
             }
         }
     }
-    println!("{decoded} decoded, {ratings} ratings skipped");
+    println!("{decoded} decoded, {ratings} of them ratings");
     assert!(report.is_empty(), "stored predicates differ:\n{report}");
-    assert!(decoded > 3000);
+    assert!(decoded > 4000);
+    assert!(ratings > 1000);
 }

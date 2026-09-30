@@ -4,14 +4,15 @@
 //! serialised objects (service settings, Client API keys, client options)
 //! into native settings, via `hydrus-legacy`'s typed decoders.
 
-use std::collections::BTreeSet;
+use std::collections::{BTreeSet, HashMap};
 
 use serde_json::{Value as Json, json};
 
 use hydrus_core::tag_filter::{FilterRule, TagFilter};
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
-use hydrus_core::{CanvasType, DuplicateType, ServiceType};
+use hydrus_core::{CanvasType, DuplicateType, ServiceKey, ServiceType};
 use hydrus_legacy::LegacyDb;
+use hydrus_legacy::objects::predicates::{StarScale, predicate_with_scales};
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
 
@@ -32,7 +33,12 @@ use crate::settings::{FavouriteTags, FileViewingStatistics, Setting};
 /// Decode everything the importer needs from the reference install `db`.
 pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let mut input = ImportInput::default();
+    // numerical rating services' scales, for the ratings stored searches test
+    let mut scales: HashMap<ServiceKey, StarScale> = HashMap::new();
     for service in db.services()? {
+        if let ServiceConfig::NumericalRating(c) = &service.config {
+            scales.insert(service.key.clone(), (u64::from(c.num_stars), c.allow_zero));
+        }
         if settingless_kind(service.service_type).is_none() {
             input
                 .service_kinds
@@ -297,7 +303,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             for (name, decoded) in folders {
                 let folder = decoded.map_err(|e| e.to_string()).and_then(|f| {
                     Ok(hydrus_parse::folders::ExportFolder {
-                        search: file_search(&f.search)?,
+                        search: file_search(&f.search, &|key| scales.get(key).copied())?,
                         name: f.name,
                         path: f.path,
                         export_type: if f.export_type == 1 {
@@ -366,7 +372,8 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         Ok(rules) => {
             for (name, decoded) in rules {
                 let converted = decoded.map_err(|e| e.to_string()).and_then(|r| {
-                    auto_resolution_rule(&r, &mut input.warnings).map(|rule| (r.id, rule))
+                    auto_resolution_rule(&r, &|key| scales.get(key).copied(), &mut input.warnings)
+                        .map(|rule| (r.id, rule))
                 });
                 match converted {
                     Ok(rule) => input.auto_resolution_rules.push(rule),
@@ -384,10 +391,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
 }
 
 /// A stored duplicates auto-resolution rule in our model, or why it can't
-/// be converted. Warnings about details that were dropped are added to
-/// `warnings`.
+/// be converted. `scales` gives each numerical rating service's scale (see
+/// [`predicate_with_scales`]). Warnings about details that were dropped are
+/// added to `warnings`.
 pub fn auto_resolution_rule(
     r: &legacy::auto_resolution::AutoResolutionRule,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
     warnings: &mut Vec<String>,
 ) -> std::result::Result<crate::duplicates::auto::Rule, String> {
     use crate::duplicates::auto::{OperationMode, Rule, RuleAction, RuleSearch};
@@ -406,8 +415,8 @@ pub fn auto_resolution_rule(
             .max_pending_pairs
             .map(|n| u32::try_from(n.max(0)).unwrap_or(u32::MAX)),
         search: RuleSearch {
-            search_1: file_search(&search.search_1)?,
-            search_2: file_search(&search.search_2)?,
+            search_1: file_search(&search.search_1, scales)?,
+            search_2: file_search(&search.search_2, scales)?,
             kind: match search.dupe_search_type {
                 0 => PairSearchKind::OneFileMatchesOneSearch,
                 1 => PairSearchKind::BothFilesMatchOneSearch,
@@ -426,7 +435,7 @@ pub fn auto_resolution_rule(
         comparators: r
             .comparators
             .iter()
-            .map(comparator)
+            .map(|c| comparator(c, scales))
             .collect::<std::result::Result<_, _>>()?,
         action: u8::try_from(r.action)
             .ok()
@@ -446,6 +455,7 @@ pub fn auto_resolution_rule(
 
 fn file_search(
     f: &legacy::FileSearchContext,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
 ) -> std::result::Result<hydrus_core::search::context::FileSearchContext, String> {
     use hydrus_core::search::context::{FileSearchContext, LocationContext, TagContext};
     Ok(FileSearchContext {
@@ -459,21 +469,23 @@ fn file_search(
             include_pending: f.tag_context.include_pending_tags,
             display_service: f.tag_context.display_service_key.clone(),
         },
-        predicates: predicates(&f.predicates)?,
+        predicates: predicates(&f.predicates, scales)?,
     })
 }
 
 fn predicates(
     stored: &[hydrus_legacy::serialisable::SerialisableObject],
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
 ) -> std::result::Result<Vec<hydrus_core::search::predicate::Predicate>, String> {
     stored
         .iter()
-        .map(|p| hydrus_legacy::objects::predicates::predicate(p).map_err(|e| e.to_string()))
+        .map(|p| predicate_with_scales(p, scales).map_err(|e| e.to_string()))
         .collect()
 }
 
 fn comparator(
     c: &legacy::auto_resolution::Comparator,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
 ) -> std::result::Result<crate::duplicates::auto::Comparator, String> {
     use crate::duplicates::auto::{Comparator, LookingAt, OneFileTest, PairTest};
     use hydrus_core::search::comparable::Comparable;
@@ -491,7 +503,7 @@ fn comparator(
             search,
         } => Comparator::OneFileMetadata {
             looking_at: looking_at(*l)?,
-            predicates: predicates(&search.predicates)?,
+            predicates: predicates(&search.predicates, scales)?,
         },
         L::OneFileHardcoded {
             looking_at: l,
@@ -526,13 +538,13 @@ fn comparator(
         L::Or(members) => Comparator::Or(
             members
                 .iter()
-                .map(comparator)
+                .map(|c| comparator(c, scales))
                 .collect::<std::result::Result<_, _>>()?,
         ),
         L::And(members) => Comparator::And(
             members
                 .iter()
-                .map(comparator)
+                .map(|c| comparator(c, scales))
                 .collect::<std::result::Result<_, _>>()?,
         ),
     })
@@ -1153,7 +1165,7 @@ mod tests {
                 hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&stored)
                     .unwrap();
             let mut warnings = Vec::new();
-            let rule = auto_resolution_rule(&legacy, &mut warnings)
+            let rule = auto_resolution_rule(&legacy, &|_| None, &mut warnings)
                 .unwrap_or_else(|e| panic!("{}: {e}", legacy.name));
             let expected = &case["expected"];
             assert_eq!(rule.name, expected["name"].as_str().unwrap());

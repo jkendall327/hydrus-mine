@@ -42,6 +42,7 @@ impl SerialisableType {
     pub const GUI_SESSION_CONTAINER: Self = Self(104);
     pub const GUI_SESSION_PAGE_DATA: Self = Self(105);
     pub const DUPLICATES_AUTO_RESOLUTION_RULE: Self = Self(128);
+    pub const SERVICE_SPECIFIER: Self = Self(142);
     pub const NOTE_IMPORT_OPTIONS: Self = Self(153);
 
     pub const fn code(self) -> u16 {

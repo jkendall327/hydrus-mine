@@ -179,8 +179,6 @@ in-memory predicate tests their comparators use by
   minute rather than woken by new pairs.
 - **URL class predicates match by the class's name** as it is now; the
   reference tests the copy of the class stored in the rule.
-- **Ratings in a rule's searches are not supported yet**; such a rule is
-  reported at migration and left behind.
 
 ## Import folders and sidecars (`hydrus-download::folders`, `hydrus-parse::sidecar`)
 

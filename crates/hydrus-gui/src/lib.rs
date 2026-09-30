@@ -226,7 +226,7 @@ fn open_viewer(
         model.borrow_mut().previous();
         show();
     });
-    window.on_close({
+    window.on_close_requested({
         let weak = window.as_weak();
         let slot = slot.clone();
         move || {
@@ -257,7 +257,11 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
             .and_then(|i| i32::try_from(i).ok())
             .unwrap_or(-1),
     );
-    let predicates: Vec<SharedString> = page.predicates().iter().map(Into::into).collect();
+    let predicates: Vec<SharedString> = page
+        .predicates()
+        .into_iter()
+        .map(SharedString::from)
+        .collect();
     window.set_predicates(ModelRc::new(VecModel::from(predicates)));
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());

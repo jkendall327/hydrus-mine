@@ -39,6 +39,7 @@
 //! against its output in `oracle/fixtures/system_predicates.json`), except
 //! for the deliberate differences listed in this crate's README.
 //! [`parse_api_search`] parses the Client API's JSON `tags` list.
+//! [`predicate_text`] writes a predicate as the reference writes it.
 //!
 //! # Execution
 //!
@@ -56,6 +57,7 @@ mod filetype_tests;
 pub use hydrus_core::search::number;
 pub mod parse;
 pub use hydrus_core::search::predicate;
+pub mod text;
 pub use hydrus_core::search::time;
 
 pub use api::parse_api_search;
@@ -72,6 +74,7 @@ pub use predicate::{
     RatingTest, Relationship, ServiceRef, ServiceSelection, SizeUnit, SystemPredicate,
     TagDisplayType, UrlRule, ViewCanvas, ViewCanvases, ViewingStat, Wildcard,
 };
+pub use text::{NamedService, TextContext, predicate_text};
 pub use time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
 
 #[cfg(test)]
