@@ -500,6 +500,15 @@ pub fn insert_with_id(
     Ok(())
 }
 
+/// Change a service's settings (its kind stays the same).
+pub fn update_config(conn: &Connection, id: ServiceId, kind: &ServiceKind) -> Result<()> {
+    conn.execute(
+        "UPDATE services SET config = ? WHERE service_id = ?",
+        params![kind.config_json()?, id],
+    )?;
+    Ok(())
+}
+
 /// Delete a service row and its per-service tables. Callers must first remove
 /// the service's content from shared tables (file domains, ratings, ...).
 pub fn delete(conn: &Connection, id: ServiceId) -> Result<()> {

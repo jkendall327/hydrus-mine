@@ -93,7 +93,7 @@ status = "done"
 
 [[api]]
 path = "/client_info"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/edit_ratings/set_rating"
@@ -155,7 +155,7 @@ status = "done"
 
 [[api]]
 path = "/get_service_rating_svg"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/get_services"
@@ -303,12 +303,12 @@ status = "todo"
 
 [[api]]
 path = "/request_new_permissions"
-status = "todo"
+status = "partial"
+notes = "refused as the reference refuses it while its registration dialog is closed; hydrus-rs has no such dialog yet"
 
 [[api]]
 path = "/session_key"
-status = "partial"
-notes = "implemented; no recorded scenario yet"
+status = "done"
 
 [[api]]
 path = "/verify_access_key"

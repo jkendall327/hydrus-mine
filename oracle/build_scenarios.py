@@ -741,6 +741,43 @@ def random_relationship_scenarios():
     return out
 
 
+def random( step, *keys ):
+    """Mark top-level response keys whose values are random (compared by type)."""
+
+    step[ 'random' ] = list( keys )
+
+    return step
+
+
+def access_more_scenarios():
+
+    svg = '/get_service_rating_svg'
+
+    steps = [
+        random( get( '/session_key' ), 'session_key' ),
+        random( get( '/session_key', key = 'restricted' ), 'session_key' ),
+        get( '/session_key', key = 'none' ),
+        random( get( '/client_info' ), 'boot_id', 'boot_time', 'currently_idle' ),
+        random( get( '/client_info', key = 'restricted' ), 'boot_id', 'boot_time', 'currently_idle' ),
+        get( '/client_info', key = 'none' ),
+        get( '/request_new_permissions', key = 'none', name = 'a tool', basic_permissions = [ 0, 1 ] ),
+        get( '/request_new_permissions', key = 'none' ),
+        get( svg, service_key = KEYS[ 'stars' ] ),
+        get( svg, service_key = KEYS[ 'favourites' ] ),
+        get( svg, service_name = 'stars' ),
+        get( svg, service_key = KEYS[ 'counter' ] ),
+        get( svg, service_key = KEYS[ 'my_tags' ] ),
+        get( svg, service_name = 'my tags' ),
+        get( svg, service_name = 'no such service' ),
+        get( svg, service_key = 'ff' * 32 ),
+        get( svg ),
+        get( svg, service_key = KEYS[ 'stars' ], key = 'restricted' ),
+        get( svg, service_key = KEYS[ 'stars' ], key = 'none' ),
+    ]
+
+    return scenario( 'access_more', 'session keys, client info, permission requests, rating SVGs', steps, read_only = True )
+
+
 def database_scenarios():
 
     bones = '/manage_database/mr_bones'
@@ -817,7 +854,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios()
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios() ]
 
     for sc in scenarios:
 

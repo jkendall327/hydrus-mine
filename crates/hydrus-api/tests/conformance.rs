@@ -18,7 +18,9 @@
 //!   JSON paths left out of one step's comparison, or whole steps skipped.
 //! - how long ago something happened, in human-readable notes ("which was
 //!   43 minutes ago before this check"), depends on when the recording was
-//!   made, so that phrase is a placeholder.
+//!   made, so that phrase is a placeholder;
+//! - a step's `random` keys (session keys, boot ids) compare by type, and
+//!   strings by length.
 
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
@@ -111,6 +113,16 @@ fn known_differences() -> Vec<KnownDifference> {
     )
     .unwrap();
     toml::from_str::<File>(&text).unwrap().difference
+}
+
+/// What can be compared of a random value: its type, and a string's length.
+fn mask_random(value: &Json) -> Json {
+    match value {
+        Json::String(s) => Json::String(format!("{{random string of {}}}", s.chars().count())),
+        Json::Number(_) => Json::String("{random number}".into()),
+        Json::Bool(_) => Json::String("{random bool}".into()),
+        other => other.clone(),
+    }
 }
 
 /// Remove the value at `path` (`$.a.b[0].c`) if present. A `*` segment
@@ -395,6 +407,14 @@ async fn replay_step(
                 if let Some((recorded_start, replay_start)) = now_window {
                     normalise_now(&mut expected, recorded_start);
                     normalise_now(&mut actual, replay_start);
+                }
+                for key in step["random"].as_array().into_iter().flatten() {
+                    let key = key.as_str().unwrap();
+                    for v in [&mut actual, &mut expected] {
+                        if let Some(value) = v.get_mut(key) {
+                            *value = mask_random(value);
+                        }
+                    }
                 }
                 if step["compare"].as_str() == Some("unordered_lists") {
                     sort_arrays(&mut actual);

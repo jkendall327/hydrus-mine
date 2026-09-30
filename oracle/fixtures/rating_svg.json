@@ -1,0 +1,93 @@
+{
+ "custom_svg": "<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 10 10\"><rect width=\"10\" height=\"10\"/></svg>\n",
+ "requests": [
+  {
+   "content_type": "image/svg+xml",
+   "length": 6861,
+   "name": "favourites",
+   "path": "/get_service_rating_svg",
+   "service_key": "6661766f757269746573",
+   "sha256": "2a9c1e8194cf16634764289285ade3335eba6427f8bc6402975703b61e28938e",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "favourites",
+     "service_key": "6661766f757269746573",
+     "type": 7,
+     "type_pretty": "local like/dislike rating service"
+    },
+    "version": 95
+   },
+   "name": "favourites",
+   "path": "/get_service",
+   "service_key": "6661766f757269746573",
+   "status": 200
+  },
+  {
+   "content_type": "image/svg+xml",
+   "length": 97,
+   "name": "stars",
+   "path": "/get_service_rating_svg",
+   "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+   "sha256": "5248738f90d53a841638d0d95057c1cd6244001c4a14f79ac5a909c296de6622",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "stars",
+     "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+     "type": 6,
+     "type_pretty": "local numerical rating service"
+    },
+    "version": 95
+   },
+   "name": "stars",
+   "path": "/get_service",
+   "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No SVG with the name \"star_shapes/gone\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "name": "missing svg",
+   "path": "/get_service_rating_svg",
+   "service_key": "5b36524f1ed56637d3221ec4832ac87a19a09c24707575defc519b05d9e952a7",
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "service": {
+     "name": "missing svg",
+     "service_key": "5b36524f1ed56637d3221ec4832ac87a19a09c24707575defc519b05d9e952a7",
+     "type": 6,
+     "type_pretty": "local numerical rating service"
+    },
+    "version": 95
+   },
+   "name": "missing svg",
+   "path": "/get_service",
+   "service_key": "5b36524f1ed56637d3221ec4832ac87a19a09c24707575defc519b05d9e952a7",
+   "status": 200
+  }
+ ],
+ "svgs": {
+  "favourites": "heart-cute",
+  "missing svg": "gone",
+  "stars": "mine"
+ }
+}

@@ -8,6 +8,7 @@ use serde_json::{Map, Value as Json, json};
 use hydrus_core::ServiceType;
 use hydrus_core::sort::human_sort;
 use hydrus_core::tag::clean_tag_checked;
+use hydrus_store::services::{ServiceKind, StarAppearance};
 
 use crate::AppState;
 use crate::auth::Permission;
@@ -50,6 +51,171 @@ pub async fn session_key(
         json!({ "session_key": hex::encode(session) }),
         &req,
     ))
+}
+
+/// When this client started, and an id for this run of it.
+pub async fn client_info(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?;
+    Ok(ApiResponse::json(
+        json!({
+            "boot_id": hex::encode(app.boot_id),
+            "boot_time": app.boot_time_ms as f64 / 1000.0,
+            // without a GUI there is no user to be idle
+            "currently_idle": false,
+        }),
+        &req,
+    ))
+}
+
+/// Access keys are requested while the reference's registration dialog is
+/// open; hydrus-rs has no such dialog yet.
+pub async fn request_new_permissions() -> ApiResult<ApiResponse> {
+    Err(ApiError::new(
+        ErrorKind::Conflict,
+        "The permission registration dialog is not open. hydrus-rs has no such dialog yet, so access keys cannot be requested this way.",
+    ))
+}
+
+/// The rating SVGs the reference ships (`static/star_shapes`).
+const BUNDLED_RATING_SVGS: &[(&str, &[u8])] = &[
+    (
+        "architecture",
+        include_bytes!("../../../../static/star_shapes/architecture.svg"),
+    ),
+    (
+        "art-palette",
+        include_bytes!("../../../../static/star_shapes/art-palette.svg"),
+    ),
+    (
+        "cinema-reel",
+        include_bytes!("../../../../static/star_shapes/cinema-reel.svg"),
+    ),
+    (
+        "eye",
+        include_bytes!("../../../../static/star_shapes/eye.svg"),
+    ),
+    (
+        "heart-cute",
+        include_bytes!("../../../../static/star_shapes/heart-cute.svg"),
+    ),
+    (
+        "inspiration",
+        include_bytes!("../../../../static/star_shapes/inspiration.svg"),
+    ),
+    (
+        "scenery",
+        include_bytes!("../../../../static/star_shapes/scenery.svg"),
+    ),
+    (
+        "smile",
+        include_bytes!("../../../../static/star_shapes/smile.svg"),
+    ),
+    (
+        "spiral",
+        include_bytes!("../../../../static/star_shapes/spiral.svg"),
+    ),
+    (
+        "star",
+        include_bytes!("../../../../static/star_shapes/star.svg"),
+    ),
+    (
+        "wallpaper",
+        include_bytes!("../../../../static/star_shapes/wallpaper.svg"),
+    ),
+];
+
+/// A rating service's SVG icon: the user's own (`static/star_shapes` in the
+/// store) before the bundled one of that name.
+pub async fn get_service_rating_svg(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?.check_any(SERVICE_READERS)?;
+    let snapshot = app.store.snapshot();
+    let registry = &snapshot.services;
+    let is_rating = |t: ServiceType| {
+        matches!(
+            t,
+            ServiceType::LocalRatingLike | ServiceType::LocalRatingNumerical
+        )
+    };
+    let key = if let Some(key) = req
+        .params
+        .optional::<hydrus_core::ServiceKey>("service_key")?
+    {
+        key
+    } else if let Some(name) = req.params.optional::<String>("service_name")? {
+        registry
+            .all()
+            .find(|s| s.name == name && is_rating(s.service_type()))
+            .map(|s| s.key.clone())
+            .ok_or_else(|| {
+                ApiError::new(
+                    ErrorKind::NotFound,
+                    format!("Sorry, did not find a service with name \"{name}\"!"),
+                )
+            })?
+    } else {
+        return Err(ApiError::bad_request(
+            "Sorry, you need to give a service_key or service_name!",
+        ));
+    };
+    let service = registry.by_key(&key).map_err(|_| {
+        ApiError::new(
+            ErrorKind::NotFound,
+            format!(
+                "Sorry, did not find a service with key \"{}\"!",
+                key.to_hex()
+            ),
+        )
+    })?;
+    let appearance = match &service.kind {
+        ServiceKind::RatingLike(config) => &config.appearance,
+        ServiceKind::RatingNumerical(config) => &config.appearance,
+        _ => {
+            return Err(ApiError::bad_request(
+                "This type of service cannot have a SVG associated with it!",
+            ));
+        }
+    };
+    let StarAppearance::Svg(name) = appearance else {
+        return Err(ApiError::new(
+            ErrorKind::NotFound,
+            format!(
+                "Rating service \"{}\" does not use a SVG icon!",
+                service.name
+            ),
+        ));
+    };
+    let custom = app
+        .store
+        .dir()
+        .join("static")
+        .join("star_shapes")
+        .join(format!("{name}.svg"));
+    let body = if custom.is_file() {
+        std::fs::read(&custom).map_err(|e| {
+            ApiError::server(format!(
+                "There was a problem getting the SVG file for rating service \"{}\"! Error follows: {e}",
+                service.name
+            ))
+        })?
+    } else if let Some((_, svg)) = BUNDLED_RATING_SVGS.iter().find(|(n, _)| n == name) {
+        svg.to_vec()
+    } else {
+        return Err(ApiError::new(
+            ErrorKind::NotFound,
+            format!("No SVG with the name \"star_shapes/{name}\"!"),
+        ));
+    };
+    Ok(ApiResponse::Bytes {
+        content_type: "image/svg+xml".into(),
+        body: body.into(),
+        cache: false,
+    })
 }
 
 const SERVICE_READERS: &[Permission] = &[

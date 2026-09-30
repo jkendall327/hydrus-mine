@@ -68,6 +68,9 @@ before its first run after a move, and it is linked afresh. Configuration hydrus
 yet (pages, the GUI's options) is kept verbatim inside the new store, so
 later versions can pick it up without a re-import.
 
+Custom assets in the install's `db/static` folder (your own rating star
+shapes, for instance) are copied into the new store's `static` folder.
+
 Autocomplete counts and other caches are rebuilt rather than copied.
 
 ## Media files: `--files`

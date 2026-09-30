@@ -244,11 +244,34 @@ fn import_legacy(source: &Path, dest: &Path, mode: TransferMode) -> Result<()> {
             transfer.destination.display()
         );
     }
+    // custom assets (the user's own star shapes, icons ...)
+    let assets = source.join("static");
+    if assets.is_dir() {
+        let copied = copy_dir(&assets, &dest.join("static")).context("copying custom assets")?;
+        println!("  {copied} custom assets (static) copied");
+    }
     println!(
         "done. run `hydrus serve {}` to start the Client API.",
         dest.display()
     );
     Ok(())
+}
+
+/// Copy a directory tree, returning how many files were copied.
+fn copy_dir(from: &Path, to: &Path) -> Result<u64> {
+    std::fs::create_dir_all(to)?;
+    let mut copied = 0;
+    for entry in std::fs::read_dir(from)? {
+        let entry = entry?;
+        let target = to.join(entry.file_name());
+        if entry.file_type()?.is_dir() {
+            copied += copy_dir(&entry.path(), &target)?;
+        } else {
+            std::fs::copy(entry.path(), &target)?;
+            copied += 1;
+        }
+    }
+    Ok(copied)
 }
 
 fn mode_name(mode: TransferMode) -> &'static str {

@@ -43,6 +43,9 @@ pub struct AppState {
     pub locked: std::sync::atomic::AtomicBool,
     /// Holds the database paused while it is locked.
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
+    /// Identifies this run of the client (`/client_info`).
+    pub boot_id: [u8; 32],
+    pub boot_time_ms: i64,
 }
 
 impl AppState {
@@ -76,6 +79,8 @@ impl AppState {
             subscriptions,
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
+            boot_id: rand::random(),
+            boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
         }))
     }
 
@@ -108,6 +113,15 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
         .route("/session_key", get(access::session_key))
+        .route("/client_info", get(access::client_info))
+        .route(
+            "/request_new_permissions",
+            get(access::request_new_permissions),
+        )
+        .route(
+            "/get_service_rating_svg",
+            get(access::get_service_rating_svg),
+        )
         .route("/get_services", get(access::get_services))
         .route("/get_service", get(access::get_service))
         .route("/add_tags/clean_tags", get(access::clean_tags))
