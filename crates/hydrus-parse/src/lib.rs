@@ -5,6 +5,7 @@ pub mod content;
 pub mod dom;
 pub mod downloaders;
 pub mod formula;
+pub mod sidecar;
 pub mod text;
 
 pub use content::{

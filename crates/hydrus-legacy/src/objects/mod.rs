@@ -41,6 +41,7 @@ pub mod parsers;
 pub mod predicates;
 mod services;
 mod sessions;
+pub mod sidecars;
 mod sort;
 pub mod subscriptions;
 mod tag_display;
