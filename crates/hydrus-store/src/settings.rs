@@ -64,6 +64,10 @@ impl Setting for hydrus_core::import_options::ImportOptionsManager {
 }
 
 /// GUGs and page parsers.
+impl Setting for hydrus_core::subscriptions::GalleryDefaults {
+    const KEY: &'static str = "gallery_defaults";
+}
+
 impl Setting for hydrus_core::subscriptions::CheckerDefaults {
     const KEY: &'static str = "checker_defaults";
 }

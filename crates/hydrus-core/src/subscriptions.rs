@@ -64,6 +64,22 @@ impl Default for CheckerDefaults {
     }
 }
 
+/// Settings for new gallery searches.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+pub struct GalleryDefaults {
+    /// Stop a search after this many new files (`gallery_file_limit`;
+    /// `None`: no limit).
+    pub file_limit: Option<u64>,
+}
+
+impl Default for GalleryDefaults {
+    fn default() -> Self {
+        Self {
+            file_limit: Some(2000),
+        }
+    }
+}
+
 /// What the timing needs to know about one found file.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeedTime {

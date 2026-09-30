@@ -18,7 +18,8 @@ then, in order, waiting for each to finish:
   page ("urls"): two posts (one with a filterable tag), a missing post, a
   direct file and a search page; then a thread URL (a watcher); then makes
   a subscription to "blue_eyes" with an initial file limit of four
-* phase 1: checks the watcher and the subscription again
+* phase 1: checks the watcher and the subscription again, then searches
+  "blue_eyes" on a gallery page with a file limit of eight
 * phase 2: checks the watcher again
 
 What each importer recorded (file seeds, gallery seeds, the watcher's and
@@ -566,6 +567,32 @@ def run( session, site ):
 
     wait_until( 'the subscription again', lambda: subscription_idle( first_sub_check ) )
 
+    # a gallery search for what the others have mostly got already
+    controller.CallBlockingToQt( controller.gui, lambda: controller.gui._notebook.NewPageImportGallery() )
+
+    multiple_gallery_import = page_variable( 'multiple_gallery_import' )
+    multiple_gallery_import.SetGUGKeyAndName( ( gug.GetGUGKey(), gug.GetName() ) )
+    multiple_gallery_import.SetFileLimit( 8 )
+    multiple_gallery_import.PendQueries( [ 'blue_eyes' ] )
+
+    def gallery_idle():
+
+        imports = multiple_gallery_import.GetGalleryImports()
+
+        if len( imports ) == 0:
+
+            return False
+
+
+        gallery_import = imports[0]
+
+        files = gallery_import.GetFileSeedCache()
+
+        return files.GetFileSeedCount() > 0 and files.GetFileSeedCount( CC.STATUS_UNKNOWN ) == 0 and ( gallery_import.GalleryFinished() or gallery_import._AmOverFileLimit() )
+
+
+    wait_until( 'the gallery search', gallery_idle )
+
     # phase 2 -------------------------------------------------------------
 
     site.phase = 2
@@ -589,6 +616,7 @@ def run( session, site ):
             subject = w.GetSubject(),
             checking_status = w.GetCheckingStatus(),
         ),
+        'gallery' : log_record( multiple_gallery_import.GetGalleryImports()[0].GetFileSeedCache(), multiple_gallery_import.GetGalleryImports()[0].GetGallerySeedLog() ),
         'subscription' : dict(
             log_record( log.GetFileSeedCache(), log.GetGallerySeedLog() ),
             dead = h.IsDead(),

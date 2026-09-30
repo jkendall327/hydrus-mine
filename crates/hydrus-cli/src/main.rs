@@ -18,6 +18,7 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 /// The reference client's default Client API port.
 const DEFAULT_PORT: u16 = 45869;
 
+mod gallery;
 mod subscriptions;
 
 #[derive(Parser)]
@@ -55,6 +56,14 @@ enum Command {
     },
     /// Delete from disk the files that were deleted from local storage.
     Purge { dir: PathBuf },
+    /// Start gallery searches (a gallery downloader page), one per query.
+    /// A running `serve` picks them up within a minute.
+    Gallery {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(flatten)]
+        search: gallery::Search,
+    },
     /// Manage subscriptions: list them, add many queries at once, check,
     /// pause and resume. A running `serve` picks changes up within minutes.
     Subscriptions {
@@ -104,6 +113,15 @@ fn main() -> Result<()> {
             files,
         } => import_legacy(&source, &dest, files.into()),
         Command::Serve { dir, port, bind } => run_server(&dir, port, bind),
+        Command::Gallery { dir, search } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            gallery::run(&dir, search)
+        }
         Command::Subscriptions { dir, action } => {
             if !dir.join(DB_FILE_NAME).exists() {
                 bail!(
@@ -250,6 +268,17 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
         }
         if let Some(subscriptions) = &state.subscriptions {
             subscriptions.start();
+        }
+        // queues made by other processes (the command line)
+        if let Some(downloads) = state.downloads.clone() {
+            tokio::spawn(async move {
+                loop {
+                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    if let Err(e) = downloads.start_new() {
+                        tracing::error!(error = %e, "looking for new download queues failed");
+                    }
+                }
+            });
         }
         println!("Client API at http://{}", options.addr);
         serve(state, &options, async {

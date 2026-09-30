@@ -7,8 +7,11 @@ hydrus") downloads posts and files into named queues, and subscriptions
 serve` runs. `hydrus subscriptions <store> ...` lists subscriptions and adds
 many queries at once. Thread URLs sent to `/add_urls/add_url` start
 watchers, which check the thread on the reference's timing until it 404s
-or goes quiet. Gallery-search queues are next. Tracked as task "Downloader
-engine".
+or goes quiet. Gallery searches (the gallery downloader page) run from
+`hydrus gallery <store> --downloader <name> <queries>`, up to the file
+limit. All four kinds are checked against the reference end to end.
+Tracked as task "Downloader engine"; what's left is migrating custom
+bandwidth rules, and the GUI.
 
 ## Goal
 
@@ -84,7 +87,8 @@ show named queues as pages.
    a small fake booru/imageboard over localhost in three phases, gives a
    fresh reference client downloaders for it (URL classes, parsers, a GUG),
    and has it run a URL page (via `/add_urls/add_url`), a watcher (until
-   the thread 404s) and a subscription (two syncs), recording every file
+   the thread 404s), a subscription (two syncs) and a gallery search,
+   recording every file
    and gallery log entry and what each file got.
    `crates/hydrus-api/tests/oracle_downloads.rs` installs the reference's
    domain manager as a migration would, replays the same steps through our

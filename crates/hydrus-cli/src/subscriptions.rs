@@ -134,7 +134,7 @@ pub fn run(dir: &Path, action: Action) -> Result<()> {
     }
 }
 
-fn read_queries(from: &Path) -> Result<Vec<String>> {
+pub(crate) fn read_queries(from: &Path) -> Result<Vec<String>> {
     let mut text = String::new();
     if from == Path::new("-") {
         std::io::stdin().read_to_string(&mut text)?;

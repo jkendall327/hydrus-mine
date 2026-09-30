@@ -45,6 +45,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     let options = db.client_options()?;
     let legacy_options = db.legacy_options()?;
 
+    let mut gallery = hydrus_core::subscriptions::GalleryDefaults::default();
+    if let Some(value) = legacy_options.get("gallery_file_limit") {
+        // (the reference stores "no limit" as None)
+        gallery.file_limit = value.as_i64().and_then(|n| u64::try_from(n).ok());
+    }
+    insert_setting(&mut input, &gallery)?;
+
     let mut thumbnails = ThumbnailSettings::default();
     if let Some((w, h)) = legacy_options.thumbnail_dimensions() {
         thumbnails.bounding_width = positive(w, "thumbnail width")?;
@@ -663,6 +670,9 @@ mod tests {
             decoded,
             hydrus_core::subscriptions::CheckerDefaults::default()
         );
+        let gallery: hydrus_core::subscriptions::GalleryDefaults =
+            serde_json::from_value(input.settings["gallery_defaults"].clone()).unwrap();
+        assert_eq!(gallery.file_limit, Some(2000));
     }
 
     #[test]

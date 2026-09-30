@@ -6,7 +6,7 @@
     "local booru tag search",
     1,
     [
-     "ecf1552c0b862e5fa0e60c3742b28bdb4dc60389362c3051edaad8c6d421d296",
+     "d2baaa1e61d2fbace0d42eeb63cb83de1144111c202eeb5e130a0104d620b2f7",
      "http://127.0.0.1:45977/search/%tags%/1",
      "%tags%",
      "+",
@@ -22,7 +22,7 @@
     3,
     [
      "local booru post parser",
-     "6c400462c41febdf7af899375ed407f079a60e1e513009c2ceb3c9f23368c9a5",
+     "a43b45426860d640a5233dd8fc0e18eedab94af7dac1e5e7463ec90d9d62d394",
      [
       55,
       2,
@@ -254,7 +254,7 @@
     3,
     [
      "local booru search parser",
-     "a085393bf9a10ae5e6f9874a20eeb2471db4cb522edc4d5c8940713e679956f7",
+     "9228f973964af05ecf7ddae2dc83091ab981524cbd09e43af0eac284c9871192",
      [
       55,
       2,
@@ -422,7 +422,7 @@
     3,
     [
      "local board thread parser",
-     "13a5e2f7090b2e2fea512318bfa9591bb842ce2042b26c54a66f9e9ec7fe0066",
+     "8d664af7a010d166a8285564529a653a021eaa6e64d53d433fb72196810d2d66",
      [
       55,
       2,
@@ -586,7 +586,7 @@
     "local booru post",
     15,
     [
-     "e7474f306ff74abdf0c32aa8e75c536fdc844bd93b6bd7b6a1d1a0853073234f",
+     "01e96342ab5c7f7889c61e00e3dd6ca1a6ed67a7961729bbce5be78cd17014aa",
      0,
      "http",
      [
@@ -686,7 +686,7 @@
     "local booru search",
     15,
     [
-     "87fd66248b355a9da2b949962eb68a406fc9a010e56d7fa3b03a7f9466a5af34",
+     "473ad662b3a0c194bbfa817d7cdac1e9391ce145027aa18cd70c3d70f5c4a691",
      3,
      "http",
      [
@@ -800,7 +800,7 @@
     "local board thread",
     15,
     [
-     "12467963a5649764630d8d403a67c39fb0daae36c1a43bff9de14d0c4d316fe1",
+     "c3651ab8564fbbfae8a712ead4c61bddb91ea127840c7cb577d2bf83f1258ffe",
      4,
      "http",
      [
@@ -912,7 +912,7 @@
        "local booru tag search",
        1,
        [
-        "ecf1552c0b862e5fa0e60c3742b28bdb4dc60389362c3051edaad8c6d421d296",
+        "d2baaa1e61d2fbace0d42eeb63cb83de1144111c202eeb5e130a0104d620b2f7",
         "http://127.0.0.1:45977/search/%tags%/1",
         "%tags%",
         "+",
@@ -924,7 +924,7 @@
     ]
    ],
    [
-    "ecf1552c0b862e5fa0e60c3742b28bdb4dc60389362c3051edaad8c6d421d296"
+    "d2baaa1e61d2fbace0d42eeb63cb83de1144111c202eeb5e130a0104d620b2f7"
    ],
    [
     26,
@@ -937,7 +937,7 @@
        "local board thread",
        15,
        [
-        "12467963a5649764630d8d403a67c39fb0daae36c1a43bff9de14d0c4d316fe1",
+        "c3651ab8564fbbfae8a712ead4c61bddb91ea127840c7cb577d2bf83f1258ffe",
         4,
         "http",
         [
@@ -1040,7 +1040,7 @@
        "local booru post",
        15,
        [
-        "e7474f306ff74abdf0c32aa8e75c536fdc844bd93b6bd7b6a1d1a0853073234f",
+        "01e96342ab5c7f7889c61e00e3dd6ca1a6ed67a7961729bbce5be78cd17014aa",
         0,
         "http",
         [
@@ -1143,7 +1143,7 @@
        "local booru search",
        15,
        [
-        "87fd66248b355a9da2b949962eb68a406fc9a010e56d7fa3b03a7f9466a5af34",
+        "473ad662b3a0c194bbfa817d7cdac1e9391ce145027aa18cd70c3d70f5c4a691",
         3,
         "http",
         [
@@ -1256,23 +1256,23 @@
     ]
    ],
    [
-    "e7474f306ff74abdf0c32aa8e75c536fdc844bd93b6bd7b6a1d1a0853073234f"
+    "01e96342ab5c7f7889c61e00e3dd6ca1a6ed67a7961729bbce5be78cd17014aa"
    ],
    [
     33,
     1,
     [
      [
-      "12467963a5649764630d8d403a67c39fb0daae36c1a43bff9de14d0c4d316fe1",
-      "13a5e2f7090b2e2fea512318bfa9591bb842ce2042b26c54a66f9e9ec7fe0066"
+      "c3651ab8564fbbfae8a712ead4c61bddb91ea127840c7cb577d2bf83f1258ffe",
+      "8d664af7a010d166a8285564529a653a021eaa6e64d53d433fb72196810d2d66"
      ],
      [
-      "e7474f306ff74abdf0c32aa8e75c536fdc844bd93b6bd7b6a1d1a0853073234f",
-      "6c400462c41febdf7af899375ed407f079a60e1e513009c2ceb3c9f23368c9a5"
+      "01e96342ab5c7f7889c61e00e3dd6ca1a6ed67a7961729bbce5be78cd17014aa",
+      "a43b45426860d640a5233dd8fc0e18eedab94af7dac1e5e7463ec90d9d62d394"
      ],
      [
-      "87fd66248b355a9da2b949962eb68a406fc9a010e56d7fa3b03a7f9466a5af34",
-      "a085393bf9a10ae5e6f9874a20eeb2471db4cb522edc4d5c8940713e679956f7"
+      "473ad662b3a0c194bbfa817d7cdac1e9391ce145027aa18cd70c3d70f5c4a691",
+      "9228f973964af05ecf7ddae2dc83091ab981524cbd09e43af0eac284c9871192"
      ]
     ]
    ],
@@ -1412,7 +1412,7 @@
        3,
        [
         "local board thread parser",
-        "13a5e2f7090b2e2fea512318bfa9591bb842ce2042b26c54a66f9e9ec7fe0066",
+        "8d664af7a010d166a8285564529a653a021eaa6e64d53d433fb72196810d2d66",
         [
          55,
          2,
@@ -1578,7 +1578,7 @@
        3,
        [
         "local booru post parser",
-        "6c400462c41febdf7af899375ed407f079a60e1e513009c2ceb3c9f23368c9a5",
+        "a43b45426860d640a5233dd8fc0e18eedab94af7dac1e5e7463ec90d9d62d394",
         [
          55,
          2,
@@ -1813,7 +1813,7 @@
        3,
        [
         "local booru search parser",
-        "a085393bf9a10ae5e6f9874a20eeb2471db4cb522edc4d5c8940713e679956f7",
+        "9228f973964af05ecf7ddae2dc83091ab981524cbd09e43af0eac284c9871192",
         [
          55,
          2,
@@ -2191,7 +2191,22 @@
      "BASE/files/p6.jpg",
      "BASE/post/6",
      "BASE/search/blue_eyes/1",
+     "BASE/search/blue_eyes/2",
      "https://elsewhere.example/art/6"
+    ]
+   },
+   "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a": {
+    "downloader_tags": [
+     "blue eyes",
+     "creator:someone",
+     "post 3"
+    ],
+    "my_tags": [],
+    "urls": [
+     "BASE/files/p3.jpg",
+     "BASE/post/3",
+     "BASE/search/blue_eyes/3",
+     "https://elsewhere.example/art/3"
     ]
    },
    "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da": {
@@ -2226,6 +2241,7 @@
      "BASE/files/p5.jpg",
      "BASE/post/5",
      "BASE/search/blue_eyes/1",
+     "BASE/search/blue_eyes/2",
      "https://elsewhere.example/art/5"
     ]
    },
@@ -2285,6 +2301,20 @@
      "https://elsewhere.example/art/9"
     ]
    },
+   "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe": {
+    "downloader_tags": [
+     "blue eyes",
+     "creator:someone",
+     "post 2"
+    ],
+    "my_tags": [],
+    "urls": [
+     "BASE/files/p2.jpg",
+     "BASE/post/2",
+     "BASE/search/blue_eyes/3",
+     "https://elsewhere.example/art/2"
+    ]
+   },
    "ba74a07aa5f0582e615b0ad11c243feff200c17feae8da6106f3b442cfd330f3": {
     "downloader_tags": [
      "blue eyes",
@@ -2308,6 +2338,131 @@
      "BASE/thread/5"
     ]
    }
+  },
+  "gallery": {
+   "files": [
+    {
+     "data": "BASE/post/9",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/1",
+     "sha256": "b3c6ce7daf6954e17646d256809e7fd752102dd5615ba73ea75a9342cebdcb25",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/8",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/1",
+     "sha256": "7cc262d587ece5b4cc901db2ec2efddd8ce15c6f4c82595f5872000bf71924da",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/7",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/1",
+     "sha256": "aed64e94c1be6800e547b03d1ac9901ee46d7af1599b810a4bff2fd73a954e4a",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/6",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/2",
+     "sha256": "3560e1fa1a059fd7ba6f2a1a9bf86c9fe389e750e2b3a1e1247d38c83ec5679c",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/5",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/2",
+     "sha256": "95702ba0537e3cbc72e4d062a2d28c415e6d62bb930bd5d6edca4ec4844395d1",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/4",
+     "external_filterable_tags": [],
+     "note": "url recognised: Imported at TIME, which was X ago before this check.",
+     "primary_urls": [],
+     "referral": "BASE/search/blue_eyes/2",
+     "sha256": "1ebba84c5d3e9bda468be7bb9889e80ed5d86f10a78d8eb8c11e42bbc32214a5",
+     "source_urls": [],
+     "status": 2,
+     "tags": []
+    },
+    {
+     "data": "BASE/post/3",
+     "external_filterable_tags": [],
+     "note": "",
+     "primary_urls": [
+      "BASE/files/p3.jpg"
+     ],
+     "referral": "BASE/search/blue_eyes/3",
+     "sha256": "7be488e1b7471773fb6dd9698bc71f96a2d5696f4f6477dc048e042eec59ae0a",
+     "source_urls": [
+      "https://elsewhere.example/art/3"
+     ],
+     "status": 1,
+     "tags": [
+      "blue eyes",
+      "creator:someone",
+      "post 3"
+     ]
+    },
+    {
+     "data": "BASE/post/2",
+     "external_filterable_tags": [],
+     "note": "",
+     "primary_urls": [
+      "BASE/files/p2.jpg"
+     ],
+     "referral": "BASE/search/blue_eyes/3",
+     "sha256": "b5db2dde9ab28f632a19dc5bfd32be14f57b9b2c2dfdd824d00828487be735fe",
+     "source_urls": [
+      "https://elsewhere.example/art/2"
+     ],
+     "status": 1,
+     "tags": [
+      "blue eyes",
+      "creator:someone",
+      "post 2"
+     ]
+    }
+   ],
+   "galleries": [
+    {
+     "note": "3 new urls found - 1 next gallery pages found",
+     "status": 1,
+     "url": "BASE/search/blue_eyes/1"
+    },
+    {
+     "note": "3 new urls found - 1 next gallery pages found",
+     "status": 1,
+     "url": "BASE/search/blue_eyes/2"
+    },
+    {
+     "note": "2 new urls found - hit file limit",
+     "status": 1,
+     "url": "BASE/search/blue_eyes/3"
+    }
+   ]
   },
   "hits": [
    [
@@ -2437,6 +2592,34 @@
    [
     1,
     "/files/p9.jpg"
+   ],
+   [
+    1,
+    "/search/blue_eyes/1"
+   ],
+   [
+    1,
+    "/search/blue_eyes/2"
+   ],
+   [
+    1,
+    "/search/blue_eyes/3"
+   ],
+   [
+    1,
+    "/post/3"
+   ],
+   [
+    1,
+    "/files/p3.jpg"
+   ],
+   [
+    1,
+    "/post/2"
+   ],
+   [
+    1,
+    "/files/p2.jpg"
    ],
    [
     2,

@@ -357,6 +357,38 @@ async fn the_downloader_does_what_the_reference_did() {
         .unwrap();
     assert!(report.notices.is_empty(), "{:?}", report.notices);
 
+    // a gallery search for what the others have mostly got already
+    let searches = runner
+        .search_gallery(
+            None,
+            gug.key(),
+            gug.name(),
+            &["blue_eyes".to_owned()],
+            Some(Some(8)),
+        )
+        .unwrap();
+    let gallery = searches[0].id;
+    wait_until("the gallery search", || {
+        let q = store
+            .read(|conn| queues::queue(conn, gallery))
+            .unwrap()
+            .unwrap();
+        let search = hydrus_download::queue::gallery_search(&q).unwrap();
+        let files = store
+            .read(|conn| queues::file_seeds(conn, gallery))
+            .unwrap();
+        let pages = store
+            .read(|conn| queues::gallery_seeds(conn, gallery))
+            .unwrap();
+        let over = search
+            .file_limit
+            .is_some_and(|l| search.num_new_urls_found >= l);
+        !files.is_empty()
+            && files.iter().all(|f| f.status != SeedStatus::Unknown)
+            && (over || pages.iter().all(|g| g.status != SeedStatus::Unknown))
+    })
+    .await;
+
     // phase 2: the thread is gone
     site.phase.store(2, Ordering::SeqCst);
     check_watcher_now(&store, &runner, watcher.id);
@@ -391,6 +423,9 @@ async fn the_downloader_does_what_the_reference_did() {
     });
     assert_eq!(watcher_log, expected["watcher"], "the watcher");
 
+    let gallery_log = n.log(&store, gallery);
+    assert_eq!(gallery_log, expected["gallery"], "the gallery search");
+
     let query = store
         .read(|conn| subs::query(conn, query_queue))
         .unwrap()
@@ -401,7 +436,7 @@ async fn the_downloader_does_what_the_reference_did() {
     assert_eq!(sub_log, expected["subscription"], "the subscription");
 
     let mut hashes = BTreeSet::new();
-    for log in [&url_log, &watcher_log, &sub_log] {
+    for log in [&url_log, &watcher_log, &sub_log, &gallery_log] {
         for f in log["files"].as_array().unwrap() {
             if let Some(h) = f["sha256"].as_str() {
                 hashes.insert(h.to_owned());

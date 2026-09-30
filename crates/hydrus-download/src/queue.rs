@@ -13,7 +13,7 @@ use parking_lot::Mutex;
 use tokio::sync::Notify;
 
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
-use hydrus_core::subscriptions::{CheckerDefaults, SeedTime};
+use hydrus_core::subscriptions::{CheckerDefaults, GalleryDefaults, SeedTime};
 use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
 use hydrus_net::Job;
@@ -80,7 +80,10 @@ impl QueueRunner {
             .store
             .read(|conn| queues::queues(conn, None))?;
         for queue in all {
-            if matches!(queue.kind, QueueKind::Urls | QueueKind::Watcher) {
+            if matches!(
+                queue.kind,
+                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery
+            ) {
                 self.wake(queue.id);
             }
         }
@@ -464,10 +467,16 @@ impl QueueRunner {
                 }
                 watcher = Some(state);
             }
-            if queue.kind != QueueKind::Watcher && !queue.gallery_paused {
+            let search = gallery_search(&queue);
+            // (`CheckCanDoGalleryWork`: no more pages once the file limit is hit)
+            let over_limit = search
+                .as_ref()
+                .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
+            if queue.kind != QueueKind::Watcher && !queue.gallery_paused && !over_limit {
                 match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
                     Ok(Some(gallery_seed)) => {
-                        self.work_on_gallery_seed(gallery_seed, handle).await;
+                        self.work_on_gallery_seed(gallery_seed, search, handle)
+                            .await;
                         tokio::time::sleep(Duration::from_secs(1)).await;
                         continue;
                     }
@@ -517,13 +526,24 @@ impl QueueRunner {
 
     /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
     /// queue.
-    async fn work_on_gallery_seed(&self, mut seed: GallerySeed, handle: &Handle) {
+    /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
+    /// queue, up to a gallery search's file limit.
+    async fn work_on_gallery_seed(
+        &self,
+        mut seed: GallerySeed,
+        mut search: Option<GallerySearch>,
+        handle: &Handle,
+    ) {
         let job = Job::new();
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "reading a gallery page".into();
+        let queue = seed.queue_id;
         let mut sink = QueueSink {
-            queue: seed.queue_id,
-            max_new_urls: None,
+            queue,
+            max_new_urls: search.as_ref().and_then(|s| {
+                s.file_limit
+                    .map(|l| l.saturating_sub(s.num_new_urls_found) as usize)
+            }),
         };
         let mut seen = BTreeSet::new();
         let result = self
@@ -531,18 +551,83 @@ impl QueueRunner {
             .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
         *handle.job.lock() = None;
+        let mut pause_gallery = false;
         match result {
-            Ok(_) => {}
+            Ok(outcome) => {
+                if let Some(s) = &mut search {
+                    s.num_new_urls_found += outcome.num_urls_added as u64;
+                    s.num_urls_found += outcome.num_urls_total as u64;
+                }
+            }
             Err(WorkError::Network(e)) => self.delay(handle, &e),
-            Err(e) => set_gallery_status(&mut seed, SeedStatus::Error, e.to_string()),
+            Err(e) => {
+                set_gallery_status(&mut seed, SeedStatus::Error, e.to_string());
+                // (a gallery search stops at an error)
+                pause_gallery = search.is_some();
+            }
         }
-        if let Err(e) = self
-            .downloader
-            .store
-            .write(move |ctx| queues::update_gallery_seed(ctx.conn(), &seed))
-        {
+        let extra = search.map(|s| serde_json::to_value(&s).expect("plain data serialises"));
+        if let Err(e) = self.downloader.store.write(move |ctx| {
+            queues::update_gallery_seed(ctx.conn(), &seed)?;
+            if let Some(extra) = &extra {
+                queues::set_queue_extra(ctx.conn(), queue, extra)?;
+            }
+            if pause_gallery {
+                queues::set_paused(ctx.conn(), queue, None, Some(true))?;
+            }
+            Ok(())
+        }) {
             tracing::error!("saving a gallery seed: {e}");
         }
+    }
+
+    /// Start gallery searches (see [`create_gallery_searches`]) and set
+    /// them working.
+    pub fn search_gallery(
+        self: &Arc<Self>,
+        page_name: Option<&str>,
+        gug_key: &str,
+        gug_name: &str,
+        queries: &[String],
+        file_limit: Option<Option<u64>>,
+    ) -> Result<Vec<Queue>, GallerySearchError> {
+        let made = create_gallery_searches(
+            &self.downloader.store,
+            &self.downloader.definitions(),
+            page_name,
+            gug_key,
+            gug_name,
+            queries,
+            file_limit,
+        )?;
+        for queue in &made {
+            self.wake(queue.id);
+        }
+        Ok(made)
+    }
+
+    /// Start working on queues made elsewhere (say, by the command line)
+    /// since the runner started.
+    pub fn start_new(self: &Arc<Self>) -> Result<(), StoreError> {
+        if !self.started.load(std::sync::atomic::Ordering::SeqCst) {
+            return Ok(());
+        }
+        let all = self
+            .downloader
+            .store
+            .read(|conn| queues::queues(conn, None))?;
+        for queue in all {
+            let known = self.handles.lock().contains_key(&queue.id);
+            if !known
+                && matches!(
+                    queue.kind,
+                    QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery
+                )
+            {
+                self.wake(queue.id);
+            }
+        }
+        Ok(())
     }
 
     /// `_DelayWork`: wait out a network failure.
@@ -632,4 +717,117 @@ fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
             created: s.created,
         })
         .collect()
+}
+
+/// The name of a new gallery downloader page.
+pub const DEFAULT_GALLERY_PAGE_NAME: &str = "gallery";
+
+/// A gallery search's state (`GalleryImport`).
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct GallerySearch {
+    pub query: String,
+    /// The downloader's name.
+    pub source_name: String,
+    /// Stop reading pages after this many new files (`None`: no limit).
+    pub file_limit: Option<u64>,
+    pub num_new_urls_found: u64,
+    pub num_urls_found: u64,
+}
+
+/// A gallery search queue's state.
+pub fn gallery_search(queue: &Queue) -> Option<GallerySearch> {
+    (queue.kind == QueueKind::Gallery)
+        .then(|| serde_json::from_value(queue.extra.clone()).ok())
+        .flatten()
+}
+
+/// Why gallery searches could not start.
+#[derive(Debug, thiserror::Error)]
+pub enum GallerySearchError {
+    #[error("Could not find a Gallery URL Generator (Downloader) for \"{0}\"!")]
+    NoDownloader(String),
+    #[error("{0}")]
+    Gug(String),
+    #[error(transparent)]
+    Store(#[from] StoreError),
+}
+
+/// Make gallery searches (`MultipleGalleryImport.PendQueries`): one queue
+/// per query on the named gallery page, reading the GUG's result pages until
+/// the file limit (`None`: the client's default).
+pub fn create_gallery_searches(
+    store: &hydrus_store::Store,
+    definitions: &hydrus_parse::Downloaders,
+    page_name: Option<&str>,
+    gug_key: &str,
+    gug_name: &str,
+    queries: &[String],
+    file_limit: Option<Option<u64>>,
+) -> Result<Vec<Queue>, GallerySearchError> {
+    let gug = definitions
+        .gugs
+        .get(gug_key, gug_name)
+        .ok_or_else(|| GallerySearchError::NoDownloader(gug_name.to_owned()))?;
+    let snapshot = store.snapshot();
+    let classes = &snapshot.url_classes;
+    let options = hydrus_core::url::GugOptions {
+        percent_twenty_is_space: false,
+        collapse_leading_slashes: classes.settings().collapse_leading_slashes,
+    };
+    let defaults: GalleryDefaults = store.read(hydrus_store::settings::get)?;
+    let file_limit = file_limit.unwrap_or(defaults.file_limit);
+    let page_name = page_name.unwrap_or(DEFAULT_GALLERY_PAGE_NAME).to_owned();
+    let mut made = Vec::new();
+    for query in queries {
+        let urls = definitions
+            .gugs
+            .gallery_urls(gug, query, options)
+            .map_err(|e| GallerySearchError::Gug(e.to_string()))?;
+        if urls.is_empty() {
+            return Err(GallerySearchError::Gug(format!(
+                "The Gallery URL Generator \"{}\" did not produce any URLs!",
+                gug.name()
+            )));
+        }
+        let run_token = hex::encode(rand_token());
+        let mut seen = BTreeSet::new();
+        let seeds: Vec<NewGallerySeed> = urls
+            .into_iter()
+            .map(|url| classes.normalise(&url, true).unwrap_or(url))
+            .filter(|url| seen.insert(url.clone()))
+            .map(|url| NewGallerySeed {
+                url,
+                can_generate_more_pages: true,
+                referral_url: None,
+                meta: GallerySeedMeta {
+                    run_token: run_token.clone(),
+                    ..GallerySeedMeta::default()
+                },
+            })
+            .collect();
+        let search = GallerySearch {
+            query: query.clone(),
+            source_name: gug.name().to_owned(),
+            file_limit,
+            num_new_urls_found: 0,
+            num_urls_found: 0,
+        };
+        let extra = serde_json::to_value(&search).expect("plain data serialises");
+        let name = page_name.clone();
+        let queue = store.write(move |ctx| {
+            let id = queues::create_queue(
+                ctx.conn(),
+                QueueKind::Gallery,
+                &name,
+                None,
+                &ImportOptionsSlice::default(),
+                now(),
+            )?;
+            queues::set_queue_extra(ctx.conn(), id, &extra)?;
+            queues::add_gallery_seeds(ctx.conn(), id, &seeds, None, now())?;
+            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
+        })?;
+        made.push(queue);
+    }
+    Ok(made)
 }
