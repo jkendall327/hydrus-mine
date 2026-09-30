@@ -763,6 +763,77 @@ def old_subscription_case( i ):
     }
 
 
+def compaction_case():
+
+    now = when()
+
+    seeds = []
+
+    for k in range( rng.choice( [ 0, 3, 10, 40 ] ) ):
+
+        f = ClientImportFileSeeds.FileSeed( ClientImportFileSeeds.FILE_SEED_TYPE_URL, f'https://example.com/post/{k}' )
+        f.created = now - rng.randint( 0, 86400 * 20 )
+        f.source_time = maybe( f.created - rng.randint( -100, 86400 * 5 ) )
+        f.status = rng.choice( [ CC.STATUS_UNKNOWN, CC.STATUS_SUCCESSFUL_AND_NEW, CC.STATUS_SUCCESSFUL_BUT_REDUNDANT, CC.STATUS_SUCCESSFUL_AND_CHILD_FILES, CC.STATUS_SUCCESSFUL_AND_CHILD_FILES, CC.STATUS_VETOED ] )
+
+        if f.status == CC.STATUS_SUCCESSFUL_AND_CHILD_FILES:
+
+            f.note = rng.choice( [ 'Found 2 new URLs.', 'Found 0 new URLs.', 'Found 1 new URLs in 2 sub-posts.', 'Found 12 new URLs.', 'something else', '' ] )
+
+        seeds.append( f )
+
+
+    cache = ClientImportFileSeeds.FileSeedCache()
+    cache.AddFileSeeds( seeds )
+
+    keep = rng.choice( [ 0, 1, 3, 5, 250 ] )
+    before = now - rng.choice( [ 0, 86400, 86400 * 5, 86400 * 30 ] )
+
+    master = cache.GetApproxNumMasterFileSeeds()
+    can_compact = cache.CanCompact( keep, before )
+
+    if can_compact:
+
+        cache.Compact( keep, before )
+
+
+    remaining = { id( f ) for f in cache.GetFileSeeds() }
+
+    gallery_seeds = []
+
+    for k in range( rng.choice( [ 0, 3, 12 ] ) ):
+
+        g = ClientImportGallerySeeds.GallerySeed( f'https://example.com/gallery?page={k}' )
+        g.created = now - rng.randint( 0, 86400 * 20 )
+        g.status = rng.choice( [ CC.STATUS_UNKNOWN, CC.STATUS_SUCCESSFUL_AND_NEW, CC.STATUS_VETOED ] )
+
+        gallery_seeds.append( g )
+
+
+    log = ClientImportGallerySeeds.GallerySeedLog()
+    log.AddGallerySeeds( gallery_seeds )
+
+    gallery_keep = rng.choice( [ 0, 1, 5, 100 ] )
+
+    if log.CanCompact( gallery_keep, before ):
+
+        log.Compact( gallery_keep, before )
+
+
+    gallery_remaining = { id( g ) for g in log.GetGallerySeeds() }
+
+    return {
+        'files' : [ [ f.status, f.note, f.source_time, f.created ] for f in seeds ],
+        'keep' : keep,
+        'before' : before,
+        'master' : master,
+        'removed' : [ i for ( i, f ) in enumerate( seeds ) if id( f ) not in remaining ],
+        'galleries' : [ [ g.status, g.created ] for g in gallery_seeds ],
+        'gallery_keep' : gallery_keep,
+        'gallery_removed' : [ i for ( i, g ) in enumerate( gallery_seeds ) if id( g ) not in gallery_remaining ],
+    }
+
+
 def main():
 
     file_seeds = seed_cases( file_seed, FILE_SEED_FIELDS, FILE_SEED_ADDED, file_seed_facts, 8, 80 )
@@ -786,6 +857,8 @@ def main():
 
     checkers = [ checker_case() for _ in range( 200 ) ]
 
+    compactions = [ compaction_case() for _ in range( 200 ) ]
+
     json.dump( {
         'file_seeds' : file_seeds,
         'gallery_seeds' : gallery_seeds,
@@ -793,6 +866,7 @@ def main():
         'subscriptions' : subscriptions,
         'old_subscriptions' : old_subscriptions,
         'checkers' : checkers,
+        'compactions' : compactions,
     }, sys.stdout, indent = 1, ensure_ascii = False, sort_keys = True )
 
     sys.stdout.write( '\n' )

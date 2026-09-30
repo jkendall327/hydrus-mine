@@ -233,3 +233,50 @@ fn checks_are_timed_as_the_reference_times_them() {
         );
     }
 }
+
+#[test]
+fn histories_compact_as_the_reference_compacts_them() {
+    use hydrus_core::subscriptions::{
+        FileLogEntry, compact_file_log, compact_gallery_log, num_master_file_seeds,
+    };
+
+    let recorded = hydrus_testkit::fixture_json("subscriptions.json");
+    for case in recorded["compactions"].as_array().unwrap() {
+        let files = case["files"].as_array().unwrap();
+        let entries: Vec<FileLogEntry<'_>> = files
+            .iter()
+            .map(|f| FileLogEntry {
+                unknown: f[0] == 0,
+                child_files_note: (f[0] == 9).then(|| f[1].as_str().unwrap()),
+                time: SeedTime {
+                    source_time: f[2].as_i64(),
+                    created: f[3].as_i64().unwrap(),
+                },
+            })
+            .collect();
+        let keep = case["keep"].as_u64().unwrap() as usize;
+        let before = case["before"].as_i64().unwrap();
+        assert_eq!(
+            json!(num_master_file_seeds(&entries)),
+            case["master"],
+            "{case}"
+        );
+        assert_eq!(
+            json!(compact_file_log(&entries, keep, before)),
+            case["removed"],
+            "{case}"
+        );
+        let galleries: Vec<(bool, i64)> = case["galleries"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|g| (g[0] == 0, g[1].as_i64().unwrap()))
+            .collect();
+        let gallery_keep = case["gallery_keep"].as_u64().unwrap() as usize;
+        assert_eq!(
+            json!(compact_gallery_log(&galleries, gallery_keep, before)),
+            case["gallery_removed"],
+            "{case}"
+        );
+    }
+}

@@ -47,7 +47,7 @@ pub struct SeedTime {
 impl SeedTime {
     /// `_GetSourceTimestampForVelocityCalculations`: the post time, else
     /// just before it was found.
-    fn velocity_time(self) -> i64 {
+    pub fn velocity_time(self) -> i64 {
         self.source_time.unwrap_or(self.created - 30)
     }
 }
@@ -226,8 +226,142 @@ impl QueryState {
 
     /// `IsSyncDue`.
     pub fn is_sync_due(&self, now: i64) -> bool {
-        !self.dead && (self.check_now || self.next_check_time <= now)
+        !self.dead && (self.check_now || now > self.next_check_time)
     }
+
+    /// `CheckNow`: check at the next chance, alive again.
+    pub fn check_now(&mut self) {
+        self.check_now = true;
+        self.paused = false;
+        self.next_check_time = 0;
+        self.dead = false;
+    }
+
+    /// `RegisterSyncComplete` (after the history is compacted): note the
+    /// check, then time the next one from what the history now holds, or
+    /// declare the query dead (and pause it if it has no files left to get).
+    pub fn register_sync_complete(
+        &mut self,
+        checker: &CheckerOptions,
+        seeds: &[SeedTime],
+        has_file_work: bool,
+        now: i64,
+    ) {
+        self.last_check_time = now;
+        self.check_now = false;
+        if checker.is_dead(seeds, self.last_check_time) {
+            self.dead = true;
+            if !has_file_work {
+                self.paused = true;
+            }
+        }
+        self.next_check_time = checker.next_check_time(seeds, self.last_check_time, now);
+    }
+}
+
+/// What history compaction needs to know about a file seed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct FileLogEntry<'a> {
+    /// Not yet worked on.
+    pub unknown: bool,
+    /// The note of a post that found child files (status "successful and
+    /// child files"), which says how many.
+    pub child_files_note: Option<&'a str>,
+    pub time: SeedTime,
+}
+
+/// `_GetListOfParentsWithChildren`: split a file history into posts with
+/// the child files they found (index ranges, in order).
+pub fn parents_with_children(entries: &[FileLogEntry<'_>]) -> Vec<std::ops::Range<usize>> {
+    let mut groups = Vec::new();
+    let mut start = 0;
+    let mut additional_children = 0u64;
+    let mut until_next_parent = false;
+    for (i, entry) in entries.iter().enumerate() {
+        if until_next_parent && entry.child_files_note.is_some() {
+            groups.push(start..i);
+            start = i;
+            until_next_parent = false;
+        }
+        additional_children = additional_children.saturating_sub(1);
+        if let Some(note) = entry.child_files_note {
+            match found_count(note) {
+                Some(n) => additional_children += n,
+                None => until_next_parent = true,
+            }
+        }
+        if !until_next_parent && additional_children == 0 {
+            groups.push(start..i + 1);
+            start = i + 1;
+        }
+    }
+    if start < entries.len() {
+        groups.push(start..entries.len());
+    }
+    groups
+}
+
+/// The N of a note starting "Found N" (`(?<=^Found )\d+`).
+fn found_count(note: &str) -> Option<u64> {
+    let rest = note.strip_prefix("Found ")?;
+    let digits: String = rest.chars().take_while(char::is_ascii_digit).collect();
+    // (Python's int() of a huge count; never fewer than none)
+    digits
+        .parse::<u64>()
+        .ok()
+        .or_else(|| (!digits.is_empty()).then_some(u64::MAX))
+}
+
+/// `GetApproxNumMasterFileSeeds`: how many posts a history holds.
+pub fn num_master_file_seeds(entries: &[FileLogEntry<'_>]) -> usize {
+    parents_with_children(entries).len()
+}
+
+/// `CanCompact` and `Compact` for a file history: the entries to drop, the
+/// posts (with their children) beyond the latest `keep` that are done and
+/// no newer than `before`. Nothing is dropped unless one of those is older
+/// than `before`.
+pub fn compact_file_log(entries: &[FileLogEntry<'_>], keep: usize, before: i64) -> Vec<usize> {
+    if entries.len() <= keep || keep == 0 {
+        return Vec::new();
+    }
+    let groups = parents_with_children(entries);
+    let compactible: Vec<usize> = groups[..groups.len().saturating_sub(keep)]
+        .iter()
+        .flat_map(Clone::clone)
+        .collect();
+    let can_compact = compactible.iter().any(|&i| {
+        let e = &entries[i];
+        !e.unknown && e.time.velocity_time() < before
+    });
+    if !can_compact {
+        return Vec::new();
+    }
+    compactible
+        .into_iter()
+        .filter(|&i| {
+            let e = &entries[i];
+            !(e.unknown || e.time.velocity_time() > before)
+        })
+        .collect()
+}
+
+/// `CanCompact` and `Compact` for a gallery log of `(not yet worked on,
+/// created)` entries: the entries to drop.
+pub fn compact_gallery_log(entries: &[(bool, i64)], keep: usize, before: i64) -> Vec<usize> {
+    if entries.len() <= keep || keep == 0 {
+        return Vec::new();
+    }
+    let compactible = 0..entries.len() - keep;
+    let can_compact = compactible
+        .clone()
+        .any(|i| !entries[i].0 && entries[i].1 < before);
+    if !can_compact {
+        return Vec::new();
+    }
+    compactible
+        .filter(|&i| !(entries[i].0 || entries[i].1 > before))
+        .collect()
 }
 
 #[cfg(test)]
