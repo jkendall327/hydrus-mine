@@ -333,3 +333,34 @@ impl ContentWriter<'_> {
         Ok(())
     }
 }
+
+impl ContentWriter<'_> {
+    /// Record that `hashes` are known by each of `urls`.
+    pub fn add_urls(&mut self, hashes: &[HashId], urls: &[String]) -> Result<()> {
+        let mut insert = self
+            .conn
+            .prepare_cached("INSERT OR IGNORE INTO file_urls (hash_id, url_id) VALUES (?1, ?2)")?;
+        for url in urls {
+            let url_id = crate::master::intern_url(self.conn, url)?;
+            for hash in hashes {
+                insert.execute(params![hash, url_id])?;
+            }
+        }
+        Ok(())
+    }
+
+    /// Forget that `hashes` are known by each of `urls`.
+    pub fn delete_urls(&mut self, hashes: &[HashId], urls: &[String]) -> Result<()> {
+        let mut delete = self
+            .conn
+            .prepare_cached("DELETE FROM file_urls WHERE hash_id = ?1 AND url_id = ?2")?;
+        for url in urls {
+            if let Some(url_id) = crate::master::url_id(self.conn, url)? {
+                for hash in hashes {
+                    delete.execute(params![hash, url_id])?;
+                }
+            }
+        }
+        Ok(())
+    }
+}

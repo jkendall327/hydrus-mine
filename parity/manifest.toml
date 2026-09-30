@@ -76,12 +76,11 @@ status = "todo"
 
 [[api]]
 path = "/add_urls/associate_url"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/add_urls/get_url_files"
-status = "partial"
-notes = "the remaining recorded step follows /add_urls/associate_url"
+status = "done"
 
 [[api]]
 path = "/add_urls/get_url_info"
@@ -122,8 +121,7 @@ status = "done"
 
 [[api]]
 path = "/get_files/file_metadata"
-status = "partial"
-notes = "read path conformant; needs write endpoints for mutating scenarios, url classes for detailed_url_information"
+status = "done"
 
 [[api]]
 path = "/get_files/file_path"

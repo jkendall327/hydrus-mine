@@ -108,3 +108,53 @@ pub async fn get_url_files(
         })
         .await
 }
+
+pub async fn associate_url(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?.check(Permission::AddUrls)?;
+    let params = req.params.clone();
+    app.blocking(move |app| {
+        let gather = |one: &str, many: &str| -> ApiResult<Vec<String>> {
+            let mut urls = Vec::new();
+            if let Some(url) = params.optional::<String>(one)? {
+                urls.push(url);
+            }
+            urls.extend(params.or::<Vec<String>>(many, Vec::new())?);
+            Ok(urls)
+        };
+        let mut to_add = gather("url_to_add", "urls_to_add")?;
+        let to_delete = gather("url_to_delete", "urls_to_delete")?;
+        if params.or("normalise_urls", true)? {
+            let snapshot = app.store.snapshot();
+            to_add = to_add
+                .iter()
+                .map(|url| snapshot.url_classes.normalise(url, false))
+                .collect::<Result<_, _>>()
+                .map_err(|e| ApiError::bad_request(e.to_string()))?;
+        }
+        if to_add.is_empty() && to_delete.is_empty() {
+            return Err(ApiError::bad_request(
+                "Did not find any URLs to add or delete!",
+            ));
+        }
+        let hashes = crate::routes::files::parse_hashes(app, &params)?.unwrap_or_default();
+        if hashes.is_empty() {
+            return Err(ApiError::bad_request(
+                "Did not find any hashes to apply the urls to!",
+            ));
+        }
+        app.store.write_content(move |w| {
+            let ids = hashes
+                .iter()
+                .map(|h| hydrus_store::master::intern_hash(w.conn(), h))
+                .collect::<hydrus_store::Result<Vec<_>>>()?;
+            w.add_urls(&ids, &to_add)?;
+            w.delete_urls(&ids, &to_delete)
+        })?;
+        Ok(())
+    })
+    .await?;
+    Ok(ApiResponse::Empty)
+}

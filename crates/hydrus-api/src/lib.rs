@@ -99,6 +99,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         )
         .route("/add_files/migrate_files", post(add_files::migrate_files))
         .route("/add_files/add_file", post(add_files::add_file))
+        .route("/add_urls/associate_url", post(urls::associate_url))
         .route(
             "/add_files/generate_hashes",
             post(add_files::generate_hashes),

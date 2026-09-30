@@ -1,8 +1,8 @@
 {
   "api": {
     "total": 76,
-    "done": 33,
-    "partial": 5,
+    "done": 36,
+    "partial": 3,
     "done_items": [
       "/add_files/add_file",
       "/add_files/archive_files",
@@ -20,6 +20,8 @@
       "/add_tags/get_siblings_and_parents",
       "/add_tags/search_tags",
       "/add_tags/set_favourite_tags",
+      "/add_urls/associate_url",
+      "/add_urls/get_url_files",
       "/add_urls/get_url_info",
       "/api_version",
       "/edit_ratings/set_rating",
@@ -27,6 +29,7 @@
       "/edit_times/set_file_viewtime",
       "/edit_times/set_time",
       "/get_files/file_hashes",
+      "/get_files/file_metadata",
       "/get_files/file_path",
       "/get_files/local_file_storage_locations",
       "/get_files/search_files",
