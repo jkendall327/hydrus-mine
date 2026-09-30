@@ -167,6 +167,58 @@ fn order<K>(
     out
 }
 
+/// The domain's whole import order, when reading it (or having it cached)
+/// beats reading import times for just `files`.
+fn import_order(
+    env: &Env<'_>,
+    service: hydrus_core::ServiceId,
+    files: &RoaringBitmap,
+) -> Result<Option<std::sync::Arc<Vec<u32>>>> {
+    use super::context::Strategy;
+    let cache = env.domain_cache();
+    match env.strategy {
+        Strategy::AlwaysProbe => return Ok(None),
+        Strategy::AlwaysScan => return Ok(Some(cache.import_order(env.conn, service)?)),
+        Strategy::Auto => {}
+    }
+    if let Some(order) = cache.cached_import_order(service) {
+        // checking a file against the domain's order in memory costs about
+        // a hundredth of reading its import time
+        return Ok((files.len() >= order.len() as u64 / 100).then_some(order));
+    }
+    let domain_size = match cache.cached(service, false) {
+        Some(domain) => Some(domain.len()),
+        None => sql::table_rows(env.conn, "file_domain_current"),
+    };
+    if env.prefer_probe(files.len(), domain_size) {
+        return Ok(None);
+    }
+    Ok(Some(cache.import_order(env.conn, service)?))
+}
+
+/// `files` sorted by import time into `service`, given its import order:
+/// the same order as [`order`] makes of each file's (import time, id) key.
+fn in_order(
+    env: &Env<'_>,
+    service: hydrus_core::ServiceId,
+    files: &RoaringBitmap,
+    order: &[u32],
+    descending: bool,
+) -> Result<Vec<u32>> {
+    let mut out: Vec<u32> = Vec::with_capacity(files.len() as usize);
+    let wanted = |id: &&u32| files.contains(**id);
+    if descending {
+        out.extend(order.iter().rev().filter(wanted));
+    } else {
+        out.extend(order.iter().filter(wanted));
+    }
+    if out.len() as u64 != files.len() {
+        let in_domain = env.domain_cache().files(env.conn, service, false)?;
+        out.extend(files.iter().filter(|id| !in_domain.contains(*id)));
+    }
+    Ok(out)
+}
+
 /// Read `(hash_id, value)` rows for `files` from `select` (a query over a
 /// table whose first column is the hash id, ending in a `WHERE`), probing
 /// or scanning `table` as appropriate.
@@ -319,6 +371,11 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
                 env.service_of_type(ServiceType::HydrusLocalFileStorage)
                     .map(|s| s.id)
             });
+            if let Some(service) = service
+                && let Some(order) = import_order(env, service, files)?
+            {
+                return in_order(env, service, files, &order, desc);
+            }
             let rows: Vec<(u32, Option<i64>)> = match service {
                 Some(service) => rows(
                     env,

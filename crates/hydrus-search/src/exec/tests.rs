@@ -677,7 +677,7 @@ fn searches_see_file_lifecycle_changes_as_the_reference_did() {
                 "INSERT INTO file_domain_deleted (service_id, hash_id, deleted_ms) VALUES (?, ?, 1)",
                 rusqlite::params![my_files, archived],
             )?;
-            Ok(())
+            hydrus_store::domains::changed(c)
         })
         .unwrap();
     let (search, sort, expected) = recorded_search("file_lifecycle", 6);
@@ -716,6 +716,37 @@ fn limits_apply_after_sorting() {
         Planner::Auto,
     );
     assert_eq!(limited, all[..3]);
+}
+
+#[test]
+fn import_time_sorts_agree_whether_probed_or_from_the_cached_order() {
+    for location in [
+        LocationContext::default(),
+        LocationContext::single(key(builtin_keys::TRASH)),
+        LocationContext::new(
+            [key(builtin_keys::MY_FILES)],
+            [key(builtin_keys::HYDRUS_LOCAL_FILE_STORAGE)],
+        ),
+    ] {
+        for order in [SortOrder::Ascending, SortOrder::Descending] {
+            let search = FileSearchContext {
+                location: location.clone(),
+                predicates: vec![Predicate::System(SystemPredicate::Everything)],
+                tags: TagContext::default(),
+            };
+            let sort = FileSort {
+                by: SortBy::ImportTime,
+                order,
+            };
+            let probed = run(&SHARED.store, &search, sort, Planner::AlwaysProbe);
+            assert!(!probed.is_empty(), "{location:?}");
+            // the first scan fills the cache, the second uses it
+            for _ in 0..2 {
+                let scanned = run(&SHARED.store, &search, sort, Planner::AlwaysScan);
+                assert_eq!(scanned, probed, "{location:?} {order:?}");
+            }
+        }
+    }
 }
 
 #[test]

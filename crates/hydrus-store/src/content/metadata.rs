@@ -249,10 +249,14 @@ impl ContentWriter<'_> {
                 "UPDATE files SET file_modified_ms = ?1 WHERE hash_id = ?2",
                 None,
             ),
-            FileTime::Imported(domain) => each(
-                "UPDATE file_domain_current SET added_ms = ?1 WHERE hash_id = ?2 AND service_id = ?3",
-                Some(i64::from(domain.get())),
-            ),
+            FileTime::Imported(domain) => {
+                // cached import orders go stale
+                crate::domains::changed(conn)?;
+                each(
+                    "UPDATE file_domain_current SET added_ms = ?1 WHERE hash_id = ?2 AND service_id = ?3",
+                    Some(i64::from(domain.get())),
+                )
+            }
             FileTime::Deleted(domain) => each(
                 "UPDATE file_domain_deleted SET deleted_ms = ?1 WHERE hash_id = ?2 AND service_id = ?3",
                 Some(i64::from(domain.get())),

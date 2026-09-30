@@ -14,6 +14,7 @@ use rusqlite::Connection;
 use crate::conn::{Db, WriteCtx};
 use crate::content::ContentWriter;
 use crate::display::DisplayGraphs;
+use crate::domains::DomainCache;
 use crate::error::Result;
 use crate::services::{self, ServiceRegistry};
 use crate::settings;
@@ -33,6 +34,8 @@ pub struct Snapshot {
     pub thumbnails: ThumbnailSettings,
     /// The client's URL classes, ready for matching.
     pub url_classes: UrlClasses,
+    /// The files of each file domain, shared by every snapshot of a store.
+    pub domains: Arc<DomainCache>,
 }
 
 impl Snapshot {
@@ -48,6 +51,7 @@ impl Snapshot {
             storage,
             thumbnails,
             url_classes,
+            domains: Arc::default(),
         })
     }
 }
@@ -177,7 +181,10 @@ impl Store {
         let snapshot = Arc::clone(&self.snapshot);
         self.db.write_alone(move |ctx| {
             let result = f(ctx)?;
-            let fresh = Snapshot::load(ctx.conn())?;
+            // a service's files go with it, and its id may be used again
+            crate::domains::changed(ctx.conn())?;
+            let mut fresh = Snapshot::load(ctx.conn())?;
+            fresh.domains = Arc::clone(&snapshot.load().domains);
             ctx.after_commit(move || snapshot.store(Arc::new(fresh)));
             Ok(result)
         })

@@ -16,10 +16,21 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
+
+/// A counter that every write changing which files are in which file domain
+/// increments, in the same transaction, so a read's snapshot says which
+/// cached domain bitmaps it may use (`domains.rs`).
+const V6: &str = r"
+CREATE TABLE domain_generation (
+    id INTEGER PRIMARY KEY CHECK (id = 1),
+    generation INTEGER NOT NULL
+) STRICT;
+INSERT INTO domain_generation (id, generation) VALUES (1, 0);
+";
 
 /// Duplicates auto-resolution rules (`duplicates/auto.rs`): each rule, the
 /// status of every potential pair in its domain, and the pairs it actioned.

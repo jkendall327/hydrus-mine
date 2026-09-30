@@ -110,3 +110,15 @@ transaction, commits the batch, then acknowledges each closure's result
 (group commit). A failed closure rolls back only its own savepoint.
 
 Readers borrow connections from a pool and see a consistent WAL snapshot.
+
+### Cached domain files
+
+Most searches are limited to a file domain and sorted by import time, and
+reading either costs a row per file in the domain. `domains.rs` keeps each
+domain's files (as a bitmap) and its import order in memory, keyed by
+`domain_generation`, a one-row counter that every write changing domain
+membership or import times increments in the same transaction
+(`ContentWriter` does this; a write to the domain tables that goes around it
+must call `domains::changed`). A read looks up the counter inside its own
+transaction, so it only uses cached data that matches its WAL snapshot, even
+while writes commit around it.

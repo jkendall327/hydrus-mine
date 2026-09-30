@@ -7,6 +7,7 @@ pub mod conn;
 pub mod content;
 pub mod counts;
 pub mod display;
+pub mod domains;
 pub mod duplicates;
 pub mod error;
 pub mod import;

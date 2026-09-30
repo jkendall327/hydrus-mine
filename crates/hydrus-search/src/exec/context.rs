@@ -11,6 +11,7 @@ use rusqlite::Connection;
 use hydrus_core::{ContentStatus, NamespaceId, ServiceId, ServiceKey, ServiceType, TagId};
 use hydrus_store::Snapshot;
 use hydrus_store::display::DisplayGraph;
+use hydrus_store::domains::Domains;
 use hydrus_store::schema::MappingTables;
 use hydrus_store::services::{Service, ServiceKind};
 use hydrus_store::settings::{self, FileViewingStatistics};
@@ -109,7 +110,8 @@ pub(crate) struct Env<'a> {
     pub tags: TagScope,
     pub viewing: FileViewingStatistics,
     pub strategy: Strategy,
-    domain_files: OnceCell<RoaringBitmap>,
+    cache: Domains<'a>,
+    domain_files: OnceCell<Arc<RoaringBitmap>>,
     domain_size: OnceCell<Option<u64>>,
     graph_namespaces: OnceCell<HashMap<TagId, NamespaceId>>,
 }
@@ -142,6 +144,7 @@ impl<'a> Env<'a> {
             tags,
             viewing: settings::get(conn)?,
             strategy,
+            cache: snapshot.domains.for_read(conn)?,
             domain_files: OnceCell::new(),
             domain_size: OnceCell::new(),
             graph_namespaces: OnceCell::new(),
@@ -160,6 +163,7 @@ impl<'a> Env<'a> {
             tags,
             viewing: self.viewing.clone(),
             strategy: self.strategy,
+            cache: self.cache,
             domain_files: OnceCell::new(),
             domain_size: OnceCell::new(),
             graph_namespaces: OnceCell::new(),
@@ -185,24 +189,40 @@ impl<'a> Env<'a> {
         Ok(self.domain_files.get_or_init(|| files))
     }
 
-    fn load_domain(&self) -> Result<RoaringBitmap> {
+    /// Every file in the domain, if the domain's files are already known
+    /// (cached by an earlier search), so using them costs no reads.
+    fn known_domain_files(&self) -> Result<Option<&RoaringBitmap>> {
+        if let Some(files) = self.domain_files.get() {
+            return Ok(Some(files));
+        }
+        let Domain::Tables { tables, except } = &self.domain else {
+            return Ok(None);
+        };
+        let parts = tables.iter().map(|t| (t.service, t.deleted));
+        let all_cached = parts
+            .chain(except.map(|e| (e, false)))
+            .all(|(service, deleted)| self.cache.cached(service, deleted).is_some());
+        if all_cached {
+            self.domain_files().map(Some)
+        } else {
+            Ok(None)
+        }
+    }
+
+    fn load_domain(&self) -> Result<Arc<RoaringBitmap>> {
         match &self.domain {
             Domain::Tables { tables, except } => {
+                if let ([t], None) = (tables.as_slice(), except) {
+                    return Ok(self.cache.files(self.conn, t.service, t.deleted)?);
+                }
                 let mut out = RoaringBitmap::new();
                 for t in tables {
-                    let mut stmt = self.conn.prepare_cached(&format!(
-                        "SELECT hash_id FROM {} WHERE service_id = ?",
-                        t.table()
-                    ))?;
-                    out |= sql::collect(&mut stmt, [t.service])?;
+                    out |= &*self.cache.files(self.conn, t.service, t.deleted)?;
                 }
                 if let Some(except) = except {
-                    let mut stmt = self.conn.prepare_cached(
-                        "SELECT hash_id FROM file_domain_current WHERE service_id = ?",
-                    )?;
-                    out -= sql::collect(&mut stmt, [*except])?;
+                    out -= &*self.cache.files(self.conn, *except, false)?;
                 }
-                Ok(out)
+                Ok(Arc::new(out))
             }
             Domain::AllKnownFiles => {
                 let mut out = RoaringBitmap::new();
@@ -212,14 +232,14 @@ impl<'a> Env<'a> {
                         .prepare_cached(&format!("SELECT DISTINCT hash_id FROM {table}"))?;
                     out |= sql::collect(&mut stmt, [])?;
                 }
-                Ok(out)
+                Ok(Arc::new(out))
             }
         }
     }
 
     /// Roughly how many files the domain has, if that is cheap to know.
     pub fn domain_size(&self) -> Result<Option<u64>> {
-        if let Some(files) = self.domain_files.get() {
+        if let Some(files) = self.known_domain_files()? {
             return Ok(Some(files.len()));
         }
         if let Some(size) = self.domain_size.get() {
@@ -250,7 +270,7 @@ impl<'a> Env<'a> {
         if set.is_empty() {
             return Ok(set);
         }
-        if let Some(files) = self.domain_files.get() {
+        if let Some(files) = self.known_domain_files()? {
             return Ok(set & files);
         }
         let probe = match self.strategy {
@@ -333,6 +353,11 @@ impl<'a> Env<'a> {
     }
 
     /// The single service of a type, e.g. hydrus local file storage.
+    /// Cached data about file domains, as this search's snapshot has them.
+    pub fn domain_cache(&self) -> Domains<'a> {
+        self.cache
+    }
+
     pub fn service_of_type(&self, service_type: ServiceType) -> Option<&Arc<Service>> {
         self.snapshot.services.of_type(service_type).next()
     }

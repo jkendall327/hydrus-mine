@@ -84,6 +84,7 @@ impl ContentWriter<'_> {
         if new_rows.is_empty() {
             return Ok(());
         }
+        crate::domains::changed(self.conn)?;
         let new: Vec<HashId> = new_rows.iter().map(|(h, _)| *h).collect();
         let roles = self.roles.clone();
 
@@ -164,6 +165,7 @@ impl ContentWriter<'_> {
         if hashes.is_empty() {
             return Ok(());
         }
+        crate::domains::changed(self.conn)?;
         let roles = self.roles.clone();
         if domain == roles.local_file_storage {
             self.remove_files(roles.combined_local_media, hashes, true)?;
@@ -363,6 +365,7 @@ impl ContentWriter<'_> {
         domains.extend([roles.combined_local_media, roles.local_file_storage]);
         let domains = id_array(&domains);
         let trash = roles.trash;
+        crate::domains::changed(self.conn)?;
         match hashes {
             None => {
                 self.conn.execute(
