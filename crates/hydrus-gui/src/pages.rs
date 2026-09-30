@@ -202,6 +202,39 @@ impl Pages {
     }
 }
 
+impl Pages {
+    /// Save the pages as the last session: each page opened as it is now,
+    /// with the files it shows, and the rest as they were.
+    pub fn save(&mut self, now: i64) -> hydrus_store::Result<()> {
+        fn update(
+            pages: &mut [Page],
+            open: &HashMap<PageKey, Rc<RefCell<SearchPage>>>,
+            files: &mut Vec<(PageKey, Vec<hydrus_core::HashId>)>,
+        ) {
+            for page in pages {
+                if let PageContent::Pages(children) = &mut page.content {
+                    update(children, open, files);
+                } else if let Some(opened) = open.get(&page.key) {
+                    let opened = opened.borrow();
+                    page.content = opened.content(&page.content);
+                    files.push((page.key, opened.results().to_vec()));
+                }
+            }
+        }
+        let mut files = Vec::new();
+        update(&mut self.session.pages, &self.open, &mut files);
+        let session = self.session.clone();
+        self.store.write(move |ctx| {
+            let conn = ctx.conn();
+            sessions::save(conn, &session, now)?;
+            for (key, files) in &files {
+                sessions::set_page_files(conn, key, files)?;
+            }
+            Ok(())
+        })
+    }
+}
+
 /// A new search page, as the reference makes one: "files", searching
 /// everything in the default domains.
 fn new_search_page() -> Page {

@@ -96,6 +96,7 @@ fn the_last_session_opens_as_it_was_left() {
         ],
     };
     let (search_key, downloader_key) = (search_page.key, downloader.key);
+    let (session_again, shown_again) = (session.clone(), shown.clone());
     let (files, other_files) = (shown.clone(), everything[5..7].to_vec());
     store
         .write(move |ctx| {
@@ -162,6 +163,33 @@ fn the_last_session_opens_as_it_was_left() {
     // a page opened before is as it was left
     pages.select(0, 0);
     assert_eq!(pages.current().borrow().results(), reversed);
+
+    // saved, and opened again: as it was left (the pages not opened too)
+    pages.current().borrow_mut().add_predicate("system:inbox");
+    let inbox = pages.current().borrow().results().to_vec();
+    assert!(!inbox.is_empty() && inbox.len() < everything.len());
+    pages.save(10).unwrap();
+    let mut again = Pages::open(store.clone()).unwrap();
+    assert_eq!(again.tabs(), pages.tabs());
+    {
+        let opened = again.current();
+        let opened = opened.borrow();
+        assert_eq!(opened.predicates(), ["system:everything", "system:inbox"]);
+        assert_eq!(opened.sort().by, SortBy::FileSize);
+        assert_eq!(opened.sort().order, SortOrder::Ascending);
+        assert_eq!(opened.results(), inbox);
+    }
+    again.select(1, 1);
+    assert_eq!(again.current().borrow().results(), &everything[5..7]);
+    assert!(again.current().borrow().note().is_some());
+    // put back as the window below expects it
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            sessions::save(conn, &session_again, 0)?;
+            sessions::set_page_files(conn, &search_key, &shown_again)
+        })
+        .unwrap();
 
     // the window: tabs for each notebook on the way to the page shown
     let windows = headless::init();

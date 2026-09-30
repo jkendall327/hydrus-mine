@@ -5,7 +5,7 @@
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_core::pages::{PageSort, PageSortBy};
+use hydrus_core::pages::{PageContent, PageSort, PageSortBy};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
     parse_api_search, predicate_text, search_files, sort_files,
@@ -25,6 +25,9 @@ pub struct SearchPage {
     /// Why the page shows files without a search, if it does.
     note: Option<String>,
     sort: FileSort,
+    /// Whether the sort was changed since the page was opened (a sort we
+    /// can't use yet is kept until then).
+    sort_changed: bool,
     /// In the sort's order.
     results: Vec<HashId>,
     selected: Option<usize>,
@@ -58,6 +61,7 @@ impl SearchPage {
                 by: SortBy::ImportTime,
                 order: SortOrder::Descending,
             },
+            sort_changed: false,
             results: Vec::new(),
             selected: None,
             error: None,
@@ -124,6 +128,41 @@ impl SearchPage {
         }
     }
 
+    /// The page as a session keeps it, given what it was opened from.
+    pub fn content(&self, opened_from: &PageContent) -> PageContent {
+        let sort = if self.sort_changed {
+            Some(PageSort {
+                by: PageSortBy::System(i64::from(self.sort.by.code())),
+                ascending: self.sort.order == SortOrder::Ascending,
+            })
+        } else {
+            opened_from.sort().cloned()
+        };
+        match opened_from {
+            _ if self.note.is_none() => PageContent::Search {
+                search: FileSearchContext {
+                    predicates: self.predicates.clone(),
+                    ..self.context.clone()
+                },
+                synchronised: self.synchronised,
+                sort,
+            },
+            PageContent::Downloader { kind, queues, .. } => PageContent::Downloader {
+                kind: *kind,
+                queues: queues.clone(),
+                sort,
+            },
+            PageContent::Other {
+                page_type, stored, ..
+            } => PageContent::Other {
+                page_type: *page_type,
+                stored: stored.clone(),
+                sort,
+            },
+            other => other.clone(),
+        }
+    }
+
     /// Why the page has no search, if it hasn't.
     pub fn note(&self) -> Option<&str> {
         self.note.as_deref()
@@ -163,11 +202,13 @@ impl SearchPage {
             .find(|c| c.by == by)
             .map_or(SortOrder::Ascending, |c| c.default_order);
         self.sort = FileSort { by, order };
+        self.sort_changed = true;
         self.resort();
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
         self.sort.order = order;
+        self.sort_changed = true;
         self.resort();
     }
 
