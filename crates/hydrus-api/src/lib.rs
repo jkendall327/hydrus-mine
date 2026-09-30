@@ -69,7 +69,9 @@ impl AppState {
 /// The API's routes.
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
-    use routes::{access, add_files, add_tags, files, metadata, relationships, search, tags, urls};
+    use routes::{
+        access, add_files, add_tags, files, metadata, network, relationships, search, tags, urls,
+    };
     Router::new()
         .route("/api_version", get(access::api_version))
         .route("/verify_access_key", get(access::verify_access_key))
@@ -157,6 +159,14 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route(
             "/manage_file_relationships/remove_potentials",
             post(relationships::remove_potentials),
+        )
+        .route("/manage_cookies/get_cookies", get(network::get_cookies))
+        .route("/manage_cookies/set_cookies", post(network::set_cookies))
+        .route("/manage_headers/get_headers", get(network::get_headers))
+        .route("/manage_headers/set_headers", post(network::set_headers))
+        .route(
+            "/manage_headers/set_user_agent",
+            post(network::set_user_agent),
         )
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())

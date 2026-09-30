@@ -19,6 +19,7 @@ use rusqlite::{Connection, OpenFlags, params};
 use hydrus_core::{ServiceId, ServiceKey, ServiceType, SubtagId};
 
 use crate::error::{Result, StoreError};
+use crate::network::{self, Cookie, CustomHeader, NetworkContext};
 use crate::services::{self, ServiceKind};
 use crate::{counts, master, schema};
 
@@ -39,6 +40,10 @@ pub struct ImportInput {
     pub api_permissions: Vec<ApiPermissionsRow>,
     /// Typed settings to store under `settings`, as JSON.
     pub settings: BTreeMap<String, serde_json::Value>,
+    /// Custom HTTP headers; `None` gives the store the defaults.
+    pub custom_headers: Option<Vec<(NetworkContext, CustomHeader)>>,
+    /// Unexpired cookies, by session.
+    pub cookies: Vec<(NetworkContext, Cookie)>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
 }
@@ -222,6 +227,7 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.duplicates()?;
     copier.storage(source_dir)?;
     copier.settings(input)?;
+    copier.network(input)?;
     copier.derived()?;
     tx.commit()?;
 
@@ -695,6 +701,38 @@ impl Copier<'_> {
         Ok(())
     }
 
+    fn network(&mut self, input: &ImportInput) -> Result<()> {
+        match &input.custom_headers {
+            None => network::create_defaults(self.conn)?,
+            Some(headers) => {
+                for (context, h) in headers {
+                    network::set_header(
+                        self.conn,
+                        context,
+                        &h.name,
+                        Some(&h.value),
+                        Some(h.approval),
+                        Some(&h.reason),
+                    )?;
+                }
+                *self
+                    .report
+                    .rows
+                    .entry("network_headers".into())
+                    .or_default() += headers.len() as u64;
+            }
+        }
+        for (session, cookie) in &input.cookies {
+            network::set_cookie(self.conn, session, cookie)?;
+        }
+        *self
+            .report
+            .rows
+            .entry("network_cookies".into())
+            .or_default() += input.cookies.len() as u64;
+        Ok(())
+    }
+
     fn settings(&mut self, input: &ImportInput) -> Result<()> {
         for p in &input.api_permissions {
             self.conn.execute(
@@ -1066,5 +1104,50 @@ pub(crate) mod tests {
         let compared = compare_counts_with_reference(&source, &dest);
         eprintln!("compared {compared} count rows");
         assert!(compared > 0);
+    }
+}
+
+#[cfg(test)]
+mod network_tests {
+    use super::*;
+    use crate::network::{self, NetworkContext};
+
+    /// A session container holding one of the reference's pickled jars
+    /// (`oracle/fixtures/cookie_jars.json`) comes across without its
+    /// expired cookies, as the reference drops them when it loads a session.
+    #[test]
+    fn imports_session_cookies() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let jars = hydrus_testkit::fixture_json("cookie_jars.json");
+        let case = jars["cases"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|c| {
+                c["what"] == "jar"
+                    && c["protocol"] == 4
+                    && c["cookies"].as_array().unwrap().len() > 2
+            })
+            .unwrap();
+        let dump = serde_json::json!([[47, 2, [2, "example.com"]], case["pickle"]]).to_string();
+        {
+            let conn = Connection::open(source.path().join("client.db")).unwrap();
+            conn.execute(
+                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (96, 'example.com', 2, 1, ?)",
+                [dump],
+            )
+            .unwrap();
+        }
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(source.path(), &dest).unwrap();
+        let conn = Connection::open(&dest).unwrap();
+        let cookies = network::cookies(&conn, &NetworkContext::domain("example.com")).unwrap();
+        let names: Vec<&str> = cookies.iter().map(|c| c.name.as_str()).collect();
+        // "empty" (expires 0) and "neg" (-5) had expired
+        assert_eq!(names, ["sid", "pref", "unicode", "big"]);
+        assert_eq!(cookies[0].rest, [("HttpOnly".to_owned(), None)]);
+        assert!(cookies[0].secure);
+        assert_eq!(cookies[1].expires, None);
     }
 }

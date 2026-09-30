@@ -16,10 +16,39 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1];
+const MIGRATIONS: &[&str] = &[V1, V2];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
+
+/// Network sessions' cookies and custom HTTP headers (`network.rs`).
+const V2: &str = r"
+-- cookies of each network session (a session per registrable domain)
+CREATE TABLE network_cookies (
+    session_type INTEGER NOT NULL,
+    session_key TEXT NOT NULL,
+    domain TEXT NOT NULL,
+    path TEXT NOT NULL,
+    name TEXT NOT NULL,
+    value TEXT,
+    expires INTEGER,
+    secure INTEGER NOT NULL,
+    -- other attributes, as JSON [[name, value or null], ...]
+    rest TEXT NOT NULL,
+    UNIQUE (session_type, session_key, domain, path, name)
+) STRICT;
+
+-- custom HTTP headers per network context (rowid keeps their order)
+CREATE TABLE network_headers (
+    context_type INTEGER NOT NULL,
+    context_key TEXT NOT NULL,
+    name TEXT NOT NULL,
+    value TEXT NOT NULL,
+    approval INTEGER NOT NULL,
+    reason TEXT NOT NULL,
+    UNIQUE (context_type, context_key, name)
+) STRICT;
+";
 
 const V1: &str = r"
 -- master data -----------------------------------------------------------

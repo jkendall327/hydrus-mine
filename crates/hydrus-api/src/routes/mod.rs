@@ -5,6 +5,7 @@ pub mod add_files;
 pub mod add_tags;
 pub mod files;
 pub mod metadata;
+pub mod network;
 pub mod relationships;
 pub mod search;
 pub mod tags;

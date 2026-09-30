@@ -121,6 +121,7 @@ impl Store {
                 for (key, name, kind) in services::default_services() {
                     services::insert(ctx.conn(), &key, &name, &kind)?;
                 }
+                crate::network::create_defaults(ctx.conn())?;
                 create_default_storage(ctx.conn(), &media)
             })?;
         }

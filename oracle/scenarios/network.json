@@ -1,0 +1,427 @@
+{
+ "name": "network",
+ "description": "cookies and custom HTTP headers (what browser extensions send)",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [
+    [
+     "domain",
+     "localhost"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "headers": {
+     "User-Agent": {
+      "value": "Test UA"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Test": {
+      "value": "1",
+      "approved": "pending",
+      "reason": "why"
+     },
+     "X-Other": {
+      "value": "2"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Test": {
+      "approved": "denied"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Missing": {
+      "approved": "denied"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Test": {}
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Test": {
+      "approved": "maybe"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": "example.com",
+    "headers": {
+     "X-Test": {
+      "value": null
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "domain": null,
+    "headers": {
+     "User-Agent": {
+      "value": "Test UA",
+      "reason": "unchanged when the value is"
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_user_agent",
+   "json": {
+    "user-agent": "Another UA"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_user_agent",
+   "json": {
+    "user-agent": ""
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_headers/get_headers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_cookies/set_cookies",
+   "json": {
+    "cookies": [
+     [
+      "sid",
+      "abc",
+      ".example.com",
+      "/",
+      1900000000
+     ],
+     [
+      "pref",
+      "x",
+      "example.com",
+      "/a",
+      null
+     ],
+     [
+      "early",
+      "e",
+      "example.com",
+      "/",
+      null
+     ],
+     [
+      "other",
+      "1",
+      "sub.example.co.uk",
+      "/",
+      null
+     ]
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "www.example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "example.co.uk"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "co.uk"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_cookies/set_cookies",
+   "json": {
+    "cookies": [
+     [
+      "pref",
+      null,
+      "example.com",
+      "/a",
+      null
+     ],
+     [
+      "sid",
+      "changed",
+      ".example.com",
+      "/",
+      null
+     ]
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_cookies/set_cookies",
+   "json": {
+    "cookies": [
+     [
+      "a",
+      "b"
+     ]
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_cookies/set_cookies",
+   "json": {
+    "cookies": [
+     [
+      1,
+      "b",
+      "example.com",
+      "/",
+      null
+     ]
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_cookies/set_cookies",
+   "json": {
+    "cookies": [
+     [
+      "a",
+      "b",
+      "example.com",
+      "/",
+      "soon"
+     ]
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "localhost"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_cookies/get_cookies",
+   "query": [
+    [
+     "domain",
+     "example.com"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_headers/set_headers",
+   "json": {
+    "headers": {
+     "X": {
+      "value": "1"
+     }
+    }
+   },
+   "key": "restricted"
+  }
+ ]
+}

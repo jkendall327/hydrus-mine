@@ -158,7 +158,8 @@ pub fn all_applicable_domains(domain: &str) -> Vec<String> {
 }
 
 /// Decode a punycode label body (RFC 3492), `None` if malformed. (Names
-/// follow the RFC.)
+/// follow the RFC.) The `idna` crate has this too; switch to it once an HTTP
+/// client brings it into the tree anyway (it is heavy for this alone).
 #[allow(clippy::many_single_char_names)]
 fn punycode_decode(input: &str) -> Option<String> {
     const BASE: u32 = 36;

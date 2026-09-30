@@ -1,7 +1,7 @@
 {
   "api": {
     "total": 76,
-    "done": 40,
+    "done": 45,
     "partial": 2,
     "done_items": [
       "/add_files/add_file",
@@ -37,12 +37,17 @@
       "/get_files/thumbnail_path",
       "/get_service",
       "/get_services",
+      "/manage_cookies/get_cookies",
+      "/manage_cookies/set_cookies",
       "/manage_file_relationships/get_file_relationships",
       "/manage_file_relationships/get_potential_pairs",
       "/manage_file_relationships/get_potentials_count",
       "/manage_file_relationships/remove_potentials",
       "/manage_file_relationships/set_file_relationships",
       "/manage_file_relationships/set_kings",
+      "/manage_headers/get_headers",
+      "/manage_headers/set_headers",
+      "/manage_headers/set_user_agent",
       "/verify_access_key"
     ]
   },

@@ -101,6 +101,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     if let Some(manager) = db.tag_display_manager()? {
         insert_setting(&mut input, &autocomplete_settings(&manager))?;
     }
+    network_input(db, &mut input)?;
     match db.url_class_settings() {
         Ok(Some(mut url_classes)) => {
             url_classes.collapse_leading_slashes = options
@@ -240,6 +241,73 @@ fn appearance(appearance: &legacy::StarAppearance) -> Result<StarAppearance> {
         .map_or_else(StarAppearance::default, StarAppearance::Svg))
 }
 
+/// Custom headers and unexpired cookies.
+fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
+    use crate::network::{Approval, Cookie, CustomHeader, NetworkContext};
+
+    let context = |kind: i64, data: &Option<String>| NetworkContext {
+        kind,
+        data: data.clone().unwrap_or_default(),
+    };
+    match db.custom_headers() {
+        Ok(Some(headers)) => {
+            input.custom_headers = Some(
+                headers
+                    .iter()
+                    .map(|h| {
+                        let approval = Approval::from_code(h.approval).ok_or_else(|| {
+                            StoreError::Invalid(format!("unknown header approval {}", h.approval))
+                        })?;
+                        Ok((
+                            context(h.context_type, &h.context_data),
+                            CustomHeader {
+                                name: h.name.clone(),
+                                value: h.value.clone(),
+                                approval,
+                                reason: h.reason.clone(),
+                            },
+                        ))
+                    })
+                    .collect::<Result<_>>()?,
+            );
+        }
+        Ok(None) => {}
+        Err(e) => input
+            .warnings
+            .push(format!("custom HTTP headers were not converted: {e}")),
+    }
+    // the reference drops expired cookies when it loads a session
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    match db.network_sessions() {
+        Ok(sessions) => {
+            for session in sessions {
+                let key = context(session.context_type, &session.context_data);
+                for c in session.cookies {
+                    if c.expires.is_some_and(|e| e <= now) {
+                        continue;
+                    }
+                    input.cookies.push((
+                        key.clone(),
+                        Cookie {
+                            name: c.name,
+                            value: c.value,
+                            domain: c.domain,
+                            path: c.path,
+                            expires: c.expires,
+                            secure: c.secure,
+                            rest: c.rest,
+                        },
+                    ));
+                }
+            }
+        }
+        Err(e) => input.warnings.push(format!(
+            "cookies were not converted (send them again from your browser): {e}"
+        )),
+    }
+    Ok(())
+}
+
 fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
     let mut filter = TagFilter::new();
     for (slice, rule) in legacy.effective_rules() {
@@ -369,6 +437,20 @@ mod tests {
         let decoded: DuplicateMergeSettings =
             serde_json::from_value(input.settings["duplicate_merge"].clone()).unwrap();
         assert_eq!(decoded, DuplicateMergeSettings::default());
+    }
+
+    #[test]
+    fn a_new_clients_headers_are_our_defaults() {
+        use crate::network::{NetworkContext, default_headers};
+
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let expected: Vec<_> = default_headers()
+            .into_iter()
+            .map(|h| (NetworkContext::global(), h))
+            .collect();
+        assert_eq!(input.custom_headers, Some(expected));
+        assert!(input.warnings.is_empty(), "{:?}", input.warnings);
     }
 
     /// Custom options as the reference serialised them

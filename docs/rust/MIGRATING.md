@@ -35,7 +35,9 @@ that remember service keys keep working). Of the options, those hydrus-rs
 already uses come across as its own settings: thumbnail size, favourite tags,
 viewing statistics, URL classes, autocomplete rules, and the duplicate
 filter's batch size and metadata merge options (what "this is better" copies
-or moves between files). Configuration hydrus-rs doesn't
+or moves between files), and the network side: custom HTTP headers (e.g. a
+User-Agent your browser extension set) and every site's cookies, less those
+that had expired. Configuration hydrus-rs doesn't
 use yet (downloaders, pages, the GUI's options) is kept verbatim inside the
 new store, so later versions can pick it up without a re-import.
 

@@ -1,0 +1,508 @@
+{
+ "recorded_at_ms": 1790729757911,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "Accept": {
+      "approved": "approved",
+      "reason": "Prefers jpeg/png over webp, but provides graceful fallback.",
+      "value": "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8"
+     },
+     "Cache-Control": {
+      "approved": "approved",
+      "reason": "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured.",
+      "value": "no-transform"
+     },
+     "User-Agent": {
+      "approved": "approved",
+      "reason": "This is the default User-Agent identifier for the client for all network connections.",
+      "value": "Mozilla/5.0 (compatible; Hydrus Client)"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": null,
+     "type": 0
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {},
+    "hydrus_version": 688,
+    "network_context": {
+     "data": "example.com",
+     "type": 2
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The value \"localhost\" does not seem to be a domain!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "Accept": {
+      "approved": "approved",
+      "reason": "Prefers jpeg/png over webp, but provides graceful fallback.",
+      "value": "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8"
+     },
+     "Cache-Control": {
+      "approved": "approved",
+      "reason": "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured.",
+      "value": "no-transform"
+     },
+     "User-Agent": {
+      "approved": "approved",
+      "reason": "This is the default User-Agent identifier for the client for all network connections.",
+      "value": "Test UA"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": null,
+     "type": 0
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "X-Other": {
+      "approved": "approved",
+      "reason": "Set by Client API",
+      "value": "2"
+     },
+     "X-Test": {
+      "approved": "pending",
+      "reason": "why",
+      "value": "1"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": "example.com",
+     "type": 2
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "X-Other": {
+      "approved": "approved",
+      "reason": "Set by Client API",
+      "value": "2"
+     },
+     "X-Test": {
+      "approved": "denied",
+      "reason": "why",
+      "value": "1"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": "example.com",
+     "type": 2
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, you tried to set approved/reason on \"X-Missing\" for \"web domain: example.com\", but that entry does not exist, so there is no value to set them to! Please give a value!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, you have to set a value, approved, or reason parameter!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The value \"maybe\" was not in the permitted list!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "X-Other": {
+      "approved": "approved",
+      "reason": "Set by Client API",
+      "value": "2"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": "example.com",
+     "type": 2
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "Accept": {
+      "approved": "approved",
+      "reason": "Prefers jpeg/png over webp, but provides graceful fallback.",
+      "value": "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8"
+     },
+     "Cache-Control": {
+      "approved": "approved",
+      "reason": "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured.",
+      "value": "no-transform"
+     },
+     "User-Agent": {
+      "approved": "approved",
+      "reason": "This is the default User-Agent identifier for the client for all network connections.",
+      "value": "Test UA"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": null,
+     "type": 0
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "Accept": {
+      "approved": "approved",
+      "reason": "Prefers jpeg/png over webp, but provides graceful fallback.",
+      "value": "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8"
+     },
+     "Cache-Control": {
+      "approved": "approved",
+      "reason": "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured.",
+      "value": "no-transform"
+     },
+     "User-Agent": {
+      "approved": "approved",
+      "reason": "This is the default User-Agent identifier for the client for all network connections.",
+      "value": "Another UA"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": null,
+     "type": 0
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "headers": {
+     "Accept": {
+      "approved": "approved",
+      "reason": "Prefers jpeg/png over webp, but provides graceful fallback.",
+      "value": "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8"
+     },
+     "Cache-Control": {
+      "approved": "approved",
+      "reason": "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured.",
+      "value": "no-transform"
+     },
+     "User-Agent": {
+      "approved": "approved",
+      "reason": "This is the default User-Agent identifier for the client for all network connections.",
+      "value": "Mozilla/5.0 (compatible; Hydrus Client)"
+     }
+    },
+    "hydrus_version": 688,
+    "network_context": {
+     "data": null,
+     "type": 0
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "cookies": [
+     [
+      "sid",
+      "abc",
+      ".example.com",
+      "/",
+      1900000000
+     ],
+     [
+      "pref",
+      "x",
+      "example.com",
+      "/a",
+      null
+     ],
+     [
+      "early",
+      "e",
+      "example.com",
+      "/",
+      null
+     ]
+    ],
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "cookies": [
+     [
+      "sid",
+      "abc",
+      ".example.com",
+      "/",
+      1900000000
+     ],
+     [
+      "pref",
+      "x",
+      "example.com",
+      "/a",
+      null
+     ],
+     [
+      "early",
+      "e",
+      "example.com",
+      "/",
+      null
+     ]
+    ],
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "cookies": [
+     [
+      "other",
+      "1",
+      "sub.example.co.uk",
+      "/",
+      null
+     ]
+    ],
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "cookies": [],
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "cookies": [
+     [
+      "sid",
+      "changed",
+      ".example.com",
+      "/",
+      null
+     ],
+     [
+      "early",
+      "e",
+      "example.com",
+      "/",
+      null
+     ]
+    ],
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The cookie \"['a', 'b']\" did not come in the format [ name, value, domain, path, expires ]!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "In the row [ name, value, domain, path, expires ], which I received as \"[1, 'b', 'example.com', '/', None]\", name, domain, and path need to be strings, value needs to be null or a string, and expires needs to be null or an integer!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "In the row [ name, value, domain, path, expires ], which I received as \"['a', 'b', 'example.com', '/', 'soon']\", name, domain, and path need to be strings, value needs to be null or a string, and expires needs to be null or an integer!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The value \"localhost\" does not seem to be a domain!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage cookies and headers",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage cookies and headers",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  }
+ ],
+ "scenario": "network"
+}

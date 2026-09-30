@@ -596,6 +596,50 @@ def write_scenarios():
         get( '/manage_file_relationships/get_potentials_count' ),
     ], read_only = False ) )
 
+    headers = '/manage_headers/set_headers'
+    cookies = '/manage_cookies/set_cookies'
+
+    out.append( scenario( 'network', 'cookies and custom HTTP headers (what browser extensions send)', [
+        get( '/manage_headers/get_headers' ),
+        get( '/manage_headers/get_headers', domain = 'example.com' ),
+        get( '/manage_headers/get_headers', domain = 'localhost' ),
+        post( headers, { 'headers': { 'User-Agent': { 'value': 'Test UA' } } } ),
+        get( '/manage_headers/get_headers' ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Test': { 'value': '1', 'approved': 'pending', 'reason': 'why' }, 'X-Other': { 'value': '2' } } } ),
+        get( '/manage_headers/get_headers', domain = 'example.com' ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Test': { 'approved': 'denied' } } } ),
+        get( '/manage_headers/get_headers', domain = 'example.com' ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Missing': { 'approved': 'denied' } } } ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Test': {} } } ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Test': { 'approved': 'maybe' } } } ),
+        post( headers, { 'domain': 'example.com', 'headers': { 'X-Test': { 'value': None } } } ),
+        get( '/manage_headers/get_headers', domain = 'example.com' ),
+        post( headers, { 'domain': None, 'headers': { 'User-Agent': { 'value': 'Test UA', 'reason': 'unchanged when the value is' } } } ),
+        get( '/manage_headers/get_headers' ),
+        post( '/manage_headers/set_user_agent', { 'user-agent': 'Another UA' } ),
+        get( '/manage_headers/get_headers' ),
+        post( '/manage_headers/set_user_agent', { 'user-agent': '' } ),
+        get( '/manage_headers/get_headers' ),
+        post( cookies, { 'cookies': [
+            [ 'sid', 'abc', '.example.com', '/', 1900000000 ],
+            [ 'pref', 'x', 'example.com', '/a', None ],
+            [ 'early', 'e', 'example.com', '/', None ],
+            [ 'other', '1', 'sub.example.co.uk', '/', None ],
+        ] } ),
+        get( '/manage_cookies/get_cookies', domain = 'example.com' ),
+        get( '/manage_cookies/get_cookies', domain = 'www.example.com' ),
+        get( '/manage_cookies/get_cookies', domain = 'example.co.uk' ),
+        get( '/manage_cookies/get_cookies', domain = 'co.uk' ),
+        post( cookies, { 'cookies': [ [ 'pref', None, 'example.com', '/a', None ], [ 'sid', 'changed', '.example.com', '/', None ] ] } ),
+        get( '/manage_cookies/get_cookies', domain = 'example.com' ),
+        post( cookies, { 'cookies': [ [ 'a', 'b' ] ] } ),
+        post( cookies, { 'cookies': [ [ 1, 'b', 'example.com', '/', None ] ] } ),
+        post( cookies, { 'cookies': [ [ 'a', 'b', 'example.com', '/', 'soon' ] ] } ),
+        get( '/manage_cookies/get_cookies', domain = 'localhost' ),
+        get( '/manage_cookies/get_cookies', key = 'restricted', domain = 'example.com' ),
+        post( headers, { 'headers': { 'X': { 'value': '1' } } }, key = 'restricted' ),
+    ], read_only = False ) )
+
     out.extend( random_relationship_scenarios() )
 
     return out

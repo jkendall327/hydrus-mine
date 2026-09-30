@@ -162,11 +162,11 @@ status = "done"
 
 [[api]]
 path = "/manage_cookies/get_cookies"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_cookies/set_cookies"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_database/force_commit"
@@ -218,15 +218,15 @@ status = "done"
 
 [[api]]
 path = "/manage_headers/get_headers"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_headers/set_headers"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_headers/set_user_agent"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_pages/add_files"
