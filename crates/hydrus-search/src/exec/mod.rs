@@ -46,7 +46,7 @@ mod similar;
 mod sort;
 mod sql;
 mod tags;
-mod time;
+pub(crate) mod time;
 
 #[cfg(test)]
 mod tests;

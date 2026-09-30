@@ -49,6 +49,7 @@ pub mod api;
 pub use hydrus_core::search::context;
 pub mod error;
 pub mod exec;
+pub mod media;
 pub use hydrus_core::search::filetype;
 #[cfg(test)]
 mod filetype_tests;

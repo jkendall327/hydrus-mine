@@ -119,7 +119,7 @@ pub(crate) fn range(test: TimeTest, clock: &Clock) -> TimeRange {
     range_opt(test, clock).unwrap_or_default()
 }
 
-fn range_opt(test: TimeTest, clock: &Clock) -> Option<TimeRange> {
+pub(crate) fn range_opt(test: TimeTest, clock: &Clock) -> Option<TimeRange> {
     Some(match test {
         TimeTest::Relative { op, age } => {
             let pivot = clock.millis(before_now(clock, age)?)?;

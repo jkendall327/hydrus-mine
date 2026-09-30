@@ -24,7 +24,7 @@ use crate::search::time::{TimeKind, TimeTest};
 
 /// One term of a file search. A search matches the files that satisfy all of
 /// its predicates.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum Predicate {
     /// Files that have the tag (or, if not `inclusive`, do not).
     Tag { tag: Tag, inclusive: bool },
@@ -41,7 +41,9 @@ pub enum Predicate {
 
 /// A tag pattern in which `*` matches any run of characters, e.g.
 /// `character:sam*` or `*blue*`. It is a cleaned tag, so it is lowercase.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct Wildcard(String);
 
 impl Wildcard {
@@ -72,7 +74,7 @@ impl fmt::Display for Wildcard {
 }
 
 /// A `system:` predicate.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum SystemPredicate {
     /// Every file in the search domain.
     Everything,
@@ -193,7 +195,7 @@ pub enum SystemPredicate {
 }
 
 /// A set of hashes of one kind, for `system:hash`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum FileHashes {
     Sha256(BTreeSet<Sha256>),
     Md5(BTreeSet<Md5>),
@@ -236,7 +238,9 @@ impl FileHashes {
 }
 
 /// Yes/no file properties.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum FileProperty {
     Audio,
     Transparency,
@@ -250,7 +254,9 @@ pub enum FileProperty {
 }
 
 /// Numeric file properties tested with a [`NumberTest`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum NumericProperty {
     /// Pixels.
     Width,
@@ -267,7 +273,9 @@ pub enum NumericProperty {
 }
 
 /// Which tags a tag-counting predicate looks at.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum NamespaceFilter {
     /// Tags in any namespace, and unnamespaced tags.
     Any,
@@ -299,7 +307,9 @@ impl NamespaceFilter {
 }
 
 /// The unit a file size was given in (binary multiples, as in the reference).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum SizeUnit {
     Bytes,
     Kilobytes,
@@ -319,7 +329,9 @@ impl SizeUnit {
 }
 
 /// The unit a pixel count was given in (decimal multiples, as in the reference).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum PixelUnit {
     Pixels,
     Kilopixels,
@@ -337,7 +349,9 @@ impl PixelUnit {
 }
 
 /// A service named in search text, or identified by key.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum ServiceRef {
     /// A service by name, as typed but lowercased. Resolve it among the
     /// services of the types the predicate allows: an exact name match
@@ -348,7 +362,9 @@ pub enum ServiceRef {
 }
 
 /// A kind of duplicate-system relationship.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Relationship {
     Duplicates,
     Alternates,
@@ -369,7 +385,9 @@ impl Relationship {
 }
 
 /// What a file viewing statistics predicate measures.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum ViewingStat {
     /// Number of views.
     Views,
@@ -378,7 +396,9 @@ pub enum ViewingStat {
 }
 
 /// Where views are counted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum ViewCanvas {
     MediaViewer,
     Preview,
@@ -396,7 +416,7 @@ impl ViewCanvas {
 }
 
 /// The canvases a viewing statistic sums over.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ViewCanvases {
     /// The user's "interesting" canvases option, read when the search runs.
     Default,
@@ -405,7 +425,7 @@ pub enum ViewCanvases {
 }
 
 /// A rule a file's URLs are matched against.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum UrlRule {
     /// A URL, compared exactly (case preserved).
     ExactMatch(String),
@@ -421,7 +441,7 @@ pub enum UrlRule {
 ///
 /// What it means depends on the kind of service it names, which is only
 /// known when the search runs. The reference interprets each form as noted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum RatingTest {
     /// Has any rating. For inc/dec services: a count above zero.
     Rated,
@@ -447,7 +467,7 @@ pub enum RatingTest {
 }
 
 /// How `system:all|any|only ... rated` combines its services.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum RatingLogic {
     All,
     Any,
@@ -459,7 +479,7 @@ pub enum RatingLogic {
 }
 
 /// A set of rating services, by type or by name.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum ServiceSelection {
     Types(BTreeSet<ServiceType>),
     /// Service names, lowercased; resolved among local rating services.
@@ -482,7 +502,9 @@ impl ServiceSelection {
 }
 
 /// Whether a tag search sees tags as stored or as displayed.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum TagDisplayType {
     /// Tags as stored, ignoring siblings and parents.
     Storage,

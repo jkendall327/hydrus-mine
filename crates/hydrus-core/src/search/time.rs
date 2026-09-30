@@ -12,7 +12,9 @@ use std::fmt;
 use crate::search::number::Comparison;
 
 /// Which timestamp of a file a time predicate tests.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum TimeKind {
     /// When the file was imported to the searched file domain.
     Imported,
@@ -25,7 +27,7 @@ pub enum TimeKind {
 }
 
 /// The test a time predicate applies.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum TimeTest {
     /// Compare the file's *age* at search time with `age`.
     Relative { op: RelativeOp, age: CalendarDelta },
@@ -37,7 +39,7 @@ pub enum TimeTest {
 }
 
 /// How a file's age is compared with a [`CalendarDelta`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum RelativeOp {
     /// Younger than the age: happened *since* that long ago (`<`).
     Less,
@@ -65,7 +67,9 @@ impl RelativeOp {
 ///
 /// Years and months are calendar units: subtracting one month from 31 March
 /// gives the last day of February. Weeks are parsed as 7 days.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Hash)]
+#[derive(
+    Debug, Clone, Copy, Default, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize,
+)]
 pub struct CalendarDelta {
     pub years: u32,
     pub months: u32,
@@ -120,7 +124,9 @@ impl fmt::Display for CalendarDelta {
 }
 
 /// A valid calendar date with a time to the minute, without a timezone.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub struct CivilDateTime {
     year: u16,
     month: u8,

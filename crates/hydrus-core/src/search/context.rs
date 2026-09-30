@@ -10,7 +10,7 @@ use crate::search::predicate::Predicate;
 
 /// The file domains a search covers: files currently in any of `current`, or
 /// deleted from any of `deleted`.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct LocationContext {
     current: BTreeSet<ServiceKey>,
     deleted: BTreeSet<ServiceKey>,
@@ -67,7 +67,7 @@ impl Default for LocationContext {
 }
 
 /// The tag domain a search reads tags from.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct TagContext {
     /// The tag service searched.
     pub service: ServiceKey,
@@ -105,7 +105,7 @@ impl Default for TagContext {
 }
 
 /// A complete file search: where to look and what to match.
-#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
 pub struct FileSearchContext {
     pub location: LocationContext,
     pub tags: TagContext,

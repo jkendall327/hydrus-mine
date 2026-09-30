@@ -231,7 +231,7 @@ pub const FILETYPE_WORDS: &[(&str, &[Mime])] = &[
 ];
 
 /// A set of file types for `system:filetype`, in summary form.
-#[derive(Debug, Clone, PartialEq, Eq, Hash, Default)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, Default, serde::Serialize, serde::Deserialize)]
 pub struct FiletypeSet(BTreeSet<Mime>);
 
 impl FiletypeSet {

@@ -22,7 +22,7 @@ use std::fmt;
 pub const DEFAULT_APPROX_PERCENT: u32 = 15;
 
 /// A test of a single number, e.g. `width > 1920` or `duration ≈ 60s ±15%`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub struct NumberTest {
     pub op: NumberOp,
     /// The number compared against, in the property's unit (pixels,
@@ -31,7 +31,7 @@ pub struct NumberTest {
 }
 
 /// The operator of a [`NumberTest`].
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum NumberOp {
     Less,
     LessOrEqual,
@@ -86,7 +86,9 @@ impl fmt::Display for NumberTest {
 
 /// A legacy comparison operator. "About" means within a tolerance fixed by
 /// the predicate (±15% for counts and sizes).
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
+#[derive(
+    Debug, Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, serde::Deserialize,
+)]
 pub enum Comparison {
     Less,
     Greater,
@@ -110,7 +112,7 @@ impl Comparison {
 
 /// The operator of a rating comparison. Ratings cannot be tested for
 /// inequality.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum RatingOp {
     Equal,
     Less,
@@ -135,7 +137,7 @@ impl RatingOp {
 }
 
 /// The operator of `system:tag as number`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum TagNumberOp {
     Less,
     Greater,
@@ -155,7 +157,7 @@ impl TagNumberOp {
 }
 
 /// The operator of `system:ratio`.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
 pub enum RatioOp {
     Equal,
     /// Width/height ratio greater than the given one.
