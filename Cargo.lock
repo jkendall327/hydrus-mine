@@ -2473,6 +2473,7 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "libloading",
  "png",
  "serde_json",
  "slint",

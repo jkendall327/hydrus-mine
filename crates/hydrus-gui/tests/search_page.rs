@@ -155,6 +155,34 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     viewer.next();
     assert_eq!(viewer.index(), 0);
     assert!(MediaViewer::new(store.clone(), Vec::new(), 0).is_none());
+    // what plays in mpv, as the reference's defaults have it: video, audio
+    // and animations (but not animated WebP), not stills or documents
+    let results = page.results().to_vec();
+    let infos = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &results))
+        .unwrap();
+    let mut kinds = std::collections::BTreeMap::new();
+    for (index, info) in infos.iter().enumerate() {
+        let mime = info.info.as_ref().unwrap().mime;
+        let viewer = MediaViewer::new(store.clone(), results.clone(), index).unwrap();
+        let playable = viewer.playable();
+        if let Some(path) = &playable {
+            assert!(path.exists(), "{path:?}");
+        }
+        kinds.insert(mime.human_name(), playable.is_some());
+    }
+    for (kind, plays) in [
+        ("mp3", true),
+        ("flac", true),
+        ("animated gif", true),
+        ("apng", true),
+        ("jpeg", false),
+        ("static gif", false),
+        ("pdf", false),
+        ("zip", false),
+    ] {
+        assert_eq!(kinds.get(kind), Some(&plays), "{kind}: {kinds:?}");
+    }
 
     // the window
     let windows = headless::init();

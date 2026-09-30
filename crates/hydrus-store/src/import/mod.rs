@@ -221,14 +221,32 @@ pub fn import(source_dir: &Path, dest: &Path, input: &ImportInput) -> Result<Imp
     let _ = std::fs::remove_file(&scratch);
     let result = import_into(source_dir, &scratch, input);
     match result {
-        Ok(report) => {
+        Ok(mut report) => {
             std::fs::rename(&scratch, dest)?;
+            copy_mpv_conf(source_dir, dest, &mut report);
             Ok(report)
         }
         Err(e) => {
             let _ = std::fs::remove_file(&scratch);
             Err(e)
         }
+    }
+}
+
+/// The reference's mpv settings (`mpv.conf` in its database directory),
+/// which the desktop client's player loads from the store's directory.
+fn copy_mpv_conf(source_dir: &Path, dest: &Path, report: &mut ImportReport) {
+    let source = source_dir.join("mpv.conf");
+    let Some(target) = dest.parent().map(|dir| dir.join("mpv.conf")) else {
+        return;
+    };
+    if !source.exists() || target.exists() {
+        return;
+    }
+    if let Err(e) = std::fs::copy(&source, &target) {
+        report.warnings.push(format!(
+            "mpv.conf could not be copied, so video plays with hydrus's default mpv settings: {e}"
+        ));
     }
 }
 
@@ -1912,6 +1930,21 @@ mod network_tests {
                 .unwrap();
             }
         }
+    }
+
+    /// The reference's mpv settings come over beside the store.
+    #[test]
+    fn copies_the_mpv_conf() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        std::fs::write(source.path().join("mpv.conf"), "loop-file=no\n").unwrap();
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+        assert_eq!(
+            std::fs::read_to_string(dest_dir.path().join("mpv.conf")).unwrap(),
+            "loop-file=no\n"
+        );
     }
 
     /// A session with a search page comes over with its search, sort and

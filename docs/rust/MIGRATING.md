@@ -19,7 +19,12 @@ as you like.
    `target/release/hydrus` and the desktop client `target/release/hydrus-gui`
    (`.exe` on Windows). `cargo build --release -p hydrus-cli` builds just the
    command line. Video and audio need `ffmpeg` on your `PATH` (for their
-   metadata and thumbnails, as hydrus does); images don't.
+   metadata and thumbnails, as hydrus does); images don't. To play video in
+   the desktop client, it needs libmpv, as hydrus does: on Linux your
+   distribution's `libmpv2` (or `mpv`) package; on Windows `libmpv-2.dll`
+   or hydrus's `mpv-2.dll` next to `hydrus-gui.exe`; on macOS `brew install
+   mpv`. Without it, video shows its thumbnail. Your `mpv.conf` comes
+   across with the import.
 3. Import:
 
    ```sh

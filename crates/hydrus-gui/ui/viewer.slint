@@ -1,6 +1,6 @@
 // The media viewer's window: one file, fitted to the window. Right and left
 // (or page down and up, or the mouse wheel) move through the page's files;
-// escape closes it.
+// space pauses and plays video; escape closes it.
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
@@ -14,6 +14,7 @@ export component MediaViewerWindow inherits Window {
     callback next();
     callback previous();
     callback close-requested();
+    callback toggle-pause();
 
     forward-focus: keys;
     keys := FocusScope {
@@ -24,6 +25,10 @@ export component MediaViewerWindow inherits Window {
             }
             if (event.text == Key.LeftArrow || event.text == Key.PageUp) {
                 root.previous();
+                return accept;
+            }
+            if (event.text == " ") {
+                root.toggle-pause();
                 return accept;
             }
             if (event.text == Key.Escape) {

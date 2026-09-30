@@ -19,6 +19,7 @@ pub use ui::*;
 pub mod autocomplete;
 mod grid;
 pub mod headless;
+pub mod mpv;
 mod page;
 mod pages;
 pub mod sort;
@@ -294,14 +295,63 @@ fn open_viewer(
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
+    // video, audio and most animations play in mpv (made when first needed)
+    let player: Rc<RefCell<Option<mpv::Player>>> = Rc::default();
+    let frames = Rc::new(slint::Timer::default());
+    let show_frames = {
+        let player = player.clone();
+        let weak = window.as_weak();
+        move || {
+            let (Some(window), Ok(player)) = (weak.upgrade(), player.try_borrow()) else {
+                return;
+            };
+            let Some(player) = player.as_ref() else {
+                return;
+            };
+            let size = window.window().size();
+            player.set_size(size.width, size.height);
+            if let Some(frame) = player.frame() {
+                window.set_media(frame);
+            }
+        }
+    };
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
+        let player = player.clone();
+        let frames = frames.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
-                let model = model.borrow();
-                window.set_caption(model.caption().into());
-                window.set_media(model.media().as_ref().map(image).unwrap_or_default());
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            window.set_caption(model.caption().into());
+            // (for a file that plays, its thumbnail until the first frame)
+            window.set_media(model.media().as_ref().map(image).unwrap_or_default());
+            let mut player = player.borrow_mut();
+            if let Some(path) = model.playable().filter(|_| mpv::available()) {
+                if player.is_none() {
+                    let conf = model.store().dir().join("mpv.conf");
+                    match mpv::Player::new(Some(&conf)) {
+                        Ok(made) => *player = Some(made),
+                        Err(e) => eprintln!("could not start mpv: {e}"),
+                    }
+                }
+                if let Some(player) = player.as_ref() {
+                    if let Err(e) = player.load(&path) {
+                        eprintln!("mpv could not play {}: {e}", path.display());
+                    }
+                    frames.start(
+                        slint::TimerMode::Repeated,
+                        std::time::Duration::from_millis(10),
+                        show_frames.clone(),
+                    );
+                }
+            } else {
+                frames.stop();
+                if let Some(player) = player.as_ref() {
+                    let _ = player.stop();
+                }
             }
         }
     };
@@ -318,10 +368,21 @@ fn open_viewer(
         model.borrow_mut().previous();
         show();
     });
+    window.on_toggle_pause({
+        let player = player.clone();
+        move || {
+            if let Some(player) = player.borrow().as_ref() {
+                let _ = player.toggle_pause();
+            }
+        }
+    });
     window.on_close_requested({
         let weak = window.as_weak();
         let slot = slot.clone();
         move || {
+            frames.stop();
+            // (stops playing at once)
+            player.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

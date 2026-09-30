@@ -49,13 +49,20 @@ thread when its row first comes into view (a blank frame until then). Double-cli
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
 to the first as in the reference, and escape closes it. Images are shown
-whole; other files by their thumbnail for now.
+whole. Video, audio and animations play in mpv, as the reference's defaults
+have it (animated WebP and JPEG XL, and ugoiras, show their first frame
+until there is a native animation player): libmpv is loaded when first
+needed, so building needs nothing more, and without it these show their
+thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
+hydrus's default one) applies. Frames come from mpv's software renderer, on
+a thread of their own (`src/mpv.rs`); that is slower than the reference's
+embedded mpv window for large videos. Other files show their thumbnail.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's page chooser
 (new pages are always search pages), reopening closed pages, system
-predicates in the autocomplete, collect, the viewer's hover frames
-and animation or video, downloader pages' own panels.
+predicates in the autocomplete, collect, the viewer's hover frames, seeking
+and volume, a native animation player, downloader pages' own panels.
 
 ## Size
 
@@ -168,8 +175,9 @@ autocomplete options, sessions, shortcut sets, recent tags.
 ## Decisions
 
 - **Video and animation: embed mpv** (as the reference can), for now; the
-  owner's choice. Decoding with ffmpeg and drawing frames ourselves (the
-  reference's native renderer) may come later.
+  owner's choice. Done, through mpv's software renderer. Decoding with
+  ffmpeg and drawing frames ourselves (the reference's native renderer) may
+  come later.
 
 ## Open questions
 

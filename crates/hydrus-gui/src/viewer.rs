@@ -30,6 +30,10 @@ impl MediaViewer {
         })
     }
 
+    pub fn store(&self) -> &Arc<Store> {
+        &self.store
+    }
+
     pub fn index(&self) -> usize {
         self.index
     }
@@ -52,8 +56,34 @@ impl MediaViewer {
         format!("{}/{}", self.index + 1, self.files.len())
     }
 
-    /// The current file as shown: an image decoded whole; anything the
-    /// viewer can't show yet, by its thumbnail.
+    /// Where the current file is, if the reference plays its kind in mpv by
+    /// default: video, audio and animations (but animated WebP and JPEG XL,
+    /// and ugoiras, which it shows natively).
+    pub fn playable(&self) -> Option<std::path::PathBuf> {
+        use hydrus_core::Mime;
+        let id = self.current();
+        let result = self
+            .store
+            .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+            .ok()?
+            .into_iter()
+            .next()?;
+        let mime = result.info?.mime;
+        let plays = match mime {
+            Mime::AnimationWebp | Mime::AnimationJxl | Mime::AnimationUgoira => false,
+            other => matches!(
+                other.general_class(),
+                Some(Mime::GeneralVideo | Mime::GeneralAudio | Mime::GeneralAnimation)
+            ),
+        };
+        if !plays {
+            return None;
+        }
+        self.store.snapshot().storage.file_path(&result.hash, mime)
+    }
+
+    /// The current file as a still: an image decoded whole; anything else by
+    /// its thumbnail.
     pub fn media(&self) -> Option<hydrus_media::Raster> {
         let id = self.current();
         let result = self
