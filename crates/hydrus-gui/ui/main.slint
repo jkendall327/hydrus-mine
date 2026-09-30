@@ -3,6 +3,8 @@
 
 import { LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 
+export { MediaViewerWindow } from "viewer.slint";
+
 export struct Thumbnail {
     image: image,
     selected: bool,
@@ -39,6 +41,7 @@ component ThumbnailGrid inherits ListView {
     in property <length> gap: 4px;
     out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
     callback clicked(int);
+    callback activated(int);
     for row in root.rows: HorizontalLayout {
         padding-left: root.gap;
         padding-top: root.gap;
@@ -61,6 +64,8 @@ component ThumbnailGrid inherits ListView {
             }
             TouchArea {
                 clicked => { root.clicked(row.first + column); }
+                // as in the reference, double-clicking a thumbnail opens the viewer
+                double-clicked => { root.activated(row.first + column); }
             }
         }
     }
@@ -86,6 +91,7 @@ export component MainWindow inherits Window {
     callback suggestion-chosen(int);
     callback remove-predicate(int);
     callback thumbnail-clicked(int);
+    callback thumbnail-activated(int);
     callback columns-changed(int);
     // how many thumbnails fit across the grid
     out property <int> grid-columns: grid.columns;
@@ -163,6 +169,7 @@ export component MainWindow inherits Window {
             grid := ThumbnailGrid {
                 rows: root.thumbnail-rows;
                 clicked(i) => { root.thumbnail-clicked(i); }
+                activated(i) => { root.thumbnail-activated(i); }
             }
         }
         Rectangle {

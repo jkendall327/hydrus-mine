@@ -45,6 +45,10 @@ impl SearchPage {
         }
     }
 
+    pub fn store(&self) -> &Arc<Store> {
+        &self.store
+    }
+
     pub fn predicates(&self) -> &[String] {
         &self.predicates
     }

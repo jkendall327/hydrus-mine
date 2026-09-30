@@ -1,0 +1,52 @@
+// The media viewer's window: one file, fitted to the window. Right and left
+// (or page down and up, or the mouse wheel) move through the page's files;
+// escape closes it.
+
+export component MediaViewerWindow inherits Window {
+    title: root.caption;
+    preferred-width: 1000px;
+    preferred-height: 750px;
+    background: #202020;
+
+    in property <image> media;
+    in property <string> caption;
+
+    callback next();
+    callback previous();
+    callback close();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.RightArrow || event.text == Key.PageDown) {
+                root.next();
+                return accept;
+            }
+            if (event.text == Key.LeftArrow || event.text == Key.PageUp) {
+                root.previous();
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                root.close();
+                return accept;
+            }
+            reject
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: root.media;
+            image-fit: contain;
+        }
+        TouchArea {
+            scroll-event(event) => {
+                if (event.delta-y < 0) {
+                    root.next();
+                } else if (event.delta-y > 0) {
+                    root.previous();
+                }
+                accept
+            }
+        }
+    }
+}

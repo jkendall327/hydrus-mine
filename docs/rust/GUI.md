@@ -14,11 +14,15 @@ system predicate; a leading hyphen excludes. Double-clicking a predicate
 removes it. The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is decoded when its row first comes
-into view.
+into view. Double-clicking a thumbnail opens the media viewer in its own
+window on that file, fitted to the window: right and left (or page down and
+up, or the mouse wheel) move through the page's files, round from the last
+to the first as in the reference, and escape closes it. Images are shown
+whole; other files by their thumbnail for now.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and draws the
 window headless (the screenshot lands in `target/tmp/`). Not yet: system
-predicates in the autocomplete, sort and collect, the media viewer, more
-pages, decoding thumbnails off the UI thread.
+predicates in the autocomplete, sort and collect, the viewer's hover
+frames and animation or video, more pages, decoding off the UI thread.
 
 ## Size
 

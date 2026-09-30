@@ -20,9 +20,28 @@ pub mod autocomplete;
 mod grid;
 pub mod headless;
 mod page;
+mod viewer;
 
 pub use grid::ThumbnailRows;
 pub use page::SearchPage;
+pub use viewer::MediaViewer;
+
+/// A page bound to a window: its grid's rows, and its media viewer while
+/// one is open.
+#[derive(Clone)]
+pub struct Bound {
+    pub rows: Rc<ThumbnailRows>,
+    pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+}
+
+impl std::fmt::Debug for Bound {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Bound")
+            .field("rows", &self.rows)
+            .field("viewer", &self.viewer.borrow().is_some())
+            .finish()
+    }
+}
 
 /// A decoded image as Slint shows it.
 pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
@@ -45,9 +64,8 @@ pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     }
 }
 
-/// Show `page` in `window`, and let the window change it. Returns the
-/// grid's rows.
-pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Rc<ThumbnailRows> {
+/// Show `page` in `window`, and let the window change it.
+pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
     let rows = Rc::new(ThumbnailRows::new(page.clone()));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
@@ -112,6 +130,25 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Rc<ThumbnailR
         let rows = rows.clone();
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
     });
+    let viewer: Rc<RefCell<Option<MediaViewerWindow>>> = Rc::default();
+    window.on_thumbnail_activated({
+        let page = page.clone();
+        let viewer = viewer.clone();
+        move |index| {
+            let page = page.borrow();
+            let Some(model) = MediaViewer::new(
+                page.store().clone(),
+                page.results().to_vec(),
+                usize::try_from(index).unwrap_or(usize::MAX),
+            ) else {
+                return;
+            };
+            match open_viewer(model, &viewer) {
+                Ok(window) => *viewer.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the media viewer: {e}"),
+            }
+        }
+    });
     window.on_thumbnail_clicked({
         let rows = rows.clone();
         move |index| {
@@ -124,7 +161,53 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Rc<ThumbnailR
             }
         }
     });
-    rows
+    Bound { rows, viewer }
+}
+
+/// Open a viewer window on `model`'s file; it forgets itself from `slot`
+/// when closed.
+fn open_viewer(
+    model: MediaViewer,
+    slot: &Rc<RefCell<Option<MediaViewerWindow>>>,
+) -> Result<MediaViewerWindow, slint::PlatformError> {
+    let window = MediaViewerWindow::new()?;
+    let model = Rc::new(RefCell::new(model));
+    let show = {
+        let model = model.clone();
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let model = model.borrow();
+                window.set_caption(model.caption().into());
+                window.set_media(model.media().as_ref().map(image).unwrap_or_default());
+            }
+        }
+    };
+    show();
+    window.on_next({
+        let model = model.clone();
+        let show = show.clone();
+        move || {
+            model.borrow_mut().next();
+            show();
+        }
+    });
+    window.on_previous(move || {
+        model.borrow_mut().previous();
+        show();
+    });
+    window.on_close({
+        let weak = window.as_weak();
+        let slot = slot.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let _ = window.hide();
+            }
+            slot.borrow_mut().take();
+        }
+    });
+    window.show()?;
+    Ok(window)
 }
 
 /// Show the page's search: the box's text and suggestions, the predicates,

@@ -17,7 +17,7 @@ fn main() -> Result<()> {
     let store = hydrus_store::Store::open(&dir)
         .with_context(|| format!("opening the store at {}", dir.display()))?;
     let window = MainWindow::new()?;
-    let _rows = bind(&window, Rc::new(RefCell::new(SearchPage::new(store))));
+    let _bound = bind(&window, Rc::new(RefCell::new(SearchPage::new(store))));
     window.run()?;
     Ok(())
 }

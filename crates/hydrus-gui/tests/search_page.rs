@@ -6,7 +6,7 @@ use std::rc::Rc;
 
 use slint::{ComponentHandle as _, Model as _};
 
-use hydrus_gui::{MainWindow, SearchPage, bind, headless};
+use hydrus_gui::{MainWindow, MediaViewer, SearchPage, bind, headless};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
@@ -78,10 +78,27 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
         .count();
     assert!(thumbnails > 0);
 
+    // the media viewer, from the third file: through the files and round
+    let mut viewer = MediaViewer::new(store.clone(), page.results().to_vec(), 2).unwrap();
+    assert_eq!(viewer.caption(), format!("3/{everything}"));
+    assert!(viewer.media().is_some());
+    viewer.previous();
+    viewer.previous();
+    viewer.previous();
+    assert_eq!(
+        viewer.index(),
+        everything - 1,
+        "back past the first to the last"
+    );
+    viewer.next();
+    assert_eq!(viewer.index(), 0);
+    assert!(MediaViewer::new(store.clone(), Vec::new(), 0).is_none());
+
     // the window
-    let window = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
-    let rows = bind(&ui, Rc::new(RefCell::new(SearchPage::new(store))));
+    let main_window = windows.get(0).unwrap();
+    let bound = bind(&ui, Rc::new(RefCell::new(SearchPage::new(store))));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));
@@ -96,27 +113,36 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let (width, height) = (1100, 700);
     // (the first frame lays the grid out, which says how many thumbnails fit
     // in a row; the second shows them)
-    headless::render(&window, width, height);
+    headless::render(&main_window, width, height);
     assert!(ui.get_grid_columns() > 1);
-    let pixels = headless::render(&window, width, height);
+    let pixels = headless::render(&main_window, width, height);
     // only the rows in view were decoded
-    assert!(rows.cached() > 0 && rows.cached() < everything, "{rows:?}");
-
-    let screenshot = std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("search_page.png");
-    let mut encoder = png::Encoder::new(
-        std::io::BufWriter::new(std::fs::File::create(&screenshot).unwrap()),
-        width,
-        height,
-    );
-    encoder.set_color(png::ColorType::Rgba);
-    encoder.set_depth(png::BitDepth::Eight);
-    encoder
-        .write_header()
-        .unwrap()
-        .write_image_data(&pixels)
-        .unwrap();
-
+    let cached = bound.rows.cached();
+    assert!(cached > 0 && cached < everything, "{bound:?}");
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(&shots.join("search_page.png"), &pixels, width, height).unwrap();
     // thumbnails were drawn: far more colours than the window's own few
     let colours: std::collections::HashSet<&[u8]> = pixels.chunks(4).collect();
     assert!(colours.len() > 1000, "{} colours", colours.len());
+
+    // double-clicking a thumbnail opens the viewer on its file
+    ui.invoke_thumbnail_activated(2);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("a viewer opened");
+    assert_eq!(windows.count(), 2);
+    assert_eq!(viewer.get_caption(), format!("3/{everything}"));
+    let pixels = headless::render(&windows.get(1).unwrap(), 800, 600);
+    headless::save_png(&shots.join("media_viewer.png"), &pixels, 800, 600).unwrap();
+    // the file fills most of the window, over its dark background
+    let background = [0x20, 0x20, 0x20, 0xff];
+    let covered = pixels.chunks(4).filter(|p| *p != background).count();
+    assert!(covered > 800 * 600 / 2, "{covered} pixels");
+    viewer.invoke_next();
+    assert_eq!(viewer.get_caption(), format!("4/{everything}"));
+    viewer.invoke_close();
+    assert!(bound.viewer.borrow().is_none());
 }
