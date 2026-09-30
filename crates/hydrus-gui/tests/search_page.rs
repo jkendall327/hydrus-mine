@@ -81,7 +81,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     // the window
     let window = headless::init();
     let ui = MainWindow::new().unwrap();
-    bind(&ui, Rc::new(RefCell::new(SearchPage::new(store))));
+    let rows = bind(&ui, Rc::new(RefCell::new(SearchPage::new(store))));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));
@@ -94,7 +94,13 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(ui.get_highlighted(), 0);
     ui.show().unwrap();
     let (width, height) = (1100, 700);
+    // (the first frame lays the grid out, which says how many thumbnails fit
+    // in a row; the second shows them)
+    headless::render(&window, width, height);
+    assert!(ui.get_grid_columns() > 1);
     let pixels = headless::render(&window, width, height);
+    // only the rows in view were decoded
+    assert!(rows.cached() > 0 && rows.cached() < everything, "{rows:?}");
 
     let screenshot = std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("search_page.png");
     let mut encoder = png::Encoder::new(

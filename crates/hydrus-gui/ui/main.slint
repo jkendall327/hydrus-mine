@@ -1,7 +1,7 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { LineEdit, ScrollView, VerticalBox } from "std-widgets.slint";
+import { LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 
 export struct Thumbnail {
     image: image,
@@ -26,33 +26,42 @@ component Predicate inherits Rectangle {
     }
 }
 
-component ThumbnailGrid inherits ScrollView {
-    in property <[Thumbnail]> thumbnails;
+export struct ThumbnailRow {
+    // the index of the row's first file
+    first: int,
+    thumbnails: [Thumbnail],
+}
+
+// A list of rows of thumbnails, so only the rows in view are made.
+component ThumbnailGrid inherits ListView {
+    in property <[ThumbnailRow]> rows;
     in property <length> thumbnail-size: 150px;
     in property <length> gap: 4px;
+    out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
     callback clicked(int);
-    property <length> cell: self.thumbnail-size + self.gap;
-    property <int> columns: max(1, floor((self.visible-width - self.gap) / self.cell));
-    viewport-height: ceil(self.thumbnails.length / self.columns) * self.cell + self.gap;
-    viewport-width: self.visible-width;
-    for thumbnail[i] in root.thumbnails: Rectangle {
-        x: root.gap + mod(i, root.columns) * root.cell;
-        y: root.gap + floor(i / root.columns) * root.cell;
-        width: root.thumbnail-size;
-        height: root.thumbnail-size;
-        border-width: thumbnail.selected ? 2px : 1px;
-        border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
-        background: #ffffff;
-        Image {
-            x: 2px;
-            y: 2px;
-            width: parent.width - 4px;
-            height: parent.height - 4px;
-            source: thumbnail.image;
-            image-fit: contain;
-        }
-        TouchArea {
-            clicked => { root.clicked(i); }
+    for row in root.rows: HorizontalLayout {
+        padding-left: root.gap;
+        padding-top: root.gap;
+        spacing: root.gap;
+        alignment: start;
+        height: root.thumbnail-size + root.gap;
+        for thumbnail[column] in row.thumbnails: Rectangle {
+            width: root.thumbnail-size;
+            height: root.thumbnail-size;
+            border-width: thumbnail.selected ? 2px : 1px;
+            border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
+            background: #ffffff;
+            Image {
+                x: 2px;
+                y: 2px;
+                width: parent.width - 4px;
+                height: parent.height - 4px;
+                source: thumbnail.image;
+                image-fit: contain;
+            }
+            TouchArea {
+                clicked => { root.clicked(row.first + column); }
+            }
         }
     }
 }
@@ -66,7 +75,7 @@ export component MainWindow inherits Window {
     in property <[string]> predicates;
     in property <[string]> suggestions;
     in property <int> highlighted: -1;
-    in property <[Thumbnail]> thumbnails;
+    in property <[ThumbnailRow]> thumbnail-rows;
     in property <string> status;
     in property <string> error;
     in-out property <string> search-text;
@@ -77,6 +86,10 @@ export component MainWindow inherits Window {
     callback suggestion-chosen(int);
     callback remove-predicate(int);
     callback thumbnail-clicked(int);
+    callback columns-changed(int);
+    // how many thumbnails fit across the grid
+    out property <int> grid-columns: grid.columns;
+    changed grid-columns => { root.columns-changed(self.grid-columns); }
 
     VerticalLayout {
         HorizontalLayout {
@@ -147,8 +160,8 @@ export component MainWindow inherits Window {
                     }
                 }
             }
-            ThumbnailGrid {
-                thumbnails: root.thumbnails;
+            grid := ThumbnailGrid {
+                rows: root.thumbnail-rows;
                 clicked(i) => { root.thumbnail-clicked(i); }
             }
         }

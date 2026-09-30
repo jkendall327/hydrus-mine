@@ -12,12 +12,13 @@ files; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Double-clicking a predicate
 removes it. The matching files' thumbnails fill the grid, newest import
-first, with the count in the status bar.
+first, with the count in the status bar; the grid is a list of rows, so only
+the rows in view exist, and a thumbnail is decoded when its row first comes
+into view.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and draws the
 window headless (the screenshot lands in `target/tmp/`). Not yet: system
 predicates in the autocomplete, sort and collect, the media viewer, more
-pages, loading thumbnails as they scroll into view (a page shows its first
-1,000 files).
+pages, decoding thumbnails off the UI thread.
 
 ## Size
 
