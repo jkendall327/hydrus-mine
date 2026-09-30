@@ -16,6 +16,7 @@ hydrus-core = { path = "crates/hydrus-core" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
 hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }
+hydrus-net = { path = "crates/hydrus-net" }
 hydrus-media = { path = "crates/hydrus-media" }
 hydrus-import = { path = "crates/hydrus-import" }
 hydrus-search = { path = "crates/hydrus-search" }

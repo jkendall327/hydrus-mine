@@ -1,0 +1,362 @@
+//! The engine against a local server that scripts responses and reports
+//! what it was sent.
+
+use std::collections::HashMap;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicUsize, Ordering};
+
+use axum::Router;
+use axum::body::Body;
+use axum::extract::{Path, State};
+use axum::http::{HeaderMap, StatusCode, header};
+use axum::response::{IntoResponse, Response};
+use axum::routing::{any, get};
+
+use hydrus_core::url::{UrlClass, UrlClassSettings, UrlType};
+use hydrus_net::{Job, NetEngine, NetError, NetOptions, Request, StatusKind};
+use hydrus_store::Store;
+use hydrus_store::network::{self, Approval, NetworkContext};
+
+#[derive(Default)]
+struct Server {
+    hits: Mutex<HashMap<String, usize>>,
+    total: AtomicUsize,
+}
+
+type Mutex<T> = parking_lot::Mutex<T>;
+
+impl Server {
+    fn hit(&self, key: &str) -> usize {
+        self.total.fetch_add(1, Ordering::SeqCst);
+        let mut hits = self.hits.lock();
+        let n = hits.entry(key.to_owned()).or_default();
+        *n += 1;
+        *n
+    }
+}
+
+fn headers_json(headers: &HeaderMap) -> String {
+    let mut pairs: Vec<(String, String)> = headers
+        .iter()
+        .map(|(k, v)| {
+            (
+                k.as_str().to_owned(),
+                String::from_utf8_lossy(v.as_bytes()).into_owned(),
+            )
+        })
+        .collect();
+    pairs.sort();
+    pairs
+        .iter()
+        .map(|(k, v)| format!("{k}: {v}"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+const FILE: &[u8; 1000] = &[7u8; 1000];
+
+async fn echo(headers: HeaderMap) -> String {
+    headers_json(&headers)
+}
+
+async fn login() -> Response {
+    Response::builder()
+        .status(StatusCode::FOUND)
+        .header(header::LOCATION, "/home")
+        .header(header::SET_COOKIE, "sid=abc123; Path=/; HttpOnly")
+        .header(header::SET_COOKIE, "short=1; Max-Age=0")
+        .body(Body::empty())
+        .unwrap()
+}
+
+async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Response {
+    let n = s.hit(&kind);
+    match kind.as_str() {
+        "503" if n <= 2 => (StatusCode::SERVICE_UNAVAILABLE, "busy").into_response(),
+        "429" if n <= 1 => Response::builder()
+            .status(StatusCode::TOO_MANY_REQUESTS)
+            .header(header::RETRY_AFTER, "0")
+            .body(Body::from("slow down"))
+            .unwrap(),
+        "always429" => Response::builder()
+            .status(StatusCode::TOO_MANY_REQUESTS)
+            .header(header::RETRY_AFTER, "0")
+            .body(Body::from("slow down"))
+            .unwrap(),
+        "404" => (StatusCode::NOT_FOUND, "not here").into_response(),
+        _ => (StatusCode::OK, format!("ok after {n}")).into_response(),
+    }
+}
+
+/// Serves `FILE` in 400-byte ranged pieces.
+async fn ranged(State(s): State<Arc<Server>>, headers: HeaderMap) -> Response {
+    s.hit("ranged");
+    let start: usize = headers
+        .get(header::RANGE)
+        .and_then(|v| v.to_str().ok())
+        .and_then(|v| v.strip_prefix("bytes="))
+        .and_then(|v| v.strip_suffix('-'))
+        .and_then(|v| v.parse().ok())
+        .unwrap_or(0);
+    let end = (start + 400).min(FILE.len());
+    Response::builder()
+        .status(StatusCode::PARTIAL_CONTENT)
+        .header(
+            header::CONTENT_RANGE,
+            format!("bytes {start}-{}/{}", end - 1, FILE.len()),
+        )
+        .header(header::CONTENT_TYPE, "image/png")
+        .body(Body::from(FILE[start..end].to_vec()))
+        .unwrap()
+}
+
+async fn redirect_loop(Path(n): Path<u32>) -> Response {
+    Response::builder()
+        .status(StatusCode::FOUND)
+        .header(header::LOCATION, format!("/loop/{}", n + 1))
+        .body(Body::empty())
+        .unwrap()
+}
+
+async fn slow() -> &'static str {
+    tokio::time::sleep(std::time::Duration::from_secs(30)).await;
+    "late"
+}
+
+struct Setup {
+    engine: NetEngine,
+    store: Arc<Store>,
+    base: String,
+    server: Arc<Server>,
+    _dir: tempfile::TempDir,
+}
+
+async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
+    let server = Arc::new(Server::default());
+    let app = Router::new()
+        .route("/echo", get(echo))
+        .route("/home", get(echo))
+        .route("/login", get(login))
+        .route("/flaky/{kind}", any(flaky))
+        .route("/file.png", get(ranged))
+        .route("/loop/{n}", get(redirect_loop))
+        .route("/slow", get(slow))
+        .with_state(Arc::clone(&server));
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
+    let base = format!("http://{}", listener.local_addr().unwrap());
+    tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let url_classes = make_classes(&base);
+    if !url_classes.is_empty() {
+        let settings = UrlClassSettings {
+            url_classes,
+            ..UrlClassSettings::default()
+        };
+        store
+            .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
+            .unwrap();
+    }
+    let options = NetOptions {
+        connection_error_wait_time: 0,
+        serverside_bandwidth_wait_time: 0,
+        network_timeout: 2,
+        ..NetOptions::default()
+    };
+    Setup {
+        engine: NetEngine::new(Arc::clone(&store), options).unwrap(),
+        store,
+        base,
+        server,
+        _dir: dir,
+    }
+}
+
+fn post_class(base: &str) -> UrlClass {
+    let host = base.trim_start_matches("http://").to_owned();
+    UrlClass {
+        name: "local echo".into(),
+        url_type: UrlType::Post,
+        preferred_scheme: "http".into(),
+        domain_mask: hydrus_core::url::DomainMask::new(vec![host], vec![], false, false),
+        path_components: vec![(hydrus_core::url::StringMatch::fixed("echo"), None)],
+        parameters: Vec::new(),
+        header_overrides: vec![("X-Class".into(), "yes".into())],
+        example_url: format!("{base}/echo"),
+        ..UrlClass::default()
+    }
+}
+
+#[tokio::test]
+async fn sends_the_clients_headers() {
+    let s = setup(|_| Vec::new()).await;
+    let domain = s.base.trim_start_matches("http://").to_owned();
+    s.store
+        .write(move |ctx| {
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::domain(domain),
+                "X-Token",
+                Some("t"),
+                Some(Approval::Approved),
+                None,
+            )?;
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::global(),
+                "X-Pending",
+                Some("no"),
+                Some(Approval::Pending),
+                None,
+            )
+        })
+        .unwrap();
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.referral_url = Some("https://example.com/gallery".into());
+    let response = s.engine.fetch(&request, &Job::new()).await.unwrap();
+    let text = response.text();
+    for expected in [
+        "user-agent: Mozilla/5.0 (compatible; Hydrus Client)",
+        "accept: image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        "cache-control: no-transform",
+        "x-token: t",
+        "referer: https://example.com/gallery",
+        // an unclassified URL might be a file
+        "range: bytes=0-",
+    ] {
+        assert!(text.contains(expected), "{expected} missing from\n{text}");
+    }
+    assert!(!text.contains("x-pending"), "{text}");
+}
+
+#[tokio::test]
+async fn url_class_overrides_and_no_range_for_posts() {
+    let s = setup(|base| vec![post_class(base)]).await;
+    let response = s
+        .engine
+        .fetch(&Request::get(format!("{}/echo", s.base)), &Job::new())
+        .await
+        .unwrap();
+    let text = response.text();
+    assert!(text.contains("x-class: yes"), "{text}");
+    assert!(!text.contains("range:"), "{text}");
+}
+
+#[tokio::test]
+async fn keeps_cookies_through_redirects() {
+    let s = setup(|_| Vec::new()).await;
+    let job = Job::new();
+    let response = s
+        .engine
+        .fetch(&Request::get(format!("{}/login", s.base)), &job)
+        .await
+        .unwrap();
+    assert_eq!(response.url, format!("{}/home", s.base));
+    assert!(
+        response.text().contains("cookie: sid=abc123"),
+        "{}",
+        response.text()
+    );
+    let session = NetworkContext::domain(s.base.trim_start_matches("http://"));
+    let cookies = s
+        .store
+        .read(|conn| {
+            let session = network::session_for(conn, &session)?;
+            network::cookies(conn, &session)
+        })
+        .unwrap();
+    assert_eq!(cookies.len(), 1);
+    assert_eq!(cookies[0].name, "sid");
+    assert_eq!(cookies[0].rest, vec![("HttpOnly".to_owned(), None)]);
+    let again = s
+        .engine
+        .fetch(&Request::get(format!("{}/echo", s.base)), &Job::new())
+        .await
+        .unwrap();
+    assert!(again.text().contains("cookie: sid=abc123"));
+    assert_eq!(job.state().status, "done!");
+}
+
+#[tokio::test]
+async fn statuses_become_errors_or_retries() {
+    let s = setup(|_| Vec::new()).await;
+    let fetch = |path: &str| {
+        let request = Request::get(format!("{}/flaky/{path}", s.base));
+        let engine = &s.engine;
+        async move { engine.fetch(&request, &Job::new()).await }
+    };
+    match fetch("404").await {
+        Err(NetError::Status {
+            kind: StatusKind::NotFound,
+            code: 404,
+            message,
+        }) => assert_eq!(message, "404: not here"),
+        other => panic!("{other:?}"),
+    }
+    assert_eq!(fetch("503").await.unwrap().text(), "ok after 3");
+    assert_eq!(fetch("429").await.unwrap().text(), "ok after 2");
+    match fetch("always429").await {
+        Err(NetError::Bandwidth(message)) => {
+            assert_eq!(
+                message,
+                "Server reported very limited bandwidth: 429: slow down"
+            );
+        }
+        other => panic!("{other:?}"),
+    }
+    assert_eq!(s.server.hits.lock()["always429"], 5);
+}
+
+#[tokio::test]
+async fn resumes_files_with_ranged_requests() {
+    let s = setup(|_| Vec::new()).await;
+    let dir = tempfile::tempdir().unwrap();
+    let path = dir.path().join("file.png");
+    let mut request = Request::get(format!("{}/file.png", s.base));
+    request.destination = Some(path.clone());
+    let job = Job::new();
+    let response = s.engine.fetch(&request, &job).await.unwrap();
+    assert_eq!(response.bytes_read, 1000);
+    assert_eq!(response.content_type.as_deref(), Some("image/png"));
+    assert_eq!(std::fs::read(&path).unwrap(), FILE.to_vec());
+    assert_eq!(s.server.hits.lock()["ranged"], 3);
+    assert_eq!(job.state().bytes_total, Some(1000));
+}
+
+#[tokio::test]
+async fn gives_up_on_redirect_loops_and_dead_servers() {
+    let s = setup(|_| Vec::new()).await;
+    match s
+        .engine
+        .fetch(&Request::get(format!("{}/loop/0", s.base)), &Job::new())
+        .await
+    {
+        Err(NetError::Network(message)) => assert_eq!(message, "Exceeded 30 redirects."),
+        other => panic!("{other:?}"),
+    }
+    // nothing listens on port 9 here
+    match s
+        .engine
+        .fetch(&Request::get("http://127.0.0.1:9/x"), &Job::new())
+        .await
+    {
+        Err(NetError::Connection(message)) => assert_eq!(message, "Could not connect!"),
+        other => panic!("{other:?}"),
+    }
+}
+
+#[tokio::test]
+async fn cancels() {
+    let s = setup(|_| Vec::new()).await;
+    let job = Job::new();
+    let request = Request::get(format!("{}/slow", s.base));
+    let cancel = Arc::clone(&job);
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_millis(100)).await;
+        cancel.cancel();
+    });
+    assert_eq!(
+        s.engine.fetch(&request, &job).await.unwrap_err(),
+        NetError::Cancelled
+    );
+}

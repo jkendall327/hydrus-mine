@@ -111,6 +111,22 @@ merges come from the in-memory cache described below.
   easy to get wrong: siblings and parents only apply to a file's current and
   pending tags; its "display" deleted and petitioned tags are its storage ones.
 
+## Network requests (`hydrus-net`)
+
+- **Pages are decoded with the web's own decoders.** A charset the server
+  states is used as the reference uses it; otherwise, where the reference
+  asks chardet, we take valid UTF-8 as UTF-8, then a `<meta>` charset, then
+  chardetng's guess. The two guessers can disagree on short pages in legacy
+  encodings.
+- **A resumed download learns the file's size from `Content-Range`.** The
+  reference takes the first response's `Content-Length`, which for a
+  partial (206) response is only that piece's size, and so can stop early.
+- **Requests may use HTTP/2** with servers that offer it, and ask for
+  gzip, deflate, brotli and zstd compression. The reference's `requests`
+  speaks HTTP/1.1 and asks for what it has installed.
+- **Redirect targets are encoded by the URL parser** rather than by
+  `requests`' `requote_uri`; both percent-encode what a URL can't contain.
+
 ## URL classes
 
 - **A URL missing a required query parameter is reported by that

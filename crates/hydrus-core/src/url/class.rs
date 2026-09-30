@@ -297,6 +297,37 @@ pub struct UrlClass {
     pub gallery_index: Option<GalleryIndex>,
 }
 
+impl Default for UrlClass {
+    /// A new class as the reference makes one: a post URL class for no
+    /// domain, which alphabetises parameters, keeps extra ones for the
+    /// server and is associated with files.
+    fn default() -> Self {
+        Self {
+            name: "new url class".into(),
+            key: Vec::new(),
+            url_type: UrlType::Post,
+            preferred_scheme: "https".into(),
+            domain_mask: DomainMask::new(Vec::new(), Vec::new(), false, false),
+            alphabetise_get_parameters: true,
+            no_more_path_components_than_this: false,
+            no_more_parameters_than_this: false,
+            keep_extra_parameters_for_server: true,
+            can_produce_multiple_files: false,
+            should_be_associated_with_files: true,
+            keep_fragment: false,
+            path_components: Vec::new(),
+            parameters: Vec::new(),
+            has_single_value_parameters: false,
+            single_value_parameters_match: StringMatch::any(),
+            header_overrides: Vec::new(),
+            api_lookup_converter: StringConverter::default(),
+            example_url: String::new(),
+            referral: Referral::default(),
+            gallery_index: None,
+        }
+    }
+}
+
 /// What a request sends as its referral URL (`Referer`).
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct Referral {
