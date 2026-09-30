@@ -74,3 +74,12 @@ step = 159
 request = "status+in+deleted%2C+current"
 skip = true
 reason = "the reference searches pending tags when asked for deleted displayed tags"
+
+[[difference]]
+scenario = "relationships_random_3"
+steps = [34, 40, 46, 52, 58, 64, 70, 76, 82, 88]
+request = "get_file_relationships"
+ignore = ["$.file_relationships.*.king_is_on_file_domain", "$.file_relationships.*.king_is_local"]
+reason = """The reference computes `king_is_on_file_domain` and `king_is_local` from the file asked \
+about, not its king, so a trashed file whose king is not trashed reports its own state. We report the \
+king's, as the Client API documentation describes."""

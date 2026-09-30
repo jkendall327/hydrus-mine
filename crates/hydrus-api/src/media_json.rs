@@ -274,10 +274,16 @@ fn tags_json(snapshot: &Snapshot, m: &MediaResult, names: &HashMap<TagId, Tag>) 
                     .entry(*status)
                     .or_default()
                     .extend(ids.iter().copied());
-                display
-                    .entry(*status)
-                    .or_default()
-                    .extend(ids.iter().flat_map(|t| graph.display_tags(*t)));
+                let shown = display.entry(*status).or_default();
+                match status {
+                    ContentStatus::Current | ContentStatus::Pending => {
+                        shown.extend(ids.iter().flat_map(|t| graph.display_tags(*t)));
+                    }
+                    // siblings and parents only apply to tags a file has
+                    ContentStatus::Deleted | ContentStatus::Petitioned => {
+                        shown.extend(ids.iter().copied());
+                    }
+                }
             }
         }
         for (status, ids) in &storage {

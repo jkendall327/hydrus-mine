@@ -1,5 +1,6 @@
-//! Reading file relationships: duplicate groups, alternates, false
-//! positives and potential duplicate pairs.
+//! File relationships: duplicate groups, alternates, false positives and
+//! potential duplicate pairs. This module reads them; [`write`] changes them
+//! and [`merge`] merges metadata between files set as duplicates.
 //!
 //! Model (tables in `schema.rs`): files that are duplicates of each other
 //! form a *duplicate group* with one best file, its *king*. Duplicate groups
@@ -21,6 +22,12 @@ use hydrus_core::{HashId, ServiceId};
 
 use crate::error::Result;
 use crate::master::id_array;
+
+pub mod merge;
+pub mod write;
+
+pub use merge::{DuplicateMergeSettings, MergeOptions, PairDecision, apply_decision};
+pub use write::{PairRelationship, RelationshipWriter};
 
 /// A duplicate group's id.
 type GroupId = u32;

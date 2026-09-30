@@ -3,7 +3,9 @@
 //!
 //! Every endpoint marked `done` in `parity/manifest.toml` must match on every
 //! recorded step. Other endpoints are reported but may fail. Run with
-//! `CONFORMANCE_VERBOSE=1` to print each mismatch.
+//! `CONFORMANCE_VERBOSE=1` to print each mismatch, `CONFORMANCE_ONLY=a,b` to
+//! replay only some scenarios, and `CONFORMANCE_DUMP=1` (or `full`) to print
+//! our side of each mismatching response.
 //!
 //! Normalisation (the reviewed list of what we don't compare):
 //! - error responses compare status and `exception_type`, not message text;
@@ -81,7 +83,11 @@ fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
 #[derive(Debug, serde::Deserialize)]
 struct KnownDifference {
     scenario: String,
-    step: usize,
+    /// The step, or with `steps`, several steps with the same difference.
+    #[serde(default)]
+    step: Option<usize>,
+    #[serde(default)]
+    steps: Vec<usize>,
     /// A fragment of the step's request, so a rebuilt scenario can't make
     /// an entry silently apply to a different step.
     #[serde(default)]
@@ -107,7 +113,8 @@ fn known_differences() -> Vec<KnownDifference> {
     toml::from_str::<File>(&text).unwrap().difference
 }
 
-/// Remove the value at `path` (`$.a.b[0].c`) if present.
+/// Remove the value at `path` (`$.a.b[0].c`) if present. A `*` segment
+/// matches every key of an object.
 fn remove_path(value: &mut Json, path: &str) {
     let mut segments = Vec::new();
     for part in path
@@ -127,28 +134,38 @@ fn remove_path(value: &mut Json, path: &str) {
             ));
         }
     }
-    let Some((last, parents)) = segments.split_last() else {
+    remove_segments(value, &segments);
+}
+
+fn remove_segments(value: &mut Json, segments: &[Json]) {
+    let Some((first, rest)) = segments.split_first() else {
         return;
     };
-    let mut current = value;
-    for segment in parents {
-        let next = match segment {
-            Json::String(key) => current.get_mut(key.as_str()),
-            index => current.get_mut(index.as_u64().unwrap() as usize),
-        };
-        match next {
-            Some(v) => current = v,
-            None => return,
+    match (value, first) {
+        (Json::Object(map), Json::String(key)) if key == "*" => {
+            if rest.is_empty() {
+                map.clear();
+            } else {
+                for child in map.values_mut() {
+                    remove_segments(child, rest);
+                }
+            }
         }
-    }
-    match (current, last) {
         (Json::Object(map), Json::String(key)) => {
-            map.remove(key);
+            if rest.is_empty() {
+                map.remove(key);
+            } else if let Some(child) = map.get_mut(key) {
+                remove_segments(child, rest);
+            }
         }
-        (Json::Array(items), index) => {
+        (Json::Array(items), index) if index.is_u64() => {
             let i = index.as_u64().unwrap() as usize;
-            if i < items.len() {
-                items.remove(i);
+            if rest.is_empty() {
+                if i < items.len() {
+                    items.remove(i);
+                }
+            } else if let Some(child) = items.get_mut(i) {
+                remove_segments(child, rest);
             }
         }
         _ => {}
@@ -384,8 +401,10 @@ async fn replay_step(
                     sort_arrays(&mut expected);
                 }
                 if let Some(d) = first_difference(&expected, &actual, "$") {
-                    if std::env::var_os("CONFORMANCE_DUMP").is_some() {
-                        eprintln!("ACTUAL {}", truncate(&actual.to_string()));
+                    match std::env::var("CONFORMANCE_DUMP").as_deref() {
+                        Ok("full") => eprintln!("ACTUAL {actual}"),
+                        Ok(_) => eprintln!("ACTUAL {}", truncate(&actual.to_string())),
+                        Err(_) => {}
                     }
                     problems.push(d);
                 }
@@ -442,6 +461,11 @@ async fn replay_recorded_scenarios() {
         })
         .collect();
     names.sort();
+    // CONFORMANCE_ONLY=a,b replays just those scenarios (when debugging)
+    if let Some(only) = std::env::var_os("CONFORMANCE_ONLY") {
+        let only = only.to_string_lossy().into_owned();
+        names.retain(|n| only.split(',').any(|o| o == n));
+    }
 
     let differences = known_differences();
     let shared = common::imported_store("basic");
@@ -480,7 +504,9 @@ async fn replay_recorded_scenarios() {
         {
             let known: Vec<&KnownDifference> = differences
                 .iter()
-                .filter(|d| &d.scenario == name && d.step == index)
+                .filter(|d| {
+                    &d.scenario == name && (d.step == Some(index) || d.steps.contains(&index))
+                })
                 .collect();
             let ignored: Vec<String> = known
                 .iter()
@@ -490,6 +516,7 @@ async fn replay_recorded_scenarios() {
                 &router, step, recorded, &manifest, &db_dir, now_window, &ignored,
             )
             .await;
+            outcome.detail = format!("[{name} #{index}] {}", outcome.detail);
             for k in &known {
                 if let Some(request) = &k.request {
                     assert!(

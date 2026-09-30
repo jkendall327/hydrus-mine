@@ -1,4 +1,4 @@
-//! Reading file relationships: duplicates, alternates and potential pairs.
+//! File relationships: duplicates, alternates and potential pairs.
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -10,8 +10,9 @@ use hydrus_core::service::builtin_keys;
 use hydrus_core::{DuplicateType, HashId, Sha256};
 use hydrus_search::parse_api_search;
 use hydrus_store::duplicates::{
-    self, DuplicateFilterSettings, FileScope, PairOrder, PairSearchKind, PairSelection,
-    PixelDuplicates, PotentialsSearch,
+    self, DuplicateFilterSettings, DuplicateMergeSettings, FileScope, PairDecision, PairOrder,
+    PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
+    RelationshipWriter,
 };
 use hydrus_store::{Snapshot, master, settings};
 
@@ -316,4 +317,189 @@ pub async fn get_potential_pairs(
             ))
         })
         .await
+}
+
+// writing ---------------------------------------------------------------------
+
+/// One pair of `set_file_relationships`, with WORSE already turned round.
+struct PairRow {
+    relationship: PairRelationship,
+    a: Sha256,
+    b: Sha256,
+    merge: bool,
+    delete_a: bool,
+    delete_b: bool,
+}
+
+fn dict_field<T: serde::de::DeserializeOwned>(
+    dict: &Map<String, Json>,
+    key: &str,
+    default: Option<T>,
+) -> ApiResult<T> {
+    match dict.get(key) {
+        Some(value) if !value.is_null() => serde_json::from_value(value.clone()).map_err(|_| {
+            ApiError::bad_request(format!(
+                "The parameter \"{key}\", with value \"{value}\", was not the expected type!"
+            ))
+        }),
+        _ => default.ok_or_else(|| {
+            ApiError::bad_request(format!("The required parameter \"{key}\" was missing!"))
+        }),
+    }
+}
+
+fn parse_pair(raw: &Json) -> ApiResult<PairRow> {
+    let dict = raw.as_object().ok_or_else(|| {
+        ApiError::bad_request(format!(
+            "The list parameter \"relationships\" held an item, \"{raw}\" that was not the expected type: Object!"
+        ))
+    })?;
+    let code: i64 = dict_field(dict, "relationship", None)?;
+    let hash_a: String = dict_field(dict, "hash_a", None)?;
+    let hash_b: String = dict_field(dict, "hash_b", None)?;
+    let merge: bool = dict_field(dict, "do_default_content_merge", None)?;
+    let delete_a: bool = dict_field(dict, "delete_a", Some(false))?;
+    let delete_b: bool = dict_field(dict, "delete_b", Some(false))?;
+    let kind = u8::try_from(code).ok().and_then(DuplicateType::from_code);
+    let relationship = match kind {
+        Some(DuplicateType::FalsePositive) => PairRelationship::FalsePositive,
+        Some(DuplicateType::Alternate) => PairRelationship::Alternate,
+        Some(DuplicateType::Better | DuplicateType::Worse) => PairRelationship::Better,
+        Some(DuplicateType::SameQuality) => PairRelationship::SameQuality,
+        Some(DuplicateType::Potential) => PairRelationship::Potential,
+        _ => {
+            return Err(ApiError::bad_request(format!(
+                "The parameter \"relationship\", with value \"{code}\", was not in the allowed values: {{0, 1, 2, 3, 4, 7}}!"
+            )));
+        }
+    };
+    let parse = |text: &str| -> ApiResult<Sha256> {
+        let bytes = hex::decode(text).map_err(|_| {
+            ApiError::bad_request(format!(
+                "Sorry, did not understand one of the hashes {hash_a} or {hash_b}!"
+            ))
+        })?;
+        Sha256::from_slice(&bytes).map_err(|_| {
+            ApiError::bad_request(format!(
+                "Sorry, one of the given hashes was the wrong length! sha256 hashes should be 32 bytes long, but {text} is {} bytes long!",
+                bytes.len()
+            ))
+        })
+    };
+    let (a, b) = (parse(&hash_a)?, parse(&hash_b)?);
+    Ok(if kind == Some(DuplicateType::Worse) {
+        PairRow {
+            relationship,
+            a: b,
+            b: a,
+            merge,
+            delete_a: delete_b,
+            delete_b: delete_a,
+        }
+    } else {
+        PairRow {
+            relationship,
+            a,
+            b,
+            merge,
+            delete_a,
+            delete_b,
+        }
+    })
+}
+
+/// The files a request names; there must be some.
+fn required_hashes(app: &AppState, params: &Params) -> ApiResult<Vec<Sha256>> {
+    parse_hashes(app, params)?.ok_or_else(|| {
+        ApiError::bad_request("Please include some files in your request--file_id or hash based!")
+    })
+}
+
+pub async fn set_file_relationships(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?
+        .check(Permission::ManageFileRelationships)?;
+    let raw: Vec<Json> = req.params.or("relationships", Vec::new())?;
+    let rows = raw.iter().map(parse_pair).collect::<ApiResult<Vec<_>>>()?;
+    if rows.is_empty() {
+        return Ok(ApiResponse::Empty);
+    }
+    app.blocking(move |app| {
+        app.store.write_content(move |w| {
+            let merge_settings: DuplicateMergeSettings = settings::get(w.conn())?;
+            for row in &rows {
+                let a = master::intern_hash(w.conn(), &row.a)?;
+                let b = master::intern_hash(w.conn(), &row.b)?;
+                let merge = if row.merge {
+                    merge_settings.for_relationship(row.relationship)
+                } else {
+                    None
+                };
+                duplicates::apply_decision(
+                    w,
+                    &PairDecision {
+                        relationship: row.relationship,
+                        a,
+                        b,
+                        merge,
+                        delete_a: row.delete_a,
+                        delete_b: row.delete_b,
+                        deletion_reason: "From Client API (duplicates processing).",
+                    },
+                )?;
+            }
+            Ok(())
+        })?;
+        Ok(())
+    })
+    .await?;
+    Ok(ApiResponse::Empty)
+}
+
+pub async fn set_kings(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?
+        .check(Permission::ManageFileRelationships)?;
+    let params = req.params.clone();
+    app.blocking(move |app| {
+        let hashes = required_hashes(app, &params)?;
+        app.store.write_content(move |w| {
+            let local_storage = w.roles().local_file_storage;
+            for hash in &hashes {
+                let id = master::intern_hash(w.conn(), hash)?;
+                RelationshipWriter::new(w.conn(), local_storage).set_king(id)?;
+            }
+            Ok(())
+        })?;
+        Ok(())
+    })
+    .await?;
+    Ok(ApiResponse::Empty)
+}
+
+pub async fn remove_potentials(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?
+        .check(Permission::ManageFileRelationships)?;
+    let params = req.params.clone();
+    app.blocking(move |app| {
+        let hashes = required_hashes(app, &params)?;
+        app.store.write_content(move |w| {
+            let local_storage = w.roles().local_file_storage;
+            let ids = master::hash_ids(w.conn(), &hashes)?;
+            for id in ids.into_values() {
+                RelationshipWriter::new(w.conn(), local_storage).remove_potentials(id)?;
+            }
+            Ok(())
+        })?;
+        Ok(())
+    })
+    .await?;
+    Ok(ApiResponse::Empty)
 }

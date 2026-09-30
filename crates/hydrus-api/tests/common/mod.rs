@@ -1,5 +1,8 @@
 //! Test fixtures: reference databases imported into native stores.
 
+// each test binary uses its own subset
+#![allow(dead_code)]
+
 use std::sync::Arc;
 
 use hydrus_api::AppState;

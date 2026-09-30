@@ -4,7 +4,8 @@
 use std::collections::BTreeMap;
 
 /// What to do when a note name is already taken by different text.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(rename_all = "snake_case")]
 pub enum NoteConflict {
     /// Overwrite the existing note.
     Replace = 0,
@@ -29,7 +30,7 @@ impl NoteConflict {
 }
 
 /// How to merge.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct NoteMerge {
     /// If a new note's text contains an existing note's, replace the latter.
     pub extend_existing: bool,

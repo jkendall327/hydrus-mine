@@ -277,6 +277,22 @@ def run_client( db_dir, hook, port = None ):
 
     original_boot = ClientController.Controller.THREADBootEverything
 
+    # the reference picks a random member to stand for a duplicate group whose
+    # king is outside the searched domain; pin that to the lowest file id (as
+    # hydrus-rs picks) so recordings are reproducible
+    from hydrus.client.db import ClientDBFilesDuplicatesStorage
+
+    class LowestChoice( object ):
+
+        @staticmethod
+        def choice( seq ):
+
+            return min( seq )
+
+
+
+    ClientDBFilesDuplicatesStorage.random = LowestChoice
+
     def patched_boot( controller ):
 
         original_boot( controller )
@@ -292,6 +308,15 @@ def run_client( db_dir, hook, port = None ):
 
             try:
 
+                # the similar-files search runs in the background and adds
+                # potential pairs at unpredictable moments (e.g. after a
+                # relationship change resets a file's search); recordings must
+                # not depend on its timing
+                for name in ( 'maintain_similar_files_duplicate_pairs_during_active', 'maintain_similar_files_duplicate_pairs_during_idle' ):
+                    
+                    controller.new_options.SetBoolean( name, False )
+                    
+                
                 # let the gui finish its post-boot CallAfters before we start poking
                 time.sleep( 1.0 )
 

@@ -29,6 +29,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_legacy_expectations.py` | `fixtures/legacy_db/<name>.expected.json`: what the reference reads from a fixture database, for `hydrus-legacy`'s tests |
 | `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
 | `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
+| `dump_duplicate_merges.py` | `fixtures/duplicate_merges.json`: what duplicate decisions with metadata merges leave in the reference's database |
 
 ## The driver
 
@@ -38,6 +39,11 @@ controller and the client's own Client API (enabled on a local port with fixed
 oracle access keys). When the hook returns, the client shuts down through its
 normal SIGTERM path and the driver waits for the database to close. One boot
 per process; use `run_in_subprocess` for more.
+
+To keep recordings reproducible the driver turns off the reference's
+background similar-files search (it adds potential pairs at unpredictable
+moments) and pins the member it picks at random to stand for a duplicate
+group whose king is out of view to the lowest file id, as hydrus-rs does.
 
 Fixture databases are populated through the same paths real use takes: the
 Client API wherever possible, and controller `Write` commands for the rest

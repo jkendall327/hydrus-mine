@@ -146,6 +146,18 @@ pub fn router(state: Arc<AppState>) -> Router {
             "/manage_file_relationships/get_potential_pairs",
             get(relationships::get_potential_pairs),
         )
+        .route(
+            "/manage_file_relationships/set_file_relationships",
+            post(relationships::set_file_relationships),
+        )
+        .route(
+            "/manage_file_relationships/set_kings",
+            post(relationships::set_kings),
+        )
+        .route(
+            "/manage_file_relationships/remove_potentials",
+            post(relationships::remove_potentials),
+        )
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())
         .with_state(state)

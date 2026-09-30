@@ -596,6 +596,82 @@ def write_scenarios():
         get( '/manage_file_relationships/get_potentials_count' ),
     ], read_only = False ) )
 
+    out.extend( random_relationship_scenarios() )
+
+    return out
+
+
+def random_relationship_scenarios():
+    """Random sequences of relationship decisions, checked after every few
+    steps. The group bookkeeping (merging duplicate and alternates groups,
+    carrying potentials and false positives across merges) has many paths;
+    random walks cover combinations hand-written steps miss."""
+
+    import random
+
+    images = sorted( n for n in BY_NAME if n.startswith( ( 'jpeg_', 'png_', 'dupe_' ) ) )
+
+    out = []
+
+    for ( seed, merges ) in ( ( 1, False ), ( 2, False ), ( 3, True ) ):
+
+        rng = random.Random( seed )
+        pool = rng.sample( images, 9 )
+        hashes = [ BY_NAME[ n ] for n in pool ]
+
+        s = []
+
+        for i in range( 60 ):
+
+            roll = rng.random()
+
+            if roll < 0.08:
+
+                s.append( post( '/manage_file_relationships/set_kings', { 'hash': rng.choice( hashes ) } ) )
+
+            elif roll < 0.13:
+
+                s.append( post( '/manage_file_relationships/remove_potentials', { 'hashes': rng.sample( hashes, 2 ) } ) )
+
+            else:
+
+                rows = []
+
+                # merges go one pair per request: the reference computes every
+                # pair's merge from the state before the request (a known
+                # difference; see docs/rust/DIFFERENCES.md)
+                for _ in range( 1 if merges else rng.choice( ( 1, 1, 1, 2 ) ) ):
+
+                    ( a, b ) = rng.sample( hashes, 2 ) if rng.random() < 0.95 else ( hashes[ 0 ], hashes[ 0 ] )
+
+                    row = { 'hash_a': a, 'hash_b': b, 'relationship': rng.choice( ( 0, 0, 1, 2, 3, 4, 4, 7 ) ), 'do_default_content_merge': merges and rng.random() < 0.7 }
+
+                    if merges and rng.random() < 0.15:
+
+                        row[ rng.choice( ( 'delete_a', 'delete_b' ) ) ] = True
+
+
+                    rows.append( row )
+
+
+                s.append( post( '/manage_file_relationships/set_file_relationships', { 'relationships': rows } ) )
+
+
+            if i % 4 == 3:
+
+                s.append( get( '/manage_file_relationships/get_file_relationships', hashes = hashes ) )
+                s.append( get( '/manage_file_relationships/get_potentials_count' ) )
+
+                # (what merges do to metadata is checked against the reference's
+                # database by dump_duplicate_merges.py: its API answers come from
+                # a cache that drifts after merges)
+
+
+
+
+        out.append( scenario( f'relationships_random_{seed}', 'random relationship decisions' + ( ' with metadata merges' if merges else '' ), s, read_only = False ) )
+
+
     return out
 
 

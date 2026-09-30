@@ -1,8 +1,8 @@
 {
   "api": {
     "total": 76,
-    "done": 36,
-    "partial": 3,
+    "done": 40,
+    "partial": 2,
     "done_items": [
       "/add_files/add_file",
       "/add_files/archive_files",
@@ -37,8 +37,12 @@
       "/get_files/thumbnail_path",
       "/get_service",
       "/get_services",
+      "/manage_file_relationships/get_file_relationships",
       "/manage_file_relationships/get_potential_pairs",
       "/manage_file_relationships/get_potentials_count",
+      "/manage_file_relationships/remove_potentials",
+      "/manage_file_relationships/set_file_relationships",
+      "/manage_file_relationships/set_kings",
       "/verify_access_key"
     ]
   },

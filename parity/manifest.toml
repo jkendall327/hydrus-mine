@@ -190,8 +190,7 @@ status = "todo"
 
 [[api]]
 path = "/manage_file_relationships/get_file_relationships"
-status = "partial"
-notes = "the remaining recorded steps follow relationship writes"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/get_potential_pairs"
@@ -207,15 +206,15 @@ status = "todo"
 
 [[api]]
 path = "/manage_file_relationships/remove_potentials"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/set_file_relationships"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/set_kings"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_headers/get_headers"

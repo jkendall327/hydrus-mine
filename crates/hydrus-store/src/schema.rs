@@ -344,7 +344,7 @@ CREATE TABLE potential_pairs (
 ) STRICT, WITHOUT ROWID;
 CREATE UNIQUE INDEX potential_pairs_larger ON potential_pairs (larger_group_id, smaller_group_id);
 
--- how far each file has been searched for similar files
+-- how far each file has been searched for similar files (NULL: not yet)
 CREATE TABLE similar_search_status (
     hash_id INTEGER PRIMARY KEY,
     searched_distance INTEGER

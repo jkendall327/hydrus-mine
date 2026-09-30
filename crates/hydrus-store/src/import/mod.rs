@@ -513,7 +513,8 @@ impl Copier<'_> {
             (
                 "similar_search_status",
                 "src.shape_search_cache",
-                "INSERT INTO similar_search_status (hash_id, searched_distance) SELECT hash_id, searched_distance FROM src.shape_search_cache",
+                // the reference marks a reset search with -1; here that is NULL, "not searched"
+                "INSERT INTO similar_search_status (hash_id, searched_distance) SELECT hash_id, CASE WHEN searched_distance < 0 THEN NULL ELSE searched_distance END FROM src.shape_search_cache",
             ),
             (
                 "recent_tags",

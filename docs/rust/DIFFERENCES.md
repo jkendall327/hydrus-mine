@@ -75,6 +75,42 @@ conformance runner, which skips exactly the recorded fields listed in
   "deleted from anywhere" membership that the database no longer has. We
   have no such cache and report what the reference reports after a restart.
 
+## Duplicates (`hydrus-store::duplicates`)
+
+Relationship bookkeeping is checked by the random `relationships_random_*`
+conformance scenarios; metadata merges by `crates/hydrus-api/tests/duplicate_merges.rs`
+against the reference's *database* after each decision
+(`oracle/fixtures/duplicate_merges.json`), because its API answers after
+merges come from the in-memory cache described below.
+
+- **Several pairs in one request are decided in order.** The reference
+  computes every pair's metadata merge in `set_file_relationships` from the
+  files as they were before the request. A later pair can then undo an
+  earlier one: seen with A better than B, then B better than C, where the
+  first pair moves B's tags to A and the second doesn't re-add to B the tags
+  C had in common with B's *old* tags, so those tags are lost from every
+  file. We apply each pair's merge to the state the previous pairs left.
+- **Metadata after a merge is read from the database.** After merges the
+  reference's in-memory media cache can show deletion records its database
+  doesn't hold (seen: a deleted parent tag on the better file) until a
+  restart. We report the database, as it does after a restart.
+- **`king_is_on_file_domain` and `king_is_local` describe the king.** The
+  reference computes them from the file asked about, so a trashed file whose
+  king isn't trashed reports its own state. We report the king's, as the
+  Client API documentation says.
+- **The potential pairs count is never stale.** The reference caches, per
+  file domain, which potential pairs are visible; the cache misses pairs that
+  come into view later (e.g. when a trashed king is replaced with one in the
+  domain) until a restart. We count from the database.
+- **A group whose king is out of view is shown by its lowest-id member.** When
+  a duplicate group's king isn't in the searched domain, the reference shows
+  a random member in its place; we show the member with the lowest file id,
+  so answers are repeatable. (The oracle pins the reference's choice the same
+  way when recording.)
+- **Deleted and petitioned tags are shown as stored.** Not a difference, but
+  easy to get wrong: siblings and parents only apply to a file's current and
+  pending tags; its "display" deleted and petitioned tags are its storage ones.
+
 ## Client API input checking (`hydrus-api`)
 
 - **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or
