@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -41,6 +41,24 @@ CREATE TABLE duplicates_generation (
     generation INTEGER NOT NULL
 ) STRICT;
 INSERT INTO duplicates_generation (id, generation) VALUES (1, 0);
+";
+
+/// GUI sessions (`sessions.rs`): each session's tree of pages, and the
+/// files each page shows.
+const V8: &str = r"
+CREATE TABLE sessions (
+    name TEXT PRIMARY KEY,
+    -- when it was saved, in seconds
+    saved INTEGER NOT NULL,
+    -- the pages (JSON)
+    pages TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE page_files (
+    page_key BLOB PRIMARY KEY,
+    -- hash ids in order, 4 bytes each, little-endian
+    hash_ids BLOB NOT NULL
+) STRICT;
 ";
 
 /// Duplicates auto-resolution rules (`duplicates/auto.rs`): each rule, the

@@ -14,6 +14,8 @@ use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::subscriptions::CheckerOptions;
 
 use super::domain::expect;
+use super::favourites::FileSearchContext;
+use super::sort::MediaSort;
 use super::subscriptions::{
     LegacyFileSeed, LegacyGallerySeed, checker_options, file_seed_cache, gallery_seed_log,
     service_keys_to_tags,
@@ -36,13 +38,15 @@ const MULTIPLE_GALLERY_IMPORT: SerialisableType = SerialisableType(20);
 const WATCHER_IMPORT: SerialisableType = SerialisableType(17);
 const MULTIPLE_WATCHER_IMPORT: SerialisableType = SerialisableType(64);
 
-/// `ClientGUIPagesCore.PAGE_TYPE_*` of the pages read here.
+/// `ClientGUIPagesCore.PAGE_TYPE_*`.
 pub mod page_type {
     pub const GALLERY: i64 = 1;
     pub const SIMPLE_DOWNLOADER: i64 = 2;
     pub const IMPORT_FROM_DISK: i64 = 3;
+    pub const PETITIONS: i64 = 5;
     pub const QUERY: i64 = 6;
     pub const URLS: i64 = 7;
+    pub const DUPLICATE_FILTER: i64 = 8;
     pub const WATCHER: i64 = 9;
 }
 
@@ -94,18 +98,30 @@ pub struct LegacyPage {
     pub name: String,
     /// `PAGE_TYPE_*` (see [`page_type`]).
     pub page_type: i64,
+    /// How the page sorts its files, if it could be read.
+    pub sort: Option<MediaSort>,
     pub content: PageContent,
 }
 
 /// What a page runs, for the pages whose work carries over.
 #[derive(Debug, Clone, PartialEq)]
 pub enum PageContent {
+    Query(LegacyQueryPage),
     Urls(LegacyUrlsImport),
     Gallery(LegacyMultipleGalleryImport),
     Watchers(LegacyMultipleWatcherImport),
-    /// A page whose state isn't read here (a search page, a duplicates
-    /// page, a simple downloader...).
+    /// A page whose state isn't read here (a duplicates page, a simple
+    /// downloader...).
     Other,
+}
+
+/// A search page's search.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacyQueryPage {
+    pub search: FileSearchContext,
+    /// Whether the page searches as its predicates change (unsynchronised,
+    /// it keeps its files until searched again).
+    pub synchronised: bool,
 }
 
 /// A URL page's importer (`URLsImport`).
@@ -250,7 +266,8 @@ pub fn page_data(object: &SerialisableObject) -> DecodeResult<LegacyPageData> {
     Ok(LegacyPageData { page, hashes })
 }
 
-/// Decode a page manager, reading the downloader of a downloader page.
+/// Decode a page manager, reading the search of a search page and the
+/// downloader of a downloader page.
 pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
     let k = PAGE_MANAGER;
     expect(object, k, &[17])?;
@@ -258,35 +275,44 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
     let [name, page_type, variables] = tuple::<3>(k, &info, "page")?;
     let name = string(k, name, "page name")?;
     let page_type = int(k, page_type, "page type")?;
-    let variable = match page_type {
-        page_type::URLS => Some("urls_import"),
-        page_type::GALLERY => Some("multiple_gallery_import"),
-        page_type::WATCHER => Some("multiple_watcher_import"),
-        _ => None,
+    let variables = nested(k, variables, "variables")?;
+    let variables = dictionary_pairs(&variables)?;
+    let variable = |wanted: &str| {
+        variables.iter().find_map(|(key, value)| match key {
+            Meta::Json(PyJson::Str(key)) if key == wanted => Some(value),
+            _ => None,
+        })
     };
-    let content = match variable {
-        None => PageContent::Other,
-        Some(wanted) => {
-            let variables = nested(k, variables, "variables")?;
-            let importer = dictionary_pairs(&variables)?
-                .iter()
-                .find_map(|(key, value)| match (key, value) {
-                    (Meta::Json(PyJson::Str(key)), Meta::Object(object)) if key == wanted => {
-                        Some(object.as_ref().clone())
-                    }
-                    _ => None,
-                })
-                .ok_or_else(|| malformed(k, format!("the page has no {wanted}")))?;
-            match page_type {
-                page_type::URLS => PageContent::Urls(urls_import(&importer)?),
-                page_type::GALLERY => PageContent::Gallery(multiple_gallery_import(&importer)?),
-                _ => PageContent::Watchers(multiple_watcher_import(&importer)?),
-            }
-        }
+    let object_variable = |wanted: &str| match variable(wanted) {
+        Some(Meta::Object(object)) => Ok(object.as_ref()),
+        _ => Err(malformed(k, format!("the page has no {wanted}"))),
     };
+    let content = match page_type {
+        page_type::QUERY => PageContent::Query(LegacyQueryPage {
+            search: FileSearchContext::from_object(object_variable("file_search_context")?)?,
+            // the reference's default for a page that predates the option
+            synchronised: match variable("synchronised") {
+                Some(Meta::Json(value)) => boolean(k, value, "synchronised")?,
+                _ => true,
+            },
+        }),
+        page_type::URLS => PageContent::Urls(urls_import(object_variable("urls_import")?)?),
+        page_type::GALLERY => PageContent::Gallery(multiple_gallery_import(object_variable(
+            "multiple_gallery_import",
+        )?)?),
+        page_type::WATCHER => PageContent::Watchers(multiple_watcher_import(object_variable(
+            "multiple_watcher_import",
+        )?)?),
+        _ => PageContent::Other,
+    };
+    // a sort that can't be read is not worth losing the page over
+    let sort = object_variable("media_sort")
+        .ok()
+        .and_then(|object| MediaSort::from_object(object).ok());
     Ok(LegacyPage {
         name,
         page_type,
+        sort,
         content,
     })
 }

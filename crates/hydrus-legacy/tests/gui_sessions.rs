@@ -15,6 +15,7 @@ use hydrus_legacy::objects::gui_sessions::{
 };
 use hydrus_legacy::objects::import_options::slice;
 use hydrus_legacy::objects::subscriptions::checker_options;
+use hydrus_legacy::objects::{FileSearchContext, MediaSort};
 
 mod common;
 use common::seeds::{file_seed_facts, gallery_seed_facts, object, service_tags, sorted};
@@ -124,10 +125,31 @@ fn watcher_page_facts(m: &LegacyMultipleWatcherImport, expected: &Json) -> Json 
     })
 }
 
-/// A page's name, type, and its downloader's facts where it has one.
+/// The expected value if ours decodes the same (`decode` reads the
+/// expected, stored form), so facts compare whole.
+fn same<T: PartialEq + std::fmt::Debug>(
+    ours: &T,
+    expected: &Json,
+    decode: impl Fn(&hydrus_legacy::serialisable::SerialisableObject) -> T,
+) -> Json {
+    if *ours == decode(&object(expected)) {
+        expected.clone()
+    } else {
+        json!(format!("{ours:?}"))
+    }
+}
+
+/// A page's name, type, sort, and its search or downloader's facts where
+/// it has one.
 fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
     let variables = &expected["variables"];
-    let content = match &p.content {
+    let mut content = match &p.content {
+        PageContent::Query(q) => json!({
+            "file_search_context": same(&q.search, &variables["file_search_context"], |o| {
+                FileSearchContext::from_object(o).unwrap()
+            }),
+            "synchronised": q.synchronised,
+        }),
         PageContent::Urls(u) => json!({ "urls_import": urls_facts(u, &variables["urls_import"]) }),
         PageContent::Gallery(m) => json!({
             "multiple_gallery_import": gallery_page_facts(m, &variables["multiple_gallery_import"])
@@ -137,6 +159,11 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
         }),
         PageContent::Other => json!({}),
     };
+    if let Some(sort) = &p.sort {
+        content["media_sort"] = same(sort, &variables["media_sort"], |o| {
+            MediaSort::from_object(o).unwrap()
+        });
+    }
     json!({ "name": p.name, "type": p.page_type, "content": content })
 }
 
@@ -147,6 +174,9 @@ fn expected_page_facts(expected: &Json) -> Json {
         "urls_import",
         "multiple_gallery_import",
         "multiple_watcher_import",
+        "file_search_context",
+        "synchronised",
+        "media_sort",
     ]
     .into_iter()
     .filter_map(|name| Some((name.to_owned(), variables.get(name)?.clone())))

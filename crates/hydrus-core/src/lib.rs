@@ -13,6 +13,7 @@ pub mod import_options;
 pub mod mime;
 pub mod notes;
 pub mod numbers;
+pub mod pages;
 pub mod pybytes;
 pub mod pyhtml;
 pub mod pyjson;

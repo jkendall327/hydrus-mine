@@ -21,6 +21,7 @@ pub mod pending;
 pub mod queues;
 pub mod schema;
 pub mod services;
+pub mod sessions;
 pub mod settings;
 pub mod similar;
 pub mod stats;

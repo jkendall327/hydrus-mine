@@ -53,6 +53,8 @@ pub struct ImportInput {
     pub import_folders: Vec<ImportFolderInput>,
     /// Downloader pages open in the session the reference opens with.
     pub downloader_pages: Vec<DownloaderPageInput>,
+    /// The session the reference opens with, as a tree of pages.
+    pub session: Option<SessionInput>,
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
@@ -87,6 +89,45 @@ pub struct SubscriptionInput {
 pub struct DownloaderPageInput {
     pub name: String,
     pub queues: Vec<PageQueueInput>,
+}
+
+/// A session's tree of pages.
+#[derive(Debug, Clone, PartialEq)]
+pub struct SessionInput {
+    pub name: String,
+    pub pages: Vec<PageInput>,
+}
+
+/// A page of a session, or a notebook of pages.
+#[derive(Debug, Clone, PartialEq)]
+pub struct PageInput {
+    pub name: String,
+    pub content: PageInputContent,
+    /// The files the page showed, in order.
+    pub hashes: Vec<hydrus_core::Sha256>,
+}
+
+/// What a page is: [`hydrus_core::pages::PageContent`], with a downloader
+/// page's queues still to be made.
+#[derive(Debug, Clone, PartialEq)]
+pub enum PageInputContent {
+    Pages(Vec<PageInput>),
+    Search {
+        search: hydrus_core::search::context::FileSearchContext,
+        synchronised: bool,
+        sort: Option<hydrus_core::pages::PageSort>,
+    },
+    /// Showing the queues of `downloader_pages[index]`.
+    Downloader {
+        kind: hydrus_core::pages::DownloaderKind,
+        index: usize,
+        sort: Option<hydrus_core::pages::PageSort>,
+    },
+    Other {
+        page_type: i64,
+        stored: Option<serde_json::Value>,
+        sort: Option<hydrus_core::pages::PageSort>,
+    },
 }
 
 /// One of a downloader page's queues.
@@ -293,7 +334,8 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.settings(input)?;
     copier.network(input)?;
     copier.subscriptions(input)?;
-    copier.downloader_pages(input)?;
+    let page_queues = copier.downloader_pages(input)?;
+    copier.session(input, &page_queues)?;
     copier.import_folders(input)?;
     copier.auto_resolution(input)?;
     copier.derived()?;
@@ -939,8 +981,9 @@ impl Copier<'_> {
         Ok(())
     }
 
-    /// Downloader pages' queues, with their files and gallery pages.
-    fn downloader_pages(&mut self, input: &ImportInput) -> Result<()> {
+    /// Downloader pages' queues, with their files and gallery pages; each
+    /// page's queue ids.
+    fn downloader_pages(&mut self, input: &ImportInput) -> Result<Vec<Vec<i64>>> {
         let url_classes = input
             .settings
             .get(<hydrus_core::url::UrlClassSettings as crate::settings::Setting>::KEY)
@@ -950,7 +993,9 @@ impl Copier<'_> {
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_secs() as i64);
         let mut counts = [0u64; 3];
+        let mut page_queues = Vec::new();
         for page in &input.downloader_pages {
+            let mut ids = Vec::new();
             for q in &page.queues {
                 let kind = match q.state {
                     PageQueueState::Urls => queues::QueueKind::Urls,
@@ -1001,7 +1046,9 @@ impl Copier<'_> {
                     queues::set_queue_extra(self.conn, id, &extra)?;
                 }
                 counts[0] += 1;
+                ids.push(id);
             }
+            page_queues.push(ids);
         }
         for (table, n) in ["import_queues", "file_seeds", "gallery_seeds"]
             .into_iter()
@@ -1009,6 +1056,89 @@ impl Copier<'_> {
         {
             *self.report.rows.entry(table.into()).or_default() += n;
         }
+        Ok(page_queues)
+    }
+
+    /// The session's pages, saved as the one the GUI opens with, and the
+    /// files each showed.
+    fn session(&mut self, input: &ImportInput, page_queues: &[Vec<i64>]) -> Result<()> {
+        use hydrus_core::pages::{Page, PageContent, PageKey, Session};
+
+        fn convert(
+            page: &PageInput,
+            page_queues: &[Vec<i64>],
+            files: &mut Vec<(PageKey, Vec<hydrus_core::Sha256>)>,
+        ) -> Page {
+            let key = PageKey::random();
+            if !page.hashes.is_empty() {
+                files.push((key, page.hashes.clone()));
+            }
+            let content = match &page.content {
+                PageInputContent::Pages(pages) => PageContent::Pages(
+                    pages
+                        .iter()
+                        .map(|p| convert(p, page_queues, files))
+                        .collect(),
+                ),
+                PageInputContent::Search {
+                    search,
+                    synchronised,
+                    sort,
+                } => PageContent::Search {
+                    search: search.clone(),
+                    synchronised: *synchronised,
+                    sort: sort.clone(),
+                },
+                PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
+                    kind: *kind,
+                    queues: page_queues.get(*index).cloned().unwrap_or_default(),
+                    sort: sort.clone(),
+                },
+                PageInputContent::Other {
+                    page_type,
+                    stored,
+                    sort,
+                } => PageContent::Other {
+                    page_type: *page_type,
+                    stored: stored.clone(),
+                    sort: sort.clone(),
+                },
+            };
+            Page {
+                key,
+                name: page.name.clone(),
+                content,
+            }
+        }
+
+        let Some(session) = &input.session else {
+            return Ok(());
+        };
+        let mut files = Vec::new();
+        let pages = session
+            .pages
+            .iter()
+            .map(|p| convert(p, page_queues, &mut files))
+            .collect();
+        let all: Vec<hydrus_core::Sha256> =
+            files.iter().flat_map(|(_, h)| h.iter().copied()).collect();
+        let ids = crate::master::hash_ids(self.conn, &all)?;
+        for (key, hashes) in &files {
+            let hash_ids: Vec<hydrus_core::HashId> =
+                hashes.iter().filter_map(|h| ids.get(h).copied()).collect();
+            crate::sessions::set_page_files(self.conn, key, &hash_ids)?;
+        }
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs() as i64);
+        // what the reference opened with is what we open with
+        let session = Session {
+            name: crate::sessions::LAST_SESSION.to_owned(),
+            pages,
+        };
+        crate::sessions::save(self.conn, &session, now)?;
+        *self.report.rows.entry("sessions".into()).or_default() += 1;
+        *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
         Ok(())
     }
 
@@ -1574,33 +1704,7 @@ mod network_tests {
             (by_work[0], by_work[1])
         };
         assert!(queue_count(chosen) >= 3);
-        {
-            let conn = Connection::open(source.path().join("client.db")).unwrap();
-            // (the fixture's client saved its own last session when it closed)
-            let latest: i64 = conn
-                .query_row("SELECT coalesce(max(timestamp_ms), 0) FROM json_dumps_named WHERE dump_type = 104", [], |r| r.get(0))
-                .unwrap();
-            for (session, timestamp) in [(older, latest + 1), (chosen, latest + 2)] {
-                let container = &session["container"];
-                conn.execute(
-                    "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, 'last session', ?, ?, ?)",
-                    params![container[2].as_i64(), timestamp, container[3].to_string()],
-                )
-                .unwrap();
-                for (hash, stored) in session["page_data"].as_object().unwrap() {
-                    conn.execute(
-                        "INSERT OR IGNORE INTO json_dumps_hashed (hash, dump_type, version, dump) VALUES (?, ?, ?, ?)",
-                        params![
-                            hex::decode(hash).unwrap(),
-                            stored[0].as_i64(),
-                            stored[1].as_i64(),
-                            stored[2].to_string()
-                        ],
-                    )
-                    .unwrap();
-                }
-            }
-        }
+        plant_last_session(source.path(), &[older, chosen]);
         let dest_dir = tempfile::tempdir().unwrap();
         let dest = dest_dir.path().join("hydrus.db");
         let report = import_legacy(source.path(), &dest).unwrap();
@@ -1739,6 +1843,186 @@ mod network_tests {
                 }
                 _ => assert_eq!(queue.extra, serde_json::json!({})),
             }
+        }
+
+        // the session's tree, as the GUI will open it: each page with its
+        // search or queues, and the files it showed
+        let session = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let mut queue_ids = imported.iter().map(|q| q.id);
+        check_pages(
+            &conn,
+            &session.pages,
+            &chosen["facts"]["tree"]["pages"],
+            &chosen["facts"]["pages"],
+            &mut queue_ids,
+        );
+        assert!(queue_ids.next().is_none(), "every queue is on a page");
+        let pages = session.all_pages();
+        for kind in [7, 9, 10] {
+            assert!(
+                pages.iter().any(|p| p.content.page_type() == kind),
+                "{kind}"
+            );
+        }
+    }
+
+    /// Plant sessions recorded by the reference as a reference database's
+    /// "last session", each saved after the one before (so the last one is
+    /// the one it opens with), with the files their pages show.
+    fn plant_last_session(source: &Path, sessions: &[&serde_json::Value]) {
+        let conn = Connection::open(source.join("client.db")).unwrap();
+        // (the fixture's client saved its own last session when it closed)
+        let latest: i64 = conn
+            .query_row(
+                "SELECT coalesce(max(timestamp_ms), 0) FROM json_dumps_named WHERE dump_type = 104",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let master = Connection::open(source.join("client.master.db")).unwrap();
+        for (session, timestamp) in sessions.iter().zip(latest + 1..) {
+            for page in session["facts"]["pages"].as_object().unwrap().values() {
+                for hash in page["hashes"].as_array().unwrap() {
+                    master
+                        .execute(
+                            "INSERT OR IGNORE INTO hashes (hash) VALUES (?)",
+                            [hex::decode(hash.as_str().unwrap()).unwrap()],
+                        )
+                        .unwrap();
+                }
+            }
+            let container = &session["container"];
+            conn.execute(
+                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, 'last session', ?, ?, ?)",
+                params![container[2].as_i64(), timestamp, container[3].to_string()],
+            )
+            .unwrap();
+            for (hash, stored) in session["page_data"].as_object().unwrap() {
+                conn.execute(
+                    "INSERT OR IGNORE INTO json_dumps_hashed (hash, dump_type, version, dump) VALUES (?, ?, ?, ?)",
+                    params![
+                        hex::decode(hash).unwrap(),
+                        stored[0].as_i64(),
+                        stored[1].as_i64(),
+                        stored[2].to_string()
+                    ],
+                )
+                .unwrap();
+            }
+        }
+    }
+
+    /// A session with a search page comes over with its search, sort and
+    /// files, beside its downloader pages.
+    #[test]
+    fn imports_search_pages_from_the_last_session() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let chosen = recorded["sessions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|s| {
+                s["facts"]["pages"]
+                    .as_object()
+                    .unwrap()
+                    .values()
+                    .any(|p| p["page"]["type"] == 6)
+            })
+            .unwrap();
+        plant_last_session(source.path(), &[chosen]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+
+        let conn = Connection::open(&dest).unwrap();
+        let session = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let queues: Vec<i64> = crate::queues::queues(&conn, None)
+            .unwrap()
+            .into_iter()
+            .map(|q| q.id)
+            .collect();
+        let mut queue_ids = queues.into_iter();
+        check_pages(
+            &conn,
+            &session.pages,
+            &chosen["facts"]["tree"]["pages"],
+            &chosen["facts"]["pages"],
+            &mut queue_ids,
+        );
+        assert!(
+            session
+                .all_pages()
+                .iter()
+                .any(|p| p.content.page_type() == 6)
+        );
+    }
+
+    /// Our pages against the reference's session tree and pages' facts.
+    fn check_pages(
+        conn: &Connection,
+        ours: &[hydrus_core::pages::Page],
+        expected: &serde_json::Value,
+        facts: &serde_json::Value,
+        queues: &mut impl Iterator<Item = i64>,
+    ) {
+        use hydrus_core::pages::PageContent;
+        let expected = expected.as_array().unwrap();
+        assert_eq!(ours.len(), expected.len());
+        for (page, node) in ours.iter().zip(expected) {
+            if let Some(children) = node.get("pages") {
+                assert_eq!(page.name, node["name"]);
+                let PageContent::Pages(ours) = &page.content else {
+                    panic!("{page:?} is not a notebook");
+                };
+                check_pages(conn, ours, children, facts, queues);
+                continue;
+            }
+            let fact = &facts[node["page_data_hash"].as_str().unwrap()];
+            let p = &fact["page"];
+            assert_eq!(page.name, p["name"]);
+            assert_eq!(page.content.page_type(), p["type"]);
+            match &page.content {
+                PageContent::Search {
+                    search,
+                    synchronised,
+                    ..
+                } => {
+                    let variables = &p["variables"];
+                    assert_eq!(*synchronised, variables["synchronised"]);
+                    let stored = hydrus_legacy::objects::FileSearchContext::from_object(
+                        &hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+                            &variables["file_search_context"].to_string(),
+                        )
+                        .unwrap(),
+                    )
+                    .unwrap();
+                    assert_eq!(
+                        *search,
+                        decode::file_search_for_tests(&stored),
+                        "{}",
+                        page.name
+                    );
+                }
+                PageContent::Downloader { queues: ids, .. } => {
+                    for id in ids {
+                        assert_eq!(Some(*id), queues.next());
+                    }
+                }
+                other => panic!("{other:?}"),
+            }
+            assert!(page.content.sort().is_some());
+            let files: Vec<String> = crate::sessions::page_files(conn, &page.key)
+                .unwrap()
+                .into_iter()
+                .map(|id| crate::master::hash(conn, id).unwrap().unwrap().to_hex())
+                .collect();
+            assert_eq!(serde_json::json!(files), fact["hashes"], "{}", page.name);
         }
     }
 

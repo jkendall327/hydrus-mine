@@ -8,9 +8,10 @@ use std::collections::{BTreeSet, HashMap};
 
 use serde_json::{Value as Json, json};
 
+use hydrus_core::pages::{DownloaderKind, PageSort, PageSortBy};
 use hydrus_core::tag_filter::{FilterRule, TagFilter};
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
-use hydrus_core::{CanvasType, DuplicateType, ServiceKey, ServiceType};
+use hydrus_core::{CanvasType, DuplicateType, ServiceKey, ServiceType, Sha256};
 use hydrus_legacy::LegacyDb;
 use hydrus_legacy::objects::predicates::{StarScale, predicate_with_scales};
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
@@ -296,7 +297,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .warnings
             .push(format!("Subscriptions were not converted: {e}")),
     }
-    downloader_pages(db, &legacy_options, &mut input);
+    session(
+        db,
+        &legacy_options,
+        &|key| scales.get(key).copied(),
+        &mut input,
+    );
     match db.export_folders() {
         Ok(folders) => {
             let mut converted = Vec::new();
@@ -1008,14 +1014,15 @@ fn api_permissions(p: &legacy::ApiPermissions) -> ApiPermissionsRow {
     }
 }
 
-/// The downloader pages open in the session the reference opens with
-/// (`default_gui_session`, "last session" unless changed).
-fn downloader_pages(
+/// The session the reference opens with (`default_gui_session`, "last
+/// session" unless changed), as the tree of pages it shows. Downloader
+/// pages' queues are carried over as queues (`input.downloader_pages`).
+fn session(
     db: &LegacyDb,
     legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
     input: &mut ImportInput,
 ) {
-    use hydrus_legacy::objects::gui_sessions::{PageContent, page_data};
     let name = legacy_options
         .get("default_gui_session")
         .and_then(hydrus_legacy::objects::YamlValue::as_str)
@@ -1028,30 +1035,109 @@ fn downloader_pages(
         Ok(None) => return,
         Err(e) => {
             input.warnings.push(format!(
-                "Session \"{name}\" could not be read, so its downloader pages were not carried \
-                 over (the original is kept): {e}"
+                "Session \"{name}\" could not be read, so its pages were not carried over (the \
+                 original is kept): {e}"
             ));
             return;
         }
     };
-    for hash in session.top.page_data_hashes() {
-        let Some(stored) = pages.get(hash) else {
-            input.warnings.push(format!(
+    let hydrus_legacy::objects::gui_sessions::SessionNode::Notebook { pages: top, .. } =
+        &session.top
+    else {
+        return;
+    };
+    let mut context = SessionContext {
+        name,
+        pages: &pages,
+        scales,
+        input,
+    };
+    let pages = top.iter().filter_map(|node| context.page(node)).collect();
+    input.session = Some(super::SessionInput {
+        name: name.to_owned(),
+        pages,
+    });
+}
+
+struct SessionContext<'a> {
+    name: &'a str,
+    pages: &'a HashMap<Vec<u8>, hydrus_legacy::readers::StoredHashedObject>,
+    scales: &'a dyn Fn(&ServiceKey) -> Option<StarScale>,
+    input: &'a mut ImportInput,
+}
+
+impl SessionContext<'_> {
+    /// A page of the session, or a notebook with its pages; `None` (with a
+    /// warning) for a page that can't be read.
+    fn page(
+        &mut self,
+        node: &hydrus_legacy::objects::gui_sessions::SessionNode,
+    ) -> Option<super::PageInput> {
+        use hydrus_legacy::objects::gui_sessions::{PageContent, SessionNode, page_data};
+        let name = self.name;
+        let page_data_hash = match node {
+            SessionNode::Notebook { name, pages } => {
+                return Some(super::PageInput {
+                    name: name.clone(),
+                    content: super::PageInputContent::Pages(
+                        pages.iter().filter_map(|node| self.page(node)).collect(),
+                    ),
+                    hashes: Vec::new(),
+                });
+            }
+            SessionNode::Page { page_data_hash, .. } => page_data_hash,
+        };
+        let Some(stored) = self.pages.get(page_data_hash) else {
+            self.input.warnings.push(format!(
                 "A page of session \"{name}\" has lost its data, so it was not carried over"
             ));
-            continue;
+            return None;
         };
-        let page = match stored.parse().and_then(|object| page_data(&object)) {
-            Ok(data) => data.page,
+        let data = match stored.parse().and_then(|object| page_data(&object)) {
+            Ok(data) => data,
             Err(e) => {
-                input.warnings.push(format!(
-                    "A page of session \"{name}\" could not be read, so its work was not carried \
-                     over (the original is kept): {e}"
+                self.input.warnings.push(format!(
+                    "A page of session \"{name}\" could not be read, so it was not carried over \
+                     (the original is kept): {e}"
                 ));
-                continue;
+                return None;
             }
         };
+        let page = data.page;
+        let sort = page.sort.as_ref().map(page_sort);
+        let hashes = data
+            .hashes
+            .iter()
+            .filter_map(|h| Sha256::from_slice(h).ok())
+            .collect();
+        let kept = |sort| super::PageInputContent::Other {
+            page_type: page.page_type,
+            stored: serde_json::from_str(&stored.dump).ok(),
+            sort,
+        };
         let queues = match page.content {
+            PageContent::Query(q) => {
+                let content = match file_search(&q.search, self.scales) {
+                    Ok(search) => super::PageInputContent::Search {
+                        search,
+                        synchronised: q.synchronised,
+                        sort,
+                    },
+                    Err(e) => {
+                        self.input.warnings.push(format!(
+                            "Page \"{}\" of session \"{name}\" searches for something hydrus-rs \
+                             can't, so it is kept but not opened: {e}",
+                            page.name
+                        ));
+                        kept(sort)
+                    }
+                };
+                return Some(super::PageInput {
+                    name: page.name,
+                    content,
+                    hashes,
+                });
+            }
             PageContent::Urls(u) => vec![super::PageQueueInput {
                 options: u.import_options,
                 files_paused: u.paused,
@@ -1124,24 +1210,71 @@ fn downloader_pages(
             PageContent::Other => {
                 use hydrus_legacy::objects::gui_sessions::page_type;
                 let what = match page.page_type {
-                    page_type::SIMPLE_DOWNLOADER => "a simple downloader page",
-                    page_type::IMPORT_FROM_DISK => "an import from disk",
-                    _ => continue,
+                    page_type::SIMPLE_DOWNLOADER => Some("a simple downloader page"),
+                    page_type::IMPORT_FROM_DISK => Some("an import from disk"),
+                    _ => None,
                 };
-                input.warnings.push(format!(
-                    "Page \"{}\" of session \"{name}\" is {what}, which hydrus-rs doesn't run yet, \
-                     so its unfinished work was not carried over (the original is kept)",
-                    page.name
-                ));
-                continue;
+                if let Some(what) = what {
+                    self.input.warnings.push(format!(
+                        "Page \"{}\" of session \"{name}\" is {what}, which hydrus-rs doesn't \
+                         run yet, so its unfinished work was not carried over (the original is \
+                         kept)",
+                        page.name
+                    ));
+                }
+                return Some(super::PageInput {
+                    name: page.name,
+                    content: kept(sort),
+                    hashes,
+                });
             }
         };
-        if !queues.is_empty() {
-            input.downloader_pages.push(super::DownloaderPageInput {
-                name: page.name,
+        let kind = match page.page_type {
+            hydrus_legacy::objects::gui_sessions::page_type::URLS => DownloaderKind::Urls,
+            hydrus_legacy::objects::gui_sessions::page_type::GALLERY => DownloaderKind::Gallery,
+            _ => DownloaderKind::Watchers,
+        };
+        self.input
+            .downloader_pages
+            .push(super::DownloaderPageInput {
+                name: page.name.clone(),
                 queues,
             });
-        }
+        Some(super::PageInput {
+            name: page.name,
+            content: super::PageInputContent::Downloader {
+                kind,
+                index: self.input.downloader_pages.len() - 1,
+                sort,
+            },
+            hashes,
+        })
+    }
+}
+
+#[cfg(test)]
+pub(super) fn file_search_for_tests(
+    f: &legacy::FileSearchContext,
+) -> hydrus_core::search::context::FileSearchContext {
+    file_search(f, &|_| None).unwrap()
+}
+
+/// A legacy page sort in our page model.
+fn page_sort(sort: &legacy::MediaSort) -> PageSort {
+    use legacy::MediaSortType;
+    PageSort {
+        by: match &sort.sort_type {
+            MediaSortType::System(code) => PageSortBy::System(*code),
+            MediaSortType::Namespaces {
+                namespaces,
+                tag_display_type,
+            } => PageSortBy::Namespaces {
+                namespaces: namespaces.clone(),
+                tag_display_type: *tag_display_type,
+            },
+            MediaSortType::Rating(key) => PageSortBy::Rating(key.clone()),
+        },
+        ascending: sort.sort_order == legacy::SortOrder::Ascending,
     }
 }
 
