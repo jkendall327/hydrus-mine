@@ -6,12 +6,17 @@
 //! reference re-saves them at its current versions whenever the domain
 //! manager is saved, so only those versions are accepted.
 
+use hydrus_parse::content::{ContentKind, ContentParser, PageParser, SubsidiaryPageParser};
 use hydrus_parse::formula::{
     Formula, FormulaKind, HtmlContent, HtmlRule, HtmlWalk, JsonContent, JsonRule, TagSearch,
 };
 
-use super::domain::{count, expect, nested_list, opt_count, string_match, string_processor};
-use super::util::{DecodeResult, boolean, int, malformed, opt_int, string, tuple};
+use super::domain::{
+    count, expect, nested_list, opt_count, string_converter, string_match, string_processor,
+};
+use super::util::{
+    DecodeResult, boolean, int, list, malformed, opt_int, opt_string, string, tuple,
+};
 use crate::pyjson::PyJson;
 use crate::serialisable::{SerialisableObject, SerialisableType};
 
@@ -22,6 +27,9 @@ const FORMULA_CONTEXT_VARIABLE: SerialisableType = SerialisableType(60);
 const RULE_HTML: SerialisableType = SerialisableType(62);
 const FORMULA_NESTED: SerialisableType = SerialisableType(133);
 const FORMULA_STATIC: SerialisableType = SerialisableType(136);
+const CONTENT_PARSER: SerialisableType = SerialisableType(30);
+const PAGE_PARSER: SerialisableType = SerialisableType(58);
+const SUBSIDIARY_PAGE_PARSER: SerialisableType = SerialisableType(135);
 
 fn object_at(
     kind: SerialisableType,
@@ -197,5 +205,106 @@ fn html_rule(object: &SerialisableObject) -> DecodeResult<HtmlRule> {
         walk,
         tag_name,
         text_match,
+    })
+}
+
+/// Decode a page parser, with its content parsers and subsidiary parsers.
+pub fn page_parser(object: &SerialisableObject) -> DecodeResult<PageParser> {
+    let k = PAGE_PARSER;
+    expect(object, k, &[3])?;
+    let info = object.info();
+    let [
+        name,
+        key,
+        converter,
+        subsidiary,
+        content_parsers,
+        example_urls,
+        _context,
+    ] = tuple::<7>(k, &info, "page parser")?;
+    Ok(PageParser {
+        name: string(k, name, "name")?,
+        key: string(k, key, "parser key")?,
+        converter: string_converter(&object_at(k, converter, "string converter")?)?,
+        subsidiary: nested_list(k, subsidiary, "subsidiary page parsers")?
+            .iter()
+            .map(subsidiary_page_parser)
+            .collect::<DecodeResult<_>>()?,
+        content_parsers: nested_list(k, content_parsers, "content parsers")?
+            .iter()
+            .map(content_parser)
+            .collect::<DecodeResult<_>>()?,
+        example_urls: list(k, example_urls, "example urls")?
+            .iter()
+            .map(|u| string(k, u, "example url"))
+            .collect::<DecodeResult<_>>()?,
+    })
+}
+
+fn subsidiary_page_parser(object: &SerialisableObject) -> DecodeResult<SubsidiaryPageParser> {
+    let k = SUBSIDIARY_PAGE_PARSER;
+    expect(object, k, &[2])?;
+    let info = object.info();
+    let [formula_tuple, sort, parser] = tuple::<3>(k, &info, "subsidiary page parser")?;
+    Ok(SubsidiaryPageParser {
+        formula: formula(&object_at(k, formula_tuple, "formula")?)?,
+        sort_by_source_time: boolean(k, sort, "sort by source time")?,
+        parser: page_parser(&object_at(k, parser, "page parser")?)?,
+    })
+}
+
+/// Decode a content parser.
+pub fn content_parser(object: &SerialisableObject) -> DecodeResult<ContentParser> {
+    let k = CONTENT_PARSER;
+    expect(object, k, &[7])?;
+    let info = object.info();
+    let [name, content_type, formula_tuple, extra] = tuple::<4>(k, &info, "content parser")?;
+    let pair = || tuple::<2>(k, extra, "additional info");
+    let kind = match int(k, content_type, "content type")? {
+        7 => {
+            let [url_type, priority] = pair()?;
+            ContentKind::Url {
+                url_type: int(k, url_type, "url type")?,
+                priority: int(k, priority, "priority")?,
+            }
+        }
+        0 => ContentKind::Tag {
+            namespace: opt_string(k, extra, "namespace")?,
+        },
+        18 => ContentKind::Note {
+            name: string(k, extra, "note name")?,
+        },
+        15 => {
+            let [hash_type, encoding] = pair()?;
+            ContentKind::Hash {
+                hash_type: string(k, hash_type, "hash type")?,
+                encoding: string(k, encoding, "hash encoding")?,
+            }
+        }
+        16 => ContentKind::Timestamp {
+            timestamp_type: opt_int(k, extra, "timestamp type")?,
+        },
+        17 => ContentKind::Title {
+            priority: int(k, extra, "title priority")?,
+        },
+        22 => ContentKind::HttpHeader {
+            name: string(k, extra, "header name")?,
+        },
+        14 => ContentKind::Variable {
+            name: string(k, extra, "variable name")?,
+        },
+        8 => {
+            let [if_found, string_match_tuple] = pair()?;
+            ContentKind::Veto {
+                if_matches_found: boolean(k, if_found, "veto if matches found")?,
+                string_match: string_match(&object_at(k, string_match_tuple, "veto match")?)?,
+            }
+        }
+        other => return Err(malformed(k, format!("unknown content type {other}"))),
+    };
+    Ok(ContentParser {
+        name: string(k, name, "name")?,
+        kind,
+        formula: formula(&object_at(k, formula_tuple, "formula")?)?,
     })
 }

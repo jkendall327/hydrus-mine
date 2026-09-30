@@ -27,7 +27,10 @@ from hydrus.client import ClientStrings
 from hydrus.client.caches import ClientCaches
 from hydrus.client.parsing import ClientParsing as P
 
-CG.client_controller = types.SimpleNamespace( parsing_cache = ClientCaches.ParsingCache() )
+from hydrus.client import ClientOptions
+
+# enough of a client for parsing: its parsing cache and default options
+CG.client_controller = types.SimpleNamespace( parsing_cache = ClientCaches.ParsingCache(), new_options = ClientOptions.ClientOptions() )
 
 rng = random.Random( 688 )
 
@@ -379,49 +382,58 @@ def run( formula, document, context, collapse ):
 
 
 
-documents = []
-cases = []
 PRESENT_TAGS = []
 PRESENT_KEYS = []
 PRESENT_ATTRS = []
 
-for kind in ( 'html', 'json' ):
 
-    for _ in range( 120 ):
+def main():
 
-        document = html_document() if kind == 'html' else json_document()
+    documents = []
+    cases = []
 
-        PRESENT_TAGS[:] = sorted( set( t.lower() for t in re.findall( r'<([a-zA-Z]+)', document ) ) )
-        PRESENT_KEYS[:] = sorted( set( re.findall( r'"([^"\\]*)":', document ) ) )
-        PRESENT_ATTRS[:] = sorted( set( a.lower() for a in re.findall( r' ([a-zA-Z-]+)(?:=|[ >])', document ) ) )
+    for kind in ( 'html', 'json' ):
 
-        doc_index = len( documents )
-        documents.append( document )
+        for _ in range( 120 ):
 
-        for _ in range( 16 ):
+            document = html_document() if kind == 'html' else json_document()
 
-            if rng.random() < 0.85:
+            PRESENT_TAGS[:] = sorted( set( t.lower() for t in re.findall( r'<([a-zA-Z]+)', document ) ) )
+            PRESENT_KEYS[:] = sorted( set( re.findall( r'"([^"\\]*)":', document ) ) )
+            PRESENT_ATTRS[:] = sorted( set( a.lower() for a in re.findall( r' ([a-zA-Z-]+)(?:=|[ >])', document ) ) )
 
-                formula = html_formula() if kind == 'html' else json_formula()
+            doc_index = len( documents )
+            documents.append( document )
 
-            else:
+            for _ in range( 16 ):
 
-                formula = other_formula( kind )
+                if rng.random() < 0.85:
 
+                    formula = html_formula() if kind == 'html' else json_formula()
 
-            context = { 'url': 'https://example.com/post/view/123', 'post_index': '0' }
-            collapse = rng.random() < 0.7
+                else:
 
-            cases.append( {
-                'formula': formula.GetSerialisableTuple(),
-                'document': doc_index,
-                'context': context,
-                'collapse_newlines': collapse,
-                **run( formula, document, context, collapse ),
-            } )
+                    formula = other_formula( kind )
 
 
+                context = { 'url': 'https://example.com/post/view/123', 'post_index': '0' }
+                collapse = rng.random() < 0.7
+
+                cases.append( {
+                    'formula': formula.GetSerialisableTuple(),
+                    'document': doc_index,
+                    'context': context,
+                    'collapse_newlines': collapse,
+                    **run( formula, document, context, collapse ),
+                } )
 
 
-json.dump( { 'documents': documents, 'cases': cases }, sys.stdout, ensure_ascii = False )
-sys.stdout.write( '\n' )
+
+
+    json.dump( { 'documents': documents, 'cases': cases }, sys.stdout, ensure_ascii = False )
+    sys.stdout.write( '\n' )
+
+
+if __name__ == '__main__':
+
+    main()

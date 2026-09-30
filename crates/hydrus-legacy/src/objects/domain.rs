@@ -397,7 +397,7 @@ fn legacy_encoding(name: &str) -> Option<Encoding> {
     })
 }
 
-fn string_converter(object: &SerialisableObject) -> DecodeResult<StringConverter> {
+pub(crate) fn string_converter(object: &SerialisableObject) -> DecodeResult<StringConverter> {
     let k = STRING_CONVERTER;
     expect(object, k, &[1, 2])?;
     let info = object.info();

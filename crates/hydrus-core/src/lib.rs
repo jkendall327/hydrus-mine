@@ -10,6 +10,8 @@ pub mod ids;
 pub mod mime;
 pub mod notes;
 pub mod numbers;
+pub mod pybytes;
+pub mod pyhtml;
 pub mod pyjson;
 pub mod service;
 pub mod sort;

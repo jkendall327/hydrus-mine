@@ -9,6 +9,7 @@ use base64::Engine as _;
 use serde::{Deserialize, Serialize};
 
 use super::pyurl::{quote, unquote};
+use crate::pybytes::{b64decode, fromhex, urlsafe_b64decode};
 
 /// A regex written for Python's `re`, compiled on first use.
 #[derive(Clone)]
@@ -397,34 +398,15 @@ fn encode(encoding: Encoding, s: &str) -> String {
 }
 
 fn decode(encoding: Encoding, s: &str) -> Result<String, String> {
-    let lenient = base64::engine::GeneralPurpose::new(
-        &base64::alphabet::STANDARD,
-        base64::engine::GeneralPurposeConfig::new()
-            .with_decode_padding_mode(base64::engine::DecodePaddingMode::Indifferent)
-            .with_decode_allow_trailing_bits(true),
-    );
+    // the reference pads to a multiple of four characters first
+    let padded = || format!("{s}{}", "=".repeat((4 - s.chars().count() % 4) % 4));
     let bytes = match encoding {
         Encoding::UrlPercent => return Ok(unquote(s)),
         Encoding::UnicodeEscape => return unicode_escape_decode(s.as_bytes()),
-        Encoding::HtmlEntities => {
-            return Err("decoding html entities is not supported yet".into());
-        }
-        Encoding::HexUtf8 => {
-            let digits: String = s.chars().filter(|c| !c.is_ascii_whitespace()).collect();
-            hex::decode(digits).map_err(|e| e.to_string())?
-        }
-        Encoding::Base64Utf8 | Encoding::Base64UrlUtf8 => {
-            let text: String = s
-                .chars()
-                .map(|c| match (encoding, c) {
-                    (Encoding::Base64UrlUtf8, '-') => '+',
-                    (Encoding::Base64UrlUtf8, '_') => '/',
-                    (_, c) => c,
-                })
-                .filter(|c| c.is_ascii_alphanumeric() || matches!(c, '+' | '/'))
-                .collect();
-            lenient.decode(text).map_err(|e| e.to_string())?
-        }
+        Encoding::HtmlEntities => return Ok(crate::pyhtml::unescape(s)),
+        Encoding::HexUtf8 => fromhex(s).ok_or("non-hexadecimal number found in fromhex() arg")?,
+        Encoding::Base64Utf8 => b64decode(&padded()).ok_or("Incorrect padding")?,
+        Encoding::Base64UrlUtf8 => urlsafe_b64decode(&padded()).ok_or("Incorrect padding")?,
     };
     Ok(String::from_utf8_lossy(&bytes).into_owned())
 }

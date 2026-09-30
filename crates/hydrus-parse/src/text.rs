@@ -66,3 +66,26 @@ mod tests {
         assert_eq!(py_strip("\u{1f} x\u{a0}"), "x");
     }
 }
+
+/// The reference's `CleanNoteText`: stripped, each line stripped, and no
+/// more than one blank line in a row.
+pub fn clean_note_text(s: &str) -> String {
+    let lines: Vec<&str> = splitlines(py_strip(s)).into_iter().map(py_strip).collect();
+    let mut text = lines.join("\n");
+    while text.contains("\n\n\n") {
+        text = text.replace("\n\n\n", "\n\n");
+    }
+    text
+}
+
+pub use hydrus_core::pyhtml::unescape as html_unescape;
+
+#[cfg(test)]
+mod unescape_tests {
+    use super::*;
+
+    #[test]
+    fn notes_are_tidied() {
+        assert_eq!(clean_note_text("  a  \n\n\n\n b \r\n c "), "a\n\nb\nc");
+    }
+}

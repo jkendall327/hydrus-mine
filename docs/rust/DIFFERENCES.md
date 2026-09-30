@@ -114,7 +114,10 @@ merges come from the in-memory cache described below.
 ## Downloader parsing (`hydrus-parse`)
 
 Checked by `crates/hydrus-legacy/tests/formulas.rs` on
-`oracle/fixtures/formulas.json` (random formulas on random documents).
+`oracle/fixtures/formulas.json` (random formulas on random documents) and
+`crates/hydrus-legacy/tests/page_parsers.rs` on
+`oracle/fixtures/page_parsers.json` (random page parsers, with subsidiary
+parsers and every kind of content parser, on random documents).
 
 - **`<template>` contents are parsed by the current standard.** HTML is
   parsed by the current HTML standard's algorithm (html5ever), as browsers
@@ -124,6 +127,14 @@ Checked by `crates/hydrus-legacy/tests/formulas.rs` on
   pages rarely put table parts in templates or templates in tables.
 - **A JSON "deminify" rule whose references form a cycle is a parse error.**
   The reference recurses until Python gives up and the parse crashes.
+- **A parsed time that doesn't fit in 64 bits is ignored.** Python's
+  integers are unbounded, so the reference keeps a "time" like 10^21 seconds
+  and fails later, when the database can't store it. We treat it like any
+  other unreadable time.
+- **Subsidiary page parsers are ordered by lowercased name.** The reference
+  casefolds, which differs for a few letters (`ß` folds to `ss`); two
+  subsidiary parsers of one page parser would have to be named alike but for
+  those letters for the order to differ.
 
 ## Client API input checking (`hydrus-api`)
 

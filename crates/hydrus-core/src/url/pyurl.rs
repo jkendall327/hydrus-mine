@@ -262,3 +262,126 @@ mod tests {
         assert_eq!(unquote("a%20b%zz%C3%A9%"), "a b%zzé%");
     }
 }
+
+/// Schemes whose URLs can be relative to a base (`urllib.parse.uses_relative`).
+const SCHEMES_RELATIVE: &[&str] = &[
+    "", "ftp", "http", "gopher", "nntp", "imap", "wais", "file", "https", "shttp", "mms",
+    "prospero", "rtsp", "rtsps", "rtspu", "sftp", "svn", "svn+ssh", "ws", "wss",
+];
+
+/// Python's `urljoin(base, url)`: `url` resolved against `base`.
+pub fn urljoin(base: &str, url: &str) -> String {
+    if base.is_empty() {
+        return url.to_owned();
+    }
+    if url.is_empty() {
+        return base.to_owned();
+    }
+    let (Ok(b), Ok(mut u)) = (urlparse(base), urlparse(url)) else {
+        return url.to_owned();
+    };
+    if u.scheme.is_empty() {
+        u.scheme.clone_from(&b.scheme);
+    }
+    if u.scheme != b.scheme || !SCHEMES_RELATIVE.contains(&u.scheme.as_str()) {
+        return url.to_owned();
+    }
+    if SCHEMES_WITH_NETLOC.contains(&u.scheme.as_str()) {
+        if !u.netloc.is_empty() {
+            return urlunparse(&u);
+        }
+        u.netloc.clone_from(&b.netloc);
+    }
+    if u.path.is_empty() && u.params.is_empty() {
+        u.path.clone_from(&b.path);
+        u.params.clone_from(&b.params);
+        if u.query.is_empty() {
+            u.query.clone_from(&b.query);
+        }
+        return urlunparse(&u);
+    }
+    let mut base_parts: Vec<&str> = b.path.split('/').collect();
+    if base_parts.last().is_some_and(|last| !last.is_empty()) {
+        base_parts.pop();
+    }
+    let segments: Vec<&str> = if u.path.starts_with('/') {
+        u.path.split('/').collect()
+    } else {
+        let mut all: Vec<&str> = base_parts;
+        all.extend(u.path.split('/'));
+        // empty segments in the middle would double the slashes
+        if all.len() > 2 {
+            let last = all.len() - 1;
+            let middle: Vec<&str> = all[1..last]
+                .iter()
+                .copied()
+                .filter(|s| !s.is_empty())
+                .collect();
+            let mut filtered = vec![all[0]];
+            filtered.extend(middle);
+            filtered.push(all[last]);
+            all = filtered;
+        }
+        all
+    };
+    let mut resolved: Vec<&str> = Vec::new();
+    for segment in &segments {
+        match *segment {
+            ".." => {
+                resolved.pop();
+            }
+            "." => {}
+            s => resolved.push(s),
+        }
+    }
+    if matches!(segments.last(), Some(&".." | &".")) {
+        resolved.push("");
+    }
+    let path = resolved.join("/");
+    u.path = if path.is_empty() {
+        "/".to_owned()
+    } else {
+        path
+    };
+    urlunparse(&u)
+}
+
+#[cfg(test)]
+mod urljoin_tests {
+    use super::urljoin;
+
+    /// Cases from Python's own `test_urlparse` (RFC 3986 section 5.4).
+    #[test]
+    fn joins_like_python() {
+        let base = "http://a/b/c/d;p?q";
+        for (url, expected) in [
+            ("g:h", "g:h"),
+            ("g", "http://a/b/c/g"),
+            ("./g", "http://a/b/c/g"),
+            ("g/", "http://a/b/c/g/"),
+            ("/g", "http://a/g"),
+            ("//g", "http://g"),
+            ("?y", "http://a/b/c/d;p?y"),
+            ("g?y", "http://a/b/c/g?y"),
+            ("#s", "http://a/b/c/d;p?q#s"),
+            ("g#s", "http://a/b/c/g#s"),
+            (";x", "http://a/b/c/;x"),
+            ("", "http://a/b/c/d;p?q"),
+            (".", "http://a/b/c/"),
+            ("./", "http://a/b/c/"),
+            ("..", "http://a/b/"),
+            ("../g", "http://a/b/g"),
+            ("../..", "http://a/"),
+            ("../../../g", "http://a/g"),
+            ("/./g", "http://a/g"),
+            ("g.", "http://a/b/c/g."),
+            ("./../g", "http://a/b/g"),
+            ("g/./h", "http://a/b/c/g/h"),
+            ("g/../h", "http://a/b/c/h"),
+            ("http:g", "http://a/b/c/g"),
+            ("javascript:void(0)", "javascript:void(0)"),
+        ] {
+            assert_eq!(urljoin(base, url), expected, "{url}");
+        }
+    }
+}

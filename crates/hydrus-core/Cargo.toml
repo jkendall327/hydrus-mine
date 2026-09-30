@@ -21,6 +21,8 @@ md-5.workspace = true
 sha1.workspace = true
 sha2.workspace = true
 rand.workspace = true
+# HTML5 named character references, for `html.unescape`
+web_atoms = "0.2.6"
 
 [dev-dependencies]
 proptest.workspace = true

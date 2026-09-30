@@ -1267,6 +1267,7 @@ dependencies = [
  "sha2",
  "thiserror 2.0.21",
  "unicode-normalization",
+ "web_atoms",
 ]
 
 [[package]]
@@ -1340,9 +1341,11 @@ dependencies = [
 name = "hydrus-parse"
 version = "0.1.0"
 dependencies = [
+ "base64 0.22.1",
  "html5ever",
  "hydrus-core",
  "markup5ever_rcdom",
+ "regex",
  "serde_json",
  "thiserror 2.0.21",
 ]
