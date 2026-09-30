@@ -1,8 +1,8 @@
 {
   "api": {
     "total": 76,
-    "done": 45,
-    "partial": 3,
+    "done": 46,
+    "partial": 2,
     "done_items": [
       "/add_files/add_file",
       "/add_files/archive_files",
@@ -20,6 +20,7 @@
       "/add_tags/get_siblings_and_parents",
       "/add_tags/search_tags",
       "/add_tags/set_favourite_tags",
+      "/add_urls/add_url",
       "/add_urls/associate_url",
       "/add_urls/get_url_files",
       "/add_urls/get_url_info",

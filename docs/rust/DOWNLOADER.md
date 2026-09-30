@@ -80,12 +80,16 @@ show named queues as pages.
    sub-page splitting and content parser options) the same way.
 2. **Your definitions.** Your database's parsers could be exercised on saved
    example pages. (None supplied: generated pages only.)
-3. **End to end against a local site.** The oracle serves a small fake
-   booru/imageboard over localhost, points the reference's downloaders (URL
-   classes, parsers, GUG) at it, runs a URL import, a gallery search, a
-   watcher and a subscription, and records what ends up in its database. We
-   run the same against the same site and compare. No real website is ever
-   contacted by tests.
+3. **End to end against a local site.** `oracle/record_downloads.py` serves
+   a small fake booru/imageboard over localhost in three phases, gives a
+   fresh reference client downloaders for it (URL classes, parsers, a GUG),
+   and has it run a URL page (via `/add_urls/add_url`), a watcher (until
+   the thread 404s) and a subscription (two syncs), recording every file
+   and gallery log entry and what each file got.
+   `crates/hydrus-api/tests/oracle_downloads.rs` installs the reference's
+   domain manager as a migration would, replays the same steps through our
+   Client API and downloader, and compares. **Done**; it matches. No real
+   website is ever contacted by tests.
 
 ## Phases
 

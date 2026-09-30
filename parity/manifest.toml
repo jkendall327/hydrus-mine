@@ -72,8 +72,8 @@ status = "done"
 
 [[api]]
 path = "/add_urls/add_url"
-status = "partial"
-note = "URL queues run; watchable URLs are refused until watchers exist; no recorded conformance scenario yet"
+status = "done"
+note = "checked end to end against the reference on a local site (crates/hydrus-api/tests/oracle_downloads.rs): URL pages and watchers"
 
 [[api]]
 path = "/add_urls/associate_url"

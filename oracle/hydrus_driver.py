@@ -260,15 +260,23 @@ def enable_client_api( controller, port ):
     controller.RestartClientServerServices()
 
 
-def run_client( db_dir, hook, port = None ):
+def run_client( db_dir, hook, port = None, network = False ):
     """Boot the reference client on `db_dir`, run `hook( Session )`, shut down.
+
+    Network traffic is paused unless `network` (for recordings against a local
+    test site; nothing else should ever be contacted).
 
     Returns whatever the hook returned. Re-raises the hook's exception after
     shutdown if it failed."""
 
     os.makedirs( db_dir, exist_ok = True )
 
-    sys.argv = [ 'hydrus_client.py', '-d', db_dir, '--pause_network_traffic', '--non_interactive_update' ]
+    sys.argv = [ 'hydrus_client.py', '-d', db_dir, '--non_interactive_update' ]
+
+    if not network:
+
+        sys.argv.append( '--pause_network_traffic' )
+
 
     from hydrus import hydrus_client_boot
     from hydrus.client import ClientController
