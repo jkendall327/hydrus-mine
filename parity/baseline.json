@@ -1,8 +1,8 @@
 {
   "api": {
     "total": 76,
-    "done": 66,
-    "partial": 3,
+    "done": 67,
+    "partial": 2,
     "done_items": [
       "/add_files/add_file",
       "/add_files/archive_files",
@@ -68,6 +68,7 @@
       "/manage_popups/update_popup",
       "/manage_services/forget_pending",
       "/manage_services/get_pending_counts",
+      "/request_new_permissions",
       "/session_key",
       "/verify_access_key"
     ]

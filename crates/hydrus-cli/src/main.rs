@@ -18,6 +18,7 @@ use hydrus_store::transfer::{TransferMode, transfer_media};
 /// The reference client's default Client API port.
 const DEFAULT_PORT: u16 = 45869;
 
+mod api_keys;
 mod duplicates;
 mod folders;
 mod gallery;
@@ -89,6 +90,14 @@ enum Command {
         dir: PathBuf,
         #[command(subcommand)]
         action: folders::ExportAction,
+    },
+    /// Client API access keys: list, add and remove them, or accept the keys
+    /// tools ask for. A running `serve` notices changes within a minute.
+    ApiKeys {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: api_keys::Action,
     },
     /// Duplicates auto-resolution: rules' progress, and approving or denying
     /// the pairs semi-automatic rules are waiting on.
@@ -174,6 +183,15 @@ fn main() -> Result<()> {
                 );
             }
             folders::run_export(&dir, action)
+        }
+        Command::ApiKeys { dir, action } => {
+            if !dir.join(DB_FILE_NAME).exists() {
+                bail!(
+                    "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
+                    dir.display()
+                );
+            }
+            api_keys::run(&dir, action)
         }
         Command::Duplicates { dir, action } => {
             if !dir.join(DB_FILE_NAME).exists() {

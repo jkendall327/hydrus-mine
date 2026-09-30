@@ -304,8 +304,7 @@ status = "done"
 
 [[api]]
 path = "/request_new_permissions"
-status = "partial"
-notes = "refused as the reference refuses it while its registration dialog is closed; hydrus-rs has no such dialog yet"
+status = "done"
 
 [[api]]
 path = "/session_key"

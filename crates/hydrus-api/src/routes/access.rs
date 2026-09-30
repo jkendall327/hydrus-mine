@@ -70,13 +70,52 @@ pub async fn client_info(
     ))
 }
 
-/// Access keys are requested while the reference's registration dialog is
-/// open; hydrus-rs has no such dialog yet.
-pub async fn request_new_permissions() -> ApiResult<ApiResponse> {
-    Err(ApiError::new(
-        ErrorKind::Conflict,
-        "The permission registration dialog is not open. hydrus-rs has no such dialog yet, so access keys cannot be requested this way.",
-    ))
+/// A tool asks for an access key, which works once the user accepts it.
+/// The reference takes requests while its registration dialog is open;
+/// hydrus-rs takes them while `hydrus api-keys <store> listen` runs.
+pub async fn request_new_permissions(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    use crate::auth::Registration;
+    let p = req.params.clone();
+    let key = app
+        .clone()
+        .blocking(move |app| {
+            let registration: Registration =
+                app.store.read(hydrus_store::settings::get)?;
+            let now = hydrus_core::time::TimestampMs::now().millis();
+            if registration.open_until_ms.is_none_or(|until| until <= now) {
+                return Err(ApiError::new(
+                    ErrorKind::Conflict,
+                    "The permission registration dialog is not open. Run `hydrus api-keys <store> listen` to accept a new access key.",
+                ));
+            }
+            let name: String = p.required("name")?;
+            let permits_everything = p.or("permits_everything", false)?;
+            let basic: Vec<Permission> = p
+                .or::<Vec<i64>>("basic_permissions", Vec::new())?
+                .into_iter()
+                .map(|code| {
+                    u8::try_from(code)
+                        .ok()
+                        .and_then(|c| Permission::try_from(c).ok())
+                        .ok_or_else(|| {
+                            ApiError::bad_request(format!("{code} is not a permission!"))
+                        })
+                })
+                .collect::<ApiResult<_>>()?;
+            let key = hex::encode(rand::random::<[u8; 32]>());
+            let request = (key.clone(), name, permits_everything, basic);
+            app.store.write(move |ctx| {
+                let mut registration: Registration = hydrus_store::settings::get(ctx.conn())?;
+                registration.requests.push(request);
+                hydrus_store::settings::set(ctx.conn(), &registration)
+            })?;
+            Ok(key)
+        })
+        .await?;
+    Ok(ApiResponse::json(json!({ "access_key": key }), &req))
 }
 
 /// The rating SVGs the reference ships (`static/star_shapes`).

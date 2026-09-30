@@ -1426,6 +1426,7 @@ version = "0.1.0"
 dependencies = [
  "anyhow",
  "clap",
+ "hex",
  "hydrus-api",
  "hydrus-core",
  "hydrus-download",
@@ -1437,6 +1438,7 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "rand 0.10.3",
  "tempfile",
  "tokio",
  "tracing",

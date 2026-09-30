@@ -832,6 +832,16 @@ def services_scenarios():
     return scenario( 'manage_services', 'pending counts, forgetting pending content, committing', steps, read_only = False, fixture = 'repositories' )
 
 
+def page_scenarios():
+
+    steps = [
+        get( '/manage_pages/get_pages' ),
+        get( '/manage_pages/get_media_viewers' ),
+    ]
+
+    return scenario( 'pages', 'the session\'s pages', steps, read_only = False )
+
+
 def popup_scenarios():
 
     h = [ BY_NAME[ f'jpeg_{i:02}.jpg' ] for i in range( 2 ) ]
@@ -1011,7 +1021,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios(), client_options_scenarios(), popup_scenarios() ]
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios(), services_scenarios(), client_options_scenarios(), popup_scenarios(), page_scenarios() ]
 
     for sc in scenarios:
 

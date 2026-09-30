@@ -199,7 +199,72 @@ pub struct AccessRegistry {
     last_search: RwLock<HashMap<Vec<u8>, LastSearch>>,
 }
 
+/// The refusal of an access key that isn't known.
+pub const UNKNOWN_KEY: &str = "Did not find an entry for that access key!";
+
+/// Every access key in the database.
+pub fn stored_keys(conn: &Connection) -> hydrus_store::Result<Vec<AccessPermissions>> {
+    Ok(AccessRegistry::load(conn)?
+        .keys
+        .into_inner()
+        .into_values()
+        .collect())
+}
+
+/// Add (or replace) an access key in the database.
+pub fn save_key(conn: &Connection, key: &AccessPermissions) -> hydrus_store::Result<()> {
+    let filter = if key.search_filter == TagFilter::default() {
+        None
+    } else {
+        Some(serde_json::to_string(&key.search_filter)?)
+    };
+    conn.execute(
+        "INSERT OR REPLACE INTO api_permissions (access_key, name, permits_everything, permissions, search_tag_filter)
+         VALUES (?, ?, ?, ?, ?)",
+        rusqlite::params![
+            key.access_key,
+            key.name,
+            key.permits_everything,
+            serde_json::to_string(&key.basic)?,
+            filter
+        ],
+    )?;
+    Ok(())
+}
+
+/// Remove an access key from the database; whether there was one.
+pub fn delete_key(conn: &Connection, access_key: &[u8]) -> hydrus_store::Result<bool> {
+    Ok(conn.execute(
+        "DELETE FROM api_permissions WHERE access_key = ?",
+        [access_key],
+    )? > 0)
+}
+
+/// Access keys asked for through `/request_new_permissions`, while
+/// `hydrus api-keys <store> listen` (standing in for the reference's
+/// registration dialog) is running.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, Deserialize)]
+pub struct Registration {
+    /// Requests are accepted until then (ms since the epoch).
+    pub open_until_ms: Option<i64>,
+    /// Keys asked for and not yet accepted or refused: access key (hex),
+    /// name, everything, basic permissions.
+    pub requests: Vec<(String, String, bool, Vec<Permission>)>,
+}
+
+impl hydrus_store::settings::Setting for Registration {
+    const KEY: &'static str = "api_registration";
+}
+
 impl AccessRegistry {
+    /// Re-read the access keys (another process may have changed them),
+    /// keeping sessions.
+    pub fn reload_keys(&self, conn: &Connection) -> hydrus_store::Result<()> {
+        let fresh = Self::load(conn)?.keys.into_inner();
+        *self.keys.write() = fresh;
+        Ok(())
+    }
+
     /// Load every access key from the database.
     pub fn load(conn: &Connection) -> hydrus_store::Result<Self> {
         let mut stmt =
@@ -267,7 +332,7 @@ impl AccessRegistry {
             .read()
             .get(&access_key)
             .cloned()
-            .ok_or_else(|| ApiError::forbidden("Did not find an entry for that access key!"))
+            .ok_or_else(|| ApiError::forbidden(UNKNOWN_KEY))
     }
 
     fn key_from_params(&self, params: &Params) -> ApiResult<Option<Vec<u8>>> {

@@ -46,6 +46,8 @@ pub struct AppState {
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
     /// Popup messages (`/manage_popups/*`).
     pub popups: popups::Popups,
+    /// When the access keys were last read from the database.
+    pub keys_read: parking_lot::Mutex<std::time::Instant>,
     /// Identifies this run of the client (`/client_info`).
     pub boot_id: [u8; 32],
     pub boot_time_ms: i64,
@@ -83,14 +85,29 @@ impl AppState {
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
             popups: popups::Popups::default(),
+            keys_read: parking_lot::Mutex::new(std::time::Instant::now()),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
         }))
     }
 
-    /// Who is making this request.
+    /// Who is making this request. Keys can be added or removed by another
+    /// process (`hydrus api-keys`), so they are read again at least once a
+    /// minute, and before a key we don't know is refused.
     pub fn authenticate(&self, req: &ApiRequest) -> ApiResult<AccessPermissions> {
-        self.access.authenticate(&req.headers, &req.params)
+        let reload = || {
+            *self.keys_read.lock() = std::time::Instant::now();
+            self.store.read(|c| self.access.reload_keys(c)).is_ok()
+        };
+        if self.keys_read.lock().elapsed() > std::time::Duration::from_secs(60) {
+            reload();
+        }
+        match self.access.authenticate(&req.headers, &req.params) {
+            Err(e) if e.message == auth::UNKNOWN_KEY && reload() => {
+                self.access.authenticate(&req.headers, &req.params)
+            }
+            other => other,
+        }
     }
 
     /// Run blocking store work off the async runtime.

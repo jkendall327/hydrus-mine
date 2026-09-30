@@ -68,6 +68,12 @@ before its first run after a move, and it is linked afresh. Configuration hydrus
 yet (pages, the GUI's options) is kept verbatim inside the new store, so
 later versions can pick it up without a re-import.
 
+Client API access keys come across, so your browser extension and other
+tools keep working. `hydrus api-keys <store>` lists, adds and removes keys;
+to connect a new tool the way hydrus's "review services" dialog does, run
+`hydrus api-keys <store> listen` while `hydrus serve` is running, then use
+the tool's "request new API key" button and accept the request.
+
 Custom assets in the install's `db/static` folder (your own rating star
 shapes, for instance) are copied into the new store's `static` folder.
 
