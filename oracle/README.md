@@ -30,6 +30,30 @@ export QT_QPA_PLATFORM=offscreen
 | `build_scenarios.py` | `scenarios/*.json`: Client API conformance scenarios (declarative request lists) |
 | `record_api.py` | `recordings/*.json`: the reference client's responses to each scenario |
 | `dump_duplicate_merges.py` | `fixtures/duplicate_merges.json`: what duplicate decisions with metadata merges leave in the reference's database |
+| `dump_note_merges.py` | `fixtures/note_merges.json`: note merging ("merge cleverly") on duplicate decisions |
+| `dump_media.py` | `fixtures/media.json`: a generated media corpus and the reference's view of it |
+| `dump_domains.py` | `fixtures/domains.json`: domain helpers over a public-suffix corpus |
+| `dump_url_classes.py` | `fixtures/url_classes.json`: URL classes making referral URLs and next pages |
+| `dump_gugs.py` | `fixtures/gugs.json`: gallery URL generators on random searches |
+| `dump_formulas.py` | `fixtures/formulas.json`: parsing formulas on random documents |
+| `dump_page_parsers.py` | `fixtures/page_parsers.json`: page parsers on random documents |
+| `dump_string_processing.py` | `fixtures/string_processing.json`: string processors on random lists |
+| `dump_cookie_jars.py` | `fixtures/cookie_jars.json`: cookie jars as the reference pickles them |
+| `dump_import_options.py` | `fixtures/import_options.json`: import option defaults and layering |
+| `dump_subscriptions.py` | `fixtures/subscriptions.json`: subscriptions and their queries' history as stored |
+| `dump_sidecars.py` | `fixtures/sidecars.json`: sidecar routing between sidecar files |
+| `dump_auto_resolution.py` | `fixtures/auto_resolution.json`: duplicates auto-resolution rules as stored |
+| `dump_visual_data.py` | `fixtures/visual_data.json`: the visual-duplicates computations, stage by stage |
+| `dump_casefold.py` | `crates/hydrus-core/src/casefold_table.rs`: Python's `str.casefold`, as a table |
+| `record_media_tests.py` | `fixtures/media_tests.json`: in-memory predicate tests on the `basic` fixture's files |
+| `record_url_class_search.py` | `fixtures/url_class_search.json`: searches by URL class, through the Client API and in memory |
+| `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
+| `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |
+| `record_downloads.py` | `fixtures/downloads.json`: the downloader against a local fake site |
+| `record_import_folder.py` | `fixtures/import_folder_run.json` + `legacy_db/import_folder.tar.gz`: an import folder run |
+| `record_export_folder.py` | `fixtures/export_folder_run.json` + `legacy_db/export_folder.tar.gz`: export folder runs |
+| `make_bench_db.py` | a large synthetic library in the reference, for benchmarks |
+| `bench_api.py` | timings of a Client API request mix against the reference and hydrus-rs |
 
 ## The driver
 

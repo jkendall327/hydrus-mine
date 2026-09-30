@@ -44,13 +44,12 @@ impl PartialOrd for Piece {
 ///
 /// Mirrors the reference's `HumanTextSortKey`: the case-folded text is split
 /// into alternating text and ASCII-digit runs, and digit runs compare
-/// numerically. (Case folding is Unicode lowercase plus `ß` → `ss`, which
-/// covers what occurs in tags.)
+/// numerically.
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct HumanSortKey(Vec<Piece>);
 
 pub fn human_sort_key(text: &str) -> HumanSortKey {
-    let folded = text.to_lowercase().replace('ß', "ss");
+    let folded = crate::casefold::casefold(text);
     let mut pieces = Vec::new();
     let mut current = String::new();
     let mut in_digits = false;

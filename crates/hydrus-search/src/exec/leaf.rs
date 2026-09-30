@@ -16,6 +16,7 @@ use roaring::RoaringBitmap;
 use rusqlite::ToSql;
 use rusqlite::types::Value;
 
+use hydrus_core::url::UrlClass;
 use hydrus_core::{
     CanvasType, ContentStatus, LabelId, NamespaceId, ServiceId, TagId, UrlDomainId, UrlId,
 };
@@ -129,6 +130,12 @@ pub(crate) enum UrlLeaf {
     Exact(UrlId),
     Domains(Vec<UrlDomainId>),
     Regex(Arc<fancy_regex::Regex>),
+    /// A URL the class matches (whatever class the client would file the
+    /// URL under), in a domain the class covers.
+    Class {
+        class: Arc<UrlClass>,
+        collapse_leading_slashes: bool,
+    },
 }
 
 /// One indexed condition.
@@ -889,6 +896,61 @@ fn urls(env: &Env<'_>, rule: &UrlLeaf, within: Option<&RoaringBitmap>) -> Result
             let mut ids = Vec::new();
             let mut stmt = env.conn.prepare_cached("SELECT url_id, url FROM urls")?;
             let mut rows = stmt.query([])?;
+            while let Some(row) = rows.next()? {
+                let url: String = row.get(1)?;
+                if matches(&url) {
+                    ids.push(row.get::<_, u32>(0)?);
+                }
+            }
+            let mut stmt = env
+                .conn
+                .prepare_cached("SELECT hash_id FROM file_urls WHERE url_id IN rarray(?)")?;
+            sql::collect(&mut stmt, [int_array(ids)])
+        }
+        UrlLeaf::Class {
+            class,
+            collapse_leading_slashes,
+        } => {
+            // as the reference: the domains the class covers, then their
+            // URLs the class matches
+            let matches = |url: &str| class.matches(url, *collapse_leading_slashes);
+            let mut domains = HashSet::new();
+            let mut stmt = env
+                .conn
+                .prepare_cached("SELECT domain_id, domain FROM url_domains")?;
+            let mut rows = stmt.query([])?;
+            while let Some(row) = rows.next()? {
+                let domain: String = row.get(1)?;
+                if class.domain_mask.matches(&domain) {
+                    domains.insert(row.get::<_, u32>(0)?);
+                }
+            }
+            if domains.is_empty() {
+                return Ok(RoaringBitmap::new());
+            }
+            if let Some(w) = within.filter(|w| env.prefer_probe(w.len(), None)) {
+                let mut out = RoaringBitmap::new();
+                let mut stmt = env.conn.prepare_cached(
+                    "SELECT f.hash_id, u.domain_id, u.url FROM file_urls f CROSS JOIN urls u ON u.url_id = f.url_id
+                     WHERE f.hash_id IN rarray(?)",
+                )?;
+                sql::for_each_chunk(w, |chunk| {
+                    let mut rows = stmt.query([chunk])?;
+                    while let Some(row) = rows.next()? {
+                        let url: String = row.get(2)?;
+                        if domains.contains(&row.get::<_, u32>(1)?) && matches(&url) {
+                            out.insert(sql::hash_id(row, 0)?);
+                        }
+                    }
+                    Ok(())
+                })?;
+                return Ok(out);
+            }
+            let mut ids = Vec::new();
+            let mut stmt = env
+                .conn
+                .prepare_cached("SELECT url_id, url FROM urls WHERE domain_id IN rarray(?)")?;
+            let mut rows = stmt.query([int_array(domains.iter().copied())])?;
             while let Some(row) = rows.next()? {
                 let url: String = row.get(1)?;
                 if matches(&url) {

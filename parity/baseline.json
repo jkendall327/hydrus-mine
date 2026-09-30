@@ -119,8 +119,8 @@
   },
   "system_predicate": {
     "total": 45,
-    "done": 44,
-    "partial": 1,
+    "done": 45,
+    "partial": 0,
     "done_items": [
       "archive",
       "archived_time",
@@ -145,6 +145,7 @@
       "height",
       "import_time",
       "inbox",
+      "known_urls",
       "last_viewed_time",
       "limit",
       "local",

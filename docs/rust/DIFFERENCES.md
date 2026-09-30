@@ -54,6 +54,18 @@ fails if one starts matching.
   file tagged `page:5` and `page:20` matches `page ≈ 10`.
 - **"Deleted" in `system:has tag with status` means deleted** for display
   tags too; the reference searches pending tags instead.
+- **A saved search's URL class predicate uses the client's class of that
+  name as it is now** (found case-folded, as a typed search finds it); the
+  reference tests the copy of the class saved with the search. If no class
+  has that name any more, the search fails ("Did not find URL Class
+  called ..."), where the reference would still use its copy.
+
+Searches by URL class are checked by
+`crates/hydrus-api/tests/url_class_search.rs` on
+`oracle/fixtures/url_class_search.json`: URL classes on a domain with and
+without its subdomains, a domain regex, query parameters in another order
+and a name that only matches case-folded, searched through the Client API
+and tested in memory.
 
 ## File lifecycle (`hydrus-store::content`)
 
@@ -284,10 +296,6 @@ parsers and every kind of content parser, on random documents).
   integers are unbounded, so the reference keeps a "time" like 10^21 seconds
   and fails later, when the database can't store it. We treat it like any
   other unreadable time.
-- **Subsidiary page parsers are ordered by lowercased name.** The reference
-  casefolds, which differs for a few letters (`ß` folds to `ss`); two
-  subsidiary parsers of one page parser would have to be named alike but for
-  those letters for the order to differ.
 
 ## Client API input checking (`hydrus-api`)
 

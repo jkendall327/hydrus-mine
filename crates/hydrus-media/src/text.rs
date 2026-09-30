@@ -110,13 +110,10 @@ impl PartialOrd for KeyPart {
 }
 
 /// `HydrusText.HumanTextSortKey`: 'page 2' sorts before 'page 10'.
-///
-/// Python casefolds; lowercasing differs only for a handful of characters
-/// (e.g. 'ß'), which do not occur in the file names this is used on.
 fn human_sort_key(text: &str) -> Vec<KeyPart> {
     // mirrors re.split('([0-9]+)', ...): text and number runs alternate, and
     // the list always starts and ends with a (possibly empty) text run
-    let folded = text.to_lowercase();
+    let folded = hydrus_core::casefold::casefold(text);
     let mut parts = Vec::new();
     let mut current = String::new();
     let mut in_digits = false;

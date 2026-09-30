@@ -47,7 +47,7 @@ pub struct FileFacts {
     pub filetype_forced: bool,
     pub inbox: bool,
     pub urls: Vec<String>,
-    /// The URL classes (by name) that match any of `urls`.
+    /// The URL classes (by case-folded name) that match any of `urls`.
     pub url_classes: BTreeSet<String>,
     /// Current and pending tags, as displayed, in all known tags.
     pub tags: BTreeSet<String>,
@@ -277,7 +277,9 @@ fn test_system(system: &SystemPredicate, facts: &FileFacts, clock: &Clock) -> bo
         }
         S::KnownUrl { rule, has } => {
             let matches = match rule {
-                UrlRule::UrlClass(name) => facts.url_classes.contains(name),
+                UrlRule::UrlClass(name) => facts
+                    .url_classes
+                    .contains(&hydrus_core::casefold::casefold(name)),
                 UrlRule::Regex(pattern) => match fancy_regex::Regex::new(pattern) {
                     Ok(re) => facts.urls.iter().any(|u| re.is_match(u).unwrap_or(false)),
                     Err(_) => false,
@@ -431,12 +433,17 @@ pub fn load_facts(
             facts.has_iptc = flags.has(F::IPTC);
             facts.has_software_source = flags.has(F::SOFTWARE_SOURCE);
         }
+        // by case-folded name, as searches name them; of classes whose names
+        // fold the same, a search means the first
+        let mut seen = BTreeSet::new();
         for class in &url_settings.url_classes {
-            if m.urls
-                .iter()
-                .any(|u| class.matches(u, url_settings.collapse_leading_slashes))
+            let name = hydrus_core::casefold::casefold(&class.name);
+            if seen.insert(name.clone())
+                && m.urls
+                    .iter()
+                    .any(|u| class.matches(u, url_settings.collapse_leading_slashes))
             {
-                facts.url_classes.insert(class.name.clone());
+                facts.url_classes.insert(name);
             }
         }
         for service in snapshot.services.tag_services() {

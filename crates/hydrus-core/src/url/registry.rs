@@ -23,6 +23,17 @@ pub struct UrlClassSettings {
     pub collapse_leading_slashes: bool,
 }
 
+impl UrlClassSettings {
+    /// The URL class a search names (`GetURLClassFromName`): the first whose
+    /// name matches, case-folded.
+    pub fn class_by_name(&self, name: &str) -> Option<&UrlClass> {
+        let wanted = crate::casefold::casefold(name);
+        self.url_classes
+            .iter()
+            .find(|class| crate::casefold::casefold(&class.name) == wanted)
+    }
+}
+
 /// What a client can do with a URL, as `/add_urls/get_url_info` reports.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct ParseCapability {

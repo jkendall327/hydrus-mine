@@ -677,7 +677,16 @@ fn url_expr(env: &Env<'_>, rule: &UrlRule) -> Result<Expr> {
                 })?;
             Expr::Leaf(Leaf::Url(UrlLeaf::Regex(Arc::new(regex))))
         }
-        UrlRule::UrlClass(name) => return Err(SearchError::UrlClassUnsupported(name.clone())),
+        UrlRule::UrlClass(name) => {
+            let settings = env.snapshot.url_classes.settings();
+            let class = settings
+                .class_by_name(name)
+                .ok_or_else(|| SearchError::UnknownUrlClass(name.clone()))?;
+            Expr::Leaf(Leaf::Url(UrlLeaf::Class {
+                class: Arc::new(class.clone()),
+                collapse_leading_slashes: settings.collapse_leading_slashes,
+            }))
+        }
     })
 }
 

@@ -408,9 +408,8 @@ impl PageParser {
             });
         }
         let mut subsidiary: Vec<&SubsidiaryPageParser> = self.subsidiary.iter().collect();
-        // the reference sorts by casefolded name; lowercasing differs only for
-        // a few letters (such as ß), see DIFFERENCES.md
-        subsidiary.sort_by_key(|s| s.parser.name.to_lowercase());
+        // the reference sorts by casefolded name
+        subsidiary.sort_by_key(|s| hydrus_core::casefold::casefold(&s.parser.name));
         let mut posts = Vec::new();
         for s in subsidiary {
             posts.extend(s.parse(&mine, context, &converted)?);

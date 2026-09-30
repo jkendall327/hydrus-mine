@@ -80,9 +80,9 @@ pub enum SearchError {
         service: String,
         kinds: &'static str,
     },
-    /// A predicate names a URL class; URL classes are not supported yet.
-    #[error("URL classes are not supported yet, so \"{0}\" cannot be searched for")]
-    UrlClassUnsupported(String),
+    /// A predicate names a URL class the client doesn't have.
+    #[error("Did not find URL Class called \"{0}\"!")]
+    UnknownUrlClass(String),
     /// A URL regex predicate's pattern does not compile.
     #[error("{pattern:?} is not a valid regular expression: {reason}")]
     InvalidRegex { pattern: String, reason: String },

@@ -861,8 +861,7 @@ status = "done"
 [[system_predicate]]
 name = "known_urls"
 reference_type = 28
-status = "partial"
-notes = "executed; URL class rules are refused until URL classes are supported"
+status = "done"
 
 [[system_predicate]]
 name = "file_service"
