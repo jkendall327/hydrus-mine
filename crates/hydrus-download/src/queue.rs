@@ -47,6 +47,8 @@ struct Handle {
 #[derive(Debug)]
 pub struct QueueRunner {
     downloader: Arc<Downloader>,
+    /// Queues only run once the runner is started.
+    started: std::sync::atomic::AtomicBool,
     handles: Mutex<HashMap<i64, Arc<Handle>>>,
     /// Seconds to wait after a network failure.
     network_error_delay: u64,
@@ -56,6 +58,7 @@ impl QueueRunner {
     pub fn new(downloader: Arc<Downloader>, network_error_delay: u64) -> Arc<Self> {
         Arc::new(Self {
             downloader,
+            started: std::sync::atomic::AtomicBool::new(false),
             handles: Mutex::default(),
             network_error_delay,
         })
@@ -65,8 +68,10 @@ impl QueueRunner {
         &self.downloader
     }
 
-    /// Start every URL queue in the store.
+    /// Start every URL queue in the store, and any made from now on.
     pub fn start_all(self: &Arc<Self>) -> Result<(), StoreError> {
+        self.started
+            .store(true, std::sync::atomic::Ordering::SeqCst);
         let all = self
             .downloader
             .store
@@ -81,8 +86,12 @@ impl QueueRunner {
         Arc::clone(self.handles.lock().entry(queue).or_default())
     }
 
-    /// Make sure a queue is being worked on, and nudge it.
+    /// Make sure a queue is being worked on (once the runner is started),
+    /// and nudge it.
     pub fn wake(self: &Arc<Self>, queue: i64) {
+        if !self.started.load(std::sync::atomic::Ordering::SeqCst) {
+            return;
+        }
         let handle = self.handle(queue);
         {
             let mut running = handle.running.lock();

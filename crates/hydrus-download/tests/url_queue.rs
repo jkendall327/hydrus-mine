@@ -201,6 +201,7 @@ async fn wait_until_done(store: &Store, queue: i64) {
 #[tokio::test(flavor = "multi_thread")]
 async fn a_url_queue_downloads_posts_and_files() {
     let s = setup().await;
+    s.runner.start_all().unwrap();
     let queue = s
         .runner
         .url_queue_for(Some("my downloads"), None, None)

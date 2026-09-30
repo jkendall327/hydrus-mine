@@ -35,6 +35,10 @@ pub struct NetOptions {
     pub max_jobs: usize,
     pub max_jobs_per_domain: usize,
     pub verify_https: bool,
+    /// Requests a second to one site, and to everything (the reference's
+    /// default bandwidth rules: "don't ever hammer a domain").
+    pub domain_requests_per_second: u32,
+    pub global_requests_per_second: u32,
 }
 
 impl Default for NetOptions {
@@ -48,6 +52,8 @@ impl Default for NetOptions {
             max_jobs: 15,
             max_jobs_per_domain: 3,
             verify_https: true,
+            domain_requests_per_second: 1,
+            global_requests_per_second: 5,
         }
     }
 }
@@ -175,6 +181,8 @@ pub struct NetEngine {
     options: NetOptions,
     slots: Arc<Semaphore>,
     domain_slots: Mutex<std::collections::HashMap<String, Arc<Semaphore>>>,
+    /// When each site (and everything) may next be sent a request.
+    next_request: Mutex<std::collections::HashMap<String, tokio::time::Instant>>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -262,6 +270,7 @@ impl NetEngine {
             store,
             slots: Arc::new(Semaphore::new(options.max_jobs.max(1))),
             domain_slots: Mutex::default(),
+            next_request: Mutex::default(),
             options,
         })
     }
@@ -332,6 +341,10 @@ impl NetEngine {
             () = job.cancel.cancelled() => return Err(NetError::Cancelled),
         };
 
+        if request.method == Method::Get {
+            self.pace(&registrable_for_pacing(&request.url), job)
+                .await?;
+        }
         let mut connection_attempt: u32 = 1;
         let mut request_attempt: u32 = 1;
         let max_requests = match request.method {
@@ -416,6 +429,48 @@ impl NetEngine {
                 }
             }
         }
+    }
+
+    /// Wait for this site's (and the client's) turn to send a request.
+    async fn pace(&self, domain: &str, job: &Job) -> Result<(), NetError> {
+        let spacing = |per_second: u32| {
+            (per_second > 0)
+                .then(|| std::time::Duration::from_secs_f64(1.0 / f64::from(per_second)))
+        };
+        let slots = [
+            (
+                format!("domain {domain}"),
+                spacing(self.options.domain_requests_per_second),
+            ),
+            (
+                "global".to_owned(),
+                spacing(self.options.global_requests_per_second),
+            ),
+        ];
+        let wait_until = {
+            let mut next = self.next_request.lock();
+            let now = tokio::time::Instant::now();
+            // take the later of the two turns, and book both from then
+            let start = slots
+                .iter()
+                .filter(|(_, gap)| gap.is_some())
+                .filter_map(|(key, _)| next.get(key).copied())
+                .fold(now, std::cmp::max);
+            for (key, gap) in &slots {
+                if let Some(gap) = gap {
+                    next.insert(key.clone(), start + *gap);
+                }
+            }
+            start
+        };
+        if wait_until > tokio::time::Instant::now() {
+            job.set_status("waiting for bandwidth");
+            tokio::select! {
+                () = tokio::time::sleep_until(wait_until) => {}
+                () = job.cancel.cancelled() => return Err(NetError::Cancelled),
+            }
+        }
+        Ok(())
     }
 
     async fn wait_on_connection_error(
@@ -846,6 +901,16 @@ impl NetEngine {
         }
         Ok(more)
     }
+}
+
+/// The widest domain context a URL's requests fall under (its registrable
+/// domain; an IP address or bare host is its own), which the per-site
+/// pacing applies to.
+fn registrable_for_pacing(url: &str) -> String {
+    check_full_url(url)
+        .ok()
+        .and_then(|p| psl::all_applicable_domains(&p.netloc).pop())
+        .unwrap_or_default()
 }
 
 /// What a failed send means.

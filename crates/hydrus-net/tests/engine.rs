@@ -161,6 +161,9 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         connection_error_wait_time: 0,
         serverside_bandwidth_wait_time: 0,
         network_timeout: 2,
+        // the local test server takes requests as fast as they come
+        domain_requests_per_second: 0,
+        global_requests_per_second: 0,
         ..NetOptions::default()
     };
     Setup {
@@ -358,5 +361,31 @@ async fn cancels() {
     assert_eq!(
         s.engine.fetch(&request, &job).await.unwrap_err(),
         NetError::Cancelled
+    );
+}
+
+#[tokio::test]
+async fn paces_requests_to_a_site() {
+    let s = setup(|_| Vec::new()).await;
+    let engine = NetEngine::new(
+        Arc::clone(&s.store),
+        NetOptions {
+            domain_requests_per_second: 4,
+            ..NetOptions::default()
+        },
+    )
+    .unwrap();
+    let started = std::time::Instant::now();
+    for _ in 0..3 {
+        engine
+            .fetch(&Request::get(format!("{}/echo", s.base)), &Job::new())
+            .await
+            .unwrap();
+    }
+    // three requests at four a second: two gaps of a quarter second
+    assert!(
+        started.elapsed() >= std::time::Duration::from_millis(500),
+        "{:?}",
+        started.elapsed()
     );
 }

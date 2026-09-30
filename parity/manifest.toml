@@ -72,7 +72,8 @@ status = "done"
 
 [[api]]
 path = "/add_urls/add_url"
-status = "todo"
+status = "partial"
+note = "URL queues run; watchable URLs are refused until watchers exist; no recorded conformance scenario yet"
 
 [[api]]
 path = "/add_urls/associate_url"

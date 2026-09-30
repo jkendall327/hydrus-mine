@@ -127,6 +127,19 @@ merges come from the in-memory cache described below.
 - **Redirect targets are encoded by the URL parser** rather than by
   `requests`' `requote_uri`; both percent-encode what a URL can't contain.
 
+## Downloading (`hydrus-download`)
+
+- **An unexpected failure's note is its message**, without the Python
+  traceback the reference appends.
+- **Oversized downloads are refused when imported**, not while downloading:
+  the reference stops a download as soon as it passes the file filtering
+  options' size limits.
+- **Only the default bandwidth rules apply** (one request a second per site,
+  five overall); rules you set yourself are not migrated yet.
+- **Watchable URLs sent by `/add_urls/add_url` are refused** until thread
+  watchers are supported; gallery URLs are queued, and read once gallery
+  pages are supported.
+
 ## URL classes
 
 - **A URL missing a required query parameter is reported by that

@@ -34,6 +34,8 @@ pub struct AppState {
     pub store: Arc<Store>,
     pub access: AccessRegistry,
     pub importer: hydrus_import::FileImporter,
+    /// The downloader's URL queues (`/add_urls/add_url`).
+    pub downloads: Option<Arc<hydrus_download::QueueRunner>>,
 }
 
 impl AppState {
@@ -41,10 +43,26 @@ impl AppState {
         let access = store.read(AccessRegistry::load)?;
         let importer =
             hydrus_import::FileImporter::new(Arc::clone(&store), hydrus_media::MediaTools::new());
+        let downloads =
+            hydrus_net::NetEngine::new(Arc::clone(&store), hydrus_net::NetOptions::default())
+                .ok()
+                .and_then(|net| {
+                    hydrus_download::Downloader::new(
+                        Arc::clone(&store),
+                        Arc::new(net),
+                        importer.clone(),
+                    )
+                    .ok()
+                })
+                .map(|downloader| {
+                    // the reference's default `downloader_network_error_delay`
+                    hydrus_download::QueueRunner::new(Arc::new(downloader), 90 * 60)
+                });
         Ok(Arc::new(Self {
             store,
             access,
             importer,
+            downloads,
         }))
     }
 
@@ -102,6 +120,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/add_files/migrate_files", post(add_files::migrate_files))
         .route("/add_files/add_file", post(add_files::add_file))
         .route("/add_urls/associate_url", post(urls::associate_url))
+        .route("/add_urls/add_url", post(urls::add_url))
         .route(
             "/add_files/generate_hashes",
             post(add_files::generate_hashes),

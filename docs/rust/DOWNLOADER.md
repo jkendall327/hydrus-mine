@@ -1,7 +1,9 @@
 # Downloader design
 
-Status: phase 1 done (parsing engine; GUGs and parsers migrate). Tracked as
-task "Downloader engine".
+Status: parsing, the HTTP engine, import options and URL queues work:
+`/add_urls/add_url` (Hydrus Companion's "send to hydrus") downloads posts
+and files into named queues. Gallery searches, watchers and subscriptions
+are next. Tracked as task "Downloader engine".
 
 ## Goal
 
@@ -84,9 +86,14 @@ show named queues as pages.
 
 1. `hydrus-parse`: formulas and string processing, then page parsers, then
    migrating parser definitions and GUGs. Randomised oracle. **Done.**
-2. `hydrus-net`: HTTP jobs with cookies, headers, bandwidth; local test server.
-3. `hydrus-download`: URL-list queues and `/add_urls/add_url` (completes
-   Companion support); then gallery searches and GUGs; watchers.
+2. `hydrus-net`: HTTP jobs with cookies, headers, retries, ranged
+   downloads and the reference's default pacing (one request a second per
+   site, five overall); local test server. **Done**, except migrating
+   custom bandwidth rules and proxies.
+3. `hydrus-download`: import options (migrated, layered as the reference
+   layers them), queue tables, the URL worker, URL queues and
+   `/add_urls/add_url`. **Done.** Then gallery pages (including gallery
+   URLs sent to URL queues) and GUG searches; watchers.
 4. Subscriptions and migrating them with their history.
 
 Login scripts are not planned: logins come from cookies (Companion sends

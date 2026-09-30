@@ -224,6 +224,11 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 tokio::time::sleep(Duration::from_secs(600)).await;
             }
         });
+        if let Some(downloads) = &state.downloads
+            && let Err(e) = downloads.start_all()
+        {
+            tracing::error!(error = %e, "starting the download queues failed");
+        }
         println!("Client API at http://{}", options.addr);
         serve(state, &options, async {
             let _ = tokio::signal::ctrl_c().await;
