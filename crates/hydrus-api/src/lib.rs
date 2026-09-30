@@ -174,6 +174,10 @@ pub fn router(state: Arc<AppState>) -> Router {
             get(relationships::get_potential_pairs),
         )
         .route(
+            "/manage_file_relationships/get_random_potentials",
+            get(relationships::get_random_potentials),
+        )
+        .route(
             "/manage_file_relationships/set_file_relationships",
             post(relationships::set_file_relationships),
         )

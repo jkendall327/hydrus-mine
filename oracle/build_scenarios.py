@@ -489,6 +489,28 @@ def relationships_read_scenarios():
     s.append( get( '/manage_file_relationships/get_potentials_count', potentials_search_type = 1 ) )
     s.append( get( '/manage_file_relationships/get_potential_pairs', compare = 'unordered_lists' ) )
     s.append( get( '/manage_file_relationships/get_potentials_count', tags_1 = [ 'format:jpeg' ], potentials_search_type = 2, tags_2 = [ 'format:jpeg' ] ) )
+    # the fixture has one potential group, so a random one is always it
+    s.append( get( '/manage_file_relationships/get_random_potentials', compare = 'unordered_lists' ) )
+    s.append( get( '/manage_file_relationships/get_random_potentials', compare = 'unordered_lists', tags_1 = [ 'system:filetype is png' ], potentials_search_type = 1 ) )
+    s.append( get( '/manage_file_relationships/get_random_potentials', compare = 'unordered_lists', pixel_duplicates = 0 ) )
+    s.append( get( '/manage_file_relationships/get_random_potentials', compare = 'unordered_lists', max_hamming_distance = 0 ) )
+
+    # the group is two jpegs and a png: file searches with system predicates
+    png = [ 'system:filetype is png' ]
+    jpeg = [ 'system:filetype is jpeg' ]
+
+    for search_type in ( 0, 1 ):
+
+        for tags in ( png, jpeg, [ 'system:inbox' ], [ 'system:archive' ], [ 'system:width > 50', 'system:filetype is image' ] ):
+
+            s.append( get( '/manage_file_relationships/get_potentials_count', tags_1 = tags, potentials_search_type = search_type ) )
+
+
+
+    s.append( get( '/manage_file_relationships/get_potentials_count', tags_1 = png, tags_2 = jpeg, potentials_search_type = 2 ) )
+    s.append( get( '/manage_file_relationships/get_potential_pairs', compare = 'unordered_lists', tags_1 = png, potentials_search_type = 0 ) )
+    s.append( get( '/manage_file_relationships/get_random_potentials', compare = 'unordered_lists', tags_1 = jpeg, potentials_search_type = 1 ) )
+    s.append( get( '/manage_file_relationships/get_potentials_count', tags_1 = [ 'system:filetype is jpeg' ], tag_service_key_1 = KEYS[ 'my_tags' ] ) )
 
     return scenario( 'relationships_read', 'duplicates and potentials', s, read_only = True )
 

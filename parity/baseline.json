@@ -1,7 +1,7 @@
 {
   "api": {
     "total": 76,
-    "done": 46,
+    "done": 47,
     "partial": 2,
     "done_items": [
       "/add_files/add_file",
@@ -43,6 +43,7 @@
       "/manage_file_relationships/get_file_relationships",
       "/manage_file_relationships/get_potential_pairs",
       "/manage_file_relationships/get_potentials_count",
+      "/manage_file_relationships/get_random_potentials",
       "/manage_file_relationships/remove_potentials",
       "/manage_file_relationships/set_file_relationships",
       "/manage_file_relationships/set_kings",

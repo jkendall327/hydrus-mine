@@ -203,7 +203,7 @@ status = "done"
 
 [[api]]
 path = "/manage_file_relationships/get_random_potentials"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/remove_potentials"

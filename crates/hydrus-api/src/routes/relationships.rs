@@ -1,29 +1,33 @@
 //! File relationships: duplicates, alternates and potential pairs.
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::sync::Arc;
 
 use axum::extract::State;
 use serde_json::{Map, Value as Json, json};
 
 use hydrus_core::service::builtin_keys;
-use hydrus_core::{DuplicateType, HashId, Sha256};
-use hydrus_search::parse_api_search;
+use hydrus_core::{DuplicateType, HashId, ServiceId, ServiceKey, Sha256};
+use hydrus_search::{
+    FileSearchContext, LocationContext, SearchError, TagContext, parse_api_search,
+};
 use hydrus_store::duplicates::{
-    self, DuplicateFilterSettings, DuplicateMergeSettings, FileScope, PairDecision, PairOrder,
-    PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
+    self, DuplicateFilterSettings, DuplicateMergeSettings, FileFilter, FileScope, PairDecision,
+    PairOrder, PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
     RelationshipWriter,
 };
 use hydrus_store::{Snapshot, master, settings};
+use rusqlite::Connection;
 
 use crate::AppState;
 use crate::auth::Permission;
 use crate::domains::{FileDomain, parse_file_domain, parse_tag_service};
 use crate::error::{ApiError, ApiResult};
-use crate::file_filter::{OwnedFileFilter, interim_filter};
+use crate::file_filter::PotentialsFileSearch;
 use crate::params::Params;
 use crate::request::{ApiRequest, ApiResponse};
 use crate::routes::files::parse_hashes;
+use crate::routes::search::search_error;
 
 fn scope_of(snapshot: &Snapshot, domain: FileDomain) -> FileScope {
     if domain.is_all_known_files(&snapshot.services) {
@@ -158,51 +162,120 @@ fn code_param<T>(
     }
 }
 
-/// A parsed potential-duplicates search, owning its file filters.
+/// A parsed potential-duplicates search.
 struct ParsedPotentials {
     scope: FileScope,
     kind: PairSearchKind,
     pixel_duplicates: PixelDuplicates,
     max_hamming_distance: u32,
-    filter_1: Option<OwnedFileFilter>,
-    filter_2: Option<OwnedFileFilter>,
+    search_1: PotentialsFileSearch,
+    search_2: PotentialsFileSearch,
+}
+
+/// The files a potential-duplicates search's file searches found (`None`:
+/// every file).
+struct Matched {
+    one: Option<HashSet<HashId>>,
+    two: Option<HashSet<HashId>>,
 }
 
 impl ParsedPotentials {
-    fn search(&self) -> PotentialsSearch<'_> {
-        PotentialsSearch {
-            scope: self.scope.clone(),
-            kind: self.kind,
-            pixel_duplicates: self.pixel_duplicates,
-            max_hamming_distance: self.max_hamming_distance,
-            search_1: self.filter_1.as_deref(),
-            search_2: self.filter_2.as_deref(),
-        }
+    fn run_searches(&self, conn: &Connection, snapshot: &Snapshot) -> Result<Matched, SearchError> {
+        let one = self.search_1.run(conn, snapshot)?;
+        let two = match self.kind {
+            PairSearchKind::BothFilesMatchDifferentSearches => self.search_2.run(conn, snapshot)?,
+            _ => None,
+        };
+        Ok(Matched { one, two })
+    }
+
+    /// Run `f` on the search, inside one read. A bad file search is a 400.
+    fn with_search<T>(
+        &self,
+        app: &AppState,
+        snapshot: &Snapshot,
+        f: impl FnOnce(&Connection, &PotentialsSearch<'_>) -> hydrus_store::Result<T>,
+    ) -> ApiResult<T> {
+        app.store
+            .read(|conn| {
+                let matched = match self.run_searches(conn, snapshot) {
+                    Ok(m) => m,
+                    Err(e) => return Ok(Err(e)),
+                };
+                let one = matched.one.as_ref().map(in_set);
+                let two = matched.two.as_ref().map(in_set);
+                let search = PotentialsSearch {
+                    scope: self.scope.clone(),
+                    kind: self.kind,
+                    pixel_duplicates: self.pixel_duplicates,
+                    max_hamming_distance: self.max_hamming_distance,
+                    search_1: one.as_ref().map(|f| f as &FileFilter<'_>),
+                    search_2: two.as_ref().map(|f| f as &FileFilter<'_>),
+                };
+                f(conn, &search).map(Ok)
+            })?
+            .map_err(search_error)
     }
 }
 
-fn parse_potentials(snapshot: &Arc<Snapshot>, params: &Params) -> ApiResult<ParsedPotentials> {
-    let scope = parse_scope(snapshot, params)?;
-    let mut filters = Vec::new();
+/// A filter answering from a search's results.
+fn in_set(
+    set: &HashSet<HashId>,
+) -> impl Fn(&Connection, &[HashId]) -> hydrus_store::Result<HashSet<HashId>> + '_ {
+    move |_, candidates| {
+        Ok(candidates
+            .iter()
+            .copied()
+            .filter(|h| set.contains(h))
+            .collect())
+    }
+}
+
+fn parse_potentials(snapshot: &Snapshot, params: &Params) -> ApiResult<ParsedPotentials> {
+    let domain = parse_file_domain(
+        &snapshot.services,
+        params,
+        builtin_keys::COMBINED_LOCAL_FILE_DOMAINS,
+        true,
+    )?;
+    let key =
+        |id: ServiceId| -> ApiResult<ServiceKey> { Ok(snapshot.services.get(id)?.key.clone()) };
+    let location = LocationContext::new(
+        domain
+            .current
+            .iter()
+            .map(|&id| key(id))
+            .collect::<ApiResult<Vec<_>>>()?,
+        domain
+            .deleted
+            .iter()
+            .map(|&id| key(id))
+            .collect::<ApiResult<Vec<_>>>()?,
+    );
+    let scope = scope_of(snapshot, domain);
+    let mut searches = Vec::new();
     for (tags, service) in [
         ("tags_1", "tag_service_key_1"),
         ("tags_2", "tag_service_key_2"),
     ] {
-        let tag_service = parse_tag_service(&snapshot.services, params, service)?;
+        let tag_service = match parse_tag_service(&snapshot.services, params, service)? {
+            Some(id) => key(id)?,
+            None => ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()),
+        };
         let predicates = match params.optional::<Json>(tags)? {
             None => Vec::new(),
             Some(list) => {
                 parse_api_search(&list).map_err(|e| ApiError::bad_request(e.to_string()))?
             }
         };
-        filters.push(interim_filter(
-            Arc::clone(snapshot),
+        searches.push(PotentialsFileSearch(FileSearchContext {
+            location: location.clone(),
+            tags: TagContext::new(tag_service, true, true),
             predicates,
-            tag_service,
-        )?);
+        }));
     }
-    let filter_2 = filters.pop().flatten();
-    let filter_1 = filters.pop().flatten();
+    let search_2 = searches.pop().expect("two searches");
+    let search_1 = searches.pop().expect("two searches");
     let kind = code_param(
         params,
         "potentials_search_type",
@@ -233,8 +306,8 @@ fn parse_potentials(snapshot: &Arc<Snapshot>, params: &Params) -> ApiResult<Pars
         kind,
         pixel_duplicates,
         max_hamming_distance,
-        filter_1,
-        filter_2,
+        search_1,
+        search_2,
     })
 }
 
@@ -250,9 +323,9 @@ pub async fn get_potentials_count(
         .blocking(move |app| {
             let snapshot = app.store.snapshot();
             let parsed = parse_potentials(&snapshot, &params)?;
-            let count = app
-                .store
-                .read(|conn| Ok(duplicates::potential_pairs(conn, &parsed.search())?.len()))?;
+            let count = parsed.with_search(app, &snapshot, |conn, search| {
+                Ok(duplicates::potential_pairs(conn, search)?.len())
+            })?;
             Ok(ApiResponse::Json(
                 json!({ "potential_duplicates_count": count }),
                 encoding,
@@ -288,7 +361,7 @@ pub async fn get_potential_pairs(
             let ascending = params.or("duplicate_pair_sort_asc", false)?;
             let group_mode = params.or("group_mode", false)?;
             let max_num_pairs = params.optional::<i64>("max_num_pairs")?;
-            let pairs = app.store.read(|conn| {
+            let pairs = parsed.with_search(app, &snapshot, |conn, search| {
                 let selection = if group_mode {
                     PairSelection::Group
                 } else {
@@ -300,8 +373,7 @@ pub async fn get_potential_pairs(
                     };
                     PairSelection::Batch { max }
                 };
-                let pairs =
-                    duplicates::select_pairs(conn, &parsed.search(), order, ascending, selection)?;
+                let pairs = duplicates::select_pairs(conn, search, order, ascending, selection)?;
                 let ids: Vec<HashId> = pairs.iter().flat_map(|&(a, b)| [a, b]).collect();
                 let hashes = master::hashes(conn, &ids)?;
                 Ok(pairs
@@ -313,6 +385,34 @@ pub async fn get_potential_pairs(
             })?;
             Ok(ApiResponse::Json(
                 json!({ "potential_duplicate_pairs": pairs }),
+                encoding,
+            ))
+        })
+        .await
+}
+
+pub async fn get_random_potentials(
+    State(app): State<Arc<AppState>>,
+    req: ApiRequest,
+) -> ApiResult<ApiResponse> {
+    app.authenticate(&req)?
+        .check(Permission::ManageFileRelationships)?;
+    let params = req.params.clone();
+    let encoding = req.response_encoding;
+    app.clone()
+        .blocking(move |app| {
+            let snapshot = app.store.snapshot();
+            let parsed = parse_potentials(&snapshot, &params)?;
+            let hashes = parsed.with_search(app, &snapshot, |conn, search| {
+                let group = duplicates::random_potential_group(conn, search)?;
+                let hashes = master::hashes(conn, &group)?;
+                Ok(group
+                    .iter()
+                    .filter_map(|id| Some(hashes.get(id)?.to_hex()))
+                    .collect::<Vec<String>>())
+            })?;
+            Ok(ApiResponse::Json(
+                json!({ "random_potential_duplicate_hashes": hashes }),
                 encoding,
             ))
         })

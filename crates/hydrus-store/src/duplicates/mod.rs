@@ -587,3 +587,28 @@ fn potential_network(rows: &[PairRow], start: [HashId; 2]) -> HashSet<HashId> {
     }
     seen
 }
+
+/// The kings of a random potential duplicate group, as the Client API's
+/// `get_random_potentials` gives them: a random pair the search finds, then
+/// every file of a found pair within that pair's whole network of potential
+/// duplicates. Empty if the search finds nothing.
+pub fn random_potential_group(
+    conn: &Connection,
+    search: &PotentialsSearch<'_>,
+) -> Result<Vec<HashId>> {
+    use rand::seq::IndexedRandom as _;
+    let pairs = potential_pairs(conn, search)?;
+    let Some(chosen) = pairs.choose(&mut rand::rng()) else {
+        return Ok(Vec::new());
+    };
+    let network = potential_network(
+        &pairs_in_scope(conn, &search.scope)?,
+        [chosen.smaller_king, chosen.larger_king],
+    );
+    let kings: BTreeSet<HashId> = pairs
+        .iter()
+        .filter(|p| network.contains(&p.smaller_king) && network.contains(&p.larger_king))
+        .flat_map(|p| [p.smaller_king, p.larger_king])
+        .collect();
+    Ok(kings.into_iter().collect())
+}

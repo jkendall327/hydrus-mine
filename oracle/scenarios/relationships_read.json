@@ -61,6 +61,281 @@
    ],
    "key": "full",
    "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_random_potentials",
+   "query": [],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_random_potentials",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is png\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_random_potentials",
+   "query": [
+    [
+     "pixel_duplicates",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_random_potentials",
+   "query": [
+    [
+     "max_hamming_distance",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is png\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is jpeg\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:inbox\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:archive\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:width > 50\", \"system:filetype is image\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is png\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is jpeg\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:inbox\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:archive\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:width > 50\", \"system:filetype is image\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is png\"]"
+    ],
+    [
+     "tags_2",
+     "[\"system:filetype is jpeg\"]"
+    ],
+    [
+     "potentials_search_type",
+     "2"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potential_pairs",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is png\"]"
+    ],
+    [
+     "potentials_search_type",
+     "0"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_random_potentials",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is jpeg\"]"
+    ],
+    [
+     "potentials_search_type",
+     "1"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [
+    [
+     "tags_1",
+     "[\"system:filetype is jpeg\"]"
+    ],
+    [
+     "tag_service_key_1",
+     "6c6f63616c2074616773"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
   }
  ]
 }
