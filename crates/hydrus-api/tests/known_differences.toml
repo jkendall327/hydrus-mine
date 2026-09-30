@@ -83,3 +83,24 @@ ignore = ["$.file_relationships.*.king_is_on_file_domain", "$.file_relationships
 reason = """The reference computes `king_is_on_file_domain` and `king_is_local` from the file asked \
 about, not its king, so a trashed file whose king is not trashed reports its own state. We report the \
 king's, as the Client API documentation describes."""
+
+[[difference]]
+scenario = "file_ranges"
+step = 7
+skip = true
+reason = """A range ending at exactly the file's size: the reference promises one byte more than the \
+file has and the response never completes. We clamp the range to the file."""
+
+[[difference]]
+scenario = "file_ranges"
+step = 10
+skip = true
+reason = """A range starting past the end of the file with no end: the reference's response never \
+completes. We send the whole file, as the reference does for a range past the end with both ends given."""
+
+[[difference]]
+scenario = "file_ranges"
+step = 12
+skip = true
+reason = """A suffix range longer than the file: the reference fails (500, seeking before the start). \
+We send the whole file, as HTTP asks."""

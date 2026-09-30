@@ -153,6 +153,8 @@ def run_steps( session, scenario, manifest ):
             headers[ 'Hydrus-Client-API-Access-Key' ] = key
             
         
+        headers.update( step.get( 'headers', {} ) )
+
         query = [ ( k, substitute( v ) ) for ( k, v ) in step.get( 'query', [] ) ]
 
         data = None
@@ -181,7 +183,17 @@ def run_steps( session, scenario, manifest ):
             path += '?' + urllib.parse.urlencode( query )
 
 
-        ( status, content_type, body ) = api.request( step[ 'method' ], path, json_body = json_body, data = data, headers = headers )
+        try:
+
+            ( status, content_type, body ) = api.request( step[ 'method' ], path, json_body = json_body, data = data, headers = headers, timeout = 15 if 'headers' in step else 120 )
+
+        except Exception as e:
+
+            # the reference never finished answering (e.g. it promised more bytes than it sent)
+            responses.append( { 'status': 0, 'content_type': '', 'no_complete_response': type( e ).__name__ } )
+
+            continue
+
 
         response = { 'status': status, 'content_type': content_type.split( ';' )[0].strip() }
         response.update( describe_body( content_type, body, db_dir ) )

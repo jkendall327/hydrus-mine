@@ -215,6 +215,7 @@ pub async fn get_service_rating_svg(
         content_type: "image/svg+xml".into(),
         body: body.into(),
         cache: false,
+        attachment: false,
     })
 }
 

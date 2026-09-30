@@ -1,7 +1,7 @@
 {
   "api": {
     "total": 76,
-    "done": 54,
+    "done": 55,
     "partial": 2,
     "done_items": [
       "/add_files/add_file",
@@ -30,6 +30,7 @@
       "/edit_times/increment_file_viewtime",
       "/edit_times/set_file_viewtime",
       "/edit_times/set_time",
+      "/get_files/file",
       "/get_files/file_hashes",
       "/get_files/file_metadata",
       "/get_files/file_path",

@@ -60,7 +60,7 @@ class Api( object ):
         self.access_key = access_key
 
 
-    def request( self, method, path, query = None, json_body = None, data = None, headers = None ):
+    def request( self, method, path, query = None, json_body = None, data = None, headers = None, timeout = 120 ):
         """Returns ( status, content_type, body_bytes ). Never raises on HTTP errors."""
 
         url = self.base + path
@@ -87,7 +87,7 @@ class Api( object ):
 
         try:
 
-            with urllib.request.urlopen( req, timeout = 120 ) as response:
+            with urllib.request.urlopen( req, timeout = timeout ) as response:
 
                 return ( response.status, response.headers.get( 'Content-Type', '' ), response.read() )
 

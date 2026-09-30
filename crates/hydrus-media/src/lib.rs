@@ -26,6 +26,7 @@
 
 mod blurhash;
 mod detect;
+pub mod encode;
 pub mod error;
 pub mod ffmpeg;
 mod formats;

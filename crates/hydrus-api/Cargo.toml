@@ -16,6 +16,8 @@ hydrus-media.workspace = true
 hydrus-search.workspace = true
 axum.workspace = true
 tokio.workspace = true
+tokio-util = { version = "0.7", features = ["io"] }
+futures-util = { version = "0.3", default-features = false, features = ["std"] }
 tower.workspace = true
 tower-http.workspace = true
 serde.workspace = true
@@ -35,6 +37,10 @@ rusqlite.workspace = true
 tempfile.workspace = true
 
 [dev-dependencies]
+png.workspace = true
+turbojpeg.workspace = true
+image-webp.workspace = true
+base64.workspace = true
 hydrus-legacy.workspace = true
 regex.workspace = true
 http-body-util.workspace = true

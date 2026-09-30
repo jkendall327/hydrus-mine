@@ -749,6 +749,56 @@ def random( step, *keys ):
     return step
 
 
+def with_headers( step, **headers ):
+
+    step[ 'headers' ] = { k.replace( '_', '-' ) : v for ( k, v ) in headers.items() }
+
+    return step
+
+
+def file_range_scenarios():
+
+    h = BY_NAME[ 'jpeg_00.jpg' ]
+
+    size = os.path.getsize( os.path.join( HERE, 'fixtures', 'import_media', 'jpeg_00.jpg' ) )
+
+    def ranged( value, **params ):
+
+        return with_headers( get( '/get_files/file', hash = h, **params ), Range = value )
+
+
+    steps = [
+        get( '/get_files/file', hash = h ),
+        get( '/get_files/file', hash = h, download = True ),
+        ranged( 'bytes=0-99' ),
+        ranged( 'bytes=100-' ),
+        ranged( 'bytes=-100' ),
+        ranged( 'bytes=0-0' ),
+        ranged( f'bytes=0-{size - 1}' ),
+        ranged( f'bytes=0-{size}' ),
+        ranged( f'bytes=10-{size + 5000}' ),
+        ranged( f'bytes={size}-' ),
+        ranged( f'bytes={size + 10}-' ),
+        ranged( f'bytes={size + 10}-{size + 20}' ),
+        ranged( f'bytes=-{size + 10}' ),
+        ranged( 'bytes=-0' ),
+        ranged( 'bytes=10-5' ),
+        ranged( 'bytes=0-9,20-29' ),
+        ranged( 'bytes=0-9, 20-29' ),
+        ranged( 'items=0-9' ),
+        ranged( 'bytes' ),
+        ranged( 'bytes=5' ),
+        ranged( 'bytes=-' ),
+        ranged( 'bytes=abc-def' ),
+        ranged( 'bytes=1-2-3' ),
+        ranged( 'bytes= 5 - 9 ' ),
+        ranged( 'bytes=0-99', download = True ),
+        with_headers( get( '/get_files/thumbnail', hash = h ), Range = 'bytes=0-99' ),
+    ]
+
+    return scenario( 'file_ranges', 'byte ranges of files', steps, read_only = True )
+
+
 def access_more_scenarios():
 
     svg = '/get_service_rating_svg'
@@ -854,7 +904,7 @@ def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios() ]
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios() + [ access_more_scenarios(), file_range_scenarios() ]
 
     for sc in scenarios:
 

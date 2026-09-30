@@ -341,6 +341,9 @@ async fn replay_step(
     }
     let method: Method = step["method"].as_str().unwrap().parse().unwrap();
     let mut builder = Request::builder().method(method).uri(&uri);
+    for (name, value) in step["headers"].as_object().into_iter().flatten() {
+        builder = builder.header(name.as_str(), value.as_str().unwrap());
+    }
     match step["key"].as_str().unwrap_or("full") {
         "none" => {}
         spec => {

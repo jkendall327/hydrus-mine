@@ -3,8 +3,8 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use axum::body::Bytes;
 use axum::extract::State;
+use axum::http::{HeaderMap, header};
 use serde_json::{Value as Json, json};
 
 use hydrus_core::{HashId, HashKind, Mime, Sha256};
@@ -16,7 +16,7 @@ use crate::auth::{AccessPermissions, Permission};
 use crate::error::{ApiError, ApiResult, ErrorKind};
 use crate::media_json::{self, MetadataOptions};
 use crate::params::Params;
-use crate::request::{ApiRequest, ApiResponse};
+use crate::request::{ApiRequest, ApiResponse, ByteRange, FileSource};
 use crate::services_json;
 
 /// The files a request names, by `hash`/`hashes`/`file_id`/`file_ids`, in
@@ -334,13 +334,286 @@ pub async fn file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiResul
             Ok((path, mime))
         })
         .await?;
-    let body = tokio::fs::read(&path)
-        .await
+    let attachment = req.params.or("download", false)?;
+    file_from_path(path, mime.mimetype().to_owned(), attachment, &req)
+}
+
+/// A file on disk as a response, with the request's byte range.
+fn file_from_path(
+    path: std::path::PathBuf,
+    content_type: String,
+    attachment: bool,
+    req: &ApiRequest,
+) -> ApiResult<ApiResponse> {
+    let filename = path
+        .file_name()
+        .map(|n| n.to_string_lossy().into_owned())
+        .unwrap_or_default();
+    let source = FileSource::Path(path);
+    let size = source
+        .size()
         .map_err(|_| ApiError::not_found("That file seems to be missing!"))?;
+    Ok(ApiResponse::File {
+        range: parse_range(&req.headers, size)?,
+        source,
+        filename,
+        content_type,
+        attachment,
+    })
+}
+
+/// The `Range` header as the reference reads it (`_parseRangeHeader`): at
+/// most one range of bytes. Where the reference fails (an end at exactly the
+/// file's size, a start past the end with no end, a suffix longer than the
+/// file) we give what was meant: the range clamped to the file, the whole
+/// file, the whole file.
+pub(crate) fn parse_range(headers: &HeaderMap, size: u64) -> ApiResult<Option<ByteRange>> {
+    let Some(value) = headers.get(header::RANGE) else {
+        return Ok(None);
+    };
+    let value = String::from_utf8_lossy(value.as_bytes());
+    let unsatisfiable = |m: &str| ApiError::new(ErrorKind::RangeNotSatisfiable, m);
+    let Some((unit, pairs)) = value.split_once('=') else {
+        return Err(ApiError::bad_request("Did not understand range header!"));
+    };
+    if unit != "bytes" {
+        return Err(unsatisfiable(
+            "Do not support anything other than bytes in Range header!",
+        ));
+    }
+    let pairs: Vec<&str> = pairs.split(',').collect();
+    if pairs.iter().any(|p| !p.contains('-')) {
+        return Err(unsatisfiable(
+            "Did not understand the Range header's range pair(s)!",
+        ));
+    }
+    let mut ranges = Vec::new();
+    for pair in pairs {
+        let parts: Vec<&str> = pair.trim().split('-').collect();
+        let [start, end] = parts[..] else {
+            return Err(ApiError::new(
+                ErrorKind::ValueError,
+                "too many values to unpack (expected 2)",
+            ));
+        };
+        let start = if start.is_empty() {
+            if end.is_empty() {
+                return Err(unsatisfiable("Undefined Range header pair given!"));
+            }
+            None
+        } else {
+            Some(python_int(start)?)
+        };
+        let end = if end.is_empty() {
+            None
+        } else {
+            Some(python_int(end)?)
+        };
+        match (start, end) {
+            (Some(s), Some(e)) if s > e => {
+                return Err(unsatisfiable("The Range header had an invalid pair!"));
+            }
+            (None, Some(e)) => {
+                let length = e.min(size);
+                ranges.push(ByteRange {
+                    offset: size - length,
+                    length,
+                    end: size.saturating_sub(1),
+                    size,
+                });
+            }
+            (Some(s), None) if s <= size => ranges.push(ByteRange {
+                offset: s,
+                length: size - s,
+                end: size.saturating_sub(1),
+                size,
+            }),
+            (Some(s), Some(e)) if s <= size => {
+                let e = e.min(size.saturating_sub(1));
+                ranges.push(ByteRange {
+                    offset: s,
+                    length: (e + 1).saturating_sub(s).min(size - s),
+                    end: e,
+                    size,
+                });
+            }
+            // a range starting past the end: the whole file
+            _ => {
+                ranges.clear();
+                break;
+            }
+        }
+    }
+    match ranges[..] {
+        [] => Ok(None),
+        [range] => Ok(Some(range)),
+        _ => Err(unsatisfiable(
+            "Can only support Single Range requests at the moment!",
+        )),
+    }
+}
+
+/// `abs(int(text))`, as Python reads an integer: surrounding whitespace, a
+/// sign, and underscores between digits allowed.
+fn python_int(text: &str) -> ApiResult<u64> {
+    let invalid = || {
+        ApiError::new(
+            ErrorKind::ValueError,
+            format!("invalid literal for int() with base 10: '{text}'"),
+        )
+    };
+    let trimmed = text.trim();
+    let digits = trimmed.strip_prefix(['+', '-']).unwrap_or(trimmed);
+    if digits.is_empty()
+        || digits.starts_with('_')
+        || digits.ends_with('_')
+        || digits.contains("__")
+        || !digits.chars().all(|c| c.is_ascii_digit() || c == '_')
+    {
+        return Err(invalid());
+    }
+    digits.replace('_', "").parse().map_err(|_| invalid())
+}
+
+/// Whether `/get_files/render` renders this kind of file
+/// (`MediaResult.IsStaticImage`).
+fn is_static_image(mime: Mime) -> bool {
+    matches!(
+        mime,
+        Mime::ImageJpeg
+            | Mime::ImagePng
+            | Mime::ImageGif
+            | Mime::ImageWebp
+            | Mime::ImageJxl
+            | Mime::ImageAvif
+            | Mime::ImageBmp
+            | Mime::ImageHeic
+            | Mime::ImageHeif
+            | Mime::ImageIcon
+            | Mime::ImageQoi
+            | Mime::ImageTiff
+            | Mime::ApplicationPsd
+            | Mime::ApplicationKrita
+            | Mime::ImageOpenraster
+    )
+}
+
+/// A static image, decoded as the reference's media viewer decodes it,
+/// optionally resized, and encoded as PNG, JPEG or WebP.
+pub async fn render(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiResult<ApiResponse> {
+    use hydrus_media::encode::{RenderFormat, encode_render};
+    use hydrus_media::resample::{Interpolation, resize};
+
+    let perms = app.authenticate(&req)?;
+    perms.check(Permission::SearchFiles)?;
+    let p = req.params.clone();
+    let not_an_image = || ApiError::bad_request("Requested file is not an image!");
+    let attachment = p.or("download", false)?;
+    let encoding = app
+        .clone()
+        .blocking(move |app| {
+            let snapshot = app.store.snapshot();
+            // an unknown file is not an image (the reference makes an empty
+            // media result for it)
+            let hash_id = if let Some(id) = p.optional::<i64>("file_id")? {
+                let id = HashId(u32::try_from(id).map_err(|_| not_an_image())?);
+                app.access.check_can_see(&perms, &[id])?;
+                Some(id)
+            } else if let Some(raw) = p.optional::<Vec<u8>>("hash")? {
+                perms.check_can_see_all_files()?;
+                let hash = Sha256::from_slice(&raw)
+                    .map_err(|_| ApiError::bad_request("Sorry, that hash was the wrong length!"))?;
+                app.store.read(|c| master::hash_id(c, &hash))?
+            } else {
+                return Err(ApiError::bad_request(
+                    "Please include a file_id or hash parameter!",
+                ));
+            };
+            let result = match hash_id {
+                Some(id) => app
+                    .store
+                    .read(|c| media::load(c, &snapshot.services, None, &[id]))?
+                    .results
+                    .into_iter()
+                    .next(),
+                None => None,
+            };
+            let Some((hash, mime)) = result.and_then(|m| Some((m.hash, m.info?.mime))) else {
+                return Err(not_an_image());
+            };
+            if mime == Mime::AnimationUgoira {
+                return Err(ApiError::bad_request(
+                    "Sorry, rendering ugoiras is not supported yet!",
+                ));
+            }
+            if !is_static_image(mime) {
+                return Err(not_an_image());
+            }
+            let format = match p.optional::<i64>("render_format")? {
+                None => RenderFormat::Png,
+                Some(code) => match u8::try_from(code).ok().and_then(Mime::from_code) {
+                    Some(Mime::ImagePng) => RenderFormat::Png,
+                    Some(Mime::ImageJpeg) => RenderFormat::Jpeg,
+                    Some(Mime::ImageWebp) => RenderFormat::Webp,
+                    _ => return Err(ApiError::bad_request("Invalid render format!")),
+                },
+            };
+            let path = snapshot
+                .storage
+                .file_path(&hash, mime)
+                .filter(|p| p.is_file())
+                .ok_or_else(|| ApiError::not_found("That file seems to be missing!"))?;
+            let mut image = app
+                .importer
+                .tools()
+                .load_image(&path, mime)
+                .map_err(|e| ApiError::server(format!("Could not render that file: {e}")))?;
+            if let (Some(width), Some(height)) =
+                (p.optional::<i64>("width")?, p.optional::<i64>("height")?)
+            {
+                if width < 1 {
+                    return Err(ApiError::bad_request("Width must be greater than 0!"));
+                }
+                if height < 1 {
+                    return Err(ApiError::bad_request("Height must be greater than 0!"));
+                }
+                let (w, h) = (
+                    u32::try_from(width).map_err(|_| ApiError::bad_request("Width is too big!"))?,
+                    u32::try_from(height)
+                        .map_err(|_| ApiError::bad_request("Height is too big!"))?,
+                );
+                // `ResizeNumPyImage`, with its comparisons as they are
+                let (iw, ih) = (image.width(), image.height());
+                if !(w == iw && h == w) {
+                    let interpolation = if w > ih || h > iw {
+                        Interpolation::Lanczos4
+                    } else {
+                        Interpolation::Area
+                    };
+                    image = resize(&image, w, h, interpolation);
+                }
+            }
+            let quality = match p.optional::<i64>("render_quality")? {
+                Some(q) => q,
+                None if format == RenderFormat::Png => 1,
+                None => 80,
+            };
+            let body = encode_render(&image, format, quality)
+                .map_err(|e| ApiError::server(e.to_string()))?;
+            let content_type = match format {
+                RenderFormat::Png => "image/png",
+                RenderFormat::Jpeg => "image/jpeg",
+                RenderFormat::Webp => "image/webp",
+            };
+            Ok((content_type, body))
+        })
+        .await?;
+    let (content_type, body) = encoding;
     Ok(ApiResponse::Bytes {
-        content_type: mime.mimetype().to_owned(),
-        body: Bytes::from(body),
+        content_type: content_type.into(),
+        body: body.into(),
         cache: true,
+        attachment,
     })
 }
 
@@ -367,20 +640,23 @@ pub async fn thumbnail(
             Ok((stored, mime))
         })
         .await?;
-    if let Some(path) = stored
-        && let Ok(bytes) = tokio::fs::read(&path).await
-    {
-        let content_type = thumbnail_content_type(&bytes);
-        return Ok(ApiResponse::Bytes {
-            content_type: content_type.into(),
-            body: Bytes::from(bytes),
-            cache: true,
-        });
+    if let Some(path) = stored {
+        let mut head = [0u8; 4];
+        if let Ok(mut f) = std::fs::File::open(&path) {
+            use std::io::Read as _;
+            let _ = f.read(&mut head);
+            let content_type = thumbnail_content_type(&head).to_owned();
+            return file_from_path(path, content_type, false, &req);
+        }
     }
-    Ok(ApiResponse::Bytes {
+    let (filename, icon) = default_thumbnail(mime);
+    let source = FileSource::Static(icon);
+    Ok(ApiResponse::File {
+        range: parse_range(&req.headers, icon.len() as u64)?,
+        source,
+        filename: filename.into(),
         content_type: "image/png".into(),
-        body: Bytes::from_static(default_thumbnail(mime)),
-        cache: true,
+        attachment: false,
     })
 }
 
@@ -393,11 +669,15 @@ fn thumbnail_content_type(bytes: &[u8]) -> &'static str {
     }
 }
 
-/// The type icon shown for files without a rendered thumbnail.
-fn default_thumbnail(mime: Mime) -> &'static [u8] {
+/// The type icon shown for files without a rendered thumbnail, and its
+/// file name.
+fn default_thumbnail(mime: Mime) -> (&'static str, &'static [u8]) {
     macro_rules! icon {
         ($name:literal) => {
-            include_bytes!(concat!("../../../../static/", $name))
+            (
+                $name,
+                include_bytes!(concat!("../../../../static/", $name)).as_slice(),
+            )
         };
     }
     match mime {

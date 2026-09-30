@@ -30,6 +30,8 @@ pub enum ErrorKind {
     ServerBusy,
     Bandwidth,
     Server,
+    /// Input the reference fails on with an unhandled `ValueError` (a 500).
+    ValueError,
 }
 
 impl ErrorKind {
@@ -48,7 +50,7 @@ impl ErrorKind {
             ErrorKind::UnprocessableEntity => StatusCode::UNPROCESSABLE_ENTITY,
             ErrorKind::ServerBusy => StatusCode::SERVICE_UNAVAILABLE,
             ErrorKind::Bandwidth => StatusCode::from_u16(509).expect("valid status"),
-            ErrorKind::Server => StatusCode::INTERNAL_SERVER_ERROR,
+            ErrorKind::Server | ErrorKind::ValueError => StatusCode::INTERNAL_SERVER_ERROR,
         }
     }
 
@@ -69,6 +71,7 @@ impl ErrorKind {
             ErrorKind::ServerBusy => "ServerBusyException",
             ErrorKind::Bandwidth => "BandwidthException",
             ErrorKind::Server => "ServerException",
+            ErrorKind::ValueError => "ValueError",
         }
     }
 }

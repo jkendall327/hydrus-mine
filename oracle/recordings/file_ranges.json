@@ -1,0 +1,211 @@
+{
+ "recorded_at_ms": 1790785890398,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "image/jpeg",
+   "length": 1744,
+   "sha256": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "status": 200
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1744,
+   "sha256": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "status": 200
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 100,
+   "sha256": "3d709235543df810e4aef66d7acc74e77c06c873a8582c5e5bd8d5128f8703ea",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1644,
+   "sha256": "29fafc7c8e31d791a597b43b870c7e2f2b6337473805905a7ee4f7dd0db113f7",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 100,
+   "sha256": "3d73f1d154a68a4d2f7889d95ac16e8a2453e32bb521e8e3c7883bc1aa901926",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1,
+   "sha256": "a8100ae6aa1940d0b663bb31cd466142ebbdbd5187131b92d93818987832eb89",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1744,
+   "sha256": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "status": 206
+  },
+  {
+   "content_type": "",
+   "no_complete_response": "TimeoutError",
+   "status": 0
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1734,
+   "sha256": "a802bd4d721bd7b1c07ebf18b495cb7e982dd8b892580b6fc4189264fea31403",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 206
+  },
+  {
+   "content_type": "",
+   "no_complete_response": "TimeoutError",
+   "status": 0
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 1744,
+   "sha256": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The \"client api\" encountered an error it could not handle!\n\nHere is a full traceback of what happened. If you are using the hydrus client, it will be saved to your log. Please forward it to hydrus_dev@proton.me:\n\nTraceback (most recent call last):\n  File \"/home/user/pyenv/lib/python3.11/site-packages/twisted/internet/defer.py\", line 1082, in _runCallbacks\n    current.result = callback(  # type: ignore[misc]\n  File \"/home/user/hydrus-mine/hydrus/core/networking/HydrusServerResources.py\", line 669, in _callbackRenderResponseContext\n    producer.start()\n  File \"/home/user/pyenv/lib/python3.11/site-packages/twisted/web/static.py\", line 775, in start\n    self.fileObject.seek(self.offset)\nbuiltins.OSError: [Errno 22] Invalid argument\n",
+    "exception_type": "OSError",
+    "hydrus_version": 688,
+    "status_code": 500,
+    "version": 95
+   },
+   "status": 500
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 206
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The Range header had an invalid pair!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Can only support Single Range requests at the moment!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Can only support Single Range requests at the moment!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Do not support anything other than bytes in Range header!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Did not understand range header!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Did not understand the Range header's range pair(s)!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Undefined Range header pair given!",
+    "exception_type": "RangeNotSatisfiableException",
+    "hydrus_version": 688,
+    "status_code": 416,
+    "version": 95
+   },
+   "status": 416
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The \"client api\" encountered an error it could not handle!\n\nHere is a full traceback of what happened. If you are using the hydrus client, it will be saved to your log. Please forward it to hydrus_dev@proton.me:\n\nTraceback (most recent call last):\n  File \"/home/user/pyenv/lib/python3.11/site-packages/twisted/internet/defer.py\", line 1082, in _runCallbacks\n    current.result = callback(  # type: ignore[misc]\n  File \"/home/user/hydrus-mine/hydrus/core/networking/HydrusServerResources.py\", line 574, in _callbackRenderResponseContext\n    offset_and_block_size_pairs = self._parseRangeHeader( request, filesize )\n  File \"/home/user/hydrus-mine/hydrus/core/networking/HydrusServerResources.py\", line 1058, in _parseRangeHeader\n    range_start = abs( int( range_start ) )\nbuiltins.ValueError: invalid literal for int() with base 10: 'abc'\n",
+    "exception_type": "ValueError",
+    "hydrus_version": 688,
+    "status_code": 500,
+    "version": 95
+   },
+   "status": 500
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The \"client api\" encountered an error it could not handle!\n\nHere is a full traceback of what happened. If you are using the hydrus client, it will be saved to your log. Please forward it to hydrus_dev@proton.me:\n\nTraceback (most recent call last):\n  File \"/home/user/pyenv/lib/python3.11/site-packages/twisted/internet/defer.py\", line 1082, in _runCallbacks\n    current.result = callback(  # type: ignore[misc]\n  File \"/home/user/hydrus-mine/hydrus/core/networking/HydrusServerResources.py\", line 574, in _callbackRenderResponseContext\n    offset_and_block_size_pairs = self._parseRangeHeader( request, filesize )\n  File \"/home/user/hydrus-mine/hydrus/core/networking/HydrusServerResources.py\", line 1045, in _parseRangeHeader\n    for ( range_start, range_end ) in range_pairs:\nbuiltins.ValueError: too many values to unpack (expected 2)\n",
+    "exception_type": "ValueError",
+    "hydrus_version": 688,
+    "status_code": 500,
+    "version": 95
+   },
+   "status": 500
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 5,
+   "sha256": "602450ad2a97c0df704b86396b2bda62cd3f3228dbc123c097b9e8de57d76c68",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 100,
+   "sha256": "3d709235543df810e4aef66d7acc74e77c06c873a8582c5e5bd8d5128f8703ea",
+   "status": 206
+  },
+  {
+   "content_type": "image/jpeg",
+   "length": 100,
+   "sha256": "fbf4bf7010455c4f3924aaa5ea70fbdad2d51918ec6b5582e983d1a7605c6f3c",
+   "status": 206
+  }
+ ],
+ "scenario": "file_ranges"
+}

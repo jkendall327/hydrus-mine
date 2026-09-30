@@ -113,8 +113,7 @@ status = "done"
 
 [[api]]
 path = "/get_files/file"
-status = "partial"
-notes = "conformant except after deletes (needs write endpoints); no Range support yet"
+status = "done"
 
 [[api]]
 path = "/get_files/file_hashes"
@@ -134,7 +133,8 @@ status = "done"
 
 [[api]]
 path = "/get_files/render"
-status = "todo"
+status = "partial"
+notes = "static images done (checked by tests/render.rs); ugoiras are not rendered yet; WebP is always lossless"
 
 [[api]]
 path = "/get_files/search_files"

@@ -1387,6 +1387,7 @@ dependencies = [
  "bytes",
  "ciborium",
  "form_urlencoded",
+ "futures-util",
  "hex",
  "http-body-util",
  "hydrus-core",
@@ -1398,8 +1399,10 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "image-webp",
  "parking_lot",
  "percent-encoding",
+ "png",
  "rand 0.10.3",
  "regex",
  "rusqlite",
@@ -1409,10 +1412,12 @@ dependencies = [
  "tempfile",
  "thiserror 2.0.21",
  "tokio",
+ "tokio-util",
  "toml",
  "tower",
  "tower-http 0.7.1",
  "tracing",
+ "turbojpeg",
 ]
 
 [[package]]

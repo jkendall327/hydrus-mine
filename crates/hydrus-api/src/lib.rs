@@ -175,6 +175,7 @@ pub fn router(state: Arc<AppState>) -> Router {
         .route("/get_files/file_hashes", get(files::file_hashes))
         .route("/get_files/file", get(files::file))
         .route("/get_files/thumbnail", get(files::thumbnail))
+        .route("/get_files/render", get(files::render))
         .route("/get_files/file_path", get(files::file_path))
         .route("/get_files/thumbnail_path", get(files::thumbnail_path))
         .route(

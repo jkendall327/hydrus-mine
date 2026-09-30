@@ -297,6 +297,26 @@ parsers and every kind of content parser, on random documents).
   and fails later, when the database can't store it. We treat it like any
   other unreadable time.
 
+## Serving files (`/get_files/file`, `/get_files/thumbnail`, `/get_files/render`)
+
+Byte ranges are checked by the `file_ranges` conformance scenario, renders by
+`crates/hydrus-api/tests/render.rs` on `oracle/fixtures/render.json`.
+
+- **Byte ranges the reference fails on are answered.** A range ending at
+  exactly the file's size is clamped to the file (the reference promises a
+  byte more than it sends, and the response never completes); a range
+  starting past the end with no end gets the whole file (the reference's
+  response never completes); a suffix longer than the file gets the whole
+  file (the reference fails with a 500).
+- **`Content-Range` of a suffix range (`bytes=-100`) names the range's real
+  end**; the reference writes the suffix length there.
+- **Rendered WebP is lossless.** The reference encodes lossily at the quality
+  asked for (80 by default) unless it is over 100; only a lossless encoder is
+  available to us, so every WebP render is what the reference gives for a
+  quality over 100. PNG and JPEG renders decode to exactly the reference's
+  pixels.
+- **Ugoiras are not rendered yet** (a 400 says so).
+
 ## Locking the database (`/manage_database/lock_on`)
 
 - **The database stays open while locked.** The reference closes its
