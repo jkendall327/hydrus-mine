@@ -2,6 +2,8 @@
 
 #![allow(dead_code)]
 
+pub mod seeds;
+
 use hydrus_legacy::{LegacyDb, OpenOptions, Rows};
 use serde_json::Value;
 use tempfile::TempDir;

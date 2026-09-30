@@ -144,7 +144,7 @@ fn headers(k: SerialisableType, value: &PyJson) -> DecodeResult<Vec<(String, Str
 }
 
 /// `ClientTags.ServiceKeysToTags` (type 77).
-fn service_keys_to_tags(
+pub(crate) fn service_keys_to_tags(
     k: SerialisableType,
     value: &PyJson,
 ) -> DecodeResult<Vec<(String, Vec<String>)>> {
@@ -335,6 +335,15 @@ pub fn file_seed_cache(cache: &SerialisableObject) -> DecodeResult<Vec<LegacyFil
         .collect()
 }
 
+/// Decode a gallery log (67).
+pub fn gallery_seed_log(log: &SerialisableObject) -> DecodeResult<Vec<LegacyGallerySeed>> {
+    expect(log, GALLERY_LOG, &[1])?;
+    nested_list(GALLERY_LOG, &log.info(), "gallery log")?
+        .iter()
+        .map(gallery_seed)
+        .collect()
+}
+
 /// Decode a query's log container.
 pub fn query_log(object: &SerialisableObject) -> DecodeResult<QueryLog> {
     let k = LOG_CONTAINER;
@@ -345,12 +354,7 @@ pub fn query_log(object: &SerialisableObject) -> DecodeResult<QueryLog> {
         .ok_or_else(|| malformed(k, "query log has no name"))?;
     let info = object.info();
     let [gallery_log, file_seed_cache_value] = tuple::<2>(k, &info, "query log")?;
-    let gallery_log = nested(k, gallery_log, "gallery log")?;
-    expect(&gallery_log, GALLERY_LOG, &[1])?;
-    let gallery_seeds = nested_list(GALLERY_LOG, &gallery_log.info(), "gallery log")?
-        .iter()
-        .map(gallery_seed)
-        .collect::<DecodeResult<_>>()?;
+    let gallery_seeds = gallery_seed_log(&nested(k, gallery_log, "gallery log")?)?;
     let file_seeds = file_seed_cache(&nested(k, file_seed_cache_value, "file seed cache")?)?;
     Ok(QueryLog {
         name,

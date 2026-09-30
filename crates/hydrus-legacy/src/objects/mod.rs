@@ -34,6 +34,7 @@ pub mod domain;
 mod duplicates;
 pub mod export_folders;
 mod favourites;
+pub mod gui_sessions;
 pub mod import_folders;
 pub mod import_options;
 pub mod legacy_import_options;
