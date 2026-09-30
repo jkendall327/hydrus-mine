@@ -30,6 +30,7 @@ mod duplicates;
 mod favourites;
 mod legacy_options;
 mod location;
+pub mod parsers;
 mod services;
 mod sessions;
 mod sort;

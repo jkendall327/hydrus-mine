@@ -14,6 +14,7 @@ repository = "https://github.com/jkendall327/hydrus-mine"
 # internal
 hydrus-core = { path = "crates/hydrus-core" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
+hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }
 hydrus-media = { path = "crates/hydrus-media" }
 hydrus-import = { path = "crates/hydrus-import" }

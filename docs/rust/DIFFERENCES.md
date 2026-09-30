@@ -111,6 +111,20 @@ merges come from the in-memory cache described below.
   easy to get wrong: siblings and parents only apply to a file's current and
   pending tags; its "display" deleted and petitioned tags are its storage ones.
 
+## Downloader parsing (`hydrus-parse`)
+
+Checked by `crates/hydrus-legacy/tests/formulas.rs` on
+`oracle/fixtures/formulas.json` (random formulas on random documents).
+
+- **`<template>` contents are parsed by the current standard.** HTML is
+  parsed by the current HTML standard's algorithm (html5ever), as browsers
+  do. The reference's html5lib predates parts of the `<template>` rules: it
+  drops table cells and rows inside a template and moves a template out of a
+  table, so formulas walking such markup find different tags there. Real
+  pages rarely put table parts in templates or templates in tables.
+- **A JSON "deminify" rule whose references form a cycle is a parse error.**
+  The reference recurses until Python gives up and the parse crashes.
+
 ## Client API input checking (`hydrus-api`)
 
 - **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or

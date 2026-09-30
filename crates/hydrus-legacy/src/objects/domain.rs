@@ -42,7 +42,7 @@ fn unsupported(kind: SerialisableType, version: u32) -> SerialisableError {
     }
 }
 
-fn expect(
+pub(crate) fn expect(
     object: &SerialisableObject,
     kind: SerialisableType,
     versions: &[u32],
@@ -57,7 +57,7 @@ fn expect(
 }
 
 /// The objects in a `SerialisableList` stored inside another object's info.
-fn nested_list(
+pub(crate) fn nested_list(
     kind: SerialisableType,
     value: &PyJson,
     what: &str,
@@ -75,12 +75,16 @@ fn nested_list(
         .collect()
 }
 
-fn count(kind: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<usize> {
+pub(crate) fn count(kind: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<usize> {
     let n = int(kind, value, what)?;
     usize::try_from(n).map_err(|_| malformed(kind, format!("{what} is negative")))
 }
 
-fn opt_count(kind: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<Option<usize>> {
+pub(crate) fn opt_count(
+    kind: SerialisableType,
+    value: &PyJson,
+    what: &str,
+) -> DecodeResult<Option<usize>> {
     opt_int(kind, value, what)?
         .map(|n| usize::try_from(n).map_err(|_| malformed(kind, format!("{what} is negative"))))
         .transpose()
@@ -355,7 +359,7 @@ fn url_parameter(object: &SerialisableObject) -> DecodeResult<UrlParameter> {
     })
 }
 
-fn string_match(object: &SerialisableObject) -> DecodeResult<StringMatch> {
+pub(crate) fn string_match(object: &SerialisableObject) -> DecodeResult<StringMatch> {
     let k = STRING_MATCH;
     expect(object, k, &[1])?;
     let info = object.info();
@@ -472,7 +476,7 @@ fn string_converter(object: &SerialisableObject) -> DecodeResult<StringConverter
     })
 }
 
-fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProcessor> {
+pub(crate) fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProcessor> {
     let k = STRING_PROCESSOR;
     expect(object, k, &[1])?;
     let steps = nested_list(k, &object.info(), "processing steps")?

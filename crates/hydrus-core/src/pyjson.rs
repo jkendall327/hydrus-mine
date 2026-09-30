@@ -69,8 +69,27 @@ impl PyJson {
         out
     }
 
+    /// Serialise as `json.dumps(value, ensure_ascii=False)` would: non-ASCII
+    /// characters are written as themselves.
+    pub fn to_python_string_unicode(&self) -> String {
+        let mut out = String::new();
+        self.write(&mut out, false);
+        out
+    }
+
     /// Append the `json.dumps` form of this value to `out`.
     pub fn write_python(&self, out: &mut String) {
+        self.write(out, true);
+    }
+
+    fn write(&self, out: &mut String, ascii: bool) {
+        let string = |s: &str, out: &mut String| {
+            if ascii {
+                write_python_string(s, out);
+            } else {
+                write_python_string_unicode(s, out);
+            }
+        };
         match self {
             PyJson::Null => out.push_str("null"),
             PyJson::Bool(true) => out.push_str("true"),
@@ -80,14 +99,14 @@ impl PyJson {
             }
             PyJson::BigInt(digits) => out.push_str(digits),
             PyJson::Float(f) => write_python_float(*f, out),
-            PyJson::Str(s) => write_python_string(s, out),
+            PyJson::Str(s) => string(s, out),
             PyJson::List(items) => {
                 out.push('[');
                 for (i, item) in items.iter().enumerate() {
                     if i > 0 {
                         out.push_str(", ");
                     }
-                    item.write_python(out);
+                    item.write(out, ascii);
                 }
                 out.push(']');
             }
@@ -97,12 +116,59 @@ impl PyJson {
                     if i > 0 {
                         out.push_str(", ");
                     }
-                    write_python_string(key, out);
+                    string(key, out);
                     out.push_str(": ");
-                    value.write_python(out);
+                    value.write(out, ascii);
                 }
                 out.push('}');
             }
+        }
+    }
+
+    /// Python's `str()` of a scalar (`True`, `None`, `1.5`, `nan`, a
+    /// string as itself); `None` for a list or object.
+    pub fn py_str(&self) -> Option<String> {
+        Some(match self {
+            PyJson::Null => "None".to_owned(),
+            PyJson::Bool(true) => "True".to_owned(),
+            PyJson::Bool(false) => "False".to_owned(),
+            PyJson::Int(i) => i.to_string(),
+            PyJson::BigInt(digits) => digits.clone(),
+            PyJson::Float(f) if f.is_nan() => "nan".to_owned(),
+            PyJson::Float(f) if f.is_infinite() => if *f > 0.0 { "inf" } else { "-inf" }.to_owned(),
+            PyJson::Float(f) => {
+                let mut out = String::new();
+                write_python_float(*f, &mut out);
+                out
+            }
+            PyJson::Str(s) => s.clone(),
+            PyJson::List(_) | PyJson::Object(_) => return None,
+        })
+    }
+
+    /// The value as `json.loads` gives it to Python code: a key given more
+    /// than once keeps its first position and its last value.
+    #[must_use]
+    pub fn with_python_dict_semantics(self) -> PyJson {
+        match self {
+            PyJson::List(items) => PyJson::List(
+                items
+                    .into_iter()
+                    .map(PyJson::with_python_dict_semantics)
+                    .collect(),
+            ),
+            PyJson::Object(entries) => {
+                let mut out: Vec<(String, PyJson)> = Vec::with_capacity(entries.len());
+                for (key, value) in entries {
+                    let value = value.with_python_dict_semantics();
+                    match out.iter_mut().find(|(k, _)| *k == key) {
+                        Some(slot) => slot.1 = value,
+                        None => out.push((key, value)),
+                    }
+                }
+                PyJson::Object(out)
+            }
+            other => other,
         }
     }
 
@@ -244,6 +310,27 @@ pub fn write_python_string(s: &str, out: &mut String) {
                     let _ = write!(out, "\\u{unit:04x}");
                 }
             }
+        }
+    }
+    out.push('"');
+}
+
+/// Write a string as `json.dumps` does with `ensure_ascii=False`.
+pub fn write_python_string_unicode(s: &str, out: &mut String) {
+    out.push('"');
+    for c in s.chars() {
+        match c {
+            '"' => out.push_str("\\\""),
+            '\\' => out.push_str("\\\\"),
+            '\n' => out.push_str("\\n"),
+            '\r' => out.push_str("\\r"),
+            '\t' => out.push_str("\\t"),
+            '\u{8}' => out.push_str("\\b"),
+            '\u{c}' => out.push_str("\\f"),
+            c if (c as u32) < 0x20 => {
+                let _ = write!(out, "\\u{:04x}", c as u32);
+            }
+            c => out.push(c),
         }
     }
     out.push('"');
