@@ -26,10 +26,13 @@ use hydrus_store::{master, media, settings};
 mod common;
 
 fn repo_root() -> PathBuf {
+    // (not canonicalised: on Windows that gives a `\\?\` path, which
+    // doesn't take the `/`s the recordings join paths with)
     Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .canonicalize()
+        .ancestors()
+        .nth(2)
         .unwrap()
+        .to_owned()
 }
 
 async fn post(router: &axum::Router, key: &str, path: &str, body: &Json) {
