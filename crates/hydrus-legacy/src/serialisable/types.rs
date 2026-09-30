@@ -16,6 +16,7 @@ pub struct SerialisableType(pub u16);
 
 impl SerialisableType {
     pub const SHORTCUT_SET: Self = Self(2);
+    pub const PREDICATE: Self = Self(14);
     pub const FILE_SEARCH_CONTEXT: Self = Self(15);
     pub const DICTIONARY: Self = Self(21);
     pub const CLIENT_OPTIONS: Self = Self(22);
@@ -35,6 +36,7 @@ impl SerialisableType {
     pub const TAG_CONTEXT: Self = Self(80);
     pub const FAVOURITE_SEARCH_MANAGER: Self = Self(81);
     pub const TAG_AUTOCOMPLETE_OPTIONS: Self = Self(85);
+    pub const NUMBER_TEST: Self = Self(93);
     pub const TAG_SORT: Self = Self(101);
     pub const LOCATION_CONTEXT: Self = Self(103);
     pub const GUI_SESSION_CONTAINER: Self = Self(104);

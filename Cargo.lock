@@ -1568,6 +1568,7 @@ dependencies = [
  "fancy-regex",
  "hex",
  "hydrus-core",
+ "hydrus-legacy",
  "hydrus-store",
  "hydrus-testkit",
  "jiff",

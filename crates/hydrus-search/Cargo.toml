@@ -20,6 +20,7 @@ fancy-regex.workspace = true
 serde_json.workspace = true
 
 [dev-dependencies]
+hydrus-legacy.workspace = true
 serde_json.workspace = true
 proptest.workspace = true
 hydrus-testkit.workspace = true

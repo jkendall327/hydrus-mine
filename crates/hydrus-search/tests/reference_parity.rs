@@ -104,8 +104,16 @@ impl Registry {
 
     /// `ServicesManager.GetServiceKeyFromName`: exact name, then case-insensitive.
     fn service(&self, allowed: &[u64], service: &ServiceRef) -> Result<&Service, String> {
-        let ServiceRef::Name(name) = service else {
-            panic!("the parser only produces names");
+        let name = match service {
+            ServiceRef::Name(name) => name,
+            ServiceRef::Key(key) => {
+                // decoded predicates name their services by key
+                return self
+                    .services
+                    .iter()
+                    .find(|s| allowed.contains(&s.kind) && s.key == key.to_hex())
+                    .ok_or_else(|| format!("no service with key {}", key.to_hex()));
+            }
         };
         let allowed_services = || self.services.iter().filter(|s| allowed.contains(&s.kind));
         allowed_services()
@@ -914,4 +922,68 @@ fn api_searches_match_the_reference() {
         }
     }
     assert!(report.is_empty(), "API searches differ:\n{report}");
+}
+
+/// Stored predicates (the reference's serialised form of each predicate it
+/// parsed) decode to what the reference parsed. Ratings are not decoded yet
+/// (see `hydrus_legacy::objects::predicates`), and URL class predicates are
+/// not recorded (the fixture's URL classes are stubs).
+#[test]
+fn stored_predicates_decode_to_what_the_reference_parsed() {
+    let fixture = fixture();
+    let registry = Registry::new(&fixture);
+    let mut report = String::new();
+    let (mut decoded, mut ratings) = (0, 0);
+    for case in fixture["system_predicates"].as_array().unwrap() {
+        let Some(serialised) = case.get("serialised") else {
+            continue;
+        };
+        let stored = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+            &serialised.to_string(),
+        )
+        .expect("a serialised tuple");
+        let expected = canonical(&case["predicate"]);
+        match hydrus_legacy::objects::predicates::predicate(&stored) {
+            Ok(pred) => {
+                decoded += 1;
+                let mut ours = predicate_json(&registry, &pred).map(|v| canonical(&v));
+                // a stored age is kept as stored (the parser's ages are
+                // normalised to days and hours at "now" by `time_json`)
+                if let (
+                    Predicate::System(SystemPredicate::Time {
+                        test: TimeTest::Relative { age, .. },
+                        ..
+                    }),
+                    Ok(json),
+                ) = (&pred, ours.as_mut())
+                {
+                    json["value"]["value"] = json!([age.years, age.months, age.days, age.hours]);
+                }
+                if ours.as_ref() != Ok(&expected) {
+                    writeln!(
+                        report,
+                        "{serialised}\n    reference: {expected}\n    ours:      {ours:?}"
+                    )
+                    .unwrap();
+                }
+            }
+            Err(e) => {
+                if expected["type"] == "system_rating"
+                    || expected["type"] == "system_rating_advanced"
+                {
+                    ratings += 1;
+                } else if matches!(
+                    compare(&registry, case),
+                    Outcome::WrongHashLength | Outcome::NumberTooLarge | Outcome::UnsupportedDate
+                ) {
+                    // values we cannot hold, whether typed or stored
+                } else {
+                    writeln!(report, "{serialised}\n    could not decode: {e}").unwrap();
+                }
+            }
+        }
+    }
+    println!("{decoded} decoded, {ratings} ratings skipped");
+    assert!(report.is_empty(), "stored predicates differ:\n{report}");
+    assert!(decoded > 3000);
 }

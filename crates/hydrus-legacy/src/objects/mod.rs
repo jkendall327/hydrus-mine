@@ -37,6 +37,7 @@ pub mod legacy_import_options;
 mod legacy_options;
 mod location;
 pub mod parsers;
+pub mod predicates;
 mod services;
 mod sessions;
 mod sort;
