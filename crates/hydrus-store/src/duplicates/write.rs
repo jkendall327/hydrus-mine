@@ -135,6 +135,22 @@ impl<'c> RelationshipWriter<'c> {
         Ok(())
     }
 
+    /// The similar-files search found `found` (files and their distances)
+    /// for `hash_id`: propose each one's duplicate group as a potential
+    /// duplicate of `hash_id`'s (`AddPotentialDuplicates`), the first
+    /// distance found for a group standing.
+    pub fn add_similar_files(&self, hash_id: HashId, found: &[(HashId, u32)]) -> Result<()> {
+        let group = self.group_or_create(hash_id)?;
+        let mut others: Vec<(GroupId, u32)> = Vec::new();
+        for &(other, distance) in found {
+            let other = self.group_or_create(other)?;
+            if !others.iter().any(|(g, _)| *g == other) {
+                others.push((other, distance));
+            }
+        }
+        self.add_potentials(group, &others)
+    }
+
     // groups -------------------------------------------------------------
 
     /// `hash_id`'s duplicate group, creating a group of one if it has none.

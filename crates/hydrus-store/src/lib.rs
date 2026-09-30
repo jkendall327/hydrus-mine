@@ -18,6 +18,7 @@ pub mod queues;
 pub mod schema;
 pub mod services;
 pub mod settings;
+pub mod similar;
 pub mod storage;
 pub mod store;
 pub mod subscriptions;

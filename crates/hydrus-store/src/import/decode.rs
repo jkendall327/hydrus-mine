@@ -95,6 +95,26 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 .collect::<Result<_>>()?;
         }
         insert_setting(&mut input, &viewing)?;
+        let mut similar = crate::similar::SimilarFilesSettings::default();
+        if let Some(&d) = options
+            .integers
+            .get("similar_files_duplicate_pairs_search_distance")
+        {
+            similar.search_distance = u32::try_from(d).unwrap_or(0);
+        }
+        if let Some(&b) = options
+            .booleans
+            .get("maintain_similar_files_duplicate_pairs_during_active")
+        {
+            similar.during_active = b;
+        }
+        if let Some(&b) = options
+            .booleans
+            .get("maintain_similar_files_duplicate_pairs_during_idle")
+        {
+            similar.during_idle = b;
+        }
+        insert_setting(&mut input, &similar)?;
         let mut checkers = hydrus_core::subscriptions::CheckerDefaults::default();
         if let Some(c) = &options.default_subscription_checker_options {
             checkers.subscriptions = c.clone();

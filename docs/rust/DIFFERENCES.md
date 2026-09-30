@@ -111,6 +111,24 @@ merges come from the in-memory cache described below.
   easy to get wrong: siblings and parents only apply to a file's current and
   pending tags; its "display" deleted and petitioned tags are its storage ones.
 
+## Similar files and potential duplicates
+
+Checked by `crates/hydrus-import/tests/similar_files.rs` on
+`oracle/fixtures/similar_files.json` (the reference searching generated
+near-duplicates at distance 2 and then 4) and by the fixture database's own
+search.
+
+- **No tree in the database.** The reference keeps a VP-tree of perceptual
+  hashes in its database and rebalances it in the background; we index the
+  hashes in memory when a search runs. Which hashes are within a distance
+  doesn't depend on the index, so the same pairs are found.
+- **The search runs whenever it has work, if either of the reference's
+  "search during active/idle time" options is on.** Without a GUI there is
+  no idle time to wait for; the search is fast enough not to need it.
+- **When one search finds two files of the same duplicate group at different
+  distances, the pair gets the smaller.** The reference records whichever
+  its tree walk reached first.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server

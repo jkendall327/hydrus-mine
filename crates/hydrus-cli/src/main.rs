@@ -269,6 +269,28 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
         if let Some(subscriptions) = &state.subscriptions {
             subscriptions.start();
         }
+        // the similar-files search, finding potential duplicates as files come in
+        let searcher = store.clone();
+        tokio::spawn(async move {
+            loop {
+                let store = searcher.clone();
+                let done = tokio::task::spawn_blocking(move || {
+                    hydrus_store::similar::run_search(&store, 1000)
+                })
+                .await;
+                match done {
+                    Ok(Ok(n)) if n > 0 => {
+                        tracing::debug!(files = n, "searched for similar files");
+                        tokio::time::sleep(Duration::from_millis(100)).await;
+                    }
+                    Ok(Err(e)) => {
+                        tracing::error!(error = %e, "the similar-files search failed");
+                        tokio::time::sleep(Duration::from_secs(600)).await;
+                    }
+                    _ => tokio::time::sleep(Duration::from_secs(30)).await,
+                }
+            }
+        });
         // queues made by other processes (the command line)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {

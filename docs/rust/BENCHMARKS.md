@@ -22,6 +22,20 @@ to be fast:
 
 Searches for similar files are mostly at distance 0 and 2.
 
+## Similar-files search
+
+`crates/hydrus-store/src/similar.rs` (`scale`, release build): 414,569
+perceptual hashes (the target install's count), 50,000 files searched.
+
+| distance | index built | 50,000 searches |
+|---|---|---|
+| 2 | 0.2 s | 0.04 s |
+| 4 | 0.1 s | 0.7 s |
+| 8 | (none: every hash is checked) | 37 s |
+
+So the target install's 50,000 unsearched files take about a second at
+distance 2 or 4, plus the database work of recording what they find.
+
 ## Store micro-benchmarks
 
 `cargo bench -p hydrus-store` (criterion) runs against a synthetic library

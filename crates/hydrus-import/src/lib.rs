@@ -370,24 +370,8 @@ impl FileRecord {
             "INSERT OR REPLACE INTO hash_digests (hash_id, md5, sha1, sha512) VALUES (?1, ?2, ?3, ?4)",
         )?
         .execute(params![id, self.md5, self.sha1, self.sha512])?;
-        conn.prepare_cached("DELETE FROM file_perceptual_hashes WHERE hash_id = ?1")?
-            .execute([id])?;
-        for phash in &self.perceptual_hashes {
-            conn.prepare_cached("INSERT OR IGNORE INTO perceptual_hashes (phash) VALUES (?1)")?
-                .execute([phash])?;
-            conn.prepare_cached(
-                "INSERT OR IGNORE INTO file_perceptual_hashes (hash_id, phash_id)
-                 SELECT ?1, phash_id FROM perceptual_hashes WHERE phash = ?2",
-            )?
-            .execute(params![id, phash])?;
-        }
-        if !self.perceptual_hashes.is_empty() {
-            // queued for the similar-files search
-            conn.prepare_cached(
-                "INSERT OR REPLACE INTO similar_search_status (hash_id, searched_distance) VALUES (?1, NULL)",
-            )?
-            .execute([id])?;
-        }
+        // (queued for the similar-files search if they are useful and new)
+        hydrus_store::similar::set_perceptual_hashes(conn, id, &self.perceptual_hashes)?;
         Ok(())
     }
 }
