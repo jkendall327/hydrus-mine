@@ -1109,7 +1109,20 @@ fn downloader_pages(
                     }
                 })
                 .collect(),
-            PageContent::Other => continue,
+            PageContent::Other => {
+                use hydrus_legacy::objects::gui_sessions::page_type;
+                let what = match page.page_type {
+                    page_type::SIMPLE_DOWNLOADER => "a simple downloader page",
+                    page_type::IMPORT_FROM_DISK => "an import from disk",
+                    _ => continue,
+                };
+                input.warnings.push(format!(
+                    "Page \"{}\" of session \"{name}\" is {what}, which hydrus-rs doesn't run yet, \
+                     so its unfinished work was not carried over (the original is kept)",
+                    page.name
+                ));
+                continue;
+            }
         };
         if !queues.is_empty() {
             input.downloader_pages.push(super::DownloaderPageInput {

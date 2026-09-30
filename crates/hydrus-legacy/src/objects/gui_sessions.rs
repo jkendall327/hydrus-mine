@@ -39,6 +39,8 @@ const MULTIPLE_WATCHER_IMPORT: SerialisableType = SerialisableType(64);
 /// `ClientGUIPagesCore.PAGE_TYPE_*` of the pages read here.
 pub mod page_type {
     pub const GALLERY: i64 = 1;
+    pub const SIMPLE_DOWNLOADER: i64 = 2;
+    pub const IMPORT_FROM_DISK: i64 = 3;
     pub const QUERY: i64 = 6;
     pub const URLS: i64 = 7;
     pub const WATCHER: i64 = 9;
