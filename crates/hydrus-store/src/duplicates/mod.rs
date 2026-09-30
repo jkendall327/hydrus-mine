@@ -501,23 +501,12 @@ pub fn select_pairs(
     selection: PairSelection,
 ) -> Result<Vec<(HashId, HashId)>> {
     let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
-    let rows = matching(conn, search, &in_scope)?;
-    let shapes: HashMap<HashId, FileShape> = rows
-        .iter()
-        .flat_map(|r| {
-            [
-                (r.smaller_king, r.smaller_shape),
-                (r.larger_king, r.larger_shape),
-            ]
-        })
-        .collect();
-    let mut pairs: Vec<PotentialPair> = rows.iter().map(PotentialPair::from).collect();
-    let shape = |h: HashId| shapes.get(&h).copied().unwrap_or_default();
+    let mut pairs = matching(conn, search, &in_scope)?;
     // a missing or zero size counts as 1, as in the reference
-    let size = |h: HashId| shape(h).size.max(1);
+    let sizes = |p: &PairRow| (p.smaller_shape.size.max(1), p.larger_shape.size.max(1));
 
     // ties break by ids, so the order is deterministic
-    let ids = |p: &PotentialPair| (p.smaller_king, p.larger_king);
+    let ids = |p: &PairRow| (p.smaller_king, p.larger_king);
     match order {
         PairOrder::Random => {
             use rand::seq::SliceRandom as _;
@@ -526,8 +515,8 @@ pub fn select_pairs(
         PairOrder::Similarity => {
             // distance, then the ratio of the sizes, compared exactly
             pairs.sort_by(|x, y| {
-                let ratio = |p: &PotentialPair| {
-                    let (a, b) = (size(p.smaller_king), size(p.larger_king));
+                let ratio = |p: &PairRow| {
+                    let (a, b) = sizes(p);
                     (u128::from(a.max(b)), u128::from(a.min(b)))
                 };
                 let ((xn, xd), (yn, yd)) = (ratio(x), ratio(y));
@@ -539,7 +528,7 @@ pub fn select_pairs(
         }
         PairOrder::MaxFilesize | PairOrder::MinFilesize => {
             pairs.sort_by_key(|p| {
-                let (a, b) = (size(p.smaller_king), size(p.larger_king));
+                let (a, b) = sizes(p);
                 let (big, small) = (a.max(b), a.min(b));
                 let key = if order == PairOrder::MaxFilesize {
                     (big, small)
@@ -554,7 +543,7 @@ pub fn select_pairs(
         pairs.reverse();
     }
 
-    let chosen: Vec<PotentialPair> = match selection {
+    let chosen: Vec<PairRow> = match selection {
         PairSelection::Batch { max } => pairs.into_iter().take(max).collect(),
         PairSelection::Group => match pairs.first() {
             None => Vec::new(),
@@ -575,8 +564,8 @@ pub fn select_pairs(
     Ok(chosen
         .into_iter()
         .map(|p| {
-            let rank = |h: HashId| (shape(h).pixels, shape(h).size, std::cmp::Reverse(h));
-            if rank(p.larger_king) > rank(p.smaller_king) {
+            let rank = |h: HashId, shape: FileShape| (shape.pixels, shape.size, std::cmp::Reverse(h));
+            if rank(p.larger_king, p.larger_shape) > rank(p.smaller_king, p.smaller_shape) {
                 (p.larger_king, p.smaller_king)
             } else {
                 (p.smaller_king, p.larger_king)
