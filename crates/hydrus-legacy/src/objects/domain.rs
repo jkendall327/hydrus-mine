@@ -10,7 +10,7 @@
 use hydrus_core::url::class::{GalleryIndex, GalleryIndexPosition, Referral, ReferralMode};
 use hydrus_core::url::strings::{
     Conversion, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep, PyRegex,
-    StringConverter, StringMatch, StringProcessor,
+    SortKind, StringConverter, StringMatch, StringProcessor,
 };
 use hydrus_core::url::{DomainMask, UrlClass, UrlClassSettings, UrlParameter, UrlType};
 
@@ -30,7 +30,9 @@ const STRING_CONVERTER: SerialisableType = SerialisableType(55);
 const PAGE_PARSER: SerialisableType = SerialisableType(58);
 const STRING_SPLITTER: SerialisableType = SerialisableType(83);
 const STRING_PROCESSOR: SerialisableType = SerialisableType(84);
+const STRING_SORTER: SerialisableType = SerialisableType(99);
 const STRING_SLICER: SerialisableType = SerialisableType(100);
+const STRING_TAG_FILTER: SerialisableType = SerialisableType(112);
 const STRING_JOINER: SerialisableType = SerialisableType(125);
 const URL_CLASS_PARAMETER: SerialisableType = SerialisableType(127);
 const URL_DOMAIN_MASK: SerialisableType = SerialisableType(139);
@@ -501,7 +503,7 @@ pub(crate) fn string_converter(object: &SerialisableObject) -> DecodeResult<Stri
     })
 }
 
-pub(crate) fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProcessor> {
+pub fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProcessor> {
     let k = STRING_PROCESSOR;
     expect(object, k, &[1])?;
     let steps = nested_list(k, &object.info(), "processing steps")?
@@ -543,6 +545,25 @@ pub(crate) fn string_processor(object: &SerialisableObject) -> DecodeResult<Stri
                         opt_count(STRING_JOINER, tuple_size, "tuple size")?
                     };
                     ProcessingStep::Join { joiner, tuple_size }
+                }
+                STRING_SORTER => {
+                    expect(step, STRING_SORTER, &[1])?;
+                    let [kind, ascending, regex] = tuple::<3>(STRING_SORTER, &info, "sorter")?;
+                    let code = int(STRING_SORTER, kind, "sort type")?;
+                    ProcessingStep::Sort {
+                        kind: SortKind::from_code(code).ok_or_else(|| {
+                            malformed(STRING_SORTER, format!("unknown sort type {code}"))
+                        })?,
+                        ascending: boolean(STRING_SORTER, ascending, "ascending")?,
+                        regex: opt_string(STRING_SORTER, regex, "regex")?.map(PyRegex::new),
+                    }
+                }
+                STRING_TAG_FILTER => {
+                    expect(step, STRING_TAG_FILTER, &[1])?;
+                    let [filter, _example] = tuple::<2>(STRING_TAG_FILTER, &info, "tag filter")?;
+                    ProcessingStep::TagFilter(super::import_options::core_tag_filter(
+                        &super::tag_filter::TagFilter::from_tuple(filter)?,
+                    ))
                 }
                 other => ProcessingStep::Unsupported {
                     type_id: other.code(),

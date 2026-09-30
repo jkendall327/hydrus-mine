@@ -612,11 +612,106 @@ pub enum ProcessingStep {
         joiner: String,
         tuple_size: Option<usize>,
     },
-    /// A step hydrus-rs doesn't run yet (sorting, tag filtering), kept as the
-    /// reference's type id.
+    /// Sort the strings (`StringSorter`), by all of each string or by
+    /// the first match of a regex in it; strings the regex doesn't match
+    /// go last.
+    Sort {
+        kind: SortKind,
+        ascending: bool,
+        regex: Option<PyRegex>,
+    },
+    /// Clean the strings as tags, keep those the filter allows (with
+    /// unnamespaced rules applying to namespaced tags too) and sort them
+    /// in human order (`StringTagFilter`).
+    TagFilter(crate::tag_filter::TagFilter),
+    /// A step hydrus-rs doesn't run, kept as the reference's type id.
     Unsupported {
         type_id: u16,
     },
+}
+
+/// How a [`ProcessingStep::Sort`] orders (`CONTENT_PARSER_SORT_TYPE_*`).
+/// "No sorting" sorts as lexicographic does, as in the reference.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(rename_all = "snake_case")]
+pub enum SortKind {
+    None,
+    Lexicographic,
+    Human,
+    Reverse,
+}
+
+impl SortKind {
+    pub fn from_code(code: i64) -> Option<Self> {
+        Some(match code {
+            0 => Self::None,
+            1 => Self::Lexicographic,
+            2 => Self::Human,
+            3 => Self::Reverse,
+            _ => return None,
+        })
+    }
+}
+
+/// `StringSorter.Sort`; `None` where the reference's sort raises (a bad
+/// regex), which leaves the strings as they were.
+fn sort_strings(
+    strings: &[String],
+    kind: SortKind,
+    ascending: bool,
+    regex: Option<&PyRegex>,
+) -> Option<Vec<String>> {
+    let mut texts = strings.to_vec();
+    if kind == SortKind::Reverse {
+        texts.reverse();
+        return Some(texts);
+    }
+    let mut unmatched = Vec::new();
+    let mut keyed: Vec<(String, String)> = match regex {
+        None => texts.into_iter().map(|t| (t.clone(), t)).collect(),
+        Some(regex) => {
+            let regex = regex.regex().ok()?;
+            let mut keyed = Vec::new();
+            for text in texts {
+                let found = regex.find(&text).ok()?.map(|m| m.as_str().to_owned());
+                match found {
+                    Some(key) if !key.is_empty() => keyed.push((key, text)),
+                    _ => unmatched.push(text),
+                }
+            }
+            keyed
+        }
+    };
+    let order = |a: &str, b: &str| {
+        if kind == SortKind::Human {
+            crate::sort::human_sort_key(a).cmp(&crate::sort::human_sort_key(b))
+        } else {
+            a.cmp(b)
+        }
+    };
+    // Python's sort with reverse=True keeps equal items in their order
+    let directed = |a: &str, b: &str| {
+        if ascending { order(a, b) } else { order(b, a) }
+    };
+    keyed.sort_by(|(a, _), (b, _)| directed(a, b));
+    unmatched.sort_by(|a, b| directed(a, b));
+    let mut out: Vec<String> = keyed.into_iter().map(|(_, t)| t).collect();
+    out.extend(unmatched);
+    Some(out)
+}
+
+/// `StringTagFilter.ConvertAndFilter`.
+fn filter_tags(strings: &[String], filter: &crate::tag_filter::TagFilter) -> Vec<String> {
+    let clean: std::collections::BTreeSet<String> = strings
+        .iter()
+        .filter_map(|s| crate::tag::clean_tag_checked(s))
+        .collect();
+    let mut tags: Vec<String> = clean
+        .into_iter()
+        .filter(|t| filter.tag_ok(t, true))
+        .collect();
+    crate::sort::human_sort(&mut tags);
+    tags
 }
 
 /// A pipeline of [`ProcessingStep`]s over a list of strings.
@@ -690,6 +785,12 @@ impl StringProcessor {
                             .collect(),
                     },
                 },
+                ProcessingStep::Sort {
+                    kind,
+                    ascending,
+                    regex,
+                } => sort_strings(&current, *kind, *ascending, regex.as_ref()).unwrap_or(current),
+                ProcessingStep::TagFilter(filter) => filter_tags(&current, filter),
                 ProcessingStep::Unsupported { type_id } => {
                     return Err(format!(
                         "string processing step type {type_id} is not supported yet"
