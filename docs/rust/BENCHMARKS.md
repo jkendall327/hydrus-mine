@@ -71,6 +71,26 @@ update) will get a set-based bulk path.
 
 ## Against the reference client
 
-To come once `/get_files/search_files` lands: the same synthetic library
-built in the reference client, imported, and the same Client API request mix
-timed against both.
+`oracle/bench_api.py` times the same Client API requests, one at a time,
+against the reference client and against hydrus-rs (release build) serving
+the same library imported in place. The library is built in the reference
+by `oracle/make_bench_db.py` (records only, no media; skewed tag popularity,
+namespaces, siblings and parents). Medians of five runs after a warm-up.
+
+50,000 files, about 1,000,000 mappings (the reference wrote it at 343 files
+and 6,869 mappings a second):
+
+| request | reference | hydrus-rs | speed-up |
+|---|---|---|---|
+| get_services | 1.7 ms | 0.6 ms | 3x |
+| file_metadata, 1 file | 4.3 ms | 2.0 ms | 2x |
+| file_metadata, 100 files | 47.5 ms | 17.8 ms | 3x |
+| file_metadata, 100 files, basic | 6.0 ms | 2.1 ms | 3x |
+| search_tags "tag number 1" | 56.2 ms | 26.4 ms | 2x |
+| search_tags "character:*" | 1.1 ms | 0.7 ms | 2x |
+| search_files, popular tag (29,000 files) | 72.0 ms | 29.7 ms | 2x |
+| search_files, 2 tags | 12.0 ms | 6.5 ms | 2x |
+| search_files, tag + system | 74.6 ms | 18.3 ms | 4x |
+| search_files, everything | 114.5 ms | 38.1 ms | 3x |
+| add_tags, 1 file, 5 tags | 4.6 ms | 1.0 ms | 4x |
+| add_tags, 100 files, 1 tag | 5.4 ms | 1.3 ms | 4x |

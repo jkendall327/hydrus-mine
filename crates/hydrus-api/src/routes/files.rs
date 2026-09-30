@@ -163,10 +163,11 @@ pub async fn file_metadata(
                 })?;
                 let by_hash: HashMap<Sha256, &MediaResult> =
                     batch.results.iter().map(|m| (m.hash, m)).collect();
+                let tag_names = media_json::TagNames::new(&batch.tags);
                 hashes
                     .iter()
                     .map(|h| match by_hash.get(h) {
-                        Some(m) => media_json::full_row(&snapshot, m, &batch.tags, opts),
+                        Some(m) => media_json::full_row(&snapshot, m, &tag_names, opts),
                         None => media_json::missing_row(h),
                     })
                     .collect()

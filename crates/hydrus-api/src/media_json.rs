@@ -4,7 +4,7 @@ use std::collections::{BTreeMap, BTreeSet, HashMap};
 
 use serde_json::{Map, Value as Json, json};
 
-use hydrus_core::sort::human_sort;
+use hydrus_core::sort::{HumanSortKey, human_sort_key};
 use hydrus_core::{
     CanvasType, ContentStatus, ServiceId, ServiceType, Sha256, Tag, TagId, TimestampMs,
 };
@@ -73,24 +73,46 @@ fn insert_basic_info(row: &mut Map<String, Json>, info: &hydrus_store::media::Fi
     }
 }
 
+/// The tags of a batch of files, with their presentation order worked out
+/// once for the whole batch.
+#[derive(Debug)]
+pub struct TagNames<'a> {
+    names: &'a HashMap<TagId, Tag>,
+    keys: HashMap<TagId, HumanSortKey>,
+}
+
+impl<'a> TagNames<'a> {
+    pub fn new(names: &'a HashMap<TagId, Tag>) -> Self {
+        let keys = names
+            .iter()
+            .map(|(id, tag)| (*id, human_sort_key(tag.as_str())))
+            .collect();
+        Self { names, keys }
+    }
+
+    /// Human order, and plain order among tags human order can't tell
+    /// apart (`HumanTextSort` of a sorted list).
+    fn sorted(&self, ids: &BTreeSet<TagId>) -> Vec<&str> {
+        let mut known: Vec<(&HumanSortKey, &str)> = ids
+            .iter()
+            .filter_map(|id| Some((self.keys.get(id)?, self.names.get(id)?.as_str())))
+            .collect();
+        known.sort_unstable();
+        known.into_iter().map(|(_, name)| name).collect()
+    }
+}
+
 /// Tags of one file, in one service, by status, sorted for presentation.
 fn statuses_json(
     by_status: &BTreeMap<ContentStatus, BTreeSet<TagId>>,
-    names: &HashMap<TagId, Tag>,
+    names: &TagNames<'_>,
 ) -> Json {
     let mut out = Map::new();
     for (status, ids) in by_status {
-        let mut tags: Vec<String> = ids
-            .iter()
-            .filter_map(|id| names.get(id))
-            .map(|t| t.as_str().to_owned())
-            .collect();
+        let tags = names.sorted(ids);
         if tags.is_empty() {
             continue;
         }
-        tags.sort();
-        tags.dedup();
-        human_sort(&mut tags);
         out.insert(status.code().to_string(), json!(tags));
     }
     Json::Object(out)
@@ -100,7 +122,7 @@ fn statuses_json(
 pub fn full_row(
     snapshot: &Snapshot,
     m: &MediaResult,
-    tag_names: &HashMap<TagId, Tag>,
+    tag_names: &TagNames<'_>,
     opts: MetadataOptions,
 ) -> Json {
     let services = &snapshot.services;
@@ -247,7 +269,7 @@ pub fn full_row(
 }
 
 /// Per tag service (and "all known tags"): storage and display tags by status.
-fn tags_json(snapshot: &Snapshot, m: &MediaResult, names: &HashMap<TagId, Tag>) -> Json {
+fn tags_json(snapshot: &Snapshot, m: &MediaResult, names: &TagNames<'_>) -> Json {
     let services = &snapshot.services;
     let mut out = Map::new();
     let mut all_storage: BTreeMap<ContentStatus, BTreeSet<TagId>> = BTreeMap::new();
