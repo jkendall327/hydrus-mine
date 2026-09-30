@@ -1,6 +1,7 @@
 # Downloader design
 
-Status: design, not yet built. Tracked as task "Downloader engine".
+Status: phase 1 done (parsing engine; GUGs and parsers migrate). Tracked as
+task "Downloader engine".
 
 ## Goal
 
@@ -70,8 +71,8 @@ show named queues as pages.
    with the reference's own classes, records what the reference extracts, and
    `hydrus-parse` must extract the same. Then whole page parsers (with
    sub-page splitting and content parser options) the same way.
-2. **Your definitions.** Your database's parsers can be exercised on saved
-   example pages, if you can supply some (see the open questions).
+2. **Your definitions.** Your database's parsers could be exercised on saved
+   example pages. (None supplied: generated pages only.)
 3. **End to end against a local site.** The oracle serves a small fake
    booru/imageboard over localhost, points the reference's downloaders (URL
    classes, parsers, GUG) at it, runs a URL import, a gallery search, a
@@ -82,24 +83,32 @@ show named queues as pages.
 ## Phases
 
 1. `hydrus-parse`: formulas and string processing, then page parsers, then
-   migrating parser definitions. Randomised oracle.
+   migrating parser definitions and GUGs. Randomised oracle. **Done.**
 2. `hydrus-net`: HTTP jobs with cookies, headers, bandwidth; local test server.
 3. `hydrus-download`: URL-list queues and `/add_urls/add_url` (completes
    Companion support); then gallery searches and GUGs; watchers.
 4. Subscriptions and migrating them with their history.
-5. Login scripts, if needed (see questions).
 
-## Open questions
+Login scripts are not planned: logins come from cookies (Companion sends
+them), which already migrate and work. A migrated downloader that names a
+login script is reported, and its requests go out with the domain's cookies
+as usual.
 
-Asked in a GitHub issue; defaults in brackets are what happens without an
-answer.
+## Decisions (from the questions in issue #1)
 
-- Which sites do you download from, and which kinds: single URLs from
-  Companion, gallery searches, thread watchers, subscriptions (roughly how
-  many)? [all kinds, subscriptions last]
-- Do any of your downloaders need a login script? [assume not; login scripts
-  last]
-- Could you share a few saved pages (HTML/JSON) from your main sites, for
-  testing your own parsers? [test with generated pages only]
-- Until the GUI exists, is a named queue per Companion "page" name fine?
-  [yes]
+- **Sites:** mainly boorus; Safebooru is the example to test against. The
+  local test site mimics a Gelbooru-0.2-style booru (gallery pages of
+  thumbnails, post pages with the file link and tags in the sidebar), driven
+  by parsers of that shape built with the reference's classes.
+- **Kinds:** all of them: single URLs, gallery searches, watchers and
+  subscriptions.
+- **Subscriptions:** about 200, so migrating them with their history (what
+  was already seen, so nothing is fetched again) is essential, and checking
+  them must be cheap: queue rows, not a serialised blob rewritten per
+  change. Adding many at once was clunky in the reference; here a list of
+  queries (one per line) becomes subscriptions in one step, with the
+  downloader and options chosen once, and duplicates of existing queries are
+  skipped and reported.
+- **Logins:** cookies only (see above).
+- **Test pages:** generated pages only.
+- **Companion pages:** a named queue per page name.
