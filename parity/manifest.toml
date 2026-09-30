@@ -1,0 +1,896 @@
+# The user-visible surface of the reference implementation, and how much of
+# it hydrus-rs covers. `cargo xtask ratchet` enforces that coverage never
+# goes backwards; see docs/rust/ARCHITECTURE.md.
+#
+# status: "todo" | "partial" | "done"
+#   partial: implemented but with known gaps (write them in `notes`)
+#   done:    implemented and covered by conformance or fixture tests
+
+[[api]]
+path = "/add_files/add_file"
+status = "done"
+
+[[api]]
+path = "/add_files/archive_files"
+status = "done"
+
+[[api]]
+path = "/add_files/clear_file_deletion_record"
+status = "done"
+
+[[api]]
+path = "/add_files/delete_files"
+status = "done"
+
+[[api]]
+path = "/add_files/generate_hashes"
+status = "done"
+
+[[api]]
+path = "/add_files/migrate_files"
+status = "done"
+
+[[api]]
+path = "/add_files/unarchive_files"
+status = "done"
+
+[[api]]
+path = "/add_files/undelete_files"
+status = "done"
+
+[[api]]
+path = "/add_notes/delete_notes"
+status = "done"
+
+[[api]]
+path = "/add_notes/set_notes"
+status = "done"
+
+[[api]]
+path = "/add_tags/add_tags"
+status = "done"
+
+[[api]]
+path = "/add_tags/clean_tags"
+status = "done"
+
+[[api]]
+path = "/add_tags/get_favourite_tags"
+status = "done"
+
+[[api]]
+path = "/add_tags/get_siblings_and_parents"
+status = "done"
+
+[[api]]
+path = "/add_tags/search_tags"
+status = "done"
+
+[[api]]
+path = "/add_tags/set_favourite_tags"
+status = "done"
+
+[[api]]
+path = "/add_urls/add_url"
+status = "done"
+note = "checked end to end against the reference on a local site (crates/hydrus-api/tests/oracle_downloads.rs): URL pages and watchers"
+
+[[api]]
+path = "/add_urls/associate_url"
+status = "done"
+
+[[api]]
+path = "/add_urls/get_url_files"
+status = "done"
+
+[[api]]
+path = "/add_urls/get_url_info"
+status = "done"
+
+[[api]]
+path = "/api_version"
+status = "done"
+
+[[api]]
+path = "/client_info"
+status = "done"
+
+[[api]]
+path = "/edit_ratings/set_rating"
+status = "done"
+
+[[api]]
+path = "/edit_times/increment_file_viewtime"
+status = "done"
+
+[[api]]
+path = "/edit_times/set_file_viewtime"
+status = "done"
+
+[[api]]
+path = "/edit_times/set_time"
+status = "done"
+
+[[api]]
+path = "/get_files/file"
+status = "done"
+
+[[api]]
+path = "/get_files/file_hashes"
+status = "done"
+
+[[api]]
+path = "/get_files/file_metadata"
+status = "done"
+
+[[api]]
+path = "/get_files/file_path"
+status = "done"
+
+[[api]]
+path = "/get_files/local_file_storage_locations"
+status = "done"
+
+[[api]]
+path = "/get_files/render"
+status = "partial"
+notes = "static images done (checked by tests/render.rs); ugoiras are not rendered yet; WebP is always lossless"
+
+[[api]]
+path = "/get_files/search_files"
+status = "done"
+notes = "URL class predicates wait on URL classes"
+
+[[api]]
+path = "/get_files/thumbnail"
+status = "done"
+
+[[api]]
+path = "/get_files/thumbnail_path"
+status = "done"
+
+[[api]]
+path = "/get_service"
+status = "done"
+
+[[api]]
+path = "/get_service_rating_svg"
+status = "done"
+
+[[api]]
+path = "/get_services"
+status = "done"
+
+[[api]]
+path = "/manage_cookies/get_cookies"
+status = "done"
+
+[[api]]
+path = "/manage_cookies/set_cookies"
+status = "done"
+
+[[api]]
+path = "/manage_database/force_commit"
+status = "done"
+
+[[api]]
+path = "/manage_database/get_client_options"
+status = "done"
+
+[[api]]
+path = "/manage_database/lock_off"
+status = "done"
+
+[[api]]
+path = "/manage_database/lock_on"
+status = "done"
+
+[[api]]
+path = "/manage_database/mr_bones"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/get_file_relationships"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/get_potential_pairs"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/get_potentials_count"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/get_random_potentials"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/remove_potentials"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/set_file_relationships"
+status = "done"
+
+[[api]]
+path = "/manage_file_relationships/set_kings"
+status = "done"
+
+[[api]]
+path = "/manage_headers/get_headers"
+status = "done"
+
+[[api]]
+path = "/manage_headers/set_headers"
+status = "done"
+
+[[api]]
+path = "/manage_headers/set_user_agent"
+status = "done"
+
+[[api]]
+path = "/manage_pages/add_files"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/focus_page"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/get_media_viewers"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/get_page_info"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/get_pages"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/new_page"
+status = "todo"
+
+[[api]]
+path = "/manage_pages/refresh_page"
+status = "todo"
+
+[[api]]
+path = "/manage_popups/add_popup"
+status = "done"
+
+[[api]]
+path = "/manage_popups/call_user_callable"
+status = "done"
+
+[[api]]
+path = "/manage_popups/cancel_popup"
+status = "done"
+
+[[api]]
+path = "/manage_popups/dismiss_popup"
+status = "done"
+
+[[api]]
+path = "/manage_popups/finish_and_dismiss_popup"
+status = "done"
+
+[[api]]
+path = "/manage_popups/finish_popup"
+status = "done"
+
+[[api]]
+path = "/manage_popups/get_popups"
+status = "done"
+
+[[api]]
+path = "/manage_popups/update_popup"
+status = "done"
+
+[[api]]
+path = "/manage_services/commit_pending"
+status = "partial"
+notes = "checked as the reference checks it, then refused (422): hydrus-rs does not upload to repositories"
+
+[[api]]
+path = "/manage_services/forget_pending"
+status = "done"
+
+[[api]]
+path = "/manage_services/get_pending_counts"
+status = "done"
+
+[[api]]
+path = "/request_new_permissions"
+status = "done"
+
+[[api]]
+path = "/session_key"
+status = "done"
+
+[[api]]
+path = "/verify_access_key"
+status = "done"
+
+# File types the reference client can import.
+
+[[filetype]]
+name = "jpeg"
+code = 1
+status = "done"
+
+[[filetype]]
+name = "png"
+code = 2
+status = "done"
+
+[[filetype]]
+name = "animated gif"
+code = 3
+status = "done"
+
+[[filetype]]
+name = "bitmap"
+code = 4
+status = "done"
+
+[[filetype]]
+name = "flash"
+code = 5
+status = "done"
+
+[[filetype]]
+name = "icon"
+code = 7
+status = "done"
+
+[[filetype]]
+name = "flv"
+code = 9
+status = "done"
+
+[[filetype]]
+name = "pdf"
+code = 10
+status = "partial"
+notes = "rendering differs slightly from the reference (thumbnail pixels, blurhash)"
+
+[[filetype]]
+name = "zip"
+code = 11
+status = "done"
+
+[[filetype]]
+name = "mp3"
+code = 13
+status = "done"
+
+[[filetype]]
+name = "mp4"
+code = 14
+status = "done"
+
+[[filetype]]
+name = "ogg"
+code = 15
+status = "done"
+
+[[filetype]]
+name = "flac"
+code = 16
+status = "done"
+
+[[filetype]]
+name = "wma"
+code = 17
+status = "done"
+
+[[filetype]]
+name = "wmv"
+code = 18
+status = "done"
+
+[[filetype]]
+name = "matroska"
+code = 20
+status = "done"
+
+[[filetype]]
+name = "webm"
+code = 21
+status = "done"
+
+[[filetype]]
+name = "apng"
+code = 23
+status = "done"
+
+[[filetype]]
+name = "mpeg"
+code = 25
+status = "done"
+
+[[filetype]]
+name = "quicktime"
+code = 26
+status = "done"
+
+[[filetype]]
+name = "avi"
+code = 27
+status = "done"
+
+[[filetype]]
+name = "application/hydrus-update-definitions"
+code = 28
+status = "partial"
+notes = "detected by unit tests; not in the reference media corpus"
+
+[[filetype]]
+name = "application/hydrus-update-content"
+code = 29
+status = "partial"
+notes = "detected by unit tests; not in the reference media corpus"
+
+[[filetype]]
+name = "rar"
+code = 31
+status = "done"
+
+[[filetype]]
+name = "7z"
+code = 32
+status = "done"
+
+[[filetype]]
+name = "webp"
+code = 33
+status = "done"
+
+[[filetype]]
+name = "tiff"
+code = 34
+status = "done"
+
+[[filetype]]
+name = "psd"
+code = 35
+status = "done"
+
+[[filetype]]
+name = "m4a"
+code = 36
+status = "done"
+
+[[filetype]]
+name = "realvideo"
+code = 37
+status = "done"
+
+[[filetype]]
+name = "realaudio"
+code = 38
+status = "done"
+
+[[filetype]]
+name = "tta"
+code = 39
+status = "done"
+
+[[filetype]]
+name = "clip"
+code = 45
+status = "done"
+
+[[filetype]]
+name = "wave"
+code = 46
+status = "done"
+
+[[filetype]]
+name = "ogv"
+code = 47
+status = "done"
+
+[[filetype]]
+name = "matroska audio"
+code = 48
+status = "done"
+
+[[filetype]]
+name = "mp4 audio"
+code = 49
+status = "done"
+
+[[filetype]]
+name = "wavpack"
+code = 53
+status = "done"
+
+[[filetype]]
+name = "sai2"
+code = 54
+status = "done"
+
+[[filetype]]
+name = "krita"
+code = 55
+status = "done"
+
+[[filetype]]
+name = "svg"
+code = 56
+status = "partial"
+notes = "rendering differs slightly from the reference (thumbnail pixels, blurhash)"
+
+[[filetype]]
+name = "xcf"
+code = 57
+status = "done"
+
+[[filetype]]
+name = "gzip"
+code = 58
+status = "done"
+
+[[filetype]]
+name = "heif"
+code = 61
+status = "todo"
+
+[[filetype]]
+name = "heif sequence"
+code = 62
+status = "todo"
+
+[[filetype]]
+name = "heic"
+code = 63
+status = "partial"
+notes = "no HEIC decoder yet: no pixel hash or perceptual hash; thumbnail falls back to the default"
+
+[[filetype]]
+name = "heic sequence"
+code = 64
+status = "todo"
+
+[[filetype]]
+name = "avif"
+code = 65
+status = "partial"
+notes = "a different AVIF decoder: pixels differ slightly, so pixel hashes and some perceptual hashes differ"
+
+[[filetype]]
+name = "avif sequence"
+code = 66
+status = "done"
+
+[[filetype]]
+name = "static gif"
+code = 68
+status = "done"
+
+[[filetype]]
+name = "procreate"
+code = 69
+status = "done"
+
+[[filetype]]
+name = "qoi"
+code = 70
+status = "done"
+
+[[filetype]]
+name = "epub"
+code = 71
+status = "done"
+
+[[filetype]]
+name = "djvu"
+code = 72
+status = "done"
+
+[[filetype]]
+name = "cbz"
+code = 73
+status = "done"
+
+[[filetype]]
+name = "ugoira"
+code = 74
+status = "done"
+
+[[filetype]]
+name = "rtf"
+code = 75
+status = "done"
+
+[[filetype]]
+name = "docx"
+code = 76
+status = "done"
+
+[[filetype]]
+name = "xlsx"
+code = 77
+status = "done"
+
+[[filetype]]
+name = "pptx"
+code = 78
+status = "done"
+
+[[filetype]]
+name = "doc"
+code = 80
+status = "done"
+
+[[filetype]]
+name = "xls"
+code = 81
+status = "done"
+
+[[filetype]]
+name = "ppt"
+code = 82
+status = "done"
+
+[[filetype]]
+name = "animated webp"
+code = 83
+status = "done"
+
+[[filetype]]
+name = "jxl"
+code = 85
+status = "partial"
+notes = "a different JPEG XL decoder: pixels differ slightly, so pixel hashes differ"
+
+[[filetype]]
+name = "paint.net"
+code = 86
+status = "done"
+
+[[filetype]]
+name = "animated jxl"
+code = 88
+status = "todo"
+
+[[filetype]]
+name = "ora"
+code = 89
+status = "done"
+
+
+# System predicates: one per reference PREDICATE_TYPE_SYSTEM_* search type.
+
+[[system_predicate]]
+name = "everything"
+reference_type = 4
+status = "done"
+
+[[system_predicate]]
+name = "inbox"
+reference_type = 5
+status = "done"
+
+[[system_predicate]]
+name = "archive"
+reference_type = 6
+status = "done"
+
+[[system_predicate]]
+name = "num_tags"
+reference_type = 8
+status = "done"
+
+[[system_predicate]]
+name = "limit"
+reference_type = 9
+status = "done"
+
+[[system_predicate]]
+name = "size"
+reference_type = 10
+status = "done"
+
+[[system_predicate]]
+name = "import_time"
+reference_type = 11
+status = "done"
+
+[[system_predicate]]
+name = "modified_time"
+reference_type = 35
+status = "done"
+
+[[system_predicate]]
+name = "last_viewed_time"
+reference_type = 43
+status = "done"
+
+[[system_predicate]]
+name = "archived_time"
+reference_type = 47
+status = "done"
+
+[[system_predicate]]
+name = "hash"
+reference_type = 12
+status = "done"
+
+[[system_predicate]]
+name = "width"
+reference_type = 13
+status = "done"
+
+[[system_predicate]]
+name = "height"
+reference_type = 14
+status = "done"
+
+[[system_predicate]]
+name = "ratio"
+reference_type = 15
+status = "done"
+
+[[system_predicate]]
+name = "duration"
+reference_type = 16
+status = "done"
+
+[[system_predicate]]
+name = "framerate"
+reference_type = 36
+status = "done"
+
+[[system_predicate]]
+name = "num_frames"
+reference_type = 37
+status = "done"
+
+[[system_predicate]]
+name = "num_pixels"
+reference_type = 24
+status = "done"
+
+[[system_predicate]]
+name = "has_audio"
+reference_type = 34
+status = "done"
+
+[[system_predicate]]
+name = "has_transparency"
+reference_type = 50
+status = "done"
+
+[[system_predicate]]
+name = "has_exif"
+reference_type = 46
+status = "done"
+
+[[system_predicate]]
+name = "has_xmp"
+reference_type = 67
+status = "done"
+
+[[system_predicate]]
+name = "has_iptc"
+reference_type = 68
+status = "done"
+
+[[system_predicate]]
+name = "has_human_readable_embedded_metadata"
+reference_type = 44
+status = "done"
+
+[[system_predicate]]
+name = "has_software_source"
+reference_type = 69
+status = "done"
+
+[[system_predicate]]
+name = "has_icc_profile"
+reference_type = 41
+status = "done"
+
+[[system_predicate]]
+name = "has_forced_filetype"
+reference_type = 51
+status = "done"
+
+[[system_predicate]]
+name = "mime"
+reference_type = 17
+status = "done"
+
+[[system_predicate]]
+name = "rating"
+reference_type = 18
+status = "done"
+
+[[system_predicate]]
+name = "rating_advanced"
+reference_type = 66
+status = "done"
+
+[[system_predicate]]
+name = "similar_to_files"
+reference_type = 19
+status = "done"
+
+[[system_predicate]]
+name = "similar_to_data"
+reference_type = 48
+status = "done"
+
+[[system_predicate]]
+name = "local"
+reference_type = 20
+status = "done"
+notes = "no text syntax; covered by executor tests"
+
+[[system_predicate]]
+name = "not_local"
+reference_type = 21
+status = "done"
+notes = "no text syntax; covered by executor tests"
+
+[[system_predicate]]
+name = "num_words"
+reference_type = 22
+status = "done"
+
+[[system_predicate]]
+name = "num_notes"
+reference_type = 38
+status = "done"
+
+[[system_predicate]]
+name = "has_note_name"
+reference_type = 40
+status = "done"
+
+[[system_predicate]]
+name = "num_urls"
+reference_type = 52
+status = "done"
+
+[[system_predicate]]
+name = "known_urls"
+reference_type = 28
+status = "done"
+
+[[system_predicate]]
+name = "file_service"
+reference_type = 23
+status = "done"
+
+[[system_predicate]]
+name = "tag_advanced"
+reference_type = 54
+status = "done"
+notes = "deleted/petitioned statuses of displayed tags follow sibling chains, see DIFFERENCES.md"
+
+[[system_predicate]]
+name = "tag_as_number"
+reference_type = 27
+status = "done"
+notes = "'~=' needs one tag in range, see DIFFERENCES.md"
+
+[[system_predicate]]
+name = "file_relationships_count"
+reference_type = 26
+status = "done"
+
+[[system_predicate]]
+name = "file_relationships_king"
+reference_type = 32
+status = "done"
+
+[[system_predicate]]
+name = "file_viewing_stats"
+reference_type = 29
+status = "done"

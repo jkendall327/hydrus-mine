@@ -1,0 +1,37 @@
+name: rust
+
+on:
+  push:
+    branches: [master, 'claude/**']
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+  pull_request:
+    paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+
+concurrency:
+  group: rust-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  RUSTFLAGS: -D warnings
+
+jobs:
+  check:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: install media tools, and fontconfig for the GUI
+        run: sudo apt-get update && sudo apt-get install -y ffmpeg libfontconfig1-dev
+      - name: fmt
+        run: cargo fmt --all --check
+      - name: clippy
+        run: cargo clippy --workspace --all-targets --locked
+      - name: test
+        run: cargo test --workspace --locked
+      - name: parity ratchet
+        run: cargo xtask ratchet --check

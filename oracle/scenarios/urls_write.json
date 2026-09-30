@@ -1,0 +1,83 @@
+{
+ "name": "urls_write",
+ "description": "associating and removing urls",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/add_urls/associate_url",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "urls_to_add": [
+     "https://new.example.com/a",
+     "https://danbooru.donmai.us/posts/77"
+    ],
+    "urls_to_delete": [
+     "https://example.com/post/0"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_urls/associate_url",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "url_to_add": "https://gelbooru.com/index.php?id=5&page=post&s=view",
+    "normalise_urls": true
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_urls/associate_url",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "url_to_add": "https://gelbooru.com/index.php?id=6&page=post&s=view",
+    "normalise_urls": false
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ],
+    [
+     "detailed_url_information",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://danbooru.donmai.us/posts/77"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://example.com/post/0"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

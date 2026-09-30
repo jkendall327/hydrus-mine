@@ -1,0 +1,36 @@
+[package]
+name = "hydrus-core"
+description = "Core domain types shared by every hydrus crate: ids, hashes, file types, services, tags."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+serde.workspace = true
+serde_json.workspace = true
+thiserror.workspace = true
+hex.workspace = true
+regex.workspace = true
+rusqlite = { workspace = true, optional = true }
+# URL classes: Python-syntax regexes, domain normalisation, string conversions
+fancy-regex.workspace = true
+unicode-normalization.workspace = true
+base64.workspace = true
+md-5.workspace = true
+sha1.workspace = true
+sha2.workspace = true
+rand.workspace = true
+# HTML5 named character references, for `html.unescape`
+web_atoms = "0.2.6"
+
+[dev-dependencies]
+proptest.workspace = true
+
+[features]
+default = ["sqlite"]
+# ToSql/FromSql impls for the id newtypes.
+sqlite = ["dep:rusqlite"]
+
+[lints]
+workspace = true

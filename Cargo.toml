@@ -1,0 +1,136 @@
+[workspace]
+resolver = "3"
+members = ["crates/*", "xtask"]
+default-members = ["crates/*"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.88"
+license = "WTFPL"
+repository = "https://github.com/jkendall327/hydrus-mine"
+
+[workspace.dependencies]
+# internal
+hydrus-core = { path = "crates/hydrus-core" }
+hydrus-legacy = { path = "crates/hydrus-legacy" }
+hydrus-parse = { path = "crates/hydrus-parse" }
+hydrus-store = { path = "crates/hydrus-store" }
+hydrus-net = { path = "crates/hydrus-net" }
+hydrus-download = { path = "crates/hydrus-download" }
+hydrus-media = { path = "crates/hydrus-media" }
+hydrus-import = { path = "crates/hydrus-import" }
+hydrus-search = { path = "crates/hydrus-search" }
+hydrus-duplicates = { path = "crates/hydrus-duplicates" }
+hydrus-api = { path = "crates/hydrus-api" }
+hydrus-testkit = { path = "crates/hydrus-testkit" }
+
+# external
+anyhow = "1"
+thiserror = "2"
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+hex = "0.4"
+regex = "1"
+fancy-regex = "0.19"
+once_cell = "1"
+parking_lot = "0.12"
+arc-swap = "1"
+crossbeam-channel = "0.5"
+rayon = "1"
+tokio = { version = "1", features = ["full"] }
+axum = { version = "0.8", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.7", features = ["cors", "trace", "compression-full", "set-header"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter", "fmt"] }
+rusqlite = { version = "0.40", features = ["bundled", "array", "functions", "blob", "backup", "limits"] }
+sha2 = "0.11"
+sha1 = "0.11"
+md-5 = "0.11"
+roaring = "0.11"
+clap = { version = "4", features = ["derive"] }
+trash = "5.2.9"
+tempfile = "3"
+proptest = "1"
+tar = "0.4"
+flate2 = "1"
+criterion = { version = "0.8", features = ["html_reports"] }
+rand = "0.10"
+toml = "1"
+bytes = "1"
+form_urlencoded = "1"
+percent-encoding = "2"
+http-body-util = "0.1"
+ciborium = "0.2"
+base64 = "0.22"
+unicode-normalization = "0.1"
+# the legacy `options` table is PyYAML output; we use the event parser only
+yaml-rust2 = { version = "0.13", default-features = false }
+# civil time in the user's time zone, for date searches
+jiff = "0.2"
+
+# media (hydrus-media)
+# libjpeg-turbo, built from source: Pillow decodes with libjpeg-turbo and pure
+# Rust decoders differ by +-4 per channel, which breaks pixel-hash parity.
+turbojpeg = { version = "1.5", default-features = false, features = ["cmake"] }
+# LittleCMS, vendored: Pillow normalises ICC-tagged images with LittleCMS.
+lcms2 = { version = "6", features = ["static"] }
+png = "0.18"
+weezl = "0.1"
+image-webp = "0.2"
+tiff = { version = "0.11", default-features = false, features = ["deflate", "lzw", "fax"] }
+qoi = "0.4"
+zip = { version = "8", default-features = false, features = ["deflate-flate2-zlib-rs"] }
+cfb = "0.15"
+plist = { version = "1", default-features = false }
+roxmltree = "0.21"
+lzma-rs = "0.3"
+hayro = "0.7"
+kurbo = "0.13"
+resvg = "0.48"
+lz4_flex = { version = "0.14", default-features = false, features = ["std", "safe-decode", "safe-encode"] }
+
+[workspace.lints.rust]
+unsafe_code = "deny"
+missing_debug_implementations = "warn"
+rust_2018_idioms = { level = "warn", priority = -1 }
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
+# pedantic lints we deliberately allow
+module_name_repetitions = "allow"
+must_use_candidate = "allow"
+missing_errors_doc = "allow"
+missing_panics_doc = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_possible_wrap = "allow"
+cast_precision_loss = "allow"
+similar_names = "allow"
+too_many_lines = "allow"
+doc_markdown = "allow"
+format_push_string = "allow"
+implicit_hasher = "allow"
+struct_excessive_bools = "allow"
+
+[profile.release]
+lto = "thin"
+codegen-units = 4
+debug = "line-tables-only"
+
+[profile.dev]
+# Full debug info makes target/ many gigabytes; line tables keep backtraces.
+debug = "line-tables-only"
+
+[profile.dev.package."*"]
+# Dependencies (image decoders, sqlite) are painfully slow unoptimised; tests
+# touch real images and databases, so optimise deps even in dev builds.
+opt-level = 2
+debug = false
+
+[profile.dev.package.hydrus-media]
+# Likewise our own pixel work: visual-duplicates tests filter 2048x2048
+# float images, which takes minutes unoptimised.
+opt-level = 2

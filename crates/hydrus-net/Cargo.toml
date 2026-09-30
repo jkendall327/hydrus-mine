@@ -1,0 +1,30 @@
+[package]
+name = "hydrus-net"
+description = "The downloader's HTTP engine: requests with the client's cookies, headers, referral URLs, retries and ranged downloads."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-store.workspace = true
+thiserror.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+parking_lot.workspace = true
+bytes.workspace = true
+percent-encoding.workspace = true
+reqwest = { version = "0.13", default-features = false, features = ["rustls", "gzip", "deflate", "brotli", "zstd", "stream", "http2", "socks"] }
+tokio-util = "0.7"
+futures-util = { version = "0.3", default-features = false }
+encoding_rs = "0.8"
+chardetng = "1"
+httpdate = "1"
+
+[dev-dependencies]
+axum.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

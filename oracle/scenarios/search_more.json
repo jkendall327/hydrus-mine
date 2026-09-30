@@ -1,0 +1,4812 @@
+{
+ "name": "search_more",
+ "description": "more file searches: every sort, more predicates, wildcards, domains and permissions",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "1"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "1"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "7"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "7"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "10"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "10"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "11"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "11"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "12"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "12"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "14"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "14"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "15"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "15"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "17"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "17"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "18"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "18"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "19"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "19"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "21"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "21"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "22"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "22"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "23"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "23"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "24"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "24"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "25"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "25"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "26"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "26"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "27"
+    ],
+    [
+     "file_sort_asc",
+     "true"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "27"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "2"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "2"
+    ],
+    [
+     "deleted_file_service_key",
+     "6c6f63616c2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "2"
+    ],
+    [
+     "file_service_keys",
+     "[\"a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270\", \"7472617368\"]"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:framerate < 30\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:framerate > 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num frames > 10\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of frames < 2\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has frames\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num urls > 2\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num urls = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has urls\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no urls\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num urls ~= 2\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has transparency\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no transparency\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has forced filetype\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no forced filetype\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has xmp\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no iptc\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has software/source metadata\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no human-readable metadata\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has width\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no height\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has words\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:width = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:height <= 200\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:width >= 1000\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:width ~= 640\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:height != 480\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:duration ~= 2 seconds\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filesize != 5 KB\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filesize > 0 B\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num pixels ~= 300 kilopixels\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num pixels = 307200 pixels\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num pixels != 307200 pixels\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:ratio ~= 4:3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:ratio is square\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:ratio is portrait\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:ratio is landscape\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:ratio = 4:3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype = image/png\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype = static gif\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype != image\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype = image project file\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype = archive, pdf\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:archived time > 2025-01-01\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:archived time < 2025-01-01\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:archived time ~= 2026-09-20\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:time imported < 100 years\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:time imported > 100 years\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:time imported ~= 2026-09-20\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:modified date > 2020-09-15\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:modified date < 2020-09-15\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:modified time ~= 2020-09-20\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:last viewed time > 2023-01-01\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:last viewed time < 3 years\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:hash = 42ecd2646b76835a34c6c2a5d453da0d md5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:hash != 663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:similar to a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf distance 20\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:similar to data 64958cfeb90fc586cff6a91f7a70b6c3a9e038e3908cc7f45668f4015e8478d1\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:similar to data 9c497069d66fb28c distance 4\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:file service is pending to my files\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:file service is not pending to my files\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:file service currently in my files\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:file service is not currently in trash\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:file service currently in no such service\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of character tags > 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of series tags = 1\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of unnamespaced tags ~= 3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of filename tags = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of tags < 3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of tags != 4\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of tags ~= 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of page tags > 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:views ~= 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:views < 3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:viewtime < 3 seconds\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:views in preview > 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:viewtime in media, preview ~= 10 seconds\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:views in client api = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num file relationships < 2 duplicates\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num file relationships ~= 1 alternates\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num file relationships > 1 potential duplicates\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num file relationships = 0 false positives\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:tag as number page ~= 10\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:tag as number page > 10\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:tag as number volume < 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:tag as number * > 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has domain donmai.us\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:does not have domain example.com\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has url matching regex \\\\d{4}$\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has url matching regex post/[0-4]$\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has note with name nope\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no note with name translation\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num notes ~= 2\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:num notes < 2\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for stars ~= 3/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for stars < 2/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for stars > 1/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for stars = 5/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for stars is like\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for favourites = 1/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:does not have a rating for stars\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for counter < 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for counter > 5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for counter = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has a rating for counter\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:does not have a rating for counter\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:rating for no such service > 1/5\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:all ratings rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:any ratings rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:all ratings not rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:any ratings not rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:all like/dislike ratings rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:any inc/dec ratings rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:only favourites rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:only favourites, stars rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:only stars not rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:only favourites (amongst favourites, stars) rated\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"my tags\\\", ignoring siblings/parents: \\\"samus\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"my tags\\\": \\\"samus\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"my tags\\\": \\\"series:metroid\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"downloader tags\\\": \\\"series:metroid\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"all known tags\\\", ignoring siblings/parents: \\\"character:samus aran\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag with status in deleted: \\\"blue eyes\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag with status in deleted, current: \\\"blue eyes\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:does not have tag in \\\"my tags\\\": \\\"safe\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tag in \\\"no such service\\\": \\\"safe\\\"\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"character:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"char*:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*s*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"blue *\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"b*e*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*:blue eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*:blue_eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"-*eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"-series:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"sa*e\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"series:the legend*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"\\u30ad\\u30e3\\u30e9*:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*:\\u521d\\u97f3*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"\\u00e9c*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"*:canonical\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\", \"-series:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"meta:*\", \"-meta:lowres\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"studio:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"studio:nintendo\", \"-character:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[[\"-safe\", \"smile\"]]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[[\"system:archive\", \"character:*\"], \"-smile\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[[\"blue eyes\", [\"smile\", \"explicit\"]]]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[[\"system:width > 1000\", \"system:has audio\", \"-safe\"], \"system:no duration\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\", \"system:limit = 4\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\", \"system:limit = 100\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:limit = 0\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    ],
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    ],
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    ],
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of tags > 3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+    ],
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:number of tags > 3\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "7472617368"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"filename:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "646f776e6c6f616465722074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "646f776e6c6f616465722074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "646f776e6c6f616465722074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"filename:*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_key",
+     "646f776e6c6f616465722074616773"
+    ],
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "unordered_lists"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"blue eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "include_current_tags",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:has tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "include_pending_tags",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"system:no tags\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "include_current_tags",
+     "false"
+    ],
+    [
+     "include_pending_tags",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"series:metroid\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_name",
+     "my tags"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "file_service_name",
+     "art"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "tag_service_name",
+     "no such service"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "file_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "99"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "deleted_file_service_keys",
+     "[\"6c6f63616c2066696c6573\", \"7472617368\"]"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "return_file_ids",
+     "false"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ],
+    [
+     "file_sort_asc",
+     "false"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"-\"]"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\", \"blue eyes\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\", \"system:inbox\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe*\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"-safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[[\"safe\", \"smile\"]]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"safe\", \"-smile\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/search_files",
+   "query": [
+    [
+     "tags",
+     "[\"blue eyes\", \"-safe\"]"
+    ],
+    [
+     "file_sort_type",
+     "20"
+    ],
+    [
+     "return_hashes",
+     "true"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  }
+ ]
+}

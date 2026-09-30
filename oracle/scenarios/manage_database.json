@@ -1,0 +1,278 @@
+{
+ "name": "manage_database",
+ "description": "database statistics (\"mr bones\")",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:inbox\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"safe\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:filetype is image\", \"system:width > 100\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "6c6f63616c2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "6c6f63616c2066696c6573"
+    ],
+    [
+     "tags",
+     "[\"system:archive\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "7472617368"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "616c6c206c6f63616c2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "616c6c206c6f63616c2066696c6573"
+    ],
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_keys",
+     "[\"6c6f63616c2066696c6573\", \"7472617368\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "deleted_file_service_key",
+     "6c6f63616c2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "deleted_file_service_key",
+     "6c6f63616c2066696c6573"
+    ],
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ],
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "tags",
+     "[\"safe\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "616c6c206b6e6f776e2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tag_service_key",
+     "6c6f63616c2074616773"
+    ],
+    [
+     "tags",
+     "[\"safe\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:everything\"]"
+    ]
+   ],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [],
+   "key": "none",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "not a list"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

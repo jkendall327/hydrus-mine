@@ -1,0 +1,292 @@
+{
+ "name": "manage_database_write",
+ "description": "database statistics after changes, and locking the database",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "hash_b": "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+      "relationship": 2,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/increment_file_viewtime",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "canvas_type": 0,
+    "views": 2,
+    "viewtime": 12.5
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/increment_file_viewtime",
+   "json": {
+    "hash": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "canvas_type": 1,
+    "views": 3,
+    "viewtime": 0.25
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/edit_times/increment_file_viewtime",
+   "json": {
+    "hash": "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "canvas_type": 0,
+    "views": 1,
+    "viewtime": 4
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/delete_files",
+   "json": {
+    "hashes": [
+     "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_files/archive_files",
+   "json": {
+    "hashes": [
+     "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+     "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "6c6f63616c2066696c6573"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "6c6f63616c2066696c6573"
+    ],
+    [
+     "tags",
+     "[\"system:filetype is jpeg\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_key",
+     "7472617368"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "file_service_keys",
+     "[\"6c6f63616c2066696c6573\", \"7472617368\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:archive\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/force_commit",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/force_commit",
+   "json": {},
+   "key": "restricted"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_off",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_on",
+   "json": {},
+   "key": "restricted"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_on",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/api_version",
+   "query": [],
+   "key": "none",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/verify_access_key",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_services",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_on",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/force_commit",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_off",
+   "json": {},
+   "key": "restricted"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_off",
+   "json": {},
+   "key": "none"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_off",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_database/lock_off",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/api_version",
+   "query": [],
+   "key": "none",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_database/mr_bones",
+   "query": [
+    [
+     "tags",
+     "[\"system:inbox\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

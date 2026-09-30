@@ -1,0 +1,520 @@
+{
+ "recorded_at_ms": 1790709771220,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "metadata": [
+     {
+      "blurhash": "UeIisF.Yr=w0+LtKWGjbLTm:RWXPV~xCnif}",
+      "detailed_known_urls": [
+       {
+        "can_parse": false,
+        "cannot_parse_reason": "unknown url class",
+        "match_name": "unknown url",
+        "normalised_url": "https://danbooru.donmai.us/posts/77",
+        "url_type": 5,
+        "url_type_string": "unknown url"
+       },
+       {
+        "can_parse": false,
+        "cannot_parse_reason": "unknown url class",
+        "match_name": "unknown url",
+        "normalised_url": "https://gelbooru.com/index.php?id=5&page=post&s=view",
+        "url_type": 5,
+        "url_type_string": "unknown url"
+       },
+       {
+        "can_parse": false,
+        "cannot_parse_reason": "unknown url class",
+        "match_name": "unknown url",
+        "normalised_url": "https://gelbooru.com/index.php?id=6&page=post&s=view",
+        "url_type": 5,
+        "url_type_string": "unknown url"
+       },
+       {
+        "can_parse": false,
+        "cannot_parse_reason": "unknown url class",
+        "match_name": "unknown url",
+        "normalised_url": "https://new.example.com/a",
+        "url_type": 5,
+        "url_type_string": "unknown url"
+       }
+      ],
+      "duration": null,
+      "ext": ".jpg",
+      "file_id": 17,
+      "file_services": {
+       "current": {
+        "616c6c206c6f63616c2066696c6573": {
+         "name": "hydrus local file storage",
+         "time_imported": 1790707135,
+         "type": 15,
+         "type_pretty": "virtual combined local file domain"
+        },
+        "616c6c206c6f63616c206d65646961": {
+         "name": "combined local file domains",
+         "time_imported": 1790707135,
+         "type": 21,
+         "type_pretty": "virtual combined local media domain"
+        },
+        "6c6f63616c2066696c6573": {
+         "name": "my files",
+         "time_imported": 1790707135,
+         "type": 2,
+         "type_pretty": "local file domain"
+        }
+       },
+       "deleted": {}
+      },
+      "file_viewing_statistics": [
+       {
+        "canvas_type": 0,
+        "canvas_type_pretty": "media viewer",
+        "last_viewed_timestamp": null,
+        "views": 0,
+        "viewtime": 0.0
+       },
+       {
+        "canvas_type": 1,
+        "canvas_type_pretty": "preview viewer",
+        "last_viewed_timestamp": null,
+        "views": 0,
+        "viewtime": 0.0
+       },
+       {
+        "canvas_type": 4,
+        "canvas_type_pretty": "client api viewer",
+        "last_viewed_timestamp": null,
+        "views": 0,
+        "viewtime": 0.0
+       }
+      ],
+      "filetype_enum": 1,
+      "filetype_forced": false,
+      "filetype_human": "jpeg",
+      "has_audio": false,
+      "has_exif": false,
+      "has_human_readable_embedded_metadata": false,
+      "has_icc_profile": false,
+      "has_iptc": false,
+      "has_software_source": false,
+      "has_transparency": false,
+      "has_xmp": false,
+      "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "height": 48,
+      "ipfs_multihashes": {},
+      "is_deleted": false,
+      "is_inbox": true,
+      "is_local": true,
+      "is_trashed": false,
+      "known_urls": [
+       "https://danbooru.donmai.us/posts/77",
+       "https://gelbooru.com/index.php?id=5&page=post&s=view",
+       "https://gelbooru.com/index.php?id=6&page=post&s=view",
+       "https://new.example.com/a"
+      ],
+      "mime": "image/jpeg",
+      "num_frames": null,
+      "num_words": null,
+      "pixel_hash": "cef682dfac77ee593e55b1cdb939fda265bc7d8d6922788c6a7f86addd74b754",
+      "ratings": {
+       "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": 5,
+       "6661766f757269746573": false,
+       "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": 0
+      },
+      "size": 1744,
+      "tags": {
+       "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
+        "display_tags": {},
+        "name": "second tags",
+        "storage_tags": {},
+        "type": 5,
+        "type_pretty": "local tag domain"
+       },
+       "616c6c206b6e6f776e2074616773": {
+        "display_tags": {
+         "0": [
+          "format:jpeg",
+          "meta:low resolution",
+          "page:3"
+         ]
+        },
+        "name": "all known tags",
+        "storage_tags": {
+         "0": [
+          "format:jpeg",
+          "meta:lowres",
+          "page:3"
+         ]
+        },
+        "type": 10,
+        "type_pretty": "virtual combined tag domain"
+       },
+       "646f776e6c6f616465722074616773": {
+        "display_tags": {},
+        "name": "downloader tags",
+        "storage_tags": {},
+        "type": 5,
+        "type_pretty": "local tag domain"
+       },
+       "6c6f63616c2074616773": {
+        "display_tags": {
+         "0": [
+          "format:jpeg",
+          "meta:low resolution",
+          "page:3"
+         ]
+        },
+        "name": "my tags",
+        "storage_tags": {
+         "0": [
+          "format:jpeg",
+          "meta:lowres",
+          "page:3"
+         ]
+        },
+        "type": 5,
+        "type_pretty": "local tag domain"
+       }
+      },
+      "thumbnail_height": 48,
+      "thumbnail_width": 64,
+      "time_modified": 1790706985,
+      "time_modified_details": {
+       "local": 1790706985
+      },
+      "width": 64
+     }
+    ],
+    "services": {
+     "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": {
+      "name": "second tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "616c6c206b6e6f776e2066696c6573": {
+      "name": "all known files",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     "616c6c206b6e6f776e2074616773": {
+      "name": "all known tags",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     "616c6c206c6f63616c2066696c6573": {
+      "name": "hydrus local file storage",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     "616c6c206c6f63616c206d65646961": {
+      "name": "combined local file domains",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     "646f776e6c6f616465722074616773": {
+      "name": "downloader tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "6661766f757269746573": {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     "6c6f63616c2066696c6573": {
+      "name": "my files",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "6c6f63616c2074616773": {
+      "name": "my tags",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     "7265706f7369746f72792075706461746573": {
+      "name": "repository updates",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     "7472617368": {
+      "name": "trash",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     },
+     "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": {
+      "name": "art",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     }
+    },
+    "services_v2": [
+     {
+      "name": "downloader tags",
+      "service_key": "646f776e6c6f616465722074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "my tags",
+      "service_key": "6c6f63616c2074616773",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "second tags",
+      "service_key": "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+      "type": 5,
+      "type_pretty": "local tag domain"
+     },
+     {
+      "name": "art",
+      "service_key": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "my files",
+      "service_key": "6c6f63616c2066696c6573",
+      "type": 2,
+      "type_pretty": "local file domain"
+     },
+     {
+      "name": "repository updates",
+      "service_key": "7265706f7369746f72792075706461746573",
+      "type": 20,
+      "type_pretty": "local update file domain"
+     },
+     {
+      "name": "hydrus local file storage",
+      "service_key": "616c6c206c6f63616c2066696c6573",
+      "type": 15,
+      "type_pretty": "virtual combined local file domain"
+     },
+     {
+      "name": "combined local file domains",
+      "service_key": "616c6c206c6f63616c206d65646961",
+      "type": 21,
+      "type_pretty": "virtual combined local media domain"
+     },
+     {
+      "name": "all known files",
+      "service_key": "616c6c206b6e6f776e2066696c6573",
+      "type": 11,
+      "type_pretty": "virtual combined file domain"
+     },
+     {
+      "name": "all known tags",
+      "service_key": "616c6c206b6e6f776e2074616773",
+      "type": 10,
+      "type_pretty": "virtual combined tag domain"
+     },
+     {
+      "colours": {
+       "dislike": {
+        "brush": "#C85078",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#F0F041",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "name": "favourites",
+      "service_key": "6661766f757269746573",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "fat star",
+      "type": 7,
+      "type_pretty": "local like/dislike rating service"
+     },
+     {
+      "allows_zero": true,
+      "colours": {
+       "dislike": {
+        "brush": "#FFFFFF",
+        "pen": "#000000"
+       },
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       },
+       "null": {
+        "brush": "#BFBFBF",
+        "pen": "#000000"
+       }
+      },
+      "max_stars": 5,
+      "min_stars": 0,
+      "name": "stars",
+      "service_key": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "star_shape": "circle",
+      "type": 6,
+      "type_pretty": "local numerical rating service"
+     },
+     {
+      "colours": {
+       "like": {
+        "brush": "#50C878",
+        "pen": "#000000"
+       },
+       "mixed": {
+        "brush": "#5F5F5F",
+        "pen": "#000000"
+       }
+      },
+      "name": "counter",
+      "service_key": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de",
+      "show_in_thumbnail": false,
+      "show_in_thumbnail_even_when_null": false,
+      "type": 22,
+      "type_pretty": "local inc/dec rating service"
+     },
+     {
+      "name": "trash",
+      "service_key": "7472617368",
+      "type": 14,
+      "type_pretty": "local trash file domain"
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://danbooru.donmai.us/posts/77",
+    "url_file_statuses": [
+     {
+      "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "note": "url recognised: Imported at 2026-09-29 18:38:55, which was 43 minutes 56 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://example.com/post/0",
+    "url_file_statuses": [
+     {
+      "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "note": "url recognised: Imported at 2026-09-29 18:38:54, which was 43 minutes 57 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "urls_write"
+}

@@ -1,0 +1,24 @@
+[package]
+name = "hydrus-import"
+description = "Importing files into a hydrus-rs store: analysis, storage, statuses."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-store.workspace = true
+hydrus-media.workspace = true
+rusqlite.workspace = true
+thiserror.workspace = true
+tracing.workspace = true
+tempfile.workspace = true
+trash.workspace = true
+
+[dev-dependencies]
+hydrus-testkit.workspace = true
+serde_json.workspace = true
+
+[lints]
+workspace = true

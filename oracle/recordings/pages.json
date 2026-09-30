@@ -1,0 +1,42 @@
+{
+ "recorded_at_ms": 1790789041941,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "pages": {
+     "is_media_page": false,
+     "name": "top page notebook",
+     "page_key": "20d0c4cae2d6f901a4fe6e46511bdea5fd8f93aac9620bc9098767e83cebeb5c",
+     "page_state": 0,
+     "page_type": 10,
+     "pages": [
+      {
+       "is_media_page": true,
+       "name": "files",
+       "page_key": "ea16b203d85cce9a17efdd7064645ccc1424162741ab0fae3a7063b6ddd6a179",
+       "page_state": 0,
+       "page_type": 6,
+       "selected": true
+      }
+     ],
+     "selected": true
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "media_viewers": [],
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "pages"
+}

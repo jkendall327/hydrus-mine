@@ -1,0 +1,463 @@
+{
+ "recorded_at_ms": 1790784082243,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 16,
+     "num_deleted": 5,
+     "num_inbox": 15,
+     "size_archive": 158717,
+     "size_deleted": 39154,
+     "size_inbox": 173021,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 0,
+     "num_deleted": 1,
+     "num_inbox": 15,
+     "size_archive": 0,
+     "size_deleted": 17508,
+     "size_inbox": 173021,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      12,
+      30.0,
+      3,
+      1.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 16,
+     "num_deleted": 5,
+     "num_inbox": 15,
+     "size_archive": 158717,
+     "size_deleted": 39154,
+     "size_inbox": 173021,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 8,
+     "num_deleted": 3,
+     "num_inbox": 7,
+     "size_archive": 83736,
+     "size_deleted": 21458,
+     "size_inbox": 68722,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      12,
+      30.0,
+      4,
+      2.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 13,
+     "num_deleted": 2,
+     "num_inbox": 9,
+     "size_archive": 122539,
+     "size_deleted": 3080,
+     "size_inbox": 127501,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      0,
+      0.0,
+      0,
+      0.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 16,
+     "num_deleted": 6,
+     "num_inbox": 14,
+     "size_archive": 158717,
+     "size_deleted": 39288,
+     "size_inbox": 172887,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 16,
+     "num_deleted": 1,
+     "num_inbox": 0,
+     "size_archive": 158717,
+     "size_deleted": 15270,
+     "size_inbox": 0,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      9,
+      22.5,
+      3,
+      1.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707137,
+     "num_archive": 4,
+     "num_deleted": 0,
+     "num_inbox": 4,
+     "size_archive": 40125,
+     "size_deleted": 0,
+     "size_inbox": 33036,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 1,
+     "num_inbox": 1,
+     "size_archive": 15270,
+     "size_inbox": 17508,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      0,
+      0.0,
+      0,
+      0.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 17,
+     "num_deleted": 3,
+     "num_inbox": 16,
+     "size_archive": 173987,
+     "size_deleted": 6376,
+     "size_inbox": 190529,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 17,
+     "num_deleted": 3,
+     "num_inbox": 16,
+     "size_archive": 173987,
+     "size_deleted": 6376,
+     "size_inbox": 190529,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      21,
+      52.5,
+      6,
+      3.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 17,
+     "num_inbox": 15,
+     "size_archive": 173987,
+     "size_inbox": 190395,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      19,
+      47.5,
+      5,
+      2.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 4,
+     "num_inbox": 2,
+     "size_archive": 21646,
+     "size_inbox": 17642,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      2,
+      5.0,
+      1,
+      0.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 4,
+     "num_inbox": 2,
+     "size_archive": 21646,
+     "size_inbox": 17642,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      2,
+      5.0,
+      1,
+      0.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, this DB Location Context has no single file table!",
+    "exception_type": "DataMissing",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 10,
+     "num_inbox": 8,
+     "size_archive": 87686,
+     "size_inbox": 86230,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      12,
+      30.0,
+      4,
+      2.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, search for all known tags over all known files is not supported!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 8,
+     "num_deleted": 3,
+     "num_inbox": 7,
+     "size_archive": 83736,
+     "size_deleted": 21458,
+     "size_inbox": 68722,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      12,
+      30.0,
+      4,
+      2.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage database",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "I was expecting to parse 'tags' as a json-encoded string, but it failed.",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  }
+ ],
+ "scenario": "manage_database"
+}

@@ -1,0 +1,37 @@
+[package]
+name = "hydrus-cli"
+description = "The hydrus-rs command line: import a hydrus install, run the Client API, maintenance."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[[bin]]
+name = "hydrus"
+path = "src/main.rs"
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-store.workspace = true
+hydrus-api.workspace = true
+hydrus-parse.workspace = true
+hydrus-download.workspace = true
+hydrus-duplicates.workspace = true
+hydrus-search.workspace = true
+hydrus-net.workspace = true
+hydrus-import.workspace = true
+hydrus-media.workspace = true
+anyhow.workspace = true
+clap.workspace = true
+tokio.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+hex.workspace = true
+rand.workspace = true
+
+[dev-dependencies]
+hydrus-testkit.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

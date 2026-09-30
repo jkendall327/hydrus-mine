@@ -1,0 +1,212 @@
+{
+ "recorded_at_ms": 1790784804607,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "session_key": "b949e6a780b492b8a1c867f8ced859300b6d48130ca96c266fcddac0a6aceddb",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "session_key": "4bd765ae4ac5bce1e9ae45e8fa4f9557d5019a4c5625982bc148504d7b6878ec",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boot_id": "27a5bdc4693e7a7317150ec5e30b0225f29f06d3191da0ac216d71c56cd1ab78",
+    "boot_time": 1790784801.892,
+    "currently_idle": false,
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boot_id": "27a5bdc4693e7a7317150ec5e30b0225f29f06d3191da0ac216d71c56cd1ab78",
+    "boot_time": 1790784801.892,
+    "currently_idle": false,
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The permission registration dialog is not open. Please open it under _services->review_ in the hydrus client.",
+    "exception_type": "ConflictException",
+    "hydrus_version": 688,
+    "status_code": 409,
+    "version": 95
+   },
+   "status": 409
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The permission registration dialog is not open. Please open it under _services->review_ in the hydrus client.",
+    "exception_type": "ConflictException",
+    "hydrus_version": 688,
+    "status_code": 409,
+    "version": 95
+   },
+   "status": 409
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Rating service \"stars\" does not use a SVG icon!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Rating service \"favourites\" does not use a SVG icon!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Rating service \"stars\" does not use a SVG icon!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This type of service cannot have a SVG associated with it!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This type of service cannot have a SVG associated with it!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, did not find a service with name \"my tags\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, did not find a service with name \"no such service\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, did not find a service with key \"ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Sorry, you need to give a service_key or service_name!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Rating service \"stars\" does not use a SVG icon!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  }
+ ],
+ "scenario": "access_more"
+}

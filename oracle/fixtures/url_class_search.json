@@ -1,0 +1,1916 @@
+{
+ "domain_manager": [
+  53,
+  7,
+  [
+   [
+    26,
+    3,
+    []
+   ],
+   [],
+   [
+    26,
+    3,
+    [
+     [
+      2,
+      [
+       50,
+       "Booru Post",
+       15,
+       [
+        "a49507df275c7f90819b989288e2063659c8a1bd32aad1d2a52a3ff296d0129c",
+        0,
+        "https",
+        [
+         139,
+         1,
+         [
+          [
+           "booru.example"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "post",
+            null,
+            null,
+            "post"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "123"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://booru.example/post/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "Image Host File",
+       15,
+       [
+        "a191fc72aeb5f7f61c6a55da712a0c546d3a708abf49bed45f23f3335b9ae547",
+        2,
+        "https",
+        [
+         139,
+         1,
+         [
+          [
+           "img.example"
+          ],
+          [],
+          true,
+          true
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://img.example/abc.jpg"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "Straße Thread",
+       15,
+       [
+        "fe97dfdfe91e26c9103a6dd5b45b38f2db21e906861cf0b7efebcd1da6961212",
+        4,
+        "https",
+        [
+         139,
+         1,
+         [
+          [
+           "strasse.example"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "thread",
+            null,
+            null,
+            "thread"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "123"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://strasse.example/thread/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "booru search",
+       15,
+       [
+        "b83230359f3c1e316625da0d03139bb6a7069c5236bb73acf14b8c07efe33d06",
+        3,
+        "https",
+        [
+         139,
+         1,
+         [
+          [
+           "booru.example"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "search",
+            null,
+            null,
+            "search"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "123"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://booru.example/search/tag/1"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "gallery php post",
+       15,
+       [
+        "7482f6c3bf93fd2729caea55bd3c544391b775fc9f2c782e9fedc450b9ee2974",
+        0,
+        "https",
+        [
+         139,
+         1,
+         [
+          [
+           "gal.example"
+          ],
+          [],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "index.php",
+            null,
+            null,
+            "index.php"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            127,
+            2,
+            [
+             "page",
+             [
+              51,
+              1,
+              [
+               0,
+               "post",
+               null,
+               null,
+               "post"
+              ]
+             ],
+             false,
+             null,
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            127,
+            2,
+            [
+             "s",
+             [
+              51,
+              1,
+              [
+               0,
+               "view",
+               null,
+               null,
+               "view"
+              ]
+             ],
+             false,
+             null,
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           2,
+           [
+            127,
+            2,
+            [
+             "id",
+             [
+              51,
+              1,
+              [
+               1,
+               2,
+               null,
+               null,
+               "123"
+              ]
+             ],
+             false,
+             null,
+             [
+              84,
+              1,
+              [
+               26,
+               3,
+               []
+              ]
+             ]
+            ]
+           ]
+          ]
+         ]
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://gal.example/index.php?id=1&page=post&s=view"
+       ]
+      ]
+     ],
+     [
+      2,
+      [
+       50,
+       "regex domain post",
+       15,
+       [
+        "873b54ee5b018c594744bf19c18f560eed4c3ceca7d6a14e0c5585231298eeaa",
+        0,
+        "https",
+        [
+         139,
+         1,
+         [
+          [],
+          [
+           "cdn\\d+\\.regex\\.example"
+          ],
+          false,
+          false
+         ]
+        ],
+        [
+         true,
+         false,
+         false,
+         true,
+         false,
+         true,
+         false
+        ],
+        [
+         [
+          [
+           51,
+           1,
+           [
+            0,
+            "p",
+            null,
+            null,
+            "p"
+           ]
+          ],
+          null
+         ],
+         [
+          [
+           51,
+           1,
+           [
+            1,
+            2,
+            null,
+            null,
+            "123"
+           ]
+          ],
+          null
+         ]
+        ],
+        [
+         26,
+         3,
+         []
+        ],
+        false,
+        [
+         51,
+         1,
+         [
+          3,
+          "",
+          null,
+          null,
+          "example string"
+         ]
+        ],
+        [],
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        0,
+        [
+         55,
+         2,
+         [
+          [],
+          "https://hostname.com/post/page.php?id=123456&s=view"
+         ]
+        ],
+        null,
+        null,
+        1,
+        "https://cdn1.regex.example/p/1"
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    "7482f6c3bf93fd2729caea55bd3c544391b775fc9f2c782e9fedc450b9ee2974",
+    "a49507df275c7f90819b989288e2063659c8a1bd32aad1d2a52a3ff296d0129c",
+    "873b54ee5b018c594744bf19c18f560eed4c3ceca7d6a14e0c5585231298eeaa"
+   ],
+   [
+    33,
+    1,
+    []
+   ],
+   [
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       [
+        [
+         "646f776e6c6f616465722074616773",
+         [
+          65,
+          4,
+          [
+           true,
+           [
+            44,
+            1,
+            []
+           ],
+           [],
+           true,
+           true,
+           true,
+           false,
+           [
+            44,
+            1,
+            []
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     6,
+     9,
+     [
+      false,
+      false,
+      [
+       150,
+       1,
+       [
+        [
+         44,
+         1,
+         []
+        ],
+        []
+       ]
+      ],
+      [
+       151,
+       1,
+       []
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    [
+     82,
+     2,
+     [
+      [
+       153,
+       1,
+       [
+        true,
+        true,
+        3,
+        [],
+        null,
+        []
+       ]
+      ],
+      false
+     ]
+    ],
+    []
+   ],
+   [
+    26,
+    3,
+    []
+   ],
+   [
+    [
+     [
+      47,
+      2,
+      [
+       0,
+       null
+      ]
+     ],
+     [
+      [
+       "User-Agent",
+       [
+        "Mozilla/5.0 (compatible; Hydrus Client)",
+        1,
+        "This is the default User-Agent identifier for the client for all network connections."
+       ]
+      ],
+      [
+       "Accept",
+       [
+        "image/jpeg,image/png,image/*;q=0.9,*/*;q=0.8",
+        1,
+        "Prefers jpeg/png over webp, but provides graceful fallback."
+       ]
+      ],
+      [
+       "Cache-Control",
+       [
+        "no-transform",
+        1,
+        "Tells CDNs not to deliver \"optimised\" versions of files. May not be honoured."
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "in_memory": [
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has url with class booru post"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class booru post"
+  },
+  {
+   "matching": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+   ],
+   "text": "system:has url with class booru search"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class booru search"
+  },
+  {
+   "matching": [
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has url with class image host file"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class image host file"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+   ],
+   "text": "system:has url with class gallery php post"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class gallery php post"
+  },
+  {
+   "matching": [
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+   ],
+   "text": "system:has url with class regex domain post"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class regex domain post"
+  },
+  {
+   "matching": [
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+   ],
+   "text": "system:has url with class straße thread"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have url with class straße thread"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has url with url class booru post"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has a url with class booru post"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has an url with class booru post"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:doesn't have url with class booru post"
+  },
+  {
+   "matching": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "text": "system:does not have a url with url class booru search"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has url with class Booru Post"
+  },
+  {
+   "matching": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "text": "system:has url with class BOORU POST"
+  },
+  {
+   "matching": [
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+   ],
+   "text": "system:has url with class strasse thread"
+  },
+  {
+   "error": "Could not parse system predicate \"system:has url with class nothing like this\"!",
+   "text": "system:has url with class nothing like this"
+  },
+  {
+   "error": "Could not parse system predicate \"system:does not have url with class nothing like this\"!",
+   "text": "system:does not have url with class nothing like this"
+  }
+ ],
+ "searches": [
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class booru search"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class booru search"
+   ]
+  },
+  {
+   "hashes": [
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class image host file"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class image host file"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class gallery php post"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class gallery php post"
+   ]
+  },
+  {
+   "hashes": [
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class regex domain post"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class regex domain post"
+   ]
+  },
+  {
+   "hashes": [
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class straße thread"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have url with class straße thread"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with url class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has a url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has an url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:doesn't have url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "status": 200,
+   "tags": [
+    "system:does not have a url with url class booru search"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class Booru Post"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class BOORU POST"
+   ]
+  },
+  {
+   "hashes": [
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class strasse thread"
+   ]
+  },
+  {
+   "error": "Could not parse system predicate \"system:has url with class nothing like this\"!",
+   "exception_type": "BadRequestException",
+   "status": 400,
+   "tags": [
+    "system:has url with class nothing like this"
+   ]
+  },
+  {
+   "error": "Could not parse system predicate \"system:does not have url with class nothing like this\"!",
+   "exception_type": "BadRequestException",
+   "status": 400,
+   "tags": [
+    "system:does not have url with class nothing like this"
+   ]
+  },
+  {
+   "hashes": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class booru post",
+    "system:has url with class booru search"
+   ]
+  },
+  {
+   "hashes": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with class booru post",
+    "system:does not have url with class booru search"
+   ]
+  },
+  {
+   "hashes": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "status": 200,
+   "tags": [
+    "system:inbox",
+    "system:has url with class booru post"
+   ]
+  },
+  {
+   "hashes": [
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "status": 200,
+   "tags": [
+    "system:filetype is image",
+    "system:has url with class image host file"
+   ]
+  },
+  {
+   "hashes": [
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+   ],
+   "status": 200,
+   "tags": [
+    "system:has url with domain booru.example",
+    "system:does not have url with class booru post"
+   ]
+  }
+ ],
+ "url_matches": {
+  "http://booru.example/post/1": {
+   "classified_as": "Booru Post",
+   "matches": [
+    "Booru Post"
+   ]
+  },
+  "https://booru.example/search/blue_sky/1": {
+   "classified_as": "booru search",
+   "matches": [
+    "booru search"
+   ]
+  },
+  "https://booru.example/search/tag/2": {
+   "classified_as": "booru search",
+   "matches": [
+    "booru search"
+   ]
+  },
+  "https://cdn.img.example/files/x.png": {
+   "classified_as": "Image Host File",
+   "matches": [
+    "Image Host File"
+   ]
+  },
+  "https://cdn12.regex.example/p/9": {
+   "classified_as": "regex domain post",
+   "matches": [
+    "regex domain post"
+   ]
+  },
+  "https://gal.example/index.php?id=5&page=post&s=view": {
+   "classified_as": "gallery php post",
+   "matches": [
+    "gallery php post"
+   ]
+  },
+  "https://gal.example/index.php?page=post&s=list": {
+   "classified_as": null,
+   "matches": []
+  },
+  "https://gal.example/index.php?page=post&s=view&id=abc": {
+   "classified_as": null,
+   "matches": []
+  },
+  "https://img.example/abc.jpg": {
+   "classified_as": "Image Host File",
+   "matches": [
+    "Image Host File"
+   ]
+  },
+  "https://other.example/post/1": {
+   "classified_as": null,
+   "matches": []
+  },
+  "https://regex.example/p/9": {
+   "classified_as": null,
+   "matches": []
+  },
+  "https://strasse.example/thread/4": {
+   "classified_as": "Straße Thread",
+   "matches": [
+    "Straße Thread"
+   ]
+  },
+  "https://sub.booru.example/post/3": {
+   "classified_as": null,
+   "matches": []
+  },
+  "https://www.booru.example/post/2": {
+   "classified_as": "Booru Post",
+   "matches": [
+    "Booru Post"
+   ]
+  },
+  "https://www2.booru.example/post/77": {
+   "classified_as": "Booru Post",
+   "matches": [
+    "Booru Post"
+   ]
+  }
+ },
+ "urls": {
+  "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b": [
+   "https://gal.example/index.php?id=5&page=post&s=view",
+   "https://gal.example/index.php?page=post&s=list"
+  ],
+  "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": [
+   "http://booru.example/post/1"
+  ],
+  "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": [
+   "https://sub.booru.example/post/3"
+  ],
+  "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61": [
+   "https://www.booru.example/post/2",
+   "https://booru.example/search/blue_sky/1"
+  ],
+  "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726": [
+   "https://gal.example/index.php?page=post&s=view&id=abc"
+  ],
+  "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": [
+   "https://cdn.img.example/files/x.png",
+   "https://other.example/post/1"
+  ],
+  "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": [
+   "https://booru.example/search/tag/2"
+  ],
+  "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3": [
+   "https://strasse.example/thread/4"
+  ],
+  "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce": [
+   "https://cdn12.regex.example/p/9",
+   "https://regex.example/p/9"
+  ],
+  "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8": [
+   "https://img.example/abc.jpg",
+   "https://www2.booru.example/post/77"
+  ]
+ }
+}

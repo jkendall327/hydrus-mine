@@ -1,0 +1,22 @@
+{
+ "name": "pages",
+ "description": "the session's pages",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_pages",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_media_viewers",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

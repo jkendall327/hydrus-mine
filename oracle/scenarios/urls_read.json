@@ -1,0 +1,168 @@
+{
+ "name": "urls_read",
+ "description": "url lookups and url classes",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://example.com/post/3"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "https://example.com/post/3"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://danbooru.donmai.us/posts/1003"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "https://danbooru.donmai.us/posts/1003"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "https://gelbooru.com/index.php?page=post&s=view&id=2000"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://gelbooru.com/index.php?id=2000&s=view&page=post"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "https://gelbooru.com/index.php?id=2000&s=view&page=post"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://unknown.example.org/whatever"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "https://unknown.example.org/whatever"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "not a url"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_info",
+   "query": [
+    [
+     "url",
+     "not a url"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/add_urls/get_url_files",
+   "query": [
+    [
+     "url",
+     "https://danbooru.donmai.us/posts/1003"
+    ],
+    [
+     "doublecheck_file_system",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

@@ -1,0 +1,191 @@
+{
+ "recorded_at_ms": 1790709766258,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://example.com/post/3",
+    "url_file_statuses": [
+     {
+      "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "note": "url recognised: Imported at 2026-09-29 18:38:54, which was 43 minutes 52 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "https://example.com/post/3",
+    "request_url": "https://example.com/post/3",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://danbooru.donmai.us/posts/1003",
+    "url_file_statuses": [
+     {
+      "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "note": "url recognised: Imported at 2026-09-29 18:38:54, which was 43 minutes 52 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "https://danbooru.donmai.us/posts/1003",
+    "request_url": "https://danbooru.donmai.us/posts/1003",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://gelbooru.com/index.php?page=post&s=view&id=2000",
+    "url_file_statuses": [
+     {
+      "hash": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "note": "url recognised: Imported at 2026-09-29 18:38:54, which was 43 minutes 52 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "https://gelbooru.com/index.php?page=post&s=view&id=2000",
+    "request_url": "https://gelbooru.com/index.php?page=post&s=view&id=2000",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://gelbooru.com/index.php?id=2000&s=view&page=post",
+    "url_file_statuses": [],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "https://gelbooru.com/index.php?id=2000&s=view&page=post",
+    "request_url": "https://gelbooru.com/index.php?id=2000&s=view&page=post",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://unknown.example.org/whatever",
+    "url_file_statuses": [],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "https://unknown.example.org/whatever",
+    "request_url": "https://unknown.example.org/whatever",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "not a url",
+    "url_file_statuses": [],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "can_parse": false,
+    "cannot_parse_reason": "unknown url class",
+    "hydrus_version": 688,
+    "match_name": "unknown url",
+    "normalised_url": "not a url",
+    "request_url": "not a url",
+    "url_type": 5,
+    "url_type_string": "unknown url",
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "normalised_url": "https://danbooru.donmai.us/posts/1003",
+    "url_file_statuses": [
+     {
+      "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "note": "url recognised: Imported at 2026-09-29 18:38:54, which was 43 minutes 52 seconds ago before this check.",
+      "status": 2
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "urls_read"
+}

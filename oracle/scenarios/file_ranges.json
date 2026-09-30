@@ -1,0 +1,400 @@
+{
+ "name": "file_ranges",
+ "description": "byte ranges of files",
+ "fixture": "basic",
+ "read_only": true,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ],
+    [
+     "download",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-99"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=100-"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=-100"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-0"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-1743"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-1744"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=10-6744"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=1744-"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=1754-"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=1754-1764"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=-1754"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=-0"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=10-5"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-9,20-29"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-9, 20-29"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "items=0-9"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=5"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=-"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=abc-def"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=1-2-3"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes= 5 - 9 "
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ],
+    [
+     "download",
+     "true"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-99"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/thumbnail",
+   "query": [
+    [
+     "hash",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "headers": {
+    "Range": "bytes=0-99"
+   }
+  }
+ ]
+}

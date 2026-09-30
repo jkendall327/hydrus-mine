@@ -1,0 +1,604 @@
+{
+ "recorded_at_ms": 1790788436787,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "api_data": {
+      "x": 1
+     },
+     "creation_time": 1790788436.8467786,
+     "had_error": false,
+     "is_cancellable": false,
+     "is_cancelled": false,
+     "is_done": true,
+     "is_pausable": false,
+     "is_paused": false,
+     "key": "b0b085174815f8cfc4a36021584f71a3d89d233bed889b6b1cb0b42f6446192e",
+     "nice_string": "a title\none",
+     "popup_gauge_1": [
+      1,
+      3
+     ],
+     "status_text_1": "one",
+     "status_title": "a title"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "creation_time": 1790788436.905353,
+     "had_error": false,
+     "is_cancellable": true,
+     "is_cancelled": false,
+     "is_done": false,
+     "is_pausable": true,
+     "is_paused": false,
+     "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+     "nice_string": "ongoing",
+     "status_title": "ongoing"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "attached_files_mergable": true,
+     "creation_time": 1790788436.963088,
+     "files": {
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+      ],
+      "label": "some files"
+     },
+     "had_error": false,
+     "is_cancellable": false,
+     "is_cancelled": false,
+     "is_done": true,
+     "is_pausable": false,
+     "is_paused": false,
+     "key": "d5b218457faebe1420d39f78daeb648765eef266fb1db619f12ea8d78814b69e",
+     "nice_string": ""
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "\"files_label\" is required to add files to a popup!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The parameter \"popup_gauge_1\" had an invalid number of items!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "creation_time": 1790788437.1273713,
+     "had_error": false,
+     "is_cancellable": false,
+     "is_cancelled": false,
+     "is_done": true,
+     "is_pausable": false,
+     "is_paused": false,
+     "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+     "nice_string": ""
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "sleep": 1.5,
+   "status": 0
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "api_data": {
+       "x": 1
+      },
+      "creation_time": 1790788436.8467786,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "b0b085174815f8cfc4a36021584f71a3d89d233bed889b6b1cb0b42f6446192e",
+      "nice_string": "a title\none",
+      "popup_gauge_1": [
+       1,
+       3
+      ],
+      "status_text_1": "one",
+      "status_title": "a title"
+     },
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": true,
+      "is_cancelled": false,
+      "is_done": false,
+      "is_pausable": true,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "ongoing",
+      "status_title": "ongoing"
+     },
+     {
+      "attached_files_mergable": true,
+      "creation_time": 1790788436.963088,
+      "files": {
+       "hashes": [
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+       ],
+       "label": "some files"
+      },
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "d5b218457faebe1420d39f78daeb648765eef266fb1db619f12ea8d78814b69e",
+      "nice_string": ""
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "creation_time": 1790788436.905353,
+     "had_error": false,
+     "is_cancellable": true,
+     "is_cancelled": false,
+     "is_done": false,
+     "is_pausable": true,
+     "is_paused": false,
+     "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+     "nice_string": "ongoing\nworking\nhard",
+     "popup_gauge_2": [
+      2,
+      5
+     ],
+     "status_text_1": "working",
+     "status_text_2": "hard",
+     "status_title": "ongoing"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_status": {
+     "creation_time": 1790788436.905353,
+     "had_error": false,
+     "is_cancellable": true,
+     "is_cancelled": false,
+     "is_done": false,
+     "is_pausable": true,
+     "is_paused": false,
+     "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+     "nice_string": "working",
+     "popup_gauge_2": [
+      2,
+      5
+     ],
+     "status_text_1": "working"
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This job key doesn't exist!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The required parameter \"job_status_key\" was missing!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This job doesn't have a user callable!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "sleep": 1.5,
+   "status": 0
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "api_data": {
+       "x": 1
+      },
+      "creation_time": 1790788436.8467786,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "b0b085174815f8cfc4a36021584f71a3d89d233bed889b6b1cb0b42f6446192e",
+      "nice_string": "a title\none",
+      "popup_gauge_1": [
+       1,
+       3
+      ],
+      "status_text_1": "one",
+      "status_title": "a title"
+     },
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": true,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "working",
+      "popup_gauge_2": [
+       2,
+       5
+      ],
+      "status_text_1": "working"
+     },
+     {
+      "attached_files_mergable": true,
+      "creation_time": 1790788436.963088,
+      "files": {
+       "hashes": [
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+       ],
+       "label": "some files"
+      },
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "d5b218457faebe1420d39f78daeb648765eef266fb1db619f12ea8d78814b69e",
+      "nice_string": ""
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "sleep": 1.5,
+   "status": 0
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": true,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "working",
+      "popup_gauge_2": [
+       2,
+       5
+      ],
+      "status_text_1": "working"
+     },
+     {
+      "attached_files_mergable": true,
+      "creation_time": 1790788436.963088,
+      "files": {
+       "hashes": [
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+       ],
+       "label": "some files"
+      },
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "d5b218457faebe1420d39f78daeb648765eef266fb1db619f12ea8d78814b69e",
+      "nice_string": ""
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": true,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "working",
+      "popup_gauge_2": [
+       2,
+       5
+      ],
+      "status_text_1": "working"
+     },
+     {
+      "attached_files_mergable": true,
+      "creation_time": 1790788436.963088,
+      "files": {
+       "hashes": [
+        "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+       ],
+       "label": "some files"
+      },
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "d5b218457faebe1420d39f78daeb648765eef266fb1db619f12ea8d78814b69e",
+      "nice_string": ""
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "sleep": 4,
+   "status": 0
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": true,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "working",
+      "popup_gauge_2": [
+       2,
+       5
+      ],
+      "status_text_1": "working"
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "job_statuses": [
+     {
+      "creation_time": 1790788436.905353,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": true,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "f4747973c0dc1272516a06071abecf84b4dcba196717a51160422a924145a14d",
+      "nice_string": "working",
+      "popup_gauge_2": [
+       2,
+       5
+      ],
+      "status_text_1": "working"
+     },
+     {
+      "creation_time": 1790788437.1273713,
+      "had_error": false,
+      "is_cancellable": false,
+      "is_cancelled": false,
+      "is_done": true,
+      "is_pausable": false,
+      "is_paused": false,
+      "key": "cf4e0cabeabfa2b0dcc138feb0681e57e69a56a0a4c7272c3e209e53b4e652ab",
+      "nice_string": ""
+     }
+    ],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage popups",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  }
+ ],
+ "scenario": "popups"
+}

@@ -1,0 +1,25 @@
+[package]
+name = "hydrus-legacy"
+description = "Read-only, typed access to reference (hydrus v688) client databases and serialised objects."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-parse.workspace = true
+hex.workspace = true
+rusqlite.workspace = true
+thiserror.workspace = true
+yaml-rust2.workspace = true
+
+[dev-dependencies]
+hydrus-testkit.workspace = true
+proptest.workspace = true
+serde_json.workspace = true
+sha2.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

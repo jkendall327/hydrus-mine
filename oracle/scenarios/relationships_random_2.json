@@ -1,0 +1,1257 @@
+{
+ "name": "relationships_random_2",
+ "description": "random relationship decisions",
+ "fixture": "basic",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 7,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_kings",
+   "json": {
+    "hash": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "relationship": 0,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/remove_potentials",
+   "json": {
+    "hashes": [
+     "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+     "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 2,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "relationship": 2,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/remove_potentials",
+   "json": {
+    "hashes": [
+     "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+     "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 0,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 4,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/remove_potentials",
+   "json": {
+    "hashes": [
+     "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+     "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 7,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/remove_potentials",
+   "json": {
+    "hashes": [
+     "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+     "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 2,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 0,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 0,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 0,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 2,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "relationship": 4,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_kings",
+   "json": {
+    "hash": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 7,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 1,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 1,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_kings",
+   "json": {
+    "hash": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "hash_b": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "relationship": 3,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "hash_b": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 7,
+      "do_default_content_merge": false
+     },
+     {
+      "hash_a": "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "hash_b": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "relationship": 0,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_file_relationships",
+   "json": {
+    "relationships": [
+     {
+      "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "hash_b": "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "relationship": 3,
+      "do_default_content_merge": false
+     }
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_file_relationships/set_kings",
+   "json": {
+    "hash": "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_file_relationships",
+   "query": [
+    [
+     "hashes",
+     "[\"9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3\", \"f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8\", \"4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189\", \"39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\", \"12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c\", \"ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457\", \"d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68\", \"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_file_relationships/get_potentials_count",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

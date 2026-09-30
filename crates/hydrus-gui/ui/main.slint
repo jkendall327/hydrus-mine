@@ -1,0 +1,257 @@
+// The main window: for now one search page, laid out as the reference's
+// (a sidebar with the search, and the thumbnail grid), and a status bar.
+
+import { ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+
+export { MediaViewerWindow } from "viewer.slint";
+
+export struct Thumbnail {
+    image: image,
+    selected: bool,
+}
+
+component Predicate inherits Rectangle {
+    in property <string> text;
+    callback remove();
+    height: 22px;
+    background: touch.has-hover ? #e8e8e8 : transparent;
+    Text {
+        x: 4px;
+        text: root.text;
+        vertical-alignment: center;
+        overflow: elide;
+        width: parent.width - 8px;
+    }
+    touch := TouchArea {
+        // as in the reference, double-clicking a predicate removes it
+        double-clicked => { root.remove(); }
+    }
+}
+
+// one notebook's tabs
+export struct TabRow {
+    names: [string],
+    selected: int,
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> selected;
+    callback chosen();
+    height: 26px;
+    width: label.preferred-width + 20px;
+    background: root.selected ? #ffffff : touch.has-hover ? #e8e8e8 : #dcdcdc;
+    border-width: 1px;
+    border-color: #c0c0c0;
+    label := Text {
+        text: root.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+        font-weight: root.selected ? 600 : 400;
+    }
+    touch := TouchArea {
+        clicked => { root.chosen(); }
+    }
+}
+
+export struct ThumbnailRow {
+    // the index of the row's first file
+    first: int,
+    thumbnails: [Thumbnail],
+}
+
+// A list of rows of thumbnails, so only the rows in view are made.
+component ThumbnailGrid inherits ListView {
+    in property <[ThumbnailRow]> rows;
+    in property <length> thumbnail-size: 150px;
+    in property <length> gap: 4px;
+    out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
+    callback clicked(int);
+    callback activated(int);
+    for row in root.rows: HorizontalLayout {
+        padding-left: root.gap;
+        padding-top: root.gap;
+        spacing: root.gap;
+        alignment: start;
+        height: root.thumbnail-size + root.gap;
+        for thumbnail[column] in row.thumbnails: Rectangle {
+            width: root.thumbnail-size;
+            height: root.thumbnail-size;
+            border-width: thumbnail.selected ? 2px : 1px;
+            border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
+            background: #ffffff;
+            Image {
+                x: 2px;
+                y: 2px;
+                width: parent.width - 4px;
+                height: parent.height - 4px;
+                source: thumbnail.image;
+                image-fit: contain;
+            }
+            TouchArea {
+                clicked => { root.clicked(row.first + column); }
+                // as in the reference, double-clicking a thumbnail opens the viewer
+                double-clicked => { root.activated(row.first + column); }
+            }
+        }
+    }
+}
+
+export component MainWindow inherits Window {
+    title: "hydrus-rs";
+    preferred-width: 1100px;
+    preferred-height: 700px;
+    background: #f4f4f4;
+
+    // the tabs of each notebook on the way to the page shown
+    in property <[TabRow]> tab-rows;
+    // why the page shown has no search, if it hasn't
+    in property <string> note;
+    in property <[string]> sort-names;
+    in property <int> sort-index;
+    in property <[string]> order-names;
+    in property <int> order-index;
+    in property <[string]> predicates;
+    in property <[string]> suggestions;
+    in property <int> highlighted: -1;
+    in property <[ThumbnailRow]> thumbnail-rows;
+    in property <string> status;
+    in property <string> error;
+    in-out property <string> search-text;
+
+    // a notebook's (level's) tab was chosen
+    callback tab-chosen(int, int);
+    callback sort-chosen(int);
+    callback order-chosen(int);
+    callback search-edited(string);
+    callback search-accepted();
+    callback move-highlight(int);
+    callback suggestion-chosen(int);
+    callback remove-predicate(int);
+    callback thumbnail-clicked(int);
+    callback thumbnail-activated(int);
+    callback columns-changed(int);
+    // how many thumbnails fit across the grid
+    out property <int> grid-columns: grid.columns;
+    changed grid-columns => { root.columns-changed(self.grid-columns); }
+
+    VerticalLayout {
+        for row[level] in root.tab-rows: HorizontalLayout {
+            padding-left: 4px;
+            padding-top: 2px;
+            spacing: 2px;
+            alignment: start;
+            for name[index] in row.names: Tab {
+                text: name;
+                selected: index == row.selected;
+                chosen => { root.tab-chosen(level, index); }
+            }
+        }
+        HorizontalLayout {
+            if root.note != "": VerticalBox {
+                width: 300px;
+                alignment: start;
+                Text {
+                    text: root.note;
+                    wrap: word-wrap;
+                }
+            }
+            if root.note == "": VerticalBox {
+                width: 300px;
+                // the sort control, as at the top of the reference's sidebar
+                HorizontalLayout {
+                    spacing: 4px;
+                    ComboBox {
+                        model: root.sort-names;
+                        current-index: root.sort-index;
+                        selected => { root.sort-chosen(self.current-index); }
+                    }
+                    ComboBox {
+                        width: 130px;
+                        model: root.order-names;
+                        current-index: root.order-index;
+                        selected => { root.order-chosen(self.current-index); }
+                    }
+                }
+                FocusScope {
+                    height: search.preferred-height;
+                    // up and down move through the suggestions, as in the reference
+                    capture-key-pressed(event) => {
+                        if (event.text == Key.UpArrow) {
+                            root.move-highlight(-1);
+                            return accept;
+                        }
+                        if (event.text == Key.DownArrow) {
+                            root.move-highlight(1);
+                            return accept;
+                        }
+                        reject
+                    }
+                    search := LineEdit {
+                        width: 100%;
+                        placeholder-text: "search";
+                        text <=> root.search-text;
+                        edited(text) => { root.search-edited(text); }
+                        accepted(text) => { root.search-accepted(); }
+                    }
+                }
+                if root.suggestions.length > 0: Rectangle {
+                    border-width: 1px;
+                    border-color: #c8c8c8;
+                    background: #ffffff;
+                    height: min(root.suggestions.length, 12) * 22px + 4px;
+                    VerticalLayout {
+                        padding: 2px;
+                        alignment: start;
+                        for suggestion[i] in root.suggestions: Rectangle {
+                            height: 22px;
+                            background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
+                            Text {
+                                x: 4px;
+                                text: suggestion;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                width: parent.width - 8px;
+                            }
+                            pick := TouchArea {
+                                clicked => { root.suggestion-chosen(i); }
+                            }
+                        }
+                    }
+                }
+                if root.error != "": Text {
+                    text: root.error;
+                    color: #b00020;
+                    wrap: word-wrap;
+                }
+                Rectangle {
+                    border-width: 1px;
+                    border-color: #c8c8c8;
+                    background: #ffffff;
+                    VerticalLayout {
+                        padding: 2px;
+                        alignment: start;
+                        for predicate[i] in root.predicates: Predicate {
+                            text: predicate;
+                            remove => { root.remove-predicate(i); }
+                        }
+                    }
+                }
+            }
+            grid := ThumbnailGrid {
+                rows: root.thumbnail-rows;
+                clicked(i) => { root.thumbnail-clicked(i); }
+                activated(i) => { root.thumbnail-activated(i); }
+            }
+        }
+        Rectangle {
+            height: 24px;
+            background: #e6e6e6;
+            Text {
+                x: 6px;
+                text: root.status;
+                vertical-alignment: center;
+            }
+        }
+    }
+}

@@ -1,0 +1,190 @@
+{
+ "name": "manage_services",
+ "description": "pending counts, forgetting pending content, committing",
+ "fixture": "repositories",
+ "read_only": false,
+ "steps": [
+  {
+   "method": "GET",
+   "path": "/manage_services/get_pending_counts",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_services/get_pending_counts",
+   "query": [],
+   "key": "restricted",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\", \"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+    ],
+    "service_keys_to_actions_to_tags": {
+     "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": {
+      "2": [
+       "another pended tag"
+      ]
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/add_tags/add_tags",
+   "json": {
+    "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "service_keys_to_actions_to_tags": {
+     "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67": {
+      "3": [
+       "pended tag"
+      ]
+     }
+    }
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_services/get_pending_counts",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {
+    "service_key": "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_services/get_pending_counts",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\", \"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {
+    "service_key": "f11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11ef11e"
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_services/get_pending_counts",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/get_files/file_metadata",
+   "query": [
+    [
+     "hashes",
+     "[\"663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea\", \"92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5\", \"a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf\"]"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {
+    "service_key": "6c6f63616c2074616773"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {
+    "service_key": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/forget_pending",
+   "json": {
+    "service_key": "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+   },
+   "key": "restricted"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/commit_pending",
+   "json": {
+    "service_key": "6c6f63616c2074616773"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/commit_pending",
+   "json": {
+    "service_key": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_services/commit_pending",
+   "json": {
+    "service_key": "7a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67a67"
+   },
+   "key": "restricted"
+  },
+  {
+   "method": "GET",
+   "path": "/get_services",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  }
+ ]
+}

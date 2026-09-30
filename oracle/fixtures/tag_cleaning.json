@@ -1,0 +1,4331 @@
+[
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "blue eyes",
+"clean": "blue eyes",
+"ok": true,
+"split": [
+"",
+"blue eyes"
+]
+},
+{
+"input": "Blue Eyes",
+"clean": "blue eyes",
+"ok": true,
+"split": [
+"",
+"blue eyes"
+]
+},
+{
+"input": "  blue   eyes  ",
+"clean": "blue eyes",
+"ok": true,
+"split": [
+"",
+"blue eyes"
+]
+},
+{
+"input": "blue_eyes",
+"clean": "blue_eyes",
+"ok": true,
+"split": [
+"",
+"blue_eyes"
+]
+},
+{
+"input": "character:samus aran",
+"clean": "character:samus aran",
+"ok": true,
+"split": [
+"character",
+"samus aran"
+]
+},
+{
+"input": "Character:Samus Aran",
+"clean": "character:samus aran",
+"ok": true,
+"split": [
+"character",
+"samus aran"
+]
+},
+{
+"input": "character : samus aran",
+"clean": "character:samus aran",
+"ok": true,
+"split": [
+"character",
+"samus aran"
+]
+},
+{
+"input": ":D",
+"clean": "::d",
+"ok": true,
+"split": [
+"",
+":d"
+]
+},
+{
+"input": "::D",
+"clean": "::d",
+"ok": true,
+"split": [
+"",
+":d"
+]
+},
+{
+"input": ":weird:stuff",
+"clean": ":weird:stuff",
+"ok": true,
+"split": [
+"",
+"weird:stuff"
+]
+},
+{
+"input": ":",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "::",
+"clean": "::",
+"ok": true,
+"split": [
+"",
+":"
+]
+},
+{
+"input": ":::",
+"clean": ":::",
+"ok": true,
+"split": [
+"",
+"::"
+]
+},
+{
+"input": "a:b:c",
+"clean": "a:b:c",
+"ok": true,
+"split": [
+"a",
+"b:c"
+]
+},
+{
+"input": "series:",
+"clean": "series:",
+"ok": false,
+"split": [
+"series",
+""
+]
+},
+{
+"input": ":samus",
+"clean": "::samus",
+"ok": true,
+"split": [
+"",
+":samus"
+]
+},
+{
+"input": "system:inbox",
+"clean": "inbox",
+"ok": true,
+"split": [
+"",
+"inbox"
+]
+},
+{
+"input": "system:system:tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "-tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "--tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "-system:tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "system:-tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "creator:-tag",
+"clean": "creator:tag",
+"ok": true,
+"split": [
+"creator",
+"tag"
+]
+},
+{
+"input": "- tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "\ttab\ttag\n",
+"clean": "tabtag",
+"ok": true,
+"split": [
+"",
+"tabtag"
+]
+},
+{
+"input": "new\nline",
+"clean": "newline",
+"ok": true,
+"split": [
+"",
+"newline"
+]
+},
+{
+"input": "bom\ufefftag",
+"clean": "bomtag",
+"ok": true,
+"split": [
+"",
+"bomtag"
+]
+},
+{
+"input": "\ufeffstart",
+"clean": "start",
+"ok": true,
+"split": [
+"",
+"start"
+]
+},
+{
+"input": "zero\u200bwidth",
+"clean": "zerowidth",
+"ok": true,
+"split": [
+"",
+"zerowidth"
+]
+},
+{
+"input": "blue_eyes\u200c",
+"clean": "blue_eyes",
+"ok": true,
+"split": [
+"",
+"blue_eyes"
+]
+},
+{
+"input": "\u200c\u200d",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u3164hangul filler",
+"clean": "hangul filler",
+"ok": true,
+"split": [
+"",
+"hangul filler"
+]
+},
+{
+"input": "\ud55c\uad6d\uc5b4\u3164\ud0dc\uadf8",
+"clean": "\ud55c\uad6d\uc5b4\u3164\ud0dc\uadf8",
+"ok": true,
+"split": [
+"",
+"\ud55c\uad6d\uc5b4\u3164\ud0dc\uadf8"
+]
+},
+{
+"input": "\u00c9COLE",
+"clean": "\u00e9cole",
+"ok": true,
+"split": [
+"",
+"\u00e9cole"
+]
+},
+{
+"input": "stra\u00dfe",
+"clean": "stra\u00dfe",
+"ok": true,
+"split": [
+"",
+"stra\u00dfe"
+]
+},
+{
+"input": "\u03a3\u038a\u03a3\u03a5\u03a6\u039f\u03a3",
+"clean": "\u03c3\u03af\u03c3\u03c5\u03c6\u03bf\u03c2",
+"ok": true,
+"split": [
+"",
+"\u03c3\u03af\u03c3\u03c5\u03c6\u03bf\u03c2"
+]
+},
+{
+"input": "\u0130stanbul",
+"clean": "i\u0307stanbul",
+"ok": true,
+"split": [
+"",
+"i\u0307stanbul"
+]
+},
+{
+"input": "\u01c5",
+"clean": "\u01c6",
+"ok": true,
+"split": [
+"",
+"\u01c6"
+]
+},
+{
+"input": "emoji \ud83c\udf89 tag",
+"clean": "emoji \ud83c\udf89 tag",
+"ok": true,
+"split": [
+"",
+"emoji \ud83c\udf89 tag"
+]
+},
+{
+"input": "nbsp\u00a0tag",
+"clean": "nbsp tag",
+"ok": true,
+"split": [
+"",
+"nbsp tag"
+]
+},
+{
+"input": "ideographic\u3000space",
+"clean": "ideographic space",
+"ok": true,
+"split": [
+"",
+"ideographic space"
+]
+},
+{
+"input": "em\u2003space",
+"clean": "em space",
+"ok": true,
+"split": [
+"",
+"em space"
+]
+},
+{
+"input": "control\u0007char",
+"clean": "controlchar",
+"ok": true,
+"split": [
+"",
+"controlchar"
+]
+},
+{
+"input": "del\u007fchar",
+"clean": "delchar",
+"ok": true,
+"split": [
+"",
+"delchar"
+]
+},
+{
+"input": "rtl\u202etext",
+"clean": "rtltext",
+"ok": true,
+"split": [
+"",
+"rtltext"
+]
+},
+{
+"input": "private\ue000use",
+"clean": "privateuse",
+"ok": true,
+"split": [
+"",
+"privateuse"
+]
+},
+{
+"input": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"clean": "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+"ok": true,
+"split": [
+"",
+"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+]
+},
+{
+"input": "ns:yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+"clean": "ns:yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy",
+"ok": true,
+"split": [
+"ns",
+"yyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyyy"
+]
+},
+{
+"input": "  :  ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " : tag",
+"clean": "tag",
+"ok": true,
+"split": [
+"",
+"tag"
+]
+},
+{
+"input": "namespace:  ",
+"clean": "namespace:",
+"ok": false,
+"split": [
+"namespace",
+""
+]
+},
+{
+"input": "a: :b",
+"clean": "a::b",
+"ok": true,
+"split": [
+"a",
+":b"
+]
+},
+{
+"input": "weird:\u200b",
+"clean": "weird:",
+"ok": false,
+"split": [
+"weird",
+""
+]
+},
+{
+"input": "title:hello: world",
+"clean": "title:hello: world",
+"ok": true,
+"split": [
+"title",
+"hello: world"
+]
+},
+{
+"input": "\u0085nel",
+"clean": "nel",
+"ok": true,
+"split": [
+"",
+"nel"
+]
+},
+{
+"input": "\ufb01 ligature",
+"clean": "\ufb01 ligature",
+"ok": true,
+"split": [
+"",
+"\ufb01 ligature"
+]
+},
+{
+"input": "\u216b roman",
+"clean": "\u217b roman",
+"ok": true,
+"split": [
+"",
+"\u217b roman"
+]
+},
+{
+"input": "\uff26\uff35\uff2c\uff2c\uff37\uff29\uff24\uff34\uff28",
+"clean": "\uff46\uff55\uff4c\uff4c\uff57\uff49\uff44\uff54\uff48",
+"ok": true,
+"split": [
+"",
+"\uff46\uff55\uff4c\uff4c\uff57\uff49\uff44\uff54\uff48"
+]
+},
+{
+"input": "1",
+"clean": "1",
+"ok": true,
+"split": [
+"",
+"1"
+]
+},
+{
+"input": "001",
+"clean": "001",
+"ok": true,
+"split": [
+"",
+"001"
+]
+},
+{
+"input": ":1",
+"clean": "::1",
+"ok": true,
+"split": [
+"",
+":1"
+]
+},
+{
+"input": "rating:5/5",
+"clean": "rating:5/5",
+"ok": true,
+"split": [
+"rating",
+"5/5"
+]
+},
+{
+"input": "ns:sub:sub2",
+"clean": "ns:sub:sub2",
+"ok": true,
+"split": [
+"ns",
+"sub:sub2"
+]
+},
+{
+"input": "system",
+"clean": "system",
+"ok": true,
+"split": [
+"",
+"system"
+]
+},
+{
+"input": "SYSTEM:everything",
+"clean": "everything",
+"ok": true,
+"split": [
+"",
+"everything"
+]
+},
+{
+"input": "meta:-",
+"clean": "meta:",
+"ok": false,
+"split": [
+"meta",
+""
+]
+},
+{
+"input": "-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "--",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u0000null",
+"clean": "null",
+"ok": true,
+"split": [
+"",
+"null"
+]
+},
+{
+"input": "tag\u2066isolate\u2069",
+"clean": "tagisolate",
+"ok": true,
+"split": [
+"",
+"tagisolate"
+]
+},
+{
+"input": "a\u200d",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": "\u200db",
+"clean": "b",
+"ok": true,
+"split": [
+"",
+"b"
+]
+},
+{
+"input": "caf\u00e9\u200c",
+"clean": "caf\u00e9",
+"ok": true,
+"split": [
+"",
+"caf\u00e9"
+]
+},
+{
+"input": "multi  :  colon : parts",
+"clean": "multi:colon : parts",
+"ok": true,
+"split": [
+"multi",
+"colon : parts"
+]
+},
+{
+"input": " leading space",
+"clean": "leading space",
+"ok": true,
+"split": [
+"",
+"leading space"
+]
+},
+{
+"input": "trailing space ",
+"clean": "trailing space",
+"ok": true,
+"split": [
+"",
+"trailing space"
+]
+},
+{
+"input": "MiXeD:CaSe:TaG",
+"clean": "mixed:case:tag",
+"ok": true,
+"split": [
+"mixed",
+"case:tag"
+]
+},
+{
+"input": "\u200b\u3164\u00df\n\ud55c-\u200b\t a\ufeff:",
+"clean": "\u3164\u00df\ud55c- a:",
+"ok": false,
+"split": [
+"\u3164\u00df\ud55c- a",
+""
+]
+},
+{
+"input": "\u00a0\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": "\u200c\u00a0\ufeff\u00c9system:\u3164\u200b",
+"clean": "\u00e9system:",
+"ok": false,
+"split": [
+"\u00e9system",
+""
+]
+},
+{
+"input": "_ \u00a0\ud55csystem:\ta\ud55c\t\t\u03a3\u00c9",
+"clean": "_ \ud55csystem:a\ud55c\u03c3\u00e9",
+"ok": true,
+"split": [
+"_ \ud55csystem",
+"a\ud55c\u03c3\u00e9"
+]
+},
+{
+"input": "\u00df_",
+"clean": "\u00df_",
+"ok": true,
+"split": [
+"",
+"\u00df_"
+]
+},
+{
+"input": "\ufeff\u00c9\ud55c\u00df-\u00dfa\u00a0\ufeff\u200b",
+"clean": "\u00e9\ud55c\u00df-\u00dfa",
+"ok": true,
+"split": [
+"",
+"\u00e9\ud55c\u00df-\u00dfa"
+]
+},
+{
+"input": "system:\u3164\ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9-\u200b",
+"clean": "\u00e9-",
+"ok": true,
+"split": [
+"",
+"\u00e9-"
+]
+},
+{
+"input": " \u3164\n\n__\u00c9\u03a3\u03a3\u3164",
+"clean": "__\u00e9\u03c3\u03c2",
+"ok": true,
+"split": [
+"",
+"__\u00e9\u03c3\u03c2"
+]
+},
+{
+"input": "\u3164\u00df:system::aab\t-a",
+"clean": "\u00df::aab-a",
+"ok": true,
+"split": [
+"\u00df",
+":aab-a"
+]
+},
+{
+"input": "\u03a3 \ufeff\u00a0\u03a3",
+"clean": "\u03c3 \u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3 \u03c3"
+]
+},
+{
+"input": " \u00a0",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9\nb\u00c9\u00c9system:-\ufeff\n",
+"clean": "\u00e9b\u00e9\u00e9system:",
+"ok": false,
+"split": [
+"\u00e9b\u00e9\u00e9system",
+""
+]
+},
+{
+"input": "-:\u03a3a\u03a3 :\u3164\ufeff",
+"clean": ":\u03c3a\u03c2 :",
+"ok": true,
+"split": [
+"",
+"\u03c3a\u03c2 :"
+]
+},
+{
+"input": " \u03a3\n\ud55c_\u200c\n:\u00c9\u00a0",
+"clean": "\u03c3\ud55c_\u200c:\u00e9",
+"ok": true,
+"split": [
+"\u03c3\ud55c_\u200c",
+"\u00e9"
+]
+},
+{
+"input": "\n\u00df\u200c\u03a3\u03a3\u200b",
+"clean": "\u00df\u200c\u03c3\u03c2",
+"ok": true,
+"split": [
+"",
+"\u00df\u200c\u03c3\u03c2"
+]
+},
+{
+"input": "_\ud55c",
+"clean": "_\ud55c",
+"ok": true,
+"split": [
+"",
+"_\ud55c"
+]
+},
+{
+"input": "\t\u03a3system:\u3164:",
+"clean": "\u03c3system::",
+"ok": true,
+"split": [
+"\u03c3system",
+":"
+]
+},
+{
+"input": "\u200c\u3164\u200bsystem:",
+"clean": "system:",
+"ok": false,
+"split": [
+"system",
+""
+]
+},
+{
+"input": ":\u00df\ufeff",
+"clean": "::\u00df",
+"ok": true,
+"split": [
+"",
+":\u00df"
+]
+},
+{
+"input": "\u200c\u3164\u200b\ufeff\n\u200c\u200b\u200b\ud55c\u03a3_",
+"clean": "\u200c\u3164\u200c\ud55c\u03c3_",
+"ok": true,
+"split": [
+"",
+"\u200c\u3164\u200c\ud55c\u03c3_"
+]
+},
+{
+"input": "\ufeff\t\ufeffsystem:system: ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0\u200c\ufeff :\ufeff\u00c9\u200b\u03a3\u200c",
+"clean": "\u00e9\u03c2\u200c",
+"ok": true,
+"split": [
+"",
+"\u00e9\u03c2\u200c"
+]
+},
+{
+"input": "b\u03a3_\n\u00df",
+"clean": "b\u03c2_\u00df",
+"ok": true,
+"split": [
+"",
+"b\u03c2_\u00df"
+]
+},
+{
+"input": "\u00dfb\u03a3a\u00c9",
+"clean": "\u00dfb\u03c3a\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00dfb\u03c3a\u00e9"
+]
+},
+{
+"input": "\n\u200b\u00a0\u3164b\u00a0",
+"clean": "b",
+"ok": true,
+"split": [
+"",
+"b"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeffb_ \n-\u00df\u00dfb",
+"clean": "b_ -\u00df\u00dfb",
+"ok": true,
+"split": [
+"",
+"b_ -\u00df\u00dfb"
+]
+},
+{
+"input": "\u200c\ufeff\u3164 a- \ufeff\u03a3\tb",
+"clean": "\u200c a- \u03c3b",
+"ok": true,
+"split": [
+"",
+"\u200c a- \u03c3b"
+]
+},
+{
+"input": "ab  \u00c9system:\ud55c:\u00df",
+"clean": "ab \u00e9system:\ud55c:\u00df",
+"ok": true,
+"split": [
+"ab \u00e9system",
+"\ud55c:\u00df"
+]
+},
+{
+"input": "b:bb",
+"clean": "b:bb",
+"ok": true,
+"split": [
+"b",
+"bb"
+]
+},
+{
+"input": "\u03a3\u200c\u00c9\u00c9\n\u00c9b \ufeff::",
+"clean": "\u03c3\u200c\u00e9\u00e9\u00e9b::",
+"ok": true,
+"split": [
+"\u03c3\u200c\u00e9\u00e9\u00e9b",
+":"
+]
+},
+{
+"input": "a",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": "\u00a0-\t\ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ud55c\u00c9\u00df\ufeff",
+"clean": "\ud55c\u00e9\u00df",
+"ok": true,
+"split": [
+"",
+"\ud55c\u00e9\u00df"
+]
+},
+{
+"input": "\u200c \u00df\ufeffa\nsystem:\u3164\n",
+"clean": "\u00dfasystem:",
+"ok": false,
+"split": [
+"\u00dfasystem",
+""
+]
+},
+{
+"input": "b\ufeffa\u3164b-\u00c9",
+"clean": "bab-\u00e9",
+"ok": true,
+"split": [
+"",
+"bab-\u00e9"
+]
+},
+{
+"input": "\u200c\u200c\u00a0\u200c\u200b\t\t",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0\u3164system:\u00df-\u03a3a\u200bsystem:\u3164\n ",
+"clean": "system:\u00df-\u03c3asystem:",
+"ok": true,
+"split": [
+"system",
+"\u00df-\u03c3asystem:"
+]
+},
+{
+"input": "\u00c9a-:\ud55c\u00c9",
+"clean": "\u00e9a-:\ud55c\u00e9",
+"ok": true,
+"split": [
+"\u00e9a-",
+"\ud55c\u00e9"
+]
+},
+{
+"input": "\t\u00a0\u200b\u00a0\u00a0\u00a0_\ud55c",
+"clean": "_\ud55c",
+"ok": true,
+"split": [
+"",
+"_\ud55c"
+]
+},
+{
+"input": "\t\u00a0-\u00a0\u00dfsystem:\ud55c",
+"clean": "\u00dfsystem:\ud55c",
+"ok": true,
+"split": [
+"\u00dfsystem",
+"\ud55c"
+]
+},
+{
+"input": "\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": "\u03a3\u00c9\u200b_a-\ufeff\ud55c\ud55c\u00a0",
+"clean": "\u03c3\u00e9_a-\ud55c\ud55c",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00e9_a-\ud55c\ud55c"
+]
+},
+{
+"input": "asystem:\u200c\ud55c_system:\ud55c:\u200b\u3164\u00c9 ",
+"clean": "asystem:\u200c\ud55c_system:\ud55c:\u3164\u00e9",
+"ok": true,
+"split": [
+"asystem",
+"\u200c\ud55c_system:\ud55c:\u3164\u00e9"
+]
+},
+{
+"input": " \n\n\u200c a:\u03a3\u200c:\u200c",
+"clean": "a:\u03c2\u200c:\u200c",
+"ok": true,
+"split": [
+"a",
+"\u03c2\u200c:\u200c"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeff\u03a3",
+"clean": "\u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3"
+]
+},
+{
+"input": "system:\u200b\u00df\n\ufeff\t:\ufeff\u00a0",
+"clean": "\u00df:",
+"ok": false,
+"split": [
+"\u00df",
+""
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\u3164\u00c9\n\ufeff\u00a0\u00c9",
+"clean": "\u00e9 \u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9 \u00e9"
+]
+},
+{
+"input": "\u00c9\ud55c\u200c\u200c\u200b\ud55c\ufeff",
+"clean": "\u00e9\ud55c\u200c\u200c\ud55c",
+"ok": true,
+"split": [
+"",
+"\u00e9\ud55c\u200c\u200c\ud55c"
+]
+},
+{
+"input": "b\ufeff\u200c\u00c9:\u00a0aa_",
+"clean": "b\u00e9:aa_",
+"ok": true,
+"split": [
+"b\u00e9",
+"aa_"
+]
+},
+{
+"input": "b\u00a0\u00dfb\nsystem:\ufeff\u00a0\n\u00c9",
+"clean": "b \u00dfbsystem:\u00e9",
+"ok": true,
+"split": [
+"b \u00dfbsystem",
+"\u00e9"
+]
+},
+{
+"input": "a\n\ud55c\ud55c_  _",
+"clean": "a\ud55c\ud55c_ _",
+"ok": true,
+"split": [
+"",
+"a\ud55c\ud55c_ _"
+]
+},
+{
+"input": "\t\u03a3\u00c9_",
+"clean": "\u03c3\u00e9_",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00e9_"
+]
+},
+{
+"input": "-\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": "\u200b\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": "system:\u00a0:\u200b\u00a0b\u200bab",
+"clean": "bab",
+"ok": true,
+"split": [
+"",
+"bab"
+]
+},
+{
+"input": "_b:\u00df\tb\u00a0::\u200c",
+"clean": "_b:\u00dfb ::",
+"ok": true,
+"split": [
+"_b",
+"\u00dfb ::"
+]
+},
+{
+"input": " \t_\u00c9-\ud55c ",
+"clean": "_\u00e9-\ud55c",
+"ok": true,
+"split": [
+"",
+"_\u00e9-\ud55c"
+]
+},
+{
+"input": " \u03a3\u200b\u00df",
+"clean": "\u03c3\u00df",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00df"
+]
+},
+{
+"input": "\u200b\u03a3",
+"clean": "\u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3"
+]
+},
+{
+"input": "system:\u3164-\u00c9\ud55c",
+"clean": "\u3164-\u00e9\ud55c",
+"ok": true,
+"split": [
+"",
+"\u3164-\u00e9\ud55c"
+]
+},
+{
+"input": "\u00a0\u00c9_\n_b \u00a0",
+"clean": "\u00e9__b",
+"ok": true,
+"split": [
+"",
+"\u00e9__b"
+]
+},
+{
+"input": "\u00a0\ufeffb\n",
+"clean": "b",
+"ok": true,
+"split": [
+"",
+"b"
+]
+},
+{
+"input": "\na_\u03a3\ud55c\ufeff\ud55c\u00c9system:\u00a0_",
+"clean": "a_\u03c3\ud55c\ud55c\u00e9system:_",
+"ok": true,
+"split": [
+"a_\u03c3\ud55c\ud55c\u00e9system",
+"_"
+]
+},
+{
+"input": "\na\ufeff\u200c\u00a0\u00df\u200c\u200b\u200b\u03a3_",
+"clean": "a\u200c \u00df\u200c\u03c2_",
+"ok": true,
+"split": [
+"",
+"a\u200c \u00df\u200c\u03c2_"
+]
+},
+{
+"input": "--a\u03a3\u200b\u00c9a",
+"clean": "a\u03c3\u00e9a",
+"ok": true,
+"split": [
+"",
+"a\u03c3\u00e9a"
+]
+},
+{
+"input": "-\n\u00a0\u200c\u00df__\u200c\u00df",
+"clean": "\u00df__\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df__\u00df"
+]
+},
+{
+"input": "-\n  \ud55c:\u00df-\u03a3-",
+"clean": "\ud55c:\u00df-\u03c3-",
+"ok": true,
+"split": [
+"\ud55c",
+"\u00df-\u03c3-"
+]
+},
+{
+"input": "a \u00a0\ud55c\u00df\ud55c\n\u00c9\u00a0-\t\u200c",
+"clean": "a \ud55c\u00df\ud55c\u00e9 -\u200c",
+"ok": true,
+"split": [
+"",
+"a \ud55c\u00df\ud55c\u00e9 -\u200c"
+]
+},
+{
+"input": "\ud55cba-\u200csystem:\n:\ud55c-\ufeff",
+"clean": "\ud55cba-\u200csystem::\ud55c-",
+"ok": true,
+"split": [
+"\ud55cba-\u200csystem",
+":\ud55c-"
+]
+},
+{
+"input": "\t  b_\u03a3",
+"clean": "b_\u03c3",
+"ok": true,
+"split": [
+"",
+"b_\u03c3"
+]
+},
+{
+"input": "b\u00c9 \ufeff\u200c",
+"clean": "b\u00e9",
+"ok": true,
+"split": [
+"",
+"b\u00e9"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:\ud55c\u200b:b",
+"clean": "\ud55c:b",
+"ok": true,
+"split": [
+"\ud55c",
+"b"
+]
+},
+{
+"input": "\t\u00c9\u00df\ufeff\na\u3164__\u00a0b\u03a3",
+"clean": "\u00e9\u00dfa__ b\u03c2",
+"ok": true,
+"split": [
+"",
+"\u00e9\u00dfa__ b\u03c2"
+]
+},
+{
+"input": " \u03a3\u00df\n\u200b",
+"clean": "\u03c3\u00df",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00df"
+]
+},
+{
+"input": "\ud55ca\u03a3",
+"clean": "\ud55ca\u03c2",
+"ok": true,
+"split": [
+"",
+"\ud55ca\u03c2"
+]
+},
+{
+"input": "_-  \nsystem:__-system:",
+"clean": "_- system:__-system:",
+"ok": true,
+"split": [
+"_- system",
+"__-system:"
+]
+},
+{
+"input": "\u200csystem:\t\u00df\u00dfaa\u3164\ufeff\u200c",
+"clean": "system:\u00df\u00dfaa",
+"ok": true,
+"split": [
+"system",
+"\u00df\u00dfaa"
+]
+},
+{
+"input": "\u200b\u00c9\u03a3",
+"clean": "\u00e9\u03c2",
+"ok": true,
+"split": [
+"",
+"\u00e9\u03c2"
+]
+},
+{
+"input": ":\t\u200b \ufeff\u00c9\t\u03a3\ufeff:_",
+"clean": ":\u00e9\u03c3:_",
+"ok": true,
+"split": [
+"",
+"\u00e9\u03c3:_"
+]
+},
+{
+"input": "\u200c\u00df\u200c\u00c9system:-\t_\u3164",
+"clean": "\u00df\u00e9system:_",
+"ok": true,
+"split": [
+"\u00df\u00e9system",
+"_"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeffbb:\ufeff\u00a0\ufeff\u00df-a",
+"clean": "bb:\u00df-a",
+"ok": true,
+"split": [
+"bb",
+"\u00df-a"
+]
+},
+{
+"input": "\ud55c\u200ca\u200basystem:\u00df",
+"clean": "\ud55c\u200caasystem:\u00df",
+"ok": true,
+"split": [
+"\ud55c\u200caasystem",
+"\u00df"
+]
+},
+{
+"input": "-\u00a0_\u00a0\u200c \u00df\u200c\ud55c",
+"clean": "_ \u200c \u00df\u200c\ud55c",
+"ok": true,
+"split": [
+"",
+"_ \u200c \u00df\u200c\ud55c"
+]
+},
+{
+"input": "\u3164\u00c9- ",
+"clean": "\u00e9-",
+"ok": true,
+"split": [
+"",
+"\u00e9-"
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "_:-:-\u03a3\u200c\t\n",
+"clean": "_::-\u03c3\u200c",
+"ok": true,
+"split": [
+"_",
+":-\u03c3\u200c"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " bsystem:system:\u3164: ",
+"clean": "bsystem::",
+"ok": true,
+"split": [
+"bsystem",
+":"
+]
+},
+{
+"input": "\u200c\u00a0system:\u00c9:\ud55c--\n\u00c9\u3164system:",
+"clean": "system:\u00e9:\ud55c--\u00e9\u3164system:",
+"ok": true,
+"split": [
+"system",
+"\u00e9:\ud55c--\u00e9\u3164system:"
+]
+},
+{
+"input": "\ufeffb\nsystem:\u200c\u00a0",
+"clean": "bsystem:",
+"ok": false,
+"split": [
+"bsystem",
+""
+]
+},
+{
+"input": "\u03a3",
+"clean": "\u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3"
+]
+},
+{
+"input": "\n\u00dfsystem:b",
+"clean": "\u00dfsystem:b",
+"ok": true,
+"split": [
+"\u00dfsystem",
+"b"
+]
+},
+{
+"input": "\u3164\t_b\ud55c\u3164_::\u00df",
+"clean": "\u3164_b\ud55c\u3164_::\u00df",
+"ok": true,
+"split": [
+"\u3164_b\ud55c\u3164_",
+":\u00df"
+]
+},
+{
+"input": "\u00a0\u03a3 \u00c9:\ufeffb:\u200c:\u03a3-",
+"clean": "\u03c3 \u00e9:b:\u200c:\u03c2-",
+"ok": true,
+"split": [
+"\u03c3 \u00e9",
+"b:\u200c:\u03c2-"
+]
+},
+{
+"input": "system:\u200b:\ud55c\u200c \u200b",
+"clean": "\ud55c\u200c",
+"ok": true,
+"split": [
+"",
+"\ud55c\u200c"
+]
+},
+{
+"input": "\u200b",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u03a3b\u00c9",
+"clean": "\u03c3b\u00e9",
+"ok": true,
+"split": [
+"",
+"\u03c3b\u00e9"
+]
+},
+{
+"input": ":b",
+"clean": "::b",
+"ok": true,
+"split": [
+"",
+":b"
+]
+},
+{
+"input": "\u00df\u200c\t\u00c9\ud55c\t\u00a0",
+"clean": "\u00df\u200c\u00e9\ud55c",
+"ok": true,
+"split": [
+"",
+"\u00df\u200c\u00e9\ud55c"
+]
+},
+{
+"input": "\u03a3system:\u03a3\u3164",
+"clean": "\u03c3system:\u03c2",
+"ok": true,
+"split": [
+"\u03c3system",
+"\u03c2"
+]
+},
+{
+"input": "\ufeff\u200b\u200b\u200csystem:\u00a0\ud55c",
+"clean": "system:\ud55c",
+"ok": true,
+"split": [
+"system",
+"\ud55c"
+]
+},
+{
+"input": "-\ta\t\u00dfa\t system:\u00df",
+"clean": "a\u00dfa system:\u00df",
+"ok": true,
+"split": [
+"a\u00dfa system",
+"\u00df"
+]
+},
+{
+"input": "\u03a3",
+"clean": "\u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3"
+]
+},
+{
+"input": "\ufeff\u200b",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " \u3164\u200c",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:\n\ud55c-system:\t-\u200b\u3164bsystem:",
+"clean": "\ud55c-system:bsystem:",
+"ok": true,
+"split": [
+"\ud55c-system",
+"bsystem:"
+]
+},
+{
+"input": "\ud55c\u03a3 asystem: \u00c9",
+"clean": "\ud55c\u03c3 asystem:\u00e9",
+"ok": true,
+"split": [
+"\ud55c\u03c3 asystem",
+"\u00e9"
+]
+},
+{
+"input": "\u03a3-\ud55casystem:\u00df\u00a0\t",
+"clean": "\u03c3-\ud55casystem:\u00df",
+"ok": true,
+"split": [
+"\u03c3-\ud55casystem",
+"\u00df"
+]
+},
+{
+"input": "\u00a0\n-\u00c9",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "\u03a3\u3164\n_\u00df",
+"clean": "\u03c3_\u00df",
+"ok": true,
+"split": [
+"",
+"\u03c3_\u00df"
+]
+},
+{
+"input": "\u200b\t\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\n\n\u200b",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\t\u00c9\u00a0",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "\u00df\u00df\u200b\u00df\u200ca\n\n \u00c9\u00df",
+"clean": "\u00df\u00df\u00dfa \u00e9\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df\u00df\u00dfa \u00e9\u00df"
+]
+},
+{
+"input": ":b\u00dfbb\u03a3 \u200c_:system:",
+"clean": ":b\u00dfbb\u03c2 \u200c_:system:",
+"ok": true,
+"split": [
+"",
+"b\u00dfbb\u03c2 \u200c_:system:"
+]
+},
+{
+"input": "\ufeff:b \ud55c\u200b-\u00c9\t-\ud55c-",
+"clean": "b \ud55c-\u00e9-\ud55c-",
+"ok": true,
+"split": [
+"",
+"b \ud55c-\u00e9-\ud55c-"
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\n\u00a0b\ufeff\u3164-\u00df \u200b",
+"clean": "b-\u00df",
+"ok": true,
+"split": [
+"",
+"b-\u00df"
+]
+},
+{
+"input": "\ud55c \u00c9\tb\u00df\t \u200c",
+"clean": "\ud55c \u00e9b\u00df \u200c",
+"ok": true,
+"split": [
+"",
+"\ud55c \u00e9b\u00df \u200c"
+]
+},
+{
+"input": "b\u00c9\u3164b\u00df\t\t\u200b a\u03a3_",
+"clean": "b\u00e9b\u00df a\u03c2_",
+"ok": true,
+"split": [
+"",
+"b\u00e9b\u00df a\u03c2_"
+]
+},
+{
+"input": "-:\u00a0\u200c\u3164-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u3164",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u200ba:\n\u00c9",
+"clean": "a:\u00e9",
+"ok": true,
+"split": [
+"a",
+"\u00e9"
+]
+},
+{
+"input": "system:\u00df_\u200c\u200b-\ufeff\u200b-ab\u03a3",
+"clean": "\u00df_\u200c--ab\u03c2",
+"ok": true,
+"split": [
+"",
+"\u00df_\u200c--ab\u03c2"
+]
+},
+{
+"input": "-\ufeff:\u00c9\u00df\ufeff\t-",
+"clean": "\u00e9\u00df-",
+"ok": true,
+"split": [
+"",
+"\u00e9\u00df-"
+]
+},
+{
+"input": "\u00df-\t\u03a3\u200c",
+"clean": "\u00df-\u03c3\u200c",
+"ok": true,
+"split": [
+"",
+"\u00df-\u03c3\u200c"
+]
+},
+{
+"input": " ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0\u3164\ufeff\u03a3 -\u3164system:\u03a3",
+"clean": "\u03c3 -system:\u03c2",
+"ok": true,
+"split": [
+"\u03c3 -system",
+"\u03c2"
+]
+},
+{
+"input": "\u03a3a\ud55c_\ufeffb:-\u200b\ufeffb\n",
+"clean": "\u03c3a\ud55c_b:b",
+"ok": true,
+"split": [
+"\u03c3a\ud55c_b",
+"b"
+]
+},
+{
+"input": "b\u200c\u03a3-\u03a3\u03a3:",
+"clean": "b\u200c\u03c2-\u03c3\u03c2:",
+"ok": false,
+"split": [
+"b\u200c\u03c2-\u03c3\u03c2",
+""
+]
+},
+{
+"input": " \u00c9 \t:-\u00a0:\n-system:",
+"clean": "\u00e9::-system:",
+"ok": true,
+"split": [
+"\u00e9",
+":-system:"
+]
+},
+{
+"input": "\t\u3164b\u200bb\u03a3\tasystem::\ud55c",
+"clean": "bb\u03c2asystem::\ud55c",
+"ok": true,
+"split": [
+"bb\u03c2asystem",
+":\ud55c"
+]
+},
+{
+"input": "\u200b  \t a\u00a0\t\ud55c-",
+"clean": "a \ud55c-",
+"ok": true,
+"split": [
+"",
+"a \ud55c-"
+]
+},
+{
+"input": "system:\ud55c\u200b\u00df\u00c9",
+"clean": "\ud55c\u00df\u00e9",
+"ok": true,
+"split": [
+"",
+"\ud55c\u00df\u00e9"
+]
+},
+{
+"input": ":\t _\u3164_\u200c\n\ufeff\u3164\u200c",
+"clean": ":: __",
+"ok": true,
+"split": [
+"",
+": __"
+]
+},
+{
+"input": "\u00c9\u200b\u3164-\u00a0 \u00a0",
+"clean": "\u00e9-",
+"ok": true,
+"split": [
+"",
+"\u00e9-"
+]
+},
+{
+"input": "b\ufeff\u3164\ud55c",
+"clean": "b\u3164\ud55c",
+"ok": true,
+"split": [
+"",
+"b\u3164\ud55c"
+]
+},
+{
+"input": "\u200c\t\ufeff\u200cb\ufeff-\u200c\u200c\ud55c\u00a0",
+"clean": "\u200c\u200cb-\u200c\u200c\ud55c",
+"ok": true,
+"split": [
+"",
+"\u200c\u200cb-\u200c\u200c\ud55c"
+]
+},
+{
+"input": "\u200c\ufeff\u00dfa\u03a3\u3164system:system:\t",
+"clean": "\u200c\u00dfa\u03c2system:",
+"ok": false,
+"split": [
+"\u200c\u00dfa\u03c2system",
+""
+]
+},
+{
+"input": "-system:b\u03a3system:\u03a3",
+"clean": "b\u03c3system:\u03c2",
+"ok": true,
+"split": [
+"b\u03c3system",
+"\u03c2"
+]
+},
+{
+"input": "\u00df\u00a0",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\u00df\u00c9system:b\nsystem:\ufeffbsystem:\u200csystem:-",
+"clean": "\u00df\u00e9system:bsystem:bsystem:system:-",
+"ok": true,
+"split": [
+"\u00df\u00e9system",
+"bsystem:bsystem:system:-"
+]
+},
+{
+"input": "\n  system::_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "a\u00a0b-\t:\u00a0\ud55c",
+"clean": "a b-:\ud55c",
+"ok": true,
+"split": [
+"a b-",
+"\ud55c"
+]
+},
+{
+"input": "bsystem:-a\u03a3\ufeffb\u00a0\ufeff:system:\u00df",
+"clean": "bsystem:a\u03c3b :system:\u00df",
+"ok": true,
+"split": [
+"bsystem",
+"a\u03c3b :system:\u00df"
+]
+},
+{
+"input": "-\ud55c\u00df\u03a3\u200b \u00c9\n\n",
+"clean": "\ud55c\u00df\u03c2 \u00e9",
+"ok": true,
+"split": [
+"",
+"\ud55c\u00df\u03c2 \u00e9"
+]
+},
+{
+"input": "a\u00c9-:\u200b",
+"clean": "a\u00e9-:",
+"ok": false,
+"split": [
+"a\u00e9-",
+""
+]
+},
+{
+"input": "\ud55cba:\u00c9\u03a3\t",
+"clean": "\ud55cba:\u00e9\u03c2",
+"ok": true,
+"split": [
+"\ud55cba",
+"\u00e9\u03c2"
+]
+},
+{
+"input": " \u00a0a\u00c9-",
+"clean": "a\u00e9-",
+"ok": true,
+"split": [
+"",
+"a\u00e9-"
+]
+},
+{
+"input": " \ufeff\n- \ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:a\u200b\t\ufeff_\ud55c\u00c9\t\n\u200c_",
+"clean": "a_\ud55c\u00e9\u200c_",
+"ok": true,
+"split": [
+"",
+"a_\ud55c\u00e9\u200c_"
+]
+},
+{
+"input": "\u00a0system: :system:_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "ba\u200b\u3164b\u200b_a\u00df\u03a3",
+"clean": "bab_a\u00df\u03c2",
+"ok": true,
+"split": [
+"",
+"bab_a\u00df\u03c2"
+]
+},
+{
+"input": "a-",
+"clean": "a-",
+"ok": true,
+"split": [
+"",
+"a-"
+]
+},
+{
+"input": "-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u200b\t\ud55c\u03a3\u03a3\u03a3a\n-",
+"clean": "\ud55c\u03c3\u03c3\u03c3a-",
+"ok": true,
+"split": [
+"",
+"\ud55c\u03c3\u03c3\u03c3a-"
+]
+},
+{
+"input": "\ufeff\u200cb\u200bb",
+"clean": "bb",
+"ok": true,
+"split": [
+"",
+"bb"
+]
+},
+{
+"input": "\u200c\u03a3\u3164\u00a0\u00c9:\u200b\u00c9",
+"clean": "\u200c\u03c3 \u00e9:\u00e9",
+"ok": true,
+"split": [
+"\u200c\u03c3 \u00e9",
+"\u00e9"
+]
+},
+{
+"input": "system: bsystem:\u00dfasystem:\u3164\u3164",
+"clean": "bsystem:\u00dfasystem:",
+"ok": true,
+"split": [
+"bsystem",
+"\u00dfasystem:"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00df_\u00c9-\u00dfbb",
+"clean": "\u00df_\u00e9-\u00dfbb",
+"ok": true,
+"split": [
+"",
+"\u00df_\u00e9-\u00dfbb"
+]
+},
+{
+"input": "\u200b\t\u00c9-\u00df -\ufeff :\u200c",
+"clean": "\u00e9-\u00df -:",
+"ok": false,
+"split": [
+"\u00e9-\u00df -",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\tsystem:\u00dfa\ufeff\t\u00a0 \u200c\t",
+"clean": "\u00dfa",
+"ok": true,
+"split": [
+"",
+"\u00dfa"
+]
+},
+{
+"input": "\ufeff\ud55ca-\u200c-\u200ba:\ufeff ",
+"clean": "\ud55ca-\u200c-a:",
+"ok": false,
+"split": [
+"\ud55ca-\u200c-a",
+""
+]
+},
+{
+"input": "\ud55c\u200c _:b ",
+"clean": "\ud55c\u200c _:b",
+"ok": true,
+"split": [
+"\ud55c\u200c _",
+"b"
+]
+},
+{
+"input": "\u3164\u00df\t",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "_\u03a3\ud55ca\ud55c",
+"clean": "_\u03c3\ud55ca\ud55c",
+"ok": true,
+"split": [
+"",
+"_\u03c3\ud55ca\ud55c"
+]
+},
+{
+"input": "\u00c9\u00a0-\u00a0system::\u00c9",
+"clean": "\u00e9 - system::\u00e9",
+"ok": true,
+"split": [
+"\u00e9 - system",
+":\u00e9"
+]
+},
+{
+"input": " system::_\u00c9\u00c9:\u00df _",
+"clean": ":_\u00e9\u00e9:\u00df _",
+"ok": true,
+"split": [
+"",
+"_\u00e9\u00e9:\u00df _"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "a\u200b\t\u00c9:\u03a3\u200b ",
+"clean": "a\u00e9:\u03c2",
+"ok": true,
+"split": [
+"a\u00e9",
+"\u03c2"
+]
+},
+{
+"input": "\u200b",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": ":\u00dfsystem:",
+"clean": ":\u00dfsystem:",
+"ok": true,
+"split": [
+"",
+"\u00dfsystem:"
+]
+},
+{
+"input": " \u00df:_\u00c9\u00a0 \u00df\u200b:",
+"clean": "\u00df:_\u00e9 \u00df:",
+"ok": true,
+"split": [
+"\u00df",
+"_\u00e9 \u00df:"
+]
+},
+{
+"input": "\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": " b\ufeffa\u00c9a_\t:_-\u200b",
+"clean": "ba\u00e9a_:_-",
+"ok": true,
+"split": [
+"ba\u00e9a_",
+"_-"
+]
+},
+{
+"input": "_\ud55c-:",
+"clean": "_\ud55c-:",
+"ok": false,
+"split": [
+"_\ud55c-",
+""
+]
+},
+{
+"input": "\ufeff\u00c9\u00df",
+"clean": "\u00e9\u00df",
+"ok": true,
+"split": [
+"",
+"\u00e9\u00df"
+]
+},
+{
+"input": " \t\u00df\u03a3bsystem:\ufeffsystem:",
+"clean": "\u00df\u03c3bsystem:",
+"ok": false,
+"split": [
+"\u00df\u03c3bsystem",
+""
+]
+},
+{
+"input": "\u00df :\u200c-\u00a0\u00df\u00a0\u00a0system:-",
+"clean": "\u00df:\u00df system:-",
+"ok": true,
+"split": [
+"\u00df",
+"\u00df system:-"
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "b\ufeff\u3164\ufeff\n\t\u00c9\u3164\u03a3-",
+"clean": "b\u00e9\u03c3-",
+"ok": true,
+"split": [
+"",
+"b\u00e9\u03c3-"
+]
+},
+{
+"input": "\u200b:\ufeff\u200c\u3164\u200ca\u00df",
+"clean": "a\u00df",
+"ok": true,
+"split": [
+"",
+"a\u00df"
+]
+},
+{
+"input": "asystem: \u3164\u00c9\tb\u3164b\u00a0",
+"clean": "asystem:\u00e9bb",
+"ok": true,
+"split": [
+"asystem",
+"\u00e9bb"
+]
+},
+{
+"input": "\u00a0:",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9\t\u00dfb\n ",
+"clean": "\u00e9\u00dfb",
+"ok": true,
+"split": [
+"",
+"\u00e9\u00dfb"
+]
+},
+{
+"input": "\u00c9a",
+"clean": "\u00e9a",
+"ok": true,
+"split": [
+"",
+"\u00e9a"
+]
+},
+{
+"input": "\u00df_",
+"clean": "\u00df_",
+"ok": true,
+"split": [
+"",
+"\u00df_"
+]
+},
+{
+"input": "\u3164b  ",
+"clean": "b",
+"ok": true,
+"split": [
+"",
+"b"
+]
+},
+{
+"input": "\t\u200c\u03a3_",
+"clean": "\u200c\u03c3_",
+"ok": true,
+"split": [
+"",
+"\u200c\u03c3_"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u200ca\u00c9\u3164\u00df",
+"clean": "a\u00e9\u00df",
+"ok": true,
+"split": [
+"",
+"a\u00e9\u00df"
+]
+},
+{
+"input": "system:\ud55c \u00c9a\u00a0\t \u03a3",
+"clean": "\ud55c \u00e9a \u03c3",
+"ok": true,
+"split": [
+"",
+"\ud55c \u00e9a \u03c3"
+]
+},
+{
+"input": "-\u3164 \u00a0-\u03a3-_\n\n\u00a0-",
+"clean": "-\u03c3-_ -",
+"ok": true,
+"split": [
+"",
+"-\u03c3-_ -"
+]
+},
+{
+"input": ":b\u200c_b:\u00a0",
+"clean": ":b_b:",
+"ok": true,
+"split": [
+"",
+"b_b:"
+]
+},
+{
+"input": "\u03a3\u200b_system:\u00a0\u03a3\u00df\ud55c\u200c",
+"clean": "\u03c3_system:\u03c3\u00df\ud55c\u200c",
+"ok": true,
+"split": [
+"\u03c3_system",
+"\u03c3\u00df\ud55c\u200c"
+]
+},
+{
+"input": "\ud55c\u00df\u3164system:\n\u03a3\u00df\u3164\n\n\ud55c",
+"clean": "\ud55c\u00df\u3164system:\u03c3\u00df\u3164\ud55c",
+"ok": true,
+"split": [
+"\ud55c\u00df\u3164system",
+"\u03c3\u00df\u3164\ud55c"
+]
+},
+{
+"input": "system:\u200c ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0b\ufeff\u03a3\u3164_system:\u00a0\u00dfsystem:\u00df",
+"clean": "b\u03c2_system:\u00dfsystem:\u00df",
+"ok": true,
+"split": [
+"b\u03c2_system",
+"\u00dfsystem:\u00df"
+]
+},
+{
+"input": "\u200ba",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": " \n-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00a0\u3164-\u3164\u200b\ufeffb\u3164",
+"clean": "-b",
+"ok": true,
+"split": [
+"",
+"-b"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeff-_\u200b: a\u200ca\n:",
+"clean": "_:aa:",
+"ok": true,
+"split": [
+"_",
+"aa:"
+]
+},
+{
+"input": "\u200c-_\t\u3164\u3164_ \u3164",
+"clean": "-__",
+"ok": true,
+"split": [
+"",
+"-__"
+]
+},
+{
+"input": "b\u00a0\tb\u03a3\ud55c\n\u200b\ufeff:\u00a0",
+"clean": "b b\u03c2\ud55c:",
+"ok": false,
+"split": [
+"b b\u03c2\ud55c",
+""
+]
+},
+{
+"input": "- \ud55c\u200b_a\u03a3",
+"clean": "\ud55c_a\u03c2",
+"ok": true,
+"split": [
+"",
+"\ud55c_a\u03c2"
+]
+},
+{
+"input": "\u200b system:a",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": "_a\u03a3\ufeffa\u00df\u00c9",
+"clean": "_a\u03c3a\u00df\u00e9",
+"ok": true,
+"split": [
+"",
+"_a\u03c3a\u00df\u00e9"
+]
+},
+{
+"input": "-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " \ud55c-\u200bb\u3164\u3164",
+"clean": "\ud55c-b\u3164\u3164",
+"ok": true,
+"split": [
+"",
+"\ud55c-b\u3164\u3164"
+]
+},
+{
+"input": "\u200b\u200c-\u00c9a\u00df\u200b",
+"clean": "-\u00e9a\u00df",
+"ok": true,
+"split": [
+"",
+"-\u00e9a\u00df"
+]
+},
+{
+"input": "b\t-\u00dfsystem:\u3164",
+"clean": "b-\u00dfsystem:",
+"ok": false,
+"split": [
+"b-\u00dfsystem",
+""
+]
+},
+{
+"input": "\u00c9\u3164asystem:\u200b\t",
+"clean": "\u00e9asystem:",
+"ok": false,
+"split": [
+"\u00e9asystem",
+""
+]
+},
+{
+"input": "_\u00a0\u00c9\u03a3\u200b\ud55c\ufeff\u03a3",
+"clean": "_ \u00e9\u03c2\ud55c\u03c3",
+"ok": true,
+"split": [
+"",
+"_ \u00e9\u03c2\ud55c\u03c3"
+]
+},
+{
+"input": "\u200c\u00a0\n\n\n\u3164\u00c9\u03a3aa b",
+"clean": "\u200c \u00e9\u03c3aa b",
+"ok": true,
+"split": [
+"",
+"\u200c \u00e9\u03c3aa b"
+]
+},
+{
+"input": "\n",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_\u200cb",
+"clean": "_b",
+"ok": true,
+"split": [
+"",
+"_b"
+]
+},
+{
+"input": ":-\t:",
+"clean": "::",
+"ok": true,
+"split": [
+"",
+":"
+]
+},
+{
+"input": "\u00a0\u00a0\n\u00a0system:\u200c\u03a3  \u00a0",
+"clean": "\u200c\u03c2",
+"ok": true,
+"split": [
+"",
+"\u200c\u03c2"
+]
+},
+{
+"input": "\t-\ufeffa\ufeff\u200c\u00c9:-\u200c",
+"clean": "a\u00e9:",
+"ok": false,
+"split": [
+"a\u00e9",
+""
+]
+},
+{
+"input": "\ufeff\ud55c\u00a0\u00df\ufeff\u200c\n-_\n\u00c9\ufeff",
+"clean": "\ud55c \u00df\u200c-_\u00e9",
+"ok": true,
+"split": [
+"",
+"\ud55c \u00df\u200c-_\u00e9"
+]
+},
+{
+"input": "\u00c9\u03a3 \u00c9asystem:asystem:-a-\u00df",
+"clean": "\u00e9\u03c2 \u00e9asystem:asystem:-a-\u00df",
+"ok": true,
+"split": [
+"\u00e9\u03c2 \u00e9asystem",
+"asystem:-a-\u00df"
+]
+},
+{
+"input": "-\u200bsystem:\u3164-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_\u00c9a\u00df\ud55c\u03a3_\u03a3",
+"clean": "_\u00e9a\u00df\ud55c\u03c3_\u03c3",
+"ok": true,
+"split": [
+"",
+"_\u00e9a\u00df\ud55c\u03c3_\u03c3"
+]
+},
+{
+"input": "\u00a0a:\u200b\ufeff\u200b \u03a3\u200b\u200c-",
+"clean": "a:\u03c3\u200c-",
+"ok": true,
+"split": [
+"a",
+"\u03c3\u200c-"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeff\n\ufeff\n \u200c:_\ud55cbb\t",
+"clean": "_\ud55cbb",
+"ok": true,
+"split": [
+"",
+"_\ud55cbb"
+]
+},
+{
+"input": "\u200b\u03a3\ud55cb\u03a3\u00a0\u03a3\u200c__",
+"clean": "\u03c3\ud55cb\u03c2 \u03c3\u200c__",
+"ok": true,
+"split": [
+"",
+"\u03c3\ud55cb\u03c2 \u03c3\u200c__"
+]
+},
+{
+"input": "\ud55c\u00a0\n",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": "\t\u200c",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " system:_:\n\u200c-",
+"clean": "_:",
+"ok": false,
+"split": [
+"_",
+""
+]
+},
+{
+"input": "\u00a0\u03a3\u200c\t-\n",
+"clean": "\u03c3\u200c-",
+"ok": true,
+"split": [
+"",
+"\u03c3\u200c-"
+]
+},
+{
+"input": "\u03a3",
+"clean": "\u03c3",
+"ok": true,
+"split": [
+"",
+"\u03c3"
+]
+},
+{
+"input": "\u03a3\ud55c\nb\ufeff-\ud55c\u3164\ud55c\n",
+"clean": "\u03c3\ud55cb-\ud55c\u3164\ud55c",
+"ok": true,
+"split": [
+"",
+"\u03c3\ud55cb-\ud55c\u3164\ud55c"
+]
+},
+{
+"input": "\u200b\u200c\u00df  \u200c",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\u00c9\u200ba",
+"clean": "\u00e9a",
+"ok": true,
+"split": [
+"",
+"\u00e9a"
+]
+},
+{
+"input": "a::\u3164a-\t",
+"clean": "a::a-",
+"ok": true,
+"split": [
+"a",
+":a-"
+]
+},
+{
+"input": "\u00a0b_",
+"clean": "b_",
+"ok": true,
+"split": [
+"",
+"b_"
+]
+},
+{
+"input": "\n\u00c9system:system:\u200b\n\u200b\t",
+"clean": "\u00e9system:",
+"ok": false,
+"split": [
+"\u00e9system",
+""
+]
+},
+{
+"input": ":",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": ":\u3164\ud55c\u00c9\u00df\u00df\u00df:\u200b\n\u00a0",
+"clean": ":\u3164\ud55c\u00e9\u00df\u00df\u00df:",
+"ok": true,
+"split": [
+"",
+"\u3164\ud55c\u00e9\u00df\u00df\u00df:"
+]
+},
+{
+"input": "\ufeff\ud55c\u00c9b\n",
+"clean": "\ud55c\u00e9b",
+"ok": true,
+"split": [
+"",
+"\ud55c\u00e9b"
+]
+},
+{
+"input": "\u00c9\ufeffb -",
+"clean": "\u00e9b -",
+"ok": true,
+"split": [
+"",
+"\u00e9b -"
+]
+},
+{
+"input": " b\u200b_\u200b_ \ufeff\u00a0-",
+"clean": "b__ -",
+"ok": true,
+"split": [
+"",
+"b__ -"
+]
+},
+{
+"input": "-system:\n\u200b\u200b\u00c9",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "-\u3164\u00a0\t\u3164a_\n",
+"clean": "a_",
+"ok": true,
+"split": [
+"",
+"a_"
+]
+},
+{
+"input": "\u3164\n",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u03a3\u00c9-\t\ud55ca-\u200c\ufeff\u00a0",
+"clean": "\u03c3\u00e9-\ud55ca-\u200c",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00e9-\ud55ca-\u200c"
+]
+},
+{
+"input": "__ a:\t\u03a3-",
+"clean": "__ a:\u03c3-",
+"ok": true,
+"split": [
+"__ a",
+"\u03c3-"
+]
+},
+{
+"input": "\u00a0\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": " _\u200c_-",
+"clean": "__-",
+"ok": true,
+"split": [
+"",
+"__-"
+]
+},
+{
+"input": "a:\u200c\u200c\u3164b  :\u00c9\u3164",
+"clean": "a:b :\u00e9",
+"ok": true,
+"split": [
+"a",
+"b :\u00e9"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u3164\u200b__-\u03a3\u200cba\u03a3",
+"clean": "__-\u03c3\u200cba\u03c2",
+"ok": true,
+"split": [
+"",
+"__-\u03c3\u200cba\u03c2"
+]
+},
+{
+"input": "\u03a3\ud55c\u200c- ",
+"clean": "\u03c3\ud55c\u200c-",
+"ok": true,
+"split": [
+"",
+"\u03c3\ud55c\u200c-"
+]
+},
+{
+"input": "\u00a0\u00df\u3164",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\ufeffa\u00a0\n_-system:\u00c9\u00c9\u00c9\u200b",
+"clean": "a _-system:\u00e9\u00e9\u00e9",
+"ok": true,
+"split": [
+"a _-system",
+"\u00e9\u00e9\u00e9"
+]
+},
+{
+"input": "system:\u200c\u00a0\u03a3\ud55c",
+"clean": "\u200c \u03c3\ud55c",
+"ok": true,
+"split": [
+"",
+"\u200c \u03c3\ud55c"
+]
+},
+{
+"input": "\u00a0 -",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9\ud55c system:\u200b\u00c9\u00c9\u03a3:",
+"clean": "\u00e9\ud55c system:\u00e9\u00e9\u03c2:",
+"ok": true,
+"split": [
+"\u00e9\ud55c system",
+"\u00e9\u00e9\u03c2:"
+]
+},
+{
+"input": "\u3164\u00a0\u00c9b\u00a0:\u200c-\u200b\n\u00a0\u00c9",
+"clean": "\u00e9b:\u00e9",
+"ok": true,
+"split": [
+"\u00e9b",
+"\u00e9"
+]
+},
+{
+"input": "\u200csystem:\t\u200c\u200c\u00a0_\u03a3",
+"clean": "system:\u200c\u200c _\u03c3",
+"ok": true,
+"split": [
+"system",
+"\u200c\u200c _\u03c3"
+]
+},
+{
+"input": "_\n",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "\u00a0:system:",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u200c\u00df\u200c\u3164 :b_\u00c9\n",
+"clean": "\u00df:b_\u00e9",
+"ok": true,
+"split": [
+"\u00df",
+"b_\u00e9"
+]
+},
+{
+"input": "b:\u3164\u00c9",
+"clean": "b:\u00e9",
+"ok": true,
+"split": [
+"b",
+"\u00e9"
+]
+},
+{
+"input": ":\u03a3\u00df\n\u00c9aa\u3164\ufeff\ud55ca\u200c",
+"clean": "::\u03c3\u00df\u00e9aa\u3164\ud55ca\u200c",
+"ok": true,
+"split": [
+"",
+":\u03c3\u00df\u00e9aa\u3164\ud55ca\u200c"
+]
+},
+{
+"input": "\u3164\u3164b_\ud55ca\u3164\u200b\u00c9_\u00a0",
+"clean": "\u3164\u3164b_\ud55ca\u3164\u00e9_",
+"ok": true,
+"split": [
+"",
+"\u3164\u3164b_\ud55ca\u3164\u00e9_"
+]
+},
+{
+"input": "\u200c-a\t_",
+"clean": "-a_",
+"ok": true,
+"split": [
+"",
+"-a_"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\ufeff\ufeff\u00a0\u00a0\u200b \u200ca",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": ":\u3164-:\u200b_a\u00a0:\u00a0",
+"clean": "::_a :",
+"ok": true,
+"split": [
+"",
+":_a :"
+]
+},
+{
+"input": "\u3164\t\u200b _\u00df \u200c_b",
+"clean": "_\u00df _b",
+"ok": true,
+"split": [
+"",
+"_\u00df _b"
+]
+},
+{
+"input": "\ud55c\t-\u200c\u00a0\u3164a\u00a0\t_system::",
+"clean": "\ud55c-\u200c \u3164a _system::",
+"ok": true,
+"split": [
+"\ud55c-\u200c \u3164a _system",
+":"
+]
+},
+{
+"input": "a:b\u00dfb:\t\tsystem:\ufeff",
+"clean": "a:b\u00dfb:system:",
+"ok": true,
+"split": [
+"a",
+"b\u00dfb:system:"
+]
+},
+{
+"input": "\u200b\t\u00c9system:\ud55c",
+"clean": "\u00e9system:\ud55c",
+"ok": true,
+"split": [
+"\u00e9system",
+"\ud55c"
+]
+},
+{
+"input": "\u03a3b-\ufeff",
+"clean": "\u03c3b-",
+"ok": true,
+"split": [
+"",
+"\u03c3b-"
+]
+},
+{
+"input": ":",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": " \ufeff\ud55c\u03a3bb::a",
+"clean": "\ud55c\u03c3bb::a",
+"ok": true,
+"split": [
+"\ud55c\u03c3bb",
+":a"
+]
+},
+{
+"input": "-\u200b_\u3164-\n",
+"clean": "_-",
+"ok": true,
+"split": [
+"",
+"_-"
+]
+},
+{
+"input": "\u00df--_\u00a0",
+"clean": "\u00df--_",
+"ok": true,
+"split": [
+"",
+"\u00df--_"
+]
+},
+{
+"input": "\ufeff\u00c9:",
+"clean": "\u00e9:",
+"ok": false,
+"split": [
+"\u00e9",
+""
+]
+},
+{
+"input": "\u00c9:b",
+"clean": "\u00e9:b",
+"ok": true,
+"split": [
+"\u00e9",
+"b"
+]
+},
+{
+"input": "\u03a3\u200bb \u03a3\n\u200c \u00c9\ufeffsystem: ",
+"clean": "\u03c3b \u03c3\u200c \u00e9system:",
+"ok": false,
+"split": [
+"\u03c3b \u03c3\u200c \u00e9system",
+""
+]
+},
+{
+"input": "\u00a0a\u00df-\u200b-\ufeff-\ud55c\ufeff",
+"clean": "a\u00df---\ud55c",
+"ok": true,
+"split": [
+"",
+"a\u00df---\ud55c"
+]
+},
+{
+"input": "-_\ufeff_",
+"clean": "__",
+"ok": true,
+"split": [
+"",
+"__"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_:\ud55cab-system:\u200c\u00a0b\u3164\u03a3",
+"clean": "_:\ud55cab-system:\u200c b\u3164\u03c3",
+"ok": true,
+"split": [
+"_",
+"\ud55cab-system:\u200c b\u3164\u03c3"
+]
+},
+{
+"input": "\u00a0\ufeff\u200csystem: \u200c\u200b\u00a0\u00c9_-",
+"clean": "system:\u00e9_-",
+"ok": true,
+"split": [
+"system",
+"\u00e9_-"
+]
+},
+{
+"input": "_\u200b\ud55c\u03a3b\u03a3\t _",
+"clean": "_\ud55c\u03c3b\u03c2 _",
+"ok": true,
+"split": [
+"",
+"_\ud55c\u03c3b\u03c2 _"
+]
+},
+{
+"input": "\t",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "system:-\u00dfsystem:\u200b\t\ud55c-\u200ca",
+"clean": "\u00dfsystem:\ud55c-\u200ca",
+"ok": true,
+"split": [
+"\u00dfsystem",
+"\ud55c-\u200ca"
+]
+},
+{
+"input": "-system:\u200b \u200c",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9-\ufeff\u00df\t\u200bsystem:",
+"clean": "\u00e9-\u00dfsystem:",
+"ok": false,
+"split": [
+"\u00e9-\u00dfsystem",
+""
+]
+},
+{
+"input": "\ufeff\u200b\u200ca\u00df",
+"clean": "a\u00df",
+"ok": true,
+"split": [
+"",
+"a\u00df"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "-:b\u00a0\n\n",
+"clean": "b",
+"ok": true,
+"split": [
+"",
+"b"
+]
+},
+{
+"input": "\u00c9",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "\u200c\ufeff\u03a3\u200b\u00df\u00a0b\u00df:-b\u200b",
+"clean": "\u200c\u03c3\u00df b\u00df:b",
+"ok": true,
+"split": [
+"\u200c\u03c3\u00df b\u00df",
+"b"
+]
+},
+{
+"input": "\u200c\u00a0b\u200b\u3164\u00df\t\n:",
+"clean": "b\u00df:",
+"ok": false,
+"split": [
+"b\u00df",
+""
+]
+},
+{
+"input": "_\u00a0-a",
+"clean": "_ -a",
+"ok": true,
+"split": [
+"",
+"_ -a"
+]
+},
+{
+"input": " \u03a3\u03a3",
+"clean": "\u03c3\u03c2",
+"ok": true,
+"split": [
+"",
+"\u03c3\u03c2"
+]
+},
+{
+"input": "\u3164_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u00c9\u200c\u00c9 \ufeff\n\u200b\u00dfb \u200c\u03a3",
+"clean": "\u00e9\u200c\u00e9 \u00dfb \u200c\u03c3",
+"ok": true,
+"split": [
+"",
+"\u00e9\u200c\u00e9 \u00dfb \u200c\u03c3"
+]
+},
+{
+"input": "\u200b\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": " ",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\t\u200c_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": " \t-\u200c:ab:",
+"clean": ":ab:",
+"ok": true,
+"split": [
+"",
+"ab:"
+]
+},
+{
+"input": "\u00c9system:_system:\ud55c \ud55c-system:\u200b\ufeff_",
+"clean": "\u00e9system:_system:\ud55c \ud55c-system:_",
+"ok": true,
+"split": [
+"\u00e9system",
+"_system:\ud55c \ud55c-system:_"
+]
+},
+{
+"input": "\ufeff\t\u3164 \u3164-ab",
+"clean": "-ab",
+"ok": true,
+"split": [
+"",
+"-ab"
+]
+},
+{
+"input": "a\u00a0:system:",
+"clean": "a:",
+"ok": false,
+"split": [
+"a",
+""
+]
+},
+{
+"input": "\u00a0\u3164\u200c \u00df\u00df_\u3164",
+"clean": "\u00df\u00df_",
+"ok": true,
+"split": [
+"",
+"\u00df\u00df_"
+]
+},
+{
+"input": "\u00c9",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "\u200c-\ud55c\u3164-system:system: ",
+"clean": "\u200c-\ud55c\u3164-system:",
+"ok": false,
+"split": [
+"\u200c-\ud55c\u3164-system",
+""
+]
+},
+{
+"input": "\n\t\u00c9-\u200b\u00df\u03a3_:\u00c9",
+"clean": "\u00e9-\u00df\u03c2_:\u00e9",
+"ok": true,
+"split": [
+"\u00e9-\u00df\u03c2_",
+"\u00e9"
+]
+},
+{
+"input": "-_\u200b\u00a0\u00a0\ufeff\t-\u00c9\u03a3\u03a3",
+"clean": "_ -\u00e9\u03c3\u03c2",
+"ok": true,
+"split": [
+"",
+"_ -\u00e9\u03c3\u03c2"
+]
+},
+{
+"input": "\ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u200c\ufeffsystem:",
+"clean": "system:",
+"ok": false,
+"split": [
+"system",
+""
+]
+},
+{
+"input": "\u200b",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": ":a",
+"clean": "::a",
+"ok": true,
+"split": [
+"",
+":a"
+]
+},
+{
+"input": "a\u200c\ud55c \u200b\ufeffa",
+"clean": "a\u200c\ud55c a",
+"ok": true,
+"split": [
+"",
+"a\u200c\ud55c a"
+]
+},
+{
+"input": "::\ud55cb\ufeff\ufeff_:",
+"clean": "::\ud55cb_:",
+"ok": true,
+"split": [
+"",
+":\ud55cb_:"
+]
+},
+{
+"input": "\u3164system:-system:\ufeffsystem:\u200c\u00a0\ud55ca",
+"clean": "system:\u200c \ud55ca",
+"ok": true,
+"split": [
+"system",
+"\u200c \ud55ca"
+]
+},
+{
+"input": "ba\ufeff\u00c9\u00a0_\u03a3 \t-",
+"clean": "ba\u00e9 _\u03c3 -",
+"ok": true,
+"split": [
+"",
+"ba\u00e9 _\u03c3 -"
+]
+},
+{
+"input": "\u200b\u00a0:\u00a0-",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_\u00c9-\u200c\ufeff\t\u00dfsystem:aasystem:_",
+"clean": "_\u00e9-\u00dfsystem:aasystem:_",
+"ok": true,
+"split": [
+"_\u00e9-\u00dfsystem",
+"aasystem:_"
+]
+},
+{
+"input": "\u00a0\ufeffsystem:\u200c\u00a0\u00df\n\u200b ",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\n\u00a0\ud55c:b",
+"clean": "\ud55c:b",
+"ok": true,
+"split": [
+"\ud55c",
+"b"
+]
+},
+{
+"input": "b\u3164a\u03a3a\t_\u200c\n\u200c_\u200b",
+"clean": "ba\u03c3a_\u200c\u200c_",
+"ok": true,
+"split": [
+"",
+"ba\u03c3a_\u200c\u200c_"
+]
+},
+{
+"input": "-\t\t\ufeff-\ufeff\u00a0:\u200c-\u200c\u3164",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\u3164\u00c9\u200b\ud55c\t\n",
+"clean": "\u3164\u00e9\ud55c",
+"ok": true,
+"split": [
+"",
+"\u3164\u00e9\ud55c"
+]
+},
+{
+"input": "\ufeff\ud55c-\u00c9\u03a3\u00df\u3164\t",
+"clean": "\ud55c-\u00e9\u03c3\u00df\u3164",
+"ok": true,
+"split": [
+"",
+"\ud55c-\u00e9\u03c3\u00df\u3164"
+]
+},
+{
+"input": "a\u00c9\u3164\u00a0\u00df",
+"clean": "a\u00e9 \u00df",
+"ok": true,
+"split": [
+"",
+"a\u00e9 \u00df"
+]
+},
+{
+"input": "b\u3164b_\u03a3\t-:\u200bsystem:",
+"clean": "bb_\u03c3-:",
+"ok": false,
+"split": [
+"bb_\u03c3-",
+""
+]
+},
+{
+"input": "\u03a3a: \u3164\t\u03a3\u00df:",
+"clean": "\u03c3a:\u03c3\u00df:",
+"ok": true,
+"split": [
+"\u03c3a",
+"\u03c3\u00df:"
+]
+},
+{
+"input": "\u00a0\ud55c\t-\u00df\tsystem:\u00c9\u00df",
+"clean": "\ud55c-\u00dfsystem:\u00e9\u00df",
+"ok": true,
+"split": [
+"\ud55c-\u00dfsystem",
+"\u00e9\u00df"
+]
+},
+{
+"input": "\u00c9\u00a0\u200cbb:\u00dfa\ufeffb\u00c9",
+"clean": "\u00e9 bb:\u00dfab\u00e9",
+"ok": true,
+"split": [
+"\u00e9 bb",
+"\u00dfab\u00e9"
+]
+},
+{
+"input": "\u3164\u03a3\u00a0a\ufeff\u200c\u200c\u200b\u00a0 ",
+"clean": "\u03c3 a\u200c\u200c",
+"ok": true,
+"split": [
+"",
+"\u03c3 a\u200c\u200c"
+]
+},
+{
+"input": "\n\u200b\ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "ba\ta",
+"clean": "baa",
+"ok": true,
+"split": [
+"",
+"baa"
+]
+},
+{
+"input": "a_\t\n\ud55ca\u3164\u200ba",
+"clean": "a_\ud55ca\u3164a",
+"ok": true,
+"split": [
+"",
+"a_\ud55ca\u3164a"
+]
+},
+{
+"input": "\t:a",
+"clean": "a",
+"ok": true,
+"split": [
+"",
+"a"
+]
+},
+{
+"input": ":-system:\u00c9\t\u00a0\u00a0-\u00df-",
+"clean": "\u00e9 -\u00df-",
+"ok": true,
+"split": [
+"",
+"\u00e9 -\u00df-"
+]
+},
+{
+"input": "a\n\u00c9system:system:\u03a3 \u200c-:\u00c9a",
+"clean": "a\u00e9system:\u03c2 \u200c-:\u00e9a",
+"ok": true,
+"split": [
+"a\u00e9system",
+"\u03c2 \u200c-:\u00e9a"
+]
+},
+{
+"input": "\u200b_bsystem:\u00df\ud55ca\u00c9:-\t",
+"clean": "_bsystem:\u00df\ud55ca\u00e9:-",
+"ok": true,
+"split": [
+"_bsystem",
+"\u00df\ud55ca\u00e9:-"
+]
+},
+{
+"input": ": a",
+"clean": ":: a",
+"ok": true,
+"split": [
+"",
+": a"
+]
+},
+{
+"input": "system:  b\u3164b\t\n\u200b ",
+"clean": "bb",
+"ok": true,
+"split": [
+"",
+"bb"
+]
+},
+{
+"input": "\u200c\u200c",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "\u00df\ud55c\ufeff\u03a3\u00df\u200c",
+"clean": "\u00df\ud55c\u03c3\u00df\u200c",
+"ok": true,
+"split": [
+"",
+"\u00df\ud55c\u03c3\u00df\u200c"
+]
+},
+{
+"input": "b\t \u200c__",
+"clean": "b __",
+"ok": true,
+"split": [
+"",
+"b __"
+]
+},
+{
+"input": "\u200c\u200c\u3164\u03a3\u00c9\ud55c\u200bb",
+"clean": "\u200c\u200c\u3164\u03c3\u00e9\ud55cb",
+"ok": true,
+"split": [
+"",
+"\u200c\u200c\u3164\u03c3\u00e9\ud55cb"
+]
+},
+{
+"input": "\u00c9-\u200c\ud55c \u00a0\n\ud55c\u00a0",
+"clean": "\u00e9-\u200c\ud55c \ud55c",
+"ok": true,
+"split": [
+"",
+"\u00e9-\u200c\ud55c \ud55c"
+]
+},
+{
+"input": "bsystem:",
+"clean": "bsystem:",
+"ok": false,
+"split": [
+"bsystem",
+""
+]
+},
+{
+"input": "_\t\u00df\ud55c_:\u200c\u3164\u200b\n",
+"clean": "_\u00df\ud55c_:",
+"ok": false,
+"split": [
+"_\u00df\ud55c_",
+""
+]
+},
+{
+"input": "\ud55c",
+"clean": "\ud55c",
+"ok": true,
+"split": [
+"",
+"\ud55c"
+]
+},
+{
+"input": " \u00df\u200c\n\ud55c\u03a3\ufeffsystem:a\ufeff_\ufeff",
+"clean": "\u00df\u200c\ud55c\u03c3system:a_",
+"ok": true,
+"split": [
+"\u00df\u200c\ud55c\u03c3system",
+"a_"
+]
+},
+{
+"input": "\u00c9-\u200c\u200c::",
+"clean": "\u00e9-::",
+"ok": true,
+"split": [
+"\u00e9-",
+":"
+]
+},
+{
+"input": "\u200c\t_a\n\u00c9",
+"clean": "_a\u00e9",
+"ok": true,
+"split": [
+"",
+"_a\u00e9"
+]
+},
+{
+"input": "\ud55c\u00c9_system:\u03a3\n\u00df\u200b\u03a3",
+"clean": "\ud55c\u00e9_system:\u03c2\u00df\u03c2",
+"ok": true,
+"split": [
+"\ud55c\u00e9_system",
+"\u03c2\u00df\u03c2"
+]
+},
+{
+"input": "ab\u3164_\u200c_system:\u00df\ud55c a\u200c",
+"clean": "ab__system:\u00df\ud55c a\u200c",
+"ok": true,
+"split": [
+"ab__system",
+"\u00df\ud55c a\u200c"
+]
+},
+{
+"input": "\u00df\u200b\u00c9a",
+"clean": "\u00df\u00e9a",
+"ok": true,
+"split": [
+"",
+"\u00df\u00e9a"
+]
+},
+{
+"input": "\u3164\n\u200b\u200c:\ud55c-\u200c\u200ca\u00df\u3164",
+"clean": "\ud55c-\u200c\u200ca\u00df\u3164",
+"ok": true,
+"split": [
+"",
+"\ud55c-\u200c\u200ca\u00df\u3164"
+]
+},
+{
+"input": "\ta-\u200c_\u3164\n\ud55c",
+"clean": "a-\u200c_\u3164\ud55c",
+"ok": true,
+"split": [
+"",
+"a-\u200c_\u3164\ud55c"
+]
+},
+{
+"input": "b\n\ud55c\u200c:a\u200b\u200c-\t\t",
+"clean": "b\ud55c\u200c:a-",
+"ok": true,
+"split": [
+"b\ud55c\u200c",
+"a-"
+]
+},
+{
+"input": "_",
+"clean": "_",
+"ok": true,
+"split": [
+"",
+"_"
+]
+},
+{
+"input": "\u00c9\u03a3_ \ud55c\u00a0\u03a3\t\u00a0:",
+"clean": "\u00e9\u03c2_ \ud55c \u03c3:",
+"ok": false,
+"split": [
+"\u00e9\u03c2_ \ud55c \u03c3",
+""
+]
+},
+{
+"input": "system:b\ufeff\u03a3-a",
+"clean": "b\u03c2-a",
+"ok": true,
+"split": [
+"",
+"b\u03c2-a"
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\u00df",
+"clean": "\u00df",
+"ok": true,
+"split": [
+"",
+"\u00df"
+]
+},
+{
+"input": "\u00c9\u00a0\u00a0\ud55c\u200b:",
+"clean": "\u00e9 \ud55c:",
+"ok": false,
+"split": [
+"\u00e9 \ud55c",
+""
+]
+},
+{
+"input": "\ufeff",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "_\n\ud55c_\u200c-\u03a3\u00df",
+"clean": "_\ud55c_\u200c-\u03c3\u00df",
+"ok": true,
+"split": [
+"",
+"_\ud55c_\u200c-\u03c3\u00df"
+]
+},
+{
+"input": "a\u200b\u200b\ufeffb\ud55c",
+"clean": "ab\ud55c",
+"ok": true,
+"split": [
+"",
+"ab\ud55c"
+]
+},
+{
+"input": "\u03a3\u00df\u00dfa ",
+"clean": "\u03c3\u00df\u00dfa",
+"ok": true,
+"split": [
+"",
+"\u03c3\u00df\u00dfa"
+]
+},
+{
+"input": "\u200c\u200c\u00c9\u00a0:-\u00a0",
+"clean": "\u00e9:",
+"ok": false,
+"split": [
+"\u00e9",
+""
+]
+},
+{
+"input": "",
+"clean": "",
+"ok": false,
+"split": [
+"",
+""
+]
+},
+{
+"input": "\n\u00c9",
+"clean": "\u00e9",
+"ok": true,
+"split": [
+"",
+"\u00e9"
+]
+},
+{
+"input": "\u03a3b-a\n:",
+"clean": "\u03c3b-a:",
+"ok": false,
+"split": [
+"\u03c3b-a",
+""
+]
+},
+{
+"input": "\u200b\u00c9\u00df\u00c9:",
+"clean": "\u00e9\u00df\u00e9:",
+"ok": false,
+"split": [
+"\u00e9\u00df\u00e9",
+""
+]
+},
+{
+"input": "\u00c9\u200c\t\ufeff\u00c9\ud55casystem:",
+"clean": "\u00e9\u200c\u00e9\ud55casystem:",
+"ok": false,
+"split": [
+"\u00e9\u200c\u00e9\ud55casystem",
+""
+]
+},
+{
+"input": "\u200c\u03a3\u03a3\u3164\u00df\nsystem:a\u00df\u200c",
+"clean": "\u200c\u03c3\u03c2\u00dfsystem:a\u00df",
+"ok": true,
+"split": [
+"\u200c\u03c3\u03c2\u00dfsystem",
+"a\u00df"
+]
+}
+]
