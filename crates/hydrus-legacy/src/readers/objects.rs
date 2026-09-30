@@ -15,6 +15,7 @@ use rusqlite::types::ValueRef;
 use super::column;
 use crate::db::LegacyDb;
 use crate::error::{LegacyError, Result};
+use crate::objects::subscriptions::{LegacySubscription, QueryLog};
 use crate::objects::{
     ClientApiManager, ClientOptions, FavouriteSearchManager, LegacyOptions, TagDisplayManager,
 };
@@ -275,14 +276,13 @@ impl LegacyDb {
         self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)
     }
 
-    /// Every network session with its cookies (named objects of type 96,
-    /// the latest of each name).
-    pub fn network_sessions(&self) -> Result<Vec<crate::objects::NetworkSession>> {
+    /// The latest object of each name of one type in `json_dumps_named`.
+    fn latest_named(&self, kind: SerialisableType) -> Result<Vec<StoredNamedObject>> {
         let mut latest: std::collections::BTreeMap<String, StoredNamedObject> =
             std::collections::BTreeMap::new();
         for row in self.json_dumps_named()? {
             let row = row?;
-            if row.kind != SerialisableType(96) {
+            if row.kind != kind {
                 continue;
             }
             if latest
@@ -292,8 +292,14 @@ impl LegacyDb {
                 latest.insert(row.name.clone(), row);
             }
         }
-        latest
-            .into_values()
+        Ok(latest.into_values().collect())
+    }
+
+    /// Every network session with its cookies (named objects of type 96,
+    /// the latest of each name).
+    pub fn network_sessions(&self) -> Result<Vec<crate::objects::NetworkSession>> {
+        self.latest_named(SerialisableType(96))?
+            .into_iter()
             .map(|row| {
                 let location = format!("json_dumps_named session {:?}", row.name);
                 let object = row
@@ -303,6 +309,59 @@ impl LegacyDb {
                     .map_err(|e| LegacyError::serialisable(&location, e))
             })
             .collect()
+    }
+
+    /// Every subscription (named objects of type 88, the latest of each
+    /// name), without their queries' histories: see [`Self::query_log`].
+    pub fn subscriptions(&self) -> Result<Vec<LegacySubscription>> {
+        self.latest_named(SerialisableType(88))?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named subscription {:?}", row.name);
+                let object = row
+                    .parse()
+                    .map_err(|e| LegacyError::serialisable(&location, e))?;
+                crate::objects::subscriptions::subscription(&object)
+                    .map_err(|e| LegacyError::serialisable(&location, e))
+            })
+            .collect()
+    }
+
+    /// A subscription query's history (type 86) by the name in its
+    /// [`QueryHeader`](crate::objects::subscriptions::QueryHeader); `None`
+    /// if it is missing (the reference then starts the query afresh).
+    pub fn query_log(&self, name: &str) -> Result<Option<QueryLog>> {
+        let table = self.table("main", "json_dumps_named")?;
+        let row = self
+            .connection()
+            .query_row(
+                &format!(
+                    "SELECT version, dump FROM {table} WHERE dump_type = 86 AND dump_name = ? \
+                     ORDER BY timestamp_ms DESC LIMIT 1"
+                ),
+                [name],
+                |row| {
+                    Ok((
+                        version_column(row, 0, "json_dumps_named"),
+                        dump_column(row, 1, "json_dumps_named"),
+                    ))
+                },
+            )
+            .optional()?;
+        let Some((version, dump)) = row else {
+            return Ok(None);
+        };
+        let location = format!("json_dumps_named query log {name:?}");
+        let object = SerialisableObject::from_stored(
+            SerialisableType(86),
+            Some(name.to_owned()),
+            version?,
+            &dump?,
+        )
+        .map_err(|e| LegacyError::serialisable(&location, e))?;
+        crate::objects::subscriptions::query_log(&object)
+            .map(Some)
+            .map_err(|e| LegacyError::serialisable(&location, e))
     }
 
     /// Tag display filters and autocomplete options (type 79).

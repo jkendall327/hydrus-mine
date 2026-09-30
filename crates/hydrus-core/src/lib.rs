@@ -16,6 +16,7 @@ pub mod pyhtml;
 pub mod pyjson;
 pub mod service;
 pub mod sort;
+pub mod subscriptions;
 pub mod tag;
 pub mod tag_filter;
 pub mod thumbnail;

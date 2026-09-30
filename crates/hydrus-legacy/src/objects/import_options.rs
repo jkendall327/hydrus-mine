@@ -297,7 +297,7 @@ fn locations(object: &SerialisableObject) -> DecodeResult<LocationOptions> {
     })
 }
 
-fn tags(object: &SerialisableObject) -> DecodeResult<TagImportOptions> {
+pub fn tags(object: &SerialisableObject) -> DecodeResult<TagImportOptions> {
     let k = TAGS;
     expect(object, k, &[1])?;
     let info = object.info();
