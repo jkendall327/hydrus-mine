@@ -330,6 +330,16 @@ def subscription( i ):
     s = ClientImportSubscriptions.Subscription( f'subscription {i}', ( bytes( rng.randrange( 256 ) for _ in range( 32 ) ), rng.choice( [ 'safebooru tag search', 'gelbooru tag search', '' ] ) ) )
 
     s._query_headers = [ query_header( i * 10 + k ) for k in range( rng.randint( 0, 3 ) ) ]
+
+    logs = []
+
+    for ( k, h ) in enumerate( s._query_headers ):
+
+        container = query_log( i * 10 + k )
+        h.SetQueryLogContainerName( container.GetName() )
+
+        logs.append( container )
+
     s._checker_options = checker_options()
     s._initial_file_limit = rng.choice( [ 100, 500, None ] )
     s._periodic_file_limit = rng.choice( [ 100, 25, None ] )
@@ -343,7 +353,7 @@ def subscription( i ):
     s._publish_label_override = maybe( 'my label' )
     s._merge_query_publish_events = rng.random() < 0.5
 
-    return s
+    return ( s, logs )
 
 
 def subscription_facts( s ):
@@ -401,40 +411,38 @@ def checker_case():
     }
 
 
+def log_case( container ):
+
+    stored = list( container.GetSerialisableTuple() )
+    loaded = read_back( stored )
+
+    return {
+        'stored' : stored,
+        'facts' : {
+            'name' : loaded.GetName(),
+            'gallery_seeds' : [ gallery_seed_facts( g ) for g in loaded.GetGallerySeedLog().GetGallerySeeds() ],
+            'file_seeds' : [ file_seed_facts( f ) for f in loaded.GetFileSeedCache().GetFileSeeds() ],
+        },
+    }
+
+
 def main():
 
     file_seeds = seed_cases( file_seed, FILE_SEED_FIELDS, FILE_SEED_ADDED, file_seed_facts, 8, 80 )
     gallery_seeds = seed_cases( gallery_seed, GALLERY_SEED_FIELDS, GALLERY_SEED_ADDED, gallery_seed_facts, 4, 30 )
 
-    query_logs = []
-
-    for i in range( 8 ):
-
-        container = query_log( i )
-
-        stored = list( container.GetSerialisableTuple() )
-        loaded = read_back( stored )
-
-        query_logs.append( {
-            'stored' : stored,
-            'facts' : {
-                'name' : loaded.GetName(),
-                'gallery_seeds' : [ gallery_seed_facts( g ) for g in loaded.GetGallerySeedLog().GetGallerySeeds() ],
-                'file_seeds' : [ file_seed_facts( f ) for f in loaded.GetFileSeedCache().GetFileSeeds() ],
-            },
-        } )
-
+    query_logs = [ log_case( query_log( i ) ) for i in range( 8 ) ]
 
     subscriptions = []
 
     for i in range( 12 ):
 
-        s = subscription( i )
+        ( s, logs ) = subscription( i )
 
         stored = list( s.GetSerialisableTuple() )
         loaded = read_back( stored )
 
-        subscriptions.append( { 'stored' : stored, 'facts' : subscription_facts( loaded ) } )
+        subscriptions.append( { 'stored' : stored, 'facts' : subscription_facts( loaded ), 'logs' : [ log_case( container ) for container in logs ] } )
 
 
     checkers = [ checker_case() for _ in range( 200 ) ]

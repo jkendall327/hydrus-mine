@@ -14,14 +14,15 @@
 use std::collections::{BTreeMap, HashMap};
 use std::path::{Path, PathBuf};
 
-use rusqlite::{Connection, OpenFlags, params};
+use rusqlite::{Connection, OpenFlags, OptionalExtension, params};
 
+use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
 use hydrus_core::{ServiceId, ServiceKey, ServiceType, SubtagId};
 
 use crate::error::{Result, StoreError};
 use crate::network::{self, Cookie, CustomHeader, NetworkContext};
 use crate::services::{self, ServiceKind};
-use crate::{counts, master, schema};
+use crate::{counts, master, queues, schema, subscriptions};
 
 mod decode;
 
@@ -44,8 +45,20 @@ pub struct ImportInput {
     pub custom_headers: Option<Vec<(NetworkContext, CustomHeader)>>,
     /// Unexpired cookies, by session.
     pub cookies: Vec<(NetworkContext, Cookie)>,
+    /// Subscriptions; their queries' histories are copied during the import.
+    pub subscriptions: Vec<SubscriptionInput>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
+}
+
+/// A subscription to import.
+#[derive(Debug, Clone, PartialEq)]
+pub struct SubscriptionInput {
+    pub name: String,
+    pub settings: SubscriptionSettings,
+    /// Each query's state, with the name its history is stored under in the
+    /// source's `json_dumps_named`.
+    pub queries: Vec<(String, QueryState)>,
 }
 
 /// One Client API access key, as stored natively.
@@ -228,6 +241,7 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.storage(source_dir)?;
     copier.settings(input)?;
     copier.network(input)?;
+    copier.subscriptions(input)?;
     copier.derived()?;
     tx.commit()?;
 
@@ -788,6 +802,89 @@ impl Copier<'_> {
         Ok(())
     }
 
+    /// Subscriptions with their queries, each query's history decoded and
+    /// copied one at a time.
+    fn subscriptions(&mut self, input: &ImportInput) -> Result<()> {
+        let url_classes = input
+            .settings
+            .get(<hydrus_core::url::UrlClassSettings as crate::settings::Setting>::KEY)
+            .and_then(|v| serde_json::from_value(v.clone()).ok())
+            .map(hydrus_core::url::UrlClasses::new);
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| d.as_secs() as i64);
+        let mut log_stmt = self.conn.prepare(
+            "SELECT version, CAST(dump AS TEXT) FROM src.json_dumps_named
+             WHERE dump_type = 86 AND dump_name = ? ORDER BY timestamp_ms DESC LIMIT 1",
+        )?;
+        let mut counts = [0u64; 4];
+        for s in &input.subscriptions {
+            let Some(id) = subscriptions::create_subscription(self.conn, &s.name, &s.settings)?
+            else {
+                continue;
+            };
+            counts[0] += 1;
+            for (log_name, state) in &s.queries {
+                let queue = subscriptions::add_query(self.conn, id, state, now)?;
+                counts[1] += 1;
+                let stored: Option<(i64, String)> = log_stmt
+                    .query_row([log_name], |r| Ok((r.get(0)?, r.get(1)?)))
+                    .optional()?;
+                let Some((version, dump)) = stored else {
+                    self.report.warnings.push(format!(
+                        "The history of query \"{}\" of subscription \"{}\" is missing; it will start afresh",
+                        state.query_text, s.name
+                    ));
+                    continue;
+                };
+                let log = hydrus_legacy::serialisable::SerialisableObject::from_stored(
+                    hydrus_legacy::serialisable::SerialisableType(86),
+                    Some(log_name.clone()),
+                    u32::try_from(version).unwrap_or(u32::MAX),
+                    &dump,
+                )
+                .and_then(|object| hydrus_legacy::objects::subscriptions::query_log(&object));
+                let log = match log {
+                    Ok(log) => log,
+                    Err(e) => {
+                        self.report.warnings.push(format!(
+                            "The history of query \"{}\" of subscription \"{}\" could not be read, so it \
+                             will start afresh (the original is kept): {e}",
+                            state.query_text, s.name
+                        ));
+                        continue;
+                    }
+                };
+                let warnings = &mut self.report.warnings;
+                let files: Vec<_> = log
+                    .file_seeds
+                    .iter()
+                    .filter_map(|f| decode::file_seed(f, url_classes.as_ref(), warnings))
+                    .collect();
+                let galleries: Vec<_> = log
+                    .gallery_seeds
+                    .iter()
+                    .map(|g| decode::gallery_seed(g, warnings))
+                    .collect();
+                counts[2] += queues::restore_file_seeds(self.conn, queue, &files)? as u64;
+                queues::restore_gallery_seeds(self.conn, queue, &galleries)?;
+                counts[3] += galleries.len() as u64;
+            }
+        }
+        for (table, n) in [
+            "subscriptions",
+            "subscription_queries",
+            "file_seeds",
+            "gallery_seeds",
+        ]
+        .into_iter()
+        .zip(counts)
+        {
+            *self.report.rows.entry(table.into()).or_default() += n;
+        }
+        Ok(())
+    }
+
     fn derived(&mut self) -> Result<()> {
         // autocomplete word index and integer values for every subtag
         let mut stmt = self.conn.prepare("SELECT subtag_id, subtag FROM subtags")?;
@@ -1149,5 +1246,203 @@ mod network_tests {
         assert_eq!(cookies[0].rest, [("HttpOnly".to_owned(), None)]);
         assert!(cookies[0].secure);
         assert_eq!(cookies[1].expires, None);
+    }
+
+    fn file_seed_facts(f: &crate::queues::FileSeed) -> serde_json::Value {
+        let mut notes = f.meta.notes.clone();
+        notes.sort();
+        let mut hashes = f.meta.hashes.clone();
+        hashes.sort();
+        let mut headers = f.meta.request_headers.clone();
+        headers.sort();
+        serde_json::json!({
+            "type": f.seed_type as i64,
+            "data": f.data,
+            "comparison": f.data_for_comparison,
+            "created": f.created,
+            "modified": f.modified,
+            "source_time": f.source_time,
+            "status": f.status.code(),
+            "note": f.note,
+            "referral": f.referral_url,
+            "headers": headers,
+            "filterable": f.meta.external_filterable_tags,
+            "additional": f.meta.external_additional_tags.iter().cloned().collect::<BTreeMap<_, _>>(),
+            "primary": f.meta.primary_urls,
+            "source": f.meta.source_urls,
+            "tags": f.meta.tags,
+            "notes": notes,
+            "hashes": hashes,
+        })
+    }
+
+    fn gallery_seed_facts(g: &crate::queues::GallerySeed) -> serde_json::Value {
+        let mut headers = g.meta.request_headers.clone();
+        headers.sort();
+        serde_json::json!({
+            "url": g.url,
+            "can_generate_more_pages": g.can_generate_more_pages,
+            "created": g.created,
+            "modified": g.modified,
+            "status": g.status.code(),
+            "note": g.note,
+            "referral": g.referral_url,
+            "headers": headers,
+            "filterable": g.meta.external_filterable_tags,
+            "additional": g.meta.external_additional_tags.iter().cloned().collect::<BTreeMap<_, _>>(),
+        })
+    }
+
+    /// Subscriptions made by the reference (`oracle/dump_subscriptions.py`)
+    /// planted in a reference database: each comes over with its settings,
+    /// queries and every query's history in order.
+    #[test]
+    fn imports_subscriptions_with_their_histories() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("subscriptions.json");
+        let cases = recorded["subscriptions"].as_array().unwrap();
+        let missing_log = cases
+            .iter()
+            .flat_map(|c| c["logs"].as_array().unwrap())
+            .next()
+            .unwrap()["facts"]["name"]
+            .clone();
+        {
+            let conn = Connection::open(source.path().join("client.db")).unwrap();
+            let mut insert = conn
+                .prepare("INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (?, ?, ?, ?, ?)")
+                .unwrap();
+            for case in cases {
+                let stored = &case["stored"];
+                // an older save of the same name, which must lose
+                insert
+                    .execute(params![88, stored[1].as_str(), 4, 1, "[]"])
+                    .unwrap();
+                insert
+                    .execute(params![
+                        88,
+                        stored[1].as_str(),
+                        stored[2].as_i64(),
+                        2,
+                        stored[3].to_string()
+                    ])
+                    .unwrap();
+                for log in case["logs"].as_array().unwrap() {
+                    let stored = &log["stored"];
+                    if stored[1] == missing_log {
+                        continue;
+                    }
+                    insert
+                        .execute(params![
+                            86,
+                            stored[1].as_str(),
+                            stored[2].as_i64(),
+                            5,
+                            stored[3].to_string()
+                        ])
+                        .unwrap();
+                }
+            }
+        }
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert_eq!(report.rows["subscriptions"], cases.len() as u64);
+        assert!(
+            report
+                .warnings
+                .iter()
+                .any(|w| w.contains("is missing; it will start afresh")),
+            "{:?}",
+            report.warnings
+        );
+
+        let conn = Connection::open(&dest).unwrap();
+        let imported = subscriptions::subscriptions(&conn).unwrap();
+        assert_eq!(imported.len(), cases.len());
+        for case in cases {
+            let facts = &case["facts"];
+            let s = subscriptions::find_subscription(&conn, facts["name"].as_str().unwrap())
+                .unwrap()
+                .unwrap();
+            let settings = &s.settings;
+            let c = &settings.checker;
+            assert_eq!(
+                serde_json::json!({
+                    "gug_key": settings.gug_key,
+                    "gug_name": settings.gug_name,
+                    "checker": [facts["checker"][0], c.never_faster_than, c.never_slower_than, [c.death_file_velocity.0, c.death_file_velocity.1]],
+                    "initial_file_limit": settings.initial_file_limit,
+                    "periodic_file_limit": settings.periodic_file_limit,
+                    "this_is_a_random_sample": settings.this_is_a_random_sample,
+                    "paused": settings.paused,
+                    "no_work_until": settings.no_work_until,
+                    "no_work_until_reason": settings.no_work_until_reason,
+                    "presentation": [
+                        settings.show_a_popup_while_working,
+                        settings.publish_files_to_popup_button,
+                        settings.publish_files_to_page,
+                        settings.publish_label_override,
+                        settings.merge_query_publish_events,
+                    ],
+                }),
+                serde_json::json!({
+                    "gug_key": facts["gug_key"],
+                    "gug_name": facts["gug_name"],
+                    "checker": facts["checker"],
+                    "initial_file_limit": facts["initial_file_limit"],
+                    "periodic_file_limit": facts["periodic_file_limit"],
+                    "this_is_a_random_sample": facts["this_is_a_random_sample"],
+                    "paused": facts["paused"],
+                    "no_work_until": facts["no_work_until"],
+                    "no_work_until_reason": facts["no_work_until_reason"],
+                    "presentation": facts["presentation"],
+                })
+            );
+            let queries = subscriptions::queries(&conn, s.id).unwrap();
+            let expected_queries = facts["queries"].as_array().unwrap();
+            assert_eq!(queries.len(), expected_queries.len());
+            for ((query, expected), log) in queries
+                .iter()
+                .zip(expected_queries)
+                .zip(case["logs"].as_array().unwrap())
+            {
+                let state = &query.state;
+                assert_eq!(state.query_text, expected["query_text"].as_str().unwrap());
+                assert_eq!(
+                    state.display_name.as_deref(),
+                    expected["display_name"].as_str()
+                );
+                assert_eq!(state.check_now, expected["check_now"]);
+                assert_eq!(state.last_check_time, expected["last_check_time"]);
+                assert_eq!(state.next_check_time, expected["next_check_time"]);
+                assert_eq!(state.paused, expected["paused"]);
+                assert_eq!(state.dead, expected["checker_status"] == 1);
+                assert_eq!(
+                    state.file_seed_compaction_number,
+                    expected["file_seed_compaction_number"]
+                );
+                assert_eq!(
+                    state.gallery_seed_compaction_number,
+                    expected["gallery_seed_compaction_number"]
+                );
+                let files: Vec<_> = crate::queues::file_seeds(&conn, query.queue_id)
+                    .unwrap()
+                    .iter()
+                    .map(file_seed_facts)
+                    .collect();
+                let galleries: Vec<_> = crate::queues::gallery_seeds(&conn, query.queue_id)
+                    .unwrap()
+                    .iter()
+                    .map(gallery_seed_facts)
+                    .collect();
+                if log["facts"]["name"] == missing_log {
+                    assert!(files.is_empty() && galleries.is_empty());
+                } else {
+                    assert_eq!(serde_json::json!(files), log["facts"]["file_seeds"]);
+                    assert_eq!(serde_json::json!(galleries), log["facts"]["gallery_seeds"]);
+                }
+            }
+        }
     }
 }

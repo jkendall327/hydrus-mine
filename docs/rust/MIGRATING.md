@@ -42,9 +42,12 @@ each kind of import, per URL class, and your favourites), so the Client
 API's file imports already follow your file filtering and destination
 settings, and your downloaders' parsers and gallery URL generators are
 converted for the downloader (a definition that can't be converted is
-reported and kept). Configuration hydrus-rs doesn't use yet (subscriptions,
-pages, the GUI's options) is kept verbatim inside the new store, so later
-versions can pick it up without a re-import.
+reported and kept). Subscriptions come across with their settings, their
+queries' timing and state, and each query's full history (the files and
+gallery pages it has seen, with their status and notes), so nothing is
+downloaded twice. Configuration hydrus-rs doesn't use yet (pages, the GUI's
+options) is kept verbatim inside the new store, so later versions can pick
+it up without a re-import.
 
 Autocomplete counts and other caches are rebuilt rather than copied.
 

@@ -63,7 +63,7 @@ show named queues as pages.
 | default import options per URL class / downloader | settings |
 | cookies, custom headers | done |
 | bandwidth rules (and recent usage) | settings (+ usage rows) |
-| subscriptions: queries, their file seed caches and gallery logs, check timings | queue rows |
+| subscriptions: queries, their file seed caches and gallery logs, check timings | done (`subscriptions` and `subscription_queries`, each query's history an import queue); a subscription last saved before hydrus v670 keeps old-style import options, which are not converted yet (the defaults apply, and the import reports it) |
 | watchers and URL/gallery pages open in the GUI session | named queues |
 
 ## Testing
@@ -94,7 +94,10 @@ show named queues as pages.
    layers them), queue tables, the URL worker, URL queues and
    `/add_urls/add_url`. **Done.** Then gallery pages (including gallery
    URLs sent to URL queues) and GUG searches; watchers.
-4. Subscriptions and migrating them with their history.
+4. Subscriptions and migrating them with their history. Migration and
+   the reference's check timing are **done** (oracle-tested: every saved
+   version of seeds, and 200 random timing cases). Next: running them on
+   schedule, then adding many queries at once.
 
 Login scripts are not planned: logins come from cookies (Companion sends
 them), which already migrate and work. A migrated downloader that names a

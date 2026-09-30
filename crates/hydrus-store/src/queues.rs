@@ -506,6 +506,35 @@ pub fn add_file_seeds(
     Ok(changed)
 }
 
+/// Append seeds exactly as they were (a migrated history), skipping any the
+/// queue already has; how many were added.
+pub fn restore_file_seeds(conn: &Connection, queue: i64, seeds: &[FileSeed]) -> Result<usize> {
+    let mut position = last_position(conn, "file_seeds", queue)?;
+    let mut stmt = conn.prepare_cached(
+        "INSERT OR IGNORE INTO file_seeds (queue_id, position, seed_type, data, data_for_comparison, created, modified, source_time, status, note, referral_url, metadata)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    )?;
+    let mut added = 0;
+    for seed in seeds {
+        position += 1.0;
+        added += stmt.execute(params![
+            queue,
+            position,
+            seed.seed_type as i64,
+            seed.data,
+            seed.data_for_comparison,
+            seed.created,
+            seed.modified,
+            seed.source_time,
+            seed.status.code(),
+            seed.note,
+            seed.referral_url,
+            json(&seed.meta)
+        ])?;
+    }
+    Ok(added)
+}
+
 /// Insert seeds straight after another (a post's files after the post),
 /// skipping ones the queue already has; how many were added.
 pub fn insert_file_seeds_after(
@@ -717,6 +746,31 @@ pub fn add_gallery_seeds(
         ])?;
     }
     Ok(fresh.len())
+}
+
+/// Append gallery seeds exactly as they were (a migrated history).
+pub fn restore_gallery_seeds(conn: &Connection, queue: i64, seeds: &[GallerySeed]) -> Result<()> {
+    let mut position = last_position(conn, "gallery_seeds", queue)?;
+    let mut stmt = conn.prepare_cached(
+        "INSERT INTO gallery_seeds (queue_id, position, url, can_generate_more_pages, created, modified, status, note, referral_url, metadata)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    )?;
+    for seed in seeds {
+        position += 1.0;
+        stmt.execute(params![
+            queue,
+            position,
+            seed.url,
+            seed.can_generate_more_pages,
+            seed.created,
+            seed.modified,
+            seed.status.code(),
+            seed.note,
+            seed.referral_url,
+            json(&seed.meta)
+        ])?;
+    }
+    Ok(())
 }
 
 pub fn gallery_seeds(conn: &Connection, queue: i64) -> Result<Vec<GallerySeed>> {

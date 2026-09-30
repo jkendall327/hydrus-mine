@@ -16,10 +16,32 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
+
+/// Subscriptions and their queries (`subscriptions.rs`); each query's
+/// history is an import queue.
+const V4: &str = r"
+CREATE TABLE subscriptions (
+    subscription_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    -- SubscriptionSettings (JSON)
+    settings TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE subscription_queries (
+    -- the import queue holding the query's history
+    queue_id INTEGER PRIMARY KEY,
+    subscription_id INTEGER NOT NULL,
+    position INTEGER NOT NULL,
+    -- QueryState (JSON)
+    state TEXT NOT NULL
+) STRICT;
+
+CREATE INDEX subscription_queries_by_subscription ON subscription_queries (subscription_id, position);
+";
 
 /// Import queues: URL lists, gallery searches, watchers and subscription
 /// queries, with their file and gallery seeds as rows (`queues.rs`).

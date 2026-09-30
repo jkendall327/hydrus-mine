@@ -20,6 +20,7 @@ pub mod services;
 pub mod settings;
 pub mod storage;
 pub mod store;
+pub mod subscriptions;
 pub mod synth;
 pub mod text;
 pub mod transfer;

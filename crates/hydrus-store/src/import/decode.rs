@@ -15,10 +15,15 @@ use hydrus_legacy::LegacyDb;
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
 
-use super::{ApiPermissionsRow, ImportInput, settingless_kind};
+use hydrus_core::import_options::{ImportOptionsSlice, TagImportOptions};
+use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
+use hydrus_core::url::UrlClasses;
+
+use super::{ApiPermissionsRow, ImportInput, SubscriptionInput, settingless_kind};
 use crate::autocomplete::{AutocompleteRules, AutocompleteSettings};
 use crate::duplicates::{DuplicateFilterSettings, DuplicateMergeSettings, MergeOptions};
 use crate::error::{Result, StoreError};
+use crate::queues::{FileSeed, FileSeedMeta, GallerySeed, GallerySeedMeta, SeedStatus, SeedType};
 use crate::services::{
     LikeRatingConfig, NumericalRatingConfig, PenBrush, RatingColours, RatingDisplay,
     RepositoryConfig, Rgb, ServerConfig, ServiceKind, StarAppearance, StarShape,
@@ -140,7 +145,173 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             "Downloaders (GUGs and parsers) were not converted: {e}"
         )),
     }
+    match db.subscriptions() {
+        Ok(subscriptions) => {
+            input.subscriptions = subscriptions
+                .iter()
+                .map(|s| subscription_input(s, &mut input.warnings))
+                .collect();
+        }
+        Err(e) => input
+            .warnings
+            .push(format!("Subscriptions were not converted: {e}")),
+    }
     Ok(input)
+}
+
+/// A subscription's settings and queries (their histories are copied during
+/// the import).
+fn subscription_input(
+    s: &legacy::subscriptions::LegacySubscription,
+    warnings: &mut Vec<String>,
+) -> SubscriptionInput {
+    let import_options = s.import_options.clone().unwrap_or_else(|| {
+        warnings.push(format!(
+            "Subscription \"{}\" was last saved by an old hydrus, and its import options were not \
+             converted, so the defaults apply to it",
+            s.name
+        ));
+        ImportOptionsSlice::default()
+    });
+    let limit = |limit: Option<i64>| limit.map(|n| u64::try_from(n).unwrap_or(0));
+    let settings = SubscriptionSettings {
+        gug_key: s.gug_key.clone(),
+        gug_name: s.gug_name.clone(),
+        checker: s.checker.clone(),
+        initial_file_limit: limit(s.initial_file_limit),
+        periodic_file_limit: limit(s.periodic_file_limit),
+        this_is_a_random_sample: s.this_is_a_random_sample,
+        paused: s.paused,
+        import_options,
+        no_work_until: s.no_work_until,
+        no_work_until_reason: s.no_work_until_reason.clone(),
+        show_a_popup_while_working: s.show_a_popup_while_working,
+        publish_files_to_popup_button: s.publish_files_to_popup_button,
+        publish_files_to_page: s.publish_files_to_page,
+        publish_label_override: s.publish_label_override.clone(),
+        merge_query_publish_events: s.merge_query_publish_events,
+    };
+    let queries = s
+        .queries
+        .iter()
+        .map(|q| {
+            let tag_import_options = q.tag_import_options.clone().unwrap_or_else(|| {
+                warnings.push(format!(
+                    "The query \"{}\" of subscription \"{}\" was last saved by an old hydrus, and its \
+                     tag import options were not converted",
+                    q.query_text, s.name
+                ));
+                TagImportOptions::default()
+            });
+            let state = QueryState {
+                query_text: q.query_text.clone(),
+                display_name: q.display_name.clone(),
+                check_now: q.check_now,
+                last_check_time: q.last_check_time,
+                next_check_time: q.next_check_time,
+                paused: q.paused,
+                // (CHECKER_STATUS_DEAD; subscriptions never 404)
+                dead: q.checker_status != 0,
+                file_seed_compaction_number: q.file_seed_compaction_number,
+                gallery_seed_compaction_number: q.gallery_seed_compaction_number,
+                tag_import_options,
+            };
+            (q.log_name.clone(), state)
+        })
+        .collect();
+    SubscriptionInput {
+        name: s.name.clone(),
+        settings,
+        queries,
+    }
+}
+
+fn service_tags(tags: &[(String, Vec<String>)]) -> Vec<(String, BTreeSet<String>)> {
+    tags.iter()
+        .map(|(key, tags)| (key.clone(), tags.iter().cloned().collect()))
+        .collect()
+}
+
+/// A query's saved file seed; `None` (with a warning) if it cannot be kept.
+/// A URL saved before its comparison form was stored is normalised with
+/// the URL classes, as the reference does when it loads it.
+pub(super) fn file_seed(
+    f: &legacy::subscriptions::LegacyFileSeed,
+    url_classes: Option<&UrlClasses>,
+    warnings: &mut Vec<String>,
+) -> Option<FileSeed> {
+    let seed_type = match f.seed_type {
+        0 => SeedType::Path,
+        1 => SeedType::Url,
+        other => {
+            warnings.push(format!(
+                "A file import of unknown type {other} ({}) was dropped",
+                f.data
+            ));
+            return None;
+        }
+    };
+    let data_for_comparison = f.data_for_comparison.clone().unwrap_or_else(|| {
+        url_classes
+            .and_then(|r| r.normalise(&f.data, false).ok())
+            .unwrap_or_else(|| f.data.clone())
+    });
+    Some(FileSeed {
+        id: 0,
+        queue_id: 0,
+        seed_type,
+        data: f.data.clone(),
+        data_for_comparison,
+        created: f.created,
+        modified: f.modified,
+        source_time: f.source_time,
+        status: seed_status(f.status, &f.data, warnings),
+        note: f.note.clone(),
+        referral_url: f.referral_url.clone(),
+        meta: FileSeedMeta {
+            request_headers: f.request_headers.clone(),
+            external_filterable_tags: f.external_filterable_tags.iter().cloned().collect(),
+            external_additional_tags: service_tags(&f.external_additional_tags),
+            primary_urls: f.primary_urls.iter().cloned().collect(),
+            source_urls: f.source_urls.iter().cloned().collect(),
+            tags: f.tags.iter().cloned().collect(),
+            notes: f.notes.clone(),
+            hashes: f.hashes.clone(),
+        },
+    })
+}
+
+pub(super) fn gallery_seed(
+    g: &legacy::subscriptions::LegacyGallerySeed,
+    warnings: &mut Vec<String>,
+) -> GallerySeed {
+    GallerySeed {
+        id: 0,
+        queue_id: 0,
+        url: g.url.clone(),
+        can_generate_more_pages: g.can_generate_more_pages,
+        created: g.created,
+        modified: g.modified,
+        status: seed_status(g.status, &g.url, warnings),
+        note: g.note.clone(),
+        referral_url: g.referral_url.clone(),
+        meta: GallerySeedMeta {
+            request_headers: g.request_headers.clone(),
+            external_filterable_tags: g.external_filterable_tags.iter().cloned().collect(),
+            external_additional_tags: service_tags(&g.external_additional_tags),
+            run_token: String::new(),
+            force_next_page_url_generation: false,
+        },
+    }
+}
+
+fn seed_status(code: i64, what: &str, warnings: &mut Vec<String>) -> SeedStatus {
+    SeedStatus::from_code(code).unwrap_or_else(|| {
+        warnings.push(format!(
+            "An import of {what} had unknown status {code}; it will be tried again"
+        ));
+        SeedStatus::Unknown
+    })
 }
 
 /// Each tag service's autocomplete search rules. (The options that only
