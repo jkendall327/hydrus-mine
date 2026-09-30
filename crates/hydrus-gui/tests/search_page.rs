@@ -42,6 +42,28 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(everything > 10, "{everything}");
     assert_eq!(page.status(), format!("{everything} files"));
 
+    // the tag list: every file's tags with how many have each, sorted as the
+    // reference sorts them (by the user's namespaces, then a-z)
+    let rows: Vec<String> = page.tag_rows().iter().map(|r| (*r).to_owned()).collect();
+    assert!(rows.len() > 10, "{rows:?}");
+    assert!(rows.iter().all(|r| r.ends_with(')')), "{rows:?}");
+    let series = rows.iter().position(|r| r.starts_with("series:"));
+    let character = rows.iter().position(|r| r.starts_with("character:"));
+    if let (Some(series), Some(character)) = (series, character) {
+        assert!(series < character, "{rows:?}");
+    }
+    // with a file selected, that file's tags, one each
+    page.select(0);
+    let selected: Vec<String> = page.tag_rows().iter().map(|r| (*r).to_owned()).collect();
+    assert!(!selected.is_empty() && selected.len() < rows.len());
+    assert!(selected.iter().all(|r| r.ends_with(" (1)")), "{selected:?}");
+    // double-clicking a tag searches for it too
+    assert!(page.activate_tag(0));
+    assert_eq!(page.predicates().len(), 2);
+    assert!(page.results().len() < everything);
+    page.remove_predicate(1);
+    assert_eq!(page.tag_rows().len(), rows.len());
+
     page.add_predicate("system:nonsense");
     assert!(page.error().is_some());
     assert_eq!(page.predicates(), ["system:everything"]);
@@ -143,6 +165,10 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));
     assert_eq!(ui.get_predicates().row_count(), 1);
+    assert!(ui.get_tags().row_count() > 10);
+    ui.invoke_thumbnail_clicked(1);
+    let selected_tags = ui.get_tags().row_count();
+    assert!(selected_tags > 0 && selected_tags < 10);
     // a row is made at once, with blanks until its thumbnails are decoded
     // (off the UI thread)
     let sizes = |rows: &hydrus_gui::ThumbnailRows| -> Vec<u32> {

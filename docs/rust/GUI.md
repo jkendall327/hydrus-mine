@@ -30,7 +30,14 @@ files; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
-and double-clicking one removes it. The matching files' thumbnails fill the grid, newest import
+and double-clicking one removes it. Below them, as the reference's
+"selection tags" box, the tags of the selected file (or with nothing
+selected, of every file on the page) with how many have each (`tag (3)
+(+1)` for pending, `(-1)` petitioned), display tags in the page's tag
+domain, sorted by the reference's default (the user's namespace order,
+then a-z; checked against its `SortTags`); double-clicking a tag searches
+for it too. Your own tag sort and namespace order aren't carried over
+yet. The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own

@@ -31,6 +31,9 @@ pub struct SearchPage {
     /// In the sort's order.
     results: Vec<HashId>,
     selected: Option<usize>,
+    /// The selection's tags (or, with nothing selected, the page's): each
+    /// tag, and its row as the list shows it.
+    tags: Vec<(String, String)>,
     error: Option<String>,
 }
 
@@ -64,6 +67,7 @@ impl SearchPage {
             sort_changed: false,
             results: Vec::new(),
             selected: None,
+            tags: Vec::new(),
             error: None,
         }
     }
@@ -92,6 +96,7 @@ impl SearchPage {
         page.synchronised = synchronised;
         page.set_page_sort(sort);
         page.results = files;
+        page.count_tags();
         page
     }
 
@@ -106,6 +111,7 @@ impl SearchPage {
         page.note = Some(note.into());
         page.set_page_sort(sort);
         page.results = files;
+        page.count_tags();
         page
     }
 
@@ -321,6 +327,102 @@ impl SearchPage {
 
     pub fn select(&mut self, index: usize) {
         self.selected = (index < self.results.len()).then_some(index);
+        self.count_tags();
+    }
+
+    /// The tag list's rows: the selected file's tags, or with nothing
+    /// selected every file's, with how many have each (`tag (3) (+1)`).
+    pub fn tag_rows(&self) -> Vec<&str> {
+        self.tags.iter().map(|(_, row)| row.as_str()).collect()
+    }
+
+    /// A tag in the list was activated: search for it too.
+    pub fn activate_tag(&mut self, index: usize) -> bool {
+        match self.tags.get(index) {
+            Some((tag, _)) => {
+                let tag = tag.clone();
+                self.add_predicate(&tag)
+            }
+            None => false,
+        }
+    }
+
+    /// Count the tags for the list, as the reference's selection tags box
+    /// does: display tags in the page's tag domain, current, pending and
+    /// petitioned, sorted by its default sort.
+    fn count_tags(&mut self) {
+        use hydrus_core::tag_sort::{TagSort, default_user_namespaces, sort_tags};
+        let files: Vec<HashId> = match self.selected {
+            Some(i) => vec![self.results[i]],
+            None => self.results.clone(),
+        };
+        let snapshot = self.store.snapshot();
+        let service = snapshot
+            .services
+            .by_key(&self.context.tags.display_service)
+            .ok()
+            .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
+            .map(|s| s.id);
+        let counted = self.store.read(|conn| {
+            let counts = hydrus_store::media::tag_counts(
+                conn,
+                &snapshot.services,
+                &snapshot.display,
+                service,
+                &files,
+            )?;
+            let ids: Vec<_> = counts
+                .current
+                .keys()
+                .chain(counts.pending.keys())
+                .chain(counts.petitioned.keys())
+                .copied()
+                .collect();
+            Ok((counts, hydrus_store::master::tags(conn, &ids)?))
+        });
+        let Ok((counts, names)) = counted else {
+            self.tags.clear();
+            return;
+        };
+        let mut rows: Vec<(String, [u64; 3])> = names
+            .iter()
+            .map(|(id, tag)| {
+                let n = |m: &std::collections::HashMap<_, u64>| m.get(id).copied().unwrap_or(0);
+                (
+                    tag.as_str().to_owned(),
+                    [
+                        n(&counts.current),
+                        n(&counts.pending),
+                        n(&counts.petitioned),
+                    ],
+                )
+            })
+            .collect();
+        sort_tags(
+            &TagSort::DEFAULT,
+            &mut rows,
+            |(tag, _)| tag,
+            |(_, n)| n.iter().sum(),
+            &default_user_namespaces(),
+        );
+        self.tags = rows
+            .into_iter()
+            .map(|(tag, [current, pending, petitioned])| {
+                let mut row = match hydrus_core::tag::split_tag(&tag) {
+                    ("", subtag) => subtag.to_owned(),
+                    _ => tag.clone(),
+                };
+                for (n, prefix) in [(current, ""), (pending, "+"), (petitioned, "-")] {
+                    if n > 0 {
+                        row.push_str(&format!(
+                            " ({prefix}{})",
+                            hydrus_core::numbers::human_int(n)
+                        ));
+                    }
+                }
+                (tag, row)
+            })
+            .collect();
     }
 
     fn search(&mut self) {
@@ -329,6 +431,7 @@ impl SearchPage {
         self.results.clear();
         // as in the reference, a page with no predicates shows nothing
         if self.predicates.is_empty() {
+            self.tags.clear();
             return;
         }
         let search = FileSearchContext {
@@ -346,6 +449,7 @@ impl SearchPage {
             Ok(Err(e)) => self.error = Some(e.to_string()),
             Err(e) => self.error = Some(e.to_string()),
         }
+        self.count_tags();
     }
 
     /// The status bar's text.

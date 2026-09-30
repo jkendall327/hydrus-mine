@@ -28,6 +28,32 @@ component Predicate inherits Rectangle {
     }
 }
 
+// the tags of the selected files (or of the page's), with their counts, as
+// the reference's "selection tags" box; double-clicking one searches for it
+component TagList inherits Rectangle {
+    in property <[string]> tags;
+    callback activated(int);
+    border-width: 1px;
+    border-color: #c8c8c8;
+    background: #ffffff;
+    ListView {
+        for tag[i] in root.tags: Rectangle {
+            height: 20px;
+            background: pick.has-hover ? #eeeeee : transparent;
+            Text {
+                x: 4px;
+                text: tag;
+                vertical-alignment: center;
+                overflow: elide;
+                width: parent.width - 8px;
+            }
+            pick := TouchArea {
+                double-clicked => { root.activated(i); }
+            }
+        }
+    }
+}
+
 // one notebook's tabs
 export struct TabRow {
     names: [string],
@@ -112,6 +138,7 @@ export component MainWindow inherits Window {
     in property <[string]> order-names;
     in property <int> order-index;
     in property <[string]> predicates;
+    in property <[string]> tags;
     in property <[string]> suggestions;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
@@ -128,6 +155,7 @@ export component MainWindow inherits Window {
     callback move-highlight(int);
     callback suggestion-chosen(int);
     callback remove-predicate(int);
+    callback tag-activated(int);
     callback thumbnail-clicked(int);
     callback thumbnail-activated(int);
     callback columns-changed(int);
@@ -154,6 +182,10 @@ export component MainWindow inherits Window {
                 Text {
                     text: root.note;
                     wrap: word-wrap;
+                }
+                TagList {
+                    tags: root.tags;
+                    activated(i) => { root.tag-activated(i); }
                 }
             }
             if root.note == "": VerticalBox {
@@ -228,6 +260,7 @@ export component MainWindow inherits Window {
                     border-width: 1px;
                     border-color: #c8c8c8;
                     background: #ffffff;
+                    height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
                     VerticalLayout {
                         padding: 2px;
                         alignment: start;
@@ -236,6 +269,10 @@ export component MainWindow inherits Window {
                             remove => { root.remove-predicate(i); }
                         }
                     }
+                }
+                TagList {
+                    tags: root.tags;
+                    activated(i) => { root.tag-activated(i); }
                 }
             }
             grid := ThumbnailGrid {

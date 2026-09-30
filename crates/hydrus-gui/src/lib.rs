@@ -155,6 +155,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    window.on_tag_activated({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |index| {
+            page()
+                .borrow_mut()
+                .activate_tag(usize::try_from(index).unwrap_or(usize::MAX));
+            shown(true);
+        }
+    });
     window.on_remove_predicate({
         let page = page.clone();
         let shown = shown.clone();
@@ -228,6 +238,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             for changed in [before, after].into_iter().flatten() {
                 rows.file_changed(changed);
             }
+            shown(false);
         }
     });
     Bound {
@@ -325,6 +336,12 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
         .map(SharedString::from)
         .collect();
     window.set_predicates(ModelRc::new(VecModel::from(predicates)));
+    let tags: Vec<SharedString> = page
+        .tag_rows()
+        .into_iter()
+        .map(SharedString::from)
+        .collect();
+    window.set_tags(ModelRc::new(VecModel::from(tags)));
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
     let sort = page.sort();

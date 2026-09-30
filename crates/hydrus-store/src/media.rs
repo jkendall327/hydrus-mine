@@ -456,6 +456,64 @@ pub fn load(
     Ok(MediaBatch { results, tags })
 }
 
+/// How many of a set of files have each tag, as a tag list counts them.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct TagCounts {
+    pub current: HashMap<TagId, u64>,
+    pub pending: HashMap<TagId, u64>,
+    pub petitioned: HashMap<TagId, u64>,
+}
+
+/// How many of `files` have each tag in a tag service (`None`: in any), as
+/// a tag list shows them: current and pending tags with siblings and
+/// parents applied, petitioned tags as stored; a file counts once per tag
+/// however many services give it the tag.
+pub fn tag_counts(
+    conn: &Connection,
+    registry: &ServiceRegistry,
+    display: &DisplayGraphs,
+    service: Option<ServiceId>,
+    files: &[HashId],
+) -> Result<TagCounts> {
+    let ids = id_array(files);
+    let services: Vec<ServiceId> = registry
+        .tag_services()
+        .map(|s| s.id)
+        .filter(|id| service.is_none_or(|wanted| wanted == *id))
+        .collect();
+    let mut counts = TagCounts::default();
+    for (status, out) in [
+        (ContentStatus::Current, &mut counts.current),
+        (ContentStatus::Pending, &mut counts.pending),
+        (ContentStatus::Petitioned, &mut counts.petitioned),
+    ] {
+        // (file, tag) pairs, deduplicated, then counted by tag
+        let mut pairs: Vec<(u32, u32)> = Vec::new();
+        for &service in &services {
+            let graph = display.get(service);
+            let table = MappingTables::new(service).for_status(status).to_owned();
+            let mut stmt = conn.prepare_cached(&format!(
+                "SELECT hash_id, tag_id FROM {table} WHERE hash_id IN rarray(?)"
+            ))?;
+            let mut rows = stmt.query([ids.clone()])?;
+            while let Some(r) = rows.next()? {
+                let (file, tag): (HashId, TagId) = (r.get(0)?, r.get(1)?);
+                if status == ContentStatus::Petitioned {
+                    pairs.push((file.0, tag.0));
+                } else {
+                    pairs.extend(graph.display_tags(tag).map(|t| (file.0, t.0)));
+                }
+            }
+        }
+        pairs.sort_unstable();
+        pairs.dedup();
+        for (_, tag) in pairs {
+            *out.entry(TagId(tag)).or_default() += 1;
+        }
+    }
+    Ok(counts)
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -484,5 +542,56 @@ mod tests {
         let tagged = batch.results.iter().filter(|m| !m.tags.is_empty()).count();
         assert_eq!(tagged, 36);
         assert!(batch.tags.len() > 40);
+    }
+
+    /// Counting a batch's tags agrees with counting each loaded file's
+    /// display tags, in each service and in all of them.
+    #[test]
+    fn counts_tags_as_each_file_has_them() {
+        use std::collections::BTreeSet;
+        let (_source, dest_dir, _dest) = import_basic();
+        let store = Store::open(dest_dir.path()).unwrap();
+        let snapshot = store.snapshot();
+        let all: Vec<HashId> = store
+            .read(|c| {
+                Ok(c.prepare("SELECT hash_id FROM files")?
+                    .query_map([], |r| r.get(0))?
+                    .collect::<rusqlite::Result<_>>()?)
+            })
+            .unwrap();
+        let batch = store
+            .read(|c| load(c, &snapshot.services, Some(&snapshot.display), &all))
+            .unwrap();
+        let services: Vec<ServiceId> = snapshot.services.tag_services().map(|s| s.id).collect();
+        let mut checked = 0;
+        for wanted in services.iter().map(|&s| Some(s)).chain([None]) {
+            let counts = store
+                .read(|c| tag_counts(c, &snapshot.services, &snapshot.display, wanted, &all))
+                .unwrap();
+            let mut expected: HashMap<TagId, u64> = HashMap::new();
+            for m in &batch.results {
+                let mut tags = BTreeSet::new();
+                for (service, service_tags) in &m.tags {
+                    if wanted.is_some_and(|w| w != *service) {
+                        continue;
+                    }
+                    let graph = snapshot.display.get(*service);
+                    for tag in service_tags
+                        .by_status
+                        .get(&ContentStatus::Current)
+                        .into_iter()
+                        .flatten()
+                    {
+                        tags.extend(graph.display_tags(*tag));
+                    }
+                }
+                for tag in tags {
+                    *expected.entry(tag).or_default() += 1;
+                }
+            }
+            assert_eq!(counts.current, expected, "{wanted:?}");
+            checked += expected.len();
+        }
+        assert!(checked > 40);
     }
 }
