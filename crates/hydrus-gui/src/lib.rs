@@ -16,6 +16,7 @@ mod ui {
 
 pub use ui::*;
 
+pub mod autocomplete;
 pub mod headless;
 mod page;
 
@@ -52,32 +53,64 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) {
     window.set_thumbnails(ModelRc::from(thumbnails.clone()));
     refresh(window, &page.borrow(), &thumbnails);
 
-    let changed = {
+    // after a change to the page, show it; `true` if its files changed
+    let shown = {
         let page = page.clone();
         let weak = window.as_weak();
-        let thumbnails = thumbnails.clone();
-        move || {
+        move |files: bool| {
             if let Some(window) = weak.upgrade() {
-                refresh(&window, &page.borrow(), &thumbnails);
+                let page = page.borrow();
+                if files {
+                    refresh(&window, &page, &thumbnails);
+                } else {
+                    refresh_search(&window, &page);
+                }
             }
         }
     };
-    window.on_add_predicate({
+    window.on_search_edited({
         let page = page.clone();
-        let changed = changed.clone();
+        let shown = shown.clone();
         move |text| {
-            page.borrow_mut().add_predicate(&text);
-            changed();
+            page.borrow_mut().type_text(&text);
+            shown(false);
+        }
+    });
+    window.on_search_accepted({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page.borrow_mut().enter();
+            shown(true);
+        }
+    });
+    window.on_move_highlight({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |by| {
+            page.borrow_mut().move_highlight(by as isize);
+            shown(false);
+        }
+    });
+    window.on_suggestion_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |index| {
+            page.borrow_mut()
+                .choose(usize::try_from(index).unwrap_or(usize::MAX));
+            shown(true);
         }
     });
     window.on_remove_predicate({
         let page = page.clone();
+        let shown = shown.clone();
         move |index| {
             page.borrow_mut()
                 .remove_predicate(usize::try_from(index).unwrap_or(usize::MAX));
-            changed();
+            shown(true);
         }
     });
+    let thumbnails = window.get_thumbnails();
     window.on_thumbnail_clicked(move |index| {
         let mut page = page.borrow_mut();
         page.select(usize::try_from(index).unwrap_or(usize::MAX));
@@ -93,9 +126,30 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) {
     });
 }
 
-fn refresh(window: &MainWindow, page: &SearchPage, thumbnails: &VecModel<Thumbnail>) {
+/// Show the search box's state: its text, suggestions, predicates and
+/// error.
+fn refresh_search(window: &MainWindow, page: &SearchPage) {
+    let autocomplete = page.autocomplete();
+    window.set_search_text(autocomplete.text().into());
+    let suggestions: Vec<SharedString> = autocomplete
+        .suggestions()
+        .iter()
+        .map(|s| s.label.as_str().into())
+        .collect();
+    window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
+    window.set_highlighted(
+        autocomplete
+            .highlighted()
+            .and_then(|i| i32::try_from(i).ok())
+            .unwrap_or(-1),
+    );
     let predicates: Vec<SharedString> = page.predicates().iter().map(Into::into).collect();
     window.set_predicates(ModelRc::new(VecModel::from(predicates)));
+    window.set_error(page.error().unwrap_or_default().into());
+}
+
+fn refresh(window: &MainWindow, page: &SearchPage, thumbnails: &VecModel<Thumbnail>) {
+    refresh_search(window, page);
     let shown: Vec<Thumbnail> = page
         .results()
         .iter()
@@ -108,5 +162,4 @@ fn refresh(window: &MainWindow, page: &SearchPage, thumbnails: &VecModel<Thumbna
         .collect();
     thumbnails.set_vec(shown);
     window.set_status(page.status().into());
-    window.set_error(page.error().unwrap_or_default().into());
 }

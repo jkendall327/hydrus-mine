@@ -6,13 +6,18 @@ and how we mean to go about it.
 
 ## Where it stands
 
-`hydrus-gui <store>` opens one search page: type a tag or system predicate
-and press enter to add it (double-click one to remove it), and the matching
-files' thumbnails fill the grid, newest import first, with the count in the
-status bar. `crates/hydrus-gui/tests/search_page.rs` drives the page and
-draws the window headless (the screenshot lands in `target/tmp/`). Not yet:
-autocomplete, sort and collect, the media viewer, more pages, loading
-thumbnails as they scroll into view (a page shows its first 1,000 files).
+`hydrus-gui <store>` opens one search page. Typing in the search box lists
+the matching tags with their counts (display tags, all known tags, all my
+files; the exact match first, then the most used), up and down move the
+highlight, and enter adds the highlighted tag, or the text as typed for a
+system predicate; a leading hyphen excludes. Double-clicking a predicate
+removes it. The matching files' thumbnails fill the grid, newest import
+first, with the count in the status bar.
+`crates/hydrus-gui/tests/search_page.rs` drives the page and draws the
+window headless (the screenshot lands in `target/tmp/`). Not yet: system
+predicates in the autocomplete, sort and collect, the media viewer, more
+pages, loading thumbnails as they scroll into view (a page shows its first
+1,000 files).
 
 ## Size
 

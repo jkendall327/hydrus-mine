@@ -64,12 +64,17 @@ export component MainWindow inherits Window {
     background: #f4f4f4;
 
     in property <[string]> predicates;
+    in property <[string]> suggestions;
+    in property <int> highlighted: -1;
     in property <[Thumbnail]> thumbnails;
     in property <string> status;
     in property <string> error;
     in-out property <string> search-text;
 
-    callback add-predicate(string);
+    callback search-edited(string);
+    callback search-accepted();
+    callback move-highlight(int);
+    callback suggestion-chosen(int);
     callback remove-predicate(int);
     callback thumbnail-clicked(int);
 
@@ -77,12 +82,50 @@ export component MainWindow inherits Window {
         HorizontalLayout {
             VerticalBox {
                 width: 260px;
-                LineEdit {
-                    placeholder-text: "search";
-                    text <=> root.search-text;
-                    accepted(text) => {
-                        root.add-predicate(text);
-                        root.search-text = "";
+                FocusScope {
+                    height: search.preferred-height;
+                    // up and down move through the suggestions, as in the reference
+                    capture-key-pressed(event) => {
+                        if (event.text == Key.UpArrow) {
+                            root.move-highlight(-1);
+                            return accept;
+                        }
+                        if (event.text == Key.DownArrow) {
+                            root.move-highlight(1);
+                            return accept;
+                        }
+                        reject
+                    }
+                    search := LineEdit {
+                        width: 100%;
+                        placeholder-text: "search";
+                        text <=> root.search-text;
+                        edited(text) => { root.search-edited(text); }
+                        accepted(text) => { root.search-accepted(); }
+                    }
+                }
+                if root.suggestions.length > 0: Rectangle {
+                    border-width: 1px;
+                    border-color: #c8c8c8;
+                    background: #ffffff;
+                    height: min(root.suggestions.length, 12) * 22px + 4px;
+                    VerticalLayout {
+                        padding: 2px;
+                        alignment: start;
+                        for suggestion[i] in root.suggestions: Rectangle {
+                            height: 22px;
+                            background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
+                            Text {
+                                x: 4px;
+                                text: suggestion;
+                                vertical-alignment: center;
+                                overflow: elide;
+                                width: parent.width - 8px;
+                            }
+                            pick := TouchArea {
+                                clicked => { root.suggestion-chosen(i); }
+                            }
+                        }
                     }
                 }
                 if root.error != "": Text {

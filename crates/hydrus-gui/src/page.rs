@@ -9,8 +9,11 @@ use hydrus_search::{
 };
 use hydrus_store::Store;
 
+use crate::autocomplete::Autocomplete;
+
 pub struct SearchPage {
     store: Arc<Store>,
+    autocomplete: Autocomplete,
     /// As typed: tags, and system predicates such as `system:inbox`.
     predicates: Vec<String>,
     /// Newest import first.
@@ -33,6 +36,7 @@ impl std::fmt::Debug for SearchPage {
 impl SearchPage {
     pub fn new(store: Arc<Store>) -> Self {
         Self {
+            autocomplete: Autocomplete::new(store.clone()),
             store,
             predicates: Vec::new(),
             results: Vec::new(),
@@ -58,21 +62,58 @@ impl SearchPage {
         self.error.as_deref()
     }
 
-    /// Add a predicate as typed and search again. One that doesn't parse is
-    /// refused with the reason; one already there is not added twice.
-    pub fn add_predicate(&mut self, text: &str) {
+    pub fn autocomplete(&self) -> &Autocomplete {
+        &self.autocomplete
+    }
+
+    /// The search box's text changed.
+    pub fn type_text(&mut self, text: &str) {
+        self.autocomplete.set_text(text);
+    }
+
+    /// Move the autocomplete's highlight.
+    pub fn move_highlight(&mut self, by: isize) {
+        self.autocomplete.move_highlight(by);
+    }
+
+    /// Enter in the search box: add the highlighted suggestion (or the text
+    /// as typed), and empty the box if that worked.
+    pub fn enter(&mut self) {
+        if let Some(chosen) = self.autocomplete.chosen()
+            && self.add_predicate(&chosen)
+        {
+            self.autocomplete.clear();
+        }
+    }
+
+    /// A suggestion was clicked.
+    pub fn choose(&mut self, index: usize) {
+        let Some(suggestion) = self.autocomplete.suggestions().get(index) else {
+            return;
+        };
+        let predicate = suggestion.predicate.clone();
+        if self.add_predicate(&predicate) {
+            self.autocomplete.clear();
+        }
+    }
+
+    /// Add a predicate as typed and search again; whether it was taken. One
+    /// that doesn't parse is refused with the reason; one already there is
+    /// not added twice.
+    pub fn add_predicate(&mut self, text: &str) -> bool {
         let text = text.trim();
         if text.is_empty() {
-            return;
+            return false;
         }
         if let Err(e) = parse_api_search(&serde_json::json!([text])) {
             self.error = Some(e.to_string());
-            return;
+            return false;
         }
         if !self.predicates.iter().any(|p| p == text) {
             self.predicates.push(text.to_owned());
         }
         self.search();
+        true
     }
 
     pub fn remove_predicate(&mut self, index: usize) {
