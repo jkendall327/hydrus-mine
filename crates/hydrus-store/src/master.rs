@@ -28,6 +28,11 @@ pub(crate) fn id_array<I: Into<u32> + Copy>(ids: &[I]) -> Rc<Vec<Value>> {
     )
 }
 
+/// Plain integers for `rarray`.
+pub(crate) fn int_array(ids: impl Iterator<Item = i64>) -> Rc<Vec<Value>> {
+    Rc::new(ids.map(Value::Integer).collect())
+}
+
 fn blob_array(blobs: impl Iterator<Item = Vec<u8>>) -> Rc<Vec<Value>> {
     Rc::new(blobs.map(Value::Blob).collect())
 }

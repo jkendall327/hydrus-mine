@@ -16,10 +16,47 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
+
+/// Duplicates auto-resolution rules (`duplicates/auto.rs`): each rule, the
+/// status of every potential pair in its domain, and the pairs it actioned.
+const V5: &str = r"
+CREATE TABLE dup_auto_rules (
+    rule_id INTEGER PRIMARY KEY,
+    name TEXT NOT NULL UNIQUE,
+    -- Rule (JSON)
+    rule TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE dup_auto_pairs (
+    rule_id INTEGER NOT NULL,
+    smaller_group_id INTEGER NOT NULL,
+    larger_group_id INTEGER NOT NULL,
+    -- PairStatus code
+    status INTEGER NOT NULL,
+    -- A and B, for pairs ready to action
+    hash_id_a INTEGER,
+    hash_id_b INTEGER,
+    -- when denied
+    timestamp_ms INTEGER,
+    PRIMARY KEY (rule_id, smaller_group_id, larger_group_id)
+) STRICT, WITHOUT ROWID;
+CREATE INDEX dup_auto_pairs_by_status ON dup_auto_pairs (rule_id, status);
+CREATE INDEX dup_auto_pairs_by_larger ON dup_auto_pairs (larger_group_id);
+CREATE INDEX dup_auto_pairs_by_smaller ON dup_auto_pairs (smaller_group_id);
+
+CREATE TABLE dup_auto_actioned (
+    rule_id INTEGER NOT NULL,
+    hash_id_a INTEGER NOT NULL,
+    hash_id_b INTEGER NOT NULL,
+    duplicate_type INTEGER NOT NULL,
+    timestamp_ms INTEGER NOT NULL
+) STRICT;
+CREATE INDEX dup_auto_actioned_by_rule ON dup_auto_actioned (rule_id, timestamp_ms);
+";
 
 /// Subscriptions and their queries (`subscriptions.rs`); each query's
 /// history is an import queue.

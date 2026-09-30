@@ -198,7 +198,178 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .warnings
             .push(format!("Subscriptions were not converted: {e}")),
     }
+    match db.auto_resolution_rules() {
+        Ok(rules) => {
+            for (name, decoded) in rules {
+                let converted = decoded.map_err(|e| e.to_string()).and_then(|r| {
+                    auto_resolution_rule(&r, &mut input.warnings).map(|rule| (r.id, rule))
+                });
+                match converted {
+                    Ok(rule) => input.auto_resolution_rules.push(rule),
+                    Err(e) => input.warnings.push(format!(
+                        "Duplicates auto-resolution rule \"{name}\" was not converted (the original is kept): {e}"
+                    )),
+                }
+            }
+        }
+        Err(e) => input.warnings.push(format!(
+            "Duplicates auto-resolution rules were not converted: {e}"
+        )),
+    }
     Ok(input)
+}
+
+/// A duplicates auto-resolution rule, or why it can't be converted.
+pub(crate) fn auto_resolution_rule(
+    r: &legacy::auto_resolution::AutoResolutionRule,
+    warnings: &mut Vec<String>,
+) -> std::result::Result<crate::duplicates::auto::Rule, String> {
+    use crate::duplicates::auto::{OperationMode, Rule, RuleAction, RuleSearch};
+    use crate::duplicates::{PairSearchKind, PixelDuplicates};
+
+    let search = &r.search;
+    Ok(Rule {
+        name: r.name.clone(),
+        paused: r.paused,
+        mode: match r.operation_mode {
+            1 => OperationMode::SemiAutomatic,
+            2 => OperationMode::FullyAutomatic,
+            other => return Err(format!("unknown operation mode {other}")),
+        },
+        max_pending_pairs: r
+            .max_pending_pairs
+            .map(|n| u32::try_from(n.max(0)).unwrap_or(u32::MAX)),
+        search: RuleSearch {
+            search_1: file_search(&search.search_1)?,
+            search_2: file_search(&search.search_2)?,
+            kind: match search.dupe_search_type {
+                0 => PairSearchKind::OneFileMatchesOneSearch,
+                1 => PairSearchKind::BothFilesMatchOneSearch,
+                2 => PairSearchKind::BothFilesMatchDifferentSearches,
+                other => return Err(format!("unknown pair search type {other}")),
+            },
+            pixel_duplicates: match search.pixel_dupes {
+                0 => PixelDuplicates::Required,
+                1 => PixelDuplicates::Allowed,
+                2 => PixelDuplicates::Excluded,
+                other => return Err(format!("unknown pixel duplicates preference {other}")),
+            },
+            max_hamming_distance: u32::try_from(search.max_hamming_distance)
+                .map_err(|_| format!("a search distance of {}", search.max_hamming_distance))?,
+        },
+        comparators: r
+            .comparators
+            .iter()
+            .map(comparator)
+            .collect::<std::result::Result<_, _>>()?,
+        action: u8::try_from(r.action)
+            .ok()
+            .and_then(DuplicateType::from_code)
+            .and_then(RuleAction::from_duplicate_type)
+            .ok_or_else(|| format!("unknown action {}", r.action))?,
+        delete_a: r.delete_a,
+        delete_b: r.delete_b,
+        custom_merge: r
+            .custom_merge_options
+            .as_ref()
+            .map(|o| merge_options(o, &format!("rule \"{}\"'s merge options", r.name), warnings))
+            .transpose()
+            .map_err(|e| e.to_string())?,
+    })
+}
+
+fn file_search(
+    f: &legacy::FileSearchContext,
+) -> std::result::Result<hydrus_core::search::context::FileSearchContext, String> {
+    use hydrus_core::search::context::{FileSearchContext, LocationContext, TagContext};
+    Ok(FileSearchContext {
+        location: LocationContext::new(
+            f.location_context.current.iter().cloned(),
+            f.location_context.deleted.iter().cloned(),
+        ),
+        tags: TagContext {
+            service: f.tag_context.service_key.clone(),
+            include_current: f.tag_context.include_current_tags,
+            include_pending: f.tag_context.include_pending_tags,
+            display_service: f.tag_context.display_service_key.clone(),
+        },
+        predicates: predicates(&f.predicates)?,
+    })
+}
+
+fn predicates(
+    stored: &[hydrus_legacy::serialisable::SerialisableObject],
+) -> std::result::Result<Vec<hydrus_core::search::predicate::Predicate>, String> {
+    stored
+        .iter()
+        .map(|p| hydrus_legacy::objects::predicates::predicate(p).map_err(|e| e.to_string()))
+        .collect()
+}
+
+fn comparator(
+    c: &legacy::auto_resolution::Comparator,
+) -> std::result::Result<crate::duplicates::auto::Comparator, String> {
+    use crate::duplicates::auto::{Comparator, LookingAt, OneFileTest, PairTest};
+    use hydrus_core::search::comparable::Comparable;
+    use legacy::auto_resolution::Comparator as L;
+
+    let looking_at = |code: i64| match code {
+        0 => Ok(LookingAt::A),
+        1 => Ok(LookingAt::B),
+        2 => Ok(LookingAt::Either),
+        other => Err(format!("unknown file to look at {other}")),
+    };
+    Ok(match c {
+        L::OneFileMetadata {
+            looking_at: l,
+            search,
+        } => Comparator::OneFileMetadata {
+            looking_at: looking_at(*l)?,
+            predicates: predicates(&search.predicates)?,
+        },
+        L::OneFileHardcoded {
+            looking_at: l,
+            test,
+        } => Comparator::OneFileHardcoded {
+            looking_at: looking_at(*l)?,
+            test: match test {
+                0 => OneFileTest::JpegIsProgressive,
+                1 => OneFileTest::JpegIsNotProgressive,
+                other => return Err(format!("unknown one-file test {other}")),
+            },
+        },
+        L::RelativeFileInfo {
+            property,
+            test,
+            multiplier,
+            delta,
+        } => Comparator::RelativeFileInfo {
+            property: Comparable::from_predicate_type(*property)
+                .ok_or_else(|| format!("cannot compare predicate type {property} between files"))?,
+            test: *test,
+            multiplier: *multiplier,
+            delta: *delta,
+        },
+        L::RelativeHardcoded(code) => Comparator::Pair(
+            PairTest::from_code(*code).ok_or_else(|| format!("unknown two-file test {code}"))?,
+        ),
+        L::VisualDuplicates(confidence) => Comparator::VisualDuplicates {
+            confidence: u8::try_from(*confidence)
+                .map_err(|_| format!("a visual duplicates confidence of {confidence}"))?,
+        },
+        L::Or(members) => Comparator::Or(
+            members
+                .iter()
+                .map(comparator)
+                .collect::<std::result::Result<_, _>>()?,
+        ),
+        L::And(members) => Comparator::And(
+            members
+                .iter()
+                .map(comparator)
+                .collect::<std::result::Result<_, _>>()?,
+        ),
+    })
 }
 
 /// A subscription's settings and queries (their histories are copied during
@@ -553,6 +724,26 @@ fn duplicate_merge_settings(
     stored: &std::collections::BTreeMap<i64, legacy::DuplicateMergeOptions>,
     warnings: &mut Vec<String>,
 ) -> Result<DuplicateMergeSettings> {
+    let mut convert = |code: i64, label: &str| -> Result<MergeOptions> {
+        match stored.get(&code) {
+            Some(o) => merge_options(o, &format!("the {label} duplicate merge options"), warnings),
+            None => Ok(MergeOptions::default()),
+        }
+    };
+    Ok(DuplicateMergeSettings {
+        better: convert(DuplicateType::Better.code().into(), "better")?,
+        same_quality: convert(DuplicateType::SameQuality.code().into(), "same quality")?,
+        alternate: convert(DuplicateType::Alternate.code().into(), "alternate")?,
+    })
+}
+
+/// One set of duplicate metadata merge options. `what` names them in
+/// warnings.
+pub(crate) fn merge_options(
+    o: &legacy::DuplicateMergeOptions,
+    what: &str,
+    warnings: &mut Vec<String>,
+) -> Result<MergeOptions> {
     use crate::duplicates::merge::{ArchiveSync, MergeAction, RatingMerge, SyncAction, TagMerge};
     use hydrus_core::notes::{NoteConflict, NoteMerge};
     use legacy::MergeAction as Legacy;
@@ -569,70 +760,60 @@ fn duplicate_merge_settings(
         Legacy::TwoWay => Some(SyncAction::TwoWay),
         Legacy::Move | Legacy::None => None,
     };
-    let mut convert = |code: i64, label: &str| -> Result<MergeOptions> {
-        let Some(o) = stored.get(&code) else {
-            return Ok(MergeOptions::default());
-        };
-        let notes = &o.note_import;
-        if !notes.name_whitelist.is_empty()
-            || notes.all_name_override.is_some()
-            || !notes.names_to_name_overrides.is_empty()
-        {
-            warnings.push(format!(
-                "the {label} duplicate merge options' note name filters and renames were dropped (the reference's editor doesn't show them)"
-            ));
-        }
-        let note_merge = if notes.get_notes && o.sync_notes != Legacy::None {
-            let conflict = NoteConflict::from_code(notes.conflict_resolution).ok_or_else(|| {
-                StoreError::Invalid(format!(
-                    "unknown note conflict resolution {}",
-                    notes.conflict_resolution
-                ))
-            })?;
-            Some(NoteMerge {
-                extend_existing: notes.extend_existing_note_if_possible,
-                conflict,
-            })
-        } else {
-            None
-        };
-        Ok(MergeOptions {
-            tags: o
-                .tag_services
-                .iter()
-                .filter_map(|(service, a, filter)| {
-                    action(*a).map(|action| TagMerge {
-                        service: service.clone(),
-                        action,
-                        filter: tag_filter(filter),
-                    })
-                })
-                .collect(),
-            ratings: o
-                .rating_services
-                .iter()
-                .filter_map(|(service, a)| {
-                    action(*a).map(|action| RatingMerge {
-                        service: service.clone(),
-                        action,
-                    })
-                })
-                .collect(),
-            notes: action(o.sync_notes),
-            note_merge,
-            archive: match o.sync_archive {
-                legacy::ArchiveSync::None => ArchiveSync::Never,
-                legacy::ArchiveSync::IfOneDoBoth => ArchiveSync::IfEither,
-                legacy::ArchiveSync::DoBothRegardless => ArchiveSync::Always,
-            },
-            urls: sync(o.sync_urls),
-            file_modified: sync(o.sync_file_modified_date),
+    let notes = &o.note_import;
+    if !notes.name_whitelist.is_empty()
+        || notes.all_name_override.is_some()
+        || !notes.names_to_name_overrides.is_empty()
+    {
+        warnings.push(format!(
+            "{what}' note name filters and renames were dropped (the reference's editor doesn't show them)"
+        ));
+    }
+    let note_merge = if notes.get_notes && o.sync_notes != Legacy::None {
+        let conflict = NoteConflict::from_code(notes.conflict_resolution).ok_or_else(|| {
+            StoreError::Invalid(format!(
+                "unknown note conflict resolution {}",
+                notes.conflict_resolution
+            ))
+        })?;
+        Some(NoteMerge {
+            extend_existing: notes.extend_existing_note_if_possible,
+            conflict,
         })
+    } else {
+        None
     };
-    Ok(DuplicateMergeSettings {
-        better: convert(DuplicateType::Better.code().into(), "better")?,
-        same_quality: convert(DuplicateType::SameQuality.code().into(), "same quality")?,
-        alternate: convert(DuplicateType::Alternate.code().into(), "alternate")?,
+    Ok(MergeOptions {
+        tags: o
+            .tag_services
+            .iter()
+            .filter_map(|(service, a, filter)| {
+                action(*a).map(|action| TagMerge {
+                    service: service.clone(),
+                    action,
+                    filter: tag_filter(filter),
+                })
+            })
+            .collect(),
+        ratings: o
+            .rating_services
+            .iter()
+            .filter_map(|(service, a)| {
+                action(*a).map(|action| RatingMerge {
+                    service: service.clone(),
+                    action,
+                })
+            })
+            .collect(),
+        notes: action(o.sync_notes),
+        note_merge,
+        archive: match o.sync_archive {
+            legacy::ArchiveSync::None => ArchiveSync::Never,
+            legacy::ArchiveSync::IfOneDoBoth => ArchiveSync::IfEither,
+            legacy::ArchiveSync::DoBothRegardless => ArchiveSync::Always,
+        },
+        urls: sync(o.sync_urls),
+        file_modified: sync(o.sync_file_modified_date),
     })
 }
 
@@ -656,6 +837,56 @@ mod tests {
     use hydrus_legacy::serialisable::SerialisableObject;
 
     use super::*;
+
+    /// Every rule the reference stores (its suggestions and rules using
+    /// every comparator; `oracle/dump_auto_resolution.py`) converts.
+    #[test]
+    fn auto_resolution_rules_convert() {
+        use crate::duplicates::auto::{Comparator, OperationMode, RuleAction};
+        let fixture = hydrus_testkit::fixture_json("auto_resolution.json");
+        for case in fixture["rules"].as_array().unwrap() {
+            let stored = SerialisableObject::from_tuple_str(&case["stored"].to_string()).unwrap();
+            let legacy =
+                hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&stored)
+                    .unwrap();
+            let mut warnings = Vec::new();
+            let rule = auto_resolution_rule(&legacy, &mut warnings)
+                .unwrap_or_else(|e| panic!("{}: {e}", legacy.name));
+            let expected = &case["expected"];
+            assert_eq!(rule.name, expected["name"].as_str().unwrap());
+            assert_eq!(
+                rule.mode,
+                if expected["operation_mode"] == 2 {
+                    OperationMode::FullyAutomatic
+                } else {
+                    OperationMode::SemiAutomatic
+                }
+            );
+            assert_eq!(
+                i64::from(rule.action.duplicate_type().code()),
+                expected["action"].as_i64().unwrap()
+            );
+            assert_eq!(
+                rule.comparators.len(),
+                expected["comparators"].as_array().unwrap().len()
+            );
+            // a stored rule round-trips through its JSON
+            let json = serde_json::to_string(&rule).unwrap();
+            assert_eq!(
+                serde_json::from_str::<crate::duplicates::auto::Rule>(&json).unwrap(),
+                rule
+            );
+            if rule.name == "everything" {
+                assert_eq!(rule.action, RuleAction::SameQuality);
+                assert!(rule.custom_merge.is_some());
+                assert!(
+                    rule.comparators
+                        .iter()
+                        .any(|c| matches!(c, Comparator::Or(_)))
+                );
+            }
+        }
+    }
 
     #[test]
     fn a_new_clients_merge_options_are_our_defaults() {

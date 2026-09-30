@@ -47,6 +47,9 @@ pub struct ImportInput {
     pub cookies: Vec<(NetworkContext, Cookie)>,
     /// Subscriptions; their queries' histories are copied during the import.
     pub subscriptions: Vec<SubscriptionInput>,
+    /// Duplicates auto-resolution rules, by the reference's rule id (their
+    /// pair statuses are copied during the import).
+    pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
 }
@@ -242,6 +245,7 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.settings(input)?;
     copier.network(input)?;
     copier.subscriptions(input)?;
+    copier.auto_resolution(input)?;
     copier.derived()?;
     tx.commit()?;
 
@@ -880,6 +884,81 @@ impl Copier<'_> {
         .into_iter()
         .zip(counts)
         {
+            *self.report.rows.entry(table.into()).or_default() += n;
+        }
+        Ok(())
+    }
+
+    /// Duplicates auto-resolution rules, with each pair's status for each
+    /// rule and the pairs each actioned (the reference keeps them in
+    /// per-rule tables; a missing table is an empty one).
+    fn auto_resolution(&mut self, input: &ImportInput) -> Result<()> {
+        use crate::duplicates::auto::{self, PairStatus};
+        let src_has = |conn: &Connection, table: &str| -> Result<bool> {
+            Ok(conn.query_row(
+                "SELECT EXISTS (SELECT 1 FROM src.sqlite_master WHERE type = 'table' AND name = ?)",
+                [table],
+                |r| r.get(0),
+            )?)
+        };
+        let (mut rules, mut pairs, mut actioned) = (0u64, 0u64, 0u64);
+        for (id, rule) in &input.auto_resolution_rules {
+            if auto::add_rule(self.conn, rule, Some(*id))?.is_none() {
+                self.report.warnings.push(format!(
+                    "Two duplicates auto-resolution rules are called \"{}\"; only the first was kept",
+                    rule.name
+                ));
+                continue;
+            }
+            rules += 1;
+            let queue = |status: PairStatus| match status {
+                PairStatus::Denied => format!("duplicate_files_auto_resolution_declined_{id}"),
+                PairStatus::ReadyToAction => {
+                    format!("duplicate_files_auto_resolution_pending_actions_{id}")
+                }
+                other => format!(
+                    "duplicate_files_auto_resolution_pair_decisions_{id}_{}",
+                    other.code()
+                ),
+            };
+            for status in PairStatus::ALL {
+                if status == PairStatus::Actioned {
+                    continue;
+                }
+                let table = queue(status);
+                if !src_has(self.conn, &table)? {
+                    continue;
+                }
+                let (a, b, when) = match status {
+                    PairStatus::ReadyToAction => ("hash_id_a", "hash_id_b", "NULL"),
+                    PairStatus::Denied => ("NULL", "NULL", "timestamp_ms"),
+                    _ => ("NULL", "NULL", "NULL"),
+                };
+                pairs += self.conn.execute(
+                    &format!(
+                        "INSERT OR IGNORE INTO dup_auto_pairs
+                            (rule_id, smaller_group_id, larger_group_id, status, hash_id_a, hash_id_b, timestamp_ms)
+                         SELECT ?, smaller_media_id, larger_media_id, ?, {a}, {b}, {when} FROM src.{table}"
+                    ),
+                    params![id, status.code()],
+                )? as u64;
+            }
+            let table = format!("duplicate_files_auto_resolution_actioned_{id}");
+            if src_has(self.conn, &table)? {
+                actioned += self.conn.execute(
+                    &format!(
+                        "INSERT INTO dup_auto_actioned (rule_id, hash_id_a, hash_id_b, duplicate_type, timestamp_ms)
+                         SELECT ?, hash_id_a, hash_id_b, duplicate_type, timestamp_ms FROM src.{table}"
+                    ),
+                    [id],
+                )? as u64;
+            }
+        }
+        for (table, n) in [
+            ("dup_auto_rules", rules),
+            ("dup_auto_pairs", pairs),
+            ("dup_auto_actioned", actioned),
+        ] {
             *self.report.rows.entry(table.into()).or_default() += n;
         }
         Ok(())

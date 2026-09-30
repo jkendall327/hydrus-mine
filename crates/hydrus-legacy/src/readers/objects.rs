@@ -330,6 +330,32 @@ impl LegacyDb {
             .collect())
     }
 
+    /// Every duplicates auto-resolution rule (type 128), decoded; a rule
+    /// that cannot be decoded is an error in its slot.
+    pub fn auto_resolution_rules(
+        &self,
+    ) -> Result<
+        Vec<(
+            String,
+            Result<crate::objects::auto_resolution::AutoResolutionRule>,
+        )>,
+    > {
+        Ok(self
+            .latest_named(SerialisableType::DUPLICATES_AUTO_RESOLUTION_RULE)?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named auto-resolution rule {:?}", row.name);
+                let decoded = row
+                    .parse()
+                    .and_then(|object| {
+                        crate::objects::auto_resolution::AutoResolutionRule::from_object(&object)
+                    })
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
+            })
+            .collect())
+    }
+
     /// A subscription query's history (type 86) by the name in its
     /// [`QueryHeader`](crate::objects::subscriptions::QueryHeader); `None`
     /// if it is missing (the reference then starts the query afresh).

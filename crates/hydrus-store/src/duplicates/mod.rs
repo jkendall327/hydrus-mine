@@ -23,6 +23,7 @@ use hydrus_core::{HashId, ServiceId};
 use crate::error::Result;
 use crate::master::id_array;
 
+pub mod auto;
 pub mod merge;
 pub mod write;
 
@@ -270,7 +271,7 @@ pub fn file_relationships(
 }
 
 /// How a potential pair must relate to the file searches.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PairSearchKind {
     /// At least one of the pair matches the first search.
     OneFileMatchesOneSearch,
@@ -281,7 +282,7 @@ pub enum PairSearchKind {
 }
 
 /// Whether pairs whose files have identical pixels are wanted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub enum PixelDuplicates {
     /// Only pixel duplicates, whatever their distance.
     Required,
