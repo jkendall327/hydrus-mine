@@ -302,27 +302,7 @@ impl TagImportOptions {
     }
 }
 
-/// `NOTE_IMPORT_CONFLICT_*`: what to do when a note's name is taken.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
-#[serde(rename_all = "snake_case")]
-pub enum NoteConflict {
-    Replace,
-    Ignore,
-    Append,
-    Rename,
-}
-
-impl NoteConflict {
-    pub fn from_code(code: i64) -> Option<Self> {
-        Some(match code {
-            0 => Self::Replace,
-            1 => Self::Ignore,
-            2 => Self::Append,
-            3 => Self::Rename,
-            _ => return None,
-        })
-    }
-}
+pub use crate::notes::NoteConflict;
 
 /// What to do with a download's notes.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
@@ -347,6 +327,41 @@ impl Default for NoteImportOptions {
             all_name_override: None,
             name_overrides: Vec::new(),
         }
+    }
+}
+
+impl NoteImportOptions {
+    /// The notes to set on a file with `existing` notes for a download's
+    /// notes (`GetUpdateeNamesToNotes`): none unless notes are wanted; only
+    /// whitelisted names; renamed as set; then merged.
+    pub fn updates(
+        &self,
+        existing: &std::collections::BTreeMap<String, String>,
+        incoming: &[(String, String)],
+    ) -> std::collections::BTreeMap<String, String> {
+        if !self.get_notes {
+            return std::collections::BTreeMap::new();
+        }
+        let mut incoming = incoming.to_vec();
+        incoming.sort();
+        let renamed = incoming
+            .into_iter()
+            .filter(|(name, _)| {
+                self.name_whitelist.is_empty() || self.name_whitelist.contains(name)
+            })
+            .map(|(name, note)| {
+                let name = match self.name_overrides.iter().find(|(from, _)| *from == name) {
+                    Some((_, to)) => to.clone(),
+                    None => self.all_name_override.clone().unwrap_or(name),
+                };
+                (name, note)
+            })
+            .collect();
+        crate::notes::NoteMerge {
+            extend_existing: self.extend_existing_note_if_possible,
+            conflict: self.conflict,
+        }
+        .merge_in_order(existing, renamed)
     }
 }
 

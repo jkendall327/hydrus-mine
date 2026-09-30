@@ -90,8 +90,13 @@ impl FileImporter {
         Ok(dir)
     }
 
-    /// What the client knows about `hash`, as import statuses word it.
-    fn known_status(&self, hash: &Sha256, prefix: &str) -> Result<(ImportResult, Option<HashId>)> {
+    /// What the client knows about `hash`, as import statuses word it
+    /// (`prefix` starts the note, e.g. `"url recognised: "`).
+    pub fn known_status(
+        &self,
+        hash: &Sha256,
+        prefix: &str,
+    ) -> Result<(ImportResult, Option<HashId>)> {
         let snap = self.store.snapshot();
         let found = self.store.read(|conn| {
             let Some(id) = master::hash_id(conn, hash)? else {
@@ -226,7 +231,7 @@ impl FileImporter {
     }
 
     /// What the import options do to a file the client already had.
-    fn update_already_in_db(&self, hash: &Sha256, options: &FileImportOptions) -> Result<()> {
+    pub fn update_already_in_db(&self, hash: &Sha256, options: &FileImportOptions) -> Result<()> {
         let snap = self.store.snapshot();
         let destinations = if options.destinations_for_already_in_db {
             options.destinations(&snap.services)

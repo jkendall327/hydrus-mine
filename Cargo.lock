@@ -1429,6 +1429,29 @@ dependencies = [
 ]
 
 [[package]]
+name = "hydrus-download"
+version = "0.1.0"
+dependencies = [
+ "axum",
+ "hex",
+ "hydrus-core",
+ "hydrus-import",
+ "hydrus-media",
+ "hydrus-net",
+ "hydrus-parse",
+ "hydrus-store",
+ "hydrus-testkit",
+ "parking_lot",
+ "rand 0.10.3",
+ "rusqlite",
+ "serde_json",
+ "tempfile",
+ "thiserror 2.0.21",
+ "tokio",
+ "tracing",
+]
+
+[[package]]
 name = "hydrus-import"
 version = "0.1.0"
 dependencies = [

@@ -114,6 +114,13 @@ impl UrlClasses {
     /// Follow a URL class's API/redirect links to the class and URL that are
     /// actually fetched.
     fn api_class_and_url(&self, url: &str) -> Result<(&UrlClass, String), UrlClassError> {
+        self.api_chain(url)
+            .map(|(chain, api_url)| (*chain.last().expect("never empty"), api_url))
+    }
+
+    /// A URL's class and the classes of each API URL it leads to, and the
+    /// last API URL (normalised for requests).
+    fn api_chain(&self, url: &str) -> Result<(Vec<&UrlClass>, String), UrlClassError> {
         let Some(mut class) = self.class_for(url) else {
             return Err(UrlClassError(format!(
                 "Could not find a URL Class for {url}!"
@@ -145,7 +152,70 @@ impl UrlClasses {
             class = next;
         }
         let api_url = class.normalise(&api_url, true, self.collapse())?;
-        Ok((class, api_url))
+        let chain = seen
+            .iter()
+            .filter_map(|key| {
+                self.settings
+                    .url_classes
+                    .iter()
+                    .find(|c| c.key.as_slice() == *key)
+            })
+            .collect();
+        Ok((chain, api_url))
+    }
+
+    /// The keys (hex) of a URL's class and its API URL classes, in order
+    /// (`GetAPIPertinentURLClassKeysInPreferenceOrder`); none for a URL
+    /// without a class.
+    pub fn api_class_keys(&self, url: &str) -> Vec<(String, UrlType)> {
+        self.api_chain(url)
+            .map(|(chain, _)| {
+                chain
+                    .into_iter()
+                    .map(|c| (hex::encode(&c.key), c.url_type))
+                    .collect()
+            })
+            .unwrap_or_default()
+    }
+
+    /// The URL to request for a post URL and the key (hex) of the parser
+    /// that reads what comes back.
+    pub fn url_to_fetch_and_parser(&self, url: &str) -> Result<(String, String), UrlClassError> {
+        let (class, api_url) = self
+            .api_class_and_url(url)
+            .map_err(|e| UrlClassError(format!("Could not find a URL class for {url}!\n\n{e}")))?;
+        let key = hex::encode(&class.key);
+        self.settings
+            .parser_links
+            .iter()
+            .find(|(class_key, _)| *class_key == key)
+            .and_then(|(_, parser)| parser.clone())
+            .filter(|parser| self.parsers.contains(parser))
+            .map(|parser| (api_url, parser))
+            .ok_or_else(|| {
+                UrlClassError(format!(
+                    "Could not find a parser for {} URL Class!",
+                    class.name
+                ))
+            })
+    }
+
+    /// Whether a URL's class says it can lead to several files (a gallery,
+    /// a watchable page, a multi-file post).
+    pub fn can_refer_to_multiple_files(&self, url: &str) -> bool {
+        self.class_for(url).is_some_and(|c| {
+            matches!(c.url_type, UrlType::Gallery | UrlType::Watchable)
+                || (c.url_type == UrlType::Post && c.can_produce_multiple_files)
+        })
+    }
+
+    /// Whether a URL's class says it is exactly one file (a file URL or a
+    /// single-file post).
+    pub fn refers_to_one_file(&self, url: &str) -> bool {
+        self.class_for(url).is_some_and(|c| {
+            c.url_type == UrlType::File
+                || (c.url_type == UrlType::Post && !c.can_produce_multiple_files)
+        })
     }
 
     /// The URL to request for a (normalised) URL: itself, or where its URL

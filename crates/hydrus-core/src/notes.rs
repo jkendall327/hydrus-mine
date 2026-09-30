@@ -64,10 +64,19 @@ impl NoteMerge {
         existing: &BTreeMap<String, String>,
         incoming: &[(String, String)],
     ) -> BTreeMap<String, String> {
-        let mut existing = existing.clone();
-        let mut updates = BTreeMap::new();
         let mut incoming = incoming.to_vec();
         incoming.sort();
+        self.merge_in_order(existing, incoming)
+    }
+
+    /// [`Self::merge`] for notes already in the order to add them.
+    pub fn merge_in_order(
+        &self,
+        existing: &BTreeMap<String, String>,
+        incoming: Vec<(String, String)>,
+    ) -> BTreeMap<String, String> {
+        let mut existing = existing.clone();
+        let mut updates = BTreeMap::new();
         for (name, note) in incoming {
             let mut name = name;
             let mut note = note;

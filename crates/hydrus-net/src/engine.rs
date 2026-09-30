@@ -147,6 +147,11 @@ impl Job {
         self.cancel.is_cancelled()
     }
 
+    /// Say what the job is doing (the engine and its callers both do).
+    pub fn set_status_text(&self, status: impl Into<String>) {
+        self.set_status(status);
+    }
+
     fn set_status(&self, status: impl Into<String>) {
         self.state.lock().status = status.into();
     }

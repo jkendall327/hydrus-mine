@@ -109,7 +109,28 @@ impl FileImportOptions {
     /// Whether a file passes the filtering rules; the error is the note the
     /// reference gives a vetoed file.
     pub fn check(&self, info: &hydrus_media::FileInfo) -> Result<(), String> {
-        let mime = info.mime;
+        self.check_values(info.size, info.mime, info.width, info.height)
+    }
+
+    /// Whether the filtering rules let every file through whatever its
+    /// size, type or resolution (`AllowsAllBasedOnFileInfo`).
+    pub fn allows_all_based_on_file_info(&self) -> bool {
+        self.allowed_mimes.is_none()
+            && self.min_size.is_none()
+            && self.max_size.is_none()
+            && self.max_gif_size.is_none()
+            && self.min_resolution.is_none()
+            && self.max_resolution.is_none()
+    }
+
+    /// [`Self::check`] on what the client knows about a file.
+    pub fn check_values(
+        &self,
+        size: u64,
+        mime: Mime,
+        width: Option<u32>,
+        height: Option<u32>,
+    ) -> Result<(), String> {
         let allowed = match &self.allowed_mimes {
             Some(set) => set.contains(&mime),
             None => hydrus_media::mimes::is_allowed(mime),
@@ -120,7 +141,6 @@ impl FileImportOptions {
                 mime.human_name()
             ));
         }
-        let size = info.size;
         if let Some(min) = self.min_size
             && size < min
         {
@@ -149,7 +169,6 @@ impl FileImportOptions {
                 human_bytes(max)
             ));
         }
-        let (width, height) = (info.width, info.height);
         if let Some((min_w, min_h)) = self.min_resolution
             && (width.is_some_and(|w| w < min_w) || height.is_some_and(|h| h < min_h))
         {
