@@ -23,7 +23,7 @@
 //! | [`domain::custom_headers`] (domain manager: custom HTTP headers) | 53 | 7 |
 //! | [`parsers::downloaders`] (domain manager: GUGs 69/70, page parsers 58 with content parsers 30, subsidiary parsers 135 and formulas) | 53 | 7 (GUGs 1, page parsers 3, content parsers 7; see [`parsers`]) |
 //! | [`import_options::manager`] (import option defaults; see [`import_options`]) | 144 | 1 |
-//! | [`subscriptions::subscription`] / [`subscriptions::query_header`] | 88 / 87 | 1-4 (old-style import options not converted) / 1-3 |
+//! | [`subscriptions::subscription`] / [`subscriptions::query_header`] | 88 / 87 | 1-4 (old-style import options: see [`legacy_import_options`]) / 1-3 |
 //! | [`subscriptions::query_log`] (a query's history: gallery log 67 of gallery seeds 66, file seed cache 8 of file seeds 57) | 86 | 1 (gallery seeds 1-4, file seed cache 8, file seeds 1-8) |
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
@@ -33,6 +33,7 @@ pub mod domain;
 mod duplicates;
 mod favourites;
 pub mod import_options;
+pub mod legacy_import_options;
 mod legacy_options;
 mod location;
 pub mod parsers;

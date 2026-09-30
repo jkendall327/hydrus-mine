@@ -13,6 +13,10 @@ each case keeps:
 * `facts`: the loaded object's fields, read with the reference's own
   attributes, to check field positions against
 
+Subscriptions are also saved in their old versions (1-3), with old-style
+file, tag and note import options in each version the reference upgrades
+from, to record what the reference converts them to.
+
 Also records checker timing (next check time, death) for random file
 histories.
 
@@ -40,10 +44,21 @@ from hydrus.client.importing import ClientImportFileSeeds
 from hydrus.client.importing import ClientImportGallerySeeds
 from hydrus.client.importing import ClientImportSubscriptionQuery
 from hydrus.client.importing import ClientImportSubscriptions
+from hydrus.client import ClientLocation
 from hydrus.client.importing.options import CheckerImportOptions
+from hydrus.client.importing.options import FileFilteringImportOptions
+from hydrus.client.importing.options import FileImportOptionsLegacy
 from hydrus.client.importing.options import ImportOptionsContainer
+from hydrus.client.importing.options import LocationImportOptions
+from hydrus.client.importing.options import NoteImportOptions
+from hydrus.client.importing.options import NoteImportOptionsLegacy
+from hydrus.client.importing.options import PrefetchImportOptions
+from hydrus.client.importing.options import PresentationImportOptions
+from hydrus.client.importing.options import TagFilteringImportOptions
 from hydrus.client.importing.options import TagImportOptions
+from hydrus.client.importing.options import TagImportOptionsLegacy
 from hydrus.client.metadata import ClientTags
+from hydrus.client.search import ClientSearchPredicate
 
 
 def cannot_normalise( url, for_server = False ):
@@ -426,6 +441,328 @@ def log_case( container ):
     }
 
 
+# old-style import options ------------------------------------------------
+
+FILE_SERVICE_KEYS = [ CC.LOCAL_FILE_SERVICE_KEY, bytes.fromhex( 'cd' * 32 ) ]
+MIMES = [ HC.IMAGE_JPEG, HC.IMAGE_PNG, HC.ANIMATION_GIF, HC.VIDEO_MP4, HC.APPLICATION_PDF, HC.APPLICATION_ZIP, HC.APPLICATION_PSD, HC.GENERAL_APPLICATION, HC.GENERAL_IMAGE, HC.GENERAL_VIDEO, HC.GENERAL_ANIMATION, HC.GENERAL_AUDIO ]
+
+
+def tag_filter():
+
+    f = HydrusTags.TagFilter()
+
+    for _ in range( rng.randint( 0, 2 ) ):
+
+        f.SetRule( rng.choice( [ '', ':', 'creator:', 'goblin' ] ), rng.choice( [ HC.FILTER_WHITELIST, HC.FILTER_BLACKLIST ] ) )
+
+
+    return f
+
+
+def legacy_file_options():
+
+    o = FileImportOptionsLegacy.FileImportOptionsLegacy()
+
+    p = PrefetchImportOptions.PrefetchImportOptions()
+    p.SetPreImportHashCheckType( rng.randint( 0, 2 ) )
+    p.SetPreImportURLCheckType( rng.randint( 0, 2 ) )
+    p.SetPreImportURLCheckLooksForNeighbourSpam( rng.random() < 0.5 )
+    o.SetPrefetchImportOptions( p )
+
+    f = FileFilteringImportOptions.FileFilteringImportOptions()
+    f.SetExcludesDeleted( rng.random() < 0.5 )
+    f.SetAllowsDecompressionBombs( rng.random() < 0.5 )
+
+    if rng.random() < 0.7:
+
+        f.SetAllowedSpecificFiletypes( ClientSearchPredicate.ConvertSummaryFiletypesToSpecific( rng.sample( MIMES, rng.randint( 1, 5 ) ), only_searchable = False ) )
+
+
+    f.SetMinSize( maybe( rng.randint( 1, 1000 ) ) )
+    f.SetMaxSize( maybe( rng.randint( 1000, 10 ** 9 ) ) )
+    f.SetMaxGifSize( maybe( rng.randint( 1000, 10 ** 8 ) ) )
+    f.SetMinResolution( maybe( ( rng.randint( 1, 100 ), rng.randint( 1, 100 ) ) ) )
+    f.SetMaxResolution( maybe( ( rng.randint( 100, 10000 ), rng.randint( 100, 10000 ) ) ) )
+    o.SetFileFilteringImportOptions( f )
+
+    l = LocationImportOptions.LocationImportOptions()
+    l.SetDestinationLocationContext( ClientLocation.LocationContext( current_service_keys = rng.sample( FILE_SERVICE_KEYS, rng.randint( 1, 2 ) ) ) )
+    l.SetAutomaticallyArchives( rng.random() < 0.5 )
+    l.SetShouldAssociatePrimaryURLs( rng.random() < 0.5 )
+    l.SetShouldAssociateSourceURLs( rng.random() < 0.5 )
+    l.SetDoAutomaticArchiveOnAlreadyInDBFiles( rng.random() < 0.5 )
+    l.SetDoImportDestinationsOnAlreadyInDBFiles( rng.random() < 0.5 )
+    o.SetLocationImportOptions( l )
+
+    pr = PresentationImportOptions.PresentationImportOptions()
+    pr.SetPresentationStatus( rng.randint( 0, 2 ) )
+    pr.SetPresentationInbox( rng.randint( 0, 2 ) )
+    pr.SetLocationContext( ClientLocation.LocationContext.STATICCreateSimple( rng.choice( [ CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY, CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY ] ) ) )
+    o.SetPresentationImportOptions( pr )
+
+    o.SetIsDefault( rng.random() < 0.3 )
+
+    return o
+
+
+def old_predicate( predicate_tuple ):
+    """A filetype predicate as an older version might have stored it."""
+
+    ( kind, version, [ predicate_type, value, inclusive ] ) = predicate_tuple
+
+    old_version = rng.choice( [ version, 6, 4 ] )
+
+    if old_version == 4:
+
+        value = sorted( ClientSearchPredicate.ConvertSummaryFiletypesToSpecific( value, only_searchable = False ) )
+
+
+    return [ kind, old_version, [ predicate_type, list( value ), inclusive ] ]
+
+
+def old_presentation( presentation_tuple ):
+
+    ( kind, version, [ location, status, inbox ] ) = presentation_tuple
+
+    if rng.random() < 0.5:
+
+        key = bytes.fromhex( location[ 2 ][ 0 ][ 0 ] ) if location[ 2 ][ 0 ] else None
+
+        code = 1 if key == CC.HYDRUS_LOCAL_FILE_STORAGE_SERVICE_KEY else 0
+
+        return [ kind, 1, [ code, status, inbox ] ]
+
+
+    return [ kind, version, [ location, status, inbox ] ]
+
+
+def legacy_file_options_at( o, version ):
+
+    ( kind, latest, info ) = o.GetSerialisableTuple()
+
+    ( prefetch, filtering, locations, presentation, is_default ) = info
+
+    presentation = old_presentation( presentation )
+
+    if version == 15:
+
+        return [ kind, 15, [ prefetch, filtering, locations, presentation, is_default ] ]
+
+
+    ( _, _, [ destination, archive, primary, source, archive_already, destinations_already ] ) = locations
+
+    post = [ archive, primary, source, archive_already, destinations_already ]
+
+    if version == 14:
+
+        return [ kind, 14, [ prefetch, filtering, destination, post, presentation, is_default ] ]
+
+
+    ( _, _, [ exclude_deleted, bombs, predicate, min_size, max_size, max_gif_size, min_res, max_res ] ) = filtering
+
+    predicate = old_predicate( predicate )
+
+    if version == 13:
+
+        return [ kind, 13, [ prefetch, [ exclude_deleted, bombs, predicate, min_size, max_size, max_gif_size, min_res, max_res, destination ], post, presentation, is_default ] ]
+
+
+    ( _, _, prefetch_info ) = prefetch
+
+    ( hash_check, url_check, spam ) = prefetch_info[ :3 ]
+
+    if version == 11:
+
+        post = post[ :4 ]
+
+    elif version <= 10:
+
+        post = post[ :3 ]
+
+
+    if version >= 9:
+
+        pre = [ exclude_deleted, hash_check, url_check, spam, bombs, predicate, min_size, max_size, max_gif_size, min_res, max_res, destination ]
+
+    else:
+
+        pre = [ exclude_deleted, url_check == PrefetchImportOptions.DO_NOT_CHECK, hash_check == PrefetchImportOptions.DO_NOT_CHECK, bombs, predicate, min_size, max_size, max_gif_size, min_res, max_res, destination ]
+
+
+    return [ kind, version, [ pre, post, presentation, is_default ] ]
+
+
+def legacy_tag_options():
+
+    services = {}
+
+    for key in some( TAG_SERVICE_KEYS, 2 ):
+
+        services[ key ] = TagImportOptions.ServiceTagImportOptions(
+            get_tags = rng.random() < 0.5,
+            get_tags_filter = tag_filter(),
+            additional_tags = some( TAGS ),
+            to_new_files = rng.random() < 0.5,
+            to_already_in_inbox = rng.random() < 0.5,
+            to_already_in_archive = rng.random() < 0.5,
+            only_add_existing_tags = rng.random() < 0.5,
+            only_add_existing_tags_filter = tag_filter(),
+            get_tags_overwrite_deleted = rng.random() < 0.2,
+            additional_tags_overwrite_deleted = rng.random() < 0.2
+        )
+
+
+    return TagImportOptionsLegacy.TagImportOptionsLegacy(
+        fetch_tags_even_if_url_recognised_and_file_already_in_db = rng.random() < 0.5,
+        fetch_tags_even_if_hash_recognised_and_file_already_in_db = rng.random() < 0.5,
+        tag_filtering_import_options = TagFilteringImportOptions.TagFilteringImportOptions( tag_blacklist = tag_filter(), tag_whitelist = some( [ 'blue eyes', 'solo' ] ) ),
+        tag_import_options = TagImportOptions.TagImportOptions( service_keys_to_service_tag_import_options = services ),
+        is_default = rng.random() < 0.3
+    )
+
+
+def old_service_tag_options( stio_tuple ):
+
+    ( kind, version, info ) = stio_tuple
+
+    if rng.random() < 0.5 and not info[ 8 ] and not info[ 9 ]:
+
+        return [ kind, 3, info[ :8 ] ]
+
+
+    return [ kind, version, info ]
+
+
+def legacy_tag_options_at( o, version ):
+
+    ( kind, latest, info ) = o.GetSerialisableTuple()
+
+    if version == 9:
+
+        return [ kind, 9, info ]
+
+
+    ( fetch_url, fetch_hash, filtering, tags, is_default ) = info
+
+    ( _, _, [ blacklist, whitelist ] ) = filtering
+    ( _, _, services ) = tags
+
+    services = [ [ key, old_service_tag_options( stio ) ] for ( key, stio ) in services ]
+
+    if version == 8:
+
+        return [ kind, 8, [ fetch_url, fetch_hash, blacklist, whitelist, services, is_default ] ]
+
+    elif version == 7:
+
+        return [ kind, 7, [ fetch_url, fetch_hash, blacklist, services, is_default ] ]
+
+    else:
+
+        return [ kind, 6, [ fetch_url, fetch_hash, blacklist, services ] ]
+
+
+
+def legacy_note_options():
+
+    n = NoteImportOptions.NoteImportOptions()
+    n.SetGetNotes( rng.random() < 0.5 )
+    n.SetExtendExistingNoteIfPossible( rng.random() < 0.5 )
+    n.SetConflictResolution( rng.randint( 0, 3 ) )
+    n.SetNameWhitelist( some( [ 'comment', 'translation' ] ) )
+    n.SetAllNameOverride( maybe( 'booru note' ) )
+    n.SetNamesToNameOverrides( dict( some( [ ( 'comment', 'booru comment' ) ] ) ) )
+
+    o = NoteImportOptionsLegacy.NoteImportOptionsLegacy()
+    o.SetNoteImportOptions( n )
+    o.SetIsDefault( rng.random() < 0.3 )
+
+    return o
+
+
+def legacy_note_options_at( o, version ):
+
+    ( kind, latest, info ) = o.GetSerialisableTuple()
+
+    if version == 2:
+
+        return [ kind, 2, info ]
+
+
+    ( ( _, _, note_info ), is_default ) = info
+
+    return [ kind, 1, list( note_info ) + [ is_default ] ]
+
+
+def old_subscription( i ):
+
+    ( s, logs ) = subscription( 100 + i )
+
+    ( kind, name, latest, info ) = s.GetSerialisableTuple()
+
+    version = rng.randint( 1, 3 )
+
+    headers = []
+
+    for header in info[ 1 ]:
+
+        ( h_kind, h_version, h_info ) = header
+
+        if rng.random() < 0.5:
+
+            tio = legacy_tag_options_at( legacy_tag_options(), rng.choice( [ 6, 7, 8, 9 ] ) )
+
+            h_info = list( h_info )
+            h_info[ 12 ] = tio
+
+            if rng.random() < 0.5:
+
+                header = [ h_kind, 2, h_info ]
+
+            else:
+
+                header = [ h_kind, 1, h_info[ :10 ] + h_info[ 12: ] ]
+
+
+
+        headers.append( header )
+
+
+    ( gug, _, checker, initial, periodic, random_sample, paused, container, *rest ) = info
+
+    fio = legacy_file_options_at( legacy_file_options(), rng.randint( 8, 15 ) )
+    tio = legacy_tag_options_at( legacy_tag_options(), rng.choice( [ 6, 7, 8, 9 ] ) )
+    nio = legacy_note_options_at( legacy_note_options(), rng.randint( 1, 2 ) )
+
+    if version == 3:
+
+        old_info = [ gug, headers, checker, initial, periodic, random_sample, paused, fio, tio, nio, *rest ]
+
+    elif version == 2:
+
+        old_info = [ gug, headers, checker, initial, periodic, random_sample, paused, fio, tio, *rest ]
+
+    else:
+
+        old_info = [ gug, headers, checker, initial, periodic, paused, fio, tio, *rest ]
+
+
+    return [ kind, name, version, old_info ]
+
+
+def old_subscription_case( i ):
+
+    stored = old_subscription( i )
+
+    loaded = read_back( json.loads( json.dumps( stored ) ) )
+
+    return {
+        'stored' : stored,
+        'facts' : subscription_facts( loaded ),
+        'import_options' : list( loaded._import_options_container.GetSerialisableTuple() ),
+    }
+
+
 def main():
 
     file_seeds = seed_cases( file_seed, FILE_SEED_FIELDS, FILE_SEED_ADDED, file_seed_facts, 8, 80 )
@@ -445,6 +782,8 @@ def main():
         subscriptions.append( { 'stored' : stored, 'facts' : subscription_facts( loaded ), 'logs' : [ log_case( container ) for container in logs ] } )
 
 
+    old_subscriptions = [ old_subscription_case( i ) for i in range( 60 ) ]
+
     checkers = [ checker_case() for _ in range( 200 ) ]
 
     json.dump( {
@@ -452,6 +791,7 @@ def main():
         'gallery_seeds' : gallery_seeds,
         'query_logs' : query_logs,
         'subscriptions' : subscriptions,
+        'old_subscriptions' : old_subscriptions,
         'checkers' : checkers,
     }, sys.stdout, indent = 1, ensure_ascii = False, sort_keys = True )
 

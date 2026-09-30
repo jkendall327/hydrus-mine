@@ -5,6 +5,7 @@
 //! reference implementation and are checked against
 //! `oracle/fixtures/constants.json` in the tests below.
 
+use std::collections::BTreeSet;
 use std::fmt;
 
 use serde::{Deserialize, Serialize};
@@ -261,6 +262,132 @@ impl Mime {
             .copied()
             .filter(move |m| m.general_class() == Some(class))
     }
+}
+
+/// The file types that can be searched for. Types outside this list (e.g.
+/// repository update files) are never matched by a filetype predicate.
+pub const SEARCHABLE_MIMES: &[Mime] = &[
+    Mime::ImageJpeg,
+    Mime::ImagePng,
+    Mime::AnimationGif,
+    Mime::ImageBmp,
+    Mime::ApplicationFlash,
+    Mime::ImageIcon,
+    Mime::VideoFlv,
+    Mime::ApplicationPdf,
+    Mime::ApplicationZip,
+    Mime::AudioMp3,
+    Mime::VideoMp4,
+    Mime::AudioOgg,
+    Mime::AudioFlac,
+    Mime::AudioWma,
+    Mime::VideoWmv,
+    Mime::VideoMkv,
+    Mime::VideoWebm,
+    Mime::AnimationApng,
+    Mime::VideoMpeg,
+    Mime::VideoMov,
+    Mime::VideoAvi,
+    Mime::ApplicationRar,
+    Mime::Application7z,
+    Mime::ImageWebp,
+    Mime::ImageTiff,
+    Mime::ApplicationPsd,
+    Mime::AudioM4a,
+    Mime::VideoRealmedia,
+    Mime::AudioRealmedia,
+    Mime::AudioTrueaudio,
+    Mime::ApplicationClip,
+    Mime::AudioWave,
+    Mime::VideoOgv,
+    Mime::AudioMkv,
+    Mime::AudioMp4,
+    Mime::AudioWavpack,
+    Mime::ApplicationSai2,
+    Mime::ApplicationKrita,
+    Mime::ImageSvg,
+    Mime::ApplicationXcf,
+    Mime::ApplicationGzip,
+    Mime::ImageHeif,
+    Mime::ImageHeifSequence,
+    Mime::ImageHeic,
+    Mime::ImageHeicSequence,
+    Mime::ImageAvif,
+    Mime::ImageAvifSequence,
+    Mime::ImageGif,
+    Mime::ApplicationProcreate,
+    Mime::ImageQoi,
+    Mime::ApplicationEpub,
+    Mime::ApplicationDjvu,
+    Mime::ApplicationCbz,
+    Mime::AnimationUgoira,
+    Mime::ApplicationRtf,
+    Mime::ApplicationDocx,
+    Mime::ApplicationXlsx,
+    Mime::ApplicationPptx,
+    Mime::ApplicationDoc,
+    Mime::ApplicationXls,
+    Mime::ApplicationPpt,
+    Mime::AnimationWebp,
+    Mime::ImageJxl,
+    Mime::ApplicationPaintDotNet,
+    Mime::AnimationJxl,
+    Mime::ImageOpenraster,
+];
+
+impl Mime {
+    /// Whether files of this type can be found by a filetype search.
+    pub fn is_searchable(self) -> bool {
+        SEARCHABLE_MIMES.contains(&self)
+    }
+}
+
+fn class_member_codes(class: Mime, only_searchable: bool) -> BTreeSet<u8> {
+    Mime::members_of_class(class)
+        .filter(|m| !only_searchable || m.is_searchable())
+        .map(Mime::code)
+        .collect()
+}
+
+/// Replace every complete class of types with the class
+/// (`ClientSearchPredicate.ConvertSpecificFiletypesToSummary`), by code.
+pub fn summarise_filetype_codes(codes: &BTreeSet<u8>, only_searchable: bool) -> BTreeSet<u8> {
+    let mut remaining = codes.clone();
+    let mut summary = BTreeSet::new();
+    for class in Mime::general_classes() {
+        let members = class_member_codes(class, only_searchable);
+        if members.is_subset(&remaining) {
+            summary.insert(class.code());
+            remaining.retain(|m| !members.contains(m));
+        }
+    }
+    summary.extend(remaining);
+    summary
+}
+
+/// Expand classes (and "any file") into their types
+/// (`ClientSearchPredicate.ConvertSummaryFiletypesToSpecific`), by code.
+pub fn specific_filetype_codes(codes: &BTreeSet<u8>, only_searchable: bool) -> BTreeSet<u8> {
+    let mut specific = BTreeSet::new();
+    for &code in codes {
+        match Mime::from_code(code) {
+            Some(Mime::GeneralFile) => {
+                for class in Mime::general_classes() {
+                    specific.extend(class_member_codes(class, false));
+                }
+            }
+            Some(class) if class.is_general_class() => {
+                specific.extend(class_member_codes(class, false));
+            }
+            _ => {
+                specific.insert(code);
+            }
+        }
+    }
+    if only_searchable {
+        specific.retain(|&c| Mime::from_code(c).is_some_and(Mime::is_searchable));
+    }
+    specific
 }
 
 impl fmt::Display for Mime {

@@ -7,7 +7,7 @@
 use serde_json::{Value as Json, json};
 
 use hydrus_core::subscriptions::{CheckerOptions, SeedTime};
-use hydrus_legacy::objects::import_options::tags;
+use hydrus_legacy::objects::import_options::{slice, tags};
 use hydrus_legacy::objects::subscriptions::{
     LegacyFileSeed, LegacyGallerySeed, file_seed, gallery_seed, query_log, subscription,
 };
@@ -116,11 +116,25 @@ fn query_logs_hold_their_seeds_in_order() {
     }
 }
 
+/// Subscriptions of today's version, and of versions 1-3 with old-style
+/// import options (of every version the reference upgrades from), which
+/// must convert as the reference converts them.
 #[test]
 fn subscriptions_read_as_the_reference_reads_them() {
     let recorded = hydrus_testkit::fixture_json("subscriptions.json");
-    for case in recorded["subscriptions"].as_array().unwrap() {
+    let current = recorded["subscriptions"].as_array().unwrap();
+    let old = recorded["old_subscriptions"].as_array().unwrap();
+    for case in current.iter().chain(old) {
         let s = subscription(&object(&case["stored"])).unwrap();
+        assert!(s.unconverted.is_empty(), "{:?}", s.unconverted);
+        if let Some(expected) = case.get("import_options") {
+            assert_eq!(
+                s.import_options,
+                slice(&object(expected)).unwrap(),
+                "{}",
+                case["stored"]
+            );
+        }
         let facts = &case["facts"];
         let queries: Vec<Json> = s
             .queries
@@ -128,8 +142,8 @@ fn subscriptions_read_as_the_reference_reads_them() {
             .zip(facts["queries"].as_array().unwrap())
             .map(|(q, expected)| {
                 assert_eq!(
-                    q.tag_import_options.as_ref(),
-                    Some(&tags(&object(&expected["tag_import_options"])).unwrap())
+                    q.tag_import_options,
+                    tags(&object(&expected["tag_import_options"])).unwrap()
                 );
                 json!({
                     "log_name": q.log_name,
@@ -179,7 +193,6 @@ fn subscriptions_read_as_the_reference_reads_them() {
             }),
             *facts
         );
-        assert!(s.import_options.is_some());
     }
 }
 

@@ -312,19 +312,22 @@ impl LegacyDb {
     }
 
     /// Every subscription (named objects of type 88, the latest of each
-    /// name), without their queries' histories: see [`Self::query_log`].
-    pub fn subscriptions(&self) -> Result<Vec<LegacySubscription>> {
-        self.latest_named(SerialisableType(88))?
+    /// name), without their queries' histories (see [`Self::query_log`]).
+    /// Each is decoded on its own, so one that can't be read doesn't stop
+    /// the others.
+    pub fn subscriptions(&self) -> Result<Vec<(String, Result<LegacySubscription>)>> {
+        Ok(self
+            .latest_named(SerialisableType(88))?
             .into_iter()
             .map(|row| {
                 let location = format!("json_dumps_named subscription {:?}", row.name);
-                let object = row
+                let decoded = row
                     .parse()
-                    .map_err(|e| LegacyError::serialisable(&location, e))?;
-                crate::objects::subscriptions::subscription(&object)
-                    .map_err(|e| LegacyError::serialisable(&location, e))
+                    .and_then(|object| crate::objects::subscriptions::subscription(&object))
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
             })
-            .collect()
+            .collect())
     }
 
     /// A subscription query's history (type 86) by the name in its

@@ -15,7 +15,6 @@ use hydrus_legacy::LegacyDb;
 use hydrus_legacy::objects::{self as legacy, ServiceConfig, TagRule};
 use hydrus_legacy::readers::Service as LegacyService;
 
-use hydrus_core::import_options::{ImportOptionsSlice, TagImportOptions};
 use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
 use hydrus_core::url::UrlClasses;
 
@@ -147,10 +146,18 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     }
     match db.subscriptions() {
         Ok(subscriptions) => {
-            input.subscriptions = subscriptions
-                .iter()
-                .map(|s| subscription_input(s, &mut input.warnings))
-                .collect();
+            for (name, decoded) in subscriptions {
+                match decoded {
+                    Ok(s) => {
+                        let converted = subscription_input(&s, &mut input.warnings);
+                        input.subscriptions.push(converted);
+                    }
+                    Err(e) => input.warnings.push(format!(
+                        "Subscription \"{name}\" could not be read, so it was not converted (the original \
+                         is kept): {e}"
+                    )),
+                }
+            }
         }
         Err(e) => input
             .warnings
@@ -165,14 +172,13 @@ fn subscription_input(
     s: &legacy::subscriptions::LegacySubscription,
     warnings: &mut Vec<String>,
 ) -> SubscriptionInput {
-    let import_options = s.import_options.clone().unwrap_or_else(|| {
+    for what in &s.unconverted {
         warnings.push(format!(
-            "Subscription \"{}\" was last saved by an old hydrus, and its import options were not \
-             converted, so the defaults apply to it",
+            "Subscription \"{}\" was last saved by an old hydrus, and {what} could not be converted, so \
+             the defaults stand in",
             s.name
         ));
-        ImportOptionsSlice::default()
-    });
+    }
     let limit = |limit: Option<i64>| limit.map(|n| u64::try_from(n).unwrap_or(0));
     let settings = SubscriptionSettings {
         gug_key: s.gug_key.clone(),
@@ -182,7 +188,7 @@ fn subscription_input(
         periodic_file_limit: limit(s.periodic_file_limit),
         this_is_a_random_sample: s.this_is_a_random_sample,
         paused: s.paused,
-        import_options,
+        import_options: s.import_options.clone(),
         no_work_until: s.no_work_until,
         no_work_until_reason: s.no_work_until_reason.clone(),
         show_a_popup_while_working: s.show_a_popup_while_working,
@@ -195,14 +201,6 @@ fn subscription_input(
         .queries
         .iter()
         .map(|q| {
-            let tag_import_options = q.tag_import_options.clone().unwrap_or_else(|| {
-                warnings.push(format!(
-                    "The query \"{}\" of subscription \"{}\" was last saved by an old hydrus, and its \
-                     tag import options were not converted",
-                    q.query_text, s.name
-                ));
-                TagImportOptions::default()
-            });
             let state = QueryState {
                 query_text: q.query_text.clone(),
                 display_name: q.display_name.clone(),
@@ -214,7 +212,7 @@ fn subscription_input(
                 dead: q.checker_status != 0,
                 file_seed_compaction_number: q.file_seed_compaction_number,
                 gallery_seed_compaction_number: q.gallery_seed_compaction_number,
-                tag_import_options,
+                tag_import_options: q.tag_import_options.clone(),
             };
             (q.log_name.clone(), state)
         })

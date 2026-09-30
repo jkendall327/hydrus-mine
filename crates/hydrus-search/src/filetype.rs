@@ -11,76 +11,7 @@ use std::fmt;
 
 use hydrus_core::Mime;
 
-/// The file types that can be searched for. Types outside this list (e.g.
-/// repository update files) are never matched by a filetype predicate.
-pub const SEARCHABLE_MIMES: &[Mime] = &[
-    Mime::ImageJpeg,
-    Mime::ImagePng,
-    Mime::AnimationGif,
-    Mime::ImageBmp,
-    Mime::ApplicationFlash,
-    Mime::ImageIcon,
-    Mime::VideoFlv,
-    Mime::ApplicationPdf,
-    Mime::ApplicationZip,
-    Mime::AudioMp3,
-    Mime::VideoMp4,
-    Mime::AudioOgg,
-    Mime::AudioFlac,
-    Mime::AudioWma,
-    Mime::VideoWmv,
-    Mime::VideoMkv,
-    Mime::VideoWebm,
-    Mime::AnimationApng,
-    Mime::VideoMpeg,
-    Mime::VideoMov,
-    Mime::VideoAvi,
-    Mime::ApplicationRar,
-    Mime::Application7z,
-    Mime::ImageWebp,
-    Mime::ImageTiff,
-    Mime::ApplicationPsd,
-    Mime::AudioM4a,
-    Mime::VideoRealmedia,
-    Mime::AudioRealmedia,
-    Mime::AudioTrueaudio,
-    Mime::ApplicationClip,
-    Mime::AudioWave,
-    Mime::VideoOgv,
-    Mime::AudioMkv,
-    Mime::AudioMp4,
-    Mime::AudioWavpack,
-    Mime::ApplicationSai2,
-    Mime::ApplicationKrita,
-    Mime::ImageSvg,
-    Mime::ApplicationXcf,
-    Mime::ApplicationGzip,
-    Mime::ImageHeif,
-    Mime::ImageHeifSequence,
-    Mime::ImageHeic,
-    Mime::ImageHeicSequence,
-    Mime::ImageAvif,
-    Mime::ImageAvifSequence,
-    Mime::ImageGif,
-    Mime::ApplicationProcreate,
-    Mime::ImageQoi,
-    Mime::ApplicationEpub,
-    Mime::ApplicationDjvu,
-    Mime::ApplicationCbz,
-    Mime::AnimationUgoira,
-    Mime::ApplicationRtf,
-    Mime::ApplicationDocx,
-    Mime::ApplicationXlsx,
-    Mime::ApplicationPptx,
-    Mime::ApplicationDoc,
-    Mime::ApplicationXls,
-    Mime::ApplicationPpt,
-    Mime::AnimationWebp,
-    Mime::ImageJxl,
-    Mime::ApplicationPaintDotNet,
-    Mime::AnimationJxl,
-    Mime::ImageOpenraster,
-];
+pub use hydrus_core::mime::SEARCHABLE_MIMES;
 
 /// The general classes, in the order the reference summarises them.
 const GENERAL_CLASSES: &[Mime] = &[
@@ -95,7 +26,7 @@ const GENERAL_CLASSES: &[Mime] = &[
 
 /// Whether files of this type can be found by a filetype search.
 pub fn is_searchable(mime: Mime) -> bool {
-    SEARCHABLE_MIMES.contains(&mime)
+    mime.is_searchable()
 }
 
 /// The words `system:filetype` accepts, in the reference's order, and the

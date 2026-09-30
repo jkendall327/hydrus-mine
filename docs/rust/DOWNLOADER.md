@@ -63,7 +63,7 @@ show named queues as pages.
 | default import options per URL class / downloader | settings |
 | cookies, custom headers | done |
 | bandwidth rules (and recent usage) | settings (+ usage rows) |
-| subscriptions: queries, their file seed caches and gallery logs, check timings | done (`subscriptions` and `subscription_queries`, each query's history an import queue); a subscription last saved before hydrus v670 keeps old-style import options, which are not converted yet (the defaults apply, and the import reports it) |
+| subscriptions: queries, their file seed caches and gallery logs, check timings | done (`subscriptions` and `subscription_queries`, each query's history an import queue); old-style import options on subscriptions last saved before hydrus v670 are converted as the reference converts them |
 | watchers and URL/gallery pages open in the GUI session | named queues |
 
 ## Testing
@@ -96,7 +96,8 @@ show named queues as pages.
    URLs sent to URL queues) and GUG searches; watchers.
 4. Subscriptions and migrating them with their history. Migration and
    the reference's check timing are **done** (oracle-tested: every saved
-   version of seeds, and 200 random timing cases). Next: running them on
+   version of seeds and subscriptions, old-style import options of every
+   version the reference upgrades from, and 200 random timing cases). Next: running them on
    schedule, then adding many queries at once.
 
 Login scripts are not planned: logins come from cookies (Companion sends

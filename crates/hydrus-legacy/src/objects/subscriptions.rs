@@ -5,14 +5,15 @@
 //!
 //! Every version of the seeds and headers that a v688 database can hold is
 //! read (older versions only lack fields, which get the reference's
-//! defaults). A subscription saved before v688's import options overhaul
-//! (version 1-3) keeps its old-style import options, which are not
-//! converted: see [`LegacySubscription::import_options`].
+//! defaults). A subscription saved before hydrus v670's import options
+//! overhaul (version 1-3) has old-style import options, converted as the
+//! reference converts them (see [`legacy_import_options`]).
 
 use hydrus_core::import_options::{ImportOptionsSlice, TagImportOptions};
 use hydrus_core::subscriptions::CheckerOptions;
 
 use super::domain::{expect, nested_list};
+use super::legacy_import_options;
 use super::util::{
     DecodeResult, boolean, float, int, list, malformed, nested, opt_int, opt_string, string,
     strings, tuple,
@@ -97,9 +98,11 @@ pub struct QueryHeader {
     pub checker_status: i64,
     pub file_seed_compaction_number: u64,
     pub gallery_seed_compaction_number: u64,
-    /// Tags for everything the query finds (`None` if stored in the old
-    /// style, which is not converted).
-    pub tag_import_options: Option<TagImportOptions>,
+    /// Tags for everything the query finds.
+    pub tag_import_options: TagImportOptions,
+    /// What of old-style options could not be converted (and why); the
+    /// defaults stand in.
+    pub unconverted: Option<String>,
 }
 
 /// A subscription.
@@ -114,9 +117,12 @@ pub struct LegacySubscription {
     pub periodic_file_limit: Option<i64>,
     pub this_is_a_random_sample: bool,
     pub paused: bool,
-    /// `None` for a subscription saved with old-style import options
-    /// (before version 4), which are not converted.
-    pub import_options: Option<ImportOptionsSlice>,
+    /// Converted as the reference converts them if saved in the old style
+    /// (before version 4).
+    pub import_options: ImportOptionsSlice,
+    /// What of old-style options (its own or its queries') could not be
+    /// converted, and why; the defaults stand in.
+    pub unconverted: Vec<String>,
     pub no_work_until: i64,
     pub no_work_until_reason: String,
     pub show_a_popup_while_working: bool,
@@ -403,14 +409,20 @@ pub fn query_header(object: &SerialisableObject) -> DecodeResult<QueryHeader> {
         (250, 100)
     };
     let tag_options = next("tag import options")?;
+    let tag_options = nested(k, tag_options, "tag import options")?;
+    let mut unconverted = None;
     let tag_import_options = if v >= 3 {
-        Some(super::import_options::tags(&nested(
-            k,
-            tag_options,
-            "tag import options",
-        )?)?)
+        super::import_options::tags(&tag_options)?
     } else {
-        None
+        // old-style tag import options, of which only the tags are kept (as
+        // version 3 did)
+        match legacy_import_options::tag_import_options(&tag_options) {
+            Ok(options) => options.tags,
+            Err(e) => {
+                unconverted = Some(format!("tag import options ({e})"));
+                TagImportOptions::default()
+            }
+        }
     };
     Ok(QueryHeader {
         log_name,
@@ -424,6 +436,7 @@ pub fn query_header(object: &SerialisableObject) -> DecodeResult<QueryHeader> {
         file_seed_compaction_number,
         gallery_seed_compaction_number,
         tag_import_options,
+        unconverted,
     })
 }
 
@@ -449,7 +462,7 @@ pub fn subscription(object: &SerialisableObject) -> DecodeResult<LegacySubscript
     let [gug_key, gug_name] = tuple::<2>(k, next("gug")?, "gug key and name")?;
     let gug_key = string(k, gug_key, "gug key")?;
     let gug_name = string(k, gug_name, "gug name")?;
-    let queries = list(k, next("query headers")?, "query headers")?
+    let queries: Vec<QueryHeader> = list(k, next("query headers")?, "query headers")?
         .iter()
         .map(|q| query_header(&nested(k, q, "query header")?))
         .collect::<DecodeResult<_>>()?;
@@ -462,26 +475,48 @@ pub fn subscription(object: &SerialisableObject) -> DecodeResult<LegacySubscript
         false
     };
     let paused = boolean(k, next("paused")?, "paused")?;
+    let mut unconverted: Vec<String> = Vec::new();
     let import_options = if v >= 4 {
-        Some(super::import_options::slice(&nested(
-            k,
-            next("import options")?,
-            "import options",
-        )?)?)
+        super::import_options::slice(&nested(k, next("import options")?, "import options")?)?
     } else {
         // file and tag import options, and (from version 3) note import
         // options, in the old style
-        next("file import options")?;
-        next("tag import options")?;
-        if v >= 3 {
-            next("note import options")?;
-        }
-        None
+        let file = nested(k, next("file import options")?, "file import options")?;
+        let tags = nested(k, next("tag import options")?, "tag import options")?;
+        let notes = if v >= 3 {
+            Some(nested(
+                k,
+                next("note import options")?,
+                "note import options",
+            )?)
+        } else {
+            None
+        };
+        let converted = (|| -> DecodeResult<ImportOptionsSlice> {
+            let notes = notes
+                .map(|n| legacy_import_options::note_import_options(&n))
+                .transpose()?;
+            Ok(legacy_import_options::convert(
+                Some(&legacy_import_options::file_import_options(&file)?),
+                Some(&legacy_import_options::tag_import_options(&tags)?),
+                notes.as_ref(),
+            ))
+        })();
+        converted.unwrap_or_else(|e| {
+            unconverted.push(format!("import options ({e})"));
+            ImportOptionsSlice::default()
+        })
     };
     let no_work_until = int(k, next("no work until")?, "no work until")?;
     let no_work_until_reason = string(k, next("no work until reason")?, "no work until reason")?;
     let b = |value: &PyJson, what: &str| boolean(k, value, what);
+    unconverted.extend(queries.iter().filter_map(|q| {
+        q.unconverted
+            .as_ref()
+            .map(|what| format!("the {what} of query \"{}\"", q.query_text))
+    }));
     Ok(LegacySubscription {
+        unconverted,
         name,
         gug_key,
         gug_name,

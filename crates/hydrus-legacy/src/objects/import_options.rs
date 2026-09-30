@@ -8,9 +8,9 @@
 //! | file filtering (with its filetype predicate, type 14) | 148 | 1 |
 //! | locations (with a location context, type 103) | 149 | 1 |
 //! | tag filtering (with a tag filter, type 44) | 150 | 1 |
-//! | tags / per service | 151 / 65 | 1 / 4 |
+//! | tags / per service | 151 / 65 | 1 / 3, 4 |
 //! | notes | 153 | 1 |
-//! | presentation | 108 | 2 |
+//! | presentation | 108 | 1, 2 |
 //! | external programs (kept as stored) | 162 | 1 |
 
 use hydrus_core::import_options::{
@@ -140,12 +140,16 @@ pub fn slice(object: &SerialisableObject) -> DecodeResult<ImportOptionsSlice> {
     Ok(slice)
 }
 
-fn check(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<PrefetchCheck> {
+pub(crate) fn check(
+    k: SerialisableType,
+    value: &PyJson,
+    what: &str,
+) -> DecodeResult<PrefetchCheck> {
     let code = int(k, value, what)?;
     PrefetchCheck::from_code(code).ok_or_else(|| malformed(k, format!("unknown {what} {code}")))
 }
 
-fn prefetch(object: &SerialisableObject) -> DecodeResult<PrefetchOptions> {
+pub(crate) fn prefetch(object: &SerialisableObject) -> DecodeResult<PrefetchOptions> {
     let k = PREFETCH;
     expect(object, k, &[1, 2])?;
     let info = object.info();
@@ -173,7 +177,11 @@ fn prefetch(object: &SerialisableObject) -> DecodeResult<PrefetchOptions> {
     })
 }
 
-fn opt_u64(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<Option<u64>> {
+pub(crate) fn opt_u64(
+    k: SerialisableType,
+    value: &PyJson,
+    what: &str,
+) -> DecodeResult<Option<u64>> {
     if value.is_null() {
         return Ok(None);
     }
@@ -183,7 +191,7 @@ fn opt_u64(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<Opti
         .map_err(|_| malformed(k, format!("{what} is negative")))
 }
 
-fn opt_resolution(
+pub(crate) fn opt_resolution(
     k: SerialisableType,
     value: &PyJson,
     what: &str,
@@ -198,7 +206,7 @@ fn opt_resolution(
     Ok(Some((dimension(w)?, dimension(h)?)))
 }
 
-fn file_filtering(object: &SerialisableObject) -> DecodeResult<FileFilteringOptions> {
+pub(crate) fn file_filtering(object: &SerialisableObject) -> DecodeResult<FileFilteringOptions> {
     let k = FILE_FILTERING;
     expect(object, k, &[1])?;
     let info = object.info();
@@ -235,7 +243,7 @@ fn file_filtering(object: &SerialisableObject) -> DecodeResult<FileFilteringOpti
     })
 }
 
-fn tag_filtering(object: &SerialisableObject) -> DecodeResult<TagFilteringOptions> {
+pub(crate) fn tag_filtering(object: &SerialisableObject) -> DecodeResult<TagFilteringOptions> {
     let k = TAG_FILTERING;
     expect(object, k, &[1])?;
     let info = object.info();
@@ -250,7 +258,7 @@ fn tag_filtering(object: &SerialisableObject) -> DecodeResult<TagFilteringOption
 }
 
 /// A location context's file domains (a set, so sorted).
-fn keys(context: &LocationContext) -> Vec<String> {
+pub(crate) fn keys(context: &LocationContext) -> Vec<String> {
     let mut keys: Vec<String> = context
         .current
         .iter()
@@ -261,7 +269,11 @@ fn keys(context: &LocationContext) -> Vec<String> {
 }
 
 /// Texts the reference keeps as a set (stored in arbitrary order), sorted.
-fn string_set(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<Vec<String>> {
+pub(crate) fn string_set(
+    k: SerialisableType,
+    value: &PyJson,
+    what: &str,
+) -> DecodeResult<Vec<String>> {
     let mut items: Vec<String> = list(k, value, what)?
         .iter()
         .map(|t| string(k, t, what))
@@ -271,7 +283,7 @@ fn string_set(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<V
     Ok(items)
 }
 
-fn locations(object: &SerialisableObject) -> DecodeResult<LocationOptions> {
+pub(crate) fn locations(object: &SerialisableObject) -> DecodeResult<LocationOptions> {
     let k = LOCATIONS;
     expect(object, k, &[1])?;
     let info = object.info();
@@ -314,10 +326,16 @@ pub fn tags(object: &SerialisableObject) -> DecodeResult<TagImportOptions> {
     Ok(TagImportOptions { services })
 }
 
-fn service_tags(object: &SerialisableObject) -> DecodeResult<ServiceTagImportOptions> {
+pub(crate) fn service_tags(object: &SerialisableObject) -> DecodeResult<ServiceTagImportOptions> {
     let k = SERVICE_TAGS;
-    expect(object, k, &[4])?;
-    let info = object.info();
+    expect(object, k, &[3, 4])?;
+    let mut info = object.info();
+    if object.version == 3 {
+        // version 4 added the two "overwrite deleted" flags, off
+        if let PyJson::List(items) = &mut info {
+            items.extend([PyJson::Bool(false), PyJson::Bool(false)]);
+        }
+    }
     let [
         get_tags,
         get_tags_filter,
@@ -350,12 +368,19 @@ fn service_tags(object: &SerialisableObject) -> DecodeResult<ServiceTagImportOpt
     })
 }
 
-fn notes(object: &SerialisableObject) -> DecodeResult<NoteImportOptions> {
+pub(crate) fn notes(object: &SerialisableObject) -> DecodeResult<NoteImportOptions> {
     let k = NOTES;
     expect(object, k, &[1])?;
     let info = object.info();
-    let [get, extend, conflict, whitelist, all_override, overrides] =
-        tuple::<6>(k, &info, "note import options")?;
+    notes_from(k, tuple::<6>(k, &info, "note import options")?)
+}
+
+/// Note import options from their six fields (also how old-style note
+/// import options began their info).
+pub(crate) fn notes_from(
+    k: SerialisableType,
+    [get, extend, conflict, whitelist, all_override, overrides]: &[PyJson; 6],
+) -> DecodeResult<NoteImportOptions> {
     let code = int(k, conflict, "conflict resolution")?;
     Ok(NoteImportOptions {
         get_notes: boolean(k, get, "get notes")?,
@@ -374,13 +399,24 @@ fn notes(object: &SerialisableObject) -> DecodeResult<NoteImportOptions> {
     })
 }
 
-fn presentation(object: &SerialisableObject) -> DecodeResult<PresentationOptions> {
+pub(crate) fn presentation(object: &SerialisableObject) -> DecodeResult<PresentationOptions> {
     let k = PRESENTATION;
-    expect(object, k, &[2])?;
+    expect(object, k, &[1, 2])?;
     let info = object.info();
     let [location, status, inbox] = tuple::<3>(k, &info, "presentation options")?;
+    let location = if object.version == 1 {
+        // (PRESENTATION_LOCATION_IN_TRASH_TOO, else in local files)
+        let key = if int(k, location, "presentation location")? == 1 {
+            hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE
+        } else {
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
+        };
+        vec![hex::encode(key)]
+    } else {
+        keys(&LocationContext::from_tuple(location)?)
+    };
     Ok(PresentationOptions {
-        location: keys(&LocationContext::from_tuple(location)?),
+        location,
         status: match int(k, status, "presentation status")? {
             0 => PresentationStatus::AnyGood,
             1 => PresentationStatus::NewOnly,
