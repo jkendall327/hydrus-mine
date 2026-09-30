@@ -1,12 +1,9 @@
 //! A search page over the `basic` fixture: driven directly, then shown in a
 //! window drawn headless (the screenshot is kept in the target directory).
 
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use slint::{ComponentHandle as _, Model as _};
 
-use hydrus_gui::{MainWindow, MediaViewer, SearchPage, bind, headless};
+use hydrus_gui::{MainWindow, MediaViewer, Pages, SearchPage, bind, headless};
 use hydrus_search::{SortBy, SortOrder};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
@@ -141,7 +138,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let main_window = windows.get(0).unwrap();
-    let bound = bind(&ui, Rc::new(RefCell::new(SearchPage::new(store))));
+    let bound = bind(&ui, Pages::single(SearchPage::new(store)));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
     assert_eq!(ui.get_status(), format!("{everything} files"));

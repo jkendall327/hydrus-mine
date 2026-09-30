@@ -20,17 +20,21 @@ pub mod autocomplete;
 mod grid;
 pub mod headless;
 mod page;
+mod pages;
 pub mod sort;
 mod viewer;
 
 pub use grid::ThumbnailRows;
 pub use page::SearchPage;
+pub use pages::{Pages, Tabs};
 pub use viewer::MediaViewer;
 
-/// A page bound to a window: its grid's rows, and its media viewer while
-/// one is open.
+/// Pages bound to a window: the pages, the page shown, its grid's rows,
+/// and the media viewer while one is open.
 #[derive(Clone)]
 pub struct Bound {
+    pub pages: Rc<RefCell<Pages>>,
+    pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
 }
@@ -38,9 +42,10 @@ pub struct Bound {
 impl std::fmt::Debug for Bound {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("Bound")
+            .field("pages", &self.pages.borrow())
             .field("rows", &self.rows)
             .field("viewer", &self.viewer.borrow().is_some())
-            .finish()
+            .finish_non_exhaustive()
     }
 }
 
@@ -65,32 +70,64 @@ pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     }
 }
 
-/// Show `page` in `window`, and let the window change it.
-pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
-    let rows = Rc::new(ThumbnailRows::new(page.clone()));
+/// Show `pages` in `window`, and let the window change them.
+pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    let pages = Rc::new(RefCell::new(pages));
+    let first = pages.borrow_mut().current();
+    let current = Rc::new(RefCell::new(first.clone()));
+    let rows = Rc::new(ThumbnailRows::new(first));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
-    refresh(window, &page.borrow());
+    show_tabs(window, &pages.borrow());
+    refresh(window, &current.borrow().borrow());
 
-    // after a change to the page, show it; `true` if its files changed
+    // after a change to the page shown, show it; `true` if its files changed
     let shown = {
-        let page = page.clone();
+        let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
-                refresh(&window, &page.borrow());
+                refresh(&window, &current.borrow().borrow());
                 if files {
                     rows.reset();
                 }
             }
         }
     };
+    // the page shown, to change
+    let page = {
+        let current = current.clone();
+        move || current.borrow().clone()
+    };
+    window.on_tab_chosen({
+        let pages = pages.clone();
+        let current = current.clone();
+        let rows = rows.clone();
+        let weak = window.as_weak();
+        let shown = shown.clone();
+        move |level, index| {
+            let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) else {
+                return;
+            };
+            let opened = {
+                let mut pages = pages.borrow_mut();
+                pages.select(level, index);
+                pages.current()
+            };
+            *current.borrow_mut() = opened.clone();
+            rows.set_page(opened);
+            if let Some(window) = weak.upgrade() {
+                show_tabs(&window, &pages.borrow());
+            }
+            shown(false);
+        }
+    });
     window.on_search_edited({
         let page = page.clone();
         let shown = shown.clone();
         move |text| {
-            page.borrow_mut().type_text(&text);
+            page().borrow_mut().type_text(&text);
             shown(false);
         }
     });
@@ -98,7 +135,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let page = page.clone();
         let shown = shown.clone();
         move || {
-            page.borrow_mut().enter();
+            page().borrow_mut().enter();
             shown(true);
         }
     });
@@ -106,7 +143,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let page = page.clone();
         let shown = shown.clone();
         move |by| {
-            page.borrow_mut().move_highlight(by as isize);
+            page().borrow_mut().move_highlight(by as isize);
             shown(false);
         }
     });
@@ -114,7 +151,8 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let page = page.clone();
         let shown = shown.clone();
         move |index| {
-            page.borrow_mut()
+            page()
+                .borrow_mut()
                 .choose(usize::try_from(index).unwrap_or(usize::MAX));
             shown(true);
         }
@@ -123,7 +161,8 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let page = page.clone();
         let shown = shown.clone();
         move |index| {
-            page.borrow_mut()
+            page()
+                .borrow_mut()
                 .remove_predicate(usize::try_from(index).unwrap_or(usize::MAX));
             shown(true);
         }
@@ -137,7 +176,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let choices = choices.clone();
         move |index| {
             if let Some(choice) = usize::try_from(index).ok().and_then(|i| choices.get(i)) {
-                page.borrow_mut().set_sort_by(choice.by);
+                page().borrow_mut().set_sort_by(choice.by);
                 shown(true);
             }
         }
@@ -152,7 +191,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
             } else {
                 SortOrder::Descending
             };
-            page.borrow_mut().set_sort_order(order);
+            page().borrow_mut().set_sort_order(order);
             shown(true);
         }
     });
@@ -165,6 +204,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
         let page = page.clone();
         let viewer = viewer.clone();
         move |index| {
+            let page = page();
             let page = page.borrow();
             let Some(model) = MediaViewer::new(
                 page.store().clone(),
@@ -182,6 +222,7 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
     window.on_thumbnail_clicked({
         let rows = rows.clone();
         move |index| {
+            let page = page();
             let before = page.borrow().selected();
             page.borrow_mut()
                 .select(usize::try_from(index).unwrap_or(usize::MAX));
@@ -191,7 +232,12 @@ pub fn bind(window: &MainWindow, page: Rc<RefCell<SearchPage>>) -> Bound {
             }
         }
     });
-    Bound { rows, viewer }
+    Bound {
+        pages,
+        current,
+        rows,
+        viewer,
+    }
 }
 
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
@@ -240,9 +286,26 @@ fn open_viewer(
     Ok(window)
 }
 
+/// Show the tabs of each notebook on the way to the page shown.
+fn show_tabs(window: &MainWindow, pages: &Pages) {
+    let rows: Vec<TabRow> = pages
+        .tabs()
+        .into_iter()
+        .map(|tabs| {
+            let names: Vec<SharedString> = tabs.names.iter().map(|n| n.as_str().into()).collect();
+            TabRow {
+                names: ModelRc::new(VecModel::from(names)),
+                selected: i32::try_from(tabs.selected).unwrap_or(0),
+            }
+        })
+        .collect();
+    window.set_tab_rows(ModelRc::new(VecModel::from(rows)));
+}
+
 /// Show the page's search: the box's text and suggestions, the predicates,
-/// any error, and the status bar.
+/// any error, and the status bar; or, for a page without a search, why.
 fn refresh(window: &MainWindow, page: &SearchPage) {
+    window.set_note(page.note().unwrap_or_default().into());
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());
     let suggestions: Vec<SharedString> = autocomplete

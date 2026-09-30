@@ -1,12 +1,14 @@
-//! A search page: its predicates, the files they find, and which file is
-//! selected. Plain Rust, driven by the window and by tests alike.
+//! A page of files: a search page (its predicates and the files they find),
+//! or a page that shows files without a search, and which file is selected.
+//! Plain Rust, driven by the window and by tests alike.
 
 use std::sync::Arc;
 
 use hydrus_core::HashId;
+use hydrus_core::pages::{PageSort, PageSortBy};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
-    parse_api_search, predicate_text, search_files,
+    parse_api_search, predicate_text, search_files, sort_files,
 };
 use hydrus_store::Store;
 
@@ -15,7 +17,13 @@ use crate::autocomplete::Autocomplete;
 pub struct SearchPage {
     store: Arc<Store>,
     autocomplete: Autocomplete,
+    /// The page's file and tag domains (its predicates are `predicates`).
+    context: FileSearchContext,
     predicates: Vec<Predicate>,
+    /// Whether the page searches as its predicates change.
+    synchronised: bool,
+    /// Why the page shows files without a search, if it does.
+    note: Option<String>,
     sort: FileSort,
     /// In the sort's order.
     results: Vec<HashId>,
@@ -41,7 +49,10 @@ impl SearchPage {
         Self {
             autocomplete,
             store,
+            context: FileSearchContext::default(),
             predicates: Vec::new(),
+            synchronised: true,
+            note: None,
             // the reference's default: newest import first
             sort: FileSort {
                 by: SortBy::ImportTime,
@@ -51,6 +62,71 @@ impl SearchPage {
             selected: None,
             error: None,
         }
+    }
+
+    /// A search page as a session kept it: its search and sort, and the
+    /// files it showed (it searches again when its search changes).
+    pub fn restored(
+        store: Arc<Store>,
+        search: FileSearchContext,
+        synchronised: bool,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::new(store);
+        let FileSearchContext {
+            location,
+            tags,
+            predicates,
+        } = search;
+        page.context = FileSearchContext {
+            location,
+            tags,
+            predicates: Vec::new(),
+        };
+        page.predicates = predicates;
+        page.synchronised = synchronised;
+        page.set_page_sort(sort);
+        page.results = files;
+        page
+    }
+
+    /// A page that shows files but has no search, saying why.
+    pub fn fixed(
+        store: Arc<Store>,
+        note: impl Into<String>,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::new(store);
+        page.note = Some(note.into());
+        page.set_page_sort(sort);
+        page.results = files;
+        page
+    }
+
+    /// A session's sort, if it is one we have; otherwise the default stays.
+    fn set_page_sort(&mut self, sort: Option<&PageSort>) {
+        if let Some(PageSort {
+            by: PageSortBy::System(code),
+            ascending,
+        }) = sort
+            && let Some(by) = SortBy::from_code(*code)
+        {
+            self.sort = FileSort {
+                by,
+                order: if *ascending {
+                    SortOrder::Ascending
+                } else {
+                    SortOrder::Descending
+                },
+            };
+        }
+    }
+
+    /// Why the page has no search, if it hasn't.
+    pub fn note(&self) -> Option<&str> {
+        self.note.as_deref()
     }
 
     pub fn store(&self) -> &Arc<Store> {
@@ -87,12 +163,34 @@ impl SearchPage {
             .find(|c| c.by == by)
             .map_or(SortOrder::Ascending, |c| c.default_order);
         self.sort = FileSort { by, order };
-        self.search();
+        self.resort();
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
         self.sort.order = order;
-        self.search();
+        self.resort();
+    }
+
+    /// Sort the files shown again (a new sort doesn't search again).
+    fn resort(&mut self) {
+        let selected = self.selected.map(|i| self.results[i]);
+        let snapshot = self.store.snapshot();
+        let clock = Clock::system();
+        match self.store.read(|conn| {
+            Ok(sort_files(
+                conn,
+                &snapshot,
+                &self.context,
+                &self.results,
+                self.sort,
+                &clock,
+            ))
+        }) {
+            Ok(Ok(sorted)) => self.results = sorted,
+            Ok(Err(e)) => self.error = Some(e.to_string()),
+            Err(e) => self.error = Some(e.to_string()),
+        }
+        self.selected = selected.and_then(|id| self.results.iter().position(|&r| r == id));
     }
 
     pub fn selected(&self) -> Option<usize> {
@@ -148,6 +246,10 @@ impl SearchPage {
         if text.is_empty() {
             return false;
         }
+        if self.note.is_some() {
+            self.error = Some("this page has no search".into());
+            return false;
+        }
         let parsed = match parse_api_search(&serde_json::json!([text])) {
             Ok(parsed) => parsed,
             Err(e) => {
@@ -160,14 +262,19 @@ impl SearchPage {
                 self.predicates.push(predicate);
             }
         }
-        self.search();
+        self.error = None;
+        if self.synchronised {
+            self.search();
+        }
         true
     }
 
     pub fn remove_predicate(&mut self, index: usize) {
         if index < self.predicates.len() {
             self.predicates.remove(index);
-            self.search();
+            if self.synchronised {
+                self.search();
+            }
         }
     }
 
@@ -185,7 +292,7 @@ impl SearchPage {
         }
         let search = FileSearchContext {
             predicates: self.predicates.clone(),
-            ..FileSearchContext::default()
+            ..self.context.clone()
         };
         let sort = self.sort;
         let snapshot = self.store.snapshot();

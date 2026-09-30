@@ -6,7 +6,17 @@ and how we mean to go about it.
 
 ## Where it stands
 
-`hydrus-gui <store>` opens one search page. At the top of its sidebar, the
+`hydrus-gui <store>` opens the last session (the one a migration brings
+over from hydrus), or a single search page if there is none. Each notebook
+on the way to the page shown has a row of tabs, and a notebook opens on its
+first page, as in the reference. A search page opens as it was left: its
+search, its sort and the files it showed, not searched again until its
+search changes (and then only if it is synchronised). Downloader pages and
+the pages we don't open yet show their files, and say what they are.
+Changing a page's sort sorts the files it shows rather than searching
+again, as the reference does. The session isn't saved yet.
+
+On a search page, at the top of its sidebar, the
 sort control offers every sort type named and ordered as in the reference,
 each with its two orders ("oldest first", "newest first"...); choosing a
 type picks its default order, as the reference does. With nothing typed, the search
@@ -26,10 +36,12 @@ window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
 to the first as in the reference, and escape closes it. Images are shown
 whole; other files by their thumbnail for now.
-`crates/hydrus-gui/tests/search_page.rs` drives the page and draws the
-window headless (the screenshot lands in `target/tmp/`). Not yet: system
-predicates in the autocomplete, collect, the viewer's hover
-frames and animation or video, more pages, decoding off the UI thread.
+`crates/hydrus-gui/tests/search_page.rs` drives the page and
+`tests/session.rs` a saved session, and both draw the window headless (the
+screenshots land in `target/tmp/`). Not yet: saving the session, adding and
+closing pages, system predicates in the autocomplete, collect, the viewer's
+hover frames and animation or video, downloader pages' own panels, decoding
+off the UI thread.
 
 ## Size
 

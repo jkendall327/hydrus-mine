@@ -16,7 +16,7 @@ use crate::{SearchPage, Thumbnail, ThumbnailRow};
 const CACHED: usize = 4000;
 
 pub struct ThumbnailRows {
-    page: Rc<RefCell<SearchPage>>,
+    page: RefCell<Rc<RefCell<SearchPage>>>,
     columns: Cell<usize>,
     cache: RefCell<HashMap<HashId, slint::Image>>,
     notify: ModelNotify,
@@ -34,7 +34,7 @@ impl std::fmt::Debug for ThumbnailRows {
 impl ThumbnailRows {
     pub fn new(page: Rc<RefCell<SearchPage>>) -> Self {
         Self {
-            page,
+            page: RefCell::new(page),
             columns: Cell::new(1),
             cache: RefCell::default(),
             notify: ModelNotify::default(),
@@ -53,6 +53,12 @@ impl ThumbnailRows {
     /// How many thumbnails have been decoded (and are kept).
     pub fn cached(&self) -> usize {
         self.cache.borrow().len()
+    }
+
+    /// Show another page's files.
+    pub fn set_page(&self, page: Rc<RefCell<SearchPage>>) {
+        *self.page.borrow_mut() = page;
+        self.notify.reset();
     }
 
     /// The page's files changed.
@@ -89,13 +95,15 @@ impl Model for ThumbnailRows {
     fn row_count(&self) -> usize {
         self.page
             .borrow()
+            .borrow()
             .results()
             .len()
             .div_ceil(self.columns.get())
     }
 
     fn row_data(&self, row: usize) -> Option<ThumbnailRow> {
-        let page = self.page.borrow();
+        let page = self.page.borrow().clone();
+        let page = page.borrow();
         let results = page.results();
         let columns = self.columns.get();
         let start = row.checked_mul(columns)?;

@@ -63,7 +63,7 @@ pub use hydrus_core::search::time;
 pub use api::parse_api_search;
 pub use context::{FileSearchContext, LocationContext, TagContext};
 pub use error::{ApiSearchError, ParseError, ParseErrorKind};
-pub use exec::{Clock, FileSort, SearchError, SortBy, SortOrder, search_files};
+pub use exec::{Clock, FileSort, SearchError, SortBy, SortOrder, search_files, sort_files};
 pub use filetype::FiletypeSet;
 pub use number::{
     Comparison, DEFAULT_APPROX_PERCENT, NumberOp, NumberTest, RatingOp, RatioOp, TagNumberOp,

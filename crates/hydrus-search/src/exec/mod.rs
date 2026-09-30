@@ -121,6 +121,25 @@ pub fn search_files(
     search_with_strategy(conn, snapshot, search, sort, clock, context::Strategy::Auto)
 }
 
+/// Sort `files` by `sort` as a search in `search`'s file and tag domains
+/// would (its predicates are not used): for a page whose files were not
+/// found by searching, or were found earlier.
+pub fn sort_files(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    files: &[HashId],
+    sort: FileSort,
+    clock: &Clock,
+) -> Result<Vec<HashId>> {
+    let env = context::Env::new(conn, snapshot, search, clock, context::Strategy::Auto)?;
+    let files: roaring::RoaringBitmap = files.iter().map(|h| h.0).collect();
+    Ok(sort::sort(&env, &files, sort)?
+        .into_iter()
+        .map(HashId)
+        .collect())
+}
+
 fn search_with_strategy(
     conn: &Connection,
     snapshot: &Snapshot,

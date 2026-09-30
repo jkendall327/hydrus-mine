@@ -28,6 +28,32 @@ component Predicate inherits Rectangle {
     }
 }
 
+// one notebook's tabs
+export struct TabRow {
+    names: [string],
+    selected: int,
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> selected;
+    callback chosen();
+    height: 26px;
+    width: label.preferred-width + 20px;
+    background: root.selected ? #ffffff : touch.has-hover ? #e8e8e8 : #dcdcdc;
+    border-width: 1px;
+    border-color: #c0c0c0;
+    label := Text {
+        text: root.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+        font-weight: root.selected ? 600 : 400;
+    }
+    touch := TouchArea {
+        clicked => { root.chosen(); }
+    }
+}
+
 export struct ThumbnailRow {
     // the index of the row's first file
     first: int,
@@ -77,6 +103,10 @@ export component MainWindow inherits Window {
     preferred-height: 700px;
     background: #f4f4f4;
 
+    // the tabs of each notebook on the way to the page shown
+    in property <[TabRow]> tab-rows;
+    // why the page shown has no search, if it hasn't
+    in property <string> note;
     in property <[string]> sort-names;
     in property <int> sort-index;
     in property <[string]> order-names;
@@ -89,6 +119,8 @@ export component MainWindow inherits Window {
     in property <string> error;
     in-out property <string> search-text;
 
+    // a notebook's (level's) tab was chosen
+    callback tab-chosen(int, int);
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
@@ -104,8 +136,27 @@ export component MainWindow inherits Window {
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
     VerticalLayout {
+        for row[level] in root.tab-rows: HorizontalLayout {
+            padding-left: 4px;
+            padding-top: 2px;
+            spacing: 2px;
+            alignment: start;
+            for name[index] in row.names: Tab {
+                text: name;
+                selected: index == row.selected;
+                chosen => { root.tab-chosen(level, index); }
+            }
+        }
         HorizontalLayout {
-            VerticalBox {
+            if root.note != "": VerticalBox {
+                width: 300px;
+                alignment: start;
+                Text {
+                    text: root.note;
+                    wrap: word-wrap;
+                }
+            }
+            if root.note == "": VerticalBox {
                 width: 300px;
                 // the sort control, as at the top of the reference's sidebar
                 HorizontalLayout {

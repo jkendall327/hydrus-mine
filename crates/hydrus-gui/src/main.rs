@@ -1,13 +1,11 @@
 //! `hydrus-gui <store>`: the desktop client over a hydrus-rs store.
 
-use std::cell::RefCell;
 use std::path::PathBuf;
-use std::rc::Rc;
 
 use anyhow::{Context as _, Result, anyhow};
 use slint::ComponentHandle as _;
 
-use hydrus_gui::{MainWindow, SearchPage, bind};
+use hydrus_gui::{MainWindow, Pages, bind};
 
 fn main() -> Result<()> {
     let dir: PathBuf = std::env::args_os()
@@ -17,7 +15,8 @@ fn main() -> Result<()> {
     let store = hydrus_store::Store::open(&dir)
         .with_context(|| format!("opening the store at {}", dir.display()))?;
     let window = MainWindow::new()?;
-    let _bound = bind(&window, Rc::new(RefCell::new(SearchPage::new(store))));
+    let pages = Pages::open(store).context("opening the last session")?;
+    let _bound = bind(&window, pages);
     window.run()?;
     Ok(())
 }
