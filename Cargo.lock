@@ -1401,6 +1401,7 @@ dependencies = [
  "clap",
  "hydrus-api",
  "hydrus-core",
+ "hydrus-parse",
  "hydrus-store",
  "hydrus-testkit",
  "tempfile",
