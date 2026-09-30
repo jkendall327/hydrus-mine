@@ -373,7 +373,8 @@ pub async fn get_potential_pairs(
                     };
                     PairSelection::Batch { max }
                 };
-                let pairs = duplicates::select_pairs(conn, &snapshot, search, order, ascending, selection)?;
+                let pairs =
+                    duplicates::select_pairs(conn, &snapshot, search, order, ascending, selection)?;
                 let ids: Vec<HashId> = pairs.iter().flat_map(|&(a, b)| [a, b]).collect();
                 let hashes = master::hashes(conn, &ids)?;
                 Ok(pairs

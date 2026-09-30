@@ -137,7 +137,12 @@ impl Domains<'_> {
 
     /// Roughly how many files a domain has (or has deleted): exact if its
     /// files are cached for this read, else as last seen, else counted.
-    pub fn size_estimate(&self, conn: &Connection, service: ServiceId, deleted: bool) -> Result<u64> {
+    pub fn size_estimate(
+        &self,
+        conn: &Connection,
+        service: ServiceId,
+        deleted: bool,
+    ) -> Result<u64> {
         if let Some(files) = self.cached(service, deleted) {
             return Ok(files.len());
         }

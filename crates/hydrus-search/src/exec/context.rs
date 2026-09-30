@@ -251,9 +251,7 @@ impl<'a> Env<'a> {
             Domain::Tables { tables, .. } => {
                 let mut total = 0u64;
                 for t in tables {
-                    total += self
-                        .cache
-                        .size_estimate(self.conn, t.service, t.deleted)?;
+                    total += self.cache.size_estimate(self.conn, t.service, t.deleted)?;
                 }
                 Some(total)
             }

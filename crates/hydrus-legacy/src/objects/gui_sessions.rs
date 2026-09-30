@@ -69,9 +69,10 @@ impl SessionNode {
     /// Every page's data hash, in the order the pages appear.
     pub fn page_data_hashes(&self) -> Vec<&[u8]> {
         match self {
-            SessionNode::Notebook { pages, .. } => {
-                pages.iter().flat_map(SessionNode::page_data_hashes).collect()
-            }
+            SessionNode::Notebook { pages, .. } => pages
+                .iter()
+                .flat_map(SessionNode::page_data_hashes)
+                .collect(),
             SessionNode::Page { page_data_hash, .. } => vec![page_data_hash.as_slice()],
         }
     }
@@ -197,7 +198,11 @@ pub fn session(object: &SerialisableObject) -> DecodeResult<LegacySession> {
 }
 
 /// The objects in a nested `SerialisableList`.
-fn objects(k: SerialisableType, value: &PyJson, what: &str) -> DecodeResult<Vec<SerialisableObject>> {
+fn objects(
+    k: SerialisableType,
+    value: &PyJson,
+    what: &str,
+) -> DecodeResult<Vec<SerialisableObject>> {
     let list = nested(k, value, what)?;
     list_items(&list)?
         .iter()
@@ -358,11 +363,21 @@ pub fn multiple_gallery_import(
     let k = MULTIPLE_GALLERY_IMPORT;
     expect(object, k, &[10])?;
     let info = object.info();
-    let [gug, highlighted, file_limit, pend_options, options, gallery_imports] =
-        tuple::<6>(k, &info, "gallery page")?;
+    let [
+        gug,
+        highlighted,
+        file_limit,
+        pend_options,
+        options,
+        gallery_imports,
+    ] = tuple::<6>(k, &info, "gallery page")?;
     let [gug_key, gug_name] = tuple::<2>(k, gug, "gug key and name")?;
-    let [start_files_paused, start_gallery_paused, no_new_dupes, merge_pends] =
-        tuple::<4>(k, pend_options, "pend options")?;
+    let [
+        start_files_paused,
+        start_gallery_paused,
+        no_new_dupes,
+        merge_pends,
+    ] = tuple::<4>(k, pend_options, "pend options")?;
     Ok(LegacyMultipleGalleryImport {
         gug_key: string(k, gug_key, "gug key")?,
         gug_name: string(k, gug_name, "gug name")?,

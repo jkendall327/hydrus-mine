@@ -8,13 +8,10 @@ use serde_json::{Value as Json, json};
 
 use hydrus_core::subscriptions::{CheckerOptions, SeedTime};
 use hydrus_legacy::objects::import_options::{slice, tags};
-use hydrus_legacy::objects::subscriptions::{
-    LegacyFileSeed, LegacyGallerySeed, file_seed, gallery_seed, query_log, subscription,
-};
+use hydrus_legacy::objects::subscriptions::{file_seed, gallery_seed, query_log, subscription};
 
 mod common;
-use common::seeds::{file_seed_facts, gallery_seed_facts, object, service_tags, sorted};
-
+use common::seeds::{file_seed_facts, gallery_seed_facts, object};
 
 #[test]
 fn seeds_of_every_version_read_as_the_reference_reads_them() {

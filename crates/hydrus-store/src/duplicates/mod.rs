@@ -548,8 +548,7 @@ pub fn select_pairs(
         PairSelection::Group => match pairs.first() {
             None => Vec::new(),
             Some(first) => {
-                let network =
-                    potential_network(&in_scope, [first.smaller_king, first.larger_king]);
+                let network = potential_network(&in_scope, [first.smaller_king, first.larger_king]);
                 pairs
                     .into_iter()
                     .filter(|p| {
@@ -564,7 +563,8 @@ pub fn select_pairs(
     Ok(chosen
         .into_iter()
         .map(|p| {
-            let rank = |h: HashId, shape: FileShape| (shape.pixels, shape.size, std::cmp::Reverse(h));
+            let rank =
+                |h: HashId, shape: FileShape| (shape.pixels, shape.size, std::cmp::Reverse(h));
             if rank(p.larger_king, p.larger_shape) > rank(p.smaller_king, p.smaller_shape) {
                 (p.larger_king, p.smaller_king)
             } else {
