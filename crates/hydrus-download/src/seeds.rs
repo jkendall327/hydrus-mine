@@ -156,7 +156,7 @@ pub(crate) fn new_url_seed(classes: &UrlClasses, url: &str) -> NewFileSeed {
 
 /// `ConvertParsedPostsToParsedPostsAndFileSeeds`: a seed per new top
 /// file URL of each post, carrying that post's metadata.
-fn seeds_from_posts(
+pub(crate) fn seeds_from_posts(
     classes: &UrlClasses,
     posts: &[ParsedPost],
     source_url: &str,

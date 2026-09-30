@@ -137,8 +137,7 @@ merges come from the in-memory cache described below.
 - **Only the default bandwidth rules apply** (one request a second per site,
   five overall); rules you set yourself are not migrated yet.
 - **Watchable URLs sent by `/add_urls/add_url` are refused** until thread
-  watchers are supported; gallery URLs are queued, and read once gallery
-  pages are supported.
+  watchers are supported.
 
 ## URL classes
 

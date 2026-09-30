@@ -49,11 +49,37 @@ async fn post(State(site): State<Arc<Site>>, Path(id): Path<String>) -> Response
     ([("content-type", "text/html; charset=utf-8")], html).into_response()
 }
 
+async fn gallery(State(site): State<Arc<Site>>, Path(page): Path<u32>) -> Response {
+    *site
+        .hits
+        .lock()
+        .entry(format!("gallery/{page}"))
+        .or_default() += 1;
+    let posts: &[u32] = match page {
+        1 => &[1, 2],
+        2 => &[3],
+        _ => &[],
+    };
+    let links = posts.iter().fold(String::new(), |mut html, p| {
+        use std::fmt::Write as _;
+        let _ = write!(html, r#"<a class="thumb" href="/post/{p}">post {p}</a>"#);
+        html
+    });
+    let next = if page == 1 {
+        r#"<a class="next" href="/gallery/2">next</a>"#
+    } else {
+        ""
+    };
+    let html = format!("<html><body>{links}{next}</body></html>");
+    ([("content-type", "text/html; charset=utf-8")], html).into_response()
+}
+
 async fn file(State(site): State<Arc<Site>>, Path(name): Path<String>) -> Response {
     *site.hits.lock().entry(format!("files/{name}")).or_default() += 1;
     let bytes = match name.as_str() {
         "1.jpg" => media("jpeg_420.jpg"),
         "2.jpg" => media("jpeg_444_q95.jpg"),
+        "3.jpg" => media("jpeg_flat.jpg"),
         _ => return StatusCode::NOT_FOUND.into_response(),
     };
     ([("content-type", "image/jpeg")], bytes).into_response()
@@ -121,6 +147,58 @@ fn booru_parser() -> PageParser {
     }
 }
 
+fn gallery_parser() -> PageParser {
+    PageParser {
+        name: "local booru gallery".into(),
+        key: "ac".into(),
+        converter: hydrus_core::url::StringConverter::default(),
+        subsidiary: Vec::new(),
+        content_parsers: vec![
+            ContentParser {
+                name: "posts".into(),
+                kind: ContentKind::Url {
+                    url_type: 7,
+                    priority: 50,
+                },
+                formula: html_formula(
+                    "a",
+                    &[("class", "thumb")],
+                    HtmlContent::Attribute("href".into()),
+                ),
+            },
+            ContentParser {
+                name: "next".into(),
+                kind: ContentKind::Url {
+                    url_type: 6,
+                    priority: 50,
+                },
+                formula: html_formula(
+                    "a",
+                    &[("class", "next")],
+                    HtmlContent::Attribute("href".into()),
+                ),
+            },
+        ],
+        example_urls: Vec::new(),
+    }
+}
+
+fn gallery_class(host: &str) -> UrlClass {
+    UrlClass {
+        name: "local booru gallery".into(),
+        key: vec![0xce],
+        url_type: UrlType::Gallery,
+        preferred_scheme: "http".into(),
+        domain_mask: DomainMask::new(vec![host.to_owned()], vec![], false, false),
+        path_components: vec![
+            (StringMatch::fixed("gallery"), None),
+            (StringMatch::any(), None),
+        ],
+        example_url: format!("http://{host}/gallery/1"),
+        ..UrlClass::default()
+    }
+}
+
 fn post_class(host: &str) -> UrlClass {
     UrlClass {
         name: "local booru post".into(),
@@ -150,6 +228,7 @@ async fn setup() -> Setup {
     let app = Router::new()
         .route("/post/{id}", get(post))
         .route("/files/{name}", get(file))
+        .route("/gallery/{page}", get(gallery))
         .with_state(Arc::clone(&site));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let host = listener.local_addr().unwrap().to_string();
@@ -157,14 +236,18 @@ async fn setup() -> Setup {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let class = post_class(&host);
+    let gallery = gallery_class(&host);
     let settings = UrlClassSettings {
-        parser_links: vec![(hex::encode(&class.key), Some("ab".into()))],
-        parser_keys: vec!["ab".into()],
-        url_classes: vec![class],
+        parser_links: vec![
+            (hex::encode(&class.key), Some("ab".into())),
+            (hex::encode(&gallery.key), Some("ac".into())),
+        ],
+        parser_keys: vec!["ab".into(), "ac".into()],
+        url_classes: vec![class, gallery],
         collapse_leading_slashes: false,
     };
     let downloaders = Downloaders {
-        parsers: vec![booru_parser()],
+        parsers: vec![booru_parser(), gallery_parser()],
         ..Downloaders::default()
     };
     store
@@ -321,4 +404,74 @@ async fn a_url_queue_downloads_posts_and_files() {
         seeds[0].note
     );
     assert_eq!(s.site.hits.lock()["post/1"], 1);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_gallery_url_in_a_url_queue_queues_its_posts() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let queue = s.runner.url_queue_for(None, None, None).unwrap();
+    s.runner
+        .pend_urls(
+            queue.id,
+            &[format!("{}/gallery/1", s.base)],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    // the gallery page makes post seeds, which then download
+    for _ in 0..400 {
+        let seeds = s
+            .store
+            .read(|conn| queues::file_seeds(conn, queue.id))
+            .unwrap();
+        if seeds.len() == 2 && seeds.iter().all(|seed| seed.status != SeedStatus::Unknown) {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    let pages = s
+        .store
+        .read(|conn| queues::gallery_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(pages.len(), 1, "URL queues don't follow next pages");
+    assert_eq!(pages[0].status, SeedStatus::SuccessfulAndNew);
+    assert_eq!(pages[0].note, "2 new urls found");
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    let outcome: Vec<(String, SeedStatus, Option<String>)> = seeds
+        .iter()
+        .map(|seed| {
+            (
+                seed.data.replace(&s.base, ""),
+                seed.status,
+                seed.referral_url.as_ref().map(|r| r.replace(&s.base, "")),
+            )
+        })
+        .collect();
+    assert_eq!(
+        outcome,
+        vec![
+            (
+                "/post/1".to_owned(),
+                SeedStatus::SuccessfulAndNew,
+                Some("/gallery/1".to_owned())
+            ),
+            (
+                "/post/2".to_owned(),
+                SeedStatus::SuccessfulAndNew,
+                Some("/gallery/1".to_owned())
+            ),
+        ]
+    );
+    // (the gallery page is the seeds' referral URL, so, as in the
+    // reference, not also one of their primary URLs)
+    assert!(
+        !seeds[0]
+            .meta
+            .primary_urls
+            .contains(&format!("{}/gallery/1", s.base))
+    );
 }

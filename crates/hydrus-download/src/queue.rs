@@ -17,9 +17,10 @@ use hydrus_core::url::UrlType;
 use hydrus_net::Job;
 use hydrus_store::StoreError;
 use hydrus_store::queues::{
-    self, FileSeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
+    self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
 };
 
+use crate::gallery::{FileSink, set_gallery_status};
 use crate::seeds::new_url_seed;
 use crate::{Downloader, WorkError, now};
 
@@ -237,6 +238,20 @@ impl QueueRunner {
                 }
                 handle.status.lock().delayed_until = None;
             }
+            if !queue.gallery_paused {
+                match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
+                    Ok(Some(gallery_seed)) => {
+                        self.work_on_gallery_seed(gallery_seed, handle).await;
+                        tokio::time::sleep(Duration::from_secs(1)).await;
+                        continue;
+                    }
+                    Ok(None) => {}
+                    Err(e) => {
+                        tracing::error!(queue_id, "reading an import queue: {e}");
+                        return;
+                    }
+                }
+            }
             let next = if queue.files_paused {
                 None
             } else {
@@ -260,6 +275,44 @@ impl QueueRunner {
                 tokio::time::sleep(Duration::from_millis(100)).await;
             }
         }
+    }
+
+    /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
+    /// queue.
+    async fn work_on_gallery_seed(&self, mut seed: GallerySeed, handle: &Handle) {
+        let job = Job::new();
+        *handle.job.lock() = Some(Arc::clone(&job));
+        handle.status.lock().files_status = "reading a gallery page".into();
+        let sink = FileSink {
+            queue: seed.queue_id,
+            max_new_urls: None,
+        };
+        let mut seen = BTreeSet::new();
+        let result = self
+            .downloader
+            .work_on_gallery_url(&mut seed, &mut seen, &sink, &job)
+            .await;
+        *handle.job.lock() = None;
+        match result {
+            Ok(_) => {}
+            Err(WorkError::Network(e)) => self.delay(handle, &e),
+            Err(e) => set_gallery_status(&mut seed, SeedStatus::Error, e.to_string()),
+        }
+        if let Err(e) = self
+            .downloader
+            .store
+            .write(move |ctx| queues::update_gallery_seed(ctx.conn(), &seed))
+        {
+            tracing::error!("saving a gallery seed: {e}");
+        }
+    }
+
+    /// `_DelayWork`: wait out a network failure.
+    fn delay(&self, handle: &Handle, e: &hydrus_net::NetError) {
+        let until = now() + self.network_error_delay as i64;
+        let mut status = handle.status.lock();
+        status.delayed_until = Some(until);
+        status.files_status = format!("{e} - waiting to retry");
     }
 
     /// `_WorkOnFiles`: one seed.
@@ -286,10 +339,7 @@ impl QueueRunner {
         let did_work = match result {
             Ok(did_work) => did_work,
             Err(WorkError::Network(e)) => {
-                let until = now() + self.network_error_delay as i64;
-                let mut status = handle.status.lock();
-                status.delayed_until = Some(until);
-                status.files_status = format!("{e} - waiting to retry");
+                self.delay(handle, &e);
                 false
             }
             Err(e) => {

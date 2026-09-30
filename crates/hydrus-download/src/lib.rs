@@ -28,10 +28,12 @@ use hydrus_store::queues::SeedStatus;
 use hydrus_store::{Store, StoreError};
 
 mod content;
+mod gallery;
 mod predict;
 pub mod queue;
 mod seeds;
 
+pub use gallery::GalleryOutcome;
 pub use queue::{QueueRunner, UrlQueueStatus};
 
 /// Why work on a seed stopped short of giving it a result.
@@ -46,6 +48,9 @@ pub enum WorkError {
     Import(#[from] hydrus_import::ImportError),
     #[error("{0}")]
     Io(#[from] std::io::Error),
+    /// A parser could not read a page.
+    #[error("{0}")]
+    Parse(String),
 }
 
 /// Downloads and imports for the store's import queues.
