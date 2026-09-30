@@ -1,0 +1,377 @@
+{
+ "recorded_at_ms": 1790784087659,
+ "reference_version": 688,
+ "responses": [
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 17,
+     "num_deleted": 7,
+     "num_inbox": 12,
+     "size_archive": 164148,
+     "size_deleted": 64507,
+     "size_inbox": 142237,
+     "total_alternate_files": 8,
+     "total_alternate_groups": 3,
+     "total_duplicate_files": 5,
+     "total_viewtime": [
+      24,
+      69.0,
+      9,
+      3.25
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 17,
+     "num_deleted": 8,
+     "num_inbox": 11,
+     "size_archive": 164148,
+     "size_deleted": 64641,
+     "size_inbox": 142103,
+     "total_alternate_files": 8,
+     "total_alternate_groups": 3,
+     "total_duplicate_files": 5,
+     "total_viewtime": [
+      24,
+      69.0,
+      9,
+      3.25
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 8,
+     "num_deleted": 2,
+     "num_inbox": 4,
+     "size_archive": 76028,
+     "size_deleted": 25353,
+     "size_inbox": 94435,
+     "total_alternate_files": 6,
+     "total_alternate_groups": 2,
+     "total_duplicate_files": 5,
+     "total_viewtime": [
+      3,
+      16.5,
+      3,
+      0.25
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 2,
+     "num_inbox": 2,
+     "size_archive": 25391,
+     "size_inbox": 32740,
+     "total_alternate_files": 0,
+     "total_alternate_groups": 0,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      1,
+      4.0,
+      0,
+      0.0
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "num_archive": 19,
+     "num_inbox": 13,
+     "size_archive": 189539,
+     "size_inbox": 174843,
+     "total_alternate_files": 8,
+     "total_alternate_groups": 3,
+     "total_duplicate_files": 6,
+     "total_viewtime": [
+      22,
+      64.0,
+      8,
+      2.75
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 17,
+     "num_deleted": 2,
+     "num_inbox": 0,
+     "size_archive": 164148,
+     "size_deleted": 25391,
+     "size_inbox": 0,
+     "total_alternate_files": 3,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 2,
+     "total_viewtime": [
+      10,
+      26.5,
+      6,
+      1.75
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage database",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The server is not busy!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage database",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "This server is busy, please try again later.",
+    "exception_type": "ServerBusyException",
+    "hydrus_version": 688,
+    "status_code": 503,
+    "version": 95
+   },
+   "status": 503
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You do not have permission to: manage database",
+    "exception_type": "InsufficientCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 403,
+    "version": 95
+   },
+   "status": 403
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "No access key or session key provided!",
+    "exception_type": "MissingCredentialsException",
+    "hydrus_version": 688,
+    "status_code": 401,
+    "version": 95
+   },
+   "status": 401
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The server is not busy!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "boned_stats": {
+     "earliest_import_time": 1790707134,
+     "num_archive": 0,
+     "num_deleted": 2,
+     "num_inbox": 12,
+     "size_archive": 0,
+     "size_deleted": 32740,
+     "size_inbox": 142237,
+     "total_alternate_files": 2,
+     "total_alternate_groups": 1,
+     "total_duplicate_files": 0,
+     "total_viewtime": [
+      14,
+      42.5,
+      3,
+      1.5
+     ]
+    },
+    "hydrus_version": 688,
+    "version": 95
+   },
+   "status": 200
+  }
+ ],
+ "scenario": "manage_database_write"
+}

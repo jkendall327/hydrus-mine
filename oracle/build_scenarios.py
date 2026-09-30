@@ -741,11 +741,83 @@ def random_relationship_scenarios():
     return out
 
 
+def database_scenarios():
+
+    bones = '/manage_database/mr_bones'
+
+    read = scenario( 'manage_database', 'database statistics ("mr bones")', [
+        get( bones ),
+        get( bones, tags = [ 'system:inbox' ] ),
+        get( bones, tags = [ 'system:everything' ] ),
+        get( bones, tags = [ 'safe' ] ),
+        get( bones, tags = [ 'system:filetype is image', 'system:width > 100' ] ),
+        get( bones, file_service_key = KEYS[ 'my_files' ] ),
+        get( bones, file_service_key = KEYS[ 'my_files' ], tags = [ 'system:archive' ] ),
+        get( bones, file_service_key = KEYS[ 'art' ] ),
+        get( bones, file_service_key = KEYS[ 'trash' ] ),
+        get( bones, file_service_key = KEYS[ 'all_local_files' ] ),
+        get( bones, file_service_key = KEYS[ 'all_local_files' ], tags = [ 'system:everything' ] ),
+        get( bones, file_service_keys = [ KEYS[ 'my_files' ], KEYS[ 'trash' ] ] ),
+        get( bones, deleted_file_service_key = KEYS[ 'my_files' ] ),
+        get( bones, deleted_file_service_key = KEYS[ 'my_files' ], tags = [ 'system:everything' ] ),
+        get( bones, file_service_key = KEYS[ 'all_known_files' ], tag_service_key = KEYS[ 'my_tags' ] ),
+        get( bones, file_service_key = KEYS[ 'all_known_files' ], tag_service_key = KEYS[ 'my_tags' ], tags = [ 'safe' ] ),
+        get( bones, file_service_key = KEYS[ 'all_known_files' ] ),
+        get( bones, tag_service_key = KEYS[ 'my_tags' ], tags = [ 'safe' ] ),
+        get( bones, tags = [ 'system:everything' ], key = 'restricted' ),
+        get( bones, key = 'none' ),
+        get( bones, tags = 'not a list' ),
+    ], read_only = True )
+
+    j = [ BY_NAME[ f'jpeg_{i:02}.jpg' ] for i in range( 12 ) ]
+
+    write = scenario( 'manage_database_write', 'database statistics after changes, and locking the database', [
+        post( '/manage_file_relationships/set_file_relationships', { 'relationships': [
+            { 'hash_a': j[ 0 ], 'hash_b': j[ 1 ], 'relationship': 4, 'do_default_content_merge': False },
+            { 'hash_a': j[ 0 ], 'hash_b': j[ 2 ], 'relationship': 4, 'do_default_content_merge': False },
+            { 'hash_a': j[ 3 ], 'hash_b': j[ 4 ], 'relationship': 3, 'do_default_content_merge': False },
+            { 'hash_a': j[ 3 ], 'hash_b': j[ 5 ], 'relationship': 3, 'do_default_content_merge': False },
+            { 'hash_a': j[ 6 ], 'hash_b': j[ 7 ], 'relationship': 2, 'do_default_content_merge': False },
+            { 'hash_a': j[ 6 ], 'hash_b': j[ 8 ], 'relationship': 3, 'do_default_content_merge': False },
+        ] } ),
+        post( '/edit_times/increment_file_viewtime', { 'hash': j[ 0 ], 'canvas_type': 0, 'views': 2, 'viewtime': 12.5 } ),
+        post( '/edit_times/increment_file_viewtime', { 'hash': j[ 1 ], 'canvas_type': 1, 'views': 3, 'viewtime': 0.25 } ),
+        post( '/edit_times/increment_file_viewtime', { 'hash': j[ 9 ], 'canvas_type': 0, 'views': 1, 'viewtime': 4 } ),
+        post( '/add_files/delete_files', { 'hashes': [ j[ 2 ], j[ 9 ] ] } ),
+        post( '/add_files/archive_files', { 'hashes': [ j[ 4 ], j[ 10 ] ] } ),
+        get( '/manage_database/mr_bones' ),
+        get( '/manage_database/mr_bones', file_service_key = KEYS[ 'my_files' ] ),
+        get( '/manage_database/mr_bones', file_service_key = KEYS[ 'my_files' ], tags = [ 'system:filetype is jpeg' ] ),
+        get( '/manage_database/mr_bones', file_service_key = KEYS[ 'trash' ] ),
+        get( '/manage_database/mr_bones', file_service_keys = [ KEYS[ 'my_files' ], KEYS[ 'trash' ] ] ),
+        get( '/manage_database/mr_bones', tags = [ 'system:archive' ] ),
+        post( '/manage_database/force_commit', {} ),
+        post( '/manage_database/force_commit', {}, key = 'restricted' ),
+        post( '/manage_database/lock_off', {} ),
+        post( '/manage_database/lock_on', {}, key = 'restricted' ),
+        post( '/manage_database/lock_on', {} ),
+        get( '/api_version', key = 'none' ),
+        get( '/verify_access_key' ),
+        get( '/get_services' ),
+        get( '/manage_database/mr_bones' ),
+        post( '/manage_database/lock_on', {} ),
+        post( '/manage_database/force_commit', {} ),
+        post( '/manage_database/lock_off', {}, key = 'restricted' ),
+        post( '/manage_database/lock_off', {}, key = 'none' ),
+        post( '/manage_database/lock_off', {} ),
+        post( '/manage_database/lock_off', {} ),
+        get( '/api_version', key = 'none' ),
+        get( '/manage_database/mr_bones', tags = [ 'system:inbox' ] ),
+    ], read_only = False )
+
+    return [ read, write ]
+
+
 def main():
 
     os.makedirs( OUT, exist_ok = True )
 
-    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios()
+    scenarios = [ access_scenarios(), search_scenarios(), search_more_scenarios(), metadata_scenarios(), tag_read_scenarios(), url_read_scenarios(), files_read_scenarios(), relationships_read_scenarios() ] + write_scenarios() + database_scenarios()
 
     for sc in scenarios:
 

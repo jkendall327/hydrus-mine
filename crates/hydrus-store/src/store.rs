@@ -148,6 +148,12 @@ impl Store {
         self.snapshot.load_full()
     }
 
+    /// Stop all database work until the guard is dropped, with the
+    /// database file complete (see [`Db::pause`]).
+    pub fn pause(&self) -> Result<crate::Paused> {
+        self.db.pause()
+    }
+
     /// Run a read against a consistent database snapshot.
     pub fn read<R>(&self, f: impl FnOnce(&Connection) -> Result<R>) -> Result<R> {
         self.db.read(f)

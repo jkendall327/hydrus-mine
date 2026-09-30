@@ -297,6 +297,14 @@ parsers and every kind of content parser, on random documents).
   and fails later, when the database can't store it. We treat it like any
   other unreadable time.
 
+## Locking the database (`/manage_database/lock_on`)
+
+- **The database stays open while locked.** The reference closes its
+  database connections; we stop every read and write, move the write-ahead
+  log into the database file and leave the connections idle. A copy taken
+  while locked is complete either way, but on Windows the files can't be
+  moved or deleted until the lock is released.
+
 ## Client API input checking (`hydrus-api`)
 
 - **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or

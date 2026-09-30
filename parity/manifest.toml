@@ -171,7 +171,7 @@ status = "done"
 
 [[api]]
 path = "/manage_database/force_commit"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_database/get_client_options"
@@ -179,15 +179,15 @@ status = "todo"
 
 [[api]]
 path = "/manage_database/lock_off"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_database/lock_on"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_database/mr_bones"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_file_relationships/get_file_relationships"

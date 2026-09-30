@@ -58,14 +58,29 @@ impl<'c> WriteCtx<'c> {
     }
 }
 
+/// What the writer thread is asked to do.
+enum Job {
+    Write(WriteJob),
+    /// Stop writing, with the write-ahead log checkpointed, until released.
+    /// Runs outside any batch.
+    Pause(PauseRequest),
+}
+
 /// A queued write, type-erased. Running it returns whether it succeeded, the
 /// effects it registered, and a reply function to call once the batch
 /// outcome is known.
-struct Job {
+struct WriteJob {
     run: Box<dyn FnOnce(&Connection) -> JobOutcome + Send>,
     /// Commit in a batch of its own. For writes whose post-commit effects
     /// (e.g. publishing a new in-memory snapshot) later writes must see.
     barrier: bool,
+}
+
+struct PauseRequest {
+    /// Told once the log is checkpointed and the writer has stopped.
+    paused: Sender<Result<()>>,
+    /// The writer waits on this until it is sent to or dropped.
+    release: Receiver<()>,
 }
 
 struct JobOutcome {
@@ -94,6 +109,29 @@ pub struct Db {
     path: PathBuf,
     writer: Writer,
     readers: ReaderPool,
+    num_readers: usize,
+}
+
+/// The database, paused (see [`Db::pause`]); dropping this resumes it.
+pub struct Paused {
+    readers: Vec<Connection>,
+    pool: Sender<Connection>,
+    _release: Sender<()>,
+}
+
+impl std::fmt::Debug for Paused {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Paused").finish_non_exhaustive()
+    }
+}
+
+impl Drop for Paused {
+    fn drop(&mut self) {
+        for reader in self.readers.drain(..) {
+            let _ = self.pool.send(reader);
+        }
+        // dropping `_release` lets the writer go on
+    }
 }
 
 impl Db {
@@ -103,8 +141,9 @@ impl Db {
         schema::configure(&conn)?;
         schema::migrate(&mut conn)?;
 
-        let (give_back, take) = crossbeam_channel::bounded(num_readers.max(1));
-        for _ in 0..num_readers.max(1) {
+        let num_readers = num_readers.max(1);
+        let (give_back, take) = crossbeam_channel::bounded(num_readers);
+        for _ in 0..num_readers {
             let reader = Connection::open_with_flags(
                 path,
                 OpenFlags::SQLITE_OPEN_READ_WRITE | OpenFlags::SQLITE_OPEN_NO_MUTEX,
@@ -126,7 +165,42 @@ impl Db {
                 thread: Some(thread),
             },
             readers: ReaderPool { take, give_back },
+            num_readers,
         })
+    }
+
+    /// Stop all database work, so the database file can be copied: wait for
+    /// running reads and queued writes to finish, move everything in the
+    /// write-ahead log into the database file, and hold every connection
+    /// idle until the returned guard is dropped. Reads and writes started
+    /// meanwhile wait.
+    pub fn pause(&self) -> Result<Paused> {
+        let (release, release_rx) = crossbeam_channel::bounded(0);
+        let mut paused = Paused {
+            readers: Vec::with_capacity(self.num_readers),
+            pool: self.readers.give_back.clone(),
+            _release: release,
+        };
+        for _ in 0..self.num_readers {
+            let reader = self
+                .readers
+                .take
+                .recv()
+                .map_err(|_| StoreError::WriterGone)?;
+            paused.readers.push(reader);
+        }
+        let (paused_tx, paused_rx) = crossbeam_channel::bounded(1);
+        self.writer
+            .jobs
+            .as_ref()
+            .ok_or(StoreError::WriterGone)?
+            .send(Job::Pause(PauseRequest {
+                paused: paused_tx,
+                release: release_rx,
+            }))
+            .map_err(|_| StoreError::WriterGone)?;
+        paused_rx.recv().map_err(|_| StoreError::WriterGone)??;
+        Ok(paused)
     }
 
     pub fn path(&self) -> &Path {
@@ -199,7 +273,7 @@ impl Db {
                 }),
             }
         });
-        let job = Job { run, barrier };
+        let job = Job::Write(WriteJob { run, barrier });
         self.writer
             .jobs
             .as_ref()
@@ -241,6 +315,26 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
     // a barrier job that arrived while a batch was open waits for the next one
     let mut carried: Option<Job> = None;
     while let Some(first) = carried.take().or_else(|| jobs.recv().ok()) {
+        let first = match first {
+            Job::Write(job) => job,
+            Job::Pause(request) => {
+                let checkpointed = conn
+                    .query_row("PRAGMA wal_checkpoint(TRUNCATE)", [], |r| {
+                        r.get::<_, i64>(0)
+                    })
+                    .map_err(StoreError::from)
+                    .and_then(|busy| match busy {
+                        0 => Ok(()),
+                        _ => Err(StoreError::Invalid(
+                            "the write-ahead log could not be checkpointed".into(),
+                        )),
+                    });
+                let _ = request.paused.send(checkpointed);
+                // until released, or the guard is dropped
+                let _ = request.release.recv();
+                continue;
+            }
+        };
         let batch_started = Instant::now();
         let mut outcomes = Vec::new();
 
@@ -256,11 +350,11 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
         while !alone && outcomes.len() < MAX_BATCH_JOBS && batch_started.elapsed() < MAX_BATCH_TIME
         {
             match jobs.try_recv() {
-                Ok(job) if job.barrier => {
+                Ok(Job::Write(job)) if !job.barrier => outcomes.push(run_job(conn, job)),
+                Ok(job) => {
                     carried = Some(job);
                     break;
                 }
-                Ok(job) => outcomes.push(run_job(conn, job)),
                 Err(_) => break,
             }
         }
@@ -286,7 +380,7 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
 }
 
 /// Run one job inside its own savepoint.
-fn run_job(conn: &Connection, job: Job) -> JobOutcome {
+fn run_job(conn: &Connection, job: WriteJob) -> JobOutcome {
     if let Err(e) = conn.execute_batch("SAVEPOINT job") {
         tracing::error!(error = %e, "could not open savepoint");
     }
@@ -310,6 +404,53 @@ mod tests {
         let dir = tempfile::tempdir().unwrap();
         let db = Db::open(&dir.path().join("hydrus.db"), 2).unwrap();
         (dir, db)
+    }
+
+    #[test]
+    fn a_pause_empties_the_log_and_holds_work_until_dropped() {
+        let (dir, db) = temp_db();
+        let db = Arc::new(db);
+        db.write(|ctx| {
+            ctx.conn()
+                .execute("INSERT INTO texts (text) VALUES ('before')", [])?;
+            Ok(())
+        })
+        .unwrap();
+        let paused = db.pause().unwrap();
+        let wal = dir.path().join("hydrus.db-wal");
+        assert_eq!(std::fs::metadata(&wal).map(|m| m.len()).unwrap_or(0), 0);
+
+        let (done_tx, done_rx) = crossbeam_channel::unbounded();
+        let writer = {
+            let db = Arc::clone(&db);
+            let done = done_tx.clone();
+            std::thread::spawn(move || {
+                db.write(|ctx| {
+                    ctx.conn()
+                        .execute("INSERT INTO texts (text) VALUES ('during')", [])?;
+                    Ok(())
+                })
+                .unwrap();
+                done.send("write").unwrap();
+            })
+        };
+        let reader = {
+            let db = Arc::clone(&db);
+            std::thread::spawn(move || {
+                db.read(|c| {
+                    Ok(c.query_row("SELECT count(*) FROM texts", [], |r| r.get::<_, i64>(0))?)
+                })
+                .unwrap();
+                done_tx.send("read").unwrap();
+            })
+        };
+        assert!(done_rx.recv_timeout(Duration::from_millis(300)).is_err());
+        drop(paused);
+        let mut finished = vec![done_rx.recv().unwrap(), done_rx.recv().unwrap()];
+        finished.sort_unstable();
+        assert_eq!(finished, ["read", "write"]);
+        writer.join().unwrap();
+        reader.join().unwrap();
     }
 
     #[test]

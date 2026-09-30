@@ -38,6 +38,11 @@ pub struct AppState {
     pub downloads: Option<Arc<hydrus_download::QueueRunner>>,
     /// Runs subscriptions as they come due.
     pub subscriptions: Option<Arc<hydrus_download::subscriptions::SubscriptionRunner>>,
+    /// The database is locked (`/manage_database/lock_on`): requests are
+    /// refused until it is unlocked.
+    pub locked: std::sync::atomic::AtomicBool,
+    /// Holds the database paused while it is locked.
+    pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
 }
 
 impl AppState {
@@ -69,6 +74,8 @@ impl AppState {
             importer,
             downloads,
             subscriptions,
+            locked: std::sync::atomic::AtomicBool::new(false),
+            paused: parking_lot::Mutex::new(None),
         }))
     }
 
@@ -94,7 +101,8 @@ impl AppState {
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
     use routes::{
-        access, add_files, add_tags, files, metadata, network, relationships, search, tags, urls,
+        access, add_files, add_tags, database, files, metadata, network, relationships, search,
+        tags, urls,
     };
     Router::new()
         .route("/api_version", get(access::api_version))
@@ -197,6 +205,17 @@ pub fn router(state: Arc<AppState>) -> Router {
             "/manage_headers/set_user_agent",
             post(network::set_user_agent),
         )
+        .route("/manage_database/mr_bones", get(database::mr_bones))
+        .route(
+            "/manage_database/force_commit",
+            post(database::force_commit),
+        )
+        .route("/manage_database/lock_on", post(database::lock_on))
+        .route("/manage_database/lock_off", post(database::lock_off))
+        .route_layer(axum::middleware::from_fn_with_state(
+            Arc::clone(&state),
+            database::refuse_while_locked,
+        ))
         .fallback(|| async { request::no_such_resource() })
         .layer(DefaultBodyLimit::disable())
         .with_state(state)

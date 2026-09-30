@@ -20,6 +20,7 @@ pub mod schema;
 pub mod services;
 pub mod settings;
 pub mod similar;
+pub mod stats;
 pub mod storage;
 pub mod store;
 pub mod subscriptions;
@@ -28,6 +29,6 @@ pub mod text;
 pub mod transfer;
 pub mod urls;
 
-pub use conn::{Db, WriteCtx};
+pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};
 pub use store::{Snapshot, Store};
