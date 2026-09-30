@@ -1,0 +1,120 @@
+# GUI plan
+
+The last phase of the roadmap (DECISIONS.md): the desktop client, in Slint.
+This is the map of the reference's Qt GUI (v688) that the work starts from,
+and how we mean to go about it. Nothing here is built yet.
+
+## Size
+
+The reference GUI (`hydrus/client/gui`) is 225 files, about 179k lines of
+Python:
+
+| area | lines |
+|---|---|
+| main window, menus, popups, subscriptions, shortcuts, string editors | 36k |
+| media viewers (canvas, hover frames, media containers) | 17k |
+| downloader definition editors (URL classes, parsers, GUGs, logins) | 16k |
+| metadata (manage tags/URLs/notes/times, sidecars) | 14k |
+| subscriptions, import/export folders, import options | 13k |
+| thumbnail grid (and its menus) | 13k |
+| options (38 pages) | 12k |
+| other panels | 11k |
+| lists (tag lists, multi-column lists) | 11k |
+| search (autocomplete, predicate editors) | 9k |
+| page notebook and sessions | 9k |
+| duplicates (filter, auto-resolution UI) | 8k |
+| widgets, media menus, page sidebars | 15k |
+
+About 10k lines are for things not wanted (petitions, repositories, the
+hydrus server, IPFS).
+
+## The reference's structure
+
+**Main window** (`ClientGUI.py`, `FrameGUI`): a notebook of pages (optionally
+with a page tree), a status bar, popup messages in the corner (downloaders
+and subscriptions report through them), and menus: file, undo, pages,
+database, network, services, tags, pending, help.
+
+**Pages** hold a sidebar (a "management panel"), a preview viewer under it,
+and a thumbnail grid. Page types: file search, gallery downloader, URL
+downloader, watcher, simple downloader, import from disk, duplicates, and
+pages of pages. A page's state is a `ManagementController` (a name, a type
+and a dictionary of variables such as its file search or its importer).
+
+**Sessions** are trees of pages saved in the database: containers in
+`json_dumps_named` (`GUI_SESSION_CONTAINER`, with timestamped backups) and
+each page's data in `json_dumps_hashed` (`GUI_SESSION_PAGE_DATA`, keyed by
+its hash, so only changed pages are saved again). "last session" is saved
+every five minutes. hydrus-rs already carries these over verbatim when
+importing a legacy database.
+
+**Thumbnail grid** (`ClientGUIMediaResultsPanel*`): owns sort, collect,
+selection and focus; paints cached thumbnail pages with overlays (borders,
+icons, ratings, tag banners). Its right-click menu is large (about 3.7k lines
+with its actions).
+
+**Tag autocomplete** (`ClientGUIACDropdown.py`): a text box with a floating
+dropdown (results, children, favourites), the active predicate list, and
+location and tag-domain buttons. It fetches off-thread and filters narrowing
+input from a client-side cache. About 50 system predicate editors.
+
+**Media viewer** (`canvas/`): a separate window; hover frames on each edge
+(tags, ratings and locations, notes, duplicates); static images rendered in
+tiles; animations either by the native renderer (ffmpeg frames) or mpv
+embedded; an archive/delete filter and the duplicate filter as viewer modes.
+
+**Duplicate filter**: the duplicates page has preparation (similar-files
+search), filtering (the potential-duplicates search, sort, group mode, merge
+options, launch) and auto-resolution tabs. The filter shows A and B in turn
+with comparison statements (resolution, size, mime, tags, times, jpeg
+quality, pixel and visual duplicates...) and buttons or shortcuts for each
+decision. Decisions are queued per batch and committed at the batch's end.
+What makes it slow in the reference: after every commit it re-reads the
+whole search space; it fetches batches through repeated "fragmentary" reads
+throttled to half a second each; it commits four decisions per round trip.
+
+**Dialogs the owner's features need**: manage subscriptions and edit
+subscription; import folders; export folders; sidecar editors (with string
+processors); import options; manage tags, URLs, notes and times; the options
+dialog; the downloader definition editors; auto-resolution rules.
+
+**Shortcuts**: named shortcut sets (`SHORTCUT_SET`) mapping keyboard and
+mouse shortcuts (in hydrus's own key codes) to application commands (about
+200 simple commands plus content commands), with eleven reserved sets
+(global, main window, thumbnails, media viewer, duplicate filter...).
+
+**GUI state in the database**, to carry over: client options (window
+positions, viewer settings per mime, default sort and collect, colours,
+thumbnail settings), column widths, favourite searches, tag display and
+autocomplete options, sessions, shortcut sets, recent tags.
+
+## How we mean to build it
+
+1. **A page and session model in the backend first**, independent of any
+   GUI: a tree of pages whose state (a search and its results, an importer)
+   lives in `hydrus-store`, decoded from the legacy session objects. The
+   Client API's `/manage_pages` endpoints then answer from it, and the GUI
+   renders it.
+2. **View models in plain Rust, views in Slint.** Each screen's behaviour
+   (what a click or a key does, what is selected, what is fetched) lives in
+   a testable Rust type; Slint files only lay out and bind. Behaviour is
+   tested without rendering; layout is checked with screenshots from Slint's
+   software renderer, which runs headless.
+3. **Order, by the owner's use**: a search page (autocomplete, thumbnail
+   grid, sort and collect) and the media viewer; then downloader pages
+   (gallery, URL, watcher) and popups; then the duplicate filter, built to
+   commit decisions as they are made and to fetch pairs without re-reading
+   the whole search space; then the dialogs for subscriptions, import and
+   export folders, sidecars and manage tags; then options, shortcuts and
+   the downloader editors.
+4. **Fidelity**: the same page types, menus, shortcuts and dialogs, reading
+   the same stored state, so a migrated user finds their session and
+   settings as they left them. The one planned redesign, a more ergonomic
+   duplicate filter, comes after the reference's behaviour is matched.
+
+## Open questions
+
+- Video and animation: embed mpv (as the reference can) or decode with
+  ffmpeg ourselves and draw frames (as its native renderer does)?
+- Slint is to be tried first (DECISIONS.md); the first milestone, a search
+  page with a thumbnail grid over a real library, is where that is judged.
