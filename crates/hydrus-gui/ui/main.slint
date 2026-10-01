@@ -8,6 +8,7 @@ export { ListText }
 // (the palette, to choose light or dark: by default the system's)
 export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow } from "viewer.slint";
+export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 
@@ -234,6 +235,7 @@ export component MainWindow inherits Window {
     callback new-page();
     callback close-page();
     callback unclose-page();
+    callback archive-delete-filter();
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
@@ -287,6 +289,11 @@ export component MainWindow inherits Window {
             }
             if (event.modifiers.control && (event.text == "w" || event.text == "W")) {
                 root.close-page();
+                return accept;
+            }
+            // as in the reference, F12 opens the archive/delete filter
+            if (event.text == Key.F12) {
+                root.archive-delete-filter();
                 return accept;
             }
             // as in the reference, ctrl+u reopens the page closed last

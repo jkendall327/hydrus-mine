@@ -18,6 +18,8 @@ mod ui {
 pub use ui::*;
 
 mod animation;
+pub mod archive_delete;
+mod archive_delete_window;
 pub mod autocomplete;
 pub mod duplicate_filter;
 pub mod favourites;
@@ -49,6 +51,8 @@ pub struct Bound {
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+    /// The archive/delete filter while one is open.
+    pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
     pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
     /// Shows thumbnails as they are decoded (held to keep it running).
@@ -395,6 +399,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // F12: the archive/delete filter, on the file selected, else them all
+    let archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>> = Rc::default();
+    window.on_archive_delete_filter({
+        let page = page.clone();
+        let archive_delete = archive_delete.clone();
+        let removed = removed.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let files = match page.selected() {
+                Some(i) => vec![page.results()[i]],
+                None => page.results().to_vec(),
+            };
+            let Some(model) = archive_delete::ArchiveDeleteFilter::new(
+                page.store().clone(),
+                files,
+                page.location().clone(),
+            ) else {
+                return;
+            };
+            match archive_delete_window::open(
+                model,
+                page.location().clone(),
+                &archive_delete,
+                removed.clone(),
+            ) {
+                Ok(window) => *archive_delete.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the archive/delete filter: {e}"),
+            }
+        }
+    });
     window.on_thumbnail_activated({
         let page = page.clone();
         let viewer = viewer.clone();
@@ -434,13 +469,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         current,
         rows,
         viewer,
+        archive_delete,
         filter,
         _thumbnails: thumbnails,
     }
 }
 
 /// Called with files a viewer deleted out of the page's domains.
-type Removed = Rc<dyn Fn(&[HashId])>;
+pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
 
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
 /// when closed.
@@ -617,7 +653,7 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
 }
 
 /// A tag or predicate list's row, in its namespace's colour.
-fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
+pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
     ListText {
         text: text.into(),
         colour: slint::Color::from_rgb_u8(r, g, b),

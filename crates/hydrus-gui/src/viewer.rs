@@ -99,19 +99,7 @@ impl MediaViewer {
     /// with its colour: display tags, less those the single media filters
     /// hide, in the media viewer's tag sort, pending ones marked `(+)`.
     pub fn tag_rows(&self) -> Vec<(String, [u8; 3])> {
-        let colours: hydrus_core::tag_presentation::NamespaceColours = self
-            .store
-            .read(hydrus_store::settings::get)
-            .unwrap_or_default();
-        crate::page::tag_rows(
-            &self.store,
-            &[self.current()],
-            None,
-            crate::page::TagList::MediaViewer,
-        )
-        .into_iter()
-        .map(|(tag, row)| (row, colours.tag(&tag)))
-        .collect()
+        hover_tags(&self.store, self.current())
     }
 
     /// The current file's frames, if the reference plays its kind with its
@@ -119,6 +107,16 @@ impl MediaViewer {
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {
         animation(&self.store, self.current())
     }
+}
+
+/// A file's tags as the tags hover frame lists them, each with its colour.
+pub(crate) fn hover_tags(store: &Store, id: HashId) -> Vec<(String, [u8; 3])> {
+    let colours: hydrus_core::tag_presentation::NamespaceColours =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    crate::page::tag_rows(store, &[id], None, crate::page::TagList::MediaViewer)
+        .into_iter()
+        .map(|(tag, row)| (row, colours.tag(&tag)))
+        .collect()
 }
 
 /// A file's frames, if the reference plays its kind with its own player:

@@ -1,0 +1,136 @@
+// The archive/delete filter's window: a page's files one at a time, fitted
+// to the window. As the reference's defaults have it, a left click or F7
+// keeps the file, a right click or delete deletes it, a middle click or
+// backspace goes back, and up skips it; F12 or escape stops. With anything
+// kept or deleted, finishing or stopping asks what to do: enter commits,
+// f forgets, and escape goes back to filtering. With the pointer over the
+// window's left fifth, the file's tags show there.
+
+import { ListText } from "theme.slint";
+
+export component ArchiveDeleteWindow inherits Window {
+    title: "archive/delete filter " + root.caption;
+    preferred-width: 1000px;
+    preferred-height: 750px;
+    background: #202020;
+
+    in property <image> media;
+    in property <string> caption;
+    // the file's tags, for the hover frame
+    in property <[ListText]> tags;
+    // what committing would do, while asking
+    in property <string> question;
+    out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+
+    callback keep();
+    callback delete();
+    callback back();
+    callback skip();
+    callback close-requested();
+    callback commit();
+    callback forget();
+    callback resume();
+    callback toggle-pause();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (root.question != "") {
+                if (event.text == Key.Return) {
+                    root.commit();
+                } else if (event.text == "f" || event.text == "F") {
+                    root.forget();
+                } else if (event.text == Key.Escape) {
+                    root.resume();
+                }
+                return accept;
+            }
+            if (event.text == Key.F7) {
+                root.keep();
+                return accept;
+            }
+            if (event.text == Key.Delete) {
+                root.delete();
+                return accept;
+            }
+            if (event.text == Key.Backspace) {
+                root.back();
+                return accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.skip();
+                return accept;
+            }
+            if (event.text == Key.F12 || event.text == Key.Escape) {
+                root.close-requested();
+                return accept;
+            }
+            if (event.text == " ") {
+                root.toggle-pause();
+                return accept;
+            }
+            reject
+        }
+        Image {
+            width: 100%;
+            height: 100%;
+            source: root.media;
+            image-fit: contain;
+        }
+        pointer := TouchArea {
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && root.question == "") {
+                    if (event.button == PointerEventButton.left) {
+                        root.keep();
+                    } else if (event.button == PointerEventButton.right) {
+                        root.delete();
+                    } else if (event.button == PointerEventButton.middle) {
+                        root.back();
+                    }
+                }
+            }
+        }
+        if root.question != "": Rectangle {
+            width: min(root.width - 40px, 480px);
+            height: 100px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: root.question;
+                    color: #f0f0f0;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "enter: commit, f: forget, escape: back to filtering";
+                    color: #a0a0a0;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+        // (nothing in it takes the pointer, so the area above keeps it)
+        if root.tags-showing: Rectangle {
+            x: 0;
+            y: 0;
+            width: root.width * 0.2;
+            height: root.height;
+            background: #202020e8;
+            clip: true;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 2px;
+                alignment: start;
+                for tag in root.tags: Text {
+                    text: tag.text;
+                    color: tag.colour;
+                    overflow: elide;
+                }
+            }
+        }
+    }
+}
