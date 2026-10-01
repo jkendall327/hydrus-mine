@@ -86,8 +86,8 @@ predicates in the autocomplete, collect, the viewer's hover frames, seeking
 and volume, a native animation player, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
-deleting from the filter, the hover frames, keeping the two files at the
-same zoom, and reviewing auto-resolution's pending pairs.
+deleting from the filter, the hover frames, zooming and panning, and
+reviewing auto-resolution's pending pairs.
 
 ## Size
 

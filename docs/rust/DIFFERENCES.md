@@ -141,6 +141,11 @@ search.
   distances, the pair gets the smaller.** The reference records whichever
   its tree walk reached first.
 
+## Pages (`hydrus-gui`)
+
+- **The page chooser takes the top row's digits too.** The reference takes
+  only the number pad's; Slint doesn't tell them apart.
+
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
 Its comparison statements are checked by
