@@ -2483,11 +2483,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -2510,11 +2512,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -2537,11 +2541,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001424497307743877
   },
@@ -2564,11 +2570,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0037012664601206776
   },
@@ -2591,11 +2599,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2618,11 +2628,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2631,7 +2643,8 @@
    "b": "auto_resolution/p05_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20075202584266663
   },
@@ -2640,7 +2653,8 @@
    "b": "auto_resolution/p06_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19807185530662536
   },
@@ -2649,7 +2663,8 @@
    "b": "similar_files/p00_same_pixels.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09035095721483231
   },
@@ -2658,7 +2673,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13209447115659714
   },
@@ -2667,7 +2683,8 @@
    "b": "similar_files/p06_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06272438019514084
   },
@@ -2690,11 +2707,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -2717,11 +2736,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001424497307743877
   },
@@ -2744,11 +2765,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0037012664601206776
   },
@@ -2771,11 +2794,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2798,11 +2823,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2811,7 +2838,8 @@
    "b": "auto_resolution/p01_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12293529808521271
   },
@@ -2820,7 +2848,8 @@
    "b": "auto_resolution/p03_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11255035474896431
   },
@@ -2829,7 +2858,8 @@
    "b": "auto_resolution/p03_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11215598210692407
   },
@@ -2838,7 +2868,8 @@
    "b": "auto_resolution/p06_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19787261188030242
   },
@@ -2847,7 +2878,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08768592774868011
   },
@@ -2856,7 +2888,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09019655883312225
   },
@@ -2865,7 +2898,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09235733449459077
   },
@@ -2888,11 +2922,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001424497307743877
   },
@@ -2915,11 +2951,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0037012664601206776
   },
@@ -2942,11 +2980,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2969,11 +3009,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004790503857657313
   },
@@ -2982,7 +3024,8 @@
    "b": "auto_resolution/p03_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11372247636318207
   },
@@ -2991,7 +3034,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20075202584266663
   },
@@ -3000,7 +3044,8 @@
    "b": "auto_resolution/p05_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20075202584266663
   },
@@ -3009,7 +3054,8 @@
    "b": "auto_resolution/p06_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19807185530662536
   },
@@ -3018,7 +3064,8 @@
    "b": "auto_resolution/p06_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1979304701089859
   },
@@ -3027,7 +3074,8 @@
    "b": "similar_files/p05_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08523077890276909
   },
@@ -3036,7 +3084,8 @@
    "b": "similar_files/p07_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09733291193842888
   },
@@ -3045,7 +3094,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09014141783118249
   },
@@ -3054,7 +3104,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15211869925260543
   },
@@ -3063,7 +3114,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08905019164085388
   },
@@ -3072,7 +3124,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1582368016242981
   },
@@ -3095,11 +3148,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0026028627064079045
   },
@@ -3122,11 +3177,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.005305283144116402
   },
@@ -3149,11 +3206,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.005305283144116402
   },
@@ -3162,7 +3221,8 @@
    "b": "auto_resolution/p01_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1230510637164116
   },
@@ -3171,7 +3231,8 @@
    "b": "auto_resolution/p05_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20078051090240479
   },
@@ -3180,7 +3241,8 @@
    "b": "auto_resolution/p06_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19845229983329774
   },
@@ -3189,7 +3251,8 @@
    "b": "auto_resolution/p06_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19831089079380035
   },
@@ -3198,7 +3261,8 @@
    "b": "similar_files/flat_0.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.28044142872095107
   },
@@ -3207,7 +3271,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1298716977238655
   },
@@ -3216,7 +3281,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13136516511440277
   },
@@ -3225,7 +3291,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09061056599020959
   },
@@ -3234,7 +3301,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08801429122686386
   },
@@ -3243,7 +3311,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15806631296873092
   },
@@ -3266,11 +3335,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007227336335927249
   },
@@ -3293,11 +3364,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007227336335927249
   },
@@ -3306,7 +3379,8 @@
    "b": "auto_resolution/p04_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13954742401838305
   },
@@ -3315,7 +3389,8 @@
    "b": "similar_files/p00_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08901793658733369
   },
@@ -3324,7 +3399,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10517743751406669
   },
@@ -3333,7 +3409,8 @@
    "b": "similar_files/p07_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09716338217258454
   },
@@ -3342,7 +3419,8 @@
    "b": "similar_files/p10_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.22581191658973693
   },
@@ -3351,7 +3429,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08873288854956626
   },
@@ -3374,11 +3453,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -3387,7 +3468,8 @@
    "b": "auto_resolution/p02_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08044664785265922
   },
@@ -3396,7 +3478,8 @@
    "b": "auto_resolution/p03_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1154107205569744
   },
@@ -3405,7 +3488,8 @@
    "b": "auto_resolution/p07_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.22093991041183472
   },
@@ -3414,7 +3498,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08979383185505867
   },
@@ -3423,7 +3508,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06026365682482719
   },
@@ -3432,7 +3518,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09494025111198424
   },
@@ -3441,7 +3528,8 @@
    "b": "auto_resolution/p01_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12398988902568817
   },
@@ -3450,7 +3538,8 @@
    "b": "auto_resolution/p02_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08221030980348587
   },
@@ -3459,7 +3548,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09234804958105086
   },
@@ -3482,11 +3572,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -3509,11 +3601,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -3536,11 +3630,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3563,11 +3659,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3590,11 +3688,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0035376510117203
   },
@@ -3617,11 +3717,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3630,7 +3732,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10525727421045303
   },
@@ -3639,7 +3742,8 @@
    "b": "auto_resolution/p06_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12942964881658556
   },
@@ -3648,7 +3752,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16763799488544465
   },
@@ -3671,11 +3776,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -3698,11 +3805,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3725,11 +3834,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3752,11 +3863,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0035376510117203
   },
@@ -3779,11 +3892,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3792,7 +3907,8 @@
    "b": "auto_resolution/p02_c.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08976167738437653
   },
@@ -3801,7 +3917,8 @@
    "b": "auto_resolution/p06_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12967725098133087
   },
@@ -3810,7 +3927,8 @@
    "b": "similar_files/p07_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07628928944468498
   },
@@ -3819,7 +3937,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16852614879608152
   },
@@ -3828,7 +3947,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19434445947408677
   },
@@ -3851,11 +3971,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3878,11 +4000,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3905,11 +4029,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0035376510117203
   },
@@ -3932,11 +4058,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016983823385089635
   },
@@ -3945,7 +4073,8 @@
    "b": "auto_resolution/p05_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10433689504861832
   },
@@ -3954,7 +4083,8 @@
    "b": "auto_resolution/p06_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13221953958272933
   },
@@ -3963,7 +4093,8 @@
    "b": "similar_files/p04_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.17690130919218064
   },
@@ -3972,7 +4103,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16852614879608152
   },
@@ -3995,11 +4127,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4022,11 +4156,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0022992509184405208
   },
@@ -4049,11 +4185,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4062,7 +4200,8 @@
    "b": "auto_resolution/p03_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0750283233821392
   },
@@ -4071,7 +4210,8 @@
    "b": "similar_files/flat_1.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20384730994701386
   },
@@ -4080,7 +4220,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07224380895495415
   },
@@ -4089,7 +4230,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09581964686512946
   },
@@ -4112,11 +4254,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0022992509184405208
   },
@@ -4139,11 +4283,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4152,7 +4298,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07629912346601486
   },
@@ -4161,7 +4308,8 @@
    "b": "auto_resolution/p04_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08453575521707535
   },
@@ -4170,7 +4318,8 @@
    "b": "auto_resolution/p07_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12496967986226082
   },
@@ -4179,7 +4328,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06826720684766768
   },
@@ -4188,7 +4338,8 @@
    "b": "similar_files/p10_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1360054947435856
   },
@@ -4211,11 +4362,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0022992509184405208
   },
@@ -4224,7 +4377,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0755316734313965
   },
@@ -4233,7 +4387,8 @@
    "b": "auto_resolution/p05_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10526477918028831
   },
@@ -4242,7 +4397,8 @@
    "b": "auto_resolution/p06_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12994834035634995
   },
@@ -4251,7 +4407,8 @@
    "b": "auto_resolution/p07_d_icc.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12549446299672126
   },
@@ -4260,7 +4417,8 @@
    "b": "similar_files/p12_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0859303541481495
   },
@@ -4269,7 +4427,8 @@
    "b": "auto_resolution/p04_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08453575521707535
   },
@@ -4278,7 +4437,8 @@
    "b": "auto_resolution/p05_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10628220587968827
   },
@@ -4287,7 +4447,8 @@
    "b": "similar_files/p01_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08164605349302292
   },
@@ -4296,7 +4457,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09729232639074326
   },
@@ -4305,7 +4467,8 @@
    "b": "similar_files/p12_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11939400285482406
   },
@@ -4328,11 +4491,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4355,11 +4520,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4382,11 +4549,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4409,11 +4578,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00991666316986084
   },
@@ -4436,11 +4607,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00991666316986084
   },
@@ -4463,11 +4636,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4476,7 +4651,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11815369427204131
   },
@@ -4485,7 +4661,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11204901933670045
   },
@@ -4508,11 +4685,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4535,11 +4714,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4562,11 +4743,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00991666316986084
   },
@@ -4589,11 +4772,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00991666316986084
   },
@@ -4616,11 +4801,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002033076155930758
   },
@@ -4629,7 +4816,8 @@
    "b": "auto_resolution/p04_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1030936636030674
   },
@@ -4638,7 +4826,8 @@
    "b": "auto_resolution/p06_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15612168610095978
   },
@@ -4647,7 +4836,8 @@
    "b": "similar_files/p06_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07144147902727127
   },
@@ -4656,7 +4846,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.059259934723377226
   },
@@ -4665,7 +4856,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13082737401127814
   },
@@ -4688,11 +4880,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4715,11 +4909,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -4742,11 +4938,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -4769,11 +4967,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4782,7 +4982,8 @@
    "b": "auto_resolution/p06_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15699390769004823
   },
@@ -4791,7 +4992,8 @@
    "b": "auto_resolution/p06_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15699390769004823
   },
@@ -4800,7 +5002,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06262573227286339
   },
@@ -4809,7 +5012,8 @@
    "b": "similar_files/p04_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09806596934795378
   },
@@ -4818,7 +5022,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.070595982670784
   },
@@ -4827,7 +5032,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13779708445072172
   },
@@ -4850,11 +5056,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -4877,11 +5085,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -4904,11 +5114,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -4917,7 +5129,8 @@
    "b": "auto_resolution/p04_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10410352200269699
   },
@@ -4926,7 +5139,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15502149909734728
   },
@@ -4935,7 +5149,8 @@
    "b": "auto_resolution/p05_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15438307374715804
   },
@@ -4944,7 +5159,8 @@
    "b": "similar_files/flat_0.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.3133706897497177
   },
@@ -4953,7 +5169,8 @@
    "b": "similar_files/p00_base_copy.bmp.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06836643442511559
   },
@@ -4962,7 +5179,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06262573227286339
   },
@@ -4971,7 +5189,8 @@
    "b": "similar_files/p03_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09571942538022996
   },
@@ -4980,7 +5199,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07607273310422898
   },
@@ -4989,7 +5209,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10009678602218629
   },
@@ -4998,7 +5219,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1364621713757515
   },
@@ -5007,7 +5229,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13779708445072172
   },
@@ -5030,11 +5253,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -5057,11 +5282,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -5070,7 +5297,8 @@
    "b": "auto_resolution/p05_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15880441665649414
   },
@@ -5079,7 +5307,8 @@
    "b": "auto_resolution/p06_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16137893199920655
   },
@@ -5088,7 +5317,8 @@
    "b": "auto_resolution/p07_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1815362699329853
   },
@@ -5097,7 +5327,8 @@
    "b": "similar_files/p00_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.068107920140028
   },
@@ -5106,7 +5337,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06234982460737229
   },
@@ -5129,11 +5361,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0095851706340909
   },
@@ -5142,7 +5376,8 @@
    "b": "auto_resolution/p04_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10784989222884178
   },
@@ -5151,7 +5386,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0932796485722065
   },
@@ -5160,7 +5396,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10848178565502166
   },
@@ -5169,7 +5406,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07747098580002786
   },
@@ -5178,7 +5416,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06801084950566291
   },
@@ -5187,7 +5426,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07715091556310653
   },
@@ -5196,7 +5436,8 @@
    "b": "similar_files/p07_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0566477969288826
   },
@@ -5205,7 +5446,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06847949996590613
   },
@@ -5214,7 +5456,8 @@
    "b": "similar_files/p08_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06806439012289048
   },
@@ -5237,11 +5480,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -5264,11 +5509,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021058588055893777
   },
@@ -5291,11 +5538,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021058588055893777
   },
@@ -5318,11 +5567,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003796366089954972
   },
@@ -5331,7 +5582,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010036186780780554
   },
@@ -5340,7 +5592,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010036186780780554
   },
@@ -5349,7 +5602,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07355418279767037
   },
@@ -5372,11 +5626,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021058588055893777
   },
@@ -5399,11 +5655,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021058588055893777
   },
@@ -5426,11 +5684,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003796366089954972
   },
@@ -5439,7 +5699,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010036186780780554
   },
@@ -5448,7 +5709,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010036186780780554
   },
@@ -5457,7 +5719,8 @@
    "b": "similar_files/p04_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15118785351514819
   },
@@ -5466,7 +5729,8 @@
    "b": "similar_files/p05_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06809487342834473
   },
@@ -5475,7 +5739,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14116930365562438
   },
@@ -5484,7 +5749,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18591757565736772
   },
@@ -5507,11 +5773,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -5534,11 +5802,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021644756896421315
   },
@@ -5547,7 +5817,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010452867951244116
   },
@@ -5556,7 +5827,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010452867951244116
   },
@@ -5565,7 +5837,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10808393210172654
   },
@@ -5588,11 +5861,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021644756896421315
   },
@@ -5601,7 +5876,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010452867951244116
   },
@@ -5610,7 +5886,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010452867951244116
   },
@@ -5619,7 +5896,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1150860220193863
   },
@@ -5628,7 +5906,8 @@
    "b": "similar_files/p01_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08842092081904412
   },
@@ -5637,7 +5916,8 @@
    "b": "similar_files/p03_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06929260045289994
   },
@@ -5646,7 +5926,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14061686396598816
   },
@@ -5655,7 +5936,8 @@
    "b": "similar_files/p09_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1428726464509964
   },
@@ -5664,7 +5946,8 @@
    "b": "auto_resolution/p03_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.011159098148345948
   },
@@ -5673,7 +5956,8 @@
    "b": "auto_resolution/p03_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.011159098148345948
   },
@@ -5682,7 +5966,8 @@
    "b": "auto_resolution/p04_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07284894660115243
   },
@@ -5691,7 +5976,8 @@
    "b": "auto_resolution/p06_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13972453773021698
   },
@@ -5700,7 +5986,8 @@
    "b": "auto_resolution/p07_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13155647218227384
   },
@@ -5709,7 +5996,8 @@
    "b": "similar_files/flat_2.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.28844249695539476
   },
@@ -5732,11 +6020,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -5745,7 +6035,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12141686081886291
   },
@@ -5754,7 +6045,8 @@
    "b": "similar_files/p01_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09164626002311707
   },
@@ -5763,7 +6055,8 @@
    "b": "similar_files/p02_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1059269078075886
   },
@@ -5772,7 +6065,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11476397812366486
   },
@@ -5781,7 +6075,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06559378579258919
   },
@@ -5790,7 +6085,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1821583069860935
   },
@@ -5799,7 +6095,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13943200707435607
   },
@@ -5808,7 +6105,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15168980360031126
   },
@@ -5817,7 +6115,8 @@
    "b": "auto_resolution/p06_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14560829102993011
   },
@@ -5826,7 +6125,8 @@
    "b": "auto_resolution/p07_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13587882369756699
   },
@@ -5835,7 +6135,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16064826548099517
   },
@@ -5844,7 +6145,8 @@
    "b": "similar_files/p07_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06749392226338387
   },
@@ -5853,7 +6155,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.046667953580617906
   },
@@ -5862,7 +6165,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11851348131895065
   },
@@ -5885,11 +6189,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -5912,11 +6218,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -5939,11 +6247,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -5966,11 +6276,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004334844043478369
   },
@@ -5993,11 +6305,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006713922973722219
   },
@@ -6020,11 +6334,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006713922973722219
   },
@@ -6047,11 +6363,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -6060,7 +6378,8 @@
    "b": "auto_resolution/p06_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1125812828540802
   },
@@ -6069,7 +6388,8 @@
    "b": "auto_resolution/p07_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11651574671268464
   },
@@ -6078,7 +6398,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11897629946470262
   },
@@ -6087,7 +6408,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18090949058532715
   },
@@ -6096,7 +6418,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18003484159708022
   },
@@ -6119,11 +6442,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -6146,11 +6471,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -6173,11 +6500,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004334844043478369
   },
@@ -6200,11 +6529,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006713922973722219
   },
@@ -6227,11 +6558,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate/watermark?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006713922973722219
   },
@@ -6254,11 +6587,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0024433911312371492
   },
@@ -6267,7 +6602,8 @@
    "b": "auto_resolution/p05_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09167614877223969
   },
@@ -6276,7 +6612,8 @@
    "b": "auto_resolution/p06_c.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10920684784650803
   },
@@ -6285,7 +6622,8 @@
    "b": "auto_resolution/p07_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1168308600783348
   },
@@ -6294,7 +6632,8 @@
    "b": "similar_files/p03_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06891015693545342
   },
@@ -6317,11 +6656,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -6344,11 +6685,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0030128978192806243
   },
@@ -6371,11 +6714,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6398,11 +6743,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6425,11 +6772,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -6438,7 +6787,8 @@
    "b": "auto_resolution/p06_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11242758184671403
   },
@@ -6447,7 +6797,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11373512670397759
   },
@@ -6456,7 +6807,8 @@
    "b": "similar_files/p01_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07618556693196296
   },
@@ -6465,7 +6817,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2006588488817215
   },
@@ -6474,7 +6827,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14481294751167295
   },
@@ -6483,7 +6837,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08465782850980759
   },
@@ -6506,11 +6861,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0030128978192806243
   },
@@ -6533,11 +6890,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6560,11 +6919,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6587,11 +6948,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -6600,7 +6963,8 @@
    "b": "auto_resolution/p07_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11574839949607849
   },
@@ -6609,7 +6973,8 @@
    "b": "similar_files/p10_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11176629215478898
   },
@@ -6632,11 +6997,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00915201660245657
   },
@@ -6659,11 +7026,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00915201660245657
   },
@@ -6686,11 +7055,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0030128978192806243
   },
@@ -6699,7 +7070,8 @@
    "b": "auto_resolution/p05_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08978916257619858
   },
@@ -6708,7 +7080,8 @@
    "b": "auto_resolution/p05_e.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08941275775432586
   },
@@ -6717,7 +7090,8 @@
    "b": "auto_resolution/p05_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08922423869371415
   },
@@ -6726,7 +7100,8 @@
    "b": "auto_resolution/p06_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1085313931107521
   },
@@ -6735,7 +7110,8 @@
    "b": "auto_resolution/p07_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11534292697906494
   },
@@ -6744,7 +7120,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08210588693618774
   },
@@ -6753,7 +7130,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.21482827812433242
   },
@@ -6762,7 +7140,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07883289754390717
   },
@@ -6785,11 +7164,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -6812,11 +7193,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6825,7 +7208,8 @@
    "b": "auto_resolution/p06_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11075786948204042
   },
@@ -6834,7 +7218,8 @@
    "b": "auto_resolution/p07_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1172019362449646
   },
@@ -6843,7 +7228,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14290007650852204
   },
@@ -6866,11 +7252,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008261159900575877
   },
@@ -6879,7 +7267,8 @@
    "b": "similar_files/p03_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.067967988550663
   },
@@ -6888,7 +7277,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08434911146759987
   },
@@ -6897,7 +7287,8 @@
    "b": "similar_files/p12_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08957119435071945
   },
@@ -6906,7 +7297,8 @@
    "b": "similar_files/p13_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10032627433538435
   },
@@ -6915,7 +7307,8 @@
    "b": "auto_resolution/p06_i_palette.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11242758184671403
   },
@@ -6924,7 +7317,8 @@
    "b": "similar_files/flat_0.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.39949172735214233
   },
@@ -6933,7 +7327,8 @@
    "b": "similar_files/p05_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10076113492250444
   },
@@ -6942,7 +7337,8 @@
    "b": "similar_files/p07_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12925172448158265
   },
@@ -6951,7 +7347,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2158275455236435
   },
@@ -6960,7 +7357,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12901818603277204
   },
@@ -6983,11 +7381,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7010,11 +7410,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7037,11 +7439,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7064,11 +7468,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7091,11 +7497,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7118,11 +7526,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004335511056706309
   },
@@ -7145,11 +7555,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7172,11 +7584,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7199,11 +7613,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7212,7 +7628,8 @@
    "b": "auto_resolution/p06_g_lossy.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08462352752685547
   },
@@ -7221,7 +7638,8 @@
    "b": "similar_files/p00_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16521061360836028
   },
@@ -7230,7 +7648,8 @@
    "b": "similar_files/p00_same_pixels.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16521061360836028
   },
@@ -7239,7 +7658,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19680507779121398
   },
@@ -7262,11 +7682,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7289,11 +7711,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7316,11 +7740,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7343,11 +7769,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7370,11 +7798,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004335511056706309
   },
@@ -7397,11 +7827,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7424,11 +7856,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7451,11 +7885,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7464,7 +7900,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16641602665185928
   },
@@ -7473,7 +7910,8 @@
    "b": "similar_files/p04_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24663887917995456
   },
@@ -7482,7 +7920,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0914586454629898
   },
@@ -7491,7 +7930,8 @@
    "b": "similar_files/p08_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09267114102840424
   },
@@ -7500,7 +7940,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2668887391686439
   },
@@ -7523,11 +7964,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7550,11 +7993,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7577,11 +8022,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7604,11 +8051,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004335511056706309
   },
@@ -7631,11 +8080,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7658,11 +8109,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7685,11 +8138,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7698,7 +8153,8 @@
    "b": "similar_files/flat_1.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2537256509065628
   },
@@ -7707,7 +8163,8 @@
    "b": "similar_files/p06_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19673625528812408
   },
@@ -7716,7 +8173,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24447193443775175
   },
@@ -7739,11 +8197,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7766,11 +8226,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7793,11 +8255,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004335511056706309
   },
@@ -7820,11 +8284,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7847,11 +8313,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007057781424373388
   },
@@ -7874,11 +8342,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001362160686403513
   },
@@ -7887,7 +8357,8 @@
    "b": "auto_resolution/p06_h.gif",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08889655619859696
   },
@@ -7896,7 +8367,8 @@
    "b": "similar_files/p03_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07821287363767623
   },
@@ -7905,7 +8377,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13037191480398178
   },
@@ -7914,7 +8387,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.26139059364795686
   },
@@ -7923,7 +8397,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07955573946237564
   },
@@ -7946,11 +8421,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -7973,11 +8450,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003169020637869835
   },
@@ -8000,11 +8479,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8027,11 +8508,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8054,11 +8537,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8067,7 +8552,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06434924975037576
   },
@@ -8076,7 +8562,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08122175186872482
   },
@@ -8085,7 +8572,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09098166972398758
   },
@@ -8094,7 +8582,8 @@
    "b": "similar_files/p05_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14608027040958405
   },
@@ -8103,7 +8592,8 @@
    "b": "similar_files/p07_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11376057863235473
   },
@@ -8112,7 +8602,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2624627560377121
   },
@@ -8121,7 +8612,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.262572380900383
   },
@@ -8144,11 +8636,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003169020637869835
   },
@@ -8171,11 +8665,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8198,11 +8694,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8225,11 +8723,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8238,7 +8738,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19642680287361144
   },
@@ -8247,7 +8748,8 @@
    "b": "similar_files/p07_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11388304680585862
   },
@@ -8256,7 +8758,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24399844110012056
   },
@@ -8279,11 +8782,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009327166434377431
   },
@@ -8306,11 +8811,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009327166434377431
   },
@@ -8333,11 +8840,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003169020637869835
   },
@@ -8346,7 +8855,8 @@
    "b": "auto_resolution/p06_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0827615275979042
   },
@@ -8355,7 +8865,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24369029998779296
   },
@@ -8378,11 +8889,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8405,11 +8918,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8418,7 +8933,8 @@
    "b": "auto_resolution/p07_b_bloated.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06679806709289551
   },
@@ -8427,7 +8943,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06522353738546371
   },
@@ -8436,7 +8953,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2830446481704712
   },
@@ -8445,7 +8963,8 @@
    "b": "similar_files/p06_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15651074647903443
   },
@@ -8468,11 +8987,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007336469367146492
   },
@@ -8481,7 +9002,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0910520613193512
   },
@@ -8490,7 +9012,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20426793694496154
   },
@@ -8499,7 +9022,8 @@
    "b": "similar_files/flat_1.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25325787961483004
   },
@@ -8508,7 +9032,8 @@
    "b": "similar_files/p04_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24622572958469388
   },
@@ -8517,7 +9042,8 @@
    "b": "similar_files/p07_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11522424668073654
   },
@@ -8526,7 +9052,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07294494658708572
   },
@@ -8549,11 +9076,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8576,11 +9105,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8603,11 +9134,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8630,11 +9163,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -8657,11 +9192,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -8684,11 +9221,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0020673889433965088
   },
@@ -8711,11 +9250,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -8738,11 +9279,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -8765,11 +9308,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -8778,7 +9323,8 @@
    "b": "auto_resolution/p07_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12048067003488541
   },
@@ -8787,7 +9333,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1484356552362442
   },
@@ -8796,7 +9343,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08890287429094315
   },
@@ -8805,7 +9353,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12013913840055467
   },
@@ -8814,7 +9363,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1484678268432617
   },
@@ -8823,7 +9373,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25887889266014097
   },
@@ -8832,7 +9383,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06794594824314118
   },
@@ -8855,11 +9407,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8882,11 +9436,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -8909,11 +9465,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -8936,11 +9494,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -8963,11 +9523,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0020673889433965088
   },
@@ -8990,11 +9552,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9017,11 +9581,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9044,11 +9610,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9057,7 +9625,8 @@
    "b": "auto_resolution/p07_f_exif.jpg",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11999987512826919
   },
@@ -9066,7 +9635,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1484356552362442
   },
@@ -9075,7 +9645,8 @@
    "b": "similar_files/p00_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15943717658519746
   },
@@ -9084,7 +9655,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.27668664753437044
   },
@@ -9107,11 +9679,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -9134,11 +9708,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9161,11 +9737,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9188,11 +9766,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0020673889433965088
   },
@@ -9215,11 +9795,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9242,11 +9824,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9269,11 +9853,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9282,7 +9868,8 @@
    "b": "similar_files/p04_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25397749841213224
   },
@@ -9291,7 +9878,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25750011801719663
   },
@@ -9314,11 +9902,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9341,11 +9931,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9368,11 +9960,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0020673889433965088
   },
@@ -9395,11 +9989,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9422,11 +10018,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008558540139347315
   },
@@ -9449,11 +10047,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009222450433298945
   },
@@ -9462,7 +10062,8 @@
    "b": "similar_files/p00_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20767039358615877
   },
@@ -9471,7 +10072,8 @@
    "b": "similar_files/p03_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10355183184146881
   },
@@ -9480,7 +10082,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12090606093406678
   },
@@ -9489,7 +10092,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12433308511972428
   },
@@ -9498,7 +10102,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15318020433187485
   },
@@ -9507,7 +10112,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.22846337258815766
   },
@@ -9516,7 +10122,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08749853745102883
   },
@@ -9525,7 +10132,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06794594824314118
   },
@@ -9548,11 +10156,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -9575,11 +10185,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0015275315148755907
   },
@@ -9602,11 +10214,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -9629,11 +10243,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -9656,11 +10272,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -9669,7 +10287,8 @@
    "b": "similar_files/p02_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.050516856461763376
   },
@@ -9678,7 +10297,8 @@
    "b": "similar_files/p10_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1210136741399765
   },
@@ -9687,7 +10307,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08560834899544717
   },
@@ -9710,11 +10331,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0015275315148755907
   },
@@ -9737,11 +10360,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -9764,11 +10389,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -9791,11 +10418,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -9804,7 +10433,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20407688915729522
   },
@@ -9813,7 +10443,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.24414088428020475
   },
@@ -9836,11 +10467,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009481534641236068
   },
@@ -9863,11 +10496,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009481534641236068
   },
@@ -9890,11 +10525,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0015275315148755907
   },
@@ -9903,7 +10540,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2574068486690521
   },
@@ -9926,11 +10564,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -9953,11 +10593,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -9966,7 +10608,8 @@
    "b": "auto_resolution/p07_a.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12125640958547593
   },
@@ -9975,7 +10618,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08981726318597794
   },
@@ -9984,7 +10628,8 @@
    "b": "similar_files/p03_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10705264210700988
   },
@@ -9993,7 +10638,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10624303370714189
   },
@@ -10002,7 +10648,8 @@
    "b": "similar_files/p04_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25623553693294526
   },
@@ -10011,7 +10658,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18778604567050933
   },
@@ -10020,7 +10668,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2630674958229065
   },
@@ -10043,11 +10692,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00868042390793562
   },
@@ -10056,7 +10707,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16225841045379638
   },
@@ -10065,7 +10717,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10276049077510835
   },
@@ -10074,7 +10727,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12007108479738235
   },
@@ -10083,7 +10737,8 @@
    "b": "similar_files/p07_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11344368904829025
   },
@@ -10092,7 +10747,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0636054627597332
   },
@@ -10101,7 +10757,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06772651225328445
   },
@@ -10124,11 +10781,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10151,11 +10810,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10178,11 +10839,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10205,11 +10868,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10232,11 +10897,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0027085666544735434
   },
@@ -10245,7 +10912,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2686088442802429
   },
@@ -10254,7 +10922,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2533239513635635
   },
@@ -10263,7 +10932,8 @@
    "b": "similar_files/p12_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.046029312163591386
   },
@@ -10286,11 +10956,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10313,11 +10985,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10340,11 +11014,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10367,11 +11043,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0027085666544735434
   },
@@ -10394,11 +11072,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10421,11 +11101,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001294649695046246
   },
@@ -10448,11 +11130,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0027085666544735434
   },
@@ -10461,7 +11145,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.22015064358711242
   },
@@ -10470,7 +11155,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15143020153045655
   },
@@ -10479,7 +11165,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1618748128414154
   },
@@ -10502,11 +11189,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10529,11 +11218,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0017128486884757876
   },
@@ -10542,7 +11233,8 @@
    "b": "similar_files/p01_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15290710628032683
   },
@@ -10565,11 +11257,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0017128486884757876
   },
@@ -10578,7 +11272,8 @@
    "b": "similar_files/p06_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.21963358223438265
   },
@@ -10587,7 +11282,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1918129988014698
   },
@@ -10596,7 +11292,8 @@
    "b": "similar_files/p00_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19190781712532043
   },
@@ -10605,7 +11302,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.28366622030735017
   },
@@ -10614,7 +11312,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20808833092451096
   },
@@ -10623,7 +11322,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08480762913823128
   },
@@ -10632,7 +11332,8 @@
    "b": "similar_files/flat_1.png",
    "simple": [
     false,
-    0
+    0,
+    "too simple to compare"
    ],
    "simple_score": 0.328341406583786
   },
@@ -10641,7 +11342,8 @@
    "b": "similar_files/flat_2.png",
    "simple": [
     false,
-    0
+    0,
+    "too simple to compare"
    ],
    "simple_score": 0.5551095843315125
   },
@@ -10650,7 +11352,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.29615568369627
   },
@@ -10659,7 +11362,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20128880590200424
   },
@@ -10668,7 +11372,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.3850088119506836
   },
@@ -10677,7 +11382,8 @@
    "b": "similar_files/flat_2.png",
    "simple": [
     false,
-    0
+    0,
+    "too simple to compare"
    ],
    "simple_score": 0.3968443274497986
   },
@@ -10686,7 +11392,8 @@
    "b": "similar_files/p02_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.21572704166173937
   },
@@ -10695,7 +11402,8 @@
    "b": "similar_files/p06_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1849675804376602
   },
@@ -10704,7 +11412,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20618133246898648
   },
@@ -10713,7 +11422,8 @@
    "b": "similar_files/p07_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.3162089094519615
   },
@@ -10722,7 +11432,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.4344703018665313
   },
@@ -10745,11 +11456,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10758,7 +11471,8 @@
    "b": "similar_files/p00_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05828396417200565
   },
@@ -10767,7 +11481,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014788434654474259
   },
@@ -10790,11 +11505,13 @@
    ],
    "regional": [
     true,
-    60
+    60,
+    "very probably visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002080071321688592
   },
@@ -10817,11 +11534,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -10844,11 +11563,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002957528969272971
   },
@@ -10857,7 +11578,8 @@
    "b": "similar_files/p03_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10046342238783836
   },
@@ -10866,7 +11588,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08793099373579025
   },
@@ -10875,7 +11598,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10341948568820952
   },
@@ -10884,7 +11608,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12088136672973633
   },
@@ -10893,7 +11618,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11694485917687417
   },
@@ -10902,7 +11628,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11208411753177643
   },
@@ -10911,7 +11638,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13677547872066498
   },
@@ -10920,7 +11648,8 @@
    "b": "similar_files/p00_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05828396417200565
   },
@@ -10929,7 +11658,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014788434654474259
   },
@@ -10952,11 +11682,13 @@
    ],
    "regional": [
     true,
-    60
+    60,
+    "very probably visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002080071321688592
   },
@@ -10979,11 +11711,13 @@
    ],
    "regional": [
     true,
-    100
+    100,
+    "near-perfect visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0
   },
@@ -11006,11 +11740,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002957528969272971
   },
@@ -11019,7 +11755,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2030165746808052
   },
@@ -11028,7 +11765,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12575137466192246
   },
@@ -11037,7 +11775,8 @@
    "b": "similar_files/p00_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06963390707969665
   },
@@ -11046,7 +11785,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05691758897155523
   },
@@ -11055,7 +11795,8 @@
    "b": "similar_files/p00_same_pixels.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05828396417200565
   },
@@ -11064,7 +11805,8 @@
    "b": "similar_files/p00_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05592151936143636
   },
@@ -11073,7 +11815,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1423824891448021
   },
@@ -11082,7 +11825,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09742020070552826
   },
@@ -11091,7 +11835,8 @@
    "b": "similar_files/p08_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18653222173452377
   },
@@ -11100,7 +11845,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1367727667093277
   },
@@ -11109,7 +11855,8 @@
    "b": "similar_files/p00_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.015990755707025527
   },
@@ -11118,7 +11865,8 @@
    "b": "similar_files/p00_same_pixels.bmp",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014788434654474259
   },
@@ -11127,7 +11875,8 @@
    "b": "similar_files/p00_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.015651653055101633
   },
@@ -11136,7 +11885,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09824177250266075
   },
@@ -11145,7 +11895,8 @@
    "b": "similar_files/p13_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11811751872301102
   },
@@ -11168,11 +11919,13 @@
    ],
    "regional": [
     true,
-    60
+    60,
+    "very probably visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002080071321688592
   },
@@ -11195,11 +11948,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0036445835605263713
   },
@@ -11208,7 +11963,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12161567658185958
   },
@@ -11217,7 +11973,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10063256993889808
   },
@@ -11226,7 +11983,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08926701843738556
   },
@@ -11235,7 +11993,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11298875883221626
   },
@@ -11244,7 +12003,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12638640254735947
   },
@@ -11267,11 +12027,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002957528969272971
   },
@@ -11280,7 +12042,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08867863714694976
   },
@@ -11289,7 +12052,8 @@
    "b": "similar_files/p01_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10842323303222656
   },
@@ -11298,7 +12062,8 @@
    "b": "similar_files/p01_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10723424851894378
   },
@@ -11307,7 +12072,8 @@
    "b": "similar_files/p05_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11183433681726454
   },
@@ -11316,7 +12082,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08695020824670792
   },
@@ -11325,7 +12092,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11100111827254296
   },
@@ -11334,7 +12102,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.128361339867115
   },
@@ -11343,7 +12112,8 @@
    "b": "similar_files/p01_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.01089588636532426
   },
@@ -11366,11 +12136,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.005060427635908127
   },
@@ -11379,7 +12151,8 @@
    "b": "similar_files/p01_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.01290054991841316
   },
@@ -11388,7 +12161,8 @@
    "b": "similar_files/p03_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0652623049914837
   },
@@ -11397,7 +12171,8 @@
    "b": "similar_files/p05_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0815379038453102
   },
@@ -11406,7 +12181,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0823510766029358
   },
@@ -11415,7 +12191,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08737169355154037
   },
@@ -11424,7 +12201,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08219606876373292
   },
@@ -11433,7 +12211,8 @@
    "b": "similar_files/p05_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07445034906268119
   },
@@ -11442,7 +12221,8 @@
    "b": "similar_files/p07_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11115344762802123
   },
@@ -11451,7 +12231,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20824667811393738
   },
@@ -11460,7 +12241,8 @@
    "b": "similar_files/p02_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05871818661689758
   },
@@ -11469,7 +12251,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2661328762769699
   },
@@ -11478,7 +12261,8 @@
    "b": "similar_files/p08_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16824859380722046
   },
@@ -11487,7 +12271,8 @@
    "b": "similar_files/p10_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05172441005706788
   },
@@ -11496,7 +12281,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.30438464879989624
   },
@@ -11505,7 +12291,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10046747848391532
   },
@@ -11514,7 +12301,8 @@
    "b": "similar_files/p03_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07340596951544284
   },
@@ -11523,7 +12311,8 @@
    "b": "similar_files/p03_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.012425305880606176
   },
@@ -11546,11 +12335,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004337262734770775
   },
@@ -11573,11 +12364,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0018488027155399325
   },
@@ -11586,7 +12379,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.020850587263703348
   },
@@ -11595,7 +12389,8 @@
    "b": "similar_files/p12_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11989632099866866
   },
@@ -11604,7 +12399,8 @@
    "b": "similar_files/p03_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0819715153425932
   },
@@ -11613,7 +12409,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07200421355664731
   },
@@ -11622,7 +12419,8 @@
    "b": "similar_files/p03_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07230485007166862
   },
@@ -11631,7 +12429,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0718339629471302
   },
@@ -11640,7 +12439,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12085699290037155
   },
@@ -11649,7 +12449,8 @@
    "b": "similar_files/p03_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014506124332547186
   },
@@ -11658,7 +12459,8 @@
    "b": "similar_files/p03_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.012952915951609613
   },
@@ -11667,7 +12469,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.030574263446033
   },
@@ -11676,7 +12479,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.078943932056427
   },
@@ -11699,11 +12503,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004023189982399344
   },
@@ -11712,7 +12518,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.021562854014337062
   },
@@ -11721,7 +12528,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.19127309024333952
   },
@@ -11730,7 +12538,8 @@
    "b": "similar_files/p03_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.020298224221915007
   },
@@ -11739,7 +12548,8 @@
    "b": "similar_files/p04_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.17585657984018327
   },
@@ -11748,7 +12558,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07478093579411507
   },
@@ -11757,7 +12568,8 @@
    "b": "similar_files/p13_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.11600956916809083
   },
@@ -11766,7 +12578,8 @@
    "b": "similar_files/p04_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0545244250446558
   },
@@ -11775,7 +12588,8 @@
    "b": "similar_files/p04_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.024889925494790077
   },
@@ -11798,11 +12612,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0013903448823839426
   },
@@ -11811,7 +12627,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014669369347393513
   },
@@ -11820,7 +12637,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.051316161081194876
   },
@@ -11829,7 +12647,8 @@
    "b": "similar_files/p04_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.063388379663229
   },
@@ -11838,7 +12657,8 @@
    "b": "similar_files/p04_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.053956170380115506
   },
@@ -11847,7 +12667,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.04343935661017895
   },
@@ -11856,7 +12677,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07873256132006645
   },
@@ -11865,7 +12687,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07773743569850922
   },
@@ -11874,7 +12697,8 @@
    "b": "similar_files/p10_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.31488623619079587
   },
@@ -11883,7 +12707,8 @@
    "b": "similar_files/p12_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25294263660907745
   },
@@ -11892,7 +12717,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.25128882080316545
   },
@@ -11901,7 +12727,8 @@
    "b": "similar_files/p04_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.02448018454015255
   },
@@ -11910,7 +12737,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.027138448506593704
   },
@@ -11919,7 +12747,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20379933416843415
   },
@@ -11928,7 +12757,8 @@
    "b": "similar_files/p12_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2250286668539047
   },
@@ -11937,7 +12767,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.21027310490608214
   },
@@ -11946,7 +12777,8 @@
    "b": "similar_files/p04_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014294133055955172
   },
@@ -11955,7 +12787,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.04968889243900776
   },
@@ -11964,7 +12797,8 @@
    "b": "similar_files/p05_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12037675231695175
   },
@@ -11973,7 +12807,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14598541781306265
   },
@@ -11982,7 +12817,8 @@
    "b": "similar_files/p05_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07628705389797688
   },
@@ -11991,7 +12827,8 @@
    "b": "similar_files/p05_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.02182667562738061
   },
@@ -12014,11 +12851,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004012355953454972
   },
@@ -12041,11 +12880,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002012498676776886
   },
@@ -12054,7 +12895,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.019657935574650762
   },
@@ -12063,7 +12905,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10312903374433517
   },
@@ -12072,7 +12915,8 @@
    "b": "similar_files/p05_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09311206750571727
   },
@@ -12081,7 +12925,8 @@
    "b": "similar_files/p05_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07453280240297316
   },
@@ -12090,7 +12935,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07523360550403595
   },
@@ -12099,7 +12945,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06627854630351065
   },
@@ -12108,7 +12955,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07693342566490173
   },
@@ -12117,7 +12965,8 @@
    "b": "similar_files/p10_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18043509498238564
   },
@@ -12126,7 +12975,8 @@
    "b": "similar_files/p05_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.02287347987294197
   },
@@ -12135,7 +12985,8 @@
    "b": "similar_files/p05_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.02153499312698841
   },
@@ -12144,7 +12995,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.03768800552934408
   },
@@ -12153,7 +13005,8 @@
    "b": "similar_files/p06_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10229209512472154
   },
@@ -12162,7 +13015,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1328037351369858
   },
@@ -12171,7 +13025,8 @@
    "b": "similar_files/p07_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.13151613771915435
   },
@@ -12194,11 +13049,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003866507578641176
   },
@@ -12207,7 +13064,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.019510323926806447
   },
@@ -12216,7 +13074,8 @@
    "b": "similar_files/p05_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.019166705571115016
   },
@@ -12225,7 +13084,8 @@
    "b": "similar_files/p08_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07625797986984253
   },
@@ -12234,7 +13094,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07184320241212845
   },
@@ -12243,7 +13104,8 @@
    "b": "similar_files/p06_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05204261355102061
   },
@@ -12252,7 +13114,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.01856227982789278
   },
@@ -12275,11 +13138,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0016960117965936663
   },
@@ -12288,7 +13153,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.012639890797436238
   },
@@ -12297,7 +13163,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07907442823052406
   },
@@ -12306,7 +13173,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.14775341451168061
   },
@@ -12315,7 +13183,8 @@
    "b": "similar_files/p06_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.059537791088223456
   },
@@ -12324,7 +13193,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05250515211373567
   },
@@ -12333,7 +13203,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06453260406851768
   },
@@ -12342,7 +13213,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16492206007242202
   },
@@ -12351,7 +13223,8 @@
    "b": "similar_files/p13_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12548992782831192
   },
@@ -12360,7 +13233,8 @@
    "b": "similar_files/p06_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.019056589715182783
   },
@@ -12369,7 +13243,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.026945624127984045
   },
@@ -12378,7 +13253,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.124733267724514
   },
@@ -12387,7 +13263,8 @@
    "b": "similar_files/p06_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.013491778075695036
   },
@@ -12396,7 +13273,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10573902726173401
   },
@@ -12405,7 +13283,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07889774292707444
   },
@@ -12414,7 +13293,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.15836574137210846
   },
@@ -12423,7 +13303,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10082703009247779
   },
@@ -12432,7 +13313,8 @@
    "b": "similar_files/p09_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06792396008968353
   },
@@ -12441,7 +13323,8 @@
    "b": "similar_files/p11_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.10419836193323134
   },
@@ -12450,7 +13333,8 @@
    "b": "similar_files/p07_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06889162696897982
   },
@@ -12473,11 +13357,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003914400236681104
   },
@@ -12500,11 +13386,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002472770004533231
   },
@@ -12513,7 +13401,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.022399835474789145
   },
@@ -12522,7 +13411,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.16504886895418167
   },
@@ -12531,7 +13421,8 @@
    "b": "similar_files/p07_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06739218607544899
   },
@@ -12540,7 +13431,8 @@
    "b": "similar_files/p07_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06834839358925819
   },
@@ -12549,7 +13441,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06535006836056709
   },
@@ -12572,11 +13465,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00477398200891912
   },
@@ -12585,7 +13480,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.023148579709231856
   },
@@ -12594,7 +13490,8 @@
    "b": "similar_files/p07_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.02261756844818592
   },
@@ -12603,7 +13500,8 @@
    "b": "similar_files/p13_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08274908661842345
   },
@@ -12612,7 +13510,8 @@
    "b": "similar_files/p08_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06751255542039872
   },
@@ -12621,7 +13520,8 @@
    "b": "similar_files/p13_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09363115578889847
   },
@@ -12630,7 +13530,8 @@
    "b": "similar_files/p08_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.052089094743132586
   },
@@ -12639,7 +13540,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.011288079526275396
   },
@@ -12662,11 +13564,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007603237591683866
   },
@@ -12689,11 +13593,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0009836479206569494
   },
@@ -12702,7 +13608,8 @@
    "b": "similar_files/p09_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12974478602409364
   },
@@ -12711,7 +13618,8 @@
    "b": "similar_files/p08_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.054637468233704564
   },
@@ -12720,7 +13628,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05362374056130648
   },
@@ -12729,7 +13638,8 @@
    "b": "similar_files/p08_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.052531777508556844
   },
@@ -12738,7 +13648,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0650836281478405
   },
@@ -12747,7 +13658,8 @@
    "b": "similar_files/p08_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.013090941123664379
   },
@@ -12756,7 +13668,8 @@
    "b": "similar_files/p08_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010980145819485188
   },
@@ -12765,7 +13678,8 @@
    "b": "similar_files/p09_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.12940690591931342
   },
@@ -12774,7 +13688,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1609778217971325
   },
@@ -12783,7 +13698,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.09498838037252426
   },
@@ -12792,7 +13708,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.1051970526576042
   },
@@ -12815,11 +13732,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "not visual duplicates\n(alternate)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007171626761555671
   },
@@ -12828,7 +13747,8 @@
    "b": "similar_files/p09_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05806102529168129
   },
@@ -12851,11 +13771,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0029788597486913202
   },
@@ -12878,11 +13800,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0029093355871737
   },
@@ -12905,11 +13829,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.002737061842344701
   },
@@ -12918,7 +13844,8 @@
    "b": "similar_files/p09_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.056351037323474885
   },
@@ -12927,7 +13854,8 @@
    "b": "similar_files/p09_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05704362280666828
   },
@@ -12936,7 +13864,8 @@
    "b": "similar_files/p09_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0554186150431633
   },
@@ -12959,11 +13888,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004388579679653048
   },
@@ -12986,11 +13917,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.003333225706592202
   },
@@ -13013,11 +13946,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004496876057237387
   },
@@ -13026,7 +13961,8 @@
    "b": "similar_files/p10_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08844496384263038
   },
@@ -13049,11 +13985,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.007372588384896517
   },
@@ -13062,7 +14000,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18510713577270507
   },
@@ -13071,7 +14010,8 @@
    "b": "similar_files/p10_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.08684483394026757
   },
@@ -13080,7 +14020,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.20567171201109885
   },
@@ -13089,7 +14030,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2894817009568214
   },
@@ -13098,7 +14040,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.18305320292711258
   },
@@ -13107,7 +14050,8 @@
    "b": "similar_files/p11_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0421201154589653
   },
@@ -13130,11 +14074,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009361703973263502
   },
@@ -13157,11 +14103,13 @@
    ],
    "regional": [
     true,
-    60
+    60,
+    "very probably visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0018283768324181438
   },
@@ -13184,11 +14132,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001104268489871174
   },
@@ -13211,11 +14161,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006486351136118173
   },
@@ -13224,7 +14176,8 @@
    "b": "similar_files/p11_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.040474933199584485
   },
@@ -13233,7 +14186,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.04348163176327944
   },
@@ -13242,7 +14196,8 @@
    "b": "similar_files/p11_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.04249207302927971
   },
@@ -13251,7 +14206,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.048541849479079247
   },
@@ -13260,7 +14216,8 @@
    "b": "similar_files/p11_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.010516250133514404
   },
@@ -13283,11 +14240,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008953178860247135
   },
@@ -13296,7 +14255,8 @@
    "b": "similar_files/p11_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.014724894426763058
   },
@@ -13305,7 +14265,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.22050915658473969
   },
@@ -13328,11 +14289,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0023440053220838307
   },
@@ -13355,11 +14318,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006244463613256812
   },
@@ -13382,11 +14347,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006675672624260187
   },
@@ -13395,7 +14362,8 @@
    "b": "similar_files/p13_base.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.2144021525979042
   },
@@ -13404,7 +14372,8 @@
    "b": "similar_files/p12_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.05985356830060482
   },
@@ -13427,11 +14396,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00624699373729527
   },
@@ -13454,11 +14425,13 @@
    ],
    "regional": [
     true,
-    60
+    60,
+    "very probably visual duplicates"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.0021908401045948266
   },
@@ -13467,7 +14440,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.017964290268719197
   },
@@ -13476,7 +14450,8 @@
    "b": "similar_files/p12_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.06438924949616193
   },
@@ -13485,7 +14460,8 @@
    "b": "similar_files/p12_noised.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.061291073635220523
   },
@@ -13494,7 +14470,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0773548923432827
   },
@@ -13503,7 +14480,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.17320546954870225
   },
@@ -13526,11 +14504,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.006790317920967936
   },
@@ -13539,7 +14519,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.018377002514898776
   },
@@ -13548,7 +14529,8 @@
    "b": "similar_files/p12_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.017971209809184076
   },
@@ -13557,7 +14539,8 @@
    "b": "similar_files/p13_brightened.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07155972421169282
   },
@@ -13580,11 +14563,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.008057054597884417
   },
@@ -13607,11 +14592,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.001081740448717028
   },
@@ -13634,11 +14621,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004354961961507797
   },
@@ -13647,7 +14636,8 @@
    "b": "similar_files/p13_cropped.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07371065821498632
   },
@@ -13656,7 +14646,8 @@
    "b": "similar_files/p13_resized.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.07162347007542848
   },
@@ -13665,7 +14656,8 @@
    "b": "similar_files/p13_shifted.png",
    "simple": [
     false,
-    0
+    0,
+    "not visual duplicates"
    ],
    "simple_score": 0.0673339631408453
   },
@@ -13688,11 +14680,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.00765485605224967
   },
@@ -13715,11 +14709,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.009264331869781017
   },
@@ -13742,11 +14738,13 @@
    ],
    "regional": [
     false,
-    0
+    0,
+    "probably not visual duplicates\n(alternate/severe re-encode?)"
    ],
    "simple": [
     true,
-    40
+    40,
+    "probably visual duplicates"
    ],
    "simple_score": 0.004538857867009937
   }

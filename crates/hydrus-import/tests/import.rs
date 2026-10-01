@@ -214,7 +214,7 @@ fn rules_veto_and_bad_files_error() {
     assert_eq!(vetoed.status, ImportStatus::Vetoed);
     assert_eq!(
         vetoed.note,
-        "File was 104KB but the upper limit in the File Filtering Import Options is 1KB."
+        "File was 104 KB but the upper limit in the File Filtering Import Options is 1 KB."
     );
 
     let junk = w

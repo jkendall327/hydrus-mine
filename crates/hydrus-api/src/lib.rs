@@ -15,7 +15,6 @@ use hydrus_store::Store;
 pub mod auth;
 pub mod domains;
 pub mod error;
-pub mod file_filter;
 pub mod location;
 pub mod media_json;
 pub mod params;

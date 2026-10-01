@@ -45,6 +45,8 @@ pub struct FileFacts {
     pub has_icc_profile: bool,
     /// The filetype was forced (the file has an original filetype).
     pub filetype_forced: bool,
+    /// The hash of the decoded pixels, for images.
+    pub pixel_hash: Option<hydrus_core::Sha256>,
     pub inbox: bool,
     pub urls: Vec<String>,
     /// The URL classes (by case-folded name) that match any of `urls`.
@@ -425,6 +427,7 @@ pub fn load_facts(
             facts.num_frames = info.num_frames;
             facts.has_audio = info.has_audio;
             facts.filetype_forced = info.original_mime.is_some();
+            facts.pixel_hash = info.pixel_hash;
             facts.has_exif = flags.has(F::EXIF);
             facts.has_icc_profile = flags.has(F::ICC_PROFILE);
             facts.has_human_readable_embedded_metadata = flags.has(F::HUMAN_READABLE_METADATA);

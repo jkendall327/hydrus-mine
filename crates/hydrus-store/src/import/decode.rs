@@ -226,14 +226,25 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             let merge = duplicate_merge_settings(stored, &mut input.warnings)?;
             insert_setting(&mut input, &merge)?;
         }
+        let mut filter = DuplicateFilterSettings::default();
         if let Some(&size) = options.integers.get("duplicate_filter_max_batch_size") {
-            insert_setting(
-                &mut input,
-                &DuplicateFilterSettings {
-                    max_batch_size: positive(size, "duplicate filter batch size")?,
-                },
-            )?;
+            filter.max_batch_size = positive(size, "duplicate filter batch size")?;
         }
+        if let Some(&size) = options
+            .noneable_integers
+            .get("duplicate_filter_auto_commit_batch_size")
+        {
+            filter.auto_commit_batch_size = size.map(|n| u32::try_from(n).unwrap_or(0));
+        }
+        if let Some(&advanced) = options.booleans.get("advanced_mode") {
+            filter.merge_alternates = advanced;
+        }
+        for (name, score) in filter.scores.by_option_name() {
+            if let Some(&n) = options.integers.get(name) {
+                *score = i32::try_from(n).unwrap_or(0);
+            }
+        }
+        insert_setting(&mut input, &filter)?;
     }
     insert_setting(&mut input, &thumbnails)?;
     if let Some(manager) = db.tag_display_manager()? {

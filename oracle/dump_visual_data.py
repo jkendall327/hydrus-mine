@@ -13,7 +13,8 @@ the pair. This records, for the Rust port:
 - `jpegs`: the reference's reading of generated jpegs' quality
   (`oracle/fixtures/visual_jpegs/`), for "A has clearly better jpeg
   quality" and "is a progressive jpeg".
-- `pairs`: the reference's verdicts (and the scores behind them) on pairs of
+- `pairs`: the reference's verdicts (with their statements, and the scores
+  behind them) on pairs of
   the auto-resolution and similar-files fixture images, loaded as its image renderer loads
   them (`GenerateNumPyImage`).
 
@@ -200,17 +201,17 @@ def pairs():
         ( va, ta ) = data[ a ]
         ( vb, tb ) = data[ b ]
 
-        ( simple_ok, simple_result, _ ) = V.FilesAreVisuallySimilarSimple( va, vb )
+        ( simple_ok, simple_result, simple_statement ) = V.FilesAreVisuallySimilarSimple( va, vb )
 
         ( interesting, lab_score ) = V.GetVisualDataWassersteinDistanceScore( va.lab_histograms, vb.lab_histograms )
 
-        row = { 'a' : a, 'b' : b, 'simple' : [ simple_ok, simple_result ], 'simple_score' : lab_score }
+        row = { 'a' : a, 'b' : b, 'simple' : [ simple_ok, simple_result, simple_statement ], 'simple_score' : lab_score }
 
         if simple_ok:
 
-            ( regional_ok, regional_result, _ ) = V.FilesAreVisuallySimilarRegional( ta, tb )
+            ( regional_ok, regional_result, regional_statement ) = V.FilesAreVisuallySimilarRegional( ta, tb )
 
-            row[ 'regional' ] = [ regional_ok, regional_result ]
+            row[ 'regional' ] = [ regional_ok, regional_result, regional_statement ]
             row[ 'edge' ] = [ float( x ) for x in V.FilesAreVisuallySimilarRegionalEdgeMapRaw( ta.edge_map, tb.edge_map ) ]
             row[ 'lab' ] = [ float( x ) if not isinstance( x, bool ) else x for x in V.FilesAreVisuallySimilarRegionalLabHistogramsRaw( ta.histograms, tb.histograms ) ]
 

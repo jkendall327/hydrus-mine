@@ -3,7 +3,7 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::human_int;
+use hydrus_core::numbers::{human_bytes, resolution_text};
 use hydrus_core::{Mime, ServiceId};
 use hydrus_store::services::ServiceRegistry;
 
@@ -193,49 +193,7 @@ impl FileImportOptions {
 
 fn resolution(width: Option<u32>, height: Option<u32>) -> String {
     match (width, height) {
-        (Some(w), Some(h)) => format!("{}x{}", human_int(u64::from(w)), human_int(u64::from(h))),
+        (Some(w), Some(h)) => resolution_text(u64::from(w), u64::from(h)),
         _ => "no resolution".into(),
-    }
-}
-
-/// Sizes as the reference words them: `512B`, `237KB`, `1.5MB`.
-pub fn human_bytes(size: u64) -> String {
-    if size < 1024 {
-        return format!("{}B", human_int(size));
-    }
-    let mut value = size as f64;
-    let mut suffix = 0;
-    while value >= 1024.0 && suffix < 5 {
-        value /= 1024.0;
-        suffix += 1;
-    }
-    // three significant figures, keeping every integer digit
-    let decimals = if value >= 100.0 {
-        0
-    } else if value >= 10.0 {
-        1
-    } else {
-        2
-    };
-    let text = format!("{value:.decimals$}");
-    let text = if text.contains('.') {
-        text.trim_end_matches('0').trim_end_matches('.').to_owned()
-    } else {
-        text
-    };
-    format!("{text}{}B", ["", "K", "M", "G", "T", "P"][suffix])
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn bytes_read_like_the_reference() {
-        assert_eq!(human_bytes(512), "512B");
-        assert_eq!(human_bytes(1024), "1KB");
-        assert_eq!(human_bytes(1536), "1.5KB");
-        assert_eq!(human_bytes(237 * 1024), "237KB");
-        assert_eq!(human_bytes(10 * 1024 * 1024 + 300 * 1024), "10.3MB");
     }
 }

@@ -10,6 +10,7 @@ use tokio::io::AsyncWriteExt as _;
 use tokio::sync::Semaphore;
 use tokio_util::sync::CancellationToken;
 
+use hydrus_core::numbers::human_bytes;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
 use hydrus_core::url::pyurl::urljoin;
 use hydrus_core::url::{UrlType, psl};
@@ -234,21 +235,6 @@ fn now() -> i64 {
     SystemTime::now()
         .duration_since(UNIX_EPOCH)
         .map_or(0, |d| d.as_secs() as i64)
-}
-
-fn human_bytes(n: u64) -> String {
-    let units = ["B", "KB", "MB", "GB", "TB"];
-    let mut value = n as f64;
-    let mut unit = 0;
-    while value >= 1024.0 && unit + 1 < units.len() {
-        value /= 1024.0;
-        unit += 1;
-    }
-    if unit == 0 {
-        format!("{n}B")
-    } else {
-        format!("{value:.1}{}", units[unit])
-    }
 }
 
 fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {

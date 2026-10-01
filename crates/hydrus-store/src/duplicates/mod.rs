@@ -20,7 +20,7 @@ use rusqlite::{Connection, OptionalExtension, params};
 
 use hydrus_core::{HashId, ServiceId};
 
-use self::cache::{FileShape, PairRow};
+use self::cache::PairRow;
 use crate::error::Result;
 use crate::master::id_array;
 use crate::store::Snapshot;
@@ -41,14 +41,106 @@ type GroupId = u32;
 pub struct DuplicateFilterSettings {
     /// How many pairs to fetch for one batch of filtering.
     pub max_batch_size: u32,
+    /// A batch with at most this many decisions, and no pair skipped by
+    /// hand, is committed without asking
+    /// (`duplicate_filter_auto_commit_batch_size`).
+    #[serde(default = "default_auto_commit")]
+    pub auto_commit_batch_size: Option<u32>,
+    /// Setting files as alternates merges their metadata too (the reference
+    /// does so only in advanced mode).
+    #[serde(default)]
+    pub merge_alternates: bool,
+    #[serde(default)]
+    pub scores: ComparisonScores,
+}
+
+#[allow(clippy::unnecessary_wraps)] // (serde's default for an option)
+fn default_auto_commit() -> Option<u32> {
+    Some(1)
 }
 
 impl Default for DuplicateFilterSettings {
     fn default() -> Self {
-        // the reference's default (checked against the fixture's options)
+        // the reference's defaults (checked against the fixture's options)
         Self {
             max_batch_size: 100,
+            auto_commit_batch_size: default_auto_commit(),
+            merge_alternates: false,
+            scores: ComparisonScores::default(),
         }
+    }
+}
+
+/// How much each difference counts towards the file shown being the better
+/// of a pair (the options' `duplicate_comparison_score_*`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ComparisonScores {
+    pub higher_filesize: i32,
+    pub much_higher_filesize: i32,
+    pub higher_resolution: i32,
+    pub much_higher_resolution: i32,
+    pub more_tags: i32,
+    pub older: i32,
+    pub nicer_ratio: i32,
+    pub has_audio: i32,
+    pub higher_jpeg_quality: i32,
+    pub much_higher_jpeg_quality: i32,
+}
+
+impl Default for ComparisonScores {
+    fn default() -> Self {
+        Self {
+            higher_filesize: 10,
+            much_higher_filesize: 20,
+            higher_resolution: 20,
+            much_higher_resolution: 50,
+            more_tags: 8,
+            older: 4,
+            nicer_ratio: 10,
+            has_audio: 20,
+            higher_jpeg_quality: 10,
+            much_higher_jpeg_quality: 20,
+        }
+    }
+}
+
+impl ComparisonScores {
+    /// The options' names for each score, for reading them.
+    pub fn by_option_name(&mut self) -> [(&'static str, &mut i32); 10] {
+        [
+            (
+                "duplicate_comparison_score_higher_filesize",
+                &mut self.higher_filesize,
+            ),
+            (
+                "duplicate_comparison_score_much_higher_filesize",
+                &mut self.much_higher_filesize,
+            ),
+            (
+                "duplicate_comparison_score_higher_resolution",
+                &mut self.higher_resolution,
+            ),
+            (
+                "duplicate_comparison_score_much_higher_resolution",
+                &mut self.much_higher_resolution,
+            ),
+            ("duplicate_comparison_score_more_tags", &mut self.more_tags),
+            ("duplicate_comparison_score_older", &mut self.older),
+            (
+                "duplicate_comparison_score_nicer_ratio",
+                &mut self.nicer_ratio,
+            ),
+            ("duplicate_comparison_score_has_audio", &mut self.has_audio),
+            (
+                "duplicate_comparison_score_higher_jpeg_quality",
+                &mut self.higher_jpeg_quality,
+            ),
+            (
+                "duplicate_comparison_score_much_higher_jpeg_quality",
+                &mut self.much_higher_jpeg_quality,
+            ),
+        ]
     }
 }
 
@@ -491,7 +583,8 @@ pub enum PairSelection {
 }
 
 /// Potential pairs for a duplicate filter: the pairs `search` finds, chosen
-/// and ordered as asked, each as `(a, b)` with the likely better file first.
+/// and ordered as asked, each as its two kings, the smaller group's first
+/// (the duplicate filter then decides which to show first).
 pub fn select_pairs(
     conn: &Connection,
     snapshot: &Snapshot,
@@ -503,7 +596,7 @@ pub fn select_pairs(
     let in_scope = pairs_in_scope(conn, snapshot, &search.scope)?;
     let mut pairs = matching(conn, search, &in_scope)?;
     // a missing or zero size counts as 1, as in the reference
-    let sizes = |p: &PairRow| (p.smaller_shape.size.max(1), p.larger_shape.size.max(1));
+    let sizes = |p: &PairRow| (p.smaller_size.max(1), p.larger_size.max(1));
 
     // ties break by ids, so the order is deterministic
     let ids = |p: &PairRow| (p.smaller_king, p.larger_king);
@@ -559,18 +652,9 @@ pub fn select_pairs(
         },
     };
 
-    // the better-looking file first: more pixels, then a bigger file
     Ok(chosen
         .into_iter()
-        .map(|p| {
-            let rank =
-                |h: HashId, shape: FileShape| (shape.pixels, shape.size, std::cmp::Reverse(h));
-            if rank(p.larger_king, p.larger_shape) > rank(p.smaller_king, p.smaller_shape) {
-                (p.larger_king, p.smaller_king)
-            } else {
-                (p.smaller_king, p.larger_king)
-            }
-        })
+        .map(|p| (p.smaller_king, p.larger_king))
         .collect())
 }
 

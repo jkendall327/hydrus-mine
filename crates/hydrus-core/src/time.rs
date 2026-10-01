@@ -126,9 +126,93 @@ pub fn pretty_time_delta(seconds: i64, no_bigger_than_days: bool) -> String {
     }
 }
 
+/// A span of seconds, which may be fractional or negative, as the
+/// reference words it (`HydrusTime.TimeDeltaToPrettyTimeDelta`): under a
+/// second in milliseconds (`600 milliseconds`, `12.5 milliseconds`) or
+/// microseconds, under a minute with a decimal place if it isn't whole
+/// (`12.3 seconds`).
+#[allow(clippy::float_cmp)] // (compared as the reference compares)
+pub fn pretty_time_delta_f64(seconds: f64) -> String {
+    if seconds == 0.0 {
+        return "0 seconds".into();
+    }
+    let (sign, seconds) = if seconds < 0.0 {
+        ("-", -seconds)
+    } else {
+        ("", seconds)
+    };
+    let text = if seconds >= 60.0 {
+        pretty_time_delta(seconds as i64, false)
+    } else if seconds > 1.0 {
+        if seconds.fract() == 0.0 {
+            format!("{} seconds", seconds as i64)
+        } else {
+            format!("{seconds:.1} seconds")
+        }
+    } else if seconds == 1.0 {
+        "1 second".into()
+    } else {
+        let ms = seconds * 1000.0;
+        if ms > 100.0 || ms.fract() == 0.0 {
+            format!("{} milliseconds", ms as i64)
+        } else if ms > 10.0 {
+            format!("{ms:.1} milliseconds")
+        } else if ms >= 1.0 {
+            format!("{ms:.2} milliseconds")
+        } else {
+            format!("{} microseconds", (ms * 1000.0) as i64)
+        }
+    };
+    format!("{sign}{text}")
+}
+
+/// How long ago (or until) `timestamp` is from `now`, both in seconds
+/// (`HydrusTime.TimestampToPrettyTimeDelta`): `now` within three seconds,
+/// else the span with `history_suffix` (`" ago"`, `" old"`) if it is past,
+/// or `in ` before it if it is to come.
+pub fn timestamp_to_pretty_time_delta(timestamp: i64, now: i64, history_suffix: &str) -> String {
+    let delta = (timestamp - now).abs();
+    if delta <= 3 {
+        return "now".into();
+    }
+    let span = pretty_time_delta(delta, false);
+    if now > timestamp {
+        format!("{span}{history_suffix}")
+    } else {
+        format!("in {span}")
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn spans_as_the_reference_words_them() {
+        // (checked against TimeDeltaToPrettyTimeDelta)
+        for (seconds, text) in [
+            (0.6, "600 milliseconds"),
+            (0.0125, "12.5 milliseconds"),
+            (0.0012, "1.20 milliseconds"),
+            (0.000_5, "500 microseconds"),
+            (1.0, "1 second"),
+            (12.25, "12.2 seconds"),
+            (5.0, "5 seconds"),
+            (90.5, "1 minute 30 seconds"),
+            (-2.5, "-2.5 seconds"),
+        ] {
+            assert_eq!(pretty_time_delta_f64(seconds), text, "{seconds}");
+        }
+        assert_eq!(
+            timestamp_to_pretty_time_delta(1000, 1000 + 86_400 * 40, " old"),
+            "1 month 9 days old"
+        );
+        assert_eq!(timestamp_to_pretty_time_delta(1000, 1002, " old"), "now");
+        assert_eq!(
+            timestamp_to_pretty_time_delta(1000, 900, " ago"),
+            "in 1 minute 40 seconds"
+        );
+    }
 
     #[test]
     fn conversions() {

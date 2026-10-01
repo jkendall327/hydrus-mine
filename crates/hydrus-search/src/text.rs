@@ -15,7 +15,7 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::human_int;
+use hydrus_core::numbers::{float_to_percentage, human_int};
 use hydrus_core::search::filetype::FiletypeSet;
 use hydrus_core::search::number::{Comparison, NumberOp, NumberTest, RatioOp, TagNumberOp};
 use hydrus_core::search::predicate::{
@@ -550,17 +550,6 @@ fn number_test_text(test: &NumberTest, render: fn(u64) -> String) -> String {
         }
     };
     format!("{op} {}{extra}", render(test.value))
-}
-
-/// `HydrusNumbers.FloatToPercentage`.
-#[allow(clippy::float_cmp)] // as the reference tests for a whole number
-fn float_to_percentage(f: f64) -> String {
-    let percent = f * 100.0;
-    if percent == percent.trunc() {
-        format!("{}%", percent as i64)
-    } else {
-        format!("{percent:.1}%")
-    }
 }
 
 /// `HydrusTime.MillisecondsDurationToPrettyTime` with `force_numbers`.
