@@ -579,3 +579,42 @@ async fn a_refusal_from_a_site_hydrus_logged_in_to_says_why() {
     assert_eq!(seeds[0].status, SeedStatus::Vetoed);
     assert!(seeds[0].note.contains("login script"), "{}", seeds[0].note);
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_queue_with_no_import_destination_pauses_its_files() {
+    use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions};
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let options = ImportOptionsSlice {
+        locations: Some(LocationOptions {
+            destinations: Vec::new(),
+            ..LocationOptions::default()
+        }),
+        ..ImportOptionsSlice::default()
+    };
+    let queue = s
+        .runner
+        .url_queue_for(Some("nowhere"), None, Some(&options))
+        .unwrap();
+    let urls = vec![format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    let mut paused = false;
+    for _ in 0..100 {
+        let q = s.store.read(|conn| queues::queue(conn, queue.id)).unwrap();
+        if q.is_some_and(|q| q.files_paused) {
+            paused = true;
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    assert!(paused, "the queue's files paused");
+    // the URL waits, untouched
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::Unknown);
+    assert!(s.site.hits.lock().is_empty());
+}

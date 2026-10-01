@@ -509,11 +509,7 @@ impl Downloader {
             let options = self
                 .full_options(CallerType::LocalImportFolder, &folder.queue.options, &[])
                 .map_err(|e| e.to_string())?;
-            if options.locations.destinations.is_empty() {
-                return Err(
-                    "There is no import destination set in the Location Import Options!".into(),
-                );
-            }
+            options.locations.check_ready_to_import()?;
             let due_by_check_now = folder.settings.check_now;
             let due_by_period = folder.settings.check_regularly
                 && now > folder.settings.last_checked + folder.settings.period;

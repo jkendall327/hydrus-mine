@@ -200,6 +200,20 @@ impl FileImporter {
                 raised: None,
             });
         }
+        // (the reference's job raises this before the file reaches the
+        // database; here it is before the file reaches storage)
+        let destinations = match options.destinations(&snap.services) {
+            Ok(d) => d,
+            Err(note) => {
+                return Ok(ImportResult {
+                    status: ImportStatus::Vetoed,
+                    hash: Some(hash),
+                    mime: Some(mime),
+                    note: note.to_owned(),
+                    raised: Some(note.to_owned()),
+                });
+            }
+        };
 
         // media first, under a claim, so the purge job can't race us
         let _claim = self.store.media_claims().claim(hash);
@@ -231,7 +245,6 @@ impl FileImporter {
             std::fs::write(&thumb_path, &thumbnail.bytes)?;
         }
 
-        let destinations = options.destinations(&snap.services);
         let archive = options.automatically_archive;
         let record = FileRecord::new(hash, &analysis, modified);
         let status = self.store.write_content(move |w| {
@@ -270,7 +283,8 @@ impl FileImporter {
     pub fn update_already_in_db(&self, hash: &Sha256, options: &FileImportOptions) -> Result<()> {
         let snap = self.store.snapshot();
         let destinations = if options.destinations_for_already_in_db {
-            options.destinations(&snap.services)
+            // (with no destination, there is nowhere to add it)
+            options.destinations(&snap.services).unwrap_or_default()
         } else {
             Vec::new()
         };

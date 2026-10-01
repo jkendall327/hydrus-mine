@@ -546,8 +546,6 @@ impl QueueRunner {
     }
 
     /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
-    /// queue.
-    /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
     /// queue, up to a gallery search's file limit.
     async fn work_on_gallery_seed(
         &self,
@@ -680,6 +678,21 @@ impl QueueRunner {
                 return false;
             }
         };
+        // (`CheckImporterCanDoFileWorkBecauseLocationsProblem`: the files
+        // pause, and the seed waits)
+        if let Err(e) = options.locations.check_ready_to_import() {
+            let id = queue.id;
+            if let Err(e) = self
+                .downloader
+                .store
+                .write(move |ctx| queues::set_paused(ctx.conn(), id, Some(true), None))
+            {
+                tracing::error!("pausing an import queue: {e}");
+            }
+            tracing::warn!(queue = %queue.name, "{e} The queue's files are paused.");
+            handle.status.lock().files_status = e.into();
+            return false;
+        }
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();

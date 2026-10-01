@@ -359,6 +359,10 @@ impl Downloader {
                 }
                 self.sync_queries(&mut sub, due, job, &mut report).await?;
             }
+            self.full_options(CallerType::Subscription, &sub.settings.import_options, &[])?
+                .locations
+                .check_ready_to_import()
+                .map_err(|e| RunStop::Failed(e.into()))?;
             self.work_on_queries_files(&mut sub, job, &mut report).await
         }
         .await;

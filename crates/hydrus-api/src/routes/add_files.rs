@@ -283,7 +283,7 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
                         ));
                     }
                 }
-                options.destinations = domains.current;
+                options.destinations = Some(domains.current);
             }
             let result = match &file {
                 GivenFile::Upload(bytes) => app.importer.import_bytes(bytes, &options),

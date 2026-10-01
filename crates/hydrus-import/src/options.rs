@@ -20,8 +20,9 @@ pub struct FileImportOptions {
     pub max_gif_size: Option<u64>,
     pub min_resolution: Option<(u32, u32)>,
     pub max_resolution: Option<(u32, u32)>,
-    /// Local file domains to import into; empty means the first one ("my files").
-    pub destinations: Vec<ServiceId>,
+    /// Local file domains to import into: `None` is the first one ("my
+    /// files"), and none at all blocks new files, as in the reference.
+    pub destinations: Option<Vec<ServiceId>>,
     /// Archive new files instead of putting them in the inbox.
     pub automatically_archive: bool,
     /// Add files already in the client to the destinations too.
@@ -42,7 +43,7 @@ impl Default for FileImportOptions {
             max_gif_size: None,
             min_resolution: None,
             max_resolution: None,
-            destinations: Vec::new(),
+            destinations: None,
             automatically_archive: false,
             destinations_for_already_in_db: false,
             archive_already_in_db: true,
@@ -93,7 +94,7 @@ impl FileImportOptions {
             max_gif_size: filtering.max_gif_size,
             min_resolution: filtering.min_resolution,
             max_resolution: filtering.max_resolution,
-            destinations,
+            destinations: Some(destinations),
             automatically_archive: locations.automatically_archive,
             destinations_for_already_in_db: locations.destinations_for_already_in_db,
             archive_already_in_db: locations.archive_already_in_db,
@@ -101,12 +102,14 @@ impl FileImportOptions {
         }
     }
 
-    /// The local file domains new files go to.
-    pub fn destinations(&self, services: &ServiceRegistry) -> Vec<ServiceId> {
-        if self.destinations.is_empty() {
-            crate::local_domains(services).into_iter().take(1).collect()
-        } else {
-            self.destinations.clone()
+    /// The local file domains new files go to, or the reference's error
+    /// when there are none (the reference drops destinations that no longer
+    /// exist before `CheckReadyToImport`).
+    pub fn destinations(&self, services: &ServiceRegistry) -> Result<Vec<ServiceId>, &'static str> {
+        match &self.destinations {
+            None => Ok(crate::local_domains(services).into_iter().take(1).collect()),
+            Some(d) if d.is_empty() => Err(hydrus_core::import_options::NO_IMPORT_DESTINATION),
+            Some(d) => Ok(d.clone()),
         }
     }
 

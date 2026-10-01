@@ -367,3 +367,35 @@ fn crc32(data: &[u8]) -> u32 {
     }
     !crc
 }
+
+#[test]
+fn a_new_file_with_no_import_destination_is_vetoed() {
+    use hydrus_core::import_options::{CallerType, ImportOptionsManager, NO_IMPORT_DESTINATION};
+    let w = world();
+    let path = media_dir().join("png_rgb.png");
+    // options whose only destination has since been deleted
+    let mut full = ImportOptionsManager::default().full(CallerType::ClientApi, None, &[]);
+    full.locations.destinations = vec!["ab".repeat(32)];
+    let options = FileImportOptions::from_full(&full, &w.store.snapshot().services);
+    let result = w.importer.import_path(&path, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::Vetoed);
+    assert_eq!(result.note, NO_IMPORT_DESTINATION);
+    assert_eq!(result.raised.as_deref(), Some(NO_IMPORT_DESTINATION));
+    let hash = result.hash.unwrap();
+    let stored = w
+        .store
+        .snapshot()
+        .storage
+        .file_path(&hash, result.mime.unwrap());
+    assert!(!stored.unwrap().exists(), "nothing reaches storage");
+
+    // with somewhere to go, it imports
+    let result = w
+        .importer
+        .import_path(&path, &FileImportOptions::default())
+        .unwrap();
+    assert_eq!(result.status, ImportStatus::SuccessfulAndNew);
+    // and a file the client has is only "already in db", as in the reference
+    let result = w.importer.import_path(&path, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::SuccessfulButRedundant);
+}

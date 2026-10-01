@@ -610,3 +610,62 @@ async fn subscriptions_wait_while_paused_globally() {
         .unwrap();
     assert_eq!(report.new_urls, 3);
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_with_no_import_destination_waits_out_its_error_delay() {
+    use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions, NO_IMPORT_DESTINATION};
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=2);
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        import_options: ImportOptionsSlice {
+            locations: Some(LocationOptions {
+                destinations: Vec::new(),
+                ..LocationOptions::default()
+            }),
+            ..ImportOptionsSlice::default()
+        },
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "nowhere", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    // the search still runs; the files wait
+    assert_eq!(report.new_urls, 2);
+    let unknown = SeedStatus::Unknown;
+    assert_eq!(post_ids(&s.store, queue), [(1, unknown), (2, unknown)]);
+    assert_eq!(
+        report.notices,
+        [format!(
+            "The subscription \"nowhere\" encountered an error when trying to sync: {NO_IMPORT_DESTINATION}"
+        )]
+    );
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    // (subscription_other_error_delay: 36 hours by default)
+    let wait = sub.settings.no_work_until - now;
+    assert!((129_500..=129_600).contains(&wait), "{wait}");
+    assert_eq!(
+        sub.settings.no_work_until_reason,
+        format!("error: {NO_IMPORT_DESTINATION}")
+    );
+}

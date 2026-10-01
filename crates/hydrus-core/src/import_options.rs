@@ -209,6 +209,22 @@ pub struct LocationOptions {
     pub destinations_for_already_in_db: bool,
 }
 
+/// Why an importer without an import destination can't import
+/// (`CheckReadyToImport`'s `FileImportBlockException`).
+pub const NO_IMPORT_DESTINATION: &str =
+    "There is no import destination set in the Location Import Options!";
+
+impl LocationOptions {
+    /// `CheckReadyToImport`: there is somewhere to put new files.
+    pub fn check_ready_to_import(&self) -> Result<(), &'static str> {
+        if self.destinations.is_empty() {
+            Err(NO_IMPORT_DESTINATION)
+        } else {
+            Ok(())
+        }
+    }
+}
+
 impl Default for LocationOptions {
     fn default() -> Self {
         Self {
