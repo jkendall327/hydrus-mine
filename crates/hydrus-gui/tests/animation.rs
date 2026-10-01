@@ -23,17 +23,23 @@ fn picture(viewer: &MediaViewerWindow) -> Option<((u32, u32), Vec<u8>)> {
     ))
 }
 
-/// Wait (a while at most) until the scanbar's text starts `wanted`, and
-/// say what it is.
+/// Wait (a while at most) until the scanbar's text starts `wanted` and
+/// stays so past its next update (the text from before a seek may read so
+/// for a moment), and say what it is.
 fn scanbar_reaches(viewer: &MediaViewerWindow, wanted: &str) -> String {
     let started = Instant::now();
-    while !viewer.get_scanbar_text().starts_with(wanted)
-        && started.elapsed() < Duration::from_secs(10)
-    {
+    loop {
         watch(viewer, Duration::from_millis(20));
+        let timed_out = started.elapsed() > Duration::from_secs(10);
+        if viewer.get_scanbar_text().starts_with(wanted) {
+            watch(viewer, Duration::from_millis(120));
+            if viewer.get_scanbar_text().starts_with(wanted) || timed_out {
+                return viewer.get_scanbar_text().to_string();
+            }
+        } else if timed_out {
+            return viewer.get_scanbar_text().to_string();
+        }
     }
-    watch(viewer, Duration::from_millis(50));
-    viewer.get_scanbar_text().to_string()
 }
 
 /// The distinct pictures shown over `time`, as the event loop would
