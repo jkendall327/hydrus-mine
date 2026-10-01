@@ -17,10 +17,13 @@ mod ui {
 pub use ui::*;
 
 pub mod autocomplete;
+pub mod duplicate_filter;
+mod filter_window;
 mod grid;
 pub mod headless;
 pub mod mpv;
 mod page;
+pub mod page_chooser;
 mod pages;
 pub mod sort;
 mod thumbnails;
@@ -39,6 +42,8 @@ pub struct Bound {
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+    /// The duplicate filter while one is open.
+    pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
     /// Shows thumbnails as they are decoded (held to keep it running).
     _thumbnails: Rc<slint::Timer>,
 }
@@ -136,13 +141,72 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
-    window.on_new_page({
-        let change_pages = change_pages.clone();
+    // the page chooser, while open
+    let chooser: Rc<RefCell<Option<page_chooser::PageChooser>>> = Rc::default();
+    let show_chooser = {
+        let chooser = chooser.clone();
+        let weak = window.as_weak();
         move || {
-            change_pages(&|pages| {
-                pages.new_search_page();
-                Ok(())
-            });
+            let Some(window) = weak.upgrade() else { return };
+            let labels: Vec<SharedString> = chooser
+                .borrow()
+                .as_ref()
+                .map(|c| c.labels().iter().map(|l| l.as_str().into()).collect())
+                .unwrap_or_default();
+            window.set_chooser_labels(ModelRc::new(VecModel::from(labels)));
+        }
+    };
+    // open the page chosen, if one was
+    let chosen = {
+        let chooser = chooser.clone();
+        let show_chooser = show_chooser.clone();
+        let change_pages = change_pages.clone();
+        move |choice: Option<page_chooser::NewPage>| {
+            if let Some(choice) = choice {
+                chooser.borrow_mut().take();
+                change_pages(&|pages| pages.new_page(&choice));
+            }
+            show_chooser();
+        }
+    };
+    window.on_new_page({
+        let chooser = chooser.clone();
+        let pages = pages.clone();
+        let show_chooser = show_chooser.clone();
+        move || {
+            let store = pages.borrow().store().clone();
+            *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
+            show_chooser();
+        }
+    });
+    window.on_chooser_pressed({
+        let chooser = chooser.clone();
+        let chosen = chosen.clone();
+        move |number| {
+            let choice = chooser
+                .borrow_mut()
+                .as_mut()
+                .and_then(|c| c.press(usize::try_from(number).unwrap_or(0)));
+            chosen(choice);
+        }
+    });
+    window.on_chooser_enter({
+        let chooser = chooser.clone();
+        let chosen = chosen.clone();
+        move || {
+            let choice = chooser
+                .borrow_mut()
+                .as_mut()
+                .and_then(page_chooser::PageChooser::enter);
+            chosen(choice);
+        }
+    });
+    window.on_chooser_cancel({
+        let chooser = chooser.clone();
+        let show_chooser = show_chooser.clone();
+        move || {
+            chooser.borrow_mut().take();
+            show_chooser();
         }
     });
     window.on_close_page({
@@ -244,6 +308,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let rows = rows.clone();
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
     });
+    let filter: Rc<RefCell<Option<DuplicateFilterWindow>>> = Rc::default();
+    window.on_launch_filter({
+        let page = page.clone();
+        let filter = filter.clone();
+        let weak = window.as_weak();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let Some(duplicates) = page.duplicates() else {
+                return;
+            };
+            let opened =
+                duplicate_filter::DuplicateFilter::for_page(page.store().clone(), duplicates)
+                    .and_then(|mut model| {
+                        let step = model.load_batch();
+                        filter_window::open_filter(model, step, &filter)
+                            .map_err(|e| anyhow::anyhow!("{e}"))
+                    });
+            match opened {
+                Ok(window) => *filter.borrow_mut() = Some(window),
+                Err(e) => {
+                    if let Some(window) = weak.upgrade() {
+                        window
+                            .set_error(format!("could not open the duplicate filter: {e}").into());
+                    }
+                }
+            }
+        }
+    });
     let viewer: Rc<RefCell<Option<MediaViewerWindow>>> = Rc::default();
     window.on_thumbnail_activated({
         let page = page.clone();
@@ -283,6 +376,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         current,
         rows,
         viewer,
+        filter,
         _thumbnails: thumbnails,
     }
 }
@@ -413,6 +507,7 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
 /// any error, and the status bar; or, for a page without a search, why.
 fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_note(page.note().unwrap_or_default().into());
+    window.set_can_filter(page.duplicates().is_some());
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());
     let suggestions: Vec<SharedString> = autocomplete

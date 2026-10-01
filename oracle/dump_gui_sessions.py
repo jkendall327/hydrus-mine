@@ -320,6 +320,38 @@ def page_manager( i ):
     return page
 
 
+def duplicates_page( i ):
+    """A duplicates page (made after the others, so their random draws are
+    unchanged), with a potential-duplicates search, sort and group mode."""
+
+    from hydrus.client.duplicates import ClientPotentialDuplicatesSearchContext
+
+    page = base_page( rng.choice( [ 'duplicates', 'dupes' ] ), ClientGUIPagesCore.PAGE_TYPE_DUPLICATE_FILTER )
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( rng.choice( [ CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY, CC.LOCAL_FILE_SERVICE_KEY ] ) )
+
+    predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_TAG, tag ) for tag in S.some( S.TAGS ) ]
+
+    if len( predicates ) == 0:
+
+        predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_SYSTEM_EVERYTHING ) ]
+
+
+    search = ClientPotentialDuplicatesSearchContext.PotentialDuplicatesSearchContext( location_context = location_context, initial_predicates = predicates )
+
+    search.SetDupeSearchType( rng.choice( [ 0, 1, 2 ] ) )
+    search.SetPixelDupesPreference( rng.choice( [ 0, 1, 2 ] ) )
+    search.SetMaxHammingDistance( rng.choice( [ 0, 4, 8 ] ) )
+
+    page.SetVariable( 'synchronised', rng.random() < 0.7 )
+    page.SetVariable( 'potential_duplicates_search_context', search )
+    page.SetVariable( 'duplicate_pair_sort_type', rng.choice( [ 0, 1, 2, 3 ] ) )
+    page.SetVariable( 'duplicate_pair_sort_asc', rng.random() < 0.5 )
+    page.SetVariable( 'filter_group_mode', rng.random() < 0.5 )
+
+    return page
+
+
 def page_manager_facts( page ):
 
     facts = { 'name' : page.GetPageName(), 'type' : page.GetType() }
@@ -428,6 +460,8 @@ def main():
         'page_managers' : cases( page_manager, page_manager_facts, 12 ),
         'sessions' : [ session( i ) for i in range( 4 ) ],
     }
+
+    fixture[ 'duplicates_pages' ] = cases( duplicates_page, page_manager_facts, 6 )
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )

@@ -123,6 +123,10 @@ pub enum PageInputContent {
         index: usize,
         sort: Option<hydrus_core::pages::PageSort>,
     },
+    Duplicates {
+        duplicates: hydrus_core::pages::DuplicatesPage,
+        sort: Option<hydrus_core::pages::PageSort>,
+    },
     Other {
         page_type: i64,
         stored: Option<serde_json::Value>,
@@ -1110,6 +1114,10 @@ impl Copier<'_> {
                 PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
                     kind: *kind,
                     queues: page_queues.get(*index).cloned().unwrap_or_default(),
+                    sort: sort.clone(),
+                },
+                PageInputContent::Duplicates { duplicates, sort } => PageContent::Duplicates {
+                    duplicates: duplicates.clone(),
                     sort: sort.clone(),
                 },
                 PageInputContent::Other {

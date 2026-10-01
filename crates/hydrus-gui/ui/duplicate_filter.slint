@@ -1,0 +1,179 @@
+// The duplicate filter's window: the file shown of a pair, and beside it
+// how it compares with the other (the reference's comparison statements)
+// and the decisions. As in the reference: a left click on the file says it
+// is better and deletes the other, a right click says they are alternates,
+// a middle click goes back, up skips; left and right (page up and down, or
+// the mouse wheel) switch between the two files.
+
+import { Button } from "std-widgets.slint";
+
+export struct Statement {
+    text: string,
+    // positive counts for the file shown, negative against
+    score: int,
+}
+
+component Choice inherits Button {
+    width: 100%;
+}
+
+export component DuplicateFilterWindow inherits Window {
+    title: "duplicate filter";
+    preferred-width: 1200px;
+    preferred-height: 800px;
+    background: #202020;
+
+    in property <image> media;
+    // e.g. "File One - 3/100 - 2 decisions"
+    in property <string> index-text;
+    in property <[Statement]> statements;
+    in property <string> score-text;
+    in property <int> score;
+    // a question for the user (commit the batch? another group?), with
+    // its answers; none while filtering
+    in property <string> question;
+    in property <[string]> answers;
+
+    // "better-delete", "better-keep", "same", "alternates", "false-positive",
+    // "skip", "back"
+    callback decide(string);
+    callback switch-media();
+    callback answer(int);
+    callback close-requested();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (root.question != "") {
+                return reject;
+            }
+            if (event.text == Key.RightArrow || event.text == Key.PageDown
+                || event.text == Key.LeftArrow || event.text == Key.PageUp) {
+                root.switch-media();
+                return accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.decide("skip");
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                root.close-requested();
+                return accept;
+            }
+            reject
+        }
+
+        HorizontalLayout {
+            Rectangle {
+                horizontal-stretch: 1;
+                Image {
+                    width: 100%;
+                    height: 100%;
+                    source: root.media;
+                    image-fit: contain;
+                }
+                Text {
+                    x: 8px;
+                    y: 6px;
+                    text: root.index-text;
+                    color: #e0e0e0;
+                    font-size: 14px;
+                }
+                TouchArea {
+                    pointer-event(event) => {
+                        if (root.question != "" || event.kind != PointerEventKind.down) {
+                            return;
+                        }
+                        if (event.button == PointerEventButton.left) {
+                            root.decide("better-delete");
+                        } else if (event.button == PointerEventButton.right) {
+                            root.decide("alternates");
+                        } else if (event.button == PointerEventButton.middle) {
+                            root.decide("back");
+                        }
+                    }
+                    scroll-event(event) => {
+                        if (root.question == "" && event.delta-y != 0) {
+                            root.switch-media();
+                        }
+                        accept
+                    }
+                }
+            }
+
+            Rectangle {
+                width: 330px;
+                background: #f0f0f0;
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 4px;
+                    for statement in root.statements: Text {
+                        text: statement.text;
+                        wrap: word-wrap;
+                        color: statement.score > 0 ? #007000 : statement.score < 0 ? #b00000 : #303030;
+                    }
+                    Text {
+                        text: root.score-text;
+                        font-weight: 700;
+                        color: root.score > 0 ? #007000 : root.score < 0 ? #b00000 : #303030;
+                    }
+                    Rectangle {
+                        height: 8px;
+                    }
+                    Choice {
+                        text: "this is better, and delete the other";
+                        clicked => { root.decide("better-delete"); }
+                    }
+                    Choice {
+                        text: "this is better, but keep both";
+                        clicked => { root.decide("better-keep"); }
+                    }
+                    Choice {
+                        text: "they are the same quality";
+                        clicked => { root.decide("same"); }
+                    }
+                    Choice {
+                        text: "they are related alternates";
+                        clicked => { root.decide("alternates"); }
+                    }
+                    Choice {
+                        text: "they are not related";
+                        clicked => { root.decide("false-positive"); }
+                    }
+                    Choice {
+                        text: "skip";
+                        clicked => { root.decide("skip"); }
+                    }
+                    Choice {
+                        text: "go back";
+                        clicked => { root.decide("back"); }
+                    }
+                    Rectangle {}
+                }
+            }
+        }
+
+        if root.question != "": Rectangle {
+            background: #00000080;
+            TouchArea {}
+            Rectangle {
+                width: 360px;
+                height: dialog.preferred-height;
+                background: #f0f0f0;
+                border-radius: 4px;
+                dialog := VerticalLayout {
+                    padding: 12px;
+                    spacing: 8px;
+                    Text {
+                        text: root.question;
+                        wrap: word-wrap;
+                    }
+                    for answer[i] in root.answers: Button {
+                        text: answer;
+                        clicked => { root.answer(i); }
+                    }
+                }
+            }
+        }
+    }
+}

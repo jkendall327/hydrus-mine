@@ -13,6 +13,7 @@
 use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::subscriptions::CheckerOptions;
 
+use super::auto_resolution::PotentialsSearch;
 use super::domain::expect;
 use super::favourites::FileSearchContext;
 use super::sort::MediaSort;
@@ -110,9 +111,22 @@ pub enum PageContent {
     Urls(LegacyUrlsImport),
     Gallery(LegacyMultipleGalleryImport),
     Watchers(LegacyMultipleWatcherImport),
-    /// A page whose state isn't read here (a duplicates page, a simple
-    /// downloader...).
+    Duplicates(LegacyDuplicatesPage),
+    /// A page whose state isn't read here (a simple downloader, an import
+    /// from disk...).
     Other,
+}
+
+/// A duplicates page's filtering settings.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacyDuplicatesPage {
+    pub search: PotentialsSearch,
+    /// Whether the page's searches run as their predicates change.
+    pub synchronised: bool,
+    /// `DUPE_PAIR_SORT_*`.
+    pub sort_type: i64,
+    pub sort_ascending: bool,
+    pub group_mode: bool,
 }
 
 /// A search page's search.
@@ -303,6 +317,25 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         page_type::WATCHER => PageContent::Watchers(multiple_watcher_import(object_variable(
             "multiple_watcher_import",
         )?)?),
+        page_type::DUPLICATE_FILTER => {
+            let flag = |name: &str, default: bool| match variable(name) {
+                Some(Meta::Json(value)) => boolean(k, value, name),
+                _ => Ok(default),
+            };
+            PageContent::Duplicates(LegacyDuplicatesPage {
+                search: PotentialsSearch::from_object(object_variable(
+                    "potential_duplicates_search_context",
+                )?)?,
+                // the reference's defaults for a page that predates them
+                synchronised: flag("synchronised", true)?,
+                sort_type: match variable("duplicate_pair_sort_type") {
+                    Some(Meta::Json(value)) => int(k, value, "pair sort")?,
+                    _ => 0,
+                },
+                sort_ascending: flag("duplicate_pair_sort_asc", false)?,
+                group_mode: flag("filter_group_mode", false)?,
+            })
+        }
         _ => PageContent::Other,
     };
     // a sort that can't be read is not worth losing the page over

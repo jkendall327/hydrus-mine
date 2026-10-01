@@ -30,6 +30,7 @@ pub mod cache;
 pub mod merge;
 pub mod write;
 
+pub use hydrus_core::duplicates::{PairOrder, PairSearchKind, PixelDuplicates};
 pub use merge::{DuplicateMergeSettings, MergeOptions, PairDecision, apply_decision};
 pub use write::{PairRelationship, RelationshipWriter};
 
@@ -365,28 +366,6 @@ pub fn file_relationships(
     })
 }
 
-/// How a potential pair must relate to the file searches.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-pub enum PairSearchKind {
-    /// At least one of the pair matches the first search.
-    OneFileMatchesOneSearch,
-    /// Both match the first search.
-    BothFilesMatchOneSearch,
-    /// One matches the first search and the other the second.
-    BothFilesMatchDifferentSearches,
-}
-
-/// Whether pairs whose files have identical pixels are wanted.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
-pub enum PixelDuplicates {
-    /// Only pixel duplicates, whatever their distance.
-    Required,
-    /// Any pair within the distance.
-    Allowed,
-    /// Pairs within the distance that are not pixel duplicates.
-    Excluded,
-}
-
 /// Which files a file search matches, asked in batches. This is where a
 /// file search executor plugs in.
 pub type FileFilter<'a> = dyn Fn(&Connection, &[HashId]) -> Result<HashSet<HashId>> + 'a;
@@ -558,18 +537,6 @@ fn matching(
             }
         })
         .collect())
-}
-
-/// How pairs are ordered.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum PairOrder {
-    /// By the larger file of the pair, then the smaller.
-    MaxFilesize,
-    /// By distance, then how different the two files' sizes are.
-    Similarity,
-    /// By the smaller file of the pair, then the larger.
-    MinFilesize,
-    Random,
 }
 
 /// Which of the matching pairs to return.

@@ -6,12 +6,14 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use hydrus_core::pages::{DownloaderKind, Page, PageContent, PageKey, Session};
+use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
+use hydrus_core::pages::{DownloaderKind, DuplicatesPage, Page, PageContent, PageKey, Session};
 use hydrus_search::FileSearchContext;
 use hydrus_store::Store;
 use hydrus_store::sessions::{self, LAST_SESSION};
 
 use crate::SearchPage;
+use crate::page_chooser::NewPage;
 
 /// One notebook's tabs: its pages' names, and which is shown.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -58,6 +60,10 @@ impl Pages {
         };
         pages.select(0, 0);
         Ok(pages)
+    }
+
+    pub fn store(&self) -> &Arc<Store> {
+        &self.store
     }
 
     /// One page, already open.
@@ -175,6 +181,9 @@ impl Pages {
                     files,
                 )
             }
+            PageContent::Duplicates { duplicates, sort } => {
+                SearchPage::duplicates_page(store, duplicates, sort.as_ref(), files)
+            }
             PageContent::Other {
                 page_type, sort, ..
             } => {
@@ -261,9 +270,50 @@ impl Pages {
     /// on its default domain, "my files"), at the far right of the current
     /// notebook as the reference's default puts it, and show it.
     pub fn new_search_page(&mut self) {
+        self.add(new_search_page());
+    }
+
+    /// Open a page of the kind chosen, at the far right of the current
+    /// notebook (as the reference's page chooser does).
+    pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {
+        let page = match chosen {
+            NewPage::Search { domain, .. } => {
+                let mut page = new_search_page();
+                if let PageContent::Search { search, .. } = &mut page.content {
+                    search.location = hydrus_search::LocationContext::single(domain.clone());
+                }
+                page
+            }
+            NewPage::Duplicates => Page {
+                key: PageKey::random(),
+                name: "duplicates".into(),
+                content: PageContent::Duplicates {
+                    duplicates: new_duplicates_page(),
+                    sort: None,
+                },
+            },
+            NewPage::Pages => Page {
+                key: PageKey::random(),
+                name: "pages".into(),
+                content: PageContent::Pages(Vec::new()),
+            },
+            NewPage::Urls | NewPage::Watcher | NewPage::Gallery | NewPage::SimpleDownloader => {
+                return Err(
+                    "hydrus-gui can't open downloader pages yet (`hydrus serve` runs the \
+                     downloaders, and the Client API can add to them)"
+                        .into(),
+                );
+            }
+        };
+        self.add(page);
+        Ok(())
+    }
+
+    /// Add `page` at the far right of the current notebook, and show it.
+    fn add(&mut self, page: Page) {
         let depth = self.current_depth();
         let pages = self.notebook_mut(depth);
-        pages.push(new_search_page());
+        pages.push(page);
         let index = pages.len() - 1;
         self.path.truncate(depth);
         self.path.push(index);
@@ -336,6 +386,28 @@ impl Pages {
 
 /// A new search page, as the reference makes one: "files", searching "my
 /// files" and all known tags.
+/// A new duplicates page's search (the reference's
+/// `CreatePageManagerDuplicateFilter`): every file in all my files, a pair
+/// matching if one of its files does, within distance 4.
+fn new_duplicates_page() -> DuplicatesPage {
+    let search = FileSearchContext {
+        location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+        )),
+        predicates: vec![hydrus_search::Predicate::System(
+            hydrus_search::SystemPredicate::Everything,
+        )],
+        ..FileSearchContext::default()
+    };
+    DuplicatesPage::new(DuplicatesSearch {
+        search_1: search.clone(),
+        search_2: search,
+        kind: PairSearchKind::OneFileMatchesOneSearch,
+        pixel_duplicates: PixelDuplicates::Allowed,
+        max_hamming_distance: 4,
+    })
+}
+
 fn new_search_page() -> Page {
     Page {
         key: PageKey::random(),

@@ -197,6 +197,13 @@ impl AutoResolutionRule {
     }
 }
 
+impl PotentialsSearch {
+    /// Read a `PotentialDuplicatesSearchContext`.
+    pub fn from_object(object: &SerialisableObject) -> DecodeResult<Self> {
+        potentials_search(object)
+    }
+}
+
 fn potentials_search(object: &SerialisableObject) -> DecodeResult<PotentialsSearch> {
     let k = POTENTIALS_SEARCH;
     object.expect_kind(k)?;

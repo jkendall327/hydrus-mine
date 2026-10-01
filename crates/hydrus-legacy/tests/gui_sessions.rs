@@ -7,6 +7,7 @@ use serde_json::{Value as Json, json};
 
 use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::subscriptions::CheckerOptions;
+use hydrus_legacy::objects::auto_resolution::PotentialsSearch;
 use hydrus_legacy::objects::gui_sessions::{
     LegacyGalleryImport, LegacyMultipleGalleryImport, LegacyMultipleWatcherImport, LegacyPage,
     LegacyUrlsImport, LegacyWatcherImport, PageContent, SessionNode, gallery_import,
@@ -157,6 +158,17 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
         PageContent::Watchers(m) => json!({
             "multiple_watcher_import": watcher_page_facts(m, &variables["multiple_watcher_import"])
         }),
+        PageContent::Duplicates(d) => json!({
+            "potential_duplicates_search_context": same(
+                &d.search,
+                &variables["potential_duplicates_search_context"],
+                |o| PotentialsSearch::from_object(o).unwrap()
+            ),
+            "synchronised": d.synchronised,
+            "duplicate_pair_sort_type": d.sort_type,
+            "duplicate_pair_sort_asc": d.sort_ascending,
+            "filter_group_mode": d.group_mode,
+        }),
         PageContent::Other => json!({}),
     };
     if let Some(sort) = &p.sort {
@@ -177,6 +189,10 @@ fn expected_page_facts(expected: &Json) -> Json {
         "file_search_context",
         "synchronised",
         "media_sort",
+        "potential_duplicates_search_context",
+        "duplicate_pair_sort_type",
+        "duplicate_pair_sort_asc",
+        "filter_group_mode",
     ]
     .into_iter()
     .filter_map(|name| Some((name.to_owned(), variables.get(name)?.clone())))
@@ -217,7 +233,10 @@ fn downloaders_read_as_the_reference_reads_them() {
 
 #[test]
 fn pages_read_as_the_reference_reads_them() {
-    for case in cases("page_managers") {
+    for case in cases("page_managers")
+        .into_iter()
+        .chain(cases("duplicates_pages"))
+    {
         let ours = page(&object(&case["stored"])).unwrap();
         assert_eq!(
             page_facts(&ours, &case["facts"]),

@@ -6,14 +6,21 @@ use std::time::{Duration, Instant};
 
 use hydrus_gui::mpv::{self, Player};
 
-/// The next frame with more than a few colours (the first may be blank).
-fn picture(player: &Player) -> Option<slint::SharedPixelBuffer<slint::Rgba8Pixel>> {
+/// The next frame of `size` with more than a few colours (the first may be
+/// blank, and frames made before a resize may still be queued).
+fn picture(
+    player: &Player,
+    size: (u32, u32),
+) -> Option<slint::SharedPixelBuffer<slint::Rgba8Pixel>> {
     let started = Instant::now();
     while started.elapsed() < Duration::from_secs(20) {
         let Some(frame) = player.wait_frame(Duration::from_secs(1)) else {
             continue;
         };
         let pixels = frame.to_rgba8()?;
+        if (pixels.width(), pixels.height()) != size {
+            continue;
+        }
         let colours: HashSet<&[u8]> = pixels.as_bytes().chunks(4).collect();
         if colours.len() > 4 {
             return Some(pixels);
@@ -33,12 +40,12 @@ fn a_video_plays_into_frames_at_the_size_asked() {
     player
         .load(&hydrus_testkit::fixture_path("media/mp4_h264.mp4"))
         .unwrap();
-    let frame = picture(&player).expect("the video's frames");
+    let frame = picture(&player, (320, 240)).expect("the video's frames at the size asked");
     assert_eq!((frame.width(), frame.height()), (320, 240));
     assert!(frame.as_bytes().chunks(4).all(|p| p[3] == 255), "opaque");
 
     player.set_size(200, 100);
-    let frame = picture(&player).expect("frames at the new size");
+    let frame = picture(&player, (200, 100)).expect("frames at the new size");
     assert_eq!((frame.width(), frame.height()), (200, 100));
 
     player.toggle_pause().unwrap();

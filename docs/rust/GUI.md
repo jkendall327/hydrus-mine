@@ -14,9 +14,12 @@ search, its sort and the files it showed, not searched again until its
 search changes (and then only if it is synchronised). Downloader pages and
 the pages we don't open yet show their files, and say what they are.
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. Ctrl+T or F9 opens a new search page (on
-"my files", the reference's default) at the far right of the current
-notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
+again, as the reference does. Ctrl+T or F9 opens the reference's page
+chooser, nine buttons laid out as a number pad (the digits, arrows and
+enter press them): file search, then a file domain, opens a search page
+on it; special opens a page of pages or a duplicates page; downloader
+pages can't be made here yet. The new page goes at the far right of the
+current notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
 the right (or left) being shown, as in the reference; downloader pages
 can't be closed yet, since their queues would run on without them. The
 pages are saved as the last session
@@ -57,12 +60,32 @@ thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
 hydrus's default one) applies. Frames come from mpv's software renderer, on
 a thread of their own (`src/mpv.rs`); that is slower than the reference's
 embedded mpv window for large videos. Other files show their thumbnail.
+A duplicates page (a migrated session's, with its search, pair sort and
+group mode) says how many potential pairs its search finds, and launches
+the duplicate filter: its own window, showing one file of a pair at a time
+(left and right, or the mouse wheel, switch to the other) beside the
+reference's comparison statements and score (`hydrus-duplicates`'s port,
+the slow ones, jpeg quality and visual duplicates, made off the UI thread)
+and the decisions: this is better (deleting the other or not), same
+quality, alternates, not related, skip, go back. As in the reference, a
+left click on the file is "better, delete the other", a right click
+"alternates", a middle click goes back and up skips. Pairs come a batch
+at a time (`duplicate_filter_max_batch_size`), or a group at a time in
+group mode; pairs with a file already merged away or deleted are skipped;
+decisions wait for the batch's end, which asks to commit them (unless
+they are few, as `duplicate_filter_auto_commit_batch_size` has it), and
+closing with decisions pending asks too. Merges use your duplicate merge
+options. The model is `src/duplicate_filter.rs`, tested in
+`tests/duplicate_filter.rs` with the window drawn headless.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
-screenshots land in `target/tmp/`). Not yet: the reference's page chooser
-(new pages are always search pages), reopening closed pages, system
+screenshots land in `target/tmp/`). Not yet: reopening closed pages, system
 predicates in the autocomplete, collect, the viewer's hover frames, seeking
-and volume, a native animation player, downloader pages' own panels.
+and volume, a native animation player, downloader pages' own panels; in
+the duplicates page, editing its search and the preparation and
+auto-resolution tabs; in the duplicate filter, video (files show as
+stills), the custom action, deleting from the filter, the hover frames,
+and reviewing auto-resolution's pending pairs.
 
 ## Size
 

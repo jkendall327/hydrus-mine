@@ -23,12 +23,11 @@ use rusqlite::{Connection, OptionalExtension, params};
 use serde::{Deserialize, Serialize};
 
 use hydrus_core::search::comparable::Comparable;
-use hydrus_core::search::context::FileSearchContext;
 use hydrus_core::search::number::NumberTest;
 use hydrus_core::search::predicate::Predicate;
 use hydrus_core::{DuplicateType, HashId};
 
-use super::{FileScope, MergeOptions, PairSearchKind, PixelDuplicates};
+use super::{FileScope, MergeOptions};
 use crate::error::{Result, StoreError};
 
 /// When auto-resolution works, and how hard (the reference's
@@ -92,15 +91,7 @@ pub enum OperationMode {
 }
 
 /// The potential pairs a rule looks at.
-#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
-pub struct RuleSearch {
-    /// The file domain is the first search's.
-    pub search_1: FileSearchContext,
-    pub search_2: FileSearchContext,
-    pub kind: PairSearchKind,
-    pub pixel_duplicates: PixelDuplicates,
-    pub max_hamming_distance: u32,
-}
+pub type RuleSearch = hydrus_core::duplicates::DuplicatesSearch;
 
 /// What a rule does to a pair that passes, A and B as the comparators
 /// decided.

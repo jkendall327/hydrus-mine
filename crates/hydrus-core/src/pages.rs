@@ -9,6 +9,7 @@
 use std::fmt;
 
 use crate::ServiceKey;
+use crate::duplicates::{DuplicatesSearch, PairOrder};
 use crate::search::context::FileSearchContext;
 
 /// A named tree of pages.
@@ -64,6 +65,11 @@ pub enum PageContent {
         queues: Vec<i64>,
         sort: Option<PageSort>,
     },
+    /// A duplicates page: a potential-duplicates search to filter.
+    Duplicates {
+        duplicates: DuplicatesPage,
+        sort: Option<PageSort>,
+    },
     /// A page of a kind we don't open yet (the reference's `PAGE_TYPE_*`),
     /// kept so it isn't lost.
     Other {
@@ -85,6 +91,7 @@ impl PageContent {
                 DownloaderKind::Urls => 7,
                 DownloaderKind::Watchers => 9,
             },
+            PageContent::Duplicates { .. } => 8,
             PageContent::Other { page_type, .. } => *page_type,
         }
     }
@@ -95,7 +102,36 @@ impl PageContent {
             PageContent::Pages(_) => None,
             PageContent::Search { sort, .. }
             | PageContent::Downloader { sort, .. }
+            | PageContent::Duplicates { sort, .. }
             | PageContent::Other { sort, .. } => sort.as_ref(),
+        }
+    }
+}
+
+/// A duplicates page's filtering: which potential pairs, in what order,
+/// a batch or a group at a time.
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct DuplicatesPage {
+    pub search: DuplicatesSearch,
+    /// Whether the page's searches run as their predicates change.
+    pub synchronised: bool,
+    pub order: PairOrder,
+    pub ascending: bool,
+    /// Filter one group of potential duplicates at a time.
+    pub group_mode: bool,
+}
+
+impl DuplicatesPage {
+    /// A new duplicates page's (the reference's
+    /// `CreatePageManagerDuplicateFilter`): every file in all my files,
+    /// within the default distance, largest files first.
+    pub fn new(search: DuplicatesSearch) -> Self {
+        Self {
+            search,
+            synchronised: true,
+            order: PairOrder::MaxFilesize,
+            ascending: false,
+            group_mode: false,
         }
     }
 }

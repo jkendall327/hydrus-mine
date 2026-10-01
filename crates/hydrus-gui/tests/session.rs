@@ -309,7 +309,14 @@ fn pages_open_and_close_as_the_reference_does() {
             .collect()
     };
     ui.invoke_tab_chosen(0, 0);
+    // ctrl+t opens the page chooser; enter twice is "file search", then the
+    // first file domain, "my files"
     ui.invoke_new_page();
+    assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "file search");
+    ui.invoke_chooser_enter();
+    assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "my files");
+    ui.invoke_chooser_enter();
+    assert_eq!(ui.get_chooser_labels().row_count(), 0, "the chooser closed");
     assert_eq!(ui.get_tab_rows().row_data(1).unwrap().selected, 1);
     assert_eq!(bound.pages.borrow().shown().name, "files");
     ui.invoke_close_page();
@@ -324,6 +331,8 @@ fn pages_open_and_close_as_the_reference_does() {
     );
     // a tab other than the one shown closes without changing what is shown
     ui.invoke_new_page();
+    ui.invoke_chooser_pressed(8);
+    ui.invoke_chooser_pressed(8);
     ui.invoke_tab_chosen(1, 0);
     ui.invoke_close_tab(1, 1);
     assert_eq!(bound.pages.borrow().shown().name, "threads");

@@ -5,7 +5,7 @@
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_core::pages::{PageContent, PageSort, PageSortBy};
+use hydrus_core::pages::{DuplicatesPage, PageContent, PageSort, PageSortBy};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
     parse_api_search, predicate_text, search_files, sort_files,
@@ -35,6 +35,8 @@ pub struct SearchPage {
     /// tag, and its row as the list shows it.
     tags: Vec<(String, String)>,
     error: Option<String>,
+    /// A duplicates page's filtering, which the page can launch.
+    duplicates: Option<DuplicatesPage>,
 }
 
 impl std::fmt::Debug for SearchPage {
@@ -69,7 +71,43 @@ impl SearchPage {
             selected: None,
             tags: Vec::new(),
             error: None,
+            duplicates: None,
         }
+    }
+
+    /// A duplicates page: how many potential pairs its search finds, and
+    /// the files it showed.
+    pub fn duplicates_page(
+        store: Arc<Store>,
+        duplicates: DuplicatesPage,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let snapshot = store.snapshot();
+        let count = store.read(|conn| {
+            match hydrus_duplicates::potentials::PotentialsQuery::from_search(
+                &snapshot,
+                &duplicates.search,
+            ) {
+                Ok(query) => query.count(conn, &snapshot),
+                Err(_) => Ok(None),
+            }
+        });
+        let note = match count {
+            Ok(Some(n)) => format!(
+                "A duplicates page: {} potential pairs to filter.",
+                hydrus_core::numbers::human_int(n as u64)
+            ),
+            _ => "A duplicates page, whose search can't be run.".to_owned(),
+        };
+        let mut page = Self::fixed(store, note, sort, files);
+        page.duplicates = Some(duplicates);
+        page
+    }
+
+    /// A duplicates page's filtering.
+    pub fn duplicates(&self) -> Option<&DuplicatesPage> {
+        self.duplicates.as_ref()
     }
 
     /// A search page as a session kept it: its search and sort, and the

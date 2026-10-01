@@ -407,6 +407,24 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     Ok(input)
 }
 
+/// A potential-duplicates search (a rule's, a duplicates page's).
+fn duplicates_search(
+    search: &legacy::auto_resolution::PotentialsSearch,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> std::result::Result<hydrus_core::duplicates::DuplicatesSearch, String> {
+    use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
+    Ok(DuplicatesSearch {
+        search_1: file_search(&search.search_1, scales)?,
+        search_2: file_search(&search.search_2, scales)?,
+        kind: PairSearchKind::from_code(search.dupe_search_type)
+            .ok_or_else(|| format!("unknown pair search type {}", search.dupe_search_type))?,
+        pixel_duplicates: PixelDuplicates::from_code(search.pixel_dupes)
+            .ok_or_else(|| format!("unknown pixel duplicates preference {}", search.pixel_dupes))?,
+        max_hamming_distance: u32::try_from(search.max_hamming_distance)
+            .map_err(|_| format!("a search distance of {}", search.max_hamming_distance))?,
+    })
+}
+
 /// A stored duplicates auto-resolution rule in our model, or why it can't
 /// be converted. `scales` gives each numerical rating service's scale (see
 /// [`predicate_with_scales`]). Warnings about details that were dropped are
@@ -416,10 +434,8 @@ pub fn auto_resolution_rule(
     scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
     warnings: &mut Vec<String>,
 ) -> std::result::Result<crate::duplicates::auto::Rule, String> {
-    use crate::duplicates::auto::{OperationMode, Rule, RuleAction, RuleSearch};
-    use crate::duplicates::{PairSearchKind, PixelDuplicates};
+    use crate::duplicates::auto::{OperationMode, Rule, RuleAction};
 
-    let search = &r.search;
     Ok(Rule {
         name: r.name.clone(),
         paused: r.paused,
@@ -431,24 +447,7 @@ pub fn auto_resolution_rule(
         max_pending_pairs: r
             .max_pending_pairs
             .map(|n| u32::try_from(n.max(0)).unwrap_or(u32::MAX)),
-        search: RuleSearch {
-            search_1: file_search(&search.search_1, scales)?,
-            search_2: file_search(&search.search_2, scales)?,
-            kind: match search.dupe_search_type {
-                0 => PairSearchKind::OneFileMatchesOneSearch,
-                1 => PairSearchKind::BothFilesMatchOneSearch,
-                2 => PairSearchKind::BothFilesMatchDifferentSearches,
-                other => return Err(format!("unknown pair search type {other}")),
-            },
-            pixel_duplicates: match search.pixel_dupes {
-                0 => PixelDuplicates::Required,
-                1 => PixelDuplicates::Allowed,
-                2 => PixelDuplicates::Excluded,
-                other => return Err(format!("unknown pixel duplicates preference {other}")),
-            },
-            max_hamming_distance: u32::try_from(search.max_hamming_distance)
-                .map_err(|_| format!("a search distance of {}", search.max_hamming_distance))?,
-        },
+        search: duplicates_search(&r.search, scales)?,
         comparators: r
             .comparators
             .iter()
@@ -1218,6 +1217,34 @@ impl SessionContext<'_> {
                     }
                 })
                 .collect(),
+            PageContent::Duplicates(d) => {
+                let content = match duplicates_search(&d.search, self.scales) {
+                    Ok(search) => super::PageInputContent::Duplicates {
+                        duplicates: hydrus_core::pages::DuplicatesPage {
+                            search,
+                            synchronised: d.synchronised,
+                            order: hydrus_core::duplicates::PairOrder::from_code(d.sort_type)
+                                .unwrap_or(hydrus_core::duplicates::PairOrder::MaxFilesize),
+                            ascending: d.sort_ascending,
+                            group_mode: d.group_mode,
+                        },
+                        sort,
+                    },
+                    Err(e) => {
+                        self.input.warnings.push(format!(
+                            "Duplicates page \"{}\" of session \"{name}\" searches for something \
+                             hydrus-rs can't, so it is kept but not opened: {e}",
+                            page.name
+                        ));
+                        kept(sort)
+                    }
+                };
+                return Some(super::PageInput {
+                    name: page.name,
+                    content,
+                    hashes,
+                });
+            }
             PageContent::Other => {
                 use hydrus_legacy::objects::gui_sessions::page_type;
                 let what = match page.page_type {

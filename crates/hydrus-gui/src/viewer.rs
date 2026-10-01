@@ -85,22 +85,26 @@ impl MediaViewer {
     /// The current file as a still: an image decoded whole; anything else by
     /// its thumbnail.
     pub fn media(&self) -> Option<hydrus_media::Raster> {
-        let id = self.current();
-        let result = self
-            .store
-            .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
-            .ok()?
-            .into_iter()
-            .next()?;
-        let snapshot = self.store.snapshot();
-        let full = result.info.as_ref().and_then(|info| {
-            let path = snapshot.storage.file_path(&result.hash, info.mime)?;
-            let bytes = std::fs::read(path).ok()?;
-            hydrus_media::decode_image(&bytes).ok()
-        });
-        full.or_else(|| {
-            let path = snapshot.storage.thumbnail_path(&result.hash)?;
-            hydrus_media::decode_image(&std::fs::read(path).ok()?).ok()
-        })
+        still(&self.store, self.current())
     }
+}
+
+/// A file as a still: an image decoded whole; anything else by its
+/// thumbnail.
+pub fn still(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
+    let result = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()?
+        .into_iter()
+        .next()?;
+    let snapshot = store.snapshot();
+    let full = result.info.as_ref().and_then(|info| {
+        let path = snapshot.storage.file_path(&result.hash, info.mime)?;
+        let bytes = std::fs::read(path).ok()?;
+        hydrus_media::decode_image(&bytes).ok()
+    });
+    full.or_else(|| {
+        let path = snapshot.storage.thumbnail_path(&result.hash)?;
+        hydrus_media::decode_image(&std::fs::read(path).ok()?).ok()
+    })
 }

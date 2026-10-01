@@ -14,6 +14,7 @@ use std::collections::HashSet;
 use rusqlite::Connection;
 
 use hydrus_core::HashId;
+use hydrus_core::duplicates::DuplicatesSearch;
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SearchError, SortBy, SortOrder, SystemPredicate,
     search_files,
@@ -75,6 +76,35 @@ fn in_set(
 }
 
 impl PotentialsQuery {
+    /// The query for a search as a duplicates page or rule stores it (its
+    /// file domain is the first file search's).
+    pub fn from_search(
+        snapshot: &Snapshot,
+        search: &DuplicatesSearch,
+    ) -> hydrus_store::Result<Self> {
+        Ok(Self {
+            scope: crate::engine::rule_scope(snapshot, &search.search_1.location)?,
+            kind: search.kind,
+            pixel_duplicates: search.pixel_duplicates,
+            max_hamming_distance: search.max_hamming_distance,
+            search_1: search.search_1.clone(),
+            search_2: search.search_2.clone(),
+        })
+    }
+
+    /// How many potential pairs it finds; `None` if a file search fails.
+    pub fn count(
+        &self,
+        conn: &Connection,
+        snapshot: &Snapshot,
+    ) -> hydrus_store::Result<Option<usize>> {
+        Ok(self
+            .with_search(conn, snapshot, |search| {
+                Ok(hydrus_store::duplicates::potential_pairs(conn, snapshot, search)?.len())
+            })?
+            .ok())
+    }
+
     /// Run the file searches, then `f` on the search they make; a file
     /// search that fails is the inner error.
     pub fn with_search<T>(

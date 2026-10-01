@@ -141,6 +141,25 @@ search.
   distances, the pair gets the smaller.** The reference records whichever
   its tree walk reached first.
 
+## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
+
+Its comparison statements are checked by
+`crates/hydrus-duplicates/tests/comparison_statements.rs` against the
+reference's (`oracle/dump_comparison_statements.py`).
+
+- **A batch is fetched in one read and committed in one transaction.** The
+  reference searches the potential pairs in throttled fragments, re-reads
+  the whole search space after every commit, and commits four decisions per
+  round trip; that is most of why it is slow.
+- **Going back undoes exactly what the decision did.** The reference, going
+  back, forgets that the first file was to be merged or deleted twice (a
+  typo for the second file), so a later pair with the second file can still
+  be skipped as dealt with.
+- **A batch's first pair is skipped if it can't be shown**, as every later
+  pair is. The reference shows it.
+- **"software/source metadata" is listed.** The reference makes the
+  statement but looks it up by another name, so never shows it.
+
 ## Duplicates auto-resolution (`hydrus-duplicates`)
 
 Checked by `crates/hydrus-duplicates/tests/reference_run.rs` on
