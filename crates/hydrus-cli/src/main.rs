@@ -22,6 +22,7 @@ mod api_keys;
 mod duplicates;
 mod folders;
 mod gallery;
+mod pauses;
 mod queues;
 mod subscriptions;
 
@@ -115,6 +116,22 @@ enum Command {
         dir: PathBuf,
         #[command(subcommand)]
         action: duplicates::Action,
+    },
+    /// Pause subscriptions, the network or the downloader queues, as
+    /// hydrus's "network > pause" menu does (your pauses come across from
+    /// hydrus). With nothing to pause, says what is paused.
+    Pause {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[arg(value_enum)]
+        what: Option<pauses::What>,
+    },
+    /// Resume what `pause` paused.
+    Resume {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[arg(value_enum)]
+        what: pauses::What,
     },
 }
 
@@ -220,6 +237,8 @@ fn main() -> Result<()> {
             }
             duplicates::run(&dir, action)
         }
+        Command::Pause { dir, what } => pauses::run(&dir, what, true),
+        Command::Resume { dir, what } => pauses::run(&dir, Some(what), false),
         Command::Purge { dir } => {
             let store = Store::open(&dir)?;
             let report = hydrus_store::maintenance::purge_deleted_media(&store, usize::MAX)?;

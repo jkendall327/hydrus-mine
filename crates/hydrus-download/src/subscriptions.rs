@@ -27,6 +27,7 @@ use hydrus_net::{BandwidthScope, Job, NetError};
 use hydrus_store::queues::{
     self, FileSeed, GallerySeedMeta, NewFileSeed, NewGallerySeed, SeedStatus,
 };
+use hydrus_store::settings::Pauses;
 use hydrus_store::subscriptions::{self as store_subs, Subscription, SubscriptionQuery};
 
 use crate::gallery::{KnownSeeds, PageSink, PageTaken, set_gallery_status};
@@ -314,6 +315,14 @@ impl Downloader {
         )
     }
 
+    /// Whether subscriptions are paused globally (`pause_subs_sync`, or all
+    /// new network traffic).
+    fn subscriptions_paused(&self) -> bool {
+        self.store
+            .read(hydrus_store::settings::get::<Pauses>)
+            .is_ok_and(|p| !p.subscriptions_run())
+    }
+
     fn has_file_work(&self, queue: i64) -> Result<bool, WorkError> {
         Ok(self
             .store
@@ -373,7 +382,8 @@ impl Downloader {
         let Some(mut sub) = self.store.read(|conn| store_subs::subscription(conn, id))? else {
             return Ok(report);
         };
-        if sub.settings.paused || now() < sub.settings.no_work_until {
+        if sub.settings.paused || now() < sub.settings.no_work_until || self.subscriptions_paused()
+        {
             return Ok(report);
         }
         let started_with = sub.settings.clone();
@@ -381,7 +391,11 @@ impl Downloader {
         let result = async {
             loop {
                 let due = self.due_queries(&sub)?;
-                if due.is_empty() || sub.settings.paused || now() < sub.settings.no_work_until {
+                if due.is_empty()
+                    || sub.settings.paused
+                    || now() < sub.settings.no_work_until
+                    || self.subscriptions_paused()
+                {
                     break;
                 }
                 self.sync_queries(&mut sub, due, job, &mut report).await?;
@@ -797,7 +811,10 @@ impl Downloader {
                 delay(sub, 300, "recently cancelled");
                 return Err(RunStop::Stop);
             }
-            if sub.settings.paused || now() < sub.settings.no_work_until {
+            if sub.settings.paused
+                || now() < sub.settings.no_work_until
+                || self.subscriptions_paused()
+            {
                 return Err(RunStop::Stop);
             }
             if !errors.ok(&seed.data) {
@@ -948,6 +965,11 @@ impl SubscriptionRunner {
 
     /// The subscription to run now, else how long to wait for one.
     fn next(&self) -> Result<Result<Subscription, Duration>, WorkError> {
+        // (paused globally: look again soon, it may be switched from the
+        // command line)
+        if self.downloader.subscriptions_paused() {
+            return Ok(Err(Duration::from_secs(30)));
+        }
         let subs = self.downloader.store.read(store_subs::subscriptions)?;
         let t = now();
         let mut ready = Vec::new();

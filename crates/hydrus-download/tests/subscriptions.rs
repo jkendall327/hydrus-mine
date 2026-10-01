@@ -557,3 +557,56 @@ async fn a_subscription_stops_when_its_bandwidth_runs_out() {
     let next = downloader.next_work_time(&sub).unwrap().unwrap();
     assert!(next > now + 30, "{next} vs {now}");
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn subscriptions_wait_while_paused_globally() {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=3);
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    // hydrus's "pause subscriptions", and its "pause all new network
+    // traffic", each stop them
+    for pauses in [
+        Pauses {
+            subscriptions: true,
+            ..Pauses::default()
+        },
+        Pauses {
+            network_traffic: true,
+            ..Pauses::default()
+        },
+    ] {
+        s.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+            .unwrap();
+        let report = s
+            .downloader
+            .run_subscription(id, &Job::new())
+            .await
+            .unwrap();
+        assert_eq!(report.new_urls, 0);
+        assert!(post_ids(&s.store, queue).is_empty());
+    }
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!(report.new_urls, 3);
+}

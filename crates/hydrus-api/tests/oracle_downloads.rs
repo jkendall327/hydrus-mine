@@ -291,7 +291,9 @@ async fn the_downloader_does_what_the_reference_did() {
         .write_and_refresh(move |ctx| {
             hydrus_store::settings::set(ctx.conn(), &url_classes)?;
             hydrus_store::settings::set(ctx.conn(), &downloaders)?;
-            hydrus_store::settings::set(ctx.conn(), &bandwidth)
+            hydrus_store::settings::set(ctx.conn(), &bandwidth)?;
+            // (the fixture's client had all new network traffic paused)
+            hydrus_store::settings::set(ctx.conn(), &hydrus_store::settings::Pauses::default())
         })
         .unwrap();
     let state = hydrus_api::AppState::new(store.clone()).unwrap();

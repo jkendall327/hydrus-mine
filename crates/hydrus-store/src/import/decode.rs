@@ -87,6 +87,15 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &folders)?;
+    let mut pauses = crate::settings::Pauses::default();
+    if let Some(options) = &options {
+        for (key, field) in pauses.by_option_name() {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &pauses)?;
     let mut export = crate::settings::ExportSettings::default();
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {

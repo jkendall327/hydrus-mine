@@ -484,3 +484,39 @@ async fn a_gallery_url_in_a_url_queue_queues_its_posts() {
             .contains(&format!("{}/gallery/1", s.base))
     );
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn queues_wait_while_their_downloads_are_paused_globally() {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    // hydrus's "pause all file import queues"
+    let paused = Pauses {
+        file_queues: true,
+        ..Pauses::default()
+    };
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &paused))
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    tokio::time::sleep(Duration::from_millis(1500)).await;
+    let waiting = s
+        .store
+        .read(|conn| queues::next_file_seed(conn, queue.id))
+        .unwrap();
+    assert!(waiting.is_some(), "nothing was downloaded");
+    assert!(s.site.hits.lock().is_empty());
+    // resumed: the queue gets on with it
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    s.runner.wake(queue.id);
+    wait_until_done(&s.store, queue.id).await;
+}

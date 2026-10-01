@@ -444,6 +444,22 @@ impl NetEngine {
         }
     }
 
+    /// Wait while all new network traffic is paused (looked at every couple
+    /// of seconds, so a switch from the command line takes effect).
+    async fn wait_while_paused(&self, job: &Job) -> Result<(), NetError> {
+        loop {
+            let paused = self
+                .store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::Pauses>)
+                .is_ok_and(|p| p.network_traffic);
+            if !paused {
+                return Ok(());
+            }
+            job.set_status("all new network traffic is paused\u{2026}");
+            job.sleep(2.0).await?;
+        }
+    }
+
     /// Wait for this site's turn to fetch a gallery page of `kind`
     /// (`ClientNetworkingBandwidth.TryToConsumeAGalleryToken`).
     async fn wait_for_gallery_token(
@@ -544,6 +560,7 @@ impl NetEngine {
             sends_range,
         };
 
+        self.wait_while_paused(job).await?;
         if self.options.obey_bandwidth {
             let override_at = request
                 .override_bandwidth_after

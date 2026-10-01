@@ -417,3 +417,40 @@ async fn bandwidth_rules_space_out_requests_and_count_their_data() {
     request.override_bandwidth_after = Some(1);
     engine.fetch(&request, &Job::new()).await.unwrap();
 }
+
+#[tokio::test]
+async fn nothing_goes_out_while_all_new_network_traffic_is_paused() {
+    use hydrus_store::settings::Pauses;
+    let s = setup(|_| Vec::new()).await;
+    let set = |network_traffic| {
+        let pauses = Pauses {
+            network_traffic,
+            ..Pauses::default()
+        };
+        s.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+            .unwrap();
+    };
+    set(true);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let fetch = s.engine.fetch(&request, &job);
+    tokio::pin!(fetch);
+    assert!(
+        tokio::time::timeout(std::time::Duration::from_secs(1), &mut fetch)
+            .await
+            .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "all new network traffic is paused\u{2026}"
+    );
+    // switched off (as by the command line): it goes within a couple of
+    // seconds
+    set(false);
+    tokio::time::timeout(std::time::Duration::from_secs(5), fetch)
+        .await
+        .expect("it went")
+        .unwrap();
+}

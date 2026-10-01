@@ -81,6 +81,65 @@ impl Default for FolderSettings {
     }
 }
 
+/// The client's global pause switches (the reference's "network > pause"
+/// menu): each stops a kind of downloading until it is switched off.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct Pauses {
+    /// Subscriptions (`pause_subs_sync`).
+    pub subscriptions: bool,
+    /// Every new request (`pause_all_new_network_traffic`); subscriptions
+    /// wait too.
+    pub network_traffic: bool,
+    /// Every downloader queue: URL queues, gallery searches and watchers
+    /// (`pause_all_paged_importers`).
+    pub paged_importers: bool,
+    /// The queues' file downloads (`pause_all_file_queues`).
+    pub file_queues: bool,
+    /// Gallery pages: gallery searches and URL queues' gallery URLs
+    /// (`pause_all_gallery_searches`).
+    pub gallery_searches: bool,
+    /// Watchers' thread checks (`pause_all_watcher_checkers`).
+    pub watcher_checkers: bool,
+}
+
+impl Setting for Pauses {
+    const KEY: &'static str = "pauses";
+}
+
+impl Pauses {
+    /// The reference's option names, with this field.
+    pub fn by_option_name(&mut self) -> [(&'static str, &mut bool); 6] {
+        [
+            ("pause_subs_sync", &mut self.subscriptions),
+            ("pause_all_new_network_traffic", &mut self.network_traffic),
+            ("pause_all_paged_importers", &mut self.paged_importers),
+            ("pause_all_file_queues", &mut self.file_queues),
+            ("pause_all_gallery_searches", &mut self.gallery_searches),
+            ("pause_all_watcher_checkers", &mut self.watcher_checkers),
+        ]
+    }
+
+    /// Whether subscriptions may run.
+    pub fn subscriptions_run(self) -> bool {
+        !(self.subscriptions || self.network_traffic)
+    }
+
+    /// Whether queues may download files.
+    pub fn files_run(self) -> bool {
+        !(self.paged_importers || self.file_queues)
+    }
+
+    /// Whether queues may read gallery pages.
+    pub fn galleries_run(self) -> bool {
+        !(self.paged_importers || self.gallery_searches)
+    }
+
+    /// Whether watchers may check their threads.
+    pub fn watchers_run(self) -> bool {
+        !(self.paged_importers || self.watcher_checkers)
+    }
+}
+
 impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }

@@ -23,6 +23,7 @@ use hydrus_store::StoreError;
 use hydrus_store::queues::{
     self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
 };
+use hydrus_store::settings::Pauses;
 
 use crate::gallery::{QueueSink, set_gallery_status};
 use crate::seeds::new_url_seed;
@@ -437,6 +438,10 @@ impl QueueRunner {
                     return;
                 }
             };
+            // (the global pause switches, looked at on each pass)
+            let pauses = store
+                .read(hydrus_store::settings::get::<Pauses>)
+                .unwrap_or_default();
             let delayed_until = handle.status.lock().delayed_until;
             if let Some(until) = delayed_until {
                 let wait = until - now();
@@ -463,7 +468,7 @@ impl QueueRunner {
                         }
                     }
                 }
-                if state.check_due(now()) {
+                if state.check_due(now()) && pauses.watchers_run() {
                     self.check_watcher(&queue, state, handle).await;
                     continue;
                 }
@@ -474,7 +479,11 @@ impl QueueRunner {
             let over_limit = search
                 .as_ref()
                 .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
-            if queue.kind != QueueKind::Watcher && !queue.gallery_paused && !over_limit {
+            if queue.kind != QueueKind::Watcher
+                && !queue.gallery_paused
+                && !over_limit
+                && pauses.galleries_run()
+            {
                 match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
                     Ok(Some(gallery_seed)) => {
                         self.work_on_gallery_seed(gallery_seed, search, handle)
@@ -492,7 +501,7 @@ impl QueueRunner {
             let files_blocked = watcher
                 .as_ref()
                 .is_some_and(|w| !w.can_do_network_work(now()));
-            let next = if queue.files_paused || files_blocked {
+            let next = if queue.files_paused || files_blocked || !pauses.files_run() {
                 None
             } else {
                 match store.read(|conn| queues::next_file_seed(conn, queue_id)) {
@@ -513,6 +522,15 @@ impl QueueRunner {
                 {
                     let due = w.next_check_time.max(w.no_work_until) + 1;
                     wait = (due - now()).clamp(1, 600);
+                }
+                // while paused globally, look again soon: the switch may be
+                // flipped from the command line
+                if pauses.paged_importers
+                    || pauses.file_queues
+                    || pauses.gallery_searches
+                    || pauses.watcher_checkers
+                {
+                    wait = wait.min(30);
                 }
                 let _ =
                     tokio::time::timeout(Duration::from_secs(wait as u64), handle.wake.notified())

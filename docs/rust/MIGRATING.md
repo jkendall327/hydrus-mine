@@ -62,7 +62,11 @@ reported and kept). Subscriptions come across with their settings, their
 queries' timing and state, and each query's full history (the files and
 gallery pages it has seen, with their status and notes), so nothing is
 downloaded twice; `hydrus serve` checks them on their schedule, and `hydrus
-subscriptions <store> list` shows them. Duplicates auto-resolution rules come
+subscriptions <store> list` shows them. What you had paused from hydrus's
+"network > pause" menu (subscriptions, all new network traffic, the
+downloader queues) stays paused: `hydrus pause <store>` shows what is, and
+`hydrus resume <store> subscriptions` (or `network`, `queues`...) resumes
+it. Duplicates auto-resolution rules come
 across with their progress: every pair's status for every rule (searched,
 tested, waiting for your approval, denied) and each rule's log of what it
 did, so no rule redoes its work; `hydrus duplicates <store> rules` shows

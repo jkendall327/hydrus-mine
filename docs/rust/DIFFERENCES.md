@@ -289,6 +289,9 @@ deletes its files from the client, migrated from the reference's database.
   default "watcher") as the reference's does, but there are no pages to
   show yet, and a check that errors pauses the watcher without the
   reference's five-second status display.
+- **A pause switched from the command line takes up to half a minute** to
+  reach a running `hydrus serve` (it looks again that often while paused);
+  the reference's menu switches act at once.
 - **Subscription messages go to the log** (and the subscription runner's
   status) rather than popups, until there is a GUI; so do new files a
   subscription would publish to a popup button or page.

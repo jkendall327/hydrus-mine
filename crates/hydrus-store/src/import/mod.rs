@@ -1333,6 +1333,24 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn the_global_pause_switches_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let pauses: crate::settings::Pauses =
+            serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        // the fixture's client had all new network traffic paused
+        assert_eq!(
+            pauses,
+            crate::settings::Pauses {
+                network_traffic: true,
+                ..crate::settings::Pauses::default()
+            }
+        );
+        assert!(!pauses.subscriptions_run());
+        assert!(pauses.files_run() && pauses.galleries_run() && pauses.watchers_run());
+    }
+
+    #[test]
     fn a_default_install_keeps_the_default_bandwidth_rules() {
         let source = legacy_fixture("basic");
         let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
