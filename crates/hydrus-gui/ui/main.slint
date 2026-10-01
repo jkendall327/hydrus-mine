@@ -429,6 +429,8 @@ export component MainWindow inherits Window {
     // ctrl+e opens the focused file as the OS opens it
     callback remove-selected();
     callback open-externally();
+    // ctrl+c: the selected files onto the clipboard, as files
+    callback copy-files();
     // alt and home, end, left or right: the selected thumbnails to the
     // start (0), back one (1), forward one (3) or to the end (4)
     callback rearrange(int);
@@ -1128,6 +1130,10 @@ export component MainWindow inherits Window {
                             }
                             if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
                                 root.open-externally();
+                                return accept;
+                            }
+                            if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
+                                root.copy-files();
                                 return accept;
                             }
                             let move = event.modifiers.alt || event.modifiers.control ? -1

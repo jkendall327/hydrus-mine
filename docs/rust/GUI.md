@@ -140,7 +140,8 @@ focused last is selected again, or the next one if it has gone) and
 enter opens the media viewer on the focused file; as the reference's media
 shortcuts have it, ctrl+r takes the selected files off the page (not out
 of the client; a selected collection goes whole) and ctrl+e opens the
-focused file (not a collection) as the OS opens it. A right-click on a thumbnail selects it
+focused file (not a collection) as the OS opens it, and ctrl+c copies the
+selected files themselves. A right-click on a thumbnail selects it
 as a click would and opens the reference's thumbnail menu
 (`src/thumbnail_menu.rs`, checked against the reference's own menus for
 several pages and selections, `oracle/record_thumbnail_menu.py`), so far
@@ -169,14 +170,15 @@ image: a new page searching `system:similar to` the selected still images
 at the reference's exact match, very similar, similar or speculative
 distance, searching at once), or the focused file as the OS opens it (the
 reference's default "Default OS File Launch"; per-type launch programs
-aren't carried over yet) or in a web browser; and share → copying the files' paths, hashes
+aren't carried over yet) or in a web browser; and share → copying the
+files themselves (as a file manager pastes them, as hydrus copies them),
+the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
 clearing deletion records, the other manage entries,
 locations, urls → manage and force metadata refetch, open's custom
 similarity distance, and
-share's exporting and copying of
-files and bitmaps. Double-clicking a thumbnail opens the media viewer in its own
+share's exporting and copying of bitmaps. Double-clicking a thumbnail opens the media viewer in its own
 window on that file (fullscreen, as hydrus opens it by default, or as
 your hydrus frame for it says; f switches between fullscreen and the
 window it was, and its size and place are kept as it closes if you had
@@ -187,7 +189,7 @@ page's files, round from the last to the first as in the reference, home
 and end go to the first and the last, and escape, enter or a middle click
 closes it; ctrl+r takes the file shown off the viewer and its page,
 showing the next (closing with none left), and ctrl+e opens it as the OS
-opens it, pausing one that plays. As the reference's default shortcuts have it, z switches between
+opens it, pausing one that plays; ctrl+c copies it, as a file. As the reference's default shortcuts have it, z switches between
 100% and fitting the window, + and - (or ctrl and the mouse wheel) step
 through your zoom levels and canvas fit, keeping the point under the
 pointer still (or wherever your zoom centre option says), shift and the

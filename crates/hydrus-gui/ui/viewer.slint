@@ -125,6 +125,8 @@ export component MediaViewerWindow inherits Window {
     // as the OS opens it
     callback remove-from-view();
     callback open-externally();
+    // ctrl+c: the file onto the clipboard, as a file
+    callback copy-file();
     // the volume a point on the volume control's track (`top` to `top` +
     // `track`, loudest at the top) sets
     pure function volume-at(y: length, top: length, track: length) -> int {
@@ -254,6 +256,10 @@ export component MediaViewerWindow inherits Window {
             }
             if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
                 root.open-externally();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
+                root.copy-file();
                 return accept;
             }
             // ctrl+b and ctrl+n: a frame back or on, in a file with a scanbar

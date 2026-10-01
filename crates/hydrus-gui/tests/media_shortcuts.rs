@@ -148,3 +148,59 @@ fn alt_and_the_arrows_rearrange_the_selected_thumbnails() {
     });
     assert_eq!(page.borrow().results(), before);
 }
+
+#[test]
+fn ctrl_c_copies_the_files_themselves() {
+    use hydrus_gui::Clip;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    // (nothing really goes on the clipboard: what would is noted)
+    let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
+    hydrus_gui::set_clipper({
+        let copied = copied.clone();
+        move |clip| copied.borrow_mut().push(clip.clone())
+    });
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let files = page.borrow().results().to_vec();
+    let paths = |of: &[hydrus_core::HashId]| -> Vec<std::path::PathBuf> {
+        hydrus_gui::thumbnail_menu::paths(&store, of)
+            .into_iter()
+            .map(Into::into)
+            .collect()
+    };
+    // nothing selected: nothing copied
+    ui.invoke_copy_files();
+    assert!(copied.borrow().is_empty());
+    // two selected: both, as files, each a real path
+    page.borrow_mut().hit(Some(0), false, false);
+    page.borrow_mut().hit(Some(1), true, false);
+    ui.invoke_copy_files();
+    let wanted = paths(&files[..2]);
+    assert_eq!(wanted.len(), 2);
+    assert!(wanted.iter().all(|p| p.exists()));
+    assert_eq!(*copied.borrow(), [Clip::Files(wanted)]);
+    // in the viewer, the file shown
+    copied.borrow_mut().clear();
+    ui.invoke_thumbnail_activated(1);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    viewer.invoke_copy_file();
+    assert_eq!(*copied.borrow(), [Clip::Files(paths(&files[1..2]))]);
+    viewer.invoke_close_requested();
+}

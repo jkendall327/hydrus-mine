@@ -68,11 +68,14 @@ pub enum Action {
     OpenInWebBrowser,
     /// Copy the entry's text (a label's).
     Copy,
-    /// Copy the selected local files' paths, hashes of a kind, or ids.
+    /// Copy the selected local files themselves (as files a file manager
+    /// pastes), or their paths, hashes of a kind, or ids.
+    CopyFiles,
     CopyPaths,
     CopyHashes(HashKind),
     CopyFileIds,
-    /// Copy the focused file's path, hash of a kind, or id.
+    /// Copy the focused file itself, or its path, hash of a kind, or id.
+    CopyFile,
     CopyPath,
     CopyHash(HashKind),
     CopyFileId,
@@ -289,9 +292,10 @@ pub fn share_menu(
         !(of.is_empty() || of.len() == 1 && focused.is_some_and(|f| of.contains(&f)))
     };
     let mut entries = Vec::new();
-    // (the reference's "export files" and "copy files" first, which
-    // hydrus-rs doesn't have yet)
+    // (the reference's "export files" first, which hydrus-rs doesn't have
+    // yet)
     if more_than_focused(&local) {
+        entries.push(Entry::Item("copy files".into(), Action::CopyFiles));
         entries.push(Entry::Item("copy paths".into(), Action::CopyPaths));
     }
     if more_than_focused(selected) {
@@ -322,6 +326,7 @@ pub fn share_menu(
     }
     if let Some(file) = focused {
         if is_local(file) {
+            entries.push(Entry::Item("copy file".into(), Action::CopyFile));
             entries.push(Entry::Item("copy path".into(), Action::CopyPath));
         }
         let one = |kind: HashKind| hashes(store, &[file], kind).pop();

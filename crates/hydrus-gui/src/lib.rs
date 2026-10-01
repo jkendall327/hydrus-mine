@@ -893,6 +893,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // ctrl+c: the selected files, as files (`SIMPLE_COPY_FILES`)
+    window.on_copy_files({
+        let page = page.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            copy_files(page.store(), &page.selected_files());
+        }
+    });
     // ctrl+e: the focused file as the OS opens it, if one file is focused
     // (`_HasFocusSingleton`)
     window.on_open_externally({
@@ -1094,6 +1103,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             launch(&file_url(&path));
                         }
                     }
+                }
+                Action::CopyFiles | Action::CopyFile => {
+                    let page = page.borrow();
+                    let files = if action == Action::CopyFile {
+                        page.focused()
+                            .map(|i| page.results()[i])
+                            .into_iter()
+                            .collect()
+                    } else {
+                        page.selected_files()
+                    };
+                    copy_files(page.store(), &files);
                 }
                 Action::CopyPaths
                 | Action::CopyHashes(_)
@@ -1427,13 +1448,60 @@ fn file_url(path: &str) -> String {
 /// Put `text` on the clipboard (as the reference's menu labels do when
 /// chosen).
 fn copy_to_clipboard(text: &str) {
-    match arboard::Clipboard::new() {
-        Ok(mut clipboard) => {
-            if let Err(e) = clipboard.set_text(text) {
-                eprintln!("could not copy to the clipboard: {e}");
-            }
+    to_clipboard(&Clip::Text(text.to_owned()));
+}
+
+/// What goes on the clipboard: text, or files (as the reference's
+/// `ToClipboard` puts them, as file URLs a file manager pastes as files).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Clip {
+    Text(String),
+    Files(Vec<std::path::PathBuf>),
+}
+
+/// Something that takes what is copied.
+type Clipper = Rc<dyn Fn(&Clip)>;
+
+thread_local! {
+    /// What takes copies in place of the clipboard, if anything.
+    static CLIPPER: RefCell<Option<Clipper>> = RefCell::new(None);
+}
+
+/// Give what is copied to `clipper` rather than the clipboard (for tests,
+/// which shouldn't touch it), on this thread.
+pub fn set_clipper(clipper: impl Fn(&Clip) + 'static) {
+    CLIPPER.with(|c| *c.borrow_mut() = Some(Rc::new(clipper)));
+}
+
+fn to_clipboard(clip: &Clip) {
+    if let Some(clipper) = CLIPPER.with(|c| c.borrow().clone()) {
+        clipper(clip);
+        return;
+    }
+    let mut clipboard = match arboard::Clipboard::new() {
+        Ok(clipboard) => clipboard,
+        Err(e) => {
+            eprintln!("could not open the clipboard: {e}");
+            return;
         }
-        Err(e) => eprintln!("could not open the clipboard: {e}"),
+    };
+    let done = match clip {
+        Clip::Text(text) => clipboard.set_text(text.as_str()),
+        Clip::Files(paths) => clipboard.set().file_list(paths),
+    };
+    if let Err(e) = done {
+        eprintln!("could not copy to the clipboard: {e}");
+    }
+}
+
+/// Copy `files`, those that are local, as files (`CopyFilesToClipboard`).
+fn copy_files(store: &hydrus_store::Store, files: &[HashId]) {
+    let paths: Vec<std::path::PathBuf> = thumbnail_menu::paths(store, files)
+        .into_iter()
+        .map(std::path::PathBuf::from)
+        .collect();
+    if !paths.is_empty() {
+        to_clipboard(&Clip::Files(paths));
     }
 }
 
@@ -1903,6 +1971,14 @@ fn open_viewer(
             } else if let Some(window) = weak.upgrade() {
                 window.invoke_close_requested();
             }
+        }
+    });
+    // ctrl+c: the file, as a file
+    window.on_copy_file({
+        let model = model.clone();
+        move || {
+            let model = model.borrow();
+            copy_files(model.store(), &[model.current()]);
         }
     });
     // ctrl+e: the file as the OS opens it, pausing one that plays

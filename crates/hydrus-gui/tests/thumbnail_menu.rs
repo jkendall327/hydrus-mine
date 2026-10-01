@@ -41,6 +41,8 @@ fn kept(label: &str) -> Kept {
         ]),
         "urls" => Kept::Only(&["open in browser", "open in a new page", "copy"]),
         "share" => Kept::Only(&[
+            "copy files",
+            "copy file",
             "copy paths",
             "copy hashes",
             "copy file ids",
