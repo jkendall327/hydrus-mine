@@ -52,6 +52,9 @@ jobs:
         with:
           toolchain: '1.94'
       - uses: Swatinem/rust-cache@v2
+        with:
+          # their cold builds are long: keep what a failed run built
+          cache-on-failure: true
       - name: install ffmpeg (Windows)
         if: runner.os == 'Windows'
         run: choco install ffmpeg -y --no-progress
