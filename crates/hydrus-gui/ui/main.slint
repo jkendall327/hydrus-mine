@@ -2,7 +2,10 @@
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
 import { Button, ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
 
+// (the palette, to choose light or dark: by default the system's)
+export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow } from "viewer.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 
@@ -15,7 +18,7 @@ component Predicate inherits Rectangle {
     in property <string> text;
     callback remove();
     height: 22px;
-    background: touch.has-hover ? #e8e8e8 : transparent;
+    background: touch.has-hover ? Theme.hover : transparent;
     Text {
         x: 4px;
         text: root.text;
@@ -35,12 +38,12 @@ component TagList inherits Rectangle {
     in property <[string]> tags;
     callback activated(int);
     border-width: 1px;
-    border-color: #c8c8c8;
-    background: #ffffff;
+    border-color: Theme.border;
+    background: Theme.panel;
     ListView {
         for tag[i] in root.tags: Rectangle {
             height: 20px;
-            background: pick.has-hover ? #eeeeee : transparent;
+            background: pick.has-hover ? Theme.hover : transparent;
             Text {
                 x: 4px;
                 text: tag;
@@ -62,10 +65,11 @@ component ChooserButton inherits Rectangle {
     visible: root.label != "";
     border-radius: 4px;
     border-width: 1px;
-    border-color: #a0a0a0;
-    background: touch.has-hover ? #dde8f4 : #f8f8f8;
+    border-color: Theme.border;
+    background: touch.has-hover ? Theme.highlight : Theme.panel;
     Text {
         text: root.label;
+        color: touch.has-hover ? Theme.highlight-text : Theme.text;
         horizontal-alignment: center;
         vertical-alignment: center;
         wrap: word-wrap;
@@ -90,9 +94,9 @@ component Tab inherits Rectangle {
     callback close();
     height: 26px;
     width: label.preferred-width + 20px;
-    background: root.selected ? #ffffff : touch.has-hover ? #e8e8e8 : #dcdcdc;
+    background: root.selected ? Theme.panel : touch.has-hover ? Theme.hover : Theme.window;
     border-width: 1px;
-    border-color: #c0c0c0;
+    border-color: Theme.border;
     label := Text {
         text: root.text;
         vertical-alignment: center;
@@ -123,30 +127,58 @@ component ThumbnailGrid inherits ListView {
     out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
     callback clicked(int);
     callback activated(int);
-    for row in root.rows: HorizontalLayout {
-        padding-left: root.gap;
-        padding-top: root.gap;
-        spacing: root.gap;
-        alignment: start;
+
+    // which of a row's `count` thumbnails is at (x, y), or -1 for a gap
+    pure function thumbnail-at(count: int, x: length, y: length) -> int {
+        let step = root.thumbnail-size + root.gap;
+        let column = floor((x - root.gap) / step);
+        if (x < root.gap || y < root.gap || column >= count
+            || x - root.gap - column * step >= root.thumbnail-size) {
+            return -1;
+        }
+        return column;
+    }
+
+    for row in root.rows: Rectangle {
         height: root.thumbnail-size + root.gap;
-        for thumbnail[column] in row.thumbnails: Rectangle {
-            width: root.thumbnail-size;
-            height: root.thumbnail-size;
-            border-width: thumbnail.selected ? 2px : 1px;
-            border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
-            background: #ffffff;
-            Image {
-                x: 2px;
-                y: 2px;
-                width: parent.width - 4px;
-                height: parent.height - 4px;
-                source: thumbnail.image;
-                image-fit: contain;
+        HorizontalLayout {
+            padding-left: root.gap;
+            padding-top: root.gap;
+            spacing: root.gap;
+            alignment: start;
+            for thumbnail in row.thumbnails: Rectangle {
+                width: root.thumbnail-size;
+                height: root.thumbnail-size;
+                border-width: thumbnail.selected ? 2px : 1px;
+                border-color: thumbnail.selected ? Theme.accent : Theme.border;
+                background: Theme.panel;
+                Image {
+                    x: 2px;
+                    y: 2px;
+                    width: parent.width - 4px;
+                    height: parent.height - 4px;
+                    source: thumbnail.image;
+                    image-fit: contain;
+                }
             }
-            TouchArea {
-                clicked => { root.clicked(row.first + column); }
-                // as in the reference, double-clicking a thumbnail opens the viewer
-                double-clicked => { root.activated(row.first + column); }
+        }
+        // one for the row, not one per thumbnail: a click redraws the row
+        // to show the selection, which makes its thumbnails afresh, so a
+        // double-click's second click would land on one that never saw the
+        // first
+        TouchArea {
+            clicked => {
+                let column = root.thumbnail-at(row.thumbnails.length, self.pressed-x, self.pressed-y);
+                if (column >= 0) {
+                    root.clicked(row.first + column);
+                }
+            }
+            // as in the reference, double-clicking a thumbnail opens the viewer
+            double-clicked => {
+                let column = root.thumbnail-at(row.thumbnails.length, self.pressed-x, self.pressed-y);
+                if (column >= 0) {
+                    root.activated(row.first + column);
+                }
             }
         }
     }
@@ -156,7 +188,7 @@ export component MainWindow inherits Window {
     title: "hydrus-rs";
     preferred-width: 1100px;
     preferred-height: 700px;
-    background: #f4f4f4;
+    background: Theme.window;
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
@@ -312,18 +344,19 @@ export component MainWindow inherits Window {
                     }
                     if root.suggestions.length > 0: Rectangle {
                         border-width: 1px;
-                        border-color: #c8c8c8;
-                        background: #ffffff;
+                        border-color: Theme.border;
+                        background: Theme.panel;
                         height: min(root.suggestions.length, 12) * 22px + 4px;
                         VerticalLayout {
                             padding: 2px;
                             alignment: start;
                             for suggestion[i] in root.suggestions: Rectangle {
                                 height: 22px;
-                                background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
+                                background: i == root.highlighted ? Theme.highlight : pick.has-hover ? Theme.hover : transparent;
                                 Text {
                                     x: 4px;
                                     text: suggestion;
+                                    color: i == root.highlighted ? Theme.highlight-text : Theme.text;
                                     vertical-alignment: center;
                                     overflow: elide;
                                     width: parent.width - 8px;
@@ -336,13 +369,13 @@ export component MainWindow inherits Window {
                     }
                     if root.error != "": Text {
                         text: root.error;
-                        color: #b00020;
+                        color: Theme.error;
                         wrap: word-wrap;
                     }
                     Rectangle {
                         border-width: 1px;
-                        border-color: #c8c8c8;
-                        background: #ffffff;
+                        border-color: Theme.border;
+                        background: Theme.panel;
                         height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
                         VerticalLayout {
                             padding: 2px;
@@ -366,7 +399,7 @@ export component MainWindow inherits Window {
             }
             Rectangle {
                 height: 24px;
-                background: #e6e6e6;
+                background: Theme.panel;
                 Text {
                     x: 6px;
                     text: root.status;
@@ -376,14 +409,14 @@ export component MainWindow inherits Window {
         }
 
         if root.chooser-labels.length > 0: Rectangle {
-            background: #00000060;
+            background: Theme.shade;
             TouchArea {
                 clicked => { root.chooser-cancel(); }
             }
             Rectangle {
                 width: 336px;
                 height: 336px;
-                background: #ececec;
+                background: Theme.window;
                 border-radius: 6px;
                 TouchArea {}
                 for number in [7, 8, 9, 4, 5, 6, 1, 2, 3]: ChooserButton {

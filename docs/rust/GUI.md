@@ -7,7 +7,9 @@ and how we mean to go about it.
 ## Where it stands
 
 `hydrus-gui <store>` opens the last session (the one a migration brings
-over from hydrus), or a single search page if there is none. Each notebook
+over from hydrus), or a single search page if there is none. Its windows
+follow the system's light or dark mode (hydrus's own colour options aren't
+carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its
 first page, as in the reference. A search page opens as it was left: its
 search, its sort and the files it showed, not searched again until its
@@ -31,10 +33,11 @@ sort control offers every sort type named and ordered as in the reference,
 each with its two orders ("oldest first", "newest first"...); choosing a
 type picks its default order, as the reference does. With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
-many files each finds (the reference also offers the system predicates that
-open an editor; not yet). Typing in the search box lists
-the matching tags with their counts (display tags, all known tags, all my
-files; the exact match first, then the most used), up and down move the
+many files each finds in the page's file domains, counted as the reference's
+`_GetFileSystemPredicates` does (the reference also offers the system
+predicates that open an editor; not yet). Typing in the search box lists
+the matching tags with their counts (display tags, in the page's file domains
+and tag service; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),

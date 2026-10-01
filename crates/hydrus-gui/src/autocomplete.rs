@@ -1,16 +1,21 @@
 //! The search box's autocomplete: the tags matching what has been typed,
 //! with their counts, as the reference's read autocomplete lists them
-//! (display tags, all known tags, in all my files); and before anything is
-//! typed, the system predicates that need no more input, with theirs.
+//! (display tags, in the page's file domains and tag service); and before
+//! anything is typed, the system predicates that need no more input, with
+//! theirs.
 
 use std::sync::Arc;
 
-use hydrus_core::ServiceKey;
-use hydrus_core::service::builtin_keys;
+use hydrus_core::mime::SEARCHABLE_MIMES;
+use hydrus_core::search::context::{LocationContext, TagContext};
+use hydrus_core::service::ServiceType;
+use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_store::Store;
 use hydrus_store::autocomplete::{
-    self, AutocompleteInput, AutocompleteSettings, CountDomain, TagDisplayType, TagSearchScope,
+    self, AutocompleteInput, AutocompleteSettings, CountDomain, CountRange, TagDisplayType,
+    TagSearchScope,
 };
+use hydrus_store::services::ServiceRegistry;
 
 /// One suggestion.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -23,6 +28,8 @@ pub struct Suggestion {
 
 pub struct Autocomplete {
     store: Arc<Store>,
+    /// The page's file domains and tag service, which the counts are for.
+    context: (LocationContext, TagContext),
     text: String,
     suggestions: Vec<Suggestion>,
     highlighted: usize,
@@ -42,10 +49,18 @@ impl Autocomplete {
     pub fn new(store: Arc<Store>) -> Self {
         Self {
             store,
+            context: (LocationContext::default(), TagContext::default()),
             text: String::new(),
             suggestions: Vec::new(),
             highlighted: 0,
         }
+    }
+
+    /// Count in these file domains and this tag service from now on.
+    pub fn set_context(&mut self, location: &LocationContext, tags: &TagContext) {
+        self.context = (location.clone(), tags.clone());
+        let text = std::mem::take(&mut self.text);
+        self.set_text(&text);
     }
 
     pub fn text(&self) -> &str {
@@ -94,28 +109,26 @@ impl Autocomplete {
         let input = AutocompleteInput::parse(&self.text);
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
-        let domain = registry
-            .builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)
-            .ok()?
-            .id;
-        let all_known_tags = ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec());
+        let (location, tags) = &self.context;
+        let tag_service = if tags.is_all_known_tags() {
+            None
+        } else {
+            Some(registry.by_key(&tags.service).ok()?.id)
+        };
+        let scope = TagSearchScope {
+            domains: count_domains(registry, location),
+            tag_service,
+            display: TagDisplayType::Display,
+            include_current: tags.include_current,
+            include_pending: tags.include_pending,
+        };
         let matches = self
             .store
             .read(|conn| {
-                let rules = hydrus_store::settings::get::<AutocompleteSettings>(conn)?
-                    .rules(&all_known_tags);
+                let rules =
+                    hydrus_store::settings::get::<AutocompleteSettings>(conn)?.rules(&tags.service);
                 let Some(query) = input.tag_query(&rules) else {
                     return Ok(Vec::new());
-                };
-                let scope = TagSearchScope {
-                    domains: vec![CountDomain {
-                        service: domain,
-                        exact: true,
-                    }],
-                    tag_service: None,
-                    display: TagDisplayType::Display,
-                    include_current: true,
-                    include_pending: true,
                 };
                 autocomplete::search_tags(conn, registry, &snapshot.display, &scope, &query)
             })
@@ -142,43 +155,142 @@ impl Autocomplete {
     }
 
     /// `system:everything`, `system:inbox` and `system:archive`, with how
-    /// many files each finds in all my files (`_GetFileSystemPredicates`).
+    /// many files each finds in the page's file domains
+    /// (`_GetFileSystemPredicates`): each domain's viewable files and
+    /// inbox, combined as tag counts are. Searching all known files, only
+    /// `system:everything` is offered, without a count.
     fn system_predicates(&self) -> Option<Vec<Suggestion>> {
+        let (location, _) = &self.context;
+        if location.is_all_known_files() {
+            return Some(vec![Suggestion {
+                label: "system:everything".into(),
+                predicate: "system:everything".into(),
+            }]);
+        }
         let snapshot = self.store.snapshot();
-        let domain = snapshot
-            .services
-            .builtin(builtin_keys::COMBINED_LOCAL_FILE_DOMAINS)
-            .ok()?
-            .id;
-        let (everything, inbox): (i64, i64) = self
+        let registry = &snapshot.services;
+        let real = |key: &ServiceKey| {
+            registry
+                .by_key(key)
+                .ok()
+                .filter(|s| REAL_FILE_SERVICES.contains(&s.service_type()))
+                .map(|s| s.id)
+        };
+        let current: Vec<ServiceId> = location.current().iter().filter_map(real).collect();
+        let deleted: Vec<ServiceId> = location.deleted().iter().filter_map(real).collect();
+        let (everything, inbox, archive) = self
             .store
             .read(|conn| {
-                let everything = conn.query_row(
-                    "SELECT count(*) FROM file_domain_current WHERE service_id = ?",
-                    [domain],
-                    |r| r.get(0),
-                )?;
-                let inbox = conn.query_row(
-                    "SELECT count(*) FROM file_inbox AS i
-                     JOIN file_domain_current AS d ON d.hash_id = i.hash_id AND d.service_id = ?",
-                    [domain],
-                    |r| r.get(0),
-                )?;
-                Ok((everything, inbox))
+                let mut everything: Option<CountRange> = None;
+                let mut inbox: Option<CountRange> = None;
+                let mut archive: Option<CountRange> = None;
+                let add = |total: &mut Option<CountRange>, n: i64| {
+                    let n = CountRange::current(u64::try_from(n).unwrap_or(0));
+                    match total {
+                        Some(t) => t.merge(n),
+                        None => *total = Some(n),
+                    }
+                };
+                for &service in &current {
+                    let viewable: i64 = conn.query_row(
+                        "SELECT count(*) FROM file_domain_current AS d
+                         JOIN files AS f ON f.hash_id = d.hash_id
+                         WHERE d.service_id = ?1 AND f.mime IN rarray(?2)",
+                        rusqlite::params![service, searchable_mimes()],
+                        |r| r.get(0),
+                    )?;
+                    add(&mut everything, viewable);
+                    // (inbox and archive can't be counted well with deleted
+                    // files in the mix)
+                    if !deleted.is_empty() {
+                        continue;
+                    }
+                    let in_inbox: i64 = conn.query_row(
+                        "SELECT count(*) FROM file_domain_current AS d
+                         JOIN file_inbox AS i ON i.hash_id = d.hash_id
+                         WHERE d.service_id = ?1",
+                        [service],
+                        |r| r.get(0),
+                    )?;
+                    add(&mut inbox, in_inbox);
+                    add(&mut archive, viewable - in_inbox);
+                }
+                for &service in &deleted {
+                    let n: i64 = conn.query_row(
+                        "SELECT count(*) FROM file_domain_deleted WHERE service_id = ?1",
+                        [service],
+                        |r| r.get(0),
+                    )?;
+                    add(&mut everything, n);
+                }
+                Ok((everything, inbox, archive))
             })
             .ok()?;
         Some(
             [
                 ("system:everything", everything),
                 ("system:inbox", inbox),
-                ("system:archive", everything - inbox),
+                ("system:archive", archive),
             ]
             .into_iter()
-            .map(|(predicate, count)| Suggestion {
-                label: format!("{predicate} ({count})"),
-                predicate: predicate.to_owned(),
+            .map(|(predicate, count)| {
+                let suffix = count.map(|c| c.suffix()).unwrap_or_default();
+                Suggestion {
+                    label: if suffix.is_empty() {
+                        predicate.to_owned()
+                    } else {
+                        format!("{predicate} {suffix}")
+                    },
+                    predicate: predicate.to_owned(),
+                }
             })
             .collect(),
         )
     }
+}
+
+/// The file services hydrus counts files in (`HC.REAL_FILE_SERVICES`).
+const REAL_FILE_SERVICES: &[ServiceType] = &[
+    ServiceType::LocalFileDomain,
+    ServiceType::LocalFileUpdateDomain,
+    ServiceType::LocalFileTrashDomain,
+    ServiceType::HydrusLocalFileStorage,
+    ServiceType::CombinedLocalFileDomains,
+    ServiceType::CombinedDeletedFile,
+    ServiceType::FileRepository,
+    ServiceType::Ipfs,
+];
+
+/// The types hydrus counts as viewable files (`HC.SEARCHABLE_MIMES`).
+fn searchable_mimes() -> std::rc::Rc<Vec<rusqlite::types::Value>> {
+    std::rc::Rc::new(
+        SEARCHABLE_MIMES
+            .iter()
+            .map(|m| rusqlite::types::Value::Integer(i64::from(m.code())))
+            .collect(),
+    )
+}
+
+/// Where tag counts come from for a page's file domains: each current
+/// domain exactly, and, for deleted files, "deleted from anywhere" as an
+/// upper bound (as the Client API's tag search does).
+fn count_domains(registry: &ServiceRegistry, location: &LocationContext) -> Vec<CountDomain> {
+    let mut domains: Vec<CountDomain> = location
+        .current()
+        .iter()
+        .filter_map(|key| registry.by_key(key).ok())
+        .map(|s| CountDomain {
+            service: s.id,
+            exact: true,
+        })
+        .collect();
+    if !location.deleted().is_empty()
+        && let Some(deleted) = registry.of_type(ServiceType::CombinedDeletedFile).next()
+    {
+        domains.push(CountDomain {
+            service: deleted.id,
+            exact: false,
+        });
+    }
+    domains
 }

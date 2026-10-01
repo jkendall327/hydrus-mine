@@ -7,6 +7,7 @@
 // animations play, as in the media viewer; space pauses.
 
 import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
 
 export struct Statement {
     text: string,
@@ -109,19 +110,19 @@ export component DuplicateFilterWindow inherits Window {
 
             Rectangle {
                 width: 330px;
-                background: #f0f0f0;
+                background: Theme.window;
                 VerticalLayout {
                     padding: 8px;
                     spacing: 4px;
                     for statement in root.statements: Text {
                         text: statement.text;
                         wrap: word-wrap;
-                        color: statement.score > 0 ? #007000 : statement.score < 0 ? #b00000 : #303030;
+                        color: statement.score > 0 ? Theme.good : statement.score < 0 ? Theme.bad : Theme.text;
                     }
                     Text {
                         text: root.score-text;
                         font-weight: 700;
-                        color: root.score > 0 ? #007000 : root.score < 0 ? #b00000 : #303030;
+                        color: root.score > 0 ? Theme.good : root.score < 0 ? Theme.bad : Theme.text;
                     }
                     Rectangle {
                         height: 8px;
@@ -160,12 +161,12 @@ export component DuplicateFilterWindow inherits Window {
         }
 
         if root.question != "": Rectangle {
-            background: #00000080;
+            background: Theme.shade;
             TouchArea {}
             Rectangle {
                 width: 360px;
                 height: dialog.preferred-height;
-                background: #f0f0f0;
+                background: Theme.window;
                 border-radius: 4px;
                 dialog := VerticalLayout {
                     padding: 12px;

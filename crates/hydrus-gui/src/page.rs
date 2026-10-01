@@ -130,6 +130,8 @@ impl SearchPage {
             tags,
             predicates: Vec::new(),
         };
+        page.autocomplete
+            .set_context(&page.context.location, &page.context.tags);
         page.predicates = predicates;
         page.synchronised = synchronised;
         page.set_page_sort(sort);

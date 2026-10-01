@@ -2488,6 +2488,7 @@ dependencies = [
  "hydrus-testkit",
  "libloading",
  "png",
+ "rusqlite",
  "serde_json",
  "slint",
  "slint-build",

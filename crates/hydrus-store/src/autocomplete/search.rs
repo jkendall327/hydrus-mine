@@ -70,7 +70,18 @@ pub struct CountRange {
 }
 
 impl CountRange {
-    fn merge(&mut self, other: CountRange) {
+    /// Exactly `n` current files.
+    pub fn current(n: u64) -> Self {
+        Self {
+            min_current: n,
+            max_current: n,
+            ..Self::default()
+        }
+    }
+
+    /// Combine with another domain's count: the larger lower bound, the
+    /// summed upper bound.
+    pub fn merge(&mut self, other: CountRange) {
         self.min_current = self.min_current.max(other.min_current);
         self.max_current += other.max_current;
         self.min_pending = self.min_pending.max(other.min_pending);

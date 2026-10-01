@@ -3,10 +3,11 @@
 
 use slint::{ComponentHandle as _, Model as _};
 
-use hydrus_gui::{MainWindow, MediaViewer, Pages, SearchPage, bind, headless};
+use hydrus_gui::{MainWindow, MediaViewer, Pages, Palette, SearchPage, bind, headless};
 use hydrus_search::{SortBy, SortOrder};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
+use slint::language::ColorScheme;
 
 #[test]
 fn a_search_page_finds_files_and_shows_their_thumbnails() {
@@ -241,8 +242,49 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let colours: std::collections::HashSet<&[u8]> = pixels.chunks(4).collect();
     assert!(colours.len() > 1000, "{} colours", colours.len());
 
-    // double-clicking a thumbnail opens the viewer on its file
-    ui.invoke_thumbnail_activated(2);
+    // the same in dark mode: every colour the window draws follows it
+    ui.global::<Palette<'_>>()
+        .set_color_scheme(ColorScheme::Dark);
+    let dark = headless::render(&main_window, width, height);
+    headless::save_png(&shots.join("search_page_dark.png"), &dark, width, height).unwrap();
+    let light_pixels = |pixels: &[u8]| {
+        pixels
+            .chunks(4)
+            .filter(|p| p[0] > 200 && p[1] > 200 && p[2] > 200)
+            .count()
+    };
+    assert!(
+        light_pixels(&dark) < light_pixels(&pixels) / 4,
+        "{} light pixels in dark mode, {} in light",
+        light_pixels(&dark),
+        light_pixels(&pixels)
+    );
+    ui.global::<Palette<'_>>()
+        .set_color_scheme(ColorScheme::Light);
+
+    // a click on a thumbnail selects it; a double-click opens the viewer on
+    // its file (the first click redraws the row, which mustn't lose it)
+    let grid_left = 300.0;
+    let third = slint::LogicalPosition::new(grid_left + 4.0 + 2.0 * 154.0 + 75.0, 4.0 + 75.0);
+    let click = |at: slint::LogicalPosition| {
+        use slint::platform::{PointerEventButton, WindowEvent};
+        let window = ui.window();
+        window.dispatch_event(WindowEvent::PointerMoved { position: at });
+        window.dispatch_event(WindowEvent::PointerPressed {
+            position: at,
+            button: PointerEventButton::Left,
+        });
+        window.dispatch_event(WindowEvent::PointerReleased {
+            position: at,
+            button: PointerEventButton::Left,
+        });
+    };
+    click(third);
+    headless::render(&main_window, width, height);
+    assert!(bound.viewer.borrow().is_none(), "one click only selects");
+    assert_eq!(windows.count(), 1);
+    click(third);
+    headless::render(&main_window, width, height);
     let viewer = bound
         .viewer
         .borrow()
@@ -261,4 +303,69 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(viewer.get_caption(), format!("4/{everything}"));
     viewer.invoke_close_requested();
     assert!(bound.viewer.borrow().is_none());
+}
+
+#[test]
+fn system_predicate_counts_are_for_the_page_s_file_domain() {
+    use hydrus_core::search::context::{LocationContext, TagContext};
+    use hydrus_core::service::ServiceType;
+    use hydrus_search::FileSearchContext;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let snapshot = store.snapshot();
+    let mut found = Vec::new();
+    // ("my files" and "art" hold different files)
+    for domain in snapshot.services.of_type(ServiceType::LocalFileDomain) {
+        let search = FileSearchContext {
+            location: LocationContext::single(domain.key.clone()),
+            tags: TagContext::default(),
+            predicates: Vec::new(),
+        };
+        let mut page = SearchPage::restored(store.clone(), search, true, None, Vec::new());
+        let labels: Vec<String> = page
+            .autocomplete()
+            .suggestions()
+            .iter()
+            .map(|s| s.label.clone())
+            .collect();
+        let mut count = |predicate: &str| {
+            page.add_predicate(predicate);
+            let n = page.results().len();
+            page.remove_predicate(0);
+            n
+        };
+        let (everything, inbox, archive) = (
+            count("system:everything"),
+            count("system:inbox"),
+            count("system:archive"),
+        );
+        let with_count = |predicate: &str, n: usize| {
+            if n == 0 {
+                predicate.to_owned()
+            } else {
+                format!("{predicate} ({n})")
+            }
+        };
+        assert_eq!(
+            labels,
+            [
+                with_count("system:everything", everything),
+                with_count("system:inbox", inbox),
+                with_count("system:archive", archive),
+            ],
+            "{}",
+            domain.name
+        );
+        found.push(everything);
+    }
+    found.sort_unstable();
+    found.dedup();
+    assert!(found.len() > 1, "the domains differ: {found:?}");
 }
