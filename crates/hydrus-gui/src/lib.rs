@@ -824,7 +824,7 @@ fn open_viewer(
             let bar = match (playable.is_some(), own) {
                 (true, _) => scanbar::Scanbar::new(duration_ms, num_frames).map(|b| (b, false)),
                 (false, Some((frames, total_ms))) => scanbar::Scanbar::new(
-                    duration_ms.or(total_ms),
+                    duration_ms.or(Some(total_ms)),
                     num_frames.or(Some(frames as u64)),
                 )
                 .map(|b| (b, true)),
@@ -943,12 +943,20 @@ fn open_viewer(
     });
     window.on_seek_delta({
         let playback = playback.clone();
+        let animator = animator.clone();
         move |direction, step| {
-            // (mpv's files; the client's own animations don't seek by time)
-            if let (Some((bar, false)), Some(position)) = (scanbar.get(), playback.position_ms()) {
-                let to = bar.seek_delta(position, direction, u64::try_from(step).unwrap_or(0));
-                playback.seek_ms(to);
-                show_scanbar(to);
+            let step = u64::try_from(step).unwrap_or(0);
+            match scanbar.get() {
+                Some((bar, false)) => {
+                    if let Some(position) = playback.position_ms() {
+                        let to = bar.seek_delta(position, direction, step);
+                        playback.seek_ms(to);
+                        show_scanbar(to);
+                    }
+                }
+                // (the frame's text follows once it is shown)
+                Some((_, true)) => animator.seek_delta(direction, step),
+                None => {}
             }
         }
     });

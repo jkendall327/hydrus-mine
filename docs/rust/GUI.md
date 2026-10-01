@@ -101,7 +101,10 @@ full height; a click or drag on it seeks there, and ctrl and left or right
 seek back 2.5 seconds or on 5 (past the end, round to the start), as the
 reference's defaults have it. Ugoiras and animated WebP, which the client
 plays itself, have the scanbar too, by frame: a click or drag goes to the
-frame under the pointer. Playing pauses while the scanbar is dragged and
+frame under the pointer, and ctrl and the arrows go to the frame showing
+that much earlier or later (or if that is the frame shown, the one
+before or after it), timed as the reference times them (a WebP's frames
+by its frame chunks). Playing pauses while the scanbar is dragged and
 resumes when it is let go, as in the reference.
 Slint's software renderer scales images by their nearest pixel, so stills
 are also drawn as the reference draws them: the part showing is cut out
@@ -182,8 +185,7 @@ repositories (pending and petitioning) and on several files at once from
 the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
-shading, seeking our own animation player's files (ugoiras and animated
-WebP) by ctrl and the arrows, playing animated JPEG XL, downloader pages' own panels; in
+shading, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and

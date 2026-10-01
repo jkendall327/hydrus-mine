@@ -10,24 +10,23 @@ use hydrus_core::Mime;
 
 use crate::error::{MediaError, Result};
 use crate::formats::archive::{self, Zip};
+use crate::formats::webp;
 use crate::imaging::Raster;
 use crate::tools::{MediaTools, raster_from_bytes};
 
 /// An animation's frames, one at a time, from the first again after the
-/// last.
+/// last, each shown for its duration: a ugoira's as
+/// `GetFrameDurationsMSUgoira` says, an animated WebP's as
+/// `GetWebPFrameDurationsMS` does.
 pub struct Frames {
     source: Source,
+    durations: Vec<u32>,
     next: usize,
 }
 
 enum Source {
-    /// A ugoira's frame images, in `GetFramePathsUgoira`'s order, each
-    /// shown as `GetFrameDurationsMSUgoira` says.
-    Ugoira {
-        zip: Zip,
-        names: Vec<String>,
-        durations: Vec<u32>,
-    },
+    /// A ugoira's frame images, in `GetFramePathsUgoira`'s order.
+    Ugoira { zip: Zip, names: Vec<String> },
     /// An animated WebP's canvas after each frame.
     Webp {
         decoder: image_webp::WebPDecoder<BufReader<File>>,
@@ -59,7 +58,7 @@ impl Frames {
         notes: &[(String, String)],
         num_frames: Option<u64>,
     ) -> Result<Self> {
-        let source = match mime {
+        let (source, durations) = match mime {
             Mime::AnimationUgoira => {
                 let damaged = || MediaError::damaged("Could not read the ugoira's frames!");
                 let mut zip = Zip::open(path).ok_or_else(damaged)?;
@@ -67,11 +66,15 @@ impl Frames {
                     .filter(|n| !n.is_empty())
                     .ok_or_else(damaged)?;
                 let durations = MediaTools::ugoira_frame_durations(path, notes, num_frames);
-                Source::Ugoira {
-                    zip,
-                    names,
-                    durations,
-                }
+                let durations = (0..names.len())
+                    .map(|i| {
+                        durations
+                            .get(i)
+                            .copied()
+                            .unwrap_or(crate::tools::UGOIRA_DEFAULT_FRAME_DURATION_MS)
+                    })
+                    .collect();
+                (Source::Ugoira { zip, names }, durations)
             }
             Mime::AnimationWebp => {
                 let decoder = image_webp::WebPDecoder::new(BufReader::new(File::open(path)?))
@@ -80,7 +83,13 @@ impl Frames {
                     return Err(MediaError::damaged("The WebP is not animated!"));
                 }
                 let channels = if decoder.has_alpha() { 4 } else { 3 };
-                Source::Webp { decoder, channels }
+                // (a frame without one of its own: the reference's 83ms)
+                let mut durations: Vec<u32> = webp::frame_durations_ms(&std::fs::read(path)?)
+                    .into_iter()
+                    .map(|d| u32::try_from(d).unwrap_or(u32::MAX))
+                    .collect();
+                durations.resize(decoder.num_frames() as usize, 83);
+                (Source::Webp { decoder, channels }, durations)
             }
             other => {
                 return Err(MediaError::Unsupported {
@@ -89,7 +98,11 @@ impl Frames {
                 });
             }
         };
-        Ok(Self { source, next: 0 })
+        Ok(Self {
+            source,
+            durations,
+            next: 0,
+        })
     }
 
     /// How many frames there are.
@@ -104,27 +117,14 @@ impl Frames {
         self.len() == 0
     }
 
-    /// How long a ugoira's frame `index` shows, in ms.
-    fn ugoira_duration(durations: &[u32], index: usize) -> u32 {
-        durations
-            .get(index)
-            .copied()
-            .unwrap_or(crate::tools::UGOIRA_DEFAULT_FRAME_DURATION_MS)
+    /// How long each frame shows, in ms.
+    pub fn durations(&self) -> &[u32] {
+        &self.durations
     }
 
-    /// How long all the frames show, in ms, if known without playing them
-    /// (a ugoira's).
-    pub fn total_ms(&self) -> Option<u64> {
-        match &self.source {
-            Source::Ugoira {
-                names, durations, ..
-            } => Some(
-                (0..names.len())
-                    .map(|i| u64::from(Self::ugoira_duration(durations, i)))
-                    .sum(),
-            ),
-            Source::Webp { .. } => None,
-        }
+    /// How long all the frames show, in ms.
+    pub fn total_ms(&self) -> u64 {
+        self.durations.iter().map(|&d| u64::from(d)).sum()
     }
 
     /// Make frame `index` (at most the last) the next one, and say how long
@@ -132,35 +132,26 @@ impl Frames {
     /// WebP is played up to it, as its frames build on each other.
     pub fn seek(&mut self, index: usize) -> Result<u64> {
         let index = index.min(self.len().saturating_sub(1));
-        if let Source::Ugoira { durations, .. } = &self.source {
-            let before = (0..index)
-                .map(|i| u64::from(Self::ugoira_duration(durations, i)))
-                .sum();
-            self.next = index;
-            return Ok(before);
+        if matches!(self.source, Source::Webp { .. }) {
+            self.next = 0;
+            for _ in 0..index {
+                self.next_frame()?;
+            }
         }
-        self.next = 0;
-        let mut before = 0;
-        for _ in 0..index {
-            before += u64::from(self.next_frame()?.1);
-        }
-        Ok(before)
+        self.next = index;
+        Ok(self.durations[..index].iter().map(|&d| u64::from(d)).sum())
     }
 
     /// The next frame and how long it shows, in ms.
     pub fn next_frame(&mut self) -> Result<(Raster, u32)> {
         let index = self.next;
         self.next = (index + 1) % self.len().max(1);
+        let duration = self.durations.get(index).copied().unwrap_or(83);
         match &mut self.source {
-            Source::Ugoira {
-                zip,
-                names,
-                durations,
-            } => {
+            Source::Ugoira { zip, names } => {
                 let bytes = zip
                     .read(&names[index])
                     .ok_or_else(|| MediaError::damaged("Could not read a ugoira frame!"))?;
-                let duration = Self::ugoira_duration(durations, index);
                 Ok((raster_from_bytes(&bytes, false)?, duration))
             }
             Source::Webp { decoder, channels } => {
@@ -172,13 +163,27 @@ impl Frames {
                     .output_buffer_size()
                     .ok_or_else(|| MediaError::damaged("The WebP is too big!"))?;
                 let mut buf = vec![0; size];
-                let duration = decoder
+                decoder
                     .read_frame(&mut buf)
                     .map_err(|e| MediaError::damaged(e.to_string()))?;
                 Ok((Raster::new(width, height, *channels, buf)?, duration))
             }
         }
     }
+}
+
+/// The frame showing `timestamp_ms` in, of frames of these `durations`
+/// (`GetFrameIndex`): the first not over by then, and past the end, the
+/// first.
+pub fn frame_index(durations: &[u32], timestamp_ms: u64) -> usize {
+    let mut so_far = 0;
+    for (index, &duration) in durations.iter().enumerate() {
+        so_far += u64::from(duration);
+        if so_far > timestamp_ms {
+            return index;
+        }
+    }
+    0
 }
 
 #[cfg(test)]
@@ -241,7 +246,7 @@ mod tests {
         // a ugoira: straight there, its place the frames' timings before it
         let mut frames =
             Frames::open(&corpus("ugoira_json.zip"), Mime::AnimationUgoira, &[], None).unwrap();
-        assert_eq!(frames.total_ms(), Some(400));
+        assert_eq!(frames.total_ms(), 400);
         assert_eq!(frames.seek(3).unwrap(), 60 + 70 + 80);
         assert_eq!(
             play(&mut frames, 2).iter().map(|f| f.2).collect::<Vec<_>>(),
@@ -251,7 +256,6 @@ mod tests {
         // an animated WebP: played up to it
         let path = corpus("webp_anim.webp");
         let mut frames = Frames::open(&path, Mime::AnimationWebp, &[], None).unwrap();
-        assert_eq!(frames.total_ms(), None);
         let mut played = Vec::new();
         let mut elapsed = vec![0_u64];
         for _ in 0..frames.len() {
@@ -259,6 +263,8 @@ mod tests {
             played.push(image);
             elapsed.push(elapsed.last().unwrap() + u64::from(ms));
         }
+        // (its timings known before playing, as its chunks say)
+        assert_eq!(frames.total_ms(), *elapsed.last().unwrap());
         for index in [2, 0, 1] {
             assert_eq!(frames.seek(index).unwrap(), elapsed[index]);
             assert_eq!(
@@ -267,6 +273,17 @@ mod tests {
                 "{index}"
             );
         }
+    }
+
+    #[test]
+    fn frames_are_found_by_time() {
+        let durations = [60, 70, 80];
+        assert_eq!(frame_index(&durations, 0), 0);
+        assert_eq!(frame_index(&durations, 59), 0);
+        assert_eq!(frame_index(&durations, 60), 1);
+        assert_eq!(frame_index(&durations, 209), 2);
+        assert_eq!(frame_index(&durations, 210), 0, "past the end, the first");
+        assert_eq!(frame_index(&[], 10), 0);
     }
 
     #[test]

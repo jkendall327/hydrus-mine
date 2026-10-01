@@ -35,14 +35,13 @@ pub(crate) struct Animator {
 }
 
 /// Where playing is: the frame shown, its place in time (ms), how many
-/// frames there are and how long they all take, if known, and whether it
-/// is paused.
+/// frames there are and how long they all take, and whether it is paused.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(crate) struct Status {
     pub index: usize,
     pub at_ms: u64,
     pub frames: usize,
-    pub total_ms: Option<u64>,
+    pub total_ms: u64,
     pub paused: bool,
 }
 
@@ -56,6 +55,7 @@ struct Running {
     generation: u64,
     show_one: bool,
     status: Status,
+    durations: Vec<u32>,
 }
 
 impl Animator {
@@ -74,6 +74,7 @@ impl Animator {
         };
         let count = frames.len();
         let total_ms = frames.total_ms();
+        let durations = frames.durations().to_vec();
         let (sender, receiver) = crossbeam_channel::bounded(AHEAD);
         let (seeks, seeking) = crossbeam_channel::unbounded::<(usize, u64)>();
         let decoding = std::thread::Builder::new()
@@ -129,6 +130,7 @@ impl Animator {
                 total_ms,
                 paused: false,
             },
+            durations,
         });
         self.tick();
     }
@@ -197,6 +199,39 @@ impl Animator {
         }
         self.timer.stop();
         self.tick();
+    }
+
+    /// Go `step_ms` forwards (`direction` 1) or back (-1) from the frame
+    /// shown (`SeekDelta`): to the frame showing then, or if that is this
+    /// one, the next (or last) frame; never before the first, and past the
+    /// end, round to the first.
+    pub fn seek_delta(self: &Rc<Self>, direction: i32, step_ms: u64) {
+        let index = {
+            let running = self.running.borrow();
+            let Some(running) = running.as_ref() else {
+                return;
+            };
+            let Status { index, at_ms, .. } = running.status;
+            let to = if direction < 0 {
+                at_ms.saturating_sub(step_ms)
+            } else {
+                at_ms + step_ms
+            };
+            let mut to_index = hydrus_media::animation::frame_index(&running.durations, to);
+            if to_index == index {
+                to_index = if direction < 0 {
+                    to_index.saturating_sub(1)
+                } else {
+                    to_index + 1
+                };
+            }
+            if to_index >= running.status.frames {
+                0
+            } else {
+                to_index
+            }
+        };
+        self.goto(index);
     }
 
     pub fn set_paused(self: &Rc<Self>, paused: bool) {

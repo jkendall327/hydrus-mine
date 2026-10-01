@@ -23,6 +23,19 @@ fn picture(viewer: &MediaViewerWindow) -> Option<((u32, u32), Vec<u8>)> {
     ))
 }
 
+/// Wait (a while at most) until the scanbar's text starts `wanted`, and
+/// say what it is.
+fn scanbar_reaches(viewer: &MediaViewerWindow, wanted: &str) -> String {
+    let started = Instant::now();
+    while !viewer.get_scanbar_text().starts_with(wanted)
+        && started.elapsed() < Duration::from_secs(10)
+    {
+        watch(viewer, Duration::from_millis(20));
+    }
+    watch(viewer, Duration::from_millis(50));
+    viewer.get_scanbar_text().to_string()
+}
+
 /// The distinct pictures shown over `time`, as the event loop would
 /// show them.
 fn watch(viewer: &MediaViewerWindow, time: Duration) -> HashSet<((u32, u32), Vec<u8>)> {
@@ -111,15 +124,7 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         viewer.invoke_scan_started();
         viewer.invoke_scan(x, width);
         // (once the frame is decoded and shown)
-        let started = Instant::now();
-        let wanted = format!("{}/{frames} - ", target + 1);
-        while !viewer.get_scanbar_text().starts_with(&wanted)
-            && started.elapsed() < Duration::from_secs(10)
-        {
-            watch(&viewer, Duration::from_millis(20));
-        }
-        watch(&viewer, Duration::from_millis(50));
-        let there = viewer.get_scanbar_text().to_string();
+        let there = scanbar_reaches(&viewer, &format!("{}/{frames} - ", target + 1));
         assert!(
             there.starts_with(&format!("{}/{frames} - ", target + 1)),
             "{name}: {there}"
@@ -134,6 +139,37 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
             "{name}: paused"
         );
         assert_eq!(viewer.get_scanbar_text(), there.as_str());
+        // seeking by time (ctrl and the arrows), still paused: to the frame
+        // showing then, or the next if that is this one; past the end, the
+        // first
+        viewer.invoke_seek_delta(1, 1);
+        let next = format!("{}/{frames} - ", (target + 1) % frames + 1);
+        assert!(scanbar_reaches(&viewer, &next).starts_with(&next), "{name}");
+        if name.starts_with("ugoira") {
+            // (frames of 60, 70, 80, 90 and 100ms)
+            for ((direction, step), wanted) in [
+                ((-1, 50), "4/5 - 0.210/0.400"),
+                ((-1, 10), "3/5 - 0.130/0.400"),
+                ((1, 10), "4/5 - 0.210/0.400"),
+                ((1, 100), "5/5 - 0.300/0.400"),
+                ((-1, 2500), "1/5 - 0.000/0.400"),
+                ((-1, 1), "1/5 - 0.000/0.400"),
+                ((1, 140), "3/5 - 0.130/0.400"),
+                ((1, 5000), "1/5 - 0.000/0.400"),
+            ] {
+                viewer.invoke_seek_delta(direction, step);
+                assert_eq!(
+                    scanbar_reaches(&viewer, wanted),
+                    wanted,
+                    "{direction} {step}"
+                );
+            }
+        }
+        assert_eq!(
+            watch(&viewer, Duration::from_millis(200)).len(),
+            1,
+            "{name}: still paused"
+        );
         viewer.invoke_scan_ended();
         assert!(
             watch(&viewer, Duration::from_millis(1000)).len() >= 2,
