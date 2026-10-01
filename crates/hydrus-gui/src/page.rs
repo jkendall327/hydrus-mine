@@ -445,7 +445,6 @@ impl SearchPage {
     /// petitioned, less those the user hides from it, sorted by its default
     /// sort.
     fn count_tags(&mut self) {
-        use hydrus_core::tag_sort::sort_tags;
         let files: Vec<HashId> = match self.selected {
             Some(i) => vec![self.results[i]],
             None => self.results.clone(),
@@ -457,73 +456,7 @@ impl SearchPage {
             .ok()
             .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
             .map(|s| s.id);
-        let counted = self.store.read(|conn| {
-            use hydrus_core::tag_presentation::TagPresentation;
-            use hydrus_store::tag_display::{TagDisplayFilters, TagView};
-            let presentation: TagPresentation = hydrus_store::settings::get(conn)?;
-            let filters: TagDisplayFilters = hydrus_store::settings::get(conn)?;
-            let hidden = filters.by_service(TagView::SelectionList, &snapshot.services);
-            let counts = hydrus_store::media::tag_counts(
-                conn,
-                &snapshot.services,
-                &snapshot.display,
-                service,
-                &files,
-                &hidden,
-            )?;
-            let ids: Vec<_> = counts
-                .current
-                .keys()
-                .chain(counts.pending.keys())
-                .chain(counts.petitioned.keys())
-                .copied()
-                .collect();
-            Ok((
-                counts,
-                hydrus_store::master::tags(conn, &ids)?,
-                presentation,
-            ))
-        });
-        let Ok((counts, names, presentation)) = counted else {
-            self.tags.clear();
-            return;
-        };
-        let mut rows: Vec<(String, [u64; 3])> = names
-            .iter()
-            .map(|(id, tag)| {
-                let n = |m: &std::collections::HashMap<_, u64>| m.get(id).copied().unwrap_or(0);
-                (
-                    tag.as_str().to_owned(),
-                    [
-                        n(&counts.current),
-                        n(&counts.pending),
-                        n(&counts.petitioned),
-                    ],
-                )
-            })
-            .collect();
-        sort_tags(
-            &presentation.search_page_sort,
-            &mut rows,
-            |(tag, _)| tag,
-            |(_, n)| n.iter().sum(),
-            &presentation.user_namespaces,
-        );
-        self.tags = rows
-            .into_iter()
-            .map(|(tag, [current, pending, petitioned])| {
-                let mut row = presentation.render(&tag);
-                for (n, prefix) in [(current, ""), (pending, "+"), (petitioned, "-")] {
-                    if n > 0 {
-                        row.push_str(&format!(
-                            " ({prefix}{})",
-                            hydrus_core::numbers::human_int(n)
-                        ));
-                    }
-                }
-                (tag, row)
-            })
-            .collect();
+        self.tags = tag_rows(&self.store, &files, service, TagList::Selection);
     }
 
     fn search(&mut self) {
@@ -566,4 +499,110 @@ impl SearchPage {
     pub fn thumbnail(&self, id: HashId) -> Option<hydrus_media::Raster> {
         crate::thumbnails::thumbnail(&self.store, id)
     }
+}
+
+/// Which tag list: the search page's ("selection tags", with counts) or
+/// the media viewer's hover frame (one file's, without).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum TagList {
+    Selection,
+    MediaViewer,
+}
+
+/// A tag list's rows for `files`, as `ListBoxTagsMedia` lists them: display
+/// tags in `service`'s domain (all known tags with none), less those the
+/// list's tag display filters hide, sorted by its tag sort, each as (tag,
+/// row). The selection list counts them (`tag (3) (+1)`); the media
+/// viewer's marks pending and petitioned ones (`tag (+)`).
+pub(crate) fn tag_rows(
+    store: &Store,
+    files: &[HashId],
+    service: Option<hydrus_core::ServiceId>,
+    list: TagList,
+) -> Vec<(String, String)> {
+    use hydrus_core::tag_sort::sort_tags;
+    let snapshot = store.snapshot();
+    let counted = store.read(|conn| {
+        use hydrus_core::tag_presentation::TagPresentation;
+        use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+        let presentation: TagPresentation = hydrus_store::settings::get(conn)?;
+        let filters: TagDisplayFilters = hydrus_store::settings::get(conn)?;
+        let view = match list {
+            TagList::Selection => TagView::SelectionList,
+            TagList::MediaViewer => TagView::SingleMedia,
+        };
+        let hidden = filters.by_service(view, &snapshot.services);
+        let counts = hydrus_store::media::tag_counts(
+            conn,
+            &snapshot.services,
+            &snapshot.display,
+            service,
+            files,
+            &hidden,
+        )?;
+        let ids: Vec<_> = counts
+            .current
+            .keys()
+            .chain(counts.pending.keys())
+            .chain(counts.petitioned.keys())
+            .copied()
+            .collect();
+        Ok((
+            counts,
+            hydrus_store::master::tags(conn, &ids)?,
+            presentation,
+        ))
+    });
+    let Ok((counts, names, presentation)) = counted else {
+        return Vec::new();
+    };
+    let mut rows: Vec<(String, [u64; 3])> = names
+        .iter()
+        .map(|(id, tag)| {
+            let n = |m: &std::collections::HashMap<_, u64>| m.get(id).copied().unwrap_or(0);
+            (
+                tag.as_str().to_owned(),
+                [
+                    n(&counts.current),
+                    n(&counts.pending),
+                    n(&counts.petitioned),
+                ],
+            )
+        })
+        .collect();
+    let sort = match list {
+        TagList::Selection => &presentation.search_page_sort,
+        TagList::MediaViewer => &presentation.media_viewer_sort,
+    };
+    sort_tags(
+        sort,
+        &mut rows,
+        |(tag, _)| tag,
+        |(_, n)| n.iter().sum(),
+        &presentation.user_namespaces,
+    );
+    rows.into_iter()
+        .map(|(tag, [current, pending, petitioned])| {
+            let mut row = presentation.render(&tag);
+            for (n, prefix) in [(current, ""), (pending, "+"), (petitioned, "-")] {
+                if n == 0 {
+                    continue;
+                }
+                match list {
+                    TagList::Selection => {
+                        row.push_str(&format!(
+                            " ({prefix}{})",
+                            hydrus_core::numbers::human_int(n)
+                        ));
+                    }
+                    // (`ListBoxItemTextTagWithCounts` without counts)
+                    TagList::MediaViewer if !prefix.is_empty() => {
+                        row.push_str(&format!(" ({prefix})"));
+                    }
+                    TagList::MediaViewer => {}
+                }
+            }
+            (tag, row)
+        })
+        .collect()
 }

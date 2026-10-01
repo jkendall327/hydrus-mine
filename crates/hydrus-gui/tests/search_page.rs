@@ -155,6 +155,21 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     );
     viewer.next();
     assert_eq!(viewer.index(), 0);
+    // its tags as the hover frame lists them: the selection list's, for
+    // that one file, without counts
+    let mut single = SearchPage::new(store.clone());
+    single.enter();
+    single.select(0);
+    let mut listed: Vec<String> = single
+        .tag_rows()
+        .iter()
+        .map(|r| r.trim_end_matches(" (1)").to_owned())
+        .collect();
+    let mut hover: Vec<String> = viewer.tag_rows().into_iter().map(|(row, _)| row).collect();
+    listed.sort();
+    hover.sort();
+    assert!(!hover.is_empty());
+    assert_eq!(hover, listed);
     assert!(MediaViewer::new(store.clone(), Vec::new(), 0).is_none());
     // what plays in mpv, as the reference's defaults have it: video, audio
     // and animations (but not animated WebP), not stills or documents
@@ -325,6 +340,37 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(covered > 800 * 600 / 2, "{covered} pixels");
     viewer.invoke_next();
     assert_eq!(viewer.get_caption(), format!("4/{everything}"));
+    // the tags hover frame: a file's tags, while the pointer is over the
+    // window's left fifth
+    for _ in 0..everything {
+        if viewer.get_tags().row_count() > 0 {
+            break;
+        }
+        viewer.invoke_next();
+    }
+    let tags: Vec<String> = (0..viewer.get_tags().row_count())
+        .map(|i| viewer.get_tags().row_data(i).unwrap().text.to_string())
+        .collect();
+    assert!(!tags.is_empty());
+    assert!(
+        tags.iter().all(|t| !t.ends_with(" (1)")),
+        "no counts: {tags:?}"
+    );
+    let point = |x: f32, y: f32| {
+        viewer
+            .window()
+            .dispatch_event(slint::platform::WindowEvent::PointerMoved {
+                position: slint::LogicalPosition::new(x, y),
+            });
+    };
+    point(400.0, 300.0);
+    assert!(!viewer.get_tags_showing());
+    point(60.0, 300.0);
+    assert!(viewer.get_tags_showing());
+    let pixels = headless::render(&windows.get(1).unwrap(), 800, 600);
+    headless::save_png(&shots.join("media_viewer_tags.png"), &pixels, 800, 600).unwrap();
+    point(400.0, 300.0);
+    assert!(!viewer.get_tags_showing());
     viewer.invoke_close_requested();
     assert!(bound.viewer.borrow().is_none());
 }

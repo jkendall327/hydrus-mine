@@ -68,6 +68,25 @@ impl MediaViewer {
         still(&self.store, self.current())
     }
 
+    /// The current file's tags as the tags hover frame lists them, each
+    /// with its colour: display tags, less those the single media filters
+    /// hide, in the media viewer's tag sort, pending ones marked `(+)`.
+    pub fn tag_rows(&self) -> Vec<(String, [u8; 3])> {
+        let colours: hydrus_core::tag_presentation::NamespaceColours = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        crate::page::tag_rows(
+            &self.store,
+            &[self.current()],
+            None,
+            crate::page::TagList::MediaViewer,
+        )
+        .into_iter()
+        .map(|(tag, row)| (row, colours.tag(&tag)))
+        .collect()
+    }
+
     /// The current file's frames, if the reference plays its kind with its
     /// own player (ugoiras and animated WebP).
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {

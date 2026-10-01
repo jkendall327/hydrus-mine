@@ -2,7 +2,8 @@
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
 import { Button, ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
-import { Theme } from "theme.slint";
+import { ListText, Theme } from "theme.slint";
+export { ListText }
 
 // (the palette, to choose light or dark: by default the system's)
 export { Palette } from "std-widgets.slint";
@@ -13,12 +14,6 @@ export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 export struct Thumbnail {
     image: image,
     selected: bool,
-}
-
-// a row of a tag or predicate list: its text, in its namespace's colour
-export struct ListText {
-    text: string,
-    colour: color,
 }
 
 component Predicate inherits Rectangle {

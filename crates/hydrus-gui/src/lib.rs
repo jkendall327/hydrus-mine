@@ -448,6 +448,12 @@ fn open_viewer(
             };
             let model = model.borrow();
             window.set_caption(model.caption().into());
+            let tags: Vec<ListText> = model
+                .tag_rows()
+                .iter()
+                .map(|(row, rgb)| list_text(row, *rgb))
+                .collect();
+            window.set_tags(ModelRc::new(VecModel::from(tags)));
             // (for a file that plays, its thumbnail until the first frame)
             window.set_media(model.media().as_ref().map(image).unwrap_or_default());
             let (size, frame) = (weak.clone(), weak.clone());

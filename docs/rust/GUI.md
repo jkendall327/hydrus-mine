@@ -70,7 +70,11 @@ the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
-to the first as in the reference, and escape closes it. Images are shown
+to the first as in the reference, and escape closes it. With the pointer
+over the window's left fifth, the file's tags show there, as the
+reference's tags hover frame does: its display tags less those your single
+media filters hide, in your media viewer tag sort and namespace colours,
+pending ones marked `(+)` (it doesn't scroll yet). Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
 own a few ahead of the one shown, each shown for its duration (a ugoira's
@@ -105,7 +109,8 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), system
-predicates in the autocomplete, collect, the viewer's hover frames, seeking
+predicates in the autocomplete, collect, the viewer's other hover frames
+(file info and buttons, ratings, notes), seeking
 and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,

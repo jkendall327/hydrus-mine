@@ -1,6 +1,10 @@
 // The media viewer's window: one file, fitted to the window. Right and left
 // (or page down and up, or the mouse wheel) move through the page's files;
-// space pauses and plays video; escape closes it.
+// space pauses and plays video; escape closes it. With the pointer over the
+// window's left fifth, the file's tags show there, as the reference's tags
+// hover frame does.
+
+import { ListText } from "theme.slint";
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
@@ -10,6 +14,9 @@ export component MediaViewerWindow inherits Window {
 
     in property <image> media;
     in property <string> caption;
+    // the file's tags, for the hover frame
+    in property <[ListText]> tags;
+    out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     callback next();
     callback previous();
@@ -43,7 +50,7 @@ export component MediaViewerWindow inherits Window {
             source: root.media;
             image-fit: contain;
         }
-        TouchArea {
+        pointer := TouchArea {
             scroll-event(event) => {
                 if (event.delta-y < 0) {
                     root.next();
@@ -51,6 +58,25 @@ export component MediaViewerWindow inherits Window {
                     root.previous();
                 }
                 accept
+            }
+        }
+        // (nothing in it takes the pointer, so the area above keeps it)
+        if root.tags-showing: Rectangle {
+            x: 0;
+            y: 0;
+            width: root.width * 0.2;
+            height: root.height;
+            background: #202020e8;
+            clip: true;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 2px;
+                alignment: start;
+                for tag in root.tags: Text {
+                    text: tag.text;
+                    color: tag.colour;
+                    overflow: elide;
+                }
             }
         }
     }
