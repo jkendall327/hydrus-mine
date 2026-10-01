@@ -56,7 +56,9 @@ search page tag sort and namespace order (checked against the reference's
 `SortTags`); double-clicking a tag searches for it too. Tags here, in the
 autocomplete and in the search's predicates are shown as your options
 have them (namespaces shown or hidden, the namespace connector,
-underscores and emojis replaced; checked against `RenderTag`). The ★ beside
+underscores and emojis replaced; checked against `RenderTag`), each in its
+namespace's colour (system predicates in `system`'s; yours come across
+from hydrus). The ★ beside
 the search box lists your favourite searches in hydrus's folders and
 order; choosing one loads its domains, tag service, predicates and sort
 into the page, searching if it is synchronised (saving and editing

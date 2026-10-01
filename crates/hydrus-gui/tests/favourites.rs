@@ -68,7 +68,7 @@ fn a_favourite_search_loads_into_the_page() {
     }
     ui.invoke_favourite_chosen(0);
     let shown: Vec<String> = (0..ui.get_predicates().row_count())
-        .map(|i| ui.get_predicates().row_data(i).unwrap().to_string())
+        .map(|i| ui.get_predicates().row_data(i).unwrap().text.to_string())
         .collect();
     assert_eq!(shown, loaded);
     assert_eq!(ui.get_status(), format!("{} files", found.len()));

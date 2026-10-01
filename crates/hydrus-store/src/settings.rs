@@ -241,6 +241,11 @@ impl Setting for hydrus_core::tag_presentation::TagPresentation {
     const KEY: &'static str = "tag_presentation";
 }
 
+/// The tag lists' colours by namespace.
+impl Setting for hydrus_core::tag_presentation::NamespaceColours {
+    const KEY: &'static str = "namespace_colours";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

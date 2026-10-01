@@ -102,6 +102,96 @@ pub fn is_decimal(s: &str) -> bool {
         })
 }
 
+/// The colours tags and predicates are listed in, by namespace (the old
+/// `namespace_colours` option, and `or_connector_custom_namespace_colour`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct NamespaceColours {
+    /// RGB by namespace: `Some("")` is unnamespaced tags', `None` that of
+    /// any namespace without its own.
+    pub colours: Vec<(Option<String>, [u8; 3])>,
+    /// The namespace whose colour an OR predicate's row takes (`None`: the
+    /// default).
+    pub or_connector: Option<String>,
+}
+
+impl Default for NamespaceColours {
+    /// The reference's (`ClientDefaults`).
+    fn default() -> Self {
+        let colour = |namespace: Option<&str>, rgb| (namespace.map(str::to_owned), rgb);
+        Self {
+            colours: vec![
+                colour(Some("system"), [153, 101, 21]),
+                colour(Some("meta"), [0, 0, 0]),
+                colour(Some("creator"), [170, 0, 0]),
+                colour(Some("studio"), [128, 0, 0]),
+                colour(Some("character"), [0, 170, 0]),
+                colour(Some("person"), [0, 128, 0]),
+                colour(Some("series"), [170, 0, 170]),
+                colour(None, [114, 160, 193]),
+                colour(Some(""), [0, 111, 250]),
+            ],
+            or_connector: None,
+        }
+    }
+}
+
+impl NamespaceColours {
+    /// A namespace's colour, else the default's
+    /// (`_GetRowsOfTextsAndColours`).
+    pub fn colour(&self, namespace: Option<&str>) -> [u8; 3] {
+        let find = |key: Option<&str>| {
+            self.colours
+                .iter()
+                .find(|(n, _)| n.as_deref() == key)
+                .map(|(_, rgb)| *rgb)
+        };
+        find(namespace)
+            .or_else(|| find(None))
+            .unwrap_or([114, 160, 193])
+    }
+
+    /// A tag's colour: its namespace's.
+    pub fn tag(&self, tag: &str) -> [u8; 3] {
+        self.colour(Some(split_tag(tag).0))
+    }
+
+    /// A predicate's colour (`Predicate.GetNamespace`): a system
+    /// predicate's is `system`'s, a namespace or tag predicate's its
+    /// namespace's (`*` for a wildcard in the namespace), an OR's the OR
+    /// connector's.
+    pub fn predicate(&self, predicate: &crate::search::predicate::Predicate) -> [u8; 3] {
+        use crate::search::predicate::Predicate;
+        match predicate {
+            Predicate::System(_) => self.colour(Some("system")),
+            Predicate::Namespace { namespace, .. } => self.colour(Some(namespace)),
+            Predicate::Tag { tag, .. } => self.tag(tag.as_ref()),
+            Predicate::Wildcard { pattern, .. } => self.wildcard(pattern.as_str()),
+            Predicate::Or(_) => self.colour(self.or_connector.as_deref()),
+        }
+    }
+
+    /// The colour of a predicate as typed (`-` for exclusion), as the
+    /// autocomplete offers it: a tag, a wildcard or a `system:` predicate.
+    pub fn predicate_text(&self, text: &str) -> [u8; 3] {
+        let text = text.strip_prefix('-').unwrap_or(text);
+        if text.starts_with("system:") {
+            self.colour(Some("system"))
+        } else {
+            self.wildcard(text)
+        }
+    }
+
+    fn wildcard(&self, pattern: &str) -> [u8; 3] {
+        let namespace = split_tag(pattern).0;
+        self.colour(Some(if namespace.contains('*') {
+            "*"
+        } else {
+            namespace
+        }))
+    }
+}
+
 /// The ranges of the reference's `emoji_pattern`.
 const EMOJI_RANGES: [(u32, u32); 12] = [
     (0x1F600, 0x1F64F),
@@ -143,6 +233,55 @@ fn replace_emojis(text: &str) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn rows_take_their_namespace_s_colour() {
+        use crate::search::predicate::{Predicate, SystemPredicate, Wildcard};
+        let colours = NamespaceColours::default();
+        let character = [0, 170, 0];
+        let unnamespaced = [0, 111, 250];
+        let other = [114, 160, 193];
+        let system = [153, 101, 21];
+        assert_eq!(colours.tag("character:samus aran"), character);
+        assert_eq!(colours.tag("blue eyes"), unnamespaced);
+        assert_eq!(colours.tag("title:a test"), other);
+        // (an unnamespaced tag with a colon is stored with a leading one)
+        assert_eq!(colours.tag("::)"), unnamespaced);
+        let tag = |t: &str, inclusive| Predicate::Tag {
+            tag: crate::Tag::new(t).unwrap(),
+            inclusive,
+        };
+        assert_eq!(colours.predicate(&tag("character:link", false)), character);
+        assert_eq!(
+            colours.predicate(&Predicate::System(SystemPredicate::Inbox)),
+            system
+        );
+        assert_eq!(
+            colours.predicate(&Predicate::Namespace {
+                namespace: "series".into(),
+                inclusive: true
+            }),
+            [170, 0, 170]
+        );
+        let wildcard = |p: &str| Predicate::Wildcard {
+            pattern: Wildcard::from_clean(p),
+            inclusive: true,
+        };
+        assert_eq!(colours.predicate(&wildcard("character:sam*")), character);
+        assert_eq!(colours.predicate(&wildcard("char*:sam")), other);
+        let or = Predicate::Or(vec![tag("character:link", true), tag("blue eyes", true)]);
+        assert_eq!(colours.predicate(&or), other);
+        assert_eq!(colours.predicate_text("-character:link"), character);
+        assert_eq!(colours.predicate_text("system:archive"), system);
+        assert_eq!(colours.predicate_text("blue*"), unnamespaced);
+        // the user's, an OR connector's namespace, and a missing default
+        let custom = NamespaceColours {
+            colours: vec![(Some("meta".into()), [1, 2, 3])],
+            or_connector: Some("meta".into()),
+        };
+        assert_eq!(custom.predicate(&or), [1, 2, 3]);
+        assert_eq!(custom.tag("character:link"), other);
+    }
 
     #[test]
     fn decimals_are_python_s() {

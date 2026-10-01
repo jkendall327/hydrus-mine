@@ -15,14 +15,22 @@ export struct Thumbnail {
     selected: bool,
 }
 
+// a row of a tag or predicate list: its text, in its namespace's colour
+export struct ListText {
+    text: string,
+    colour: color,
+}
+
 component Predicate inherits Rectangle {
     in property <string> text;
+    in property <color> colour: Theme.text;
     callback remove();
     height: 22px;
     background: touch.has-hover ? Theme.hover : transparent;
     Text {
         x: 4px;
         text: root.text;
+        color: root.colour;
         vertical-alignment: center;
         overflow: elide;
         width: parent.width - 8px;
@@ -36,7 +44,7 @@ component Predicate inherits Rectangle {
 // the tags of the selected files (or of the page's), with their counts, as
 // the reference's "selection tags" box; double-clicking one searches for it
 component TagList inherits Rectangle {
-    in property <[string]> tags;
+    in property <[ListText]> tags;
     callback activated(int);
     border-width: 1px;
     border-color: Theme.border;
@@ -47,7 +55,8 @@ component TagList inherits Rectangle {
             background: pick.has-hover ? Theme.hover : transparent;
             Text {
                 x: 4px;
-                text: tag;
+                text: tag.text;
+                color: tag.colour;
                 vertical-alignment: center;
                 overflow: elide;
                 width: parent.width - 8px;
@@ -209,9 +218,9 @@ export component MainWindow inherits Window {
     in property <int> sort-index;
     in property <[string]> order-names;
     in property <int> order-index;
-    in property <[string]> predicates;
-    in property <[string]> tags;
-    in property <[string]> suggestions;
+    in property <[ListText]> predicates;
+    in property <[ListText]> tags;
+    in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
     in property <string> status;
@@ -408,8 +417,8 @@ export component MainWindow inherits Window {
                                 background: i == root.highlighted ? Theme.highlight : pick.has-hover ? Theme.hover : transparent;
                                 Text {
                                     x: 4px;
-                                    text: suggestion;
-                                    color: i == root.highlighted ? Theme.highlight-text : Theme.text;
+                                    text: suggestion.text;
+                                    color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
                                     vertical-alignment: center;
                                     overflow: elide;
                                     width: parent.width - 8px;
@@ -434,7 +443,8 @@ export component MainWindow inherits Window {
                             padding: 2px;
                             alignment: start;
                             for predicate[i] in root.predicates: Predicate {
-                                text: predicate;
+                                text: predicate.text;
+                                colour: predicate.colour;
                                 remove => { root.remove-predicate(i); }
                             }
                         }

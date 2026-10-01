@@ -502,6 +502,14 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
     window.set_tab_rows(ModelRc::new(VecModel::from(rows)));
 }
 
+/// A tag or predicate list's row, in its namespace's colour.
+fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
+    ListText {
+        text: text.into(),
+        colour: slint::Color::from_rgb_u8(r, g, b),
+    }
+}
+
 /// Show the page's search: the box's text and suggestions, the predicates,
 /// any error, and the status bar; or, for a page without a search, why.
 fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<FavouriteRow>) {
@@ -513,12 +521,16 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
         ModelRc::default()
     });
     window.set_can_filter(page.duplicates().is_some());
+    let colours: hydrus_core::tag_presentation::NamespaceColours = page
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());
-    let suggestions: Vec<SharedString> = autocomplete
+    let suggestions: Vec<ListText> = autocomplete
         .suggestions()
         .iter()
-        .map(|s| s.label.as_str().into())
+        .map(|s| list_text(&s.label, colours.predicate_text(&s.predicate)))
         .collect();
     window.set_suggestions(ModelRc::new(VecModel::from(suggestions)));
     window.set_highlighted(
@@ -527,16 +539,18 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
             .and_then(|i| i32::try_from(i).ok())
             .unwrap_or(-1),
     );
-    let predicates: Vec<SharedString> = page
+    let predicates: Vec<ListText> = page
         .predicates()
-        .into_iter()
-        .map(SharedString::from)
+        .iter()
+        .zip(page.predicate_colours(&colours))
+        .map(|(text, rgb)| list_text(text, rgb))
         .collect();
     window.set_predicates(ModelRc::new(VecModel::from(predicates)));
-    let tags: Vec<SharedString> = page
+    let tags: Vec<ListText> = page
         .tag_rows()
         .into_iter()
-        .map(SharedString::from)
+        .zip(page.tag_colours(&colours))
+        .map(|(text, rgb)| list_text(text, rgb))
         .collect();
     window.set_tags(ModelRc::new(VecModel::from(tags)));
     window.set_error(page.error().unwrap_or_default().into());

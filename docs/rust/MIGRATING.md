@@ -65,7 +65,8 @@ by emptying the trash, or by a duplicate decision) until they are back in
 the inbox, and your options to inbox the files duplicate decisions delete
 apply. How tags are shown comes across for the GUI: your tag display
 filters, whether namespaces are shown, the namespace connector,
-underscores and emojis, your namespace order and your tag list sorts, and
+underscores and emojis, your namespace order, your tag list sorts and
+your namespace colours, and
 your lock password, which `hydrus-gui` asks for before it opens, and your
 favourite searches (a favourite searching for something hydrus-rs can't is
 reported and left out). How files are handled

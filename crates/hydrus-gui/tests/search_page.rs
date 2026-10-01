@@ -195,6 +195,27 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(ui.get_status(), format!("{everything} files"));
     assert_eq!(ui.get_predicates().row_count(), 1);
     assert!(ui.get_tags().row_count() > 10);
+    // rows are in their namespace's colour (hydrus's defaults here)
+    let rgb = |c: slint::Color| (c.red(), c.green(), c.blue());
+    assert_eq!(
+        rgb(ui.get_predicates().row_data(0).unwrap().colour),
+        (153, 101, 21)
+    );
+    let tag_colours: Vec<(String, (u8, u8, u8))> = (0..ui.get_tags().row_count())
+        .map(|i| {
+            let row = ui.get_tags().row_data(i).unwrap();
+            (row.text.to_string(), rgb(row.colour))
+        })
+        .collect();
+    let colour_of = |prefix: &str| {
+        tag_colours
+            .iter()
+            .find(|(text, _)| text.starts_with(prefix))
+            .unwrap_or_else(|| panic!("no {prefix} row in {tag_colours:?}"))
+            .1
+    };
+    assert_eq!(colour_of("character:"), (0, 170, 0));
+    assert_eq!(colour_of("blue eyes"), (0, 111, 250));
     ui.invoke_thumbnail_clicked(1);
     let selected_tags = ui.get_tags().row_count();
     assert!(selected_tags > 0 && selected_tags < 10);
@@ -221,6 +242,9 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     ui.invoke_search_edited("samus".into());
     assert_eq!(ui.get_search_text(), "samus");
     assert!(ui.get_suggestions().row_count() > 0);
+    let samus = ui.get_suggestions().row_data(0).unwrap();
+    assert!(samus.text.starts_with("character:samus"), "{}", samus.text);
+    assert_eq!(rgb(samus.colour), (0, 170, 0));
     assert_eq!(ui.get_highlighted(), 0);
     ui.show().unwrap();
     let (width, height) = (1100, 700);

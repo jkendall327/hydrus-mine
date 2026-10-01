@@ -161,6 +161,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
     }
+    insert_setting(
+        &mut input,
+        &namespace_colours(&legacy_options, options.as_ref()),
+    )?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -1294,6 +1298,30 @@ fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
     Ok(())
 }
 
+/// The tag lists' colours: the old options' namespace colours (the
+/// defaults if it has none), and the namespace OR predicates take theirs
+/// from.
+fn namespace_colours(
+    legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    options: Option<&legacy::ClientOptions>,
+) -> hydrus_core::tag_presentation::NamespaceColours {
+    let mut out = hydrus_core::tag_presentation::NamespaceColours::default();
+    let colours = legacy_options.namespace_colours();
+    if !colours.is_empty() {
+        out.colours = colours
+            .into_iter()
+            .map(|(namespace, rgb)| (namespace.map(str::to_owned), rgb))
+            .collect();
+    }
+    if let Some(Some(namespace)) = options.and_then(|o| {
+        o.noneable_strings
+            .get("or_connector_custom_namespace_colour")
+    }) {
+        out.or_connector = Some(namespace.clone());
+    }
+    out
+}
+
 /// How tags are shown: `RenderTag`'s options, the namespace order and the
 /// search page's and media viewer's tag sorts.
 fn tag_presentation(
@@ -1883,6 +1911,49 @@ mod tests {
             Some("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7")
         );
         assert!(lock.accepts("hunter2") && !lock.accepts("hunter"));
+    }
+
+    /// The tag lists' colours come across: hydrus's defaults, the user's,
+    /// and the namespace OR predicates take theirs from.
+    #[test]
+    fn namespace_colours_convert() {
+        use hydrus_core::tag_presentation::NamespaceColours;
+        use hydrus_legacy::objects::LegacyOptions;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        // the fixture's are hydrus's defaults
+        let sorted = |c: NamespaceColours| {
+            let mut colours = c.colours;
+            colours.sort();
+            colours
+        };
+        assert_eq!(
+            sorted(namespace_colours(
+                &db.legacy_options().unwrap(),
+                Some(&options)
+            )),
+            sorted(NamespaceColours::default())
+        );
+        // the user's, and the OR connector's
+        let custom = LegacyOptions::parse(Some(
+            "namespace_colours:\n  null: !!python/tuple\n  - 1\n  - 2\n  - 3\n  ? ''\n  : !!python/tuple\n  - 4\n  - 5\n  - 6\n  character: !!python/tuple\n  - 7\n  - 8\n  - 9\n",
+        ))
+        .unwrap();
+        options.noneable_strings.insert(
+            "or_connector_custom_namespace_colour".into(),
+            Some("character".into()),
+        );
+        let converted = namespace_colours(&custom, Some(&options));
+        assert_eq!(
+            sorted(converted.clone()),
+            vec![
+                (None, [1, 2, 3]),
+                (Some(String::new()), [4, 5, 6]),
+                (Some("character".into()), [7, 8, 9]),
+            ]
+        );
+        assert_eq!(converted.or_connector.as_deref(), Some("character"));
     }
 
     /// The user's tag presentation options come across, with the search

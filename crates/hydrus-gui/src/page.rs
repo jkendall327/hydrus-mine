@@ -410,6 +410,25 @@ impl SearchPage {
         self.tags.iter().map(|(_, row)| row.as_str()).collect()
     }
 
+    /// The colour of each of [`Self::tag_rows`]: its tag's namespace's.
+    pub fn tag_colours(
+        &self,
+        colours: &hydrus_core::tag_presentation::NamespaceColours,
+    ) -> Vec<[u8; 3]> {
+        self.tags.iter().map(|(tag, _)| colours.tag(tag)).collect()
+    }
+
+    /// The colour of each of [`Self::predicates`] (`Predicate.GetNamespace`'s).
+    pub fn predicate_colours(
+        &self,
+        colours: &hydrus_core::tag_presentation::NamespaceColours,
+    ) -> Vec<[u8; 3]> {
+        self.predicates
+            .iter()
+            .map(|p| colours.predicate(p))
+            .collect()
+    }
+
     /// A tag in the list was activated: search for it too.
     pub fn activate_tag(&mut self, index: usize) -> bool {
         match self.tags.get(index) {
