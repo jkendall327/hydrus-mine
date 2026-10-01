@@ -19,6 +19,7 @@ use hydrus_store::Store;
 use hydrus_store::duplicates::ComparisonScores;
 
 use crate::duplicate_filter::{Decision, DuplicateFilter, Step};
+use crate::playback::Playback;
 use crate::thumbnails::Pixels;
 use crate::ui::{DuplicateFilterWindow, Statement as StatementRow};
 
@@ -122,6 +123,8 @@ struct State {
     images: HashMap<HashId, slint::Image>,
     /// Files asked of the stills thread and not yet back.
     requested: HashSet<HashId>,
+    /// Video, audio and animations play, as in the media viewer.
+    playback: Rc<Playback>,
 }
 
 impl State {
@@ -155,13 +158,16 @@ fn key_order(key: &str) -> usize {
 /// Show the state in the window.
 fn show(window: &DuplicateFilterWindow, state: &mut State) {
     let Some((shown, other)) = state.model.current() else {
+        state.shown = None;
+        state.playback.stop();
         window.set_media(slint::Image::default());
         window.set_index_text("-".into());
         window.set_statements(ModelRc::default());
         window.set_score_text(SharedString::new());
         return;
     };
-    if state.shown != Some((shown, other)) {
+    let newly_shown = state.shown != Some((shown, other));
+    if newly_shown {
         state.shown = Some((shown, other));
         state.slow_done = false;
         state.statements.clear();
@@ -177,6 +183,22 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         })
         .clone();
     window.set_media(image);
+    if newly_shown {
+        let path = crate::viewer::playable(state.model.store(), shown);
+        let (size, frame) = (window.as_weak(), window.as_weak());
+        state.playback.play(
+            path.as_deref(),
+            move || {
+                let size = size.upgrade()?.window().size();
+                Some((size.width, size.height))
+            },
+            move |image| {
+                if let Some(window) = frame.upgrade() {
+                    window.set_media(image);
+                }
+            },
+        );
+    }
     window.set_index_text(state.model.index_text().into());
     // the file shown against the other: the fast statements, then the slow
     // ones once made
@@ -283,6 +305,7 @@ pub(crate) fn open_filter(
     slot: &Rc<RefCell<Option<DuplicateFilterWindow>>>,
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = DuplicateFilterWindow::new()?;
+    let model_dir = model.store().dir().to_path_buf();
     let slow = Rc::new(SlowStatements::new(model.store()));
     let stills = Rc::new(Stills::new(model.store()));
     let state = Rc::new(RefCell::new(State {
@@ -293,6 +316,7 @@ pub(crate) fn open_filter(
         slow_done: false,
         images: HashMap::new(),
         requested: HashSet::new(),
+        playback: Playback::new(model_dir.join("mpv.conf")),
     }));
 
     // ask for the slow statements of the pair shown, if not yet asked
@@ -392,6 +416,10 @@ pub(crate) fn open_filter(
             });
         }
     });
+    window.on_toggle_pause({
+        let state = state.clone();
+        move || state.borrow().playback.toggle_pause()
+    });
     window.on_switch_media({
         let update = update.clone();
         move || {
@@ -405,8 +433,10 @@ pub(crate) fn open_filter(
         let weak = window.as_weak();
         let slot = slot.clone();
         let collect = collect.clone();
+        let state = state.clone();
         move || {
             collect.stop();
+            state.borrow().playback.close();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

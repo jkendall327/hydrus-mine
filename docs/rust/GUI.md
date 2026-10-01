@@ -69,7 +69,9 @@ the slow ones, jpeg quality and visual duplicates, made off the UI thread)
 and the decisions: this is better (deleting the other or not), same
 quality, alternates, not related, skip, go back. As in the reference, a
 left click on the file is "better, delete the other", a right click
-"alternates", a middle click goes back and up skips. Pairs come a batch
+"alternates", a middle click goes back and up skips; video, audio and
+animations play as in the media viewer, and the next three pairs' files
+are decoded ahead. Pairs come a batch
 at a time (`duplicate_filter_max_batch_size`), or a group at a time in
 group mode; pairs with a file already merged away or deleted are skipped;
 decisions wait for the batch's end, which asks to commit them (unless
@@ -83,9 +85,9 @@ screenshots land in `target/tmp/`). Not yet: reopening closed pages, system
 predicates in the autocomplete, collect, the viewer's hover frames, seeking
 and volume, a native animation player, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
-auto-resolution tabs; in the duplicate filter, video (files show as
-stills), the custom action, deleting from the filter, the hover frames,
-and reviewing auto-resolution's pending pairs.
+auto-resolution tabs; in the duplicate filter, the custom action,
+deleting from the filter, the hover frames, keeping the two files at the
+same zoom, and reviewing auto-resolution's pending pairs.
 
 ## Size
 

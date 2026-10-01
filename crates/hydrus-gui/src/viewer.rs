@@ -57,29 +57,9 @@ impl MediaViewer {
     }
 
     /// Where the current file is, if the reference plays its kind in mpv by
-    /// default: video, audio and animations (but animated WebP and JPEG XL,
-    /// and ugoiras, which it shows natively).
+    /// default.
     pub fn playable(&self) -> Option<std::path::PathBuf> {
-        use hydrus_core::Mime;
-        let id = self.current();
-        let result = self
-            .store
-            .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
-            .ok()?
-            .into_iter()
-            .next()?;
-        let mime = result.info?.mime;
-        let plays = match mime {
-            Mime::AnimationWebp | Mime::AnimationJxl | Mime::AnimationUgoira => false,
-            other => matches!(
-                other.general_class(),
-                Some(Mime::GeneralVideo | Mime::GeneralAudio | Mime::GeneralAnimation)
-            ),
-        };
-        if !plays {
-            return None;
-        }
-        self.store.snapshot().storage.file_path(&result.hash, mime)
+        playable(&self.store, self.current())
     }
 
     /// The current file as a still: an image decoded whole; anything else by
@@ -107,4 +87,28 @@ pub fn still(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
         let path = snapshot.storage.thumbnail_path(&result.hash)?;
         hydrus_media::decode_image(&std::fs::read(path).ok()?).ok()
     })
+}
+
+/// Where a file is, if the reference plays its kind in mpv by default:
+/// video, audio and animations (but animated WebP and JPEG XL, and ugoiras,
+/// which it shows natively).
+pub fn playable(store: &Store, id: HashId) -> Option<std::path::PathBuf> {
+    use hydrus_core::Mime;
+    let result = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()?
+        .into_iter()
+        .next()?;
+    let mime = result.info?.mime;
+    let plays = match mime {
+        Mime::AnimationWebp | Mime::AnimationJxl | Mime::AnimationUgoira => false,
+        other => matches!(
+            other.general_class(),
+            Some(Mime::GeneralVideo | Mime::GeneralAudio | Mime::GeneralAnimation)
+        ),
+    };
+    if !plays {
+        return None;
+    }
+    store.snapshot().storage.file_path(&result.hash, mime)
 }

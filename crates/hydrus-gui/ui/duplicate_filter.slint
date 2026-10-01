@@ -3,7 +3,8 @@
 // and the decisions. As in the reference: a left click on the file says it
 // is better and deletes the other, a right click says they are alternates,
 // a middle click goes back, up skips; left and right (page up and down, or
-// the mouse wheel) switch between the two files.
+// the mouse wheel) switch between the two files. Video, audio and
+// animations play, as in the media viewer; space pauses.
 
 import { Button } from "std-widgets.slint";
 
@@ -38,6 +39,7 @@ export component DuplicateFilterWindow inherits Window {
     // "skip", "back"
     callback decide(string);
     callback switch-media();
+    callback toggle-pause();
     callback answer(int);
     callback close-requested();
 
@@ -54,6 +56,10 @@ export component DuplicateFilterWindow inherits Window {
             }
             if (event.text == Key.UpArrow) {
                 root.decide("skip");
+                return accept;
+            }
+            if (event.text == " ") {
+                root.toggle-pause();
                 return accept;
             }
             if (event.text == Key.Escape) {

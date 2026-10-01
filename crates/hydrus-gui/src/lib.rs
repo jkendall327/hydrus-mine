@@ -25,6 +25,7 @@ pub mod mpv;
 mod page;
 pub mod page_chooser;
 mod pages;
+mod playback;
 pub mod sort;
 mod thumbnails;
 mod viewer;
@@ -389,31 +390,11 @@ fn open_viewer(
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
-    // video, audio and most animations play in mpv (made when first needed)
-    let player: Rc<RefCell<Option<mpv::Player>>> = Rc::default();
-    let frames = Rc::new(slint::Timer::default());
-    let show_frames = {
-        let player = player.clone();
-        let weak = window.as_weak();
-        move || {
-            let (Some(window), Ok(player)) = (weak.upgrade(), player.try_borrow()) else {
-                return;
-            };
-            let Some(player) = player.as_ref() else {
-                return;
-            };
-            let size = window.window().size();
-            player.set_size(size.width, size.height);
-            if let Some(frame) = player.frame() {
-                window.set_media(frame);
-            }
-        }
-    };
+    let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
-        let player = player.clone();
-        let frames = frames.clone();
+        let playback = playback.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -422,31 +403,19 @@ fn open_viewer(
             window.set_caption(model.caption().into());
             // (for a file that plays, its thumbnail until the first frame)
             window.set_media(model.media().as_ref().map(image).unwrap_or_default());
-            let mut player = player.borrow_mut();
-            if let Some(path) = model.playable().filter(|_| mpv::available()) {
-                if player.is_none() {
-                    let conf = model.store().dir().join("mpv.conf");
-                    match mpv::Player::new(Some(&conf)) {
-                        Ok(made) => *player = Some(made),
-                        Err(e) => eprintln!("could not start mpv: {e}"),
+            let (size, frame) = (weak.clone(), weak.clone());
+            playback.play(
+                model.playable().as_deref(),
+                move || {
+                    let size = size.upgrade()?.window().size();
+                    Some((size.width, size.height))
+                },
+                move |image| {
+                    if let Some(window) = frame.upgrade() {
+                        window.set_media(image);
                     }
-                }
-                if let Some(player) = player.as_ref() {
-                    if let Err(e) = player.load(&path) {
-                        eprintln!("mpv could not play {}: {e}", path.display());
-                    }
-                    frames.start(
-                        slint::TimerMode::Repeated,
-                        std::time::Duration::from_millis(10),
-                        show_frames.clone(),
-                    );
-                }
-            } else {
-                frames.stop();
-                if let Some(player) = player.as_ref() {
-                    let _ = player.stop();
-                }
-            }
+                },
+            );
         }
     };
     show();
@@ -463,20 +432,15 @@ fn open_viewer(
         show();
     });
     window.on_toggle_pause({
-        let player = player.clone();
-        move || {
-            if let Some(player) = player.borrow().as_ref() {
-                let _ = player.toggle_pause();
-            }
-        }
+        let playback = playback.clone();
+        move || playback.toggle_pause()
     });
     window.on_close_requested({
         let weak = window.as_weak();
         let slot = slot.clone();
         move || {
-            frames.stop();
             // (stops playing at once)
-            player.borrow_mut().take();
+            playback.close();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
