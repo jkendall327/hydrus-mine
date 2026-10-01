@@ -876,6 +876,23 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // alt and home, end, left or right (`SIMPLE_REARRANGE_THUMBNAILS`)
+    window.on_rearrange({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |to| {
+            use thumbnail_menu::Rearrange;
+            let to = match to {
+                0 => Rearrange::Start,
+                1 => Rearrange::Back,
+                3 => Rearrange::Forward,
+                4 => Rearrange::End,
+                _ => return,
+            };
+            page().borrow_mut().rearrange(to);
+            shown(true);
+        }
+    });
     // ctrl+e: the focused file as the OS opens it, if one file is focused
     // (`_HasFocusSingleton`)
     window.on_open_externally({
@@ -947,6 +964,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let urls = (!selected.is_empty())
                 .then(|| thumbnail_menu::urls_menu(&url_facts))
                 .flatten();
+            let rearrange = thumbnail_menu::rearrange_menu(
+                page.results(),
+                &page.selected_items().into_iter().collect(),
+                page.focused().map(|i| page.results()[i]),
+            );
             let entries = thumbnail_menu::menu(
                 &snapshot.services,
                 &files,
@@ -955,6 +977,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 urls,
                 open,
                 share,
+                rearrange,
             );
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
@@ -1009,6 +1032,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             match action {
                 Action::Refresh => {
                     page.borrow_mut().refresh();
+                    shown(true);
+                }
+                Action::Rearrange(to) => {
+                    page.borrow_mut().rearrange(to);
                     shown(true);
                 }
                 Action::Select(filter) => {
@@ -1304,6 +1331,8 @@ fn thumbnail_menu_rows(
         select,
         has_remove: !slots.remove.is_empty(),
         remove,
+        has_rearrange: !slots.rearrange.is_empty(),
+        rearrange: rows(&slots.rearrange),
         filter: rows(&slots.filter),
         delete: rows(&slots.delete),
         delete_title,

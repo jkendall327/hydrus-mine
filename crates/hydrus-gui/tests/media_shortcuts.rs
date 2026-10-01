@@ -96,3 +96,55 @@ fn ctrl_r_and_ctrl_e() {
     assert!(!page.borrow().results().contains(&shown_before[1]));
     viewer.invoke_close_requested();
 }
+
+#[test]
+fn alt_and_the_arrows_rearrange_the_selected_thumbnails() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let before = page.borrow().results().to_vec();
+    let n = before.len();
+    // the third and fourth selected
+    page.borrow_mut().hit(Some(2), false, false);
+    page.borrow_mut().hit(Some(3), true, false);
+    let moved = [before[2], before[3]];
+    let at = |page: &SearchPage| {
+        let results = page.results();
+        [moved[0], moved[1]].map(|f| results.iter().position(|&r| r == f).unwrap())
+    };
+    // alt+left: back one; alt+home: to the start; alt+end: to the end;
+    // alt+right at the end: nowhere
+    ui.invoke_rearrange(1);
+    assert_eq!(at(&page.borrow()), [1, 2]);
+    ui.invoke_rearrange(0);
+    assert_eq!(at(&page.borrow()), [0, 1]);
+    ui.invoke_rearrange(4);
+    assert_eq!(at(&page.borrow()), [n - 2, n - 1]);
+    ui.invoke_rearrange(3);
+    assert_eq!(at(&page.borrow()), [n - 2, n - 1]);
+    // the rest keep their order, and the selection stays
+    let rest: Vec<_> = page.borrow().results()[..n - 2].to_vec();
+    let mut expected = before.clone();
+    expected.retain(|f| !moved.contains(f));
+    assert_eq!(rest, expected);
+    assert_eq!(page.borrow().selected_files().len(), 2);
+    // until the page sorts again
+    let ascending = page.borrow().sort().ascending;
+    page.borrow_mut().set_sort_order(if ascending {
+        hydrus_search::SortOrder::Ascending
+    } else {
+        hydrus_search::SortOrder::Descending
+    });
+    assert_eq!(page.borrow().results(), before);
+}

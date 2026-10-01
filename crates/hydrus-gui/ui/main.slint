@@ -157,6 +157,8 @@ export struct ThumbnailMenu {
     select: MenuGroups,
     has-remove: bool,
     remove: MenuGroups,
+    has-rearrange: bool,
+    rearrange: [MenuRow],
     filter: [MenuRow],
     delete: [MenuRow],
     delete-title: string,
@@ -427,6 +429,9 @@ export component MainWindow inherits Window {
     // ctrl+e opens the focused file as the OS opens it
     callback remove-selected();
     callback open-externally();
+    // alt and home, end, left or right: the selected thumbnails to the
+    // start (0), back one (1), forward one (3) or to the end (4)
+    callback rearrange(int);
     callback move-focus(int, bool, int, int) -> int;
     // the right-click menu: asked for on a file (-1 for none), then shown;
     // an entry chosen
@@ -906,6 +911,13 @@ export component MainWindow inherits Window {
                             }
                             MenuSeparator { }
                         }
+                        if root.thumbnail-menu.has-rearrange: Menu {
+                            title: "rearrange";
+                            for row in root.thumbnail-menu.rearrange: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
                         MenuSeparator { }
                         for row in root.thumbnail-menu.filter: MenuItem {
                             title: row.label;
@@ -1105,6 +1117,14 @@ export component MainWindow inherits Window {
                             if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
                                 root.remove-selected();
                                 return accept;
+                            }
+                            if (event.modifiers.alt) {
+                                let to = event.text == Key.Home ? 0 : event.text == Key.LeftArrow ? 1
+                                    : event.text == Key.RightArrow ? 3 : event.text == Key.End ? 4 : -1;
+                                if (to >= 0) {
+                                    root.rearrange(to);
+                                    return accept;
+                                }
                             }
                             if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
                                 root.open-externally();

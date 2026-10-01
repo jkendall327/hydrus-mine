@@ -11,7 +11,8 @@ use std::sync::Arc;
 use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
 use hydrus_gui::thumbnail_menu::{
-    Entry, GROUPS, Slots, facts, info_menu, menu, open_menu, share_menu, url_facts, urls_menu,
+    Entry, GROUPS, Slots, facts, info_menu, menu, open_menu, rearrange_menu, share_menu, url_facts,
+    urls_menu,
 };
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
@@ -49,6 +50,7 @@ fn kept(label: &str) -> Kept {
         ]),
         "select"
         | "remove"
+        | "rearrange"
         | "delete"
         | "delete selected"
         | "refresh"
@@ -197,7 +199,8 @@ fn the_menu_is_the_reference_s() {
     };
     let mut checked = 0;
     for page in fixture["pages"].as_array().unwrap() {
-        let files = facts(&store, &ids(&page["files"]));
+        let in_page = ids(&page["files"]);
+        let files = facts(&store, &in_page);
         for case in page["menus"].as_array().unwrap() {
             let selected: HashSet<HashId> = ids(&case["selected"]).into_iter().collect();
             let in_order = ids(&case["selected"]);
@@ -214,6 +217,10 @@ fn the_menu_is_the_reference_s() {
             let urls = (!selected.is_empty())
                 .then(|| urls_menu(&url_facts(&store, in_order.first().copied(), &in_order)))
                 .flatten();
+            // (the recorder selects with a click, then ctrl+clicks, which
+            // don't move the focus by hydrus's default: the first file
+            // selected is focused)
+            let rearrange = rearrange_menu(&in_page, &selected, in_order.first().copied());
             let entries = menu(
                 &snapshot.services,
                 &files,
@@ -222,6 +229,7 @@ fn the_menu_is_the_reference_s() {
                 urls,
                 open,
                 share,
+                rearrange,
             );
             let ours = described(&entries);
             // (and the window's template shows it as it is)

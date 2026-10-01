@@ -811,6 +811,20 @@ impl SearchPage {
         }
     }
 
+    /// Move the selected thumbnails as `to` says (the thumbnail menu's
+    /// rearrange, alt and home, end, left or right): until the page sorts
+    /// again, they stay there.
+    pub fn rearrange(&mut self, to: crate::thumbnail_menu::Rearrange) {
+        let selected: std::collections::HashSet<HashId> =
+            self.selected_items().into_iter().collect();
+        self.results = crate::thumbnail_menu::rearranged(
+            &self.results,
+            &selected,
+            self.selection.focused(),
+            to,
+        );
+    }
+
     /// Select every file (ctrl+A).
     pub fn select_all(&mut self) {
         self.selection.select_all(&self.results);

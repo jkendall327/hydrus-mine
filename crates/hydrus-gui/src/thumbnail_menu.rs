@@ -81,6 +81,97 @@ pub enum Action {
     OpenUrls(Urls),
     CopyUrls(Urls),
     UrlPage(Urls),
+    /// Move the selected thumbnails (`SIMPLE_REARRANGE_THUMBNAILS`).
+    Rearrange(Rearrange),
+}
+
+/// Where rearranging moves the selected thumbnails (`MOVE_HOME`,
+/// `MOVE_LEFT`, `MOVE_TO_FOCUS`, `MOVE_RIGHT`, `MOVE_END`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Rearrange {
+    Start,
+    Back,
+    ToFocus,
+    Forward,
+    End,
+}
+
+/// The rearrange menu (`AddRearrangeMenu`), for a selection of some but
+/// not all of the page's `items` (files, and collections by their first):
+/// to the start and back one unless the selection starts the page; to the
+/// focused thumbnail if it isn't the selection's first, or the selection
+/// has gaps; and forward one and to the end unless it ends the page.
+pub fn rearrange_menu(
+    items: &[HashId],
+    selected: &HashSet<HashId>,
+    focused: Option<HashId>,
+) -> Option<Entry> {
+    let at: Vec<usize> = items
+        .iter()
+        .enumerate()
+        .filter(|(_, item)| selected.contains(item))
+        .map(|(i, _)| i)
+        .collect();
+    let (&earliest, &latest) = (at.first()?, at.last()?);
+    if at.len() == items.len() {
+        return None;
+    }
+    let contiguous = latest - earliest == at.len() - 1;
+    let item = |label: &str, to: Rearrange| Entry::Item(label.into(), Action::Rearrange(to));
+    let mut entries = Vec::new();
+    if earliest > 0 {
+        entries.push(item("to start", Rearrange::Start));
+        entries.push(item("back one", Rearrange::Back));
+    }
+    if let Some(focused) = focused.and_then(|f| items.iter().position(|&i| i == f))
+        && (focused != earliest || !contiguous)
+    {
+        entries.push(item("to here", Rearrange::ToFocus));
+    }
+    if earliest + at.len() < items.len() {
+        entries.push(item("forward one", Rearrange::Forward));
+        entries.push(item("to end", Rearrange::End));
+    }
+    Some(Entry::Menu("rearrange".into(), entries))
+}
+
+/// The page's items with the selected ones moved as `to` says
+/// (`SIMPLE_REARRANGE_THUMBNAILS`, then `move_items`: they are taken out,
+/// in order, and put back at the place worked out before, or at the end
+/// if that is past it); unmoved if nothing is selected, or they are
+/// already first and asked back one.
+pub fn rearranged(
+    items: &[HashId],
+    selected: &HashSet<HashId>,
+    focused: Option<HashId>,
+    to: Rearrange,
+) -> Vec<HashId> {
+    let moving: Vec<HashId> = items
+        .iter()
+        .copied()
+        .filter(|i| selected.contains(i))
+        .collect();
+    let Some(earliest) = items.iter().position(|i| selected.contains(i)) else {
+        return items.to_vec();
+    };
+    let insertion = match to {
+        Rearrange::Start => Some(0),
+        Rearrange::End => Some(items.len()),
+        Rearrange::Back => earliest.checked_sub(1),
+        Rearrange::Forward => Some(earliest + 1),
+        Rearrange::ToFocus => focused.and_then(|f| items.iter().position(|&i| i == f)),
+    };
+    let Some(insertion) = insertion else {
+        return items.to_vec();
+    };
+    let mut out: Vec<HashId> = items
+        .iter()
+        .copied()
+        .filter(|i| !selected.contains(i))
+        .collect();
+    let at = insertion.min(out.len());
+    out.splice(at..at, moving);
+    out
 }
 
 /// What a urls menu entry takes: one of the focused file's URLs (by its
@@ -773,6 +864,7 @@ pub fn menu(
     urls: Option<Entry>,
     open: Vec<Entry>,
     share: Option<Entry>,
+    rearrange: Option<Entry>,
 ) -> Vec<Entry> {
     let Ok(roles) = DomainRoles::new(services) else {
         return vec![Entry::Item("refresh".into(), Action::Refresh)];
@@ -898,6 +990,10 @@ pub fn menu(
             remove.push(item(Filter::NotSelected, Action::Remove));
         }
         entries.push(Entry::Menu("remove".into(), remove));
+        // rearrange (`AddRearrangeMenu`), for a selection
+        if num_selected > 0 {
+            entries.extend(rearrange);
+        }
 
         separate(&mut entries);
         if files.iter().any(&is_local) {
@@ -1071,6 +1167,7 @@ pub struct Slots {
     pub head: Vec<SlotItem>,
     pub select: Vec<Vec<SlotItem>>,
     pub remove: Vec<Vec<SlotItem>>,
+    pub rearrange: Vec<SlotItem>,
     /// The archive/delete filter, archiving and re-inboxing.
     pub filter: Vec<SlotItem>,
     /// Deleting from the one local domain the files are in.
@@ -1366,6 +1463,7 @@ impl Slots {
                 Entry::Menu(title, inner) => match title.as_str() {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
+                    "rearrange" => slots.rearrange = items(inner),
                     "manage" => slots.manage = items(inner),
                     "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
@@ -1394,6 +1492,12 @@ impl Slots {
         }
         if !self.remove.is_empty() {
             out.push(menu("remove", &self.remove));
+        }
+        if !self.rearrange.is_empty() {
+            out.push(Entry::Menu(
+                "rearrange".into(),
+                self.rearrange.iter().map(item).collect(),
+            ));
         }
         separate(&mut out);
         out.extend(self.filter.iter().map(item));
@@ -1534,5 +1638,76 @@ mod tests {
         };
         assert_eq!(visit.len(), 15 + 2);
         assert_eq!(titles(visit)[14], "6 more...");
+    }
+
+    /// Letters for ids, to read the orders below.
+    fn page(letters: &str) -> Vec<HashId> {
+        letters.bytes().map(|b| HashId(u32::from(b))).collect()
+    }
+
+    fn letters(items: &[HashId]) -> String {
+        items
+            .iter()
+            .map(|i| char::from(u8::try_from(i.0).unwrap()))
+            .collect()
+    }
+
+    #[test]
+    fn rearranging_moves_as_the_reference_s_lists_do() {
+        // (each as hydrus's FastIndexUniqueList.move_items gives it, from
+        // the insertion index the thumbnail panel works out)
+        let items = page("abcdef");
+        for (selected, to, focus, wanted) in [
+            ("c", Rearrange::Start, None, "cabdef"),
+            ("c", Rearrange::End, None, "abdefc"),
+            ("c", Rearrange::Back, None, "acbdef"),
+            ("c", Rearrange::Forward, None, "abdcef"),
+            ("bd", Rearrange::Forward, None, "acbdef"),
+            ("bd", Rearrange::Back, None, "bdacef"),
+            ("bd", Rearrange::Start, None, "bdacef"),
+            ("bd", Rearrange::End, None, "acefbd"),
+            ("ae", Rearrange::ToFocus, Some("c"), "bcaedf"),
+            ("bc", Rearrange::ToFocus, Some("e"), "adefbc"),
+            ("df", Rearrange::ToFocus, Some("a"), "dfabce"),
+            ("a", Rearrange::Back, None, "abcdef"),
+            ("ef", Rearrange::Forward, None, "abcdef"),
+            ("ce", Rearrange::Forward, None, "abdcef"),
+        ] {
+            let selected: HashSet<HashId> = page(selected).into_iter().collect();
+            let focus = focus.map(|f| page(f)[0]);
+            assert_eq!(
+                letters(&rearranged(&items, &selected, focus, to)),
+                wanted,
+                "{to:?}"
+            );
+        }
+    }
+
+    #[test]
+    fn the_rearrange_menu_offers_what_would_move() {
+        let items = page("abcdef");
+        let offered = |selected: &str, focus: char| {
+            let selected: HashSet<HashId> = page(selected).into_iter().collect();
+            rearrange_menu(&items, &selected, Some(HashId(u32::from(focus as u8)))).map(|m| match m
+            {
+                Entry::Menu(_, inner) => titles(&inner),
+                _ => unreachable!(),
+            })
+        };
+        // first and contiguous, focused first: nothing back, no "to here"
+        assert_eq!(offered("ab", 'a').unwrap(), ["forward one", "to end"]);
+        // with a gap, "to here" even focused on the first
+        assert_eq!(
+            offered("ac", 'a').unwrap(),
+            ["to here", "forward one", "to end"]
+        );
+        // focused elsewhere: "to here"; at the end: nothing forward
+        assert_eq!(
+            offered("ef", 'b').unwrap(),
+            ["to start", "back one", "to here"]
+        );
+        // all of them, or none: no menu
+        assert!(offered("abcdef", 'a').is_none());
+        assert!(offered("", 'a').is_none());
     }
 }

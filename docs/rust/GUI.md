@@ -149,7 +149,10 @@ files' types and size, the focused file's info lines, and how often they
 were viewed; a line chosen is copied to the clipboard, as in the
 reference); refresh; select and remove (all,
 inbox and archive, each file domain, local and not, not selected, none,
-each with its count); the archive/delete filter; archive and re-inbox;
+each with its count); rearrange (to start, back one, to here, forward
+one, to end, as the selection allows; alt and home, left, right or end do
+the same, and the order holds until the page sorts again); the
+archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
 trash physically, delete physically and undelete; manage → tags; and
 urls → open in browser, open in a new page, or copy the focused file's
@@ -169,7 +172,7 @@ reference's default "Default OS File Launch"; per-type launch programs
 aren't carried over yet) or in a web browser; and share → copying the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
-rearrange, clearing deletion records, the other manage entries,
+clearing deletion records, the other manage entries,
 locations, urls → manage and force metadata refetch, open's custom
 similarity distance, and
 share's exporting and copying of
