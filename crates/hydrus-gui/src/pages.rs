@@ -65,7 +65,7 @@ impl Pages {
             .filter(|s| !s.pages.is_empty())
             .unwrap_or_else(|| Session {
                 name: LAST_SESSION.to_owned(),
-                pages: vec![new_search_page()],
+                pages: vec![new_search_page(&store)],
             });
         let mut pages = Self {
             store,
@@ -84,7 +84,7 @@ impl Pages {
 
     /// One page, already open.
     pub fn single(page: SearchPage) -> Self {
-        let tree = new_search_page();
+        let tree = new_search_page(page.store());
         let mut pages = Self {
             store: page.store().clone(),
             session: Session {
@@ -178,9 +178,10 @@ impl Pages {
                 synchronised,
                 sort,
                 lock,
-                ..
+                collect,
             } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files)
-                .with_lock(lock),
+                .with_lock(lock)
+                .with_collect(collect),
             PageContent::Downloader { kind, queues, sort } => {
                 // (and what the reference's says while empty)
                 let (kind, empty) = match kind {
@@ -265,7 +266,7 @@ impl Pages {
                 } else if let Some(opened) = open.get(&page.key) {
                     let opened = opened.borrow();
                     page.content = opened.content(&page.content);
-                    files.push((page.key, opened.results().to_vec()));
+                    files.push((page.key, opened.files()));
                 }
             }
         }
@@ -309,7 +310,7 @@ impl Pages {
     /// on its default domain, "my files"), at the far right of the current
     /// notebook as the reference's default puts it, and show it.
     pub fn new_search_page(&mut self) {
-        self.add(new_search_page());
+        self.add(new_search_page(&self.store));
     }
 
     /// Open `files` in a new page searching `location` (the reference's
@@ -322,24 +323,29 @@ impl Pages {
         location: hydrus_search::LocationContext,
         files: Vec<hydrus_core::HashId>,
         sort: Option<&hydrus_core::pages::PageSort>,
+        collect: Option<&hydrus_core::pages::PageCollect>,
     ) {
         let hashes = self
             .store
             .read(|c| hydrus_store::master::hashes(c, &files))
             .unwrap_or_default();
-        let mut page = new_search_page();
+        let mut page = new_search_page(&self.store);
         let PageContent::Search {
             search,
             synchronised,
             lock,
             sort: page_sort,
-            ..
+            collect: page_collect,
         } = &mut page.content
         else {
             unreachable!("a search page");
         };
-        // (the files keep their order, under the page's sort)
+        // (the files keep their order, under the page's sort, and collect
+        // as the page's did)
         *page_sort = sort.cloned();
+        if let Some(collect) = collect {
+            *page_collect = Some(collect.clone());
+        }
         search.location = location;
         search.predicates = vec![hydrus_search::Predicate::System(
             hydrus_core::search::predicate::SystemPredicate::Hash {
@@ -357,7 +363,8 @@ impl Pages {
             sort,
             files,
         )
-        .with_lock(*lock);
+        .with_lock(*lock)
+        .with_collect(page_collect.clone());
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
     }
@@ -371,11 +378,12 @@ impl Pages {
         predicates: Vec<hydrus_search::Predicate>,
         name: &str,
     ) {
-        let mut page = new_search_page();
+        let mut page = new_search_page(&self.store);
         name.clone_into(&mut page.name);
         let PageContent::Search {
             search,
             synchronised,
+            collect,
             ..
         } = &mut page.content
         else {
@@ -389,7 +397,8 @@ impl Pages {
             *synchronised,
             None,
             Vec::new(),
-        );
+        )
+        .with_collect(collect.clone());
         opened.refresh();
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
@@ -431,7 +440,7 @@ impl Pages {
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {
         let page = match chosen {
             NewPage::Search { domain, .. } => {
-                let mut page = new_search_page();
+                let mut page = new_search_page(&self.store);
                 if let PageContent::Search { search, .. } = &mut page.content {
                     search.location = hydrus_search::LocationContext::single(domain.clone());
                 }
@@ -593,7 +602,7 @@ impl Pages {
                 self.path.truncate(depth);
             } else {
                 // as the reference, never without a page
-                self.session.pages.push(new_search_page());
+                self.session.pages.push(new_search_page(&self.store));
                 self.path = vec![0];
             }
         }
@@ -701,7 +710,11 @@ fn new_duplicates_page(
 
 /// A new search page, as the reference makes one: "files", searching "my
 /// files" and all known tags.
-fn new_search_page() -> Page {
+/// A new search page, searching "my files", sorting by default and
+/// collecting by the options' default collect (as `CreatePageManager`).
+fn new_search_page(store: &Store) -> Page {
+    let sorts: hydrus_core::pages::SortSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
     Page {
         key: PageKey::random(),
         name: "files".into(),
@@ -715,7 +728,7 @@ fn new_search_page() -> Page {
             synchronised: true,
             sort: None,
             lock: None,
-            collect: None,
+            collect: Some(sorts.default_collect),
         },
     }
 }

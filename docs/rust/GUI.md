@@ -52,7 +52,27 @@ own: file size, smallest first). A namespace sort orders files by their
 subtags in each namespace in turn (current and pending, in all known tags,
 in human order, as the reference's `GetComparableNamespaceSlice`); a rating
 sort by the rating, unrated files counting as -1 (0 on an inc/dec
-service). With nothing typed, the search
+service). Under the sort control, the collect control ("no collections",
+or "collect by series-stars") opens the reference's choices: the
+namespaces in your namespace sorts, then the like/dislike and numerical
+rating services, each checked to collect by it; its ⚙ says whether files
+matching none collect into one group or stay separate. A page collects as
+the reference's pages do (`MediaList.Collect`, checked against it through
+the page): files group by their tags in those namespaces and their
+ratings' values, every group a collection (even of one file), and the
+files and collections sort together, a collection by the reference's view
+of it (sizes summed, its latest import...). A collection shows as its
+first file with its number of files in a box at the bottom left; the
+status bar counts "N files in M collections"; selecting one selects its
+files (the menu, the archive/delete filter, deleting... act on them);
+activating one opens the media viewer over all the page's files from its
+first. Collecting selects nothing first, as the reference does; sorting
+leaves the collections as they were. A new page collects by your default
+collect; a session's page as it was (collected and sorted on opening, as
+the reference's page does); a page opened from the selection as its page
+did. Not yet: the ⚙'s tag service (collecting goes by all known tags,
+the reference's default), and middle-clicking the control to clear it.
+With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds in the page's file domains, counted as the reference's
 `_GetFileSystemPredicates` does (the reference also offers the system
@@ -77,7 +97,7 @@ from hydrus). The ★ beside
 the search box lists your favourite searches in hydrus's folders and
 order; choosing one loads its domains, tag service, predicates and sort
 into the page, searching if it is synchronised (saving and editing
-favourites isn't here yet, nor collecting). The lock button beside them
+favourites isn't here yet, nor a favourite's collect). The lock button beside them
 locks the page's search to a `system:hash` of the files in view (asking
 first, as hydrus does, unless the search is empty or already that hash);
 a page opened on files ("open in a new page") starts locked. A locked
@@ -123,7 +143,7 @@ URLs (labelled by URL class, decoded as hydrus shows them, sorted), its
 recognised URLs or all of them, and the selection's URLs of each class or
 all of them (opening several asks first; "files with" a URL opens a "url
 search" page on all my files); open → in a new page (locked to the files,
-with the page's sort), in a
+with the page's sort and collect), in a
 new duplicate filter page (a duplicates page searching a `system:hash` of
 them, on all my files unless hydrus's
 `open_files_to_duplicate_filter_uses_all_my_files` was off), similar
@@ -257,7 +277,7 @@ screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of
 the thumbnails' menu, system
-predicates in the autocomplete, collect, the viewer's other hover frames
+predicates in the autocomplete, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
 shading, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and

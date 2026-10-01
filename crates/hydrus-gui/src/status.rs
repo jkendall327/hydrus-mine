@@ -49,12 +49,46 @@ pub fn facts(store: &Store, files: &[HashId]) -> Vec<(HashId, Facts)> {
         .collect()
 }
 
+/// How many items some files are shown as, and how many of those are
+/// collections.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Items {
+    pub items: usize,
+    pub collections: usize,
+}
+
+impl Items {
+    /// Each file shown alone.
+    pub fn files(count: usize) -> Self {
+        Self {
+            items: count,
+            collections: 0,
+        }
+    }
+}
+
 /// `GetMediasFiletypeSummaryString`: "1 png", "14 jpegs", "3 animations",
-/// "36 files".
-pub fn filetype_summary(files: &[Facts]) -> String {
+/// "36 files", "12 files in 3 collections" (of `files`, shown as `items`).
+pub fn filetype_summary(files: &[Facts], items: Items) -> String {
     let count = files.len();
     let summary = if count > 100_000 {
         "files".to_owned()
+    } else if items.collections > 0 {
+        let suffix = if items.items > 1 || count > 1 {
+            "s"
+        } else {
+            ""
+        };
+        if items.collections == items.items {
+            let collections = if items.collections > 1 { "s" } else { "" };
+            format!(
+                "file{suffix} in {} collection{collections}",
+                human_int(items.collections as u64)
+            )
+        } else {
+            // (a collection's type is none of the others)
+            format!("file{suffix}")
+        }
     } else {
         let suffix = if count > 1 { "s" } else { "" };
         let mimes: BTreeSet<Mime> = files.iter().map(|f| f.mime).collect();
@@ -93,13 +127,14 @@ pub(crate) fn total_duration(files: &[Facts]) -> Option<String> {
     Some(duration_ms_to_pretty(total))
 }
 
-/// The status bar's text for a page of `files` with `selected` selected.
-/// An empty page says `empty` if it has something to say; one file
-/// selected is described by `single_line` (its interesting info lines
-/// joined with ", ", if the options show them).
+/// The status bar's text for a page of `files` (shown as `items`) with
+/// `selected` (as `selected_items`) selected. An empty page says `empty`
+/// if it has something to say; one file selected is described by
+/// `single_line` (its interesting info lines joined with ", ", if the
+/// options show them).
 pub fn status(
-    files: &[Facts],
-    selected: &[Facts],
+    (files, items): (&[Facts], Items),
+    (selected, selected_items): (&[Facts], Items),
     empty: Option<&str>,
     single_line: Option<&str>,
 ) -> String {
@@ -108,7 +143,7 @@ pub fn status(
     {
         return empty.to_owned();
     }
-    let mut s = filetype_summary(files);
+    let mut s = filetype_summary(files, items);
     if selected.is_empty() {
         if !files.is_empty() {
             s += &format!(" - totalling {}", total_size(files));
@@ -118,7 +153,10 @@ pub fn status(
         }
         return s;
     }
-    s += &format!(" - {} selected, ", filetype_summary(selected));
+    s += &format!(
+        " - {} selected, ",
+        filetype_summary(selected, selected_items)
+    );
     if let (1, Some(line)) = (selected.len(), single_line) {
         s += line;
         return s;

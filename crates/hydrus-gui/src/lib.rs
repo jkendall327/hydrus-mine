@@ -23,6 +23,7 @@ mod animation;
 pub mod archive_delete;
 mod archive_delete_window;
 pub mod autocomplete;
+pub mod collect;
 pub mod duplicate_filter;
 pub mod favourites;
 mod filter_window;
@@ -440,6 +441,40 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // (the collect control's choices are as `refresh` lists them)
+    window.on_collect_toggled({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |index, on| {
+            let page = page();
+            let collect = {
+                let page = page.borrow();
+                let choices = collect::choices(page.store());
+                usize::try_from(index)
+                    .ok()
+                    .filter(|&i| i < choices.len())
+                    .map(|i| collect::toggled(&choices, page.collect(), i, on))
+            };
+            if let Some(collect) = collect {
+                page.borrow_mut().set_collect(collect);
+                shown(true);
+            }
+        }
+    });
+    window.on_collect_unmatched_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |collect_unmatched| {
+            let page = page();
+            let collect = {
+                let page = page.borrow();
+                let choices = collect::choices(page.store());
+                collect::with_unmatched(&choices, page.collect(), collect_unmatched)
+            };
+            page.borrow_mut().set_collect(collect);
+            shown(true);
+        }
+    });
     window.on_columns_changed({
         let rows = rows.clone();
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
@@ -660,7 +695,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let page = page();
             let page = page.borrow();
             let files = match page.selected_files() {
-                selected if selected.is_empty() => page.results().to_vec(),
+                selected if selected.is_empty() => page.files(),
                 selected => selected,
             };
             let Some(model) = archive_delete::ArchiveDeleteFilter::new(
@@ -687,11 +722,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move |index| {
             let page = page();
             let page = page.borrow();
-            let Some(model) = MediaViewer::new(
-                page.store().clone(),
-                page.results().to_vec(),
-                usize::try_from(index).unwrap_or(usize::MAX),
-            ) else {
+            // (over all the page's files, from the item's first, as the
+            // reference's `_LaunchMediaViewer` opens)
+            let files = page.files();
+            let start = usize::try_from(index)
+                .ok()
+                .and_then(|i| page.results().get(i))
+                .and_then(|item| files.iter().position(|f| f == item))
+                .unwrap_or(usize::MAX);
+            let Some(model) = MediaViewer::new(page.store().clone(), files, start) else {
                 return;
             };
             let model = model.with_location(page.location().clone());
@@ -798,7 +837,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             let page = page();
             let page = page.borrow();
-            let files = thumbnail_menu::facts(page.store(), page.results());
+            let files = thumbnail_menu::facts(page.store(), &page.files());
             let selected: std::collections::HashSet<HashId> =
                 page.selected_files().into_iter().collect();
             let snapshot = page.store().snapshot();
@@ -809,7 +848,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let info = thumbnail_menu::info_menu(
                 page.store(),
                 page.focused().map(|i| page.results()[i]),
-                &page.selected_files(),
+                (&page.selected_files(), page.selected_counts()),
                 &settings,
                 hydrus_core::TimestampMs::now().0,
             );
@@ -987,16 +1026,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 }
                 Action::OpenInNewPage => {
-                    let (location, files, sort) = {
+                    let (location, files, sort, collect) = {
                         let page = page.borrow();
                         (
                             page.location().clone(),
                             page.selected_files(),
                             page.sort().clone(),
+                            page.collect().clone(),
                         )
                     };
                     change_pages(&|pages| {
-                        pages.open_files(location.clone(), files.clone(), Some(&sort));
+                        pages.open_files(
+                            location.clone(),
+                            files.clone(),
+                            Some(&sort),
+                            Some(&collect),
+                        );
                         Ok(())
                     });
                 }
@@ -1901,6 +1946,19 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
         window.set_order_names(ModelRc::new(VecModel::from(orders)));
         window.set_order_index(i32::from(!sort.ascending));
     }
+    let collect = page.collect();
+    let choices = collect::choices(page.store());
+    window.set_collect_label(collect::label(&choices, collect).into());
+    let rows: Vec<CollectRow> = choices
+        .iter()
+        .map(|c| CollectRow {
+            name: c.name.as_str().into(),
+            checked: c.checked(collect),
+        })
+        .collect();
+    window.set_collect_choices(ModelRc::new(VecModel::from(rows)));
+    window.set_collect_unmatched(collect.collect_unmatched);
+    window.set_collect_separate(!collect.collect_unmatched);
 }
 
 #[cfg(test)]

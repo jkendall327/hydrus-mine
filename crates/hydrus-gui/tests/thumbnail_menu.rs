@@ -204,7 +204,7 @@ fn the_menu_is_the_reference_s() {
             let info = info_menu(
                 &store,
                 in_order.first().copied(),
-                &in_order,
+                (&in_order, hydrus_gui::status::Items::files(in_order.len())),
                 &InfoLineSettings::default(),
                 now_ms,
             );

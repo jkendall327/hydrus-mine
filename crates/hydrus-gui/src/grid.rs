@@ -8,7 +8,7 @@ use std::collections::{BTreeSet, HashMap};
 use std::rc::Rc;
 use std::time::Duration;
 
-use slint::{Model, ModelNotify, ModelRc, ModelTracker, VecModel};
+use slint::{Model, ModelNotify, ModelRc, ModelTracker, SharedString, VecModel};
 
 use hydrus_core::HashId;
 
@@ -182,6 +182,11 @@ impl Model for ThumbnailRows {
             .map(|i| Thumbnail {
                 image: self.image(results[i], i),
                 selected: page.is_selected(i),
+                files: page
+                    .collection(results[i])
+                    .map_or_else(SharedString::new, |files| {
+                        hydrus_core::numbers::human_int(files.len() as u64).into()
+                    }),
             })
             .collect();
         Some(ThumbnailRow {

@@ -6,11 +6,13 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_core::pages::{DuplicatesPage, HashLock, PageContent, PageSort, PageSortBy};
+use hydrus_core::pages::{
+    DuplicatesPage, HashLock, PageCollect, PageContent, PageMedia, PageSort, PageSortBy,
+};
 use hydrus_core::search::predicate::{FileHashes, SystemPredicate};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
-    parse_api_search, predicate_text, search_files, sort_page_files,
+    collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
 
@@ -39,6 +41,16 @@ pub struct SearchPage {
     /// The sort applied first, which orders the sort's ties (the options'
     /// `fallback_sort`).
     fallback: PageSort,
+    /// How the page collects its files, and its collections: each by its
+    /// first file (the item `results` shows), with its files in order.
+    collect: PageCollect,
+    collections: HashMap<HashId, Vec<HashId>>,
+    /// The page's files in the order they came to it (searched, or as a
+    /// session kept them), which collecting takes them in: so a
+    /// collection, and what it takes from its first file, stays as it is
+    /// while the page sorts (the reference collects once, and sorts its
+    /// collections).
+    came: Vec<HashId>,
     /// In the sort's order.
     results: Vec<HashId>,
     selection: Selection,
@@ -85,6 +97,9 @@ impl SearchPage {
             sort: sorts.default_sort,
             sort_changed: false,
             fallback: sorts.fallback_sort,
+            collect: sorts.default_collect,
+            collections: HashMap::new(),
+            came: Vec::new(),
             results: Vec::new(),
             selection: Selection::default(),
             tags: Vec::new(),
@@ -156,6 +171,10 @@ impl SearchPage {
         page.predicates = predicates;
         page.synchronised = synchronised;
         page.set_page_sort(sort);
+        // (collecting as the session says, `with_collect`: a page that
+        // doesn't say doesn't)
+        page.collect = PageCollect::default();
+        page.came.clone_from(&files);
         page.results = files;
         page.learn_facts();
         page.count_tags();
@@ -207,6 +226,7 @@ impl SearchPage {
         page.note = Some(note.into());
         page.empty_status.set(Some("empty page"));
         page.set_page_sort(sort);
+        page.came.clone_from(&files);
         page.results = files;
         page.learn_facts();
         page.count_tags();
@@ -244,11 +264,7 @@ impl SearchPage {
                 synchronised: self.synchronised,
                 sort,
                 lock: self.lock(),
-                // (kept as opened: the page doesn't collect yet)
-                collect: match opened_from {
-                    PageContent::Search { collect, .. } => collect.clone(),
-                    _ => None,
-                },
+                collect: Some(self.collect.clone()),
             },
             PageContent::Downloader { kind, queues, .. } => PageContent::Downloader {
                 kind: *kind,
@@ -301,11 +317,36 @@ impl SearchPage {
     }
 
     /// Take files off the page (deleted from its domain, say), as the
-    /// reference's pages drop them; a locked search lets go of them too,
-    /// if it follows removals (`NotifyFilesRemoved`).
+    /// reference's pages drop them, out of their collections (one left
+    /// empty goes); a locked search lets go of them too, if it follows
+    /// removals (`NotifyFilesRemoved`).
     pub fn remove_files(&mut self, files: &[HashId]) {
-        self.selection.remove(&self.results, files);
-        self.results.retain(|id| !files.contains(id));
+        let gone: std::collections::HashSet<HashId> = files.iter().copied().collect();
+        let emptied: Vec<HashId> = self
+            .results
+            .iter()
+            .copied()
+            .filter(|item| self.files_of(*item).iter().all(|f| gone.contains(f)))
+            .collect();
+        self.selection.remove(&self.results, &emptied);
+        self.results.retain(|item| !emptied.contains(item));
+        self.came.retain(|f| !gone.contains(f));
+        // (a collection left with files is shown by its first now)
+        let mut renamed: HashMap<HashId, HashId> = HashMap::new();
+        for item in &mut self.results {
+            if let Some(mut members) = self.collections.remove(item) {
+                members.retain(|f| !gone.contains(f));
+                renamed.insert(*item, members[0]);
+                *item = members[0];
+                self.collections.insert(members[0], members);
+            }
+        }
+        let shown: std::collections::HashSet<HashId> = self.results.iter().copied().collect();
+        self.collections.retain(|key, _| shown.contains(key));
+        if !renamed.is_empty() {
+            self.selection
+                .remap(|f| Some(renamed.get(&f).copied().unwrap_or(f)));
+        }
         self.count_tags();
         if self.locked && self.lock_syncs.syncs_removes {
             let removed = self.sha256s(files);
@@ -360,7 +401,7 @@ impl SearchPage {
             return None;
         }
         match self.lock_hashes() {
-            Some(hashes) if hashes == self.sha256s(&self.results) => None,
+            Some(hashes) if hashes == self.sha256s(&self.files()) => None,
             Some(_) => Some(
                 "This will lock the page, collapsing the current search to a system:hash of \
                  the current files.\n\nYour search already has a system:hash, but its files \
@@ -383,7 +424,7 @@ impl SearchPage {
             return;
         }
         self.locked = true;
-        let hashes = self.sha256s(&self.results);
+        let hashes = self.sha256s(&self.files());
         self.set_lock_hashes(hashes);
     }
 
@@ -416,8 +457,67 @@ impl SearchPage {
             .unwrap_or_default()
     }
 
+    /// The page's items, in order: its files, a collection shown by its
+    /// first file.
     pub fn results(&self) -> &[HashId] {
         &self.results
+    }
+
+    /// The page's files, in order, its collections' in theirs.
+    pub fn files(&self) -> Vec<HashId> {
+        self.flatten(&self.results)
+    }
+
+    /// The files of the item shown by `item`: a collection's, or the file.
+    pub fn files_of(&self, item: HashId) -> Vec<HashId> {
+        self.collections
+            .get(&item)
+            .cloned()
+            .unwrap_or_else(|| vec![item])
+    }
+
+    /// The collection the item shown by `item` is, if it is one.
+    pub fn collection(&self, item: HashId) -> Option<&[HashId]> {
+        self.collections.get(&item).map(Vec::as_slice)
+    }
+
+    fn flatten(&self, items: &[HashId]) -> Vec<HashId> {
+        items
+            .iter()
+            .flat_map(|&item| {
+                self.collections
+                    .get(&item)
+                    .cloned()
+                    .unwrap_or_else(|| vec![item])
+            })
+            .collect()
+    }
+
+    /// How the page collects its files.
+    pub fn collect(&self) -> &PageCollect {
+        &self.collect
+    }
+
+    /// Collect the page's files anew (the reference's collect control), and
+    /// sort them; as the reference's `Collect`, it selects nothing first.
+    pub fn set_collect(&mut self, collect: PageCollect) {
+        self.collect = collect;
+        self.selection.select_none(&self.results);
+        self.resort();
+        self.count_tags();
+    }
+
+    /// The page restored collecting as a session kept it: collected and
+    /// sorted if it collects (as the reference's page does on loading),
+    /// else in the order kept.
+    #[must_use]
+    pub fn with_collect(mut self, collect: Option<PageCollect>) -> Self {
+        match collect {
+            Some(collect) if collect.collects() => self.set_collect(collect),
+            Some(collect) => self.collect = collect,
+            None => {}
+        }
+        self
     }
 
     /// The page's sort.
@@ -456,30 +556,90 @@ impl SearchPage {
 
     /// Sort the files shown again (a new sort doesn't search again), as
     /// the reference's pages sort: the fallback sort first, then the
-    /// page's, from the order they are in.
+    /// page's, from the order they are in; collecting them first if the
+    /// page collects (the selection following its files).
     fn resort(&mut self) {
         let snapshot = self.store.snapshot();
         let clock = Clock::system();
-        match self.store.read(|conn| {
-            Ok(sort_page_files(
-                conn,
-                &snapshot,
-                &self.context,
-                &self.results,
-                &self.sort,
-                Some(&self.fallback),
-                &clock,
-            ))
-        }) {
-            Ok(Ok(sorted)) => self.results = sorted,
-            Ok(Err(e)) => self.error = Some(e.to_string()),
-            Err(e) => self.error = Some(e.to_string()),
+        let collect = self.collect.clone();
+        let arranged = self.store.read(|conn| {
+            Ok(if collect.collects() {
+                collect_page_files(
+                    conn,
+                    &snapshot,
+                    &self.context,
+                    &self.came,
+                    &collect,
+                    &self.sort,
+                    Some(&self.fallback),
+                    &clock,
+                )
+            } else {
+                sort_page_files(
+                    conn,
+                    &snapshot,
+                    &self.context,
+                    &self.files(),
+                    &self.sort,
+                    Some(&self.fallback),
+                    &clock,
+                )
+                .map(|sorted| sorted.into_iter().map(PageMedia::File).collect())
+            })
+        });
+        let media = match arranged {
+            Ok(Ok(media)) => media,
+            Ok(Err(e)) => {
+                self.error = Some(e.to_string());
+                return;
+            }
+            Err(e) => {
+                self.error = Some(e.to_string());
+                return;
+            }
+        };
+        let mut results = Vec::with_capacity(media.len());
+        let mut collections = HashMap::new();
+        let mut item_of: HashMap<HashId, HashId> = HashMap::new();
+        for m in media {
+            match m {
+                PageMedia::File(file) => {
+                    item_of.insert(file, file);
+                    results.push(file);
+                }
+                PageMedia::Collection(members) => {
+                    let key = members[0];
+                    item_of.extend(members.iter().map(|&f| (f, key)));
+                    results.push(key);
+                    collections.insert(key, members);
+                }
+            }
         }
+        self.results = results;
+        self.collections = collections;
+        self.selection.remap(|f| item_of.get(&f).copied());
     }
 
-    /// The selected files, in the page's order.
+    /// The selected files, in the page's order, collections' as theirs.
     pub fn selected_files(&self) -> Vec<HashId> {
+        self.flatten(&self.selection.files(&self.results))
+    }
+
+    /// The selected items: files, and collections by their first file.
+    pub fn selected_items(&self) -> Vec<HashId> {
         self.selection.files(&self.results)
+    }
+
+    /// How many items are selected, and how many of those are collections.
+    pub fn selected_counts(&self) -> crate::status::Items {
+        let items = self.selected_items();
+        crate::status::Items {
+            collections: items
+                .iter()
+                .filter(|i| self.collections.contains_key(i))
+                .count(),
+            items: items.len(),
+        }
     }
 
     /// The selected files' indices.
@@ -606,9 +766,16 @@ impl SearchPage {
     }
 
     /// Select just `files` (the menu's select), as the reference's
-    /// `_Select` does.
+    /// `_Select` does: the items they are in.
     pub fn select_files(&mut self, files: &[HashId]) {
-        self.selection.select_only(&self.results, files);
+        let wanted: std::collections::HashSet<HashId> = files.iter().copied().collect();
+        let items: Vec<HashId> = self
+            .results
+            .iter()
+            .copied()
+            .filter(|&item| self.files_of(item).iter().any(|f| wanted.contains(f)))
+            .collect();
+        self.selection.select_only(&self.results, &items);
         self.count_tags();
     }
 
@@ -691,7 +858,7 @@ impl SearchPage {
     /// sort.
     fn count_tags(&mut self) {
         let files = match self.selected_files() {
-            selected if selected.is_empty() => self.results.clone(),
+            selected if selected.is_empty() => self.files(),
             selected => selected,
         };
         let snapshot = self.store.snapshot();
@@ -708,6 +875,8 @@ impl SearchPage {
         self.error = None;
         self.selection.clear();
         self.results.clear();
+        self.came.clear();
+        self.collections.clear();
         // as in the reference, a page with no predicates shows nothing
         if self.predicates.is_empty() {
             self.tags.clear();
@@ -734,6 +903,7 @@ impl SearchPage {
             .read(|conn| Ok(search_files(conn, &snapshot, &search, sort, &clock)))
         {
             Ok(Ok(found)) => {
+                self.came.clone_from(&found);
                 self.results = found;
                 self.resort();
             }
@@ -747,9 +917,8 @@ impl SearchPage {
     /// Read the status bar's facts of the files shown not yet known.
     fn learn_facts(&mut self) {
         let unknown: Vec<HashId> = self
-            .results
-            .iter()
-            .copied()
+            .files()
+            .into_iter()
             .filter(|f| !self.facts.contains_key(f))
             .collect();
         if unknown.is_empty() {
@@ -770,10 +939,14 @@ impl SearchPage {
                 .copied()
                 .collect()
         };
-        let all = facts(&self.results);
+        let all = facts(&self.files());
         if !all.is_empty() {
             self.empty_status.set(None);
         }
+        let shown = crate::status::Items {
+            items: self.results.len(),
+            collections: self.collections.len(),
+        };
         let selected_files = self.selected_files();
         let mut selected = facts(&selected_files);
         if let Ok(inbox) = self
@@ -789,8 +962,8 @@ impl SearchPage {
             _ => None,
         };
         crate::status::status(
-            &all,
-            &selected,
+            (&all, shown),
+            (&selected, self.selected_counts()),
             self.empty_status.get(),
             single_line.as_deref(),
         )

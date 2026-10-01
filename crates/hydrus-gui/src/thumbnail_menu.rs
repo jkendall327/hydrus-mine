@@ -310,7 +310,7 @@ fn separate(entries: &mut Vec<Entry>) {
 pub fn info_menu(
     store: &Store,
     focused: Option<HashId>,
-    selected: &[HashId],
+    (selected, items): (&[HashId], crate::status::Items),
     settings: &hydrus_core::media_viewer::InfoLineSettings,
     now_ms: i64,
 ) -> Option<Entry> {
@@ -333,7 +333,7 @@ pub fn info_menu(
         .collect();
     let mut label = format!(
         "{}, {}",
-        crate::status::filetype_summary(&facts),
+        crate::status::filetype_summary(&facts, items),
         crate::status::total_size(&facts)
     );
     let mut entries = Vec::new();

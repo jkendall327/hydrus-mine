@@ -10,7 +10,7 @@ use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
 use hydrus_gui::SearchPage;
 use hydrus_gui::info_lines::status_line;
-use hydrus_gui::status::{Facts, facts, status};
+use hydrus_gui::status::{Facts, Items, facts, status};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::Value;
@@ -80,7 +80,12 @@ fn the_status_bar_is_the_reference_s() {
                 _ => None,
             };
             assert_eq!(
-                status(&files, &facts_of(&selected), empty, single_line.as_deref()),
+                status(
+                    (&files, Items::files(files.len())),
+                    (&facts_of(&selected), Items::files(selected.len())),
+                    empty,
+                    single_line.as_deref()
+                ),
                 selection["status"].as_str().unwrap(),
                 "{name}: {} selected",
                 selected.len()

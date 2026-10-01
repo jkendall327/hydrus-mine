@@ -244,6 +244,17 @@ impl Selection {
         self.end_shift_select();
     }
 
+    /// The page's items regrouped (collected anew): each one kept as the
+    /// item `to` gives for it (none: dropped).
+    pub fn remap(&mut self, to: impl Fn(HashId) -> Option<HashId>) {
+        self.selected = self.selected.iter().filter_map(|&f| to(f)).collect();
+        self.focused = self.focused.and_then(&to);
+        self.last_hit = self.last_hit.and_then(&to);
+        self.ghost = self.ghost.and_then(&to);
+        self.shift_start = self.shift_start.and_then(&to);
+        self.shift_added = self.shift_added.iter().filter_map(|&f| to(f)).collect();
+    }
+
     /// A new search: nothing selected or focused.
     pub fn clear(&mut self) {
         *self = Self::default();

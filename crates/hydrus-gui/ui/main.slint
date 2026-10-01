@@ -1,7 +1,7 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { Button, ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 export { ListText }
 
@@ -16,6 +16,8 @@ export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 export struct Thumbnail {
     image: image,
     selected: bool,
+    // a collection's number of files, as text; empty for a file
+    files: string,
 }
 
 component Predicate inherits Rectangle {
@@ -187,6 +189,12 @@ export struct ThumbnailMenu {
     share-d: [MenuRow],
 }
 
+// a choice in the collect control
+export struct CollectRow {
+    name: string,
+    checked: bool,
+}
+
 export struct ThumbnailRow {
     // the index of the row's first file
     first: int,
@@ -251,6 +259,22 @@ component ThumbnailGrid inherits ListView {
                     height: parent.height - 4px;
                     source: thumbnail.image;
                     image-fit: contain;
+                }
+                // a collection: its number of files, in a box at the
+                // bottom left
+                if thumbnail.files != "": Rectangle {
+                    x: 2px;
+                    y: parent.height - 2px - self.height;
+                    width: count.preferred-width + 8px;
+                    height: count.preferred-height + 4px;
+                    background: Theme.window;
+                    border-width: 1px;
+                    border-color: Theme.border;
+                    count := Text {
+                        text: thumbnail.files;
+                        color: Theme.text;
+                        font-size: 11px;
+                    }
                 }
             }
         }
@@ -332,6 +356,16 @@ export component MainWindow inherits Window {
     callback lock-search();
     callback unlock-search();
     callback lock-syncs-changed(bool, bool);
+    // the collect control: its label, its choices (shown while open), and
+    // the cog's whether files matching none collect into one group or
+    // stay separate
+    in property <string> collect-label;
+    in property <[CollectRow]> collect-choices;
+    in-out property <bool> collect-open;
+    in-out property <bool> collect-unmatched;
+    in-out property <bool> collect-separate;
+    callback collect-toggled(int, bool);
+    callback collect-unmatched-chosen(bool);
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
@@ -487,6 +521,57 @@ export component MainWindow inherits Window {
                             model: root.order-names;
                             current-index: root.order-index;
                             selected => { root.order-chosen(self.current-index); }
+                        }
+                    }
+                    // and the collect control under it: the choices open
+                    // from the label, and stay open while checked, as the
+                    // reference's
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            text: root.collect-label;
+                            checkable: true;
+                            checked <=> root.collect-open;
+                        }
+                        collect-cog := ContextMenuArea {
+                            width: 30px;
+                            Menu {
+                                Menu {
+                                    title: "unmatched files";
+                                    MenuItem {
+                                        title: "collect into one group";
+                                        checkable: true;
+                                        checked <=> root.collect-unmatched;
+                                        activated => { root.collect-unmatched-chosen(true); }
+                                    }
+                                    MenuItem {
+                                        title: "leave separate";
+                                        checkable: true;
+                                        checked <=> root.collect-separate;
+                                        activated => { root.collect-unmatched-chosen(false); }
+                                    }
+                                }
+                            }
+                            Button {
+                                width: 30px;
+                                text: "⚙";
+                                clicked => { collect-cog.show({ x: 0px, y: self.height }); }
+                            }
+                        }
+                    }
+                    if root.collect-open: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 2px;
+                            for choice[index] in root.collect-choices: CheckBox {
+                                text: choice.name;
+                                checked: choice.checked;
+                                toggled => { root.collect-toggled(index, self.checked); }
+                            }
                         }
                     }
                     if root.search-locked: VerticalLayout {
