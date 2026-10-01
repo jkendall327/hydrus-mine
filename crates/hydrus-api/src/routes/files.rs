@@ -635,6 +635,7 @@ pub async fn thumbnail(
                     .storage
                     .thumbnail_path(&hash)
                     .filter(|p| p.is_file())
+                    .or_else(|| regenerated_thumbnail(app, m.as_ref()))
             } else {
                 None
             };
@@ -659,6 +660,21 @@ pub async fn thumbnail(
         content_type: "image/png".into(),
         attachment: false,
     })
+}
+
+/// A missing thumbnail, made again from its file (`GetThumbnailPath`).
+fn regenerated_thumbnail(
+    app: &AppState,
+    media: Option<&MediaResult>,
+) -> Option<std::path::PathBuf> {
+    let media = media?;
+    match app.importer.regenerate_thumbnail(media) {
+        Ok(path) => path,
+        Err(e) => {
+            tracing::warn!(hash = %media.hash, error = %e, "regenerating a thumbnail failed");
+            None
+        }
+    }
 }
 
 /// Thumbnails are stored without an extension; sniff whether they are PNG.
@@ -763,6 +779,7 @@ pub async fn thumbnail_path(
                 .storage
                 .thumbnail_path(&hash)
                 .filter(|p| p.is_file())
+                .or_else(|| regenerated_thumbnail(app, m.as_ref()))
                 .ok_or_else(|| {
                     ApiError::new(ErrorKind::FileMissing, "Could not find that thumbnail!")
                 })?;

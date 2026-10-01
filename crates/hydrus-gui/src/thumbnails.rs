@@ -47,14 +47,33 @@ impl Pixels {
     }
 }
 
-/// A file's thumbnail, decoded; `None` if it has none on disk.
-pub fn thumbnail(store: &Store, id: HashId) -> Option<hydrus_media::Raster> {
+/// A file's thumbnail, decoded; `None` if it has none. A thumbnail that
+/// has gone missing is made again from its file, as the reference does.
+pub fn thumbnail(store: &Arc<Store>, id: HashId) -> Option<hydrus_media::Raster> {
     let hash = store
         .read(|conn| hydrus_store::master::hash(conn, id))
         .ok()??;
     let path = store.snapshot().storage.thumbnail_path(&hash)?;
-    let bytes = std::fs::read(path).ok()?;
+    let bytes = match std::fs::read(&path) {
+        Ok(bytes) => bytes,
+        Err(_) => std::fs::read(regenerate(store, id)?).ok()?,
+    };
     hydrus_media::decode_image(&bytes).ok()
+}
+
+fn regenerate(store: &Arc<Store>, id: HashId) -> Option<std::path::PathBuf> {
+    let snapshot = store.snapshot();
+    let media = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+        .ok()?
+        .results
+        .pop()?;
+    let importer =
+        hydrus_import::FileImporter::new(Arc::clone(store), hydrus_media::MediaTools::new());
+    importer
+        .regenerate_thumbnail(&media)
+        .map_err(|e| eprintln!("regenerating a thumbnail failed: {e}"))
+        .ok()?
 }
 
 pub struct ThumbnailLoader {

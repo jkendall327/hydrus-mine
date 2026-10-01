@@ -229,3 +229,34 @@ fn rules_veto_and_bad_files_error() {
     assert_eq!(junk.status, ImportStatus::Error, "{}", junk.note);
     assert!(!junk.note.is_empty());
 }
+
+#[test]
+fn a_missing_thumbnail_is_made_again_from_its_file() {
+    let w = world();
+    let options = FileImportOptions::default();
+    let hash = w
+        .importer
+        .import_path(&media_dir().join("png_rgba.png"), &options)
+        .unwrap()
+        .hash
+        .unwrap();
+    let path = w.store.snapshot().storage.thumbnail_path(&hash).unwrap();
+    let original = std::fs::read(&path).unwrap();
+    std::fs::remove_file(&path).unwrap();
+
+    let made = w.importer.regenerate_thumbnail(&w.load(&hash)).unwrap();
+    assert_eq!(made.as_deref(), Some(path.as_path()));
+    assert_eq!(std::fs::read(&path).unwrap(), original, "the same thumbnail");
+
+    // a file that is no longer stored can't give one
+    std::fs::remove_file(&path).unwrap();
+    let id = w.id(&hash);
+    w.store
+        .write_content(move |c| {
+            let storage = c.roles().local_file_storage;
+            c.delete_files(storage, &[id], None)
+        })
+        .unwrap();
+    assert!(w.importer.regenerate_thumbnail(&w.load(&hash)).is_err());
+    assert!(!path.exists());
+}

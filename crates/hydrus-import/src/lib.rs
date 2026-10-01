@@ -295,6 +295,72 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
     }
 }
 
+impl FileImporter {
+    /// `RegenerateThumbnail`, for a thumbnail that has gone missing: make it
+    /// again from the file, under the client's thumbnail settings. Its path,
+    /// or `None` when the file has no thumbnail of its own (its type has
+    /// none, or it is shown with its type's icon); an error when the file
+    /// isn't stored here or can't be read.
+    pub fn regenerate_thumbnail(
+        &self,
+        media: &hydrus_store::media::MediaResult,
+    ) -> Result<Option<std::path::PathBuf>> {
+        let missing =
+            |why: String| ImportError::Io(std::io::Error::new(std::io::ErrorKind::NotFound, why));
+        let snap = self.store.snapshot();
+        let Some(info) = &media.info else {
+            return Err(missing(format!("no metadata for file {}", media.hash)));
+        };
+        if !info.mime.has_thumbnail() {
+            return Ok(None);
+        }
+        let local_storage =
+            hydrus_store::content::DomainRoles::new(&snap.services)?.local_file_storage;
+        if !media.current.iter().any(|c| c.service == local_storage) {
+            return Err(missing(
+                "I was called to regenerate a thumbnail from source, but the source file does not think it is in the local file store!".into(),
+            ));
+        }
+        let file = snap
+            .storage
+            .file_path(&media.hash, info.mime)
+            .filter(|p| p.is_file())
+            .ok_or_else(|| {
+                missing(format!(
+                    "The thumbnail for file {} could not be regenerated from the original file because the original file is missing! This event could indicate hard drive corruption. Please check everything is ok.",
+                    media.hash
+                ))
+            })?;
+        let file_info = hydrus_media::FileInfo {
+            mime: info.mime,
+            size: info.size,
+            width: info.width,
+            height: info.height,
+            duration_ms: info.duration_ms,
+            num_frames: info.num_frames,
+            has_audio: info.has_audio,
+            num_words: info.num_words,
+        };
+        let thumbnail = self
+            .tools
+            .thumbnail(&file, &file_info, &thumbnail_spec(&snap.thumbnails))
+            .map_err(|e| {
+                missing(format!(
+                    "The thumbnail for file {} could not be regenerated from the original file ({e}).",
+                    media.hash
+                ))
+            })?;
+        if thumbnail.is_default {
+            return Ok(None);
+        }
+        let path = snap.storage.thumbnail_path(&media.hash).ok_or_else(|| {
+            StoreError::Corrupt(format!("no storage location for {}", media.hash))
+        })?;
+        write_bytes_into_storage(&thumbnail.bytes, &path)?;
+        Ok(Some(path))
+    }
+}
+
 fn thumbnail_spec(settings: &hydrus_core::thumbnail::ThumbnailSettings) -> ThumbnailSpec {
     use hydrus_core::thumbnail::ThumbnailScale as Core;
     use hydrus_media::ThumbnailScale as Media;
@@ -319,6 +385,20 @@ fn write_into_storage(source: &Path, destination: &Path) -> Result<()> {
     std::fs::create_dir_all(dir)?;
     let partial = tempfile::NamedTempFile::new_in(dir)?;
     std::fs::copy(source, partial.path())?;
+    partial
+        .persist(destination)
+        .map_err(|e| ImportError::Io(e.error))?;
+    Ok(())
+}
+
+/// Write bytes into storage the same way.
+fn write_bytes_into_storage(bytes: &[u8], destination: &Path) -> Result<()> {
+    let dir = destination
+        .parent()
+        .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
+    std::fs::create_dir_all(dir)?;
+    let mut partial = tempfile::NamedTempFile::new_in(dir)?;
+    std::io::Write::write_all(&mut partial, bytes)?;
     partial
         .persist(destination)
         .map_err(|e| ImportError::Io(e.error))?;

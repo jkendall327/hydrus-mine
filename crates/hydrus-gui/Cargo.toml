@@ -16,6 +16,7 @@ hydrus-store.workspace = true
 hydrus-search.workspace = true
 hydrus-duplicates.workspace = true
 hydrus-media.workspace = true
+hydrus-import.workspace = true
 anyhow.workspace = true
 crossbeam-channel.workspace = true
 libloading.workspace = true
@@ -28,7 +29,6 @@ slint-build = "1.18"
 
 [dev-dependencies]
 hydrus-testkit.workspace = true
-hydrus-import.workspace = true
 tempfile.workspace = true
 
 [lints]
