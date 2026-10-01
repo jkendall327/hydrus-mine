@@ -120,7 +120,16 @@ fn an_import_folder_does_what_the_reference_did() {
         store.read(hydrus_store::settings::get).unwrap();
     assert!(!global.delete_to_recycle_bin, "the option came across");
 
-    let net = Arc::new(NetEngine::new(Arc::clone(&store), NetOptions::default()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Downloader::new(Arc::clone(&store), net, importer).unwrap();
     let run = downloader.work_on_import_folder(id).unwrap();

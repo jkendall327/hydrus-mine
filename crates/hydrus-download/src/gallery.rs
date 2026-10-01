@@ -332,6 +332,10 @@ impl Downloader {
         seen.insert(url_to_fetch.clone());
         job.set_status_text("downloading gallery page");
         let mut request = Request::get(url_to_fetch.clone());
+        // gallery pages wait their turn per site, and for bandwidth at most
+        // half a minute
+        request.gallery_page = true;
+        request.override_bandwidth_after = Some(30);
         request.referral_url.clone_from(&seed.referral_url);
         request
             .additional_headers

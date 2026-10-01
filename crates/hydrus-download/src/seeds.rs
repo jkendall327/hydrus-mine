@@ -208,6 +208,16 @@ impl From<std::io::Error> for Stop {
     }
 }
 
+/// How a file is fetched (`DownloadAndImportRawFile`'s arguments).
+#[derive(Default)]
+struct FileFetch<'a> {
+    /// The referral to send, over the seed's own.
+    forced_referral_url: Option<&'a str>,
+    /// The page it was found on, whose site's bandwidth it counts against.
+    spawning_url: Option<&'a str>,
+    override_bandwidth_after: Option<u64>,
+}
+
 /// Network failures as `WorkOnURL` treats them: some statuses end the seed
 /// as vetoed, the rest are for the queue to wait out.
 fn network(e: NetError) -> Stop {
@@ -300,7 +310,13 @@ impl Downloader {
             self.check_tags_veto(seed, options)?;
             *did_work = true;
             let file_url = seed.data.clone();
-            self.download_and_import(seed, &file_url, options, job, None)
+            // (it counts against the page it was found on too)
+            let spawning = seed.referral_url.clone();
+            let how = FileFetch {
+                spawning_url: spawning.as_deref(),
+                ..FileFetch::default()
+            };
+            self.download_and_import(seed, &file_url, options, job, how)
                 .await?;
         }
         *did_work |= self.write_content_updates(seed, options)?;
@@ -350,7 +366,7 @@ impl Downloader {
         };
         let mut context = ParsingContext::new();
         context.insert("post_url".into(), post_url);
-        context.insert("url".into(), url_to_fetch);
+        context.insert("url".into(), url_to_fetch.clone());
         let posts = match parser.parse(&mut context, &text) {
             Ok(posts) => posts,
             Err(ParseFailure::Veto(reason)) => return Err(Stop::Veto(format!("veto: {reason}"))),
@@ -374,7 +390,20 @@ impl Downloader {
                 self.check_tags_veto(seed, options)?;
                 let (_, should_download_file) = self.predict(seed, options, Some(&file_url))?;
                 if should_download_file {
-                    self.download_and_import(seed, &file_url, options, job, None)
+                    // the post page is its referral, and it counts against
+                    // the post's site too; by default it waits for bandwidth
+                    // only a few seconds after the post
+                    let override_after = self
+                        .net
+                        .bandwidth_settings()
+                        .override_on_file_urls_from_posts
+                        .then_some(3);
+                    let how = FileFetch {
+                        forced_referral_url: Some(&url_for_child_referral),
+                        spawning_url: Some(&url_to_fetch),
+                        override_bandwidth_after: override_after,
+                    };
+                    self.download_and_import(seed, &file_url, options, job, how)
                         .await?;
                 }
             }
@@ -473,8 +502,13 @@ impl Downloader {
         file_url: &str,
         options: &FullImportOptions,
         job: &Job,
-        forced_referral_url: Option<&str>,
+        how: FileFetch<'_>,
     ) -> Result<(), Stop> {
+        let FileFetch {
+            forced_referral_url,
+            spawning_url,
+            override_bandwidth_after,
+        } = how;
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
         seed_mut(seed).add_primary_urls(classes, [file_url.to_owned()]);
@@ -494,6 +528,10 @@ impl Downloader {
             .additional_headers
             .clone_from(&seed.meta.request_headers);
         request.destination = Some(temp.path().to_path_buf());
+        request
+            .bandwidth_urls
+            .extend(spawning_url.map(str::to_owned));
+        request.override_bandwidth_after = override_bandwidth_after;
         let response = self.net.fetch(&request, job).await.map_err(network)?;
         if url_to_fetch != file_url {
             seed_mut(seed).add_primary_urls(classes, [url_to_fetch.clone()]);

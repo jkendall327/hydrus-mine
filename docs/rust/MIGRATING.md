@@ -51,8 +51,9 @@ already uses come across as its own settings: thumbnail size, favourite tags,
 viewing statistics, URL classes, autocomplete rules, and the duplicate
 filter's batch size and metadata merge options (what "this is better" copies
 or moves between files), and the network side: custom HTTP headers (e.g. a
-User-Agent your browser extension set) and every site's cookies, less those
-that had expired. Your import options come across too (the defaults for
+User-Agent your browser extension set), every site's cookies, less those
+that had expired, and your bandwidth rules with their recent usage (so
+today's limits carry on). Your import options come across too (the defaults for
 each kind of import, per URL class, and your favourites), so the Client
 API's file imports already follow your file filtering and destination
 settings, and your downloaders' parsers and gallery URL generators are

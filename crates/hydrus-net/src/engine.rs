@@ -10,11 +10,14 @@ use tokio::io::AsyncWriteExt as _;
 use tokio::sync::Semaphore;
 use tokio_util::sync::CancellationToken;
 
+use hydrus_core::bandwidth::{GalleryTokenKind, Manager};
 use hydrus_core::numbers::human_bytes;
+use hydrus_core::time::timestamp_to_pretty_time_delta;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
 use hydrus_core::url::pyurl::urljoin;
 use hydrus_core::url::{UrlType, psl};
 use hydrus_store::Store;
+use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::network::{self, Approval, NetworkContext};
 
 use crate::cookies::{CookieChange, CookieUrl, cookie_header, set_cookie_changes};
@@ -36,10 +39,9 @@ pub struct NetOptions {
     pub max_jobs: usize,
     pub max_jobs_per_domain: usize,
     pub verify_https: bool,
-    /// Requests a second to one site, and to everything (the reference's
-    /// default bandwidth rules: "don't ever hammer a domain").
-    pub domain_requests_per_second: u32,
-    pub global_requests_per_second: u32,
+    /// Apply the bandwidth rules and the gallery page waits (tests talking
+    /// to a local server turn them off).
+    pub obey_bandwidth: bool,
 }
 
 impl Default for NetOptions {
@@ -53,8 +55,7 @@ impl Default for NetOptions {
             max_jobs: 15,
             max_jobs_per_domain: 3,
             verify_https: true,
-            domain_requests_per_second: 1,
-            global_requests_per_second: 5,
+            obey_bandwidth: true,
         }
     }
 }
@@ -78,6 +79,14 @@ pub struct Request {
     /// Contexts beyond the global and domain ones (the downloader page,
     /// subscription or watcher it is for), whose headers also apply.
     pub extra_contexts: Vec<NetworkContext>,
+    /// Other URLs whose sites' bandwidth this request counts against (the
+    /// post page a file was found on).
+    pub bandwidth_urls: Vec<String>,
+    /// Stop obeying the bandwidth rules after waiting this many seconds
+    /// (else the job's [`BandwidthScope`]'s).
+    pub override_bandwidth_after: Option<u64>,
+    /// A gallery page: it waits its turn per site, as the job's scope says.
+    pub gallery_page: bool,
     /// Try once, whatever happens.
     pub one_shot: bool,
     /// Write the response here instead of keeping it in memory.
@@ -93,6 +102,9 @@ impl Request {
             body: None,
             additional_headers: Vec::new(),
             extra_contexts: Vec::new(),
+            bandwidth_urls: Vec::new(),
+            override_bandwidth_after: None,
+            gallery_page: false,
             one_shot: false,
             destination: None,
         }
@@ -121,11 +133,25 @@ impl Response {
     }
 }
 
+/// What an importer's requests count against, as the reference's network
+/// job factories set it: the downloader page, subscription or watcher
+/// context, how long they wait for bandwidth before going anyway, and which
+/// gallery pages wait their turn together.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct BandwidthScope {
+    pub contexts: Vec<NetworkContext>,
+    /// Seconds a request waits on the rules before ignoring them (`None`:
+    /// as long as they say).
+    pub override_after: Option<u64>,
+    pub gallery_token: Option<GalleryTokenKind>,
+}
+
 /// A request in progress: what it is doing, and a way to cancel it.
 #[derive(Debug, Default)]
 pub struct Job {
     state: Mutex<JobState>,
     cancel: CancellationToken,
+    scope: Mutex<BandwidthScope>,
 }
 
 /// What a job is doing.
@@ -140,6 +166,24 @@ pub struct JobState {
 impl Job {
     pub fn new() -> Arc<Self> {
         Arc::new(Self::default())
+    }
+
+    /// A job whose requests count against `scope`.
+    pub fn scoped(scope: BandwidthScope) -> Arc<Self> {
+        Arc::new(Self {
+            scope: Mutex::new(scope),
+            ..Self::default()
+        })
+    }
+
+    pub fn scope(&self) -> BandwidthScope {
+        self.scope.lock().clone()
+    }
+
+    /// Count the job's next requests against `scope` (a subscription works
+    /// through its queries with one job).
+    pub fn set_scope(&self, scope: BandwidthScope) {
+        *self.scope.lock() = scope;
     }
 
     pub fn state(&self) -> JobState {
@@ -182,8 +226,9 @@ pub struct NetEngine {
     options: NetOptions,
     slots: Arc<Semaphore>,
     domain_slots: Mutex<std::collections::HashMap<String, Arc<Semaphore>>>,
-    /// When each site (and everything) may next be sent a request.
-    next_request: Mutex<std::collections::HashMap<String, tokio::time::Instant>>,
+    /// The bandwidth rules and usage, and when the usage was last saved.
+    bandwidth: Mutex<(Manager, i64)>,
+    bandwidth_settings: BandwidthSettings,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -251,14 +296,191 @@ impl NetEngine {
             .tls_danger_accept_invalid_certs(!options.verify_https)
             .build()
             .map_err(|e| NetError::Network(format!("could not start the HTTP client: {e}")))?;
+        let now = now();
+        let (bandwidth_settings, usage) = store
+            .read(|conn| {
+                Ok((
+                    hydrus_store::settings::get::<BandwidthSettings>(conn)?,
+                    hydrus_store::bandwidth::usage(conn, now)?,
+                ))
+            })
+            .map_err(|e| NetError::Io(e.to_string()))?;
+        let mut manager = Manager::new(bandwidth_settings.rules.clone());
+        manager.set_trackers(usage);
         Ok(Self {
             client,
             store,
             slots: Arc::new(Semaphore::new(options.max_jobs.max(1))),
             domain_slots: Mutex::default(),
-            next_request: Mutex::default(),
+            bandwidth: Mutex::new((manager, now)),
+            bandwidth_settings,
             options,
         })
+    }
+
+    pub fn bandwidth_settings(&self) -> &BandwidthSettings {
+        &self.bandwidth_settings
+    }
+
+    /// The network contexts a request to `url` counts against: everything,
+    /// and each level of its domain.
+    pub fn contexts_for(url: &str) -> Vec<NetworkContext> {
+        let mut contexts = vec![NetworkContext::global()];
+        if let Ok(parts) = check_full_url(url) {
+            contexts.extend(
+                psl::all_applicable_domains(&parts.netloc)
+                    .into_iter()
+                    .map(NetworkContext::domain),
+            );
+        }
+        contexts
+    }
+
+    /// Whether `contexts` have room for a request and a megabyte, ignoring
+    /// rules over `threshold` seconds or less (a subscription asks before
+    /// working on a query).
+    pub fn can_do_work(&self, contexts: &[NetworkContext], threshold: u64) -> bool {
+        !self.options.obey_bandwidth
+            || self
+                .bandwidth
+                .lock()
+                .0
+                .can_do_work(contexts, threshold, now())
+    }
+
+    /// Seconds until `contexts`' rules all have room again.
+    pub fn waiting_estimate(&self, contexts: &[NetworkContext]) -> u64 {
+        if !self.options.obey_bandwidth {
+            return 0;
+        }
+        self.bandwidth
+            .lock()
+            .0
+            .waiting_estimate_and_context(contexts, now())
+            .0
+    }
+
+    /// Keep the bandwidth usage that changed (done every minute as it
+    /// changes; call it when stopping).
+    pub fn save_bandwidth(&self) -> Result<(), NetError> {
+        let dirty = {
+            let mut b = self.bandwidth.lock();
+            b.1 = now();
+            b.0.take_dirty()
+        };
+        if dirty.is_empty() {
+            return Ok(());
+        }
+        self.store
+            .write(move |ctx| hydrus_store::bandwidth::save_usage(ctx.conn(), &dirty))
+            .map_err(|e| NetError::Io(e.to_string()))
+    }
+
+    /// Save the usage if it hasn't been for a minute.
+    fn maybe_save_bandwidth(&self) {
+        let due = now() - self.bandwidth.lock().1 >= 60;
+        if due && let Err(e) = self.save_bandwidth() {
+            tracing::warn!("could not save bandwidth usage: {e}");
+        }
+    }
+
+    /// Wait until the rules let a request start (counting it), or until
+    /// it may go regardless (`ClientNetworkingJobs.TryToStartBandwidth`).
+    async fn wait_for_bandwidth(
+        &self,
+        contexts: &[NetworkContext],
+        obeys: bool,
+        override_at: Option<i64>,
+        job: &Job,
+    ) -> Result<(), NetError> {
+        loop {
+            if job.is_cancelled() {
+                return Err(NetError::Cancelled);
+            }
+            let now = now();
+            // POSTs and overridden requests go at once (but still count)
+            let obeys = obeys && override_at.is_none_or(|at| now <= at);
+            let wait = {
+                let mut b = self.bandwidth.lock();
+                if !obeys {
+                    b.0.report_request(contexts, now);
+                    None
+                } else if b.0.try_to_start_request(contexts, now) {
+                    None
+                } else {
+                    Some(b.0.waiting_estimate_and_context(contexts, now))
+                }
+            };
+            let Some((seconds, whose)) = wait else {
+                self.maybe_save_bandwidth();
+                return Ok(());
+            };
+            let seconds = i64::try_from(seconds).unwrap_or(i64::MAX);
+            let (until, what) = match override_at {
+                Some(at) if at - now < seconds => (at, "overriding bandwidth"),
+                _ => (now.saturating_add(seconds), "bandwidth free"),
+            };
+            let when = match timestamp_to_pretty_time_delta(until, now, "") {
+                t if t == "now" => "imminently".to_owned(),
+                t => t,
+            };
+            job.set_status(format!(
+                "{what} {when}\u{2026} ({})",
+                whose.to_human_string()
+            ));
+            // as the reference's job sleeps; shorter waits are retried as
+            // its engine loop retries them
+            let mut sleep = match seconds {
+                s if s > 1200 => 30.0,
+                s if s > 120 => 10.0,
+                s if s > 10 => 0.8,
+                _ => 0.1,
+            };
+            // (woken for an override, as the reference wakes the job)
+            if let Some(at) = override_at {
+                sleep = f64::min(sleep, ((at - now) as f64 + 1.0).max(0.1));
+            }
+            job.sleep(sleep).await?;
+        }
+    }
+
+    /// Wait for this site's turn to fetch a gallery page of `kind`
+    /// (`ClientNetworkingBandwidth.TryToConsumeAGalleryToken`).
+    async fn wait_for_gallery_token(
+        &self,
+        second_level_domain: &str,
+        kind: GalleryTokenKind,
+        job: &Job,
+    ) -> Result<(), NetError> {
+        let s = &self.bandwidth_settings;
+        let delay = match kind {
+            GalleryTokenKind::DownloadPage => s.gallery_page_wait_pages,
+            GalleryTokenKind::Subscription => s.gallery_page_wait_subscriptions,
+            GalleryTokenKind::Watcher => s.watcher_page_wait,
+        };
+        loop {
+            let now = now();
+            let result = self.bandwidth.lock().0.try_to_consume_gallery_token(
+                second_level_domain,
+                kind,
+                delay,
+                now,
+            );
+            match result {
+                Ok(()) => {
+                    job.set_status("gallery token ok - starting soon");
+                    return Ok(());
+                }
+                Err(next) => {
+                    let when = match timestamp_to_pretty_time_delta(next, now, "") {
+                        t if t == "now" => "checking".to_owned(),
+                        t => t,
+                    };
+                    job.set_status(format!("waiting to start: {when}"));
+                    job.sleep(0.8).await?;
+                }
+            }
+        }
     }
 
     pub fn options(&self) -> &NetOptions {
@@ -283,13 +505,26 @@ impl NetEngine {
             .map_err(|e| NetError::Network(format!("Invalid URL {}: {e}", request.url)))?;
         let domain = parts.netloc.clone();
         let registrable = psl::second_level_domain(&domain);
+        let scope = job.scope();
         let mut contexts = vec![NetworkContext::global()];
         contexts.extend(
             psl::all_applicable_domains(&domain)
                 .into_iter()
                 .map(NetworkContext::domain),
         );
-        contexts.extend(request.extra_contexts.iter().cloned());
+        for extra in request.extra_contexts.iter().chain(&scope.contexts) {
+            if !contexts.contains(extra) {
+                contexts.push(extra.clone());
+            }
+        }
+        // (a file counts against the post page it was found on, too)
+        for url in &request.bandwidth_urls {
+            for c in Self::contexts_for(url) {
+                if !contexts.contains(&c) {
+                    contexts.push(c);
+                }
+            }
+        }
         let session = {
             let registrable = NetworkContext::domain(registrable.clone());
             self.store
@@ -309,6 +544,23 @@ impl NetEngine {
             sends_range,
         };
 
+        if self.options.obey_bandwidth {
+            let override_at = request
+                .override_bandwidth_after
+                .or(scope.override_after)
+                .map(|s| now().saturating_add(i64::try_from(s).unwrap_or(i64::MAX)));
+            self.wait_for_bandwidth(
+                &attempt.contexts,
+                request.method == Method::Get,
+                override_at,
+                job,
+            )
+            .await?;
+        }
+        let gallery_token = scope
+            .gallery_token
+            .filter(|_| request.gallery_page && self.options.obey_bandwidth);
+
         job.set_status("waiting for a slot");
         let _slot = tokio::select! {
             slot = Arc::clone(&self.slots).acquire_owned() => slot.expect("never closed"),
@@ -317,7 +569,7 @@ impl NetEngine {
         let domain_slots = Arc::clone(
             self.domain_slots
                 .lock()
-                .entry(registrable)
+                .entry(registrable.clone())
                 .or_insert_with(|| {
                     Arc::new(Semaphore::new(self.options.max_jobs_per_domain.max(1)))
                 }),
@@ -327,9 +579,8 @@ impl NetEngine {
             () = job.cancel.cancelled() => return Err(NetError::Cancelled),
         };
 
-        if request.method == Method::Get {
-            self.pace(&registrable_for_pacing(&request.url), job)
-                .await?;
+        if let Some(kind) = gallery_token {
+            self.wait_for_gallery_token(&registrable, kind, job).await?;
         }
         let mut connection_attempt: u32 = 1;
         let mut request_attempt: u32 = 1;
@@ -415,48 +666,6 @@ impl NetEngine {
                 }
             }
         }
-    }
-
-    /// Wait for this site's (and the client's) turn to send a request.
-    async fn pace(&self, domain: &str, job: &Job) -> Result<(), NetError> {
-        let spacing = |per_second: u32| {
-            (per_second > 0)
-                .then(|| std::time::Duration::from_secs_f64(1.0 / f64::from(per_second)))
-        };
-        let slots = [
-            (
-                format!("domain {domain}"),
-                spacing(self.options.domain_requests_per_second),
-            ),
-            (
-                "global".to_owned(),
-                spacing(self.options.global_requests_per_second),
-            ),
-        ];
-        let wait_until = {
-            let mut next = self.next_request.lock();
-            let now = tokio::time::Instant::now();
-            // take the later of the two turns, and book both from then
-            let start = slots
-                .iter()
-                .filter(|(_, gap)| gap.is_some())
-                .filter_map(|(key, _)| next.get(key).copied())
-                .fold(now, std::cmp::max);
-            for (key, gap) in &slots {
-                if let Some(gap) = gap {
-                    next.insert(key.clone(), start + *gap);
-                }
-            }
-            start
-        };
-        if wait_until > tokio::time::Instant::now() {
-            job.set_status("waiting for bandwidth");
-            tokio::select! {
-                () = tokio::time::sleep_until(wait_until) => {}
-                () = job.cancel.cancelled() => return Err(NetError::Cancelled),
-            }
-        }
-        Ok(())
     }
 
     async fn wait_on_connection_error(
@@ -778,6 +987,32 @@ impl NetEngine {
         })
     }
 
+    /// Count `bytes` against the request's contexts, and wait while a speed
+    /// limit is used up.
+    async fn report_data(&self, a: &Attempt<'_>, bytes: u64) -> Result<(), NetError> {
+        if !self.options.obey_bandwidth {
+            return Ok(());
+        }
+        let mut last_failed = None;
+        loop {
+            let now = now();
+            {
+                let mut b = self.bandwidth.lock();
+                if last_failed.is_none() {
+                    b.0.report_data(&a.contexts, bytes, now);
+                }
+                // (it won't have changed within the same second)
+                if last_failed != Some(now) {
+                    if b.0.can_continue_download(&a.contexts, now) {
+                        return Ok(());
+                    }
+                    last_failed = Some(now);
+                }
+            }
+            a.job.sleep(0.1).await?;
+        }
+    }
+
     /// Read a response into the sink. Whether a ranged download has more to
     /// fetch (only asked for successful GETs).
     async fn read_body(
@@ -847,6 +1082,7 @@ impl NetEngine {
             progress.read += n;
             read_here += n;
             a.job.state.lock().bytes_read = progress.read;
+            self.report_data(a, n).await?;
             if progress.accurate {
                 if let Some(total) = progress.total
                     && progress.read > total
@@ -887,16 +1123,6 @@ impl NetEngine {
         }
         Ok(more)
     }
-}
-
-/// The widest domain context a URL's requests fall under (its registrable
-/// domain; an IP address or bare host is its own), which the per-site
-/// pacing applies to.
-fn registrable_for_pacing(url: &str) -> String {
-    check_full_url(url)
-        .ok()
-        .and_then(|p| psl::all_applicable_domains(&p.netloc).pop())
-        .unwrap_or_default()
 }
 
 /// What a failed send means.

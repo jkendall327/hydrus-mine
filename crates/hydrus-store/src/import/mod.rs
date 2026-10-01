@@ -1344,7 +1344,10 @@ pub(crate) mod tests {
         };
         let defaults = crate::bandwidth::BandwidthSettings::default();
         assert_eq!(sorted(stored.rules.clone()), sorted(defaults.rules.clone()));
-        assert_eq!(stored, BandwidthSettingsOrdered::with_rules(defaults, stored.rules.clone()));
+        assert_eq!(
+            stored,
+            BandwidthSettingsOrdered::with_rules(defaults, stored.rules.clone())
+        );
         // a fresh install has used no bandwidth yet
         assert!(input.bandwidth_usage.is_empty());
     }

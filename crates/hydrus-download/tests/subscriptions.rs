@@ -264,7 +264,16 @@ async fn setup() -> Setup {
             hydrus_store::settings::set(ctx.conn(), &downloaders)
         })
         .unwrap();
-    let net = Arc::new(NetEngine::new(Arc::clone(&store), NetOptions::default()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
     Setup {
@@ -481,4 +490,70 @@ async fn a_subscription_without_its_downloader_pauses() {
         .unwrap();
     assert!(sub.settings.paused);
     assert_eq!(s.downloader.next_work_time(&sub).unwrap(), None);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_stops_when_its_bandwidth_runs_out() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_core::network::{CONTEXT_SUBSCRIPTION, NetworkContext};
+    use hydrus_store::bandwidth::BandwidthSettings;
+
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=7);
+    // seven requests a day per subscription query: two gallery pages of
+    // three, then a post and its file per download (no waits between
+    // gallery pages)
+    let mut bandwidth = BandwidthSettings {
+        gallery_page_wait_subscriptions: 0,
+        ..BandwidthSettings::default()
+    };
+    for (context, rules) in &mut bandwidth.rules {
+        if *context == NetworkContext::default_of_kind(CONTEXT_SUBSCRIPTION) {
+            *rules = Rules::new([Rule::new(BandwidthType::Requests, Some(86_400), 7)]);
+        }
+    }
+    s.store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &bandwidth))
+        .unwrap();
+    let net = Arc::new(NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap());
+    let importer = FileImporter::new(Arc::clone(&s.store), MediaTools::new());
+    let downloader = Downloader::new(Arc::clone(&s.store), net, importer).unwrap();
+
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        initial_file_limit: Some(4),
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = downloader.run_subscription(id, &Job::new()).await.unwrap();
+    assert_eq!(report.new_urls, 4, "{report:?}");
+    // two pages and two downloads use six: there isn't room for another
+    // request and a megabyte, as the subscription asks before each file
+    let ok = SeedStatus::SuccessfulAndNew;
+    let unknown = SeedStatus::Unknown;
+    assert_eq!(
+        post_ids(&s.store, queue),
+        [(4, ok), (5, ok), (6, unknown), (7, unknown)]
+    );
+    // and the subscription comes back when there is bandwidth, not at once
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    let next = downloader.next_work_time(&sub).unwrap().unwrap();
+    assert!(next > now + 30, "{next} vs {now}");
 }

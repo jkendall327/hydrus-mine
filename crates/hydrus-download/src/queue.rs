@@ -12,11 +12,13 @@ use std::time::Duration;
 use parking_lot::Mutex;
 use tokio::sync::Notify;
 
+use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
+use hydrus_core::network::NetworkContext;
 use hydrus_core::subscriptions::{CheckerDefaults, GalleryDefaults, SeedTime};
 use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
-use hydrus_net::Job;
+use hydrus_net::{BandwidthScope, Job};
 use hydrus_store::StoreError;
 use hydrus_store::queues::{
     self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
@@ -317,7 +319,7 @@ impl QueueRunner {
     /// next check.
     async fn check_watcher(&self, queue: &Queue, mut state: WatcherState, handle: &Handle) {
         let store = &self.downloader.store;
-        let job = Job::new();
+        let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "checking".into();
         let new_seed = NewGallerySeed {
@@ -534,7 +536,8 @@ impl QueueRunner {
         mut search: Option<GallerySearch>,
         handle: &Handle,
     ) {
-        let job = Job::new();
+        // (only URL and gallery queues read gallery pages here)
+        let job = Job::scoped(bandwidth_scope(QueueKind::Gallery, seed.queue_id));
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "reading a gallery page".into();
         let queue = seed.queue_id;
@@ -658,7 +661,7 @@ impl QueueRunner {
                 return false;
             }
         };
-        let job = Job::new();
+        let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
         let result = self.downloader.work_on_url(&mut seed, &options, &job).await;
@@ -820,4 +823,24 @@ pub fn create_gallery_searches(
         made.push(queue);
     }
     Ok(made)
+}
+
+/// What a queue's requests count against, as the reference's importers make
+/// their network jobs: the downloader page (a URL queue, a gallery search)
+/// or the watcher, whose gallery pages wait their turn per site with the
+/// rest of their kind.
+fn bandwidth_scope(kind: QueueKind, queue: i64) -> BandwidthScope {
+    let key = format!("{queue:016x}");
+    match kind {
+        QueueKind::Watcher => BandwidthScope {
+            contexts: vec![NetworkContext::watcher_page(key)],
+            override_after: None,
+            gallery_token: Some(GalleryTokenKind::Watcher),
+        },
+        _ => BandwidthScope {
+            contexts: vec![NetworkContext::downloader_page(key)],
+            override_after: None,
+            gallery_token: Some(GalleryTokenKind::DownloadPage),
+        },
+    }
 }

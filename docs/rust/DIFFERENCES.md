@@ -277,8 +277,13 @@ deletes its files from the client, migrated from the reference's database.
 - **Oversized downloads are refused when imported**, not while downloading:
   the reference stops a download as soon as it passes the file filtering
   options' size limits.
-- **Only the default bandwidth rules apply** (one request a second per site,
-  five overall); rules you set yourself are not migrated yet.
+- **Bandwidth rules and usage are the reference's**, checked against its
+  own classes (`oracle/dump_bandwidth.py`), and migrated. Two differences:
+  a subscription that has files to get but not quite the bandwidth to start
+  is looked at again a minute later at the soonest (the reference's
+  "waiting estimate" can be zero then, and its loop would retry at once),
+  and the usage of the last minute before a crash is lost (it is saved
+  every minute and on stopping).
 - **Watchers are grouped by page name only.** A watchable URL sent by
   `/add_urls/add_url` starts a watcher on the named watcher "page" (by
   default "watcher") as the reference's does, but there are no pages to
@@ -287,9 +292,6 @@ deletes its files from the client, migrated from the reference's database.
 - **Subscription messages go to the log** (and the subscription runner's
   status) rather than popups, until there is a GUI; so do new files a
   subscription would publish to a popup button or page.
-- **Subscriptions follow the default per-site pacing.** The reference's
-  bandwidth rules for subscriptions, and its "go ahead anyway after 30
-  seconds" for subscription requests, don't apply yet.
 - **A subscription stops getting files from a site after three connection
   failures in ten minutes** (the reference's defaults) and tries again an
   hour later. The reference counts those failures across the whole client;

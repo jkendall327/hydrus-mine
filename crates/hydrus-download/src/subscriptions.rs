@@ -15,13 +15,15 @@ use std::time::{Duration, Instant};
 
 use rand::seq::{IndexedRandom as _, SliceRandom as _};
 
+use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::CallerType;
+use hydrus_core::network::NetworkContext;
 use hydrus_core::numbers::human_int;
 use hydrus_core::subscriptions::{
     FileLogEntry, SeedTime, compact_file_log, compact_gallery_log, num_master_file_seeds,
 };
 use hydrus_core::url::{AnyGug, GugOptions, UrlClasses};
-use hydrus_net::{Job, NetError};
+use hydrus_net::{BandwidthScope, Job, NetError};
 use hydrus_store::queues::{
     self, FileSeed, GallerySeedMeta, NewFileSeed, NewGallerySeed, SeedStatus,
 };
@@ -263,7 +265,55 @@ fn human_name(sub: &Subscription, query: &SubscriptionQuery) -> String {
     }
 }
 
+/// What a subscription query's requests count against (the reference's
+/// `NetworkJobSubscription`, keyed by subscription and query): they wait at
+/// most half a minute for bandwidth, the subscription itself having asked
+/// first; gallery pages take subscription turns per site.
+fn query_scope(sub: &Subscription, query: &SubscriptionQuery) -> BandwidthScope {
+    BandwidthScope {
+        contexts: vec![NetworkContext::subscription(
+            &sub.name,
+            query.state.human_name(),
+        )],
+        override_after: Some(30),
+        gallery_token: Some(GalleryTokenKind::Subscription),
+    }
+}
+
+/// The contexts a query's file downloads count against, by its next file
+/// (`_GetExampleNetworkContexts`).
+fn query_contexts(
+    sub: &Subscription,
+    query: &SubscriptionQuery,
+    example_url: Option<&str>,
+) -> Vec<NetworkContext> {
+    let mut contexts = example_url.map_or_else(
+        || vec![NetworkContext::global()],
+        hydrus_net::NetEngine::contexts_for,
+    );
+    contexts.extend(query_scope(sub, query).contexts);
+    contexts
+}
+
+/// How far ahead a subscription asks for bandwidth before working on a
+/// query's files (`SUBSCRIPTION_BANDWIDTH_OK_WINDOW`): rules over this many
+/// seconds or less don't stop it.
+const BANDWIDTH_OK_WINDOW: u64 = 90;
+
 impl Downloader {
+    /// Whether the query's next file has bandwidth (`FileBandwidthOK`).
+    fn file_bandwidth_ok(
+        &self,
+        sub: &Subscription,
+        query: &SubscriptionQuery,
+        example_url: Option<&str>,
+    ) -> bool {
+        self.net.can_do_work(
+            &query_contexts(sub, query, example_url),
+            BANDWIDTH_OK_WINDOW,
+        )
+    }
+
     fn has_file_work(&self, queue: i64) -> Result<bool, WorkError> {
         Ok(self
             .store
@@ -296,7 +346,19 @@ impl Downloader {
                 q.state.next_check_time
             };
             if file_work {
-                time = 0;
+                // when its next file has bandwidth (at least a minute on,
+                // when a rule is all but used up but not over)
+                let next = self
+                    .store
+                    .read(|conn| queues::next_file_seed(conn, q.queue_id))?;
+                let example = next.as_ref().map(|s| s.data.as_str());
+                time = if self.file_bandwidth_ok(sub, q, example) {
+                    0
+                } else {
+                    let contexts = query_contexts(sub, q, example);
+                    let wait = self.net.waiting_estimate(&contexts).max(60);
+                    now().saturating_add(i64::try_from(wait).unwrap_or(i64::MAX))
+                };
             }
             earliest = Some(earliest.map_or(time, |e| e.min(time)));
         }
@@ -478,6 +540,7 @@ impl Downloader {
         if query.state.paused {
             return Ok(());
         }
+        job.set_scope(query_scope(sub, query));
         let queue = query.queue_id;
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
@@ -721,6 +784,7 @@ impl Downloader {
     ) -> Result<(), RunStop> {
         let queue = query.queue_id;
         let name = human_name(sub, query);
+        job.set_scope(query_scope(sub, query));
         let mut done_work = false;
         loop {
             let Some(mut seed) = self
@@ -739,6 +803,16 @@ impl Downloader {
             if !errors.ok(&seed.data) {
                 if done_work {
                     delay(sub, 3600, "domain errors, will try again later");
+                }
+                return Err(RunStop::Stop);
+            }
+            // out of bandwidth: stop the subscription's file work until
+            // there is some (it is scheduled for then)
+            if !self.file_bandwidth_ok(sub, query, Some(&seed.data)) {
+                if done_work {
+                    job.set_status_text(
+                        "no more bandwidth to download files, will do some more later",
+                    );
                 }
                 return Err(RunStop::Stop);
             }

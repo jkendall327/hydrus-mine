@@ -162,8 +162,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         serverside_bandwidth_wait_time: 0,
         network_timeout: 2,
         // the local test server takes requests as fast as they come
-        domain_requests_per_second: 0,
-        global_requests_per_second: 0,
+        obey_bandwidth: false,
         ..NetOptions::default()
     };
     Setup {
@@ -365,16 +364,13 @@ async fn cancels() {
 }
 
 #[tokio::test]
-async fn paces_requests_to_a_site() {
+async fn bandwidth_rules_space_out_requests_and_count_their_data() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_store::bandwidth::BandwidthSettings;
+
     let s = setup(|_| Vec::new()).await;
-    let engine = NetEngine::new(
-        Arc::clone(&s.store),
-        NetOptions {
-            domain_requests_per_second: 4,
-            ..NetOptions::default()
-        },
-    )
-    .unwrap();
+    // the reference's default rules: one request a second to a domain
+    let engine = NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap();
     let started = std::time::Instant::now();
     for _ in 0..3 {
         engine
@@ -382,10 +378,42 @@ async fn paces_requests_to_a_site() {
             .await
             .unwrap();
     }
-    // three requests at four a second: two gaps of a quarter second
+    // three calendar seconds: at least one whole second between the first
+    // and the third
     assert!(
-        started.elapsed() >= std::time::Duration::from_millis(500),
+        started.elapsed() >= std::time::Duration::from_secs(1),
         "{:?}",
         started.elapsed()
     );
+    engine.save_bandwidth().unwrap();
+
+    // a tiny daily data cap on this domain: used up already
+    let url = format!("{}/echo", s.base);
+    let site = NetEngine::contexts_for(&url)[1].clone();
+    assert_eq!(site.kind, hydrus_core::network::CONTEXT_DOMAIN);
+    let mut settings = BandwidthSettings::default();
+    settings.rules.push((
+        site.clone(),
+        Rules::new([Rule::new(BandwidthType::Data, Some(86_400), 10)]),
+    ));
+    s.store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
+        .unwrap();
+    // (a new engine carries on from the usage kept)
+    let engine = NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap();
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let waited = tokio::time::timeout(
+        std::time::Duration::from_secs(3),
+        engine.fetch(&request, &job),
+    )
+    .await;
+    assert!(waited.is_err(), "it waited for tomorrow");
+    let status = job.state().status;
+    assert!(status.starts_with("bandwidth free in "), "{status}");
+    assert!(status.contains(&site.to_human_string()), "{status}");
+    // a request told to wait at most a second goes anyway
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.override_bandwidth_after = Some(1);
+    engine.fetch(&request, &Job::new()).await.unwrap();
 }

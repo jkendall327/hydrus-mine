@@ -535,10 +535,21 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
             });
         }
         println!("Client API at http://{}", options.addr);
-        serve(state, &options, async {
+        let net = state
+            .downloads
+            .as_ref()
+            .map(|d| std::sync::Arc::clone(d.downloader().net()));
+        let served = serve(state, &options, async {
             let _ = tokio::signal::ctrl_c().await;
         })
-        .await
+        .await;
+        // (the bandwidth used since the last minute's save)
+        if let Some(net) = net
+            && let Err(e) = net.save_bandwidth()
+        {
+            tracing::error!(error = %e, "saving bandwidth usage failed");
+        }
+        served
     })?;
     Ok(())
 }

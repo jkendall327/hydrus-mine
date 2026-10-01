@@ -256,7 +256,16 @@ async fn setup() -> Setup {
             hydrus_store::settings::set(ctx.conn(), &downloaders)
         })
         .unwrap();
-    let net = Arc::new(NetEngine::new(Arc::clone(&store), NetOptions::default()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
     Setup {

@@ -279,10 +279,19 @@ async fn the_downloader_does_what_the_reference_did() {
         downloaders.unconverted
     );
     let gug = downloaders.gugs.gugs[0].clone();
+    // the default bandwidth rules, but no waits between gallery pages (the
+    // recording's timing doesn't matter, only what was downloaded)
+    let bandwidth = hydrus_store::bandwidth::BandwidthSettings {
+        gallery_page_wait_pages: 0,
+        gallery_page_wait_subscriptions: 0,
+        watcher_page_wait: 0,
+        ..hydrus_store::bandwidth::BandwidthSettings::default()
+    };
     store
         .write_and_refresh(move |ctx| {
             hydrus_store::settings::set(ctx.conn(), &url_classes)?;
-            hydrus_store::settings::set(ctx.conn(), &downloaders)
+            hydrus_store::settings::set(ctx.conn(), &downloaders)?;
+            hydrus_store::settings::set(ctx.conn(), &bandwidth)
         })
         .unwrap();
     let state = hydrus_api::AppState::new(store.clone()).unwrap();
