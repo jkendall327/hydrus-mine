@@ -163,8 +163,12 @@ fn the_last_session_opens_as_it_was_left() {
     );
     assert!(pages.current().borrow().results().is_empty());
 
-    // a page opened before is as it was left
+    // back in the notebook: the page it showed last, as a tab widget keeps
+    // its tab
     pages.select(0, 0);
+    assert!(pages.current().borrow().note().is_some());
+    // and a page opened before is as it was left
+    pages.select(1, 0);
     assert_eq!(pages.current().borrow().results(), reversed);
 
     // saved, and opened again: as it was left (the pages not opened too)

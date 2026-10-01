@@ -16,7 +16,13 @@ keeps its size and place as it closes, as hydrus's frame locations do
 follow the system's light or dark mode (hydrus's own colour options aren't
 carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its
-first page, as in the reference. A search page opens as it was left: its
+first page, and on the page it showed last when you come back to it, as in
+the reference. As the reference's main window shortcuts have it, ctrl+page
+up and down show the page beside (in the deepest notebook that can move,
+unless a notebook above moved in the last three seconds, so a held key
+runs along the top tabs), f5 searches the page again (resuming a paused
+search; a locked one stays), and ctrl+s and ctrl+m give the keyboard to
+the search box and the thumbnails. A search page opens as it was left: its
 search, its sort and the files it showed, not searched again until its
 search changes (and then only if it is synchronised). Downloader pages and
 the pages we don't open yet show their files, and say what they are.
@@ -85,7 +91,9 @@ and tag service; the exact match first, then the most used), up and down move th
 highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
-and double-clicking one removes it. Below them, as the reference's
+and double-clicking one removes it. Under the search box, the reference's
+pause/play button ("searching immediately", or "search paused", when a
+changed search waits to be searched; ctrl+i in the search box switches it). Below them, as the reference's
 "selection tags" box, the tags of the selected files (or with nothing
 selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag

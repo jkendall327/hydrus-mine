@@ -31,6 +31,12 @@ pub struct Pages {
     open: HashMap<PageKey, Rc<RefCell<SearchPage>>>,
     /// Pages closed in the last hour, oldest first, to reopen.
     closed: Vec<Closed>,
+    /// The page each notebook showed last, to show again (as a tab widget
+    /// keeps its tab): by notebook.
+    remembered: HashMap<PageKey, usize>,
+    /// When each notebook last moved its selection by ctrl+page up or down
+    /// (`None`: the top one).
+    last_moved: HashMap<Option<PageKey>, std::time::Instant>,
 }
 
 /// A closed page, as it was: where it was, and its pages as opened.
@@ -73,6 +79,8 @@ impl Pages {
             path: Vec::new(),
             open: HashMap::new(),
             closed: Vec::new(),
+            remembered: HashMap::new(),
+            last_moved: HashMap::new(),
         };
         pages.select(0, 0);
         Ok(pages)
@@ -94,6 +102,8 @@ impl Pages {
             path: vec![0],
             open: HashMap::new(),
             closed: Vec::new(),
+            remembered: HashMap::new(),
+            last_moved: HashMap::new(),
         };
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
         pages
@@ -121,7 +131,8 @@ impl Pages {
     }
 
     /// Show the `index`th page of the notebook at `level` (0 is the top):
-    /// within a notebook, its first page.
+    /// within a notebook, the page it showed last (its first, to begin
+    /// with).
     pub fn select(&mut self, level: usize, index: usize) {
         if level > self.path.len() {
             return;
@@ -140,12 +151,80 @@ impl Pages {
         self.path.push(index);
         let mut page = &pages[index];
         while let PageContent::Pages(children) = &page.content {
-            let Some(first) = children.first() else {
+            if children.is_empty() {
+                break;
+            }
+            let at = self
+                .remembered
+                .get(&page.key)
+                .map_or(0, |&i| i.min(children.len() - 1));
+            self.path.push(at);
+            page = &children[at];
+        }
+        self.remember();
+    }
+
+    /// Note the page each notebook on the way to the page shown shows.
+    fn remember(&mut self) {
+        let mut pages = self.session.pages.as_slice();
+        for (depth, &i) in self.path.iter().enumerate() {
+            let page = &pages[i];
+            let PageContent::Pages(children) = &page.content else {
                 break;
             };
-            self.path.push(0);
-            page = first;
+            if let Some(&child) = self.path.get(depth + 1) {
+                self.remembered.insert(page.key, child);
+            }
+            pages = children;
         }
+    }
+
+    /// Show the page `delta` along (ctrl+page up and down,
+    /// `MoveSelection`): in the deepest notebook on the way to the page
+    /// shown that can move so, unless a notebook above it moved in the
+    /// last three seconds, which moves again (so a held key runs along
+    /// its tabs, not into them); never round the ends.
+    pub fn move_selection(&mut self, delta: isize, now: std::time::Instant) -> bool {
+        self.move_at(0, delta, false, now)
+    }
+
+    fn move_at(&mut self, depth: usize, delta: isize, test: bool, now: std::time::Instant) -> bool {
+        const RECENT: std::time::Duration = std::time::Duration::from_secs(3);
+        let Some(&current) = self.path.get(depth) else {
+            return false;
+        };
+        let (count, current_is_notebook) = {
+            let mut pages = self.session.pages.as_slice();
+            for &i in &self.path[..depth] {
+                match &pages[i].content {
+                    PageContent::Pages(children) => pages = children,
+                    _ => return false,
+                }
+            }
+            (
+                pages.len(),
+                matches!(pages[current].content, PageContent::Pages(_)),
+            )
+        };
+        if count <= 1 {
+            return false;
+        }
+        let key = self.notebook_key(depth);
+        let recent = self
+            .last_moved
+            .get(&key)
+            .is_some_and(|&at| now.duration_since(at) < RECENT);
+        if current_is_notebook && !recent && self.move_at(depth + 1, delta, true, now) {
+            return self.move_at(depth + 1, delta, test, now);
+        }
+        let Some(new) = current.checked_add_signed(delta).filter(|&i| i < count) else {
+            return false;
+        };
+        if !test {
+            self.select(depth, new);
+            self.last_moved.insert(key, now);
+        }
+        true
     }
 
     /// The page shown: a page, or a notebook with no pages.

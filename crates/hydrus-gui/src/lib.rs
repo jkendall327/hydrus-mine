@@ -339,6 +339,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
+    // ctrl+page up and down: the page beside (`MoveSelection`)
+    window.on_move_pages({
+        let change_pages = change_pages.clone();
+        move |delta| {
+            change_pages(&|pages| {
+                pages.move_selection(delta as isize, std::time::Instant::now());
+                Ok(())
+            });
+        }
+    });
     window.on_close_tab({
         let change_pages = change_pages.clone();
         move |level, index| {
@@ -410,6 +420,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page()
                 .borrow_mut()
                 .remove_predicate(usize::try_from(index).unwrap_or(usize::MAX));
+            shown(true);
+        }
+    });
+    // f5: search again (`RefreshQuery`)
+    window.on_refresh_page({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().refresh();
+            shown(true);
+        }
+    });
+    // ctrl+i, or the button: searching as the search changes, or waiting
+    window.on_flip_synchronised({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let synchronised = page.borrow().synchronised();
+            page.borrow_mut().set_synchronised(!synchronised);
             shown(true);
         }
     });
@@ -2097,6 +2127,7 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     });
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
+    window.set_synchronised(page.synchronised());
     let lock = page.lock();
     window.set_search_locked(lock.is_some());
     if let Some(lock) = lock {

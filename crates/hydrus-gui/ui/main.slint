@@ -378,6 +378,16 @@ export component MainWindow inherits Window {
     callback unclose-page();
     callback archive-delete-filter();
     callback flip-global-mute();
+    // f5: search the page again; ctrl+page up and down: the page beside
+    callback refresh-page();
+    callback move-pages(int);
+    // whether the page searches as its search changes, and ctrl+i (or the
+    // button under the search box) switching it
+    in property <bool> synchronised: true;
+    callback flip-synchronised();
+    // ctrl+s: the search box takes the keyboard (counted, for the box to
+    // see each ask)
+    in-out property <int> search-focus-requests;
     // the selected file's shortcuts, and a question's answer
     callback archive-selected();
     callback inbox-selected();
@@ -478,6 +488,30 @@ export component MainWindow inherits Window {
             // unmutes everything
             if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
                 root.flip-global-mute();
+                return accept;
+            }
+            // as the reference's main window shortcuts have it: f5 searches
+            // the page again, ctrl+page up and down show the page beside,
+            // ctrl+s and ctrl+m give the keyboard to the search box and to
+            // the thumbnails
+            if (event.text == Key.F5) {
+                root.refresh-page();
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.PageUp) {
+                root.move-pages(-1);
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.PageDown) {
+                root.move-pages(1);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "s" || event.text == "S")) {
+                root.search-focus-requests += 1;
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "m" || event.text == "M")) {
+                grid-keys.focus();
                 return accept;
             }
             // as in the reference, ctrl+u reopens the page closed last
@@ -625,8 +659,15 @@ export component MainWindow inherits Window {
                     }
                     if !root.search-locked: FocusScope {
                         height: search-row.preferred-height;
+                        property <int> focus-requests: root.search-focus-requests;
+                        changed focus-requests => { search.focus(); }
                         // up and down move through the suggestions, as in the reference
                         capture-key-pressed(event) => {
+                            // ctrl+i: searching as the search changes, or waiting
+                            if (event.modifiers.control && (event.text == "i" || event.text == "I")) {
+                                root.flip-synchronised();
+                                return accept;
+                            }
                             if (event.text == Key.UpArrow) {
                                 root.move-highlight(-1);
                                 return accept;
@@ -660,6 +701,12 @@ export component MainWindow inherits Window {
                                 clicked => { root.lock-search(); }
                             }
                         }
+                    }
+                    // the reference's pause/play button: searching as the
+                    // search changes, or waiting
+                    if !root.search-locked && root.note == "": Button {
+                        text: root.synchronised ? "searching immediately" : "search paused";
+                        clicked => { root.flip-synchronised(); }
                     }
                     if root.favourites-open && !root.search-locked: Rectangle {
                         border-width: 1px;

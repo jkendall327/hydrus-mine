@@ -784,10 +784,29 @@ impl SearchPage {
         self.count_tags();
     }
 
-    /// Search again (the menu's "refresh"), if the page has a search that
-    /// isn't locked.
+    /// Search again (F5, the menu's "refresh"), if the page has a search
+    /// that isn't locked.
     pub fn refresh(&mut self) {
-        if self.note.is_none() && !self.locked && !self.predicates.is_empty() {
+        // (`RefreshQuery`: a locked search stays as it is, and a paused one
+        // resumes, which searches)
+        if self.note.is_none() && !self.locked {
+            self.synchronised = true;
+            self.search();
+        }
+    }
+
+    /// Whether the page searches as its search changes ("searching
+    /// immediately"), or waits ("search paused").
+    pub fn synchronised(&self) -> bool {
+        self.synchronised
+    }
+
+    /// Search as the search changes, or wait (the search box's pause/play
+    /// button, ctrl+i): searching again at once once on.
+    pub fn set_synchronised(&mut self, synchronised: bool) {
+        let resumed = synchronised && !self.synchronised;
+        self.synchronised = synchronised;
+        if resumed && self.note.is_none() && !self.locked {
             self.search();
         }
     }
