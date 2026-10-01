@@ -1512,6 +1512,34 @@ pub(crate) mod tests {
             input.settings["thumbnails"],
             serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100, "video_percentage_in": 35})
         );
+        // the fixture's favourite search
+        let favourites: crate::settings::FavouriteSearches =
+            serde_json::from_value(input.settings["favourite_searches"].clone()).unwrap();
+        let [favourite] = &favourites.0[..] else {
+            panic!("{favourites:?}");
+        };
+        assert_eq!(
+            (favourite.folder.as_deref(), favourite.name.as_str()),
+            (Some("example search"), "inbox filter")
+        );
+        assert!(favourite.synchronised);
+        assert_eq!(favourite.search.predicates.len(), 3);
+        assert_eq!(
+            favourite
+                .search
+                .location
+                .current()
+                .iter()
+                .collect::<Vec<_>>(),
+            [&hydrus_core::ServiceKey::new(b"local files".to_vec())]
+        );
+        assert_eq!(
+            favourite.sort,
+            Some(hydrus_core::pages::PageSort {
+                by: hydrus_core::pages::PageSortBy::System(0),
+                ascending: false
+            })
+        );
         // the reference's defaults
         assert_eq!(
             input.settings["tag_presentation"],

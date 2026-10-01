@@ -427,6 +427,32 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &|key| scales.get(key).copied(),
         &mut input,
     );
+    match db.favourite_search_manager() {
+        Ok(Some(manager)) => {
+            let mut converted = Vec::new();
+            for f in manager.searches {
+                match file_search(&f.file_search_context, &|key| scales.get(key).copied()) {
+                    Ok(search) => converted.push(hydrus_core::pages::FavouriteSearch {
+                        folder: f.folder,
+                        name: f.name,
+                        search,
+                        synchronised: f.synchronised,
+                        sort: f.media_sort.as_ref().map(page_sort),
+                    }),
+                    Err(e) => input.warnings.push(format!(
+                        "The favourite search \"{}\" searches for something hydrus-rs can't, \
+                         so it was not converted: {e}",
+                        f.name
+                    )),
+                }
+            }
+            insert_setting(&mut input, &crate::settings::FavouriteSearches(converted))?;
+        }
+        Ok(None) => {}
+        Err(e) => input
+            .warnings
+            .push(format!("Favourite searches were not converted: {e}")),
+    }
     match db.export_folders() {
         Ok(folders) => {
             let mut converted = Vec::new();

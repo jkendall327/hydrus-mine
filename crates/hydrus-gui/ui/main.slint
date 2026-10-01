@@ -185,6 +185,14 @@ component ThumbnailGrid inherits ListView {
     }
 }
 
+// A row of the favourite searches menu: a folder, or a search to load.
+export struct FavouriteRow {
+    label: string,
+    depth: int,
+    // the search it loads; -1 for a folder
+    search: int,
+}
+
 export component MainWindow inherits Window {
     title: "hydrus-rs";
     preferred-width: 1100px;
@@ -209,6 +217,9 @@ export component MainWindow inherits Window {
     in property <string> status;
     in property <string> error;
     in-out property <string> search-text;
+    // the favourite searches menu (none: no button)
+    in property <[FavouriteRow]> favourites;
+    in-out property <bool> favourites-open;
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
@@ -222,6 +233,7 @@ export component MainWindow inherits Window {
     callback order-chosen(int);
     callback search-edited(string);
     callback search-accepted();
+    callback favourite-chosen(int);
     callback move-highlight(int);
     callback suggestion-chosen(int);
     callback remove-predicate(int);
@@ -322,7 +334,7 @@ export component MainWindow inherits Window {
                         }
                     }
                     FocusScope {
-                        height: search.preferred-height;
+                        height: search-row.preferred-height;
                         // up and down move through the suggestions, as in the reference
                         capture-key-pressed(event) => {
                             if (event.text == Key.UpArrow) {
@@ -335,15 +347,55 @@ export component MainWindow inherits Window {
                             }
                             reject
                         }
-                        search := LineEdit {
-                            width: 100%;
-                            placeholder-text: "search";
-                            text <=> root.search-text;
-                            edited(text) => { root.search-edited(text); }
-                            accepted(text) => { root.search-accepted(); }
+                        search-row := HorizontalLayout {
+                            spacing: 4px;
+                            search := LineEdit {
+                                horizontal-stretch: 1;
+                                placeholder-text: "search";
+                                text <=> root.search-text;
+                                edited(text) => { root.search-edited(text); }
+                                accepted(text) => { root.search-accepted(); }
+                            }
+                            // as the reference's star button: the favourite searches
+                            if root.favourites.length > 0: Button {
+                                width: 30px;
+                                text: "★";
+                                checkable: true;
+                                checked <=> root.favourites-open;
+                            }
                         }
                     }
-                    if root.suggestions.length > 0: Rectangle {
+                    if root.favourites-open: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        height: min(root.favourites.length, 12) * 22px + 4px;
+                        VerticalLayout {
+                            padding: 2px;
+                            alignment: start;
+                            for favourite in root.favourites: Rectangle {
+                                height: 22px;
+                                background: favourite.search >= 0 && load.has-hover ? Theme.hover : transparent;
+                                Text {
+                                    x: 4px + favourite.depth * 14px;
+                                    text: favourite.label;
+                                    color: Theme.text;
+                                    font-weight: favourite.search < 0 ? 700 : 400;
+                                    vertical-alignment: center;
+                                    overflow: elide;
+                                    width: parent.width - self.x - 4px;
+                                }
+                                load := TouchArea {
+                                    enabled: favourite.search >= 0;
+                                    clicked => {
+                                        root.favourites-open = false;
+                                        root.favourite-chosen(favourite.search);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    if root.suggestions.length > 0 && !root.favourites-open: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
                         background: Theme.panel;

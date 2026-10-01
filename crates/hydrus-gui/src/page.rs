@@ -140,6 +140,39 @@ impl SearchPage {
         page
     }
 
+    /// Load a favourite search, as the reference's favourites menu does:
+    /// its domains, tag service and predicates, whether the page searches
+    /// as they change, and its sort; it searches if synchronised. A page
+    /// without a search (a downloader page, say) is left as it is.
+    pub fn load_favourite(&mut self, favourite: &hydrus_core::pages::FavouriteSearch) {
+        if self.note.is_some() {
+            return;
+        }
+        let FileSearchContext {
+            location,
+            tags,
+            predicates,
+        } = favourite.search.clone();
+        self.context = FileSearchContext {
+            location,
+            tags,
+            predicates: Vec::new(),
+        };
+        self.autocomplete
+            .set_context(&self.context.location, &self.context.tags);
+        self.autocomplete.clear();
+        self.predicates = predicates;
+        self.synchronised = favourite.synchronised;
+        if favourite.sort.is_some() {
+            let before = self.sort;
+            self.set_page_sort(favourite.sort.as_ref());
+            self.sort_changed |= self.sort != before;
+        }
+        if self.synchronised {
+            self.search();
+        }
+    }
+
     /// A page that shows files but has no search, saying why.
     pub fn fixed(
         store: Arc<Store>,

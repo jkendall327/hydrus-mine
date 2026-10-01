@@ -52,7 +52,11 @@ search page tag sort and namespace order (checked against the reference's
 `SortTags`); double-clicking a tag searches for it too. Tags here, in the
 autocomplete and in the search's predicates are shown as your options
 have them (namespaces shown or hidden, the namespace connector,
-underscores and emojis replaced; checked against `RenderTag`). The matching files' thumbnails fill the grid, newest import
+underscores and emojis replaced; checked against `RenderTag`). The ★ beside
+the search box lists your favourite searches in hydrus's folders and
+order; choosing one loads its domains, tag service, predicates and sort
+into the page, searching if it is synchronised (saving and editing
+favourites isn't here yet, nor collecting). The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own

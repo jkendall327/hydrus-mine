@@ -223,6 +223,14 @@ impl Setting for hydrus_core::import_options::ImportOptionsManager {
     const KEY: &'static str = "import_options";
 }
 
+/// Saved searches, in the reference's stored order.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
+pub struct FavouriteSearches(pub Vec<hydrus_core::pages::FavouriteSearch>);
+
+impl Setting for FavouriteSearches {
+    const KEY: &'static str = "favourite_searches";
+}
+
 /// The desktop client's lock password.
 impl Setting for hydrus_core::lock::LockPassword {
     const KEY: &'static str = "lock_password";

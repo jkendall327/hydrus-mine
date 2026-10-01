@@ -18,6 +18,7 @@ pub use ui::*;
 
 pub mod autocomplete;
 pub mod duplicate_filter;
+pub mod favourites;
 mod filter_window;
 mod grid;
 pub mod headless;
@@ -86,16 +87,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         },
     );
     show_tabs(window, &pages.borrow());
-    refresh(window, &current.borrow().borrow());
+    // the favourite searches, read once (the reference reads its own
+    // manager, loaded at boot)
+    let favourites: Rc<Vec<hydrus_core::pages::FavouriteSearch>> = Rc::new(
+        current
+            .borrow()
+            .borrow()
+            .store()
+            .read(hydrus_store::settings::get::<hydrus_store::settings::FavouriteSearches>)
+            .map(|f| f.0)
+            .unwrap_or_default(),
+    );
+    let favourite_rows: Vec<FavouriteRow> = favourites::favourite_rows(&favourites)
+        .into_iter()
+        .map(|row| FavouriteRow {
+            label: row.label.into(),
+            depth: i32::try_from(row.depth).unwrap_or(i32::MAX),
+            search: row.search.and_then(|i| i32::try_from(i).ok()).unwrap_or(-1),
+        })
+        .collect();
+    let favourite_rows = ModelRc::new(VecModel::from(favourite_rows));
+    refresh(window, &current.borrow().borrow(), &favourite_rows);
 
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
         let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
+        let favourite_rows = favourite_rows.clone();
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
-                refresh(&window, &current.borrow().borrow());
+                refresh(&window, &current.borrow().borrow(), &favourite_rows);
                 if files {
                     rows.reset();
                 }
@@ -239,6 +261,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             page().borrow_mut().enter();
             shown(true);
+        }
+    });
+    window.on_favourite_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        let favourites = favourites.clone();
+        move |index| {
+            if let Some(favourite) = usize::try_from(index).ok().and_then(|i| favourites.get(i)) {
+                page().borrow_mut().load_favourite(favourite);
+                shown(true);
+            }
         }
     });
     window.on_move_highlight({
@@ -471,8 +504,14 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
 
 /// Show the page's search: the box's text and suggestions, the predicates,
 /// any error, and the status bar; or, for a page without a search, why.
-fn refresh(window: &MainWindow, page: &SearchPage) {
+fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<FavouriteRow>) {
     window.set_note(page.note().unwrap_or_default().into());
+    // (only a page with a search can load one)
+    window.set_favourites(if page.note().is_none() {
+        favourites.clone()
+    } else {
+        ModelRc::default()
+    });
     window.set_can_filter(page.duplicates().is_some());
     let autocomplete = page.autocomplete();
     window.set_search_text(autocomplete.text().into());

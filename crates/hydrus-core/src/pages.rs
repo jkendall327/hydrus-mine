@@ -167,6 +167,19 @@ pub enum PageSortBy {
     Rating(ServiceKey),
 }
 
+/// A saved search (the reference's favourite searches), which a search
+/// page can load: its domains, tag service and predicates, whether it
+/// searches as they change, and its sort.
+#[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
+pub struct FavouriteSearch {
+    /// The menu folder, `/` separating nested ones; none for the top.
+    pub folder: Option<String>,
+    pub name: String,
+    pub search: FileSearchContext,
+    pub synchronised: bool,
+    pub sort: Option<PageSort>,
+}
+
 /// A page's key: 32 random bytes, written as hex.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, PartialOrd, Ord)]
 pub struct PageKey(pub [u8; 32]);
