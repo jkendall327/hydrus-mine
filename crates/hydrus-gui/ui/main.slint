@@ -236,6 +236,14 @@ export component MainWindow inherits Window {
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();
+    // the selected file's shortcuts, and a question's answer
+    callback archive-selected();
+    callback inbox-selected();
+    callback delete-selected();
+    callback undelete-selected();
+    callback answer(bool);
+    // a question to answer (a deletion): enter is yes, escape no
+    in property <string> question;
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
@@ -264,6 +272,15 @@ export component MainWindow inherits Window {
         width: 100%;
         height: 100%;
         capture-key-pressed(event) => {
+            // a question takes every key while it is asked
+            if (root.question != "") {
+                if (event.text == Key.Return) {
+                    root.answer(true);
+                } else if (event.text == Key.Escape) {
+                    root.answer(false);
+                }
+                return accept;
+            }
             // the page chooser takes every key while it is open
             if (root.chooser-labels.length > 0) {
                 if (event.text.character-count == 1 && event.text.is-float() && event.text != "0") {
@@ -462,10 +479,41 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                grid := ThumbnailGrid {
-                    rows: root.thumbnail-rows;
-                    clicked(i) => { root.thumbnail-clicked(i); }
-                    activated(i) => { root.thumbnail-activated(i); }
+                // the thumbnails' shortcuts, once a click gives them the
+                // keyboard: F7 archives the file selected and shift+F7
+                // inboxes it, delete deletes it (asking first) and
+                // shift+delete undeletes it
+                grid-keys := FocusScope {
+                    horizontal-stretch: 1;
+                    key-pressed(event) => {
+                        if (event.text == Key.F7) {
+                            if (event.modifiers.shift) {
+                                root.inbox-selected();
+                            } else {
+                                root.archive-selected();
+                            }
+                            return accept;
+                        }
+                        if (event.text == Key.Delete) {
+                            if (event.modifiers.shift) {
+                                root.undelete-selected();
+                            } else {
+                                root.delete-selected();
+                            }
+                            return accept;
+                        }
+                        reject
+                    }
+                    grid := ThumbnailGrid {
+                        width: 100%;
+                        height: 100%;
+                        rows: root.thumbnail-rows;
+                        clicked(i) => {
+                            grid-keys.focus();
+                            root.thumbnail-clicked(i);
+                        }
+                        activated(i) => { root.thumbnail-activated(i); }
+                    }
                 }
             }
             Rectangle {
@@ -479,6 +527,31 @@ export component MainWindow inherits Window {
             }
         }
 
+        if root.question != "": Rectangle {
+            background: Theme.shade;
+            TouchArea {}
+            Rectangle {
+                width: 420px;
+                height: 90px;
+                background: Theme.window;
+                border-radius: 6px;
+                VerticalLayout {
+                    padding: 12px;
+                    spacing: 8px;
+                    Text {
+                        text: root.question;
+                        wrap: word-wrap;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: "enter: yes, escape: no";
+                        color: Theme.text;
+                        opacity: 0.7;
+                        horizontal-alignment: center;
+                    }
+                }
+            }
+        }
         if root.chooser-labels.length > 0: Rectangle {
             background: Theme.shade;
             TouchArea {

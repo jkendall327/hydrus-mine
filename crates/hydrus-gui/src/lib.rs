@@ -399,6 +399,73 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // the selected file's shortcuts: F7, shift+F7, delete, shift+delete
+    let selected_file = {
+        let page = page.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            page.selected().map(|i| page.results()[i])
+        }
+    };
+    let act = |action: fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>| {
+        let page = page.clone();
+        let selected_file = selected_file.clone();
+        move || {
+            if let Some(file) = selected_file()
+                && let Err(e) = action(page().borrow().store(), &[file])
+            {
+                eprintln!("could not change the file: {e}");
+            }
+        }
+    };
+    window.on_archive_selected(act(media_actions::archive));
+    window.on_inbox_selected(act(media_actions::inbox));
+    window.on_undelete_selected(act(media_actions::undelete));
+    let pending: Rc<RefCell<Option<(HashId, media_actions::Deletion)>>> = Rc::default();
+    window.on_delete_selected({
+        let page = page.clone();
+        let pending = pending.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(file) = selected_file() else {
+                return;
+            };
+            let page = page();
+            let page = page.borrow();
+            let deletion = media_actions::deletion(page.store(), page.location(), &[file]);
+            if let (Some(deletion), Some(window)) = (deletion, weak.upgrade()) {
+                window.set_question(deletion.question(1).into());
+                *pending.borrow_mut() = Some((file, deletion));
+            }
+        }
+    });
+    window.on_answer({
+        let page = page.clone();
+        let weak = window.as_weak();
+        let removed = removed.clone();
+        move |yes| {
+            let asked = pending.borrow_mut().take();
+            if let Some(window) = weak.upgrade() {
+                window.set_question(SharedString::new());
+            }
+            let Some((file, deletion)) = asked.filter(|_| yes) else {
+                return;
+            };
+            let (store, location) = {
+                let page = page();
+                let page = page.borrow();
+                (page.store().clone(), page.location().clone())
+            };
+            if let Err(e) = media_actions::delete(&store, &[file], &deletion) {
+                eprintln!("could not delete the file: {e}");
+                return;
+            }
+            if media_actions::still_in(&store, &location, &[file]).is_empty() {
+                removed(&[file]);
+            }
+        }
+    });
     // F12: the archive/delete filter, on the file selected, else them all
     let archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>> = Rc::default();
     window.on_archive_delete_filter({

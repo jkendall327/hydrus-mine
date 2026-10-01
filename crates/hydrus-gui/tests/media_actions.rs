@@ -49,7 +49,7 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
 
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
     ui.invoke_search_edited("system:inbox".into());
@@ -161,4 +161,46 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
 
     viewer.invoke_close_requested();
     assert!(ui.get_thumbnail_rows().row_count() > 0);
+
+    // the thumbnails' shortcuts, once a click gives them the keyboard
+    let main_window = windows.get(0).unwrap();
+    headless::render(&main_window, 1100, 700);
+    let first = slint::LogicalPosition::new(300.0 + 4.0 + 75.0, 4.0 + 75.0);
+    for event in [
+        slint::platform::WindowEvent::PointerPressed {
+            position: first,
+            button: slint::platform::PointerEventButton::Left,
+        },
+        slint::platform::WindowEvent::PointerReleased {
+            position: first,
+            button: slint::platform::PointerEventButton::Left,
+        },
+    ] {
+        main_window.dispatch_event(event);
+    }
+    let selected = {
+        let page = page.borrow();
+        page.results()[page.selected().expect("a click selects")]
+    };
+    let key = |key: slint::platform::Key| {
+        let text: slint::SharedString = key.into();
+        main_window.dispatch_event(slint::platform::WindowEvent::KeyPressed { text: text.clone() });
+        main_window.dispatch_event(slint::platform::WindowEvent::KeyReleased { text });
+    };
+    assert!(state(&store, selected).0);
+    key(slint::platform::Key::F7);
+    assert!(!state(&store, selected).0, "F7 archives it");
+    ui.invoke_inbox_selected();
+    assert!(state(&store, selected).0);
+    let before = page.borrow().results().len();
+    key(slint::platform::Key::Delete);
+    assert_eq!(ui.get_question(), "Send this file to the trash?");
+    key(slint::platform::Key::Escape);
+    assert_eq!(ui.get_question(), "");
+    assert_eq!(page.borrow().results().len(), before);
+    key(slint::platform::Key::Delete);
+    key(slint::platform::Key::Return);
+    assert_eq!(ui.get_question(), "");
+    assert_eq!(state(&store, selected).1, ["trash"]);
+    assert_eq!(page.borrow().results().len(), before - 1);
 }

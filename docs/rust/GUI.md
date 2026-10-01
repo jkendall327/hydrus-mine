@@ -76,7 +76,8 @@ to the inbox, delete deletes it (from the page's domain, if it searches
 one, else to the trash; in the trash, for good, unless the delete lock
 holds it), asking first, and shift+delete undeletes it; a file deleted out
 of the page's domains leaves the page and the viewer (which closes when
-none are left). F12 opens the archive/delete filter, as the reference's
+none are left). The same keys work on the thumbnails, once a click gives
+them the keyboard, for the file selected. F12 opens the archive/delete filter, as the reference's
 does, on the file selected (or all the page's files), those in a local
 domain and not in the trash: a left click or F7 keeps the file, a right
 click or delete deletes it, a middle click or backspace goes back, up
