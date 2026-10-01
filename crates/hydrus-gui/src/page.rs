@@ -225,7 +225,8 @@ impl SearchPage {
             .store
             .read(hydrus_store::settings::get)
             .unwrap_or_default();
-        let context = TextContext::from_store(&snapshot.services, &viewing);
+        let mut context = TextContext::from_store(&snapshot.services, &viewing);
+        context.presentation = self.store.read(hydrus_store::settings::get).ok();
         self.predicates
             .iter()
             .map(|p| predicate_text(p, &context))
@@ -389,9 +390,10 @@ impl SearchPage {
 
     /// Count the tags for the list, as the reference's selection tags box
     /// does: display tags in the page's tag domain, current, pending and
-    /// petitioned, sorted by its default sort.
+    /// petitioned, less those the user hides from it, sorted by its default
+    /// sort.
     fn count_tags(&mut self) {
-        use hydrus_core::tag_sort::{TagSort, default_user_namespaces, sort_tags};
+        use hydrus_core::tag_sort::sort_tags;
         let files: Vec<HashId> = match self.selected {
             Some(i) => vec![self.results[i]],
             None => self.results.clone(),
@@ -404,12 +406,18 @@ impl SearchPage {
             .filter(|s| s.service_type() != hydrus_core::ServiceType::CombinedTag)
             .map(|s| s.id);
         let counted = self.store.read(|conn| {
+            use hydrus_core::tag_presentation::TagPresentation;
+            use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+            let presentation: TagPresentation = hydrus_store::settings::get(conn)?;
+            let filters: TagDisplayFilters = hydrus_store::settings::get(conn)?;
+            let hidden = filters.by_service(TagView::SelectionList, &snapshot.services);
             let counts = hydrus_store::media::tag_counts(
                 conn,
                 &snapshot.services,
                 &snapshot.display,
                 service,
                 &files,
+                &hidden,
             )?;
             let ids: Vec<_> = counts
                 .current
@@ -418,9 +426,13 @@ impl SearchPage {
                 .chain(counts.petitioned.keys())
                 .copied()
                 .collect();
-            Ok((counts, hydrus_store::master::tags(conn, &ids)?))
+            Ok((
+                counts,
+                hydrus_store::master::tags(conn, &ids)?,
+                presentation,
+            ))
         });
-        let Ok((counts, names)) = counted else {
+        let Ok((counts, names, presentation)) = counted else {
             self.tags.clear();
             return;
         };
@@ -439,19 +451,16 @@ impl SearchPage {
             })
             .collect();
         sort_tags(
-            &TagSort::DEFAULT,
+            &presentation.search_page_sort,
             &mut rows,
             |(tag, _)| tag,
             |(_, n)| n.iter().sum(),
-            &default_user_namespaces(),
+            &presentation.user_namespaces,
         );
         self.tags = rows
             .into_iter()
             .map(|(tag, [current, pending, petitioned])| {
-                let mut row = match hydrus_core::tag::split_tag(&tag) {
-                    ("", subtag) => subtag.to_owned(),
-                    _ => tag.clone(),
-                };
+                let mut row = presentation.render(&tag);
                 for (n, prefix) in [(current, ""), (pending, "+"), (petitioned, "-")] {
                     if n > 0 {
                         row.push_str(&format!(

@@ -32,6 +32,7 @@ pub mod storage;
 pub mod store;
 pub mod subscriptions;
 pub mod synth;
+pub mod tag_display;
 pub mod text;
 pub mod transfer;
 pub mod trash;

@@ -1514,6 +1514,15 @@ pub(crate) mod tests {
         );
         // the reference's defaults
         assert_eq!(
+            input.settings["tag_presentation"],
+            serde_json::to_value(hydrus_core::tag_presentation::TagPresentation::default())
+                .unwrap()
+        );
+        assert_eq!(
+            input.settings["tag_display_filters"],
+            serde_json::to_value(crate::tag_display::TagDisplayFilters::default()).unwrap()
+        );
+        assert_eq!(
             input.settings["delete_lock"],
             serde_json::json!({
                 "archived": false,

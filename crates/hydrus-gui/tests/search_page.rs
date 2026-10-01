@@ -369,3 +369,77 @@ fn system_predicate_counts_are_for_the_page_s_file_domain() {
     found.dedup();
     assert!(found.len() > 1, "the domains differ: {found:?}");
 }
+
+#[test]
+fn tags_are_shown_as_the_user_has_them_shown() {
+    use hydrus_core::ServiceKey;
+    use hydrus_core::service::builtin_keys;
+    use hydrus_core::tag_filter::{FilterRule, TagFilter};
+    use hydrus_core::tag_presentation::TagPresentation;
+    use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let mut page = SearchPage::new(store.clone());
+    page.enter();
+    let rows: Vec<String> = page.tag_rows().iter().map(|r| (*r).to_owned()).collect();
+    assert!(rows.iter().any(|r| r.starts_with("character:")), "{rows:?}");
+    assert!(rows.iter().any(|r| r.starts_with("series:")), "{rows:?}");
+
+    // namespaces hidden, and character tags hidden from the tag list
+    let presentation = TagPresentation {
+        show_namespaces: false,
+        ..TagPresentation::default()
+    };
+    let mut filters = TagDisplayFilters::default();
+    filters.for_view_mut(TagView::SelectionList).insert(
+        ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()).to_hex(),
+        TagFilter::new().with_rule("character:", FilterRule::Blacklist),
+    );
+    store
+        .write(move |ctx| {
+            hydrus_store::settings::set(ctx.conn(), &presentation)?;
+            hydrus_store::settings::set(ctx.conn(), &filters)
+        })
+        .unwrap();
+    let mut page = SearchPage::new(store.clone());
+    assert_eq!(
+        page.autocomplete().suggestions()[0].label.split(' ').next(),
+        Some("everything")
+    );
+    page.enter();
+    assert_eq!(page.predicates(), ["everything"]);
+    let hidden: Vec<String> = page.tag_rows().iter().map(|r| (*r).to_owned()).collect();
+    // (namespaces stay on number subtags, as hydrus's
+    // `show_subtag_number_namespaces` has it)
+    assert!(
+        hidden
+            .iter()
+            .all(|r| !r.starts_with("series:") && !r.starts_with("character:")),
+        "{hidden:?}"
+    );
+    assert!(hidden.iter().any(|r| r.starts_with("page:")), "{hidden:?}");
+    let series = rows
+        .iter()
+        .find(|r| r.starts_with("series:"))
+        .unwrap()
+        .strip_prefix("series:")
+        .unwrap();
+    assert!(hidden.iter().any(|r| r == series), "{series} in {hidden:?}");
+    let characters = rows.iter().filter(|r| r.starts_with("character:")).count();
+    assert_eq!(hidden.len(), rows.len() - characters);
+    // a tag in the list still searches as itself
+    let index = hidden.iter().position(|r| r == series).unwrap();
+    assert!(page.activate_tag(index));
+    assert_eq!(
+        page.predicates()[1],
+        series.rsplit_once(" (").unwrap().0,
+        "shown without its namespace"
+    );
+}

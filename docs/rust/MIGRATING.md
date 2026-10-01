@@ -63,7 +63,9 @@ archived files against deletion, the lock comes across too: archived files
 can still go to the trash, but aren't deleted for good (by the Client API,
 by emptying the trash, or by a duplicate decision) until they are back in
 the inbox, and your options to inbox the files duplicate decisions delete
-apply. How files are handled
+apply. How tags are shown comes across for the GUI: your tag display
+filters, whether namespaces are shown, the namespace connector,
+underscores and emojis, your namespace order and your tag list sorts. How files are handled
 comes across as well: where in a video its thumbnail is taken from, whether
 zips are checked for comic book archives, what counts as transparency, and
 whether hydrus leaves files' permissions alone (for drives that refuse

@@ -118,6 +118,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &delete_lock)?;
+    if let Some(options) = &options {
+        insert_setting(&mut input, &tag_presentation(options))?;
+    }
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
@@ -353,6 +356,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     insert_setting(&mut input, &thumbnails)?;
     if let Some(manager) = db.tag_display_manager()? {
         insert_setting(&mut input, &autocomplete_settings(&manager))?;
+        insert_setting(&mut input, &tag_display_filters(&manager))?;
     }
     network_input(db, &mut input)?;
     bandwidth_input(db, options.as_ref(), &mut input)?;
@@ -1220,6 +1224,87 @@ fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
     Ok(())
 }
 
+/// How tags are shown: `RenderTag`'s options, the namespace order and the
+/// search page's and media viewer's tag sorts.
+fn tag_presentation(
+    options: &legacy::ClientOptions,
+) -> hydrus_core::tag_presentation::TagPresentation {
+    use hydrus_core::tag_presentation::TagPresentation;
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+    let mut out = TagPresentation::default();
+    for (key, field) in [
+        ("show_namespaces", &mut out.show_namespaces),
+        ("show_number_namespaces", &mut out.show_number_namespaces),
+        (
+            "show_subtag_number_namespaces",
+            &mut out.show_subtag_number_namespaces,
+        ),
+        (
+            "replace_tag_underscores_with_spaces",
+            &mut out.replace_underscores,
+        ),
+        ("replace_tag_emojis_with_boxes", &mut out.replace_emojis),
+    ] {
+        if let Some(&value) = options.booleans.get(key) {
+            *field = value;
+        }
+    }
+    if let Some(connector) = options.strings.get("namespace_connector") {
+        out.namespace_connector.clone_from(connector);
+    }
+    if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
+        out.user_namespaces.clone_from(namespaces);
+    }
+    let sort = |legacy: &legacy::TagSort| -> Option<TagSort> {
+        Some(TagSort {
+            sort_type: match legacy.sort_type {
+                0 => TagSortType::Tag,
+                1 => TagSortType::Subtag,
+                2 => TagSortType::Count,
+                _ => return None,
+            },
+            ascending: legacy.sort_order == legacy::SortOrder::Ascending,
+            group_by: match legacy.group_by {
+                0 => TagGroupBy::Nothing,
+                1 => TagGroupBy::NamespaceAz,
+                2 => TagGroupBy::NamespaceUser,
+                _ => return None,
+            },
+        })
+    };
+    // (`CC.TAG_PRESENTATION_SEARCH_PAGE` and `_MEDIA_VIEWER`)
+    for (code, field) in [
+        (0, &mut out.search_page_sort),
+        (2, &mut out.media_viewer_sort),
+    ] {
+        if let Some(converted) = options.default_tag_sorts.get(&code).and_then(sort) {
+            *field = converted;
+        }
+    }
+    out
+}
+
+/// The tag display manager's filters for the single media and selection
+/// list views (the others it may hold aren't used by the reference).
+fn tag_display_filters(
+    manager: &hydrus_legacy::objects::TagDisplayManager,
+) -> crate::tag_display::TagDisplayFilters {
+    use crate::tag_display::{TagDisplayFilters, TagView};
+    let mut out = TagDisplayFilters::default();
+    for (code, per_service) in &manager.tag_filters {
+        let Some(view) = TagView::from_code(*code) else {
+            continue;
+        };
+        for (key, filter) in per_service {
+            let filter = tag_filter(filter);
+            if !filter.allows_everything() {
+                out.for_view_mut(view).insert(key.to_hex(), filter);
+            }
+        }
+    }
+    out
+}
+
 fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
     let mut filter = TagFilter::new();
     for (slice, rule) in legacy.effective_rules() {
@@ -1633,6 +1718,95 @@ mod tests {
     use hydrus_legacy::serialisable::SerialisableObject;
 
     use super::*;
+
+    /// The user's tag presentation options come across, with the search
+    /// page's and media viewer's tag sorts.
+    #[test]
+    fn tag_presentation_converts() {
+        use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        assert_eq!(
+            tag_presentation(&options),
+            hydrus_core::tag_presentation::TagPresentation::default()
+        );
+        options.booleans.insert("show_namespaces".into(), false);
+        options
+            .booleans
+            .insert("replace_tag_underscores_with_spaces".into(), true);
+        options
+            .strings
+            .insert("namespace_connector".into(), " - ".into());
+        options.string_lists.insert(
+            "user_namespace_group_by_sort".into(),
+            vec!["series".into(), ":".into(), String::new()],
+        );
+        options.default_tag_sorts.insert(
+            0,
+            legacy::TagSort {
+                sort_type: 2,
+                sort_order: legacy::SortOrder::Descending,
+                use_siblings: true,
+                group_by: 1,
+            },
+        );
+        let converted = tag_presentation(&options);
+        assert!(!converted.show_namespaces && converted.replace_underscores);
+        assert_eq!(converted.namespace_connector, " - ");
+        assert_eq!(converted.user_namespaces, ["series", ":", ""]);
+        assert_eq!(
+            converted.search_page_sort,
+            TagSort {
+                sort_type: TagSortType::Count,
+                ascending: false,
+                group_by: TagGroupBy::NamespaceAz,
+            }
+        );
+        assert_eq!(converted.media_viewer_sort, TagSort::DEFAULT);
+    }
+
+    /// The single media and selection list filters come across by service;
+    /// filters that hide nothing, and other views, are left out.
+    #[test]
+    fn tag_display_filters_convert() {
+        use crate::tag_display::TagView;
+        let key = |k: &[u8]| ServiceKey::new(k.to_vec());
+        let hide = |slice: &str| legacy::TagFilter {
+            rules: vec![(slice.into(), TagRule::Block)],
+        };
+        let manager = legacy::TagDisplayManager {
+            tag_filters: vec![
+                (
+                    2,
+                    vec![
+                        (key(b"local tags"), hide("meta:")),
+                        (key(b"downloader tags"), legacy::TagFilter { rules: vec![] }),
+                    ],
+                ),
+                (3, vec![(key(b"all known tags"), hide("blue eyes"))]),
+                (4, vec![(key(b"local tags"), hide("page:"))]),
+            ],
+            autocomplete_options: Vec::new(),
+        };
+        let filters = tag_display_filters(&manager);
+        let rules = |view, k: &[u8]| -> Option<Vec<(String, FilterRule)>> {
+            filters
+                .for_view(view)
+                .get(&key(k).to_hex())
+                .map(|f| f.rules().map(|(s, r)| (s.to_owned(), r)).collect())
+        };
+        assert_eq!(
+            rules(TagView::SingleMedia, b"local tags"),
+            Some(vec![("meta:".to_owned(), FilterRule::Blacklist)])
+        );
+        assert_eq!(rules(TagView::SingleMedia, b"downloader tags"), None);
+        assert_eq!(
+            rules(TagView::SelectionList, b"all known tags"),
+            Some(vec![("blue eyes".to_owned(), FilterRule::Blacklist)])
+        );
+        assert_eq!(filters.single_media.len() + filters.selection_list.len(), 2);
+    }
 
     /// Every rule the reference stores (its suggestions, rules using every
     /// comparator, and the owner's own; `oracle/dump_auto_resolution.py`)

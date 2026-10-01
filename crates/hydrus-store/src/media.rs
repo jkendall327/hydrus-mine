@@ -466,14 +466,15 @@ pub struct TagCounts {
 
 /// How many of `files` have each tag in a tag service (`None`: in any), as
 /// a tag list shows them: current and pending tags with siblings and
-/// parents applied, petitioned tags as stored; a file counts once per tag
-/// however many services give it the tag.
+/// parents applied, petitioned tags as stored, less those `hidden` hides;
+/// a file counts once per tag however many services give it the tag.
 pub fn tag_counts(
     conn: &Connection,
     registry: &ServiceRegistry,
     display: &DisplayGraphs,
     service: Option<ServiceId>,
     files: &[HashId],
+    hidden: &crate::tag_display::TagHider,
 ) -> Result<TagCounts> {
     let ids = id_array(files);
     let services: Vec<ServiceId> = registry
@@ -496,14 +497,27 @@ pub fn tag_counts(
                 "SELECT hash_id, tag_id FROM {table} WHERE hash_id IN rarray(?)"
             ))?;
             let mut rows = stmt.query([ids.clone()])?;
+            let mut found: Vec<(u32, u32)> = Vec::new();
             while let Some(r) = rows.next()? {
                 let (file, tag): (HashId, TagId) = (r.get(0)?, r.get(1)?);
                 if status == ContentStatus::Petitioned {
-                    pairs.push((file.0, tag.0));
+                    found.push((file.0, tag.0));
                 } else {
-                    pairs.extend(graph.display_tags(tag).map(|t| (file.0, t.0)));
+                    found.extend(graph.display_tags(tag).map(|t| (file.0, t.0)));
                 }
             }
+            if hidden.filters(service) {
+                let mut tags: Vec<TagId> = found.iter().map(|&(_, t)| TagId(t)).collect();
+                tags.sort_unstable();
+                tags.dedup();
+                let names = crate::master::tags(conn, &tags)?;
+                found.retain(|&(_, t)| {
+                    names
+                        .get(&TagId(t))
+                        .is_none_or(|name| hidden.shows(service, name.as_str()))
+                });
+            }
+            pairs.extend(found);
         }
         pairs.sort_unstable();
         pairs.dedup();
@@ -566,7 +580,16 @@ mod tests {
         let mut checked = 0;
         for wanted in services.iter().map(|&s| Some(s)).chain([None]) {
             let counts = store
-                .read(|c| tag_counts(c, &snapshot.services, &snapshot.display, wanted, &all))
+                .read(|c| {
+                    tag_counts(
+                        c,
+                        &snapshot.services,
+                        &snapshot.display,
+                        wanted,
+                        &all,
+                        &crate::tag_display::TagHider::default(),
+                    )
+                })
                 .unwrap();
             let mut expected: HashMap<TagId, u64> = HashMap::new();
             for m in &batch.results {
@@ -593,5 +616,104 @@ mod tests {
             checked += expected.len();
         }
         assert!(checked > 40);
+    }
+
+    /// Tags the selection list hides are left out: those its "all known
+    /// tags" filter hides everywhere, those a service's filter hides only
+    /// where that service gives them.
+    #[test]
+    fn hidden_tags_are_left_out_of_the_counts() {
+        use std::collections::BTreeSet;
+
+        use hydrus_core::ServiceKey;
+        use hydrus_core::service::builtin_keys;
+        use hydrus_core::tag_filter::{FilterRule, TagFilter};
+
+        use crate::tag_display::{TagDisplayFilters, TagHider, TagView};
+
+        let (_source, dest_dir, _dest) = import_basic();
+        let store = Store::open(dest_dir.path()).unwrap();
+        let snapshot = store.snapshot();
+        let all: Vec<HashId> = store
+            .read(|c| {
+                Ok(c.prepare("SELECT hash_id FROM files")?
+                    .query_map([], |r| r.get(0))?
+                    .collect::<rusqlite::Result<_>>()?)
+            })
+            .unwrap();
+        let my_tags = snapshot.services.by_name("my tags").unwrap();
+        let mut filters = TagDisplayFilters::default();
+        let list = filters.for_view_mut(TagView::SelectionList);
+        list.insert(
+            my_tags.key.to_hex(),
+            TagFilter::new().with_rule("series:", FilterRule::Blacklist),
+        );
+        list.insert(
+            ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()).to_hex(),
+            TagFilter::new().with_rule("character:samus aran", FilterRule::Blacklist),
+        );
+        let hidden = filters.by_service(TagView::SelectionList, &snapshot.services);
+        let count = |hidden: &TagHider| {
+            store
+                .read(|c| tag_counts(c, &snapshot.services, &snapshot.display, None, &all, hidden))
+                .unwrap()
+                .current
+        };
+        let (before, after) = (count(&TagHider::default()), count(&hidden));
+
+        let batch = store
+            .read(|c| load(c, &snapshot.services, Some(&snapshot.display), &all))
+            .unwrap();
+        let mut ids: BTreeSet<TagId> = BTreeSet::new();
+        for m in &batch.results {
+            for (service, tags) in &m.tags {
+                let graph = snapshot.display.get(*service);
+                for tag in tags
+                    .by_status
+                    .get(&ContentStatus::Current)
+                    .into_iter()
+                    .flatten()
+                {
+                    ids.extend(graph.display_tags(*tag));
+                }
+            }
+        }
+        let names = store
+            .read(|c| crate::master::tags(c, &ids.into_iter().collect::<Vec<_>>()))
+            .unwrap();
+        let mut expected: HashMap<TagId, u64> = HashMap::new();
+        for m in &batch.results {
+            let mut shown = BTreeSet::new();
+            for (service, tags) in &m.tags {
+                let graph = snapshot.display.get(*service);
+                for tag in tags
+                    .by_status
+                    .get(&ContentStatus::Current)
+                    .into_iter()
+                    .flatten()
+                {
+                    shown.extend(
+                        graph
+                            .display_tags(*tag)
+                            .filter(|t| hidden.shows(*service, names[t].as_str())),
+                    );
+                }
+            }
+            for tag in shown {
+                *expected.entry(tag).or_default() += 1;
+            }
+        }
+        assert_eq!(after, expected);
+        let name_of = |id: &TagId| names[id].as_str().to_owned();
+        let samus = before
+            .keys()
+            .find(|id| name_of(id) == "character:samus aran");
+        assert!(samus.is_some_and(|id| !after.contains_key(id)));
+        assert!(
+            before
+                .iter()
+                .any(|(id, n)| name_of(id).starts_with("series:") && after.get(id) != Some(n)),
+            "my tags' series tags are hidden"
+        );
     }
 }

@@ -223,6 +223,11 @@ impl Setting for hydrus_core::import_options::ImportOptionsManager {
     const KEY: &'static str = "import_options";
 }
 
+/// How tags are shown in the GUI.
+impl Setting for hydrus_core::tag_presentation::TagPresentation {
+    const KEY: &'static str = "tag_presentation";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

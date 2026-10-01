@@ -9,6 +9,7 @@ use std::sync::Arc;
 use hydrus_core::mime::SEARCHABLE_MIMES;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::ServiceType;
+use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::{ServiceId, ServiceKey};
 use hydrus_store::Store;
 use hydrus_store::autocomplete::{
@@ -102,6 +103,13 @@ impl Autocomplete {
         self.suggestions = self.search().unwrap_or_default();
     }
 
+    /// How the user has tags shown.
+    fn presentation(&self) -> TagPresentation {
+        self.store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default()
+    }
+
     fn search(&self) -> Option<Vec<Suggestion>> {
         if self.text.trim().is_empty() {
             return self.system_predicates();
@@ -143,11 +151,12 @@ impl Autocomplete {
                 .then(a.tag.cmp(&b.tag))
         });
         let sign = if input.inclusive() { "" } else { "-" };
+        let presentation = self.presentation();
         Some(
             matches
                 .into_iter()
                 .map(|m| Suggestion {
-                    label: format!("{sign}{} {}", m.tag, m.count.suffix()),
+                    label: format!("{sign}{} {}", presentation.render(&m.tag), m.count.suffix()),
                     predicate: format!("{sign}{}", m.tag),
                 })
                 .collect(),
@@ -161,9 +170,10 @@ impl Autocomplete {
     /// `system:everything` is offered, without a count.
     fn system_predicates(&self) -> Option<Vec<Suggestion>> {
         let (location, _) = &self.context;
+        let presentation = self.presentation();
         if location.is_all_known_files() {
             return Some(vec![Suggestion {
-                label: "system:everything".into(),
+                label: presentation.render("system:everything"),
                 predicate: "system:everything".into(),
             }]);
         }
@@ -235,11 +245,12 @@ impl Autocomplete {
             .into_iter()
             .map(|(predicate, count)| {
                 let suffix = count.map(|c| c.suffix()).unwrap_or_default();
+                let shown = presentation.render(predicate);
                 Suggestion {
                     label: if suffix.is_empty() {
-                        predicate.to_owned()
+                        shown
                     } else {
-                        format!("{predicate} {suffix}")
+                        format!("{shown} {suffix}")
                     },
                     predicate: predicate.to_owned(),
                 }

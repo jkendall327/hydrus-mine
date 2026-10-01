@@ -45,10 +45,12 @@ and double-clicking one removes it. Below them, as the reference's
 "selection tags" box, the tags of the selected file (or with nothing
 selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag
-domain, sorted by the reference's default (the user's namespace order,
-then a-z; checked against its `SortTags`); double-clicking a tag searches
-for it too. Your own tag sort and namespace order aren't carried over
-yet. The matching files' thumbnails fill the grid, newest import
+domain less those your tag display filters hide from it, sorted by your
+search page tag sort and namespace order (checked against the reference's
+`SortTags`); double-clicking a tag searches for it too. Tags here, in the
+autocomplete and in the search's predicates are shown as your options
+have them (namespaces shown or hidden, the namespace connector,
+underscores and emojis replaced; checked against `RenderTag`). The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own

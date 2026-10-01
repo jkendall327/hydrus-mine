@@ -46,6 +46,7 @@ fn context(fixture: &Value) -> TextContext {
                 other => panic!("unknown canvas {other}"),
             })
             .collect(),
+        presentation: None,
     }
 }
 

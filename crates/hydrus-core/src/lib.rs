@@ -26,6 +26,7 @@ pub mod sort;
 pub mod subscriptions;
 pub mod tag;
 pub mod tag_filter;
+pub mod tag_presentation;
 pub mod tag_sort;
 pub mod thumbnail;
 pub mod time;
