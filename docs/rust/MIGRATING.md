@@ -89,7 +89,8 @@ a watcher page as one per watcher, each with every URL, file and gallery
 page it held and whether it was paused; `hydrus serve` carries on with
 them, and `hydrus queues <store> list` shows them. A duplicates page
 comes across with its search, pair sort and group mode, and launches the
-duplicate filter. Pages of kinds hydrus-rs doesn't open yet (import from
+duplicate filter (a store imported before duplicates pages were read
+opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (import from
 disk, simple downloader...) are kept as they were stored. Configuration hydrus-rs doesn't use yet (your other
 saved sessions, the GUI's options) is kept verbatim inside the new store,
 so later versions can pick it up without a re-import.

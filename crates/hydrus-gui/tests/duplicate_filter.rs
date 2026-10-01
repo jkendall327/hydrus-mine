@@ -332,3 +332,33 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     assert!(ui.get_error().contains("downloader pages"));
     assert_eq!(ui.get_chooser_labels().row_count(), 0);
 }
+
+#[test]
+fn duplicates_pages_kept_by_an_earlier_import_still_open() {
+    use hydrus_core::duplicates::PairOrder;
+    let fixture = hydrus_testkit::fixture_json("gui_sessions.json");
+    for case in fixture["duplicates_pages"].as_array().unwrap() {
+        // the page's data, as `PageContent::Other` keeps it: the page and
+        // its files
+        let stored = serde_json::json!([case["stored"], []]);
+        let page = hydrus_store::import::stored_duplicates_page(&stored).expect("read");
+        let variables = &case["facts"]["variables"];
+        let search = &variables["potential_duplicates_search_context"][2];
+        assert_eq!(
+            page.group_mode,
+            variables["filter_group_mode"].as_bool().unwrap()
+        );
+        assert_eq!(
+            page.ascending,
+            variables["duplicate_pair_sort_asc"].as_bool().unwrap()
+        );
+        assert_eq!(
+            Some(page.order),
+            PairOrder::from_code(variables["duplicate_pair_sort_type"].as_i64().unwrap())
+        );
+        assert_eq!(
+            i64::from(page.search.max_hamming_distance),
+            search[4].as_i64().unwrap()
+        );
+    }
+}

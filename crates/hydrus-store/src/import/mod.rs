@@ -29,6 +29,7 @@ mod decode;
 pub use decode::auto_resolution_rule;
 
 pub use decode::decode_input;
+pub use decode::stored_duplicates_page;
 
 /// Reference schema version this importer understands.
 pub const SUPPORTED_REFERENCE_VERSION: u32 = 688;

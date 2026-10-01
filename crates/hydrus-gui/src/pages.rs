@@ -184,6 +184,16 @@ impl Pages {
             PageContent::Duplicates { duplicates, sort } => {
                 SearchPage::duplicates_page(store, duplicates, sort.as_ref(), files)
             }
+            // (a duplicates page an earlier import kept as stored)
+            PageContent::Other {
+                page_type: 8,
+                stored: Some(stored),
+                sort,
+            } if hydrus_store::import::stored_duplicates_page(&stored).is_some() => {
+                let duplicates =
+                    hydrus_store::import::stored_duplicates_page(&stored).expect("read just now");
+                SearchPage::duplicates_page(store, duplicates, sort.as_ref(), files)
+            }
             PageContent::Other {
                 page_type, sort, ..
             } => {

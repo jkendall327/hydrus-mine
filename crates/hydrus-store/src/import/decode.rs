@@ -407,6 +407,41 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     Ok(input)
 }
 
+/// A duplicates page's filtering.
+fn duplicates_page(
+    d: &legacy::gui_sessions::LegacyDuplicatesPage,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> std::result::Result<hydrus_core::pages::DuplicatesPage, String> {
+    use hydrus_core::duplicates::PairOrder;
+    Ok(hydrus_core::pages::DuplicatesPage {
+        search: duplicates_search(&d.search, scales)?,
+        synchronised: d.synchronised,
+        order: PairOrder::from_code(d.sort_type).unwrap_or(PairOrder::MaxFilesize),
+        ascending: d.sort_ascending,
+        group_mode: d.group_mode,
+    })
+}
+
+/// A duplicates page that an import kept as stored, from before duplicates
+/// pages were read (its page data, as `PageContent::Other` keeps it): its
+/// filtering, if it can be read. (Rating predicates in its search are read
+/// without the services' star counts.)
+pub fn stored_duplicates_page(stored: &Json) -> Option<hydrus_core::pages::DuplicatesPage> {
+    use hydrus_legacy::objects::gui_sessions::{PageContent, page_data};
+    use hydrus_legacy::serialisable::{SerialisableObject, SerialisableType};
+    let object = SerialisableObject::from_stored(
+        SerialisableType::GUI_SESSION_PAGE_DATA,
+        None,
+        1,
+        &stored.to_string(),
+    )
+    .ok()?;
+    match page_data(&object).ok()?.page.content {
+        PageContent::Duplicates(d) => duplicates_page(&d, &|_| None).ok(),
+        _ => None,
+    }
+}
+
 /// A potential-duplicates search (a rule's, a duplicates page's).
 fn duplicates_search(
     search: &legacy::auto_resolution::PotentialsSearch,
@@ -1218,18 +1253,8 @@ impl SessionContext<'_> {
                 })
                 .collect(),
             PageContent::Duplicates(d) => {
-                let content = match duplicates_search(&d.search, self.scales) {
-                    Ok(search) => super::PageInputContent::Duplicates {
-                        duplicates: hydrus_core::pages::DuplicatesPage {
-                            search,
-                            synchronised: d.synchronised,
-                            order: hydrus_core::duplicates::PairOrder::from_code(d.sort_type)
-                                .unwrap_or(hydrus_core::duplicates::PairOrder::MaxFilesize),
-                            ascending: d.sort_ascending,
-                            group_mode: d.group_mode,
-                        },
-                        sort,
-                    },
+                let content = match duplicates_page(&d, self.scales) {
+                    Ok(duplicates) => super::PageInputContent::Duplicates { duplicates, sort },
                     Err(e) => {
                         self.input.warnings.push(format!(
                             "Duplicates page \"{}\" of session \"{name}\" searches for something \
