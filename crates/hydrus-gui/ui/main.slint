@@ -315,6 +315,17 @@ export component MainWindow inherits Window {
     // the favourite searches menu (none: no button)
     in property <[FavouriteRow]> favourites;
     in-out property <bool> favourites-open;
+    // a page's search locked to a system:hash of its files, in place of
+    // the search box and predicates: the button saying how many, which
+    // unlocks it, and the cog's what the hash follows
+    in property <bool> can-lock-search;
+    in property <bool> search-locked;
+    in property <string> lock-label;
+    in-out property <bool> lock-syncs-new;
+    in-out property <bool> lock-syncs-removes;
+    callback lock-search();
+    callback unlock-search();
+    callback lock-syncs-changed(bool, bool);
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
@@ -472,7 +483,45 @@ export component MainWindow inherits Window {
                             selected => { root.order-chosen(self.current-index); }
                         }
                     }
-                    FocusScope {
+                    if root.search-locked: VerticalLayout {
+                        spacing: 2px;
+                        Text {
+                            text: "search locked";
+                            color: Theme.text;
+                            font-weight: 700;
+                        }
+                        HorizontalLayout {
+                            spacing: 4px;
+                            Button {
+                                horizontal-stretch: 1;
+                                text: root.lock-label;
+                                clicked => { root.unlock-search(); }
+                            }
+                            cog-menu := ContextMenuArea {
+                                width: 30px;
+                                Menu {
+                                    MenuItem {
+                                        title: "update when files added to page";
+                                        checkable: true;
+                                        checked <=> root.lock-syncs-new;
+                                        activated => { root.lock-syncs-changed(root.lock-syncs-new, root.lock-syncs-removes); }
+                                    }
+                                    MenuItem {
+                                        title: "update when files removed from page";
+                                        checkable: true;
+                                        checked <=> root.lock-syncs-removes;
+                                        activated => { root.lock-syncs-changed(root.lock-syncs-new, root.lock-syncs-removes); }
+                                    }
+                                }
+                                Button {
+                                    width: 30px;
+                                    text: "⚙";
+                                    clicked => { cog-menu.show({ x: 0px, y: self.height }); }
+                                }
+                            }
+                        }
+                    }
+                    if !root.search-locked: FocusScope {
                         height: search-row.preferred-height;
                         // up and down move through the suggestions, as in the reference
                         capture-key-pressed(event) => {
@@ -502,9 +551,15 @@ export component MainWindow inherits Window {
                                 checkable: true;
                                 checked <=> root.favourites-open;
                             }
+                            // and its lock button: lock the files in view to a
+                            // fixed system:hash
+                            if root.can-lock-search: Button {
+                                text: "lock";
+                                clicked => { root.lock-search(); }
+                            }
                         }
                     }
-                    if root.favourites-open: Rectangle {
+                    if root.favourites-open && !root.search-locked: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
                         background: Theme.panel;
@@ -534,7 +589,7 @@ export component MainWindow inherits Window {
                             }
                         }
                     }
-                    if root.suggestions.length > 0 && !root.favourites-open: Rectangle {
+                    if root.suggestions.length > 0 && !root.favourites-open && !root.search-locked: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
                         background: Theme.panel;
@@ -564,7 +619,7 @@ export component MainWindow inherits Window {
                         color: Theme.error;
                         wrap: word-wrap;
                     }
-                    Rectangle {
+                    if !root.search-locked: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
                         background: Theme.panel;

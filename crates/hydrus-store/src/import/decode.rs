@@ -1706,6 +1706,10 @@ impl SessionContext<'_> {
                         search,
                         synchronised: q.synchronised,
                         sort,
+                        lock: q.hash_locked.then_some(hydrus_core::pages::HashLock {
+                            syncs_new: q.lock_syncs.syncs_new,
+                            syncs_removes: q.lock_syncs.syncs_removes,
+                        }),
                     },
                     Err(e) => {
                         self.input.warnings.push(format!(

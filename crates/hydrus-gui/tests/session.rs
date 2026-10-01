@@ -76,6 +76,7 @@ fn the_last_session_opens_as_it_was_left() {
                 by: PageSortBy::System(0),
                 ascending: false,
             }),
+            lock: None,
         },
     );
     let downloader = page(
@@ -237,6 +238,7 @@ fn pages_open_and_close_as_the_reference_does() {
                 search: FileSearchContext::default(),
                 synchronised: true,
                 sort: None,
+                lock: None,
             },
         )
     };
@@ -396,6 +398,7 @@ fn a_saved_session_appends_as_a_page_of_pages() {
             search,
             synchronised: true,
             sort: None,
+            lock: None,
         },
     );
     let saved = Session {

@@ -64,7 +64,15 @@ from hydrus). The ★ beside
 the search box lists your favourite searches in hydrus's folders and
 order; choosing one loads its domains, tag service, predicates and sort
 into the page, searching if it is synchronised (saving and editing
-favourites isn't here yet, nor collecting). The matching files' thumbnails fill the grid, newest import
+favourites isn't here yet, nor collecting). The lock button beside them
+locks the page's search to a `system:hash` of the files in view (asking
+first, as hydrus does, unless the search is empty or already that hash);
+a page opened on files ("open in a new page") starts locked. A locked
+page shows "search locked" and a "Locked at N files." button, which
+unlocks it, in place of the search box and predicates; it doesn't search
+on refresh, and files removed from it leave the hash, unless its cog
+says otherwise. Locks come across from hydrus's sessions and are kept in
+ours. The matching files' thumbnails fill the grid, newest import
 first. The status bar says what the reference's does (`src/status.rs`,
 checked against `_GetPrettyStatusForStatusBar`): how many files and of
 what type ("14 jpegs", "27 images", "36 files"), their total size and,

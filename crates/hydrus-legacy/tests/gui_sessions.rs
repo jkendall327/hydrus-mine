@@ -150,6 +150,9 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
                 FileSearchContext::from_object(o).unwrap()
             }),
             "synchronised": q.synchronised,
+            "system_hash_locked": q.hash_locked,
+            "system_hash_locked_syncs_new": q.lock_syncs.syncs_new,
+            "system_hash_locked_syncs_removes": q.lock_syncs.syncs_removes,
         }),
         PageContent::Urls(u) => json!({ "urls_import": urls_facts(u, &variables["urls_import"]) }),
         PageContent::Gallery(m) => json!({
@@ -188,6 +191,9 @@ fn expected_page_facts(expected: &Json) -> Json {
         "multiple_watcher_import",
         "file_search_context",
         "synchronised",
+        "system_hash_locked",
+        "system_hash_locked_syncs_new",
+        "system_hash_locked_syncs_removes",
         "media_sort",
         "potential_duplicates_search_context",
         "duplicate_pair_sort_type",
@@ -231,11 +237,14 @@ fn downloaders_read_as_the_reference_reads_them() {
     }
 }
 
+/// (search pages locked to a `system:hash`, with what the hash follows,
+/// among them)
 #[test]
 fn pages_read_as_the_reference_reads_them() {
     for case in cases("page_managers")
         .into_iter()
         .chain(cases("duplicates_pages"))
+        .chain(cases("locked_pages"))
     {
         let ours = page(&object(&case["stored"])).unwrap();
         assert_eq!(

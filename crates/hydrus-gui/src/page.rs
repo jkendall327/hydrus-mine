@@ -6,7 +6,8 @@ use std::collections::HashMap;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_core::pages::{DuplicatesPage, PageContent, PageSort, PageSortBy};
+use hydrus_core::pages::{DuplicatesPage, HashLock, PageContent, PageSort, PageSortBy};
+use hydrus_core::search::predicate::{FileHashes, SystemPredicate};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
     parse_api_search, predicate_text, search_files, sort_files,
@@ -25,6 +26,11 @@ pub struct SearchPage {
     predicates: Vec<Predicate>,
     /// Whether the page searches as its predicates change.
     synchronised: bool,
+    /// Whether the search is locked to a `system:hash` of the page's
+    /// files, and what that hash follows (kept while unlocked, as the
+    /// reference's page keeps it).
+    locked: bool,
+    lock_syncs: HashLock,
     /// Why the page shows files without a search, if it does.
     note: Option<String>,
     sort: FileSort,
@@ -68,6 +74,8 @@ impl SearchPage {
             context: FileSearchContext::default(),
             predicates: Vec::new(),
             synchronised: true,
+            locked: false,
+            lock_syncs: HashLock::default(),
             note: None,
             // the reference's default: newest import first
             sort: FileSort {
@@ -157,7 +165,8 @@ impl SearchPage {
     /// as they change, and its sort; it searches if synchronised. A page
     /// without a search (a downloader page, say) is left as it is.
     pub fn load_favourite(&mut self, favourite: &hydrus_core::pages::FavouriteSearch) {
-        if self.note.is_some() {
+        // (a locked page hides its favourites, with its search)
+        if self.note.is_some() || self.locked {
             return;
         }
         let FileSearchContext {
@@ -247,6 +256,7 @@ impl SearchPage {
                 },
                 synchronised: self.synchronised,
                 sort,
+                lock: self.lock(),
             },
             PageContent::Downloader { kind, queues, .. } => PageContent::Downloader {
                 kind: *kind,
@@ -299,11 +309,119 @@ impl SearchPage {
     }
 
     /// Take files off the page (deleted from its domain, say), as the
-    /// reference's pages drop them.
+    /// reference's pages drop them; a locked search lets go of them too,
+    /// if it follows removals (`NotifyFilesRemoved`).
     pub fn remove_files(&mut self, files: &[HashId]) {
         self.selection.remove(&self.results, files);
         self.results.retain(|id| !files.contains(id));
         self.count_tags();
+        if self.locked && self.lock_syncs.syncs_removes {
+            let removed = self.sha256s(files);
+            if let Some(mut hashes) = self.lock_hashes() {
+                hashes.retain(|h| !removed.contains(h));
+                self.set_lock_hashes(hashes);
+            }
+        }
+    }
+
+    /// The page restored with its search locked as a session kept it.
+    #[must_use]
+    pub fn with_lock(mut self, lock: Option<HashLock>) -> Self {
+        self.locked = lock.is_some();
+        self.lock_syncs = lock.unwrap_or_default();
+        self
+    }
+
+    /// Whether the search is locked to a `system:hash` of the page's
+    /// files, and what that hash follows.
+    pub fn lock(&self) -> Option<HashLock> {
+        self.locked.then_some(self.lock_syncs)
+    }
+
+    /// How many files a locked search holds (its `system:hash`'s), for
+    /// the reference's "Locked at N files." (0 if the search is not just
+    /// such a hash).
+    pub fn locked_count(&self) -> usize {
+        self.lock_hashes().map_or(0, |h| h.len())
+    }
+
+    /// Unlock the search: it becomes its `system:hash`, which can be
+    /// edited (`UnlockSearch`).
+    pub fn unlock(&mut self) {
+        self.locked = false;
+    }
+
+    /// Set what a locked search's hash follows: files added to the page,
+    /// and files removed from it.
+    pub fn set_lock_syncs(&mut self, syncs_new: bool, syncs_removes: bool) {
+        self.lock_syncs = HashLock {
+            syncs_new,
+            syncs_removes,
+        };
+    }
+
+    /// What to ask before locking the search to the files in view, if
+    /// anything (`LockSearch`): nothing for an empty search, or for a
+    /// `system:hash` of just those files.
+    pub fn lock_question(&self) -> Option<&'static str> {
+        if self.predicates.is_empty() {
+            return None;
+        }
+        match self.lock_hashes() {
+            Some(hashes) if hashes == self.sha256s(&self.results) => None,
+            Some(_) => Some(
+                "This will lock the page, collapsing the current search to a system:hash of \
+                 the current files.\n\nYour search already has a system:hash, but its files \
+                 are different than what is currently in view. If you want to lock your \
+                 current system:hash, not what is currently in view, click no and refresh the \
+                 search to reset you back to what the existing system:hash says, and then try \
+                 locking again.",
+            ),
+            None => Some(
+                "This will lock the page, collapsing the current search to a system:hash of \
+                 the current files. Is this ok?",
+            ),
+        }
+    }
+
+    /// Lock the search to a `system:hash` of the files in view (after
+    /// `lock_question`, if it asks anything).
+    pub fn lock_search(&mut self) {
+        if self.note.is_some() {
+            return;
+        }
+        self.locked = true;
+        let hashes = self.sha256s(&self.results);
+        self.set_lock_hashes(hashes);
+    }
+
+    /// The search's hashes, if it is just an inclusive sha256
+    /// `system:hash` (`_GetExistingLockHashes`).
+    fn lock_hashes(&self) -> Option<std::collections::BTreeSet<hydrus_core::Sha256>> {
+        match &self.predicates[..] {
+            [
+                Predicate::System(SystemPredicate::Hash {
+                    hashes: FileHashes::Sha256(hashes),
+                    inclusive: true,
+                }),
+            ] => Some(hashes.clone()),
+            _ => None,
+        }
+    }
+
+    /// Make the search a `system:hash` of `hashes` (`_UpdateSystemLockFiles`).
+    fn set_lock_hashes(&mut self, hashes: std::collections::BTreeSet<hydrus_core::Sha256>) {
+        self.predicates = vec![Predicate::System(SystemPredicate::Hash {
+            hashes: FileHashes::Sha256(hashes),
+            inclusive: true,
+        })];
+    }
+
+    fn sha256s(&self, files: &[HashId]) -> std::collections::BTreeSet<hydrus_core::Sha256> {
+        self.store
+            .read(|c| hydrus_store::master::hashes(c, files))
+            .map(|hashes| hashes.into_values().collect())
+            .unwrap_or_default()
     }
 
     pub fn results(&self) -> &[HashId] {
@@ -433,6 +551,9 @@ impl SearchPage {
             self.error = Some("this page has no search".into());
             return false;
         }
+        if self.locked {
+            return false;
+        }
         let parsed = match parse_api_search(&serde_json::json!([text])) {
             Ok(parsed) => parsed,
             Err(e) => {
@@ -453,7 +574,7 @@ impl SearchPage {
     }
 
     pub fn remove_predicate(&mut self, index: usize) {
-        if index < self.predicates.len() {
+        if !self.locked && index < self.predicates.len() {
             self.predicates.remove(index);
             if self.synchronised {
                 self.search();
@@ -484,9 +605,10 @@ impl SearchPage {
         self.count_tags();
     }
 
-    /// Search again (the menu's "refresh"), if the page has a search.
+    /// Search again (the menu's "refresh"), if the page has a search that
+    /// isn't locked.
     pub fn refresh(&mut self) {
-        if self.note.is_none() && !self.predicates.is_empty() {
+        if self.note.is_none() && !self.locked && !self.predicates.is_empty() {
             self.search();
         }
     }

@@ -122,6 +122,7 @@ pub enum PageInputContent {
         search: hydrus_core::search::context::FileSearchContext,
         synchronised: bool,
         sort: Option<hydrus_core::pages::PageSort>,
+        lock: Option<hydrus_core::pages::HashLock>,
     },
     /// Showing the queues of `downloader_pages[index]`.
     Downloader {
@@ -1148,10 +1149,12 @@ impl Copier<'_> {
                     search,
                     synchronised,
                     sort,
+                    lock,
                 } => PageContent::Search {
                     search: search.clone(),
                     synchronised: *synchronised,
                     sort: sort.clone(),
+                    lock: *lock,
                 },
                 PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
                     kind: *kind,

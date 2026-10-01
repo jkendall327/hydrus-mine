@@ -58,6 +58,10 @@ pub enum PageContent {
         /// keeps its files until searched again.
         synchronised: bool,
         sort: Option<PageSort>,
+        /// Whether the search is locked to a `system:hash` of the page's
+        /// files.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        lock: Option<HashLock>,
     },
     /// A downloader page, showing these import queues (`queues` ids).
     Downloader {
@@ -78,6 +82,26 @@ pub enum PageContent {
         stored: Option<serde_json::Value>,
         sort: Option<PageSort>,
     },
+}
+
+/// A search page's search locked to a `system:hash` of its files (the
+/// reference's `system_hash_locked`): the page doesn't search, and the
+/// hash takes in files added to the page and lets go of those removed
+/// from it, as these say.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct HashLock {
+    pub syncs_new: bool,
+    pub syncs_removes: bool,
+}
+
+impl Default for HashLock {
+    /// The reference's: both.
+    fn default() -> Self {
+        Self {
+            syncs_new: true,
+            syncs_removes: true,
+        }
+    }
 }
 
 impl PageContent {
@@ -238,12 +262,26 @@ mod tests {
                             by: PageSortBy::System(2),
                             ascending: false,
                         }),
+                        lock: Some(HashLock {
+                            syncs_new: false,
+                            syncs_removes: true,
+                        }),
                     },
                 }]),
             }],
         };
         let json = serde_json::to_string(&session).unwrap();
         assert_eq!(serde_json::from_str::<Session>(&json).unwrap(), session);
+        // a session saved before pages could be locked reads as unlocked
+        let mut unlocked = session.clone();
+        if let PageContent::Pages(children) = &mut unlocked.pages[0].content
+            && let PageContent::Search { lock, .. } = &mut children[0].content
+        {
+            *lock = None;
+        }
+        let old = json.replace(r#","lock":{"syncs_new":false,"syncs_removes":true}"#, "");
+        assert_ne!(old, json);
+        assert_eq!(serde_json::from_str::<Session>(&old).unwrap(), unlocked);
         let names: Vec<&str> = session
             .all_pages()
             .iter()

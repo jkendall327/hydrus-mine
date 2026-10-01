@@ -606,10 +606,46 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 window.set_question(SharedString::new());
             }
             if let Some(asked) = asked.filter(|_| yes) {
+                if let Asked::LockSearch(_) = asked {
+                    page().borrow_mut().lock_search();
+                    shown(false);
+                    return;
+                }
                 let store = page().borrow().store().clone();
                 asked.act(&store, &*removed);
                 shown(false);
             }
+        }
+    });
+    // the search's lock (the reference's lock button, and the lock box's
+    // unlock button and cog)
+    window.on_lock_search({
+        let page = page.clone();
+        let ask = ask.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let question = page.borrow().lock_question();
+            if let Some(question) = question {
+                ask(Asked::LockSearch(question));
+            } else {
+                page.borrow_mut().lock_search();
+                shown(false);
+            }
+        }
+    });
+    window.on_unlock_search({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().unlock();
+            shown(false);
+        }
+    });
+    window.on_lock_syncs_changed({
+        let page = page.clone();
+        move |syncs_new, syncs_removes| {
+            page().borrow_mut().set_lock_syncs(syncs_new, syncs_removes);
         }
     });
     // F12: the archive/delete filter, on the files selected, else them all
@@ -1155,6 +1191,8 @@ enum Asked {
         media_actions::Deletion,
         hydrus_search::LocationContext,
     ),
+    /// Locking the page's search to its files, asking this.
+    LockSearch(&'static str),
 }
 
 impl Asked {
@@ -1173,6 +1211,7 @@ impl Asked {
             Self::Archive(files) => format!("Archive {} files?", count(files)),
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
+            Self::LockSearch(question) => (*question).to_owned(),
         }
     }
 
@@ -1194,6 +1233,8 @@ impl Asked {
                     }
                 })
             }
+            // (the page locks itself)
+            Self::LockSearch(_) => Ok(()),
         };
         if let Err(e) = done {
             eprintln!("could not change the files: {e}");
@@ -1697,6 +1738,20 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
         ModelRc::default()
     });
     window.set_can_filter(page.duplicates().is_some());
+    window.set_can_lock_search(page.note().is_none());
+    let lock = page.lock();
+    window.set_search_locked(lock.is_some());
+    if let Some(lock) = lock {
+        window.set_lock_label(
+            format!(
+                "Locked at {} files.",
+                hydrus_core::numbers::human_int(page.locked_count() as u64)
+            )
+            .into(),
+        );
+        window.set_lock_syncs_new(lock.syncs_new);
+        window.set_lock_syncs_removes(lock.syncs_removes);
+    }
     let colours: hydrus_core::tag_presentation::NamespaceColours = page
         .store()
         .read(hydrus_store::settings::get)

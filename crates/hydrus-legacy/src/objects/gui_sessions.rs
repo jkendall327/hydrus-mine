@@ -136,6 +136,19 @@ pub struct LegacyQueryPage {
     /// Whether the page searches as its predicates change (unsynchronised,
     /// it keeps its files until searched again).
     pub synchronised: bool,
+    /// Whether the search is locked to its `system:hash`
+    /// (`system_hash_locked`).
+    pub hash_locked: bool,
+    /// Whether that hash takes in files added to the page and lets go of
+    /// those removed from it (kept while unlocked).
+    pub lock_syncs: LegacyHashLock,
+}
+
+/// A search page's `system_hash_locked_syncs_new` and `_syncs_removes`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LegacyHashLock {
+    pub syncs_new: bool,
+    pub syncs_removes: bool,
 }
 
 /// A URL page's importer (`URLsImport`).
@@ -301,13 +314,19 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         Some(Meta::Object(object)) => Ok(object.as_ref()),
         _ => Err(malformed(k, format!("the page has no {wanted}"))),
     };
+    let flag = |name: &str, default: bool| match variable(name) {
+        Some(Meta::Json(value)) => boolean(k, value, name),
+        _ => Ok(default),
+    };
     let content = match page_type {
         page_type::QUERY => PageContent::Query(LegacyQueryPage {
             search: FileSearchContext::from_object(object_variable("file_search_context")?)?,
-            // the reference's default for a page that predates the option
-            synchronised: match variable("synchronised") {
-                Some(Meta::Json(value)) => boolean(k, value, "synchronised")?,
-                _ => true,
+            // the reference's defaults for a page that predates the options
+            synchronised: flag("synchronised", true)?,
+            hash_locked: flag("system_hash_locked", false)?,
+            lock_syncs: LegacyHashLock {
+                syncs_new: flag("system_hash_locked_syncs_new", true)?,
+                syncs_removes: flag("system_hash_locked_syncs_removes", true)?,
             },
         }),
         page_type::URLS => PageContent::Urls(urls_import(object_variable("urls_import")?)?),
@@ -318,10 +337,6 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
             "multiple_watcher_import",
         )?)?),
         page_type::DUPLICATE_FILTER => {
-            let flag = |name: &str, default: bool| match variable(name) {
-                Some(Meta::Json(value)) => boolean(k, value, name),
-                _ => Ok(default),
-            };
             PageContent::Duplicates(LegacyDuplicatesPage {
                 search: PotentialsSearch::from_object(object_variable(
                     "potential_duplicates_search_context",

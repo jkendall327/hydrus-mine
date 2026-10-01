@@ -177,7 +177,9 @@ impl Pages {
                 search,
                 synchronised,
                 sort,
-            } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files),
+                lock,
+            } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files)
+                .with_lock(lock),
             PageContent::Downloader { kind, queues, sort } => {
                 // (and what the reference's says while empty)
                 let (kind, empty) = match kind {
@@ -311,29 +313,46 @@ impl Pages {
 
     /// Open `files` in a new page searching `location` (the reference's
     /// "open in a new page", `ShowFilesInNewPage`), at the far right of
-    /// the current notebook, and show it.
+    /// the current notebook, and show it. Its search is locked to a
+    /// `system:hash` of them, as the reference's `NewPageQuery` locks a
+    /// page opened on files.
     pub fn open_files(
         &mut self,
         location: hydrus_search::LocationContext,
         files: Vec<hydrus_core::HashId>,
     ) {
+        let hashes = self
+            .store
+            .read(|c| hydrus_store::master::hashes(c, &files))
+            .unwrap_or_default();
         let mut page = new_search_page();
         let PageContent::Search {
             search,
             synchronised,
+            lock,
             ..
         } = &mut page.content
         else {
             unreachable!("a search page");
         };
         search.location = location;
+        search.predicates = vec![hydrus_search::Predicate::System(
+            hydrus_core::search::predicate::SystemPredicate::Hash {
+                hashes: hydrus_core::search::predicate::FileHashes::Sha256(
+                    hashes.into_values().collect(),
+                ),
+                inclusive: true,
+            },
+        )];
+        *lock = Some(hydrus_core::pages::HashLock::default());
         let opened = SearchPage::restored(
             self.store.clone(),
             search.clone(),
             *synchronised,
             None,
             files,
-        );
+        )
+        .with_lock(*lock);
         self.open.insert(page.key, Rc::new(RefCell::new(opened)));
         self.add(page);
     }
@@ -649,6 +668,7 @@ fn new_search_page() -> Page {
             },
             synchronised: true,
             sort: None,
+            lock: None,
         },
     }
 }

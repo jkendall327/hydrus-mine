@@ -385,6 +385,25 @@ def page_manager_facts( page ):
     return facts
 
 
+def locked_page( i ):
+    """A search page locked to a system:hash of its files, as "open in a new
+    page" makes one (made after the others, so their random draws are
+    unchanged), with what the hash follows set at random."""
+
+    hashes = tuple( bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 1, 4 ) ) )
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY )
+    predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_SYSTEM_HASH, ( hashes, 'sha256' ) ) ]
+    file_search_context = ClientSearchFileSearchContext.FileSearchContext( location_context = location_context, tag_context = ClientSearchTagContext.TagContext(), predicates = predicates )
+    file_search_context.SetComplete()
+
+    page = ClientGUIPageManager.CreatePageManagerQuery( 'files', file_search_context, start_system_hash_locked = True )
+    page.SetVariable( 'system_hash_locked_syncs_new', rng.random() < 0.5 )
+    page.SetVariable( 'system_hash_locked_syncs_removes', rng.random() < 0.5 )
+
+    return page
+
+
 # sessions
 
 def session( i ):
@@ -462,6 +481,7 @@ def main():
     }
 
     fixture[ 'duplicates_pages' ] = cases( duplicates_page, page_manager_facts, 6 )
+    fixture[ 'locked_pages' ] = cases( locked_page, page_manager_facts, 4 )
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )
