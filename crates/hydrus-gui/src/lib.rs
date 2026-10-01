@@ -1729,6 +1729,7 @@ fn open_viewer(
     window.on_seek_delta({
         let playback = playback.clone();
         let animator = animator.clone();
+        let scanbar = scanbar.clone();
         move |direction, step| {
             let step = u64::try_from(step).unwrap_or(0);
             match scanbar.get() {
@@ -1759,6 +1760,33 @@ fn open_viewer(
         move || {
             model.borrow_mut().previous();
             show();
+        }
+    });
+    window.on_first({
+        let model = model.clone();
+        let show = show.clone();
+        move || {
+            model.borrow_mut().first();
+            show();
+        }
+    });
+    window.on_last({
+        let model = model.clone();
+        let show = show.clone();
+        move || {
+            model.borrow_mut().last();
+            show();
+        }
+    });
+    // ctrl+b and ctrl+n, for a file with a scanbar (`GotoPreviousOrNextFrame`)
+    window.on_frame_step({
+        let playback = playback.clone();
+        let animator = animator.clone();
+        let scanbar = scanbar.clone();
+        move |direction| match scanbar.get() {
+            Some((_, false)) => playback.frame_step(direction),
+            Some((_, true)) => animator.step(direction),
+            None => {}
         }
     });
     // F3: manage the file's tags; once applied, the hover frame's and the

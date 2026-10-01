@@ -68,6 +68,41 @@ fn a_video_plays_into_frames_at_the_size_asked() {
         (position - target).abs() <= 100.0,
         "{position} for {target}"
     );
+    // a frame on and a frame back (ctrl+n and ctrl+b), paused there
+    let moved = |from: f64, on: bool| {
+        let started = Instant::now();
+        while started.elapsed() < Duration::from_secs(10) {
+            if let Some(now) = player.position_ms()
+                && (if on { now > from } else { now < from })
+            {
+                return Some(now);
+            }
+            std::thread::sleep(Duration::from_millis(20));
+        }
+        None
+    };
+    // (where it rests, once the seek or step before has finished: a step
+    // asked mid-seek may be lost to it)
+    let settled = || {
+        let started = Instant::now();
+        let mut last = player.position_ms();
+        while started.elapsed() < Duration::from_secs(10) {
+            std::thread::sleep(Duration::from_millis(200));
+            let now = player.position_ms();
+            if now.is_some() && now == last {
+                return now;
+            }
+            last = now;
+        }
+        last
+    };
+    let before = settled().expect("where the seek left it");
+    player.frame_step(1).unwrap();
+    moved(before, true).expect("a frame on");
+    let on = settled().expect("where the step left it");
+    assert!(player.paused());
+    player.frame_step(-1).unwrap();
+    moved(on, false).expect("a frame back");
     player.toggle_pause().unwrap();
     assert!(!player.paused());
 

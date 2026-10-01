@@ -235,6 +235,29 @@ impl Animator {
         self.goto(index);
     }
 
+    /// Go a frame on (`direction` 1) or back (-1), round from the last to
+    /// the first and back (`GotoPreviousOrNextFrame`).
+    pub fn step(self: &Rc<Self>, direction: i32) {
+        let index = {
+            let running = self.running.borrow();
+            let Some(running) = running.as_ref() else {
+                return;
+            };
+            let Status { index, frames, .. } = running.status;
+            if frames == 0 {
+                return;
+            }
+            if direction < 0 {
+                index.checked_sub(1).unwrap_or(frames - 1)
+            } else if index + 1 >= frames {
+                0
+            } else {
+                index + 1
+            }
+        };
+        self.goto(index);
+    }
+
     pub fn set_paused(self: &Rc<Self>, paused: bool) {
         let resumed = {
             let mut running = self.running.borrow_mut();

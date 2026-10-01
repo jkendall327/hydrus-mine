@@ -78,6 +78,16 @@ impl MediaViewer {
         self.index = self.index.checked_sub(1).unwrap_or(self.files.len() - 1);
     }
 
+    /// The first file (`SIMPLE_VIEW_FIRST`).
+    pub fn first(&mut self) {
+        self.index = 0;
+    }
+
+    /// The last file (`SIMPLE_VIEW_LAST`).
+    pub fn last(&mut self) {
+        self.index = self.files.len() - 1;
+    }
+
     /// The window's title, e.g. `3/31`.
     pub fn caption(&self) -> String {
         format!("{}/{}", self.index + 1, self.files.len())

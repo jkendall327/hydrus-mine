@@ -339,6 +339,16 @@ impl Player {
         self.flag(c"pause")
     }
 
+    /// A frame on (`direction` 1) or back (-1), as the reference's
+    /// `GotoPreviousOrNextFrame` asks mpv (which pauses on it).
+    pub fn frame_step(&self, direction: i32) -> Result<(), String> {
+        self.command(&[if direction < 0 {
+            "frame-back-step"
+        } else {
+            "frame-step"
+        }])
+    }
+
     /// Play at `volume` (0 to 100), muted or not.
     pub fn set_audio(&self, volume: u8, mute: bool) -> Result<(), String> {
         self.command(&["set", "volume", &volume.min(100).to_string()])?;

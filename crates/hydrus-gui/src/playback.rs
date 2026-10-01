@@ -124,6 +124,15 @@ impl Playback {
         }
     }
 
+    /// A frame on (1) or back (-1).
+    pub fn frame_step(&self, direction: i32) {
+        if let Some(player) = self.player.borrow().as_ref()
+            && let Err(e) = player.frame_step(direction)
+        {
+            eprintln!("could not step a frame: {e}");
+        }
+    }
+
     /// Play at `volume` (0 to 100), muted or not, from now on.
     pub fn set_audio(&self, volume: u8, mute: bool) {
         self.audio.set((volume, mute));

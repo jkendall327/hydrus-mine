@@ -168,8 +168,9 @@ your hydrus frame for it says; f switches between fullscreen and the
 window it was, and its size and place are kept as it closes if you had
 hydrus's option for that on), at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
-(or page down and up, or the mouse wheel) move through the page's files,
-round from the last to the first as in the reference, and escape or enter
+(or down and up, page down and up, or the mouse wheel) move through the
+page's files, round from the last to the first as in the reference, home
+and end go to the first and the last, and escape, enter or a middle click
 closes it. As the reference's default shortcuts have it, z switches between
 100% and fitting the window, + and - (or ctrl and the mouse wheel) step
 through your zoom levels and canvas fit, keeping the point under the
@@ -196,12 +197,14 @@ Under a file mpv plays, the reference's scanbar shows how far through it
 is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
 text), a thin line until the pointer comes near the file's bottom, then
 full height; a click or drag on it seeks there, and ctrl and left or right
-seek back 2.5 seconds or on 5 (past the end, round to the start), as the
-reference's defaults have it. Ugoiras and animated WebP, which the client
+seek back 2.5 seconds or on 5 (past the end, round to the start), and
+ctrl+b and ctrl+n go a frame back or on (mpv's frame steps, which pause),
+as the reference's defaults have it. Ugoiras and animated WebP, which the client
 plays itself, have the scanbar too, by frame: a click or drag goes to the
 frame under the pointer, and ctrl and the arrows go to the frame showing
 that much earlier or later (or if that is the frame shown, the one
-before or after it), timed as the reference times them (a WebP's frames
+before or after it), and ctrl+b and ctrl+n a frame back or on, round
+the ends, timed as the reference times them (a WebP's frames
 by its frame chunks). Playing pauses while the scanbar is dragged and
 resumes when it is let go, as in the reference. A file mpv plays that has
 sound plays at your hydrus volume (70 by default; the media viewer's own

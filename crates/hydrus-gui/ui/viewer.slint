@@ -1,7 +1,9 @@
 // The media viewer's window: one file, at its default zoom (fitted to the
-// window, by default). Right and left (or page down and up, or the mouse
-// wheel) move through the page's files; space pauses and plays video;
-// escape or enter closes it. As the reference's default shortcuts have it,
+// window, by default). Right and left (or down and up, page down and up,
+// or the mouse wheel) move through the page's files, home and end to the
+// first and last; space pauses and plays video, and ctrl+b and ctrl+n go
+// a frame back or on; f switches fullscreen; escape, enter or a middle
+// click closes it. As the reference's default shortcuts have it,
 // z switches between 100% and fitting the window, + and - (or ctrl and the
 // mouse wheel) zoom in and out, and shift and the arrow keys (or dragging)
 // move the file. Under a file that plays, its scanbar shows how far through
@@ -114,6 +116,11 @@ export component MediaViewerWindow inherits Window {
     callback audio-changed();
     // f: between fullscreen and the window it was
     callback toggle-fullscreen();
+    // home and end: the first file and the last
+    callback first();
+    callback last();
+    // a frame back (-1) or on (1)
+    callback frame-step(int);
     // the volume a point on the volume control's track (`top` to `top` +
     // `track`, loudest at the top) sets
     pure function volume-at(y: length, top: length, track: length) -> int {
@@ -237,12 +244,29 @@ export component MediaViewerWindow inherits Window {
                 root.zoom(-1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
                 return accept;
             }
-            if (event.text == Key.RightArrow || event.text == Key.PageDown) {
+            // ctrl+b and ctrl+n: a frame back or on, in a file with a scanbar
+            if (event.modifiers.control && (event.text == "b" || event.text == "B")) {
+                root.frame-step(-1);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "n" || event.text == "N")) {
+                root.frame-step(1);
+                return accept;
+            }
+            if (event.text == Key.RightArrow || event.text == Key.DownArrow || event.text == Key.PageDown) {
                 root.next();
                 return accept;
             }
-            if (event.text == Key.LeftArrow || event.text == Key.PageUp) {
+            if (event.text == Key.LeftArrow || event.text == Key.UpArrow || event.text == Key.PageUp) {
                 root.previous();
+                return accept;
+            }
+            if (event.text == Key.Home) {
+                root.first();
+                return accept;
+            }
+            if (event.text == Key.End) {
+                root.last();
                 return accept;
             }
             if (event.text == " ") {
@@ -277,6 +301,10 @@ export component MediaViewerWindow inherits Window {
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                     root.drag-x = self.mouse-x;
                     root.drag-y = self.mouse-y;
+                }
+                // as the reference's default: a middle click closes it
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
+                    root.close-requested();
                 }
             }
             moved => {

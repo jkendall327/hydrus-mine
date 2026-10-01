@@ -184,6 +184,19 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
                     "{direction} {step}"
                 );
             }
+            // ctrl+b and ctrl+n: a frame back or on, round the ends
+            for (direction, wanted) in [
+                (-1, "5/5 - 0.300/0.400"),
+                (1, "1/5 - 0.000/0.400"),
+                (1, "2/5 - 0.060/0.400"),
+            ] {
+                viewer.invoke_frame_step(direction);
+                assert_eq!(
+                    scanbar_reaches(&viewer, wanted),
+                    wanted,
+                    "frame step {direction}"
+                );
+            }
         }
         assert_eq!(
             watch(&viewer, Duration::from_millis(200)).len(),
