@@ -97,6 +97,33 @@ pub fn purge_deleted_media(store: &Store, batch: usize) -> Result<PurgeReport> {
     })
 }
 
+/// Drop and rebuild every derived table from the primary ones (ADR-6):
+/// the subtags' word and number indexes, the notes' full-text index and
+/// the autocomplete counts, so a derived-data bug is never data loss.
+pub fn rebuild_caches(conn: &rusqlite::Connection) -> Result<()> {
+    conn.execute_batch(
+        "DELETE FROM cache_subtag_words;
+         DELETE FROM cache_searchable_subtags;
+         DELETE FROM cache_integer_subtags;
+         INSERT INTO cache_note_fts (cache_note_fts) VALUES ('delete-all');",
+    )?;
+    {
+        let mut stmt = conn.prepare("SELECT subtag_id, subtag FROM subtags")?;
+        let rows = stmt.query_map([], |r| {
+            Ok((
+                r.get::<_, hydrus_core::SubtagId>(0)?,
+                r.get::<_, String>(1)?,
+            ))
+        })?;
+        for row in rows {
+            let (id, subtag) = row?;
+            crate::master::index_subtag(conn, id, &subtag)?;
+        }
+    }
+    conn.execute_batch("INSERT INTO cache_note_fts (rowid, note) SELECT note_id, note FROM notes")?;
+    crate::counts::rebuild_all(conn)
+}
+
 fn remove_if_present(path: &std::path::Path, recycle: bool) -> Result<bool> {
     match std::fs::symlink_metadata(path) {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(false),
@@ -161,6 +188,56 @@ mod tests {
                 w.delete_files(storage, &[id], None)
             })
             .unwrap();
+    }
+
+    /// Every derived table's rows, by table.
+    fn derived_rows(store: &Store) -> Vec<(String, Vec<String>)> {
+        store
+            .read(|c| {
+                let tables: Vec<String> = c
+                    .prepare(
+                        "SELECT name FROM sqlite_master WHERE type = 'table'
+                         AND (name LIKE 'cache%' OR name LIKE '%counts%')
+                         AND name NOT LIKE 'cache_note_fts%' ORDER BY name",
+                    )?
+                    .query_map([], |r| r.get(0))?
+                    .collect::<rusqlite::Result<_>>()?;
+                let mut out = Vec::new();
+                for table in tables.into_iter().chain(["cache_note_fts".to_owned()]) {
+                    let sql = if table == "cache_note_fts" {
+                        "SELECT rowid FROM cache_note_fts".to_owned()
+                    } else {
+                        format!("SELECT * FROM {table}")
+                    };
+                    let mut stmt = c.prepare(&sql)?;
+                    let width = stmt.column_count();
+                    let mut rows: Vec<String> = stmt
+                        .query_map([], |r| {
+                            (0..width)
+                                .map(|i| {
+                                    r.get::<_, rusqlite::types::Value>(i)
+                                        .map(|v| format!("{v:?}"))
+                                })
+                                .collect::<rusqlite::Result<Vec<_>>>()
+                                .map(|v| v.join("|"))
+                        })?
+                        .collect::<rusqlite::Result<_>>()?;
+                    rows.sort();
+                    out.push((table, rows));
+                }
+                Ok(out)
+            })
+            .unwrap()
+    }
+
+    #[test]
+    fn rebuilding_the_caches_gives_the_same_caches() {
+        let (_source, dest_dir, _db) = import_basic();
+        let store = Store::open(dest_dir.path()).unwrap();
+        let before = derived_rows(&store);
+        assert!(before.iter().any(|(_, rows)| !rows.is_empty()));
+        store.write(|ctx| rebuild_caches(ctx.conn())).unwrap();
+        assert_eq!(derived_rows(&store), before);
     }
 
     #[test]

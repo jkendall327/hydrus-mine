@@ -59,6 +59,13 @@ enum Command {
         #[arg(long)]
         bind: Option<IpAddr>,
     },
+    /// Upkeep of the store's own data.
+    Maintenance {
+        /// The hydrus-rs store directory.
+        dir: PathBuf,
+        #[command(subcommand)]
+        action: MaintenanceAction,
+    },
     /// Delete from disk the files that were deleted from local storage (to
     /// the recycle bin, if hydrus's "delete to recycle bin" option was on).
     Purge { dir: PathBuf },
@@ -134,6 +141,13 @@ enum Command {
         #[arg(value_enum)]
         what: pauses::What,
     },
+}
+
+#[derive(Subcommand)]
+enum MaintenanceAction {
+    /// Drop and rebuild every derived table (autocomplete counts and word
+    /// indexes, the notes' search index) from the primary data.
+    RebuildCaches,
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -240,6 +254,17 @@ fn main() -> Result<()> {
         }
         Command::Pause { dir, what } => pauses::run(&dir, what, true),
         Command::Resume { dir, what } => pauses::run(&dir, Some(what), false),
+        Command::Maintenance {
+            dir,
+            action: MaintenanceAction::RebuildCaches,
+        } => {
+            let _lock = lock_store(&dir, "rebuilding the caches")?;
+            let store = Store::open(&dir)?;
+            let started = std::time::Instant::now();
+            store.write(|ctx| hydrus_store::maintenance::rebuild_caches(ctx.conn()))?;
+            println!("rebuilt the caches in {:.1?}", started.elapsed());
+            Ok(())
+        }
         Command::Purge { dir } => {
             let _lock = lock_store(&dir, "a purge")?;
             let store = Store::open(&dir)?;

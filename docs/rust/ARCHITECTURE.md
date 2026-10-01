@@ -90,8 +90,9 @@ wrong by these tests.
 Every derived table (autocomplete counts, text indexes, similarity trees, ...)
 has exactly two code paths: *rebuild from primary data* and *apply an
 incremental change*. Property tests generate random operation sequences and
-assert `incremental == rebuild`. A maintenance command can drop and rebuild any
-derived table, so a derived-data bug is never data loss.
+assert `incremental == rebuild`. `hydrus maintenance <store> rebuild-caches`
+drops and rebuilds every derived table, so a derived-data bug is never data
+loss.
 
 ### ADR-7: Serialised objects are typed
 
@@ -131,9 +132,9 @@ The GUI came last, in Slint (see `DECISIONS.md` and `GUI.md`).
 
 ## Parity ratchet
 
-`parity/manifest.toml` enumerates the user-visible surface (API endpoints,
-system predicates, file types, services, maintenance jobs, ...), each with a
-status. `cargo xtask ratchet` recomputes the numbers from the manifest and the
+`parity/manifest.toml` enumerates part of the user-visible surface (Client
+API endpoints, system predicates and file types), each with a status. Gaps
+elsewhere (background jobs, options) are tracked as GitHub issues. `cargo xtask ratchet` recomputes the numbers from the manifest and the
 conformance results, and fails if anything that previously passed no longer
 does, or if a count goes down. Raising the baseline is part of the change that
 earns it.

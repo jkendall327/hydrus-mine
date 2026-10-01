@@ -17,12 +17,12 @@ use std::path::{Path, PathBuf};
 use rusqlite::{Connection, OpenFlags, OptionalExtension, params};
 
 use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
-use hydrus_core::{ServiceId, ServiceKey, ServiceType, SubtagId};
+use hydrus_core::{ServiceId, ServiceKey, ServiceType};
 
 use crate::error::{Result, StoreError};
 use crate::network::{self, Cookie, CustomHeader, NetworkContext};
 use crate::services::{self, ServiceKind};
-use crate::{counts, master, queues, schema, subscriptions};
+use crate::{queues, schema, subscriptions};
 
 mod decode;
 
@@ -1281,20 +1281,7 @@ impl Copier<'_> {
     }
 
     fn derived(&mut self) -> Result<()> {
-        // autocomplete word index and integer values for every subtag
-        let mut stmt = self.conn.prepare("SELECT subtag_id, subtag FROM subtags")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((r.get::<_, SubtagId>(0)?, r.get::<_, String>(1)?))
-        })?;
-        for row in rows {
-            let (id, subtag) = row?;
-            master::index_subtag(self.conn, id, &subtag)?;
-        }
-        self.conn.execute_batch(
-            "INSERT INTO cache_note_fts (rowid, note) SELECT note_id, note FROM notes",
-        )?;
-        counts::rebuild_all(self.conn)?;
-        Ok(())
+        crate::maintenance::rebuild_caches(self.conn)
     }
 }
 
