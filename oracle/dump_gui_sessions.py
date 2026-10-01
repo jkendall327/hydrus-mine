@@ -404,6 +404,27 @@ def locked_page( i ):
     return page
 
 
+def collected_page( i ):
+    """A search page collecting its files (made after the others, so their
+    random draws are unchanged): by some namespaces, and some unmatched
+    files collected or not."""
+
+    page = page_manager_query_for_collect()
+    namespaces = rng.sample( [ 'series', 'creator', 'title', 'page', 'chapter' ], rng.randint( 1, 3 ) )
+    rating_service_keys = [ bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 0, 2 ) ) ]
+    page.SetVariable( 'media_collect', ClientMediaCollect.MediaCollect( namespaces = namespaces, rating_service_keys = rating_service_keys, collect_unmatched = rng.random() < 0.5 ) )
+
+    return page
+
+
+def page_manager_query_for_collect():
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY )
+    file_search_context = ClientSearchFileSearchContext.FileSearchContext( location_context = location_context, tag_context = ClientSearchTagContext.TagContext(), predicates = [] )
+
+    return ClientGUIPageManager.CreatePageManagerQuery( 'files', file_search_context )
+
+
 # sessions
 
 def session( i ):
@@ -482,6 +503,7 @@ def main():
 
     fixture[ 'duplicates_pages' ] = cases( duplicates_page, page_manager_facts, 6 )
     fixture[ 'locked_pages' ] = cases( locked_page, page_manager_facts, 4 )
+    fixture[ 'collected_pages' ] = cases( collected_page, page_manager_facts, 4 )
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )

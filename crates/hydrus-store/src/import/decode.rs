@@ -217,6 +217,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .iter()
             .map(page_sort)
             .collect();
+        if let Some(collect) = &options.default_collect {
+            sorts.default_collect = page_collect(collect);
+        }
     }
     insert_setting(&mut input, &sorts)?;
     let mut network = crate::network::NetworkSettings::default();
@@ -1713,6 +1716,11 @@ impl SessionContext<'_> {
         };
         let page = data.page;
         let sort = page.sort.as_ref().map(page_sort);
+        let collect = page
+            .collect
+            .as_ref()
+            .map(page_collect)
+            .filter(hydrus_core::pages::PageCollect::collects);
         let hashes = data
             .hashes
             .iter()
@@ -1734,6 +1742,7 @@ impl SessionContext<'_> {
                             syncs_new: q.lock_syncs.syncs_new,
                             syncs_removes: q.lock_syncs.syncs_removes,
                         }),
+                        collect,
                     },
                     Err(e) => {
                         self.input.warnings.push(format!(
@@ -1894,6 +1903,15 @@ pub(super) fn file_search_for_tests(
     f: &legacy::FileSearchContext,
 ) -> hydrus_core::search::context::FileSearchContext {
     file_search(f, &|_| None).unwrap()
+}
+
+/// A legacy page collect in our page model.
+fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageCollect {
+    hydrus_core::pages::PageCollect {
+        namespaces: collect.namespaces.clone(),
+        ratings: collect.rating_service_keys.clone(),
+        collect_unmatched: collect.collect_unmatched,
+    }
 }
 
 /// A legacy page sort in our page model.

@@ -244,6 +244,11 @@ impl SearchPage {
                 synchronised: self.synchronised,
                 sort,
                 lock: self.lock(),
+                // (kept as opened: the page doesn't collect yet)
+                collect: match opened_from {
+                    PageContent::Search { collect, .. } => collect.clone(),
+                    _ => None,
+                },
             },
             PageContent::Downloader { kind, queues, .. } => PageContent::Downloader {
                 kind: *kind,

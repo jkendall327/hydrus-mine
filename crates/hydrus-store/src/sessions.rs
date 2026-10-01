@@ -117,6 +117,7 @@ mod tests {
                 synchronised: true,
                 sort: None,
                 lock: None,
+                collect: None,
             },
         }
     }

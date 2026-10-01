@@ -123,6 +123,7 @@ pub enum PageInputContent {
         synchronised: bool,
         sort: Option<hydrus_core::pages::PageSort>,
         lock: Option<hydrus_core::pages::HashLock>,
+        collect: Option<hydrus_core::pages::PageCollect>,
     },
     /// Showing the queues of `downloader_pages[index]`.
     Downloader {
@@ -1150,11 +1151,13 @@ impl Copier<'_> {
                     synchronised,
                     sort,
                     lock,
+                    collect,
                 } => PageContent::Search {
                     search: search.clone(),
                     synchronised: *synchronised,
                     sort: sort.clone(),
                     lock: *lock,
+                    collect: collect.clone(),
                 },
                 PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
                     kind: *kind,
@@ -1611,6 +1614,11 @@ pub(crate) mod tests {
         assert_eq!(
             input.settings["pages"],
             serde_json::json!({"duplicate_filter_uses_all_my_files": true})
+        );
+        // the reference's default: no collecting
+        assert_eq!(
+            input.settings["sorts"]["default_collect"],
+            serde_json::json!({"namespaces": [], "ratings": [], "collect_unmatched": true})
         );
         // recorded, counting the media viewer and the Client API
         assert_eq!(

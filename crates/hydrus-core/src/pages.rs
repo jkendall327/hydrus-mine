@@ -62,6 +62,9 @@ pub enum PageContent {
         /// files.
         #[serde(default, skip_serializing_if = "Option::is_none")]
         lock: Option<HashLock>,
+        /// How the page collects its files, if it does.
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        collect: Option<PageCollect>,
     },
     /// A downloader page, showing these import queues (`queues` ids).
     Downloader {
@@ -238,6 +241,8 @@ pub struct SortSettings {
     pub fallback_sort: PageSort,
     /// `default_namespace_sorts`.
     pub namespace_sorts: Vec<PageSort>,
+    /// How a new page collects (`default_collect`).
+    pub default_collect: PageCollect,
 }
 
 impl Default for SortSettings {
@@ -265,6 +270,7 @@ impl Default for SortSettings {
                 namespaces(["series", "creator", "title", "volume", "chapter", "page"]),
                 namespaces(["creator", "series", "title", "volume", "chapter", "page"]),
             ],
+            default_collect: PageCollect::default(),
         }
     }
 }
@@ -343,6 +349,11 @@ mod tests {
                         lock: Some(HashLock {
                             syncs_new: false,
                             syncs_removes: true,
+                        }),
+                        collect: Some(PageCollect {
+                            namespaces: vec!["series".into()],
+                            ratings: Vec::new(),
+                            collect_unmatched: false,
                         }),
                     },
                 }]),

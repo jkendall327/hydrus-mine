@@ -16,7 +16,7 @@ use hydrus_core::subscriptions::CheckerOptions;
 use super::auto_resolution::PotentialsSearch;
 use super::domain::expect;
 use super::favourites::FileSearchContext;
-use super::sort::MediaSort;
+use super::sort::{MediaCollect, MediaSort};
 use super::subscriptions::{
     LegacyFileSeed, LegacyGallerySeed, checker_options, file_seed_cache, gallery_seed_log,
     service_keys_to_tags,
@@ -101,6 +101,8 @@ pub struct LegacyPage {
     pub page_type: i64,
     /// How the page sorts its files, if it could be read.
     pub sort: Option<MediaSort>,
+    /// How the page collects its files, if it could be read.
+    pub collect: Option<MediaCollect>,
     pub content: PageContent,
 }
 
@@ -357,10 +359,14 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
     let sort = object_variable("media_sort")
         .ok()
         .and_then(|object| MediaSort::from_object(object).ok());
+    let collect = object_variable("media_collect")
+        .ok()
+        .and_then(|object| MediaCollect::from_object(object).ok());
     Ok(LegacyPage {
         name,
         page_type,
         sort,
+        collect,
         content,
     })
 }

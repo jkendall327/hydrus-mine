@@ -16,7 +16,7 @@ use hydrus_legacy::objects::gui_sessions::{
 };
 use hydrus_legacy::objects::import_options::slice;
 use hydrus_legacy::objects::subscriptions::checker_options;
-use hydrus_legacy::objects::{FileSearchContext, MediaSort};
+use hydrus_legacy::objects::{FileSearchContext, MediaCollect, MediaSort};
 
 mod common;
 use common::seeds::{file_seed_facts, gallery_seed_facts, object, service_tags, sorted};
@@ -179,6 +179,11 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
             MediaSort::from_object(o).unwrap()
         });
     }
+    if let Some(collect) = &p.collect {
+        content["media_collect"] = same(collect, &variables["media_collect"], |o| {
+            MediaCollect::from_object(o).unwrap()
+        });
+    }
     json!({ "name": p.name, "type": p.page_type, "content": content })
 }
 
@@ -195,6 +200,7 @@ fn expected_page_facts(expected: &Json) -> Json {
         "system_hash_locked_syncs_new",
         "system_hash_locked_syncs_removes",
         "media_sort",
+        "media_collect",
         "potential_duplicates_search_context",
         "duplicate_pair_sort_type",
         "duplicate_pair_sort_asc",
@@ -245,6 +251,7 @@ fn pages_read_as_the_reference_reads_them() {
         .into_iter()
         .chain(cases("duplicates_pages"))
         .chain(cases("locked_pages"))
+        .chain(cases("collected_pages"))
     {
         let ours = page(&object(&case["stored"])).unwrap();
         assert_eq!(

@@ -178,6 +178,7 @@ impl Pages {
                 synchronised,
                 sort,
                 lock,
+                ..
             } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files)
                 .with_lock(lock),
             PageContent::Downloader { kind, queues, sort } => {
@@ -332,6 +333,7 @@ impl Pages {
             synchronised,
             lock,
             sort: page_sort,
+            ..
         } = &mut page.content
         else {
             unreachable!("a search page");
@@ -713,6 +715,7 @@ fn new_search_page() -> Page {
             synchronised: true,
             sort: None,
             lock: None,
+            collect: None,
         },
     }
 }

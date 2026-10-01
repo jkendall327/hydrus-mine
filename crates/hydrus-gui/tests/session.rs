@@ -77,6 +77,7 @@ fn the_last_session_opens_as_it_was_left() {
                 ascending: false,
             }),
             lock: None,
+            collect: None,
         },
     );
     let downloader = page(
@@ -239,6 +240,7 @@ fn pages_open_and_close_as_the_reference_does() {
                 synchronised: true,
                 sort: None,
                 lock: None,
+                collect: None,
             },
         )
     };
@@ -399,6 +401,7 @@ fn a_saved_session_appends_as_a_page_of_pages() {
             synchronised: true,
             sort: None,
             lock: None,
+            collect: None,
         },
     );
     let saved = Session {
