@@ -139,8 +139,7 @@ fn rules_do_what_the_reference_did() {
         let legacy =
             hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&stored)
                 .unwrap();
-        let rule = hydrus_store::import::auto_resolution_rule(&legacy, &|_| None, &mut Vec::new())
-            .unwrap();
+        let rule = hydrus_store::import::auto_resolution_rule(&legacy, &|_| None).unwrap();
         let id = legacy.id;
         store
             .write(move |ctx| auto::add_rule(ctx.conn(), &rule, Some(id)).map(|_| ()))

@@ -42,5 +42,40 @@ for _ in range( 1500 ):
     } )
     
 
+# name whitelists and renames, from a separate stream so the cases above
+# stay as they were
+rng = random.Random( 6880 )
+
+for _ in range( 500 ):
+
+    existing = { rng.choice( NAMES ) : rng.choice( TEXTS[ 1: ] ) for _ in range( rng.randint( 0, 3 ) ) }
+    incoming = [ ( rng.choice( NAMES ), rng.choice( TEXTS ) ) for _ in range( rng.randint( 1, 3 ) ) ]
+    extend = rng.random() < 0.5
+    conflict = rng.choice( list( NoteImportOptions.note_import_conflict_str_lookup.keys() ) )
+    whitelist = sorted( set( rng.sample( NAMES, rng.randint( 0, 3 ) ) ) ) if rng.random() < 0.5 else []
+    overrides = { rng.choice( NAMES ) : rng.choice( NAMES ) for _ in range( rng.randint( 0, 2 ) ) }
+    all_override = rng.choice( NAMES ) if rng.random() < 0.25 else None
+
+    options = NoteImportOptions.NoteImportOptions()
+    options.SetExtendExistingNoteIfPossible( extend )
+    options.SetConflictResolution( conflict )
+    options.SetNameWhitelist( whitelist )
+    options.SetNamesToNameOverrides( overrides )
+    options.SetAllNameOverride( all_override )
+
+    result = options.GetUpdateeNamesToNotes( existing, incoming )
+
+    cases.append( {
+        'existing': existing,
+        'incoming': incoming,
+        'extend_existing_note_if_possible': extend,
+        'conflict_resolution': conflict,
+        'name_whitelist': whitelist,
+        'names_to_name_overrides': overrides,
+        'all_name_override': all_override,
+        'result': result,
+    } )
+
+
 json.dump( { 'conflict_resolutions': { str( k ) : v for ( k, v ) in NoteImportOptions.note_import_conflict_str_lookup.items() }, 'cases': cases }, sys.stdout, indent = 1, ensure_ascii = False, sort_keys = True )
 sys.stdout.write( '\n' )

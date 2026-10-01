@@ -370,7 +370,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
         insert_setting(&mut input, &checkers)?;
         if let Some(stored) = &options.duplicate_action_options {
-            let merge = duplicate_merge_settings(stored, &mut input.warnings)?;
+            let merge = duplicate_merge_settings(stored)?;
             insert_setting(&mut input, &merge)?;
         }
         let mut filter = DuplicateFilterSettings::default();
@@ -570,7 +570,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         Ok(rules) => {
             for (name, decoded) in rules {
                 let converted = decoded.map_err(|e| e.to_string()).and_then(|r| {
-                    auto_resolution_rule(&r, &|key| scales.get(key).copied(), &mut input.warnings)
+                    auto_resolution_rule(&r, &|key| scales.get(key).copied())
                         .map(|rule| (r.id, rule))
                 });
                 match converted {
@@ -719,12 +719,10 @@ fn duplicates_search(
 
 /// A stored duplicates auto-resolution rule in our model, or why it can't
 /// be converted. `scales` gives each numerical rating service's scale (see
-/// [`predicate_with_scales`]). Warnings about details that were dropped are
-/// added to `warnings`.
+/// [`predicate_with_scales`]).
 pub fn auto_resolution_rule(
     r: &legacy::auto_resolution::AutoResolutionRule,
     scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
-    warnings: &mut Vec<String>,
 ) -> std::result::Result<crate::duplicates::auto::Rule, String> {
     use crate::duplicates::auto::{OperationMode, Rule, RuleAction};
 
@@ -755,7 +753,7 @@ pub fn auto_resolution_rule(
         custom_merge: r
             .custom_merge_options
             .as_ref()
-            .map(|o| merge_options(o, &format!("rule \"{}\"'s merge options", r.name), warnings))
+            .map(merge_options)
             .transpose()
             .map_err(|e| e.to_string())?,
     })
@@ -1393,28 +1391,22 @@ fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
 /// stored options merge nothing, as in the reference.
 fn duplicate_merge_settings(
     stored: &std::collections::BTreeMap<i64, legacy::DuplicateMergeOptions>,
-    warnings: &mut Vec<String>,
 ) -> Result<DuplicateMergeSettings> {
-    let mut convert = |code: i64, label: &str| -> Result<MergeOptions> {
+    let convert = |code: i64| -> Result<MergeOptions> {
         match stored.get(&code) {
-            Some(o) => merge_options(o, &format!("the {label} duplicate merge options"), warnings),
+            Some(o) => merge_options(o),
             None => Ok(MergeOptions::default()),
         }
     };
     Ok(DuplicateMergeSettings {
-        better: convert(DuplicateType::Better.code().into(), "better")?,
-        same_quality: convert(DuplicateType::SameQuality.code().into(), "same quality")?,
-        alternate: convert(DuplicateType::Alternate.code().into(), "alternate")?,
+        better: convert(DuplicateType::Better.code().into())?,
+        same_quality: convert(DuplicateType::SameQuality.code().into())?,
+        alternate: convert(DuplicateType::Alternate.code().into())?,
     })
 }
 
-/// One set of duplicate metadata merge options. `what` names them in
-/// warnings.
-pub(crate) fn merge_options(
-    o: &legacy::DuplicateMergeOptions,
-    what: &str,
-    warnings: &mut Vec<String>,
-) -> Result<MergeOptions> {
+/// One set of duplicate metadata merge options.
+pub(crate) fn merge_options(o: &legacy::DuplicateMergeOptions) -> Result<MergeOptions> {
     use crate::duplicates::merge::{ArchiveSync, MergeAction, RatingMerge, SyncAction, TagMerge};
     use hydrus_core::notes::{NoteConflict, NoteMerge};
     use legacy::MergeAction as Legacy;
@@ -1432,14 +1424,11 @@ pub(crate) fn merge_options(
         Legacy::Move | Legacy::None => None,
     };
     let notes = &o.note_import;
-    if !notes.name_whitelist.is_empty()
-        || notes.all_name_override.is_some()
-        || !notes.names_to_name_overrides.is_empty()
-    {
-        warnings.push(format!(
-            "{what}' note name filters and renames were dropped (the reference's editor doesn't show them)"
-        ));
-    }
+    let note_names = crate::duplicates::merge::NoteNames {
+        whitelist: notes.name_whitelist.clone(),
+        all_override: notes.all_name_override.clone(),
+        overrides: notes.names_to_name_overrides.clone(),
+    };
     let note_merge = if notes.get_notes && o.sync_notes != Legacy::None {
         let conflict = NoteConflict::from_code(notes.conflict_resolution).ok_or_else(|| {
             StoreError::Invalid(format!(
@@ -1478,6 +1467,7 @@ pub(crate) fn merge_options(
             .collect(),
         notes: action(o.sync_notes),
         note_merge,
+        note_names,
         archive: match o.sync_archive {
             legacy::ArchiveSync::None => ArchiveSync::Never,
             legacy::ArchiveSync::IfOneDoBoth => ArchiveSync::IfEither,
@@ -1996,8 +1986,7 @@ mod tests {
             let legacy =
                 hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&stored)
                     .unwrap();
-            let mut warnings = Vec::new();
-            let rule = auto_resolution_rule(&legacy, &|_| None, &mut warnings)
+            let rule = auto_resolution_rule(&legacy, &|_| None)
                 .unwrap_or_else(|e| panic!("{}: {e}", legacy.name));
             let expected = &case["expected"];
             assert_eq!(rule.name, expected["name"].as_str().unwrap());
@@ -2111,11 +2100,9 @@ mod tests {
                 )
             })
             .collect();
-        let mut warnings = Vec::new();
-        let converted = duplicate_merge_settings(&stored, &mut warnings).unwrap();
+        let converted = duplicate_merge_settings(&stored).unwrap();
         let expected: DuplicateMergeSettings =
             serde_json::from_value(phase["settings"].clone()).unwrap();
         assert_eq!(converted, expected);
-        assert!(warnings.is_empty());
     }
 }
