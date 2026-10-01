@@ -129,7 +129,13 @@ quality, alternates, not related, skip, go back. As in the reference, a
 left click on the file is "better, delete the other", a right click
 "alternates", a middle click goes back and up skips; video, audio and
 animations play as in the media viewer, and the next three pairs' files
-are decoded ahead. Pairs come a batch
+are decoded ahead. Files zoom and pan as in the media viewer (but for
+dragging), and switching to the pair's other file keeps the zoom and
+position, as the reference's does: the other file as tall as the first
+was if both are landscape, as wide if both are portrait (otherwise by
+whichever side differs less), unless at the default zoom that would
+spill a little over the window's edge; a new pair starts fitted and
+centred. Pairs come a batch
 at a time (`duplicate_filter_max_batch_size`), or a group at a time in
 group mode; pairs with a file already merged away or deleted are skipped;
 decisions wait for the batch's end, which asks to commit them (unless
@@ -148,7 +154,7 @@ predicates in the autocomplete, collect, the viewer's other hover frames
 and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
-deleting from the filter, the hover frames, zooming and panning (there), and
+deleting from the filter, the hover frames, and
 reviewing auto-resolution's pending
 pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its
 zoom and pan locks, and "open externally" for the file types shown with

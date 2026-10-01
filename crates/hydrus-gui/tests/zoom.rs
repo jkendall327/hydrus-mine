@@ -132,6 +132,53 @@ fn zooms_follow_the_settings() {
 }
 
 #[test]
+fn switching_files_keeps_the_zoom_as_the_duplicate_filter_does() {
+    let settings = MediaViewerSettings::default();
+    let at = |resolution: (u32, u32)| {
+        Zoom::new(
+            settings.clone(),
+            Mime::ImagePng,
+            Some(resolution),
+            (1000, 750),
+            1.0,
+        )
+    };
+    // both landscape: as tall as the first was, where it was
+    let mut zoom = at((4000, 3000));
+    zoom.switch_to(Mime::ImagePng, Some((2000, 1000)));
+    assert_eq!(zoom.zoom(), 0.75);
+    assert_eq!(zoom.rect(), (0, 0, 1500, 750));
+    zoom.pan(1, 1);
+    zoom.switch_to(Mime::ImagePng, Some((4000, 3000)));
+    assert_eq!(zoom.zoom(), 0.25);
+    assert_eq!(zoom.rect(), (83, 62, 1000, 750));
+    // both portrait: as wide, unless, at the default zoom filling the
+    // canvas's height, that would spill a little over the bottom
+    let mut zoom = at((600, 750));
+    assert_eq!(zoom.rect(), (200, 0, 600, 750));
+    zoom.switch_to(Mime::ImagePng, Some((600, 780)));
+    assert_eq!(zoom.zoom(), 750.0 / 780.0);
+    assert_eq!(zoom.rect(), (200, 0, 577, 750));
+    let mut zoom = at((600, 750));
+    zoom.switch_to(Mime::ImagePng, Some((300, 500)));
+    assert_eq!(zoom.zoom(), 2.0, "as wide");
+    // one of each: whichever side differs less (the first fills the
+    // window, 1000x750)
+    let mut zoom = at((800, 600));
+    zoom.switch_to(Mime::ImagePng, Some((600, 900)));
+    assert_eq!(zoom.zoom(), 1000.0 / 600.0, "as wide");
+    let mut zoom = at((800, 600));
+    zoom.switch_to(Mime::ImagePng, Some((400, 700)));
+    assert_eq!(zoom.zoom(), 750.0 / 700.0, "as tall");
+    // a file without a resolution takes its default zoom, where it was
+    let mut zoom = at((4000, 3000));
+    zoom.pan(-1, 0);
+    zoom.switch_to(Mime::AudioMp3, None);
+    assert_eq!(zoom.zoom(), 1.0);
+    assert_eq!(zoom.rect(), (-83, 0, 360, 240));
+}
+
+#[test]
 fn video_renders_at_the_size_shown_up_to_twice_the_window() {
     let mut video = Zoom::new(
         MediaViewerSettings::default(),

@@ -141,6 +141,88 @@ impl Zoom {
         );
     }
 
+    /// Show another file in its place, keeping the zoom and position, as
+    /// the duplicate filter does going between a pair's files
+    /// (`ZoomMaintainingZoom`): the new file as tall as the old one was
+    /// (both landscape) or as wide (both portrait; otherwise whichever
+    /// side differs less), unless at the default zoom that would spill a
+    /// little over the canvas's edge. A file without a resolution, or one
+    /// not shown, takes its default zoom.
+    #[allow(clippy::float_cmp)]
+    pub fn switch_to(&mut self, mime: Mime, resolution: Option<(u32, u32)>) {
+        let useful = |r: Option<(u32, u32)>| r.filter(|&(w, h)| w > 0 && h > 0);
+        let previous = (
+            self.mime,
+            useful(self.resolution),
+            self.current,
+            self.size(),
+        );
+        let previous_zooms = self.zooms.clone();
+        self.mime = mime;
+        self.resolution = resolution;
+        self.show = self.settings.view(mime).media_show_action;
+        let position = self.position;
+        let (Some(old), Some(new)) = (previous.1, useful(resolution)) else {
+            self.reinit();
+            self.position = position;
+            return;
+        };
+        if !self.zoomable() {
+            self.reinit();
+            self.position = position;
+            return;
+        }
+        self.zooms = canvas_zooms(
+            &self.settings,
+            mime,
+            resolution,
+            (
+                u32::try_from(self.canvas.0.max(0)).unwrap_or(0),
+                u32::try_from(self.canvas.1.max(0)).unwrap_or(0),
+            ),
+            self.ratio,
+        );
+        let (_, _, previous_zoom, (shown_width, shown_height)) = previous;
+        let (old_width, old_height) = media_size(previous.0, Some(old), previous_zoom);
+        let (old_w, old_h) = (f64::from(old.0), f64::from(old.1));
+        let (new_w, new_h) = (f64::from(new.0), f64::from(new.1));
+        let width_locked = f64::from(old_width) / new_w;
+        let height_locked = f64::from(old_height) / new_h;
+        let width_locked_size = self.size_at(width_locked);
+        let height_locked_size = self.size_at(height_locked);
+        let mut lock_height = if old_w > old_h && new_w > new_h {
+            true
+        } else if old_w < old_h && new_w < new_h {
+            false
+        } else {
+            let width_difference = old_w.max(new_w) / old_w.min(new_w);
+            let height_difference = old_h.max(new_h) / old_h.min(new_h);
+            height_difference <= width_difference
+        };
+        // at the default zoom, near the canvas's edges, don't spill a little
+        // over them
+        if previous_zoom == previous_zooms[&ZoomType::DefaultForFiletype]
+            && previous_zoom <= previous_zooms[&ZoomType::Canvas] * 1.05
+        {
+            let (canvas_width, canvas_height) =
+                (f64::from(self.canvas.0), f64::from(self.canvas.1));
+            let (width, height) = (f64::from(shown_width), f64::from(shown_height));
+            let near = |side: f64, canvas: f64| canvas * 0.95 <= side && side <= canvas * 1.05;
+            let spills = |new: i32, side: f64| side < f64::from(new) && f64::from(new) < side * 1.1;
+            if near(height, canvas_height) && spills(width_locked_size.1, height) {
+                lock_height = true;
+            }
+            if near(width, canvas_width) && spills(height_locked_size.0, width) {
+                lock_height = false;
+            }
+        }
+        self.current = if lock_height {
+            height_locked
+        } else {
+            width_locked
+        };
+    }
+
     /// The canvas changed size: the default zoom again, centred, as the
     /// reference's defaults have it.
     pub fn resize(&mut self, canvas: Point, ratio: f64) {
@@ -324,22 +406,39 @@ impl std::fmt::Debug for Zoomed {
 }
 
 impl Zoomed {
-    /// For `window`, drawing with `draw`.
+    /// For `window`, whose whole is the canvas, drawing with `draw`.
     pub fn of<W: slint::ComponentHandle + 'static>(
         window: &W,
         settings: MediaViewerSettings,
         draw: impl Fn(&W, Rect) + 'static,
     ) -> Self {
-        let (canvas, drawn) = (window.as_weak(), window.as_weak());
+        Self::within(
+            window,
+            settings,
+            |window| {
+                let window = window.window();
+                let size = window.size().to_logical(window.scale_factor());
+                (size.width as i32, size.height as i32)
+            },
+            draw,
+        )
+    }
+
+    /// For `window`, whose canvas (in logical pixels) `canvas` gives.
+    pub fn within<W: slint::ComponentHandle + 'static>(
+        window: &W,
+        settings: MediaViewerSettings,
+        canvas: impl Fn(&W) -> Point + 'static,
+        draw: impl Fn(&W, Rect) + 'static,
+    ) -> Self {
+        let (sized, drawn) = (window.as_weak(), window.as_weak());
         Self {
             settings,
             zoom: std::rc::Rc::default(),
             canvas: std::rc::Rc::new(move || {
-                let window = canvas.upgrade()?;
-                let window = window.window();
-                let ratio = window.scale_factor();
-                let size = window.size().to_logical(ratio);
-                Some(((size.width as i32, size.height as i32), f64::from(ratio)))
+                let window = sized.upgrade()?;
+                let ratio = f64::from(window.window().scale_factor());
+                Some((canvas(&window), ratio))
             }),
             draw: std::rc::Rc::new(move |rect| {
                 if let Some(window) = drawn.upgrade() {
@@ -377,6 +476,23 @@ impl Zoomed {
             change(zoom);
         }
         self.draw();
+    }
+
+    /// Show another file in the old one's place, at the same zoom and
+    /// position (see [`Zoom::switch_to`]).
+    pub fn switch_to(&self, shape: Option<(Mime, Option<(u32, u32)>)>) {
+        let switched = match (self.zoom.borrow_mut().as_mut(), shape) {
+            (Some(zoom), Some((mime, resolution))) => {
+                zoom.switch_to(mime, resolution);
+                true
+            }
+            _ => false,
+        };
+        if switched {
+            self.draw();
+        } else {
+            self.show(shape);
+        }
     }
 
     /// The window changed size.

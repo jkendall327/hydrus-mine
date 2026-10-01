@@ -297,10 +297,55 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
     headless::save_png(&shots.join("duplicate_filter.png"), &pixels, 1200, 800).unwrap();
 
+    // the file is fitted to its area, beside the comparison; z switches
+    // to 100% and back, and shift and the arrows pan
+    let rect = |f: &hydrus_gui::DuplicateFilterWindow| {
+        (
+            f.get_media_x(),
+            f.get_media_y(),
+            f.get_media_width(),
+            f.get_media_height(),
+        )
+    };
+    let (area_width, area_height) = (filter.get_canvas_width(), filter.get_canvas_height());
+    assert!(area_width < 1200.0 && (area_height - 800.0).abs() < 0.5);
+    let fitted = rect(&filter);
+    assert!(
+        (fitted.2 - area_width).abs() <= 1.0 || (fitted.3 - area_height).abs() <= 1.0,
+        "{fitted:?} in {area_width}x{area_height}"
+    );
+    filter.invoke_zoom(0, false, 0.0, 0.0);
+    let full = rect(&filter);
+    assert_ne!(full, fitted);
+    filter.invoke_zoom(0, false, 0.0, 0.0);
+    assert_eq!(rect(&filter), fitted);
+    filter.invoke_zoom(1, false, 0.0, 0.0);
+    filter.invoke_pan(1, 1);
+    let zoomed = rect(&filter);
+    assert!(zoomed.2 > fitted.2);
+    // the other file of the pair keeps the zoom and position: as tall or as
+    // wide as the first was
     filter.invoke_switch_media();
     assert!(filter.get_index_text().starts_with("File Two - 1/"));
+    let other = rect(&filter);
+    assert_eq!((other.0, other.1), (zoomed.0, zoomed.1));
+    assert!(
+        (other.2 - zoomed.2).abs() <= 1.0 || (other.3 - zoomed.3).abs() <= 1.0,
+        "{other:?} after {zoomed:?}"
+    );
+    filter.invoke_switch_media();
+    let back = rect(&filter);
+    assert_eq!((back.0, back.1), (zoomed.0, zoomed.1));
+    assert!((back.2 - zoomed.2).abs() <= 1.0 && (back.3 - zoomed.3).abs() <= 1.0);
+    filter.invoke_switch_media();
     filter.invoke_decide("better-delete".into());
     assert!(filter.get_index_text().ends_with(" - 1 decisions"));
+    // the next pair starts fitted again
+    let next = rect(&filter);
+    assert!(
+        (next.2 - area_width).abs() <= 1.0 || (next.3 - area_height).abs() <= 1.0,
+        "{next:?}"
+    );
 
     // closing with a decision pending asks first
     filter.invoke_close_requested();

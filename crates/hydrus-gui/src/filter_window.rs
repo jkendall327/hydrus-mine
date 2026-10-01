@@ -126,6 +126,8 @@ struct State {
     /// Video, audio and animations play, as in the media viewer.
     playback: Rc<Playback>,
     animator: Rc<crate::animation::Animator>,
+    /// The file shown's zoom and position.
+    zoomed: crate::zoom::Zoomed,
 }
 
 impl State {
@@ -170,6 +172,14 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
     };
     let newly_shown = state.shown != Some((shown, other));
     if newly_shown {
+        // going between a pair's files keeps the zoom and position; a new
+        // pair starts at the first's default zoom, centred
+        let shape = crate::viewer::shape(state.model.store(), shown);
+        if state.shown == Some((other, shown)) {
+            state.zoomed.switch_to(shape);
+        } else {
+            state.zoomed.show(shape);
+        }
         state.shown = Some((shown, other));
         state.slow_done = false;
         state.statements.clear();
@@ -188,11 +198,15 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
     if newly_shown {
         let path = crate::viewer::playable(state.model.store(), shown);
         let (size, frame) = (window.as_weak(), window.as_weak());
+        let zoomed = state.zoomed.clone();
         state.playback.play(
             path.as_deref(),
             move || {
-                let size = size.upgrade()?.window().size();
-                Some((size.width, size.height))
+                // (rendered at the size shown)
+                zoomed.render_size().or_else(|| {
+                    let size = size.upgrade()?.window().size();
+                    Some((size.width, size.height))
+                })
             },
             move |image| {
                 if let Some(window) = frame.upgrade() {
@@ -319,6 +333,27 @@ pub(crate) fn open_filter(
     let model_dir = model.store().dir().to_path_buf();
     let slow = Rc::new(SlowStatements::new(model.store()));
     let stills = Rc::new(Stills::new(model.store()));
+    let settings: hydrus_core::media_viewer::MediaViewerSettings = model
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let zoomed = crate::zoom::Zoomed::within(
+        &window,
+        settings,
+        |window| {
+            (
+                window.get_canvas_width() as i32,
+                window.get_canvas_height() as i32,
+            )
+        },
+        |window, (x, y, width, height)| {
+            window.set_media_x(x as f32);
+            window.set_media_y(y as f32);
+            window.set_media_width(width as f32);
+            window.set_media_height(height as f32);
+        },
+    );
+    crate::bind_zoom!(window, zoomed);
     let state = Rc::new(RefCell::new(State {
         model,
         asking: Asking::Nothing,
@@ -329,6 +364,7 @@ pub(crate) fn open_filter(
         requested: HashSet::new(),
         playback: Playback::new(model_dir.join("mpv.conf")),
         animator: crate::animation::Animator::new(),
+        zoomed,
     }));
 
     // ask for the slow statements of the pair shown, if not yet asked
