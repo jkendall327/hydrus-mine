@@ -2,7 +2,8 @@
 //! container does it with its default options and shortcuts: z switches
 //! between 100% and canvas fit, + and - (and ctrl and the wheel) step
 //! through the zooms about the pointer, shift and the arrow keys pan, and
-//! dragging moves the file.
+//! dragging moves the file (in the media viewer; in the archive/delete
+//! filter a click decides).
 
 // (zooms and positions are exact, as the reference's are)
 #![allow(clippy::float_cmp)]
@@ -166,7 +167,7 @@ fn rect(viewer: &MediaViewerWindow) -> (f32, f32, f32, f32) {
 }
 
 #[test]
-fn the_viewer_zooms_and_pans_by_key_wheel_and_drag() {
+fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -284,4 +285,63 @@ fn the_viewer_zooms_and_pans_by_key_wheel_and_drag() {
     // enter closes the viewer, as escape does
     key(window, Key::Return);
     assert!(bound.viewer.borrow().is_none());
+
+    // the archive/delete filter zooms and pans the same way
+    ui.invoke_thumbnail_clicked(0);
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    slint::platform::update_timers_and_animations();
+    let window = filter.window();
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: LogicalPosition::new(400.0, 300.0),
+    });
+    let rect = |f: &hydrus_gui::ArchiveDeleteWindow| {
+        (
+            f.get_media_x(),
+            f.get_media_y(),
+            f.get_media_width(),
+            f.get_media_height(),
+        )
+    };
+    assert_eq!(rect(&filter), fitted);
+    key(window, "z");
+    assert_eq!((rect(&filter).2, rect(&filter).3), (width, height));
+    key(window, "z");
+    key(window, "+");
+    assert!(rect(&filter).2 > fitted.2);
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    window.dispatch_event(WindowEvent::PointerScrolled {
+        position: LogicalPosition::new(400.0, 300.0),
+        delta_x: 0.0,
+        delta_y: -120.0,
+    });
+    window.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    assert_eq!(rect(&filter), fitted, "zoomed back out");
+    // shift and up pans, rather than skipping
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Shift.into(),
+    });
+    key(window, Key::UpArrow);
+    window.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Shift.into(),
+    });
+    assert_eq!(
+        rect(&filter).1,
+        fitted.1 - (fitted.3.min(600.0) / 12.0).floor()
+    );
+    assert_eq!(filter.get_caption(), "1/1");
+    // with nothing decided, enter closes it
+    key(window, Key::Return);
+    assert!(bound.archive_delete.borrow().is_none());
 }

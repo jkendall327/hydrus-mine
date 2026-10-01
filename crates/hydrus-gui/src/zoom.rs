@@ -91,7 +91,7 @@ impl Zoom {
 
     /// Where the file is drawn, as (x, y, width, height): its zoomed box,
     /// or, not zoomable, the canvas.
-    pub fn rect(&self) -> (i32, i32, i32, i32) {
+    pub fn rect(&self) -> Rect {
         if !self.zoomable() {
             return (0, 0, self.canvas.0, self.canvas.1);
         }
@@ -297,5 +297,114 @@ impl Zoom {
             self.position.0 += delta.0;
             self.position.1 += delta.1;
         }
+    }
+}
+
+/// Where a file is drawn: (x, y, width, height).
+pub type Rect = (i32, i32, i32, i32);
+
+/// A window's zoomed file, kept as the file, the window and the user
+/// change it, and drawn by the window's own setter.
+#[derive(Clone)]
+pub(crate) struct Zoomed {
+    settings: MediaViewerSettings,
+    zoom: std::rc::Rc<std::cell::RefCell<Option<Zoom>>>,
+    /// The window's canvas and device pixel ratio, while it is open.
+    canvas: std::rc::Rc<dyn Fn() -> Option<(Point, f64)>>,
+    /// Draw the file at (x, y, width, height).
+    draw: std::rc::Rc<dyn Fn(Rect)>,
+}
+
+impl std::fmt::Debug for Zoomed {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Zoomed")
+            .field("zoom", &self.zoom.borrow())
+            .finish_non_exhaustive()
+    }
+}
+
+impl Zoomed {
+    /// For `window`, drawing with `draw`.
+    pub fn of<W: slint::ComponentHandle + 'static>(
+        window: &W,
+        settings: MediaViewerSettings,
+        draw: impl Fn(&W, Rect) + 'static,
+    ) -> Self {
+        let (canvas, drawn) = (window.as_weak(), window.as_weak());
+        Self {
+            settings,
+            zoom: std::rc::Rc::default(),
+            canvas: std::rc::Rc::new(move || {
+                let window = canvas.upgrade()?;
+                let window = window.window();
+                let ratio = window.scale_factor();
+                let size = window.size().to_logical(ratio);
+                Some(((size.width as i32, size.height as i32), f64::from(ratio)))
+            }),
+            draw: std::rc::Rc::new(move |rect| {
+                if let Some(window) = drawn.upgrade() {
+                    draw(&window, rect);
+                }
+            }),
+        }
+    }
+
+    /// Show a file of this type and resolution (none: of unknown type) at
+    /// its default zoom.
+    pub fn show(&self, shape: Option<(Mime, Option<(u32, u32)>)>) {
+        let Some((canvas, ratio)) = (self.canvas)() else {
+            return;
+        };
+        *self.zoom.borrow_mut() = shape.map(|(mime, resolution)| {
+            Zoom::new(self.settings.clone(), mime, resolution, canvas, ratio)
+        });
+        self.draw();
+    }
+
+    fn draw(&self) {
+        let rect = if let Some(zoom) = self.zoom.borrow().as_ref() {
+            zoom.rect()
+        } else {
+            let ((width, height), _) = (self.canvas)().unwrap_or(((0, 0), 1.0));
+            (0, 0, width, height)
+        };
+        (self.draw)(rect);
+    }
+
+    /// Apply a change to the zoom, then draw.
+    fn change(&self, change: impl FnOnce(&mut Zoom)) {
+        if let Some(zoom) = self.zoom.borrow_mut().as_mut() {
+            change(zoom);
+        }
+        self.draw();
+    }
+
+    /// The window changed size.
+    pub fn resized(&self) {
+        if let Some((canvas, ratio)) = (self.canvas)() {
+            self.change(|zoom| zoom.resize(canvas, ratio));
+        }
+    }
+
+    /// Zoom in (`direction` 1), out (-1) or switch (0), about `pointer`.
+    pub fn zoom(&self, direction: i32, pointer: Option<Point>) {
+        self.change(|zoom| match direction.signum() {
+            1 => zoom.zoom_in(pointer),
+            -1 => zoom.zoom_out(pointer),
+            _ => zoom.switch(pointer),
+        });
+    }
+
+    pub fn pan(&self, x_steps: i32, y_steps: i32) {
+        self.change(|zoom| zoom.pan(x_steps, y_steps));
+    }
+
+    pub fn drag(&self, delta: Point) {
+        self.change(|zoom| zoom.drag(delta));
+    }
+
+    /// The size to render video at, if the file's zoom is known.
+    pub fn render_size(&self) -> Option<(u32, u32)> {
+        self.zoom.borrow().as_ref().map(Zoom::render_size)
     }
 }

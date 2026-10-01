@@ -22,6 +22,12 @@ pub(crate) fn open(
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
     let animator = animation::Animator::new();
+    let settings: hydrus_core::media_viewer::MediaViewerSettings = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let zoomed = crate::zoom_window!(window, settings);
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -42,6 +48,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
+        let zoomed = zoomed.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -55,6 +62,7 @@ pub(crate) fn open(
                 return;
             };
             let store = model.store();
+            zoomed.show(crate::viewer::shape(store, file));
             window.set_media(
                 crate::viewer::still(store, file)
                     .as_ref()
@@ -67,11 +75,15 @@ pub(crate) fn open(
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             let (size, frame) = (weak.clone(), weak.clone());
+            let zoomed = zoomed.clone();
             playback.play(
                 crate::viewer::playable(store, file).as_deref(),
                 move || {
-                    let size = size.upgrade()?.window().size();
-                    Some((size.width, size.height))
+                    // (rendered at the size shown)
+                    zoomed.render_size().or_else(|| {
+                        let size = size.upgrade()?.window().size();
+                        Some((size.width, size.height))
+                    })
                 },
                 move |image| {
                     if let Some(window) = frame.upgrade() {
@@ -179,6 +191,7 @@ pub(crate) fn open(
         playback.toggle_pause();
         animator.toggle_pause();
     });
+    crate::bind_zoom!(window, zoomed);
     show();
     window.show()?;
     Ok(window)

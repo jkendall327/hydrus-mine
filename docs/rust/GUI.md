@@ -100,7 +100,9 @@ decided) asks, as the reference's "filtering done?" does, to keep N and
 delete M from the page's domain: enter commits (archiving the kept,
 deleting the deleted, with the delete lock's "inbox deletees" option
 honoured), f forgets, escape goes back to filtering. The deleted leave
-the page. With the pointer
+the page. Files zoom and pan there as in the media viewer (but for
+dragging, as a click decides), and enter stops, as the reference's
+media viewer shortcuts have it. With the pointer
 over the window's left fifth, the file's tags show there, as the
 reference's tags hover frame does: its display tags less those your single
 media filters hide, in your media viewer tag sort and namespace colours,
@@ -146,8 +148,8 @@ predicates in the autocomplete, collect, the viewer's other hover frames
 and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
-deleting from the filter, the hover frames, zooming and panning (there and
-in the archive/delete filter), and reviewing auto-resolution's pending
+deleting from the filter, the hover frames, zooming and panning (there), and
+reviewing auto-resolution's pending
 pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its
 zoom and pan locks, and "open externally" for the file types shown with
 that button (their thumbnail fills the window instead).

@@ -104,14 +104,7 @@ impl MediaViewer {
 
     /// The current file's type and resolution, for zooming it.
     pub fn shape(&self) -> Option<(hydrus_core::Mime, Option<(u32, u32)>)> {
-        let info = self
-            .store
-            .read(|conn| hydrus_store::media::load_basic(conn, &[self.current()]))
-            .ok()?
-            .into_iter()
-            .next()?
-            .info?;
-        Some((info.mime, info.width.zip(info.height)))
+        shape(&self.store, self.current())
     }
 
     /// The current file's frames, if the reference plays its kind with its
@@ -119,6 +112,17 @@ impl MediaViewer {
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {
         animation(&self.store, self.current())
     }
+}
+
+/// A file's type and resolution, for zooming it.
+pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Option<(u32, u32)>)> {
+    let info = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()?
+        .into_iter()
+        .next()?
+        .info?;
+    Some((info.mime, info.width.zip(info.height)))
 }
 
 /// A file's tags as the tags hover frame lists them, each with its colour.

@@ -1,10 +1,12 @@
-// The archive/delete filter's window: a page's files one at a time, fitted
-// to the window. As the reference's defaults have it, a left click or F7
-// keeps the file, a right click or delete deletes it, a middle click or
-// backspace goes back, and up skips it; F12 or escape stops. With anything
-// kept or deleted, finishing or stopping asks what to do: enter commits,
-// f forgets, and escape goes back to filtering. With the pointer over the
-// window's left fifth, the file's tags show there.
+// The archive/delete filter's window: a page's files one at a time, at
+// their default zoom. As the reference's defaults have it, a left click or
+// F7 keeps the file, a right click or delete deletes it, a middle click or
+// backspace goes back, and up skips it; F12, escape or enter stops. With
+// anything kept or deleted, finishing or stopping asks what to do: enter
+// commits, f forgets, and escape goes back to filtering. As in the media
+// viewer, z switches between 100% and fitting the window, + and - (or ctrl
+// and the mouse wheel) zoom, and shift and the arrow keys pan. With the
+// pointer over the window's left fifth, the file's tags show there.
 
 import { ListText } from "theme.slint";
 
@@ -20,6 +22,11 @@ export component ArchiveDeleteWindow inherits Window {
     in property <[ListText]> tags;
     // what committing would do, while asking
     in property <string> question;
+    // where the file is drawn: its box at its zoom
+    in property <length> media-x;
+    in property <length> media-y;
+    in property <length> media-width: root.width;
+    in property <length> media-height: root.height;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     callback keep();
@@ -31,6 +38,16 @@ export component ArchiveDeleteWindow inherits Window {
     callback forget();
     callback resume();
     callback toggle-pause();
+    // zoom in (1), out (-1) or switch (0), about the pointer if it is over
+    // the window
+    callback zoom(int, bool, length, length);
+    callback pan(int, int);
+    // (files aren't dragged here: a left click keeps them)
+    callback drag(length, length);
+    callback canvas-resized(length, length);
+
+    changed width => { root.canvas-resized(self.width, self.height); }
+    changed height => { root.canvas-resized(self.width, self.height); }
 
     forward-focus: keys;
     keys := FocusScope {
@@ -43,6 +60,36 @@ export component ArchiveDeleteWindow inherits Window {
                 } else if (event.text == Key.Escape) {
                     root.resume();
                 }
+                return accept;
+            }
+            if (event.modifiers.shift) {
+                if (event.text == Key.UpArrow) {
+                    root.pan(0, -1);
+                    return accept;
+                }
+                if (event.text == Key.DownArrow) {
+                    root.pan(0, 1);
+                    return accept;
+                }
+                if (event.text == Key.LeftArrow) {
+                    root.pan(-1, 0);
+                    return accept;
+                }
+                if (event.text == Key.RightArrow) {
+                    root.pan(1, 0);
+                    return accept;
+                }
+            }
+            if ((event.text == "z" || event.text == "Z") && !event.modifiers.control && !event.modifiers.alt) {
+                root.zoom(0, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "+") {
+                root.zoom(1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "-") {
+                root.zoom(-1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
                 return accept;
             }
             if (event.text == Key.F7) {
@@ -61,7 +108,7 @@ export component ArchiveDeleteWindow inherits Window {
                 root.skip();
                 return accept;
             }
-            if (event.text == Key.F12 || event.text == Key.Escape) {
+            if (event.text == Key.F12 || event.text == Key.Escape || event.text == Key.Return) {
                 root.close-requested();
                 return accept;
             }
@@ -72,12 +119,25 @@ export component ArchiveDeleteWindow inherits Window {
             reject
         }
         Image {
-            width: 100%;
-            height: 100%;
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
             source: root.media;
             image-fit: contain;
         }
         pointer := TouchArea {
+            scroll-event(event) => {
+                if (event.modifiers.control) {
+                    if (event.delta-y > 0) {
+                        root.zoom(1, true, self.mouse-x, self.mouse-y);
+                    } else if (event.delta-y < 0) {
+                        root.zoom(-1, true, self.mouse-x, self.mouse-y);
+                    }
+                    return accept;
+                }
+                reject
+            }
             pointer-event(event) => {
                 if (event.kind == PointerEventKind.down && root.question == "") {
                     if (event.button == PointerEventButton.left) {
