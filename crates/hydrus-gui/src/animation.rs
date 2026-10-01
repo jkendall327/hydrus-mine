@@ -1,13 +1,14 @@
 //! Playing the animations the reference plays with its own player rather
 //! than mpv (ugoiras and animated WebP): frames are decoded on a thread of
 //! their own, a few ahead of the one shown, and each is shown for its
-//! duration, looping.
+//! duration, looping. The player says which frame it is on and when, and
+//! goes to a frame when asked, as the reference's scanbar has it.
 
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::time::Duration;
 
-use crossbeam_channel::{Receiver, TryRecvError};
+use crossbeam_channel::{Receiver, Sender, TryRecvError};
 use hydrus_media::animation::Frames;
 
 use crate::thumbnails::Pixels;
@@ -18,15 +19,43 @@ const AHEAD: usize = 3;
 /// The least time a frame is shown, so a zero duration doesn't spin.
 const SHORTEST_FRAME_MS: u32 = 10;
 
+/// A frame decoded: its pixels, how long it shows, its index and place in
+/// time (ms), and which seek it follows.
+struct Decoded {
+    pixels: Pixels,
+    ms: u32,
+    index: usize,
+    at_ms: u64,
+    generation: u64,
+}
+
 pub(crate) struct Animator {
     timer: slint::Timer,
     running: RefCell<Option<Running>>,
 }
 
+/// Where playing is: the frame shown, its place in time (ms), how many
+/// frames there are and how long they all take, if known, and whether it
+/// is paused.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) struct Status {
+    pub index: usize,
+    pub at_ms: u64,
+    pub frames: usize,
+    pub total_ms: Option<u64>,
+    pub paused: bool,
+}
+
 struct Running {
-    frames: Receiver<(Pixels, u32)>,
+    frames: Receiver<Decoded>,
+    seeks: Sender<(usize, u64)>,
     show: Box<dyn Fn(slint::Image)>,
     paused: bool,
+    /// The seek frames must follow to be shown; and whether to show the
+    /// next one even though paused (just seeked).
+    generation: u64,
+    show_one: bool,
+    status: Status,
 }
 
 impl Animator {
@@ -43,14 +72,42 @@ impl Animator {
         let Some(mut frames) = frames else {
             return;
         };
+        let count = frames.len();
+        let total_ms = frames.total_ms();
         let (sender, receiver) = crossbeam_channel::bounded(AHEAD);
+        let (seeks, seeking) = crossbeam_channel::unbounded::<(usize, u64)>();
         let decoding = std::thread::Builder::new()
             .name("animation".into())
             .spawn(move || {
+                let (mut generation, mut index, mut at_ms) = (0, 0, 0);
                 // (ends when a frame can't be read, or nothing is watching)
-                while let Ok((raster, ms)) = frames.next_frame() {
-                    if sender.send((Pixels::new(&raster), ms)).is_err() {
+                loop {
+                    if let Some((to, new)) = seeking.try_iter().last() {
+                        match frames.seek(to) {
+                            Ok(before) => {
+                                (generation, index, at_ms) =
+                                    (new, to.min(count.saturating_sub(1)), before);
+                            }
+                            Err(_) => break,
+                        }
+                    }
+                    let Ok((raster, ms)) = frames.next_frame() else {
                         break;
+                    };
+                    let decoded = Decoded {
+                        pixels: Pixels::new(&raster),
+                        ms,
+                        index,
+                        at_ms,
+                        generation,
+                    };
+                    if sender.send(decoded).is_err() {
+                        break;
+                    }
+                    index += 1;
+                    at_ms += u64::from(ms);
+                    if index >= count {
+                        (index, at_ms) = (0, 0);
                     }
                 }
             });
@@ -60,8 +117,18 @@ impl Animator {
         }
         *self.running.borrow_mut() = Some(Running {
             frames: receiver,
+            seeks,
             show: Box::new(show),
             paused: false,
+            generation: 0,
+            show_one: false,
+            status: Status {
+                index: 0,
+                at_ms: 0,
+                frames: count,
+                total_ms,
+                paused: false,
+            },
         });
         self.tick();
     }
@@ -70,14 +137,24 @@ impl Animator {
     /// moment, for it to be decoded).
     fn tick(self: &Rc<Self>) {
         let wait = {
-            let running = self.running.borrow();
-            let Some(running) = running.as_ref().filter(|r| !r.paused) else {
+            let mut running = self.running.borrow_mut();
+            let Some(running) = running.as_mut().filter(|r| !r.paused || r.show_one) else {
                 return;
             };
             match running.frames.try_recv() {
-                Ok((pixels, ms)) => {
-                    (running.show)(pixels.image());
-                    ms.max(SHORTEST_FRAME_MS)
+                // (decoded before the latest seek)
+                Ok(frame) if frame.generation != running.generation => 0,
+                Ok(frame) => {
+                    (running.show)(frame.pixels.image());
+                    running.status.index = frame.index;
+                    running.status.at_ms = frame.at_ms;
+                    if running.show_one {
+                        running.show_one = false;
+                        if running.paused {
+                            return;
+                        }
+                    }
+                    frame.ms.max(SHORTEST_FRAME_MS)
                 }
                 Err(TryRecvError::Empty) => 5,
                 // (a frame couldn't be read: the last one stays)
@@ -96,20 +173,52 @@ impl Animator {
         );
     }
 
-    pub fn toggle_pause(self: &Rc<Self>) {
+    /// Where playing is, if anything plays.
+    pub fn status(&self) -> Option<Status> {
+        self.running.borrow().as_ref().map(|r| Status {
+            paused: r.paused,
+            ..r.status
+        })
+    }
+
+    /// Go to frame `index` and show it (`GotoFrame`).
+    pub fn goto(self: &Rc<Self>, index: usize) {
+        {
+            let mut running = self.running.borrow_mut();
+            let Some(running) = running.as_mut() else {
+                return;
+            };
+            running.generation += 1;
+            running.show_one = true;
+            let _ = running.seeks.send((index, running.generation));
+            // (frames decoded before it are dropped, so the decoder isn't
+            // left waiting to hand them over)
+            while running.frames.try_recv().is_ok() {}
+        }
+        self.timer.stop();
+        self.tick();
+    }
+
+    pub fn set_paused(self: &Rc<Self>, paused: bool) {
         let resumed = {
             let mut running = self.running.borrow_mut();
             let Some(running) = running.as_mut() else {
                 return;
             };
-            running.paused = !running.paused;
-            !running.paused
+            let resumed = running.paused && !paused;
+            running.paused = paused;
+            resumed
         };
         if resumed {
             self.tick();
-        } else {
+        } else if paused {
             self.timer.stop();
         }
+    }
+
+    pub fn toggle_pause(self: &Rc<Self>) {
+        let paused = self.status().is_some_and(|s| s.paused);
+        self.set_paused(!paused);
     }
 
     /// Stop playing; the decoding thread ends at its next frame.

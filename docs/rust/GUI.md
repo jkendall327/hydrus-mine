@@ -99,7 +99,10 @@ is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
 text), a thin line until the pointer comes near the file's bottom, then
 full height; a click or drag on it seeks there, and ctrl and left or right
 seek back 2.5 seconds or on 5 (past the end, round to the start), as the
-reference's defaults have it.
+reference's defaults have it. Ugoiras and animated WebP, which the client
+plays itself, have the scanbar too, by frame: a click or drag goes to the
+frame under the pointer. Playing pauses while the scanbar is dragged and
+resumes when it is let go, as in the reference.
 Slint's software renderer scales images by their nearest pixel, so stills
 are also drawn as the reference draws them: the part showing is cut out
 and resized with the file type's zoom qualities (area shrinking, Lanczos
@@ -178,8 +181,8 @@ repositories (pending and petitioning) and on several files at once from
 the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
-shading and seeking our own animation player's files (ugoiras and animated
-WebP), playing animated JPEG XL, downloader pages' own panels; in
+shading, seeking our own animation player's files (ugoiras and animated
+WebP) by ctrl and the arrows, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and

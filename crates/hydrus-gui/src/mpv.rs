@@ -334,6 +334,10 @@ impl Player {
         error >= 0 && flag != 0
     }
 
+    pub fn set_paused(&self, paused: bool) -> Result<(), String> {
+        self.command(&["set", "pause", if paused { "yes" } else { "no" }])
+    }
+
     /// Go to `ms` into the file, exactly, as the reference seeks.
     pub fn seek_ms(&self, ms: f64) -> Result<(), String> {
         let seconds = format!("{:.3}", ms.max(0.0) / 1000.0);

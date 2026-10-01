@@ -97,6 +97,19 @@ impl Playback {
         }
     }
 
+    pub fn paused(&self) -> bool {
+        self.player
+            .borrow()
+            .as_ref()
+            .is_some_and(mpv::Player::paused)
+    }
+
+    pub fn set_paused(&self, paused: bool) {
+        if let Some(player) = self.player.borrow().as_ref() {
+            let _ = player.set_paused(paused);
+        }
+    }
+
     pub fn toggle_pause(&self) {
         if let Some(player) = self.player.borrow().as_ref() {
             let _ = player.toggle_pause();

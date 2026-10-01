@@ -44,6 +44,18 @@ fn the_bar_shows_and_seeks_as_the_reference_s_does() {
     assert_eq!(video.seek_to(60.0, 110.0), 5280.0);
     assert_eq!(video.seek_to(-20.0, 110.0), 0.0);
     assert_eq!(video.seek_to(200.0, 110.0), 9600.0);
+    // the client's own animations: by the frame shown, and the frame a
+    // click goes to (`int( proportion * ( num_frames - 1 ) + 0.5 )`)
+    let ugoira = Scanbar::new(Some(400), Some(5)).unwrap();
+    assert_eq!(
+        ugoira.at_frame(3, 210),
+        (0.75, "4/5 - 0.210/0.400".to_owned())
+    );
+    assert_eq!(ugoira.at_frame(9, 400).1, "5/5 - 0.400/0.400");
+    assert_eq!(ugoira.frame_at(5.0, 110.0), 0);
+    assert_eq!(ugoira.frame_at(5.0 + 0.6 * 100.0, 110.0), 2);
+    assert_eq!(ugoira.frame_at(5.0 + 0.65 * 100.0, 110.0), 3);
+    assert_eq!(ugoira.frame_at(500.0, 110.0), 4);
     // ctrl and left back 2.5 seconds, never before the start; ctrl and
     // right on 5, past the end round to the start
     assert_eq!(video.seek_delta(1000.0, -1, 2500), 0.0);
@@ -127,6 +139,28 @@ fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
         "{}",
         video.get_scanbar_text()
     );
+    // a drag pauses playing while it lasts, as the reference's does
+    video.invoke_scan_started();
+    video.invoke_scan(0.0, video.get_media_width());
+    let started = Instant::now();
+    while started.elapsed() < Duration::from_millis(300) {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    let held = video.get_scanbar_text().to_string();
+    let started = Instant::now();
+    while started.elapsed() < Duration::from_millis(300) {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(Duration::from_millis(20));
+    }
+    assert_eq!(
+        video.get_scanbar_text(),
+        held.as_str(),
+        "paused while dragged"
+    );
+    video.invoke_scan_ended();
+    settle(&|| video.get_scanbar_text() != held.as_str());
+    assert_ne!(video.get_scanbar_text(), held.as_str(), "playing again");
     // pause, then seek half way along the bar: the bar shows where the
     // click went at once, and mpv is there once it has seeked
     let file = bound.current.borrow().borrow().results()[0];

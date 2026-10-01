@@ -127,6 +127,9 @@ export component MediaViewerWindow inherits Window {
     // seek to where a click on the scanbar at x, along a bar this wide,
     // goes; and seek a step back (-1) or forward (1), in milliseconds
     callback scan(length, length);
+    // a drag on the scanbar starts and ends (playing pauses while it lasts)
+    callback scan-started();
+    callback scan-ended();
     callback seek-delta(int, int);
 
     changed width => { root.canvas-resized(self.width, self.height); }
@@ -289,8 +292,13 @@ export component MediaViewerWindow inherits Window {
             }
             scrub := TouchArea {
                 pointer-event(event) => {
-                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                        root.scan(self.mouse-x, self.width);
+                    if (event.button == PointerEventButton.left) {
+                        if (event.kind == PointerEventKind.down) {
+                            root.scan-started();
+                            root.scan(self.mouse-x, self.width);
+                        } else if (event.kind == PointerEventKind.up) {
+                            root.scan-ended();
+                        }
                     }
                 }
                 moved => {

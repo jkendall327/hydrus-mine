@@ -700,14 +700,26 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
-    // the scanbar of the file mpv plays, if it has one
-    let scanbar: Rc<std::cell::Cell<Option<scanbar::Scanbar>>> = Rc::default();
+    // the scanbar of the file playing, if it has one, and which player
+    // plays it: mpv, or the client's own (`true`)
+    let scanbar: Rc<std::cell::Cell<Option<(scanbar::Scanbar, bool)>>> = Rc::default();
     let show_scanbar = {
         let weak = window.as_weak();
         let scanbar = scanbar.clone();
         move |position_ms: f64| {
-            if let (Some(window), Some(bar)) = (weak.upgrade(), scanbar.get()) {
+            if let (Some(window), Some((bar, _))) = (weak.upgrade(), scanbar.get()) {
                 let (progress, text) = bar.at(position_ms);
+                window.set_scanbar_progress(progress);
+                window.set_scanbar_text(text.into());
+            }
+        }
+    };
+    let show_frame = {
+        let weak = window.as_weak();
+        let scanbar = scanbar.clone();
+        move |index: usize, at_ms: u64| {
+            if let (Some(window), Some((bar, _))) = (weak.upgrade(), scanbar.get()) {
+                let (progress, text) = bar.at_frame(index, at_ms);
                 window.set_scanbar_progress(progress);
                 window.set_scanbar_text(text.into());
             }
@@ -801,16 +813,23 @@ fn open_viewer(
                     }
                 },
             );
+            let own = animation.as_ref().map(|f| (f.len(), f.total_ms()));
             let frame = weak.clone();
             animator.play(animation, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
                 }
             });
-            let bar = playable.as_ref().and_then(|_| {
-                let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
-                scanbar::Scanbar::new(duration_ms, num_frames)
-            });
+            let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
+            let bar = match (playable.is_some(), own) {
+                (true, _) => scanbar::Scanbar::new(duration_ms, num_frames).map(|b| (b, false)),
+                (false, Some((frames, total_ms))) => scanbar::Scanbar::new(
+                    duration_ms.or(total_ms),
+                    num_frames.or(Some(frames as u64)),
+                )
+                .map(|b| (b, true)),
+                (false, None) => None,
+            };
             scanbar.set(bar);
             window.set_scanbar_shown(bar.is_some());
             show_scanbar(0.0);
@@ -847,32 +866,86 @@ fn open_viewer(
     let scanning = Rc::new(slint::Timer::default());
     scanning.start(slint::TimerMode::Repeated, Duration::from_millis(50), {
         let playback = playback.clone();
+        let animator = animator.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
-        move || {
-            if scanbar.get().is_some()
-                && let Some(position) = playback.position_ms()
-            {
-                show_scanbar(position);
+        let show_frame = show_frame.clone();
+        move || match scanbar.get() {
+            Some((_, false)) => {
+                if let Some(position) = playback.position_ms() {
+                    show_scanbar(position);
+                }
             }
+            Some((_, true)) => {
+                if let Some(status) = animator.status() {
+                    show_frame(status.index, status.at_ms);
+                }
+            }
+            None => {}
         }
     });
     window.on_scan({
         let playback = playback.clone();
+        let animator = animator.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
-        move |x, width| {
-            if let Some(bar) = scanbar.get() {
+        let weak = window.as_weak();
+        move |x, width| match scanbar.get() {
+            Some((bar, false)) => {
                 let to = bar.seek_to(x, width);
                 playback.seek_ms(to);
                 show_scanbar(to);
+            }
+            Some((bar, true)) => {
+                // (the frame's text follows once it is shown)
+                let index = bar.frame_at(x, width);
+                animator.goto(index);
+                if let Some(window) = weak.upgrade() {
+                    window.set_scanbar_progress(bar.at_frame(index, 0).0);
+                }
+            }
+            None => {}
+        }
+    });
+    // as the reference: playing pauses while the scanbar is dragged
+    let playing_before_scan = Rc::new(std::cell::Cell::new(false));
+    window.on_scan_started({
+        let playback = playback.clone();
+        let animator = animator.clone();
+        let scanbar = scanbar.clone();
+        let playing_before_scan = playing_before_scan.clone();
+        move || {
+            let playing = match scanbar.get() {
+                Some((_, false)) => !playback.paused(),
+                Some((_, true)) => animator.status().is_some_and(|s| !s.paused),
+                None => false,
+            };
+            playing_before_scan.set(playing);
+            if playing {
+                playback.set_paused(true);
+                animator.set_paused(true);
+            }
+        }
+    });
+    window.on_scan_ended({
+        let playback = playback.clone();
+        let animator = animator.clone();
+        let scanbar = scanbar.clone();
+        move || {
+            if playing_before_scan.replace(false) {
+                match scanbar.get() {
+                    Some((_, false)) => playback.set_paused(false),
+                    Some((_, true)) => animator.set_paused(false),
+                    None => {}
+                }
             }
         }
     });
     window.on_seek_delta({
         let playback = playback.clone();
         move |direction, step| {
-            if let (Some(bar), Some(position)) = (scanbar.get(), playback.position_ms()) {
+            // (mpv's files; the client's own animations don't seek by time)
+            if let (Some((bar, false)), Some(position)) = (scanbar.get(), playback.position_ms()) {
                 let to = bar.seek_delta(position, direction, u64::try_from(step).unwrap_or(0));
                 playback.seek_ms(to);
                 show_scanbar(to);

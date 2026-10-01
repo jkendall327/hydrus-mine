@@ -59,6 +59,35 @@ impl Scanbar {
         }
     }
 
+    /// At frame `index`, `at_ms` in, of an animation the client plays
+    /// itself (`Animation.GetAnimationBarStatus`): as [`Scanbar::at`], but
+    /// by the frame shown.
+    pub fn at_frame(&self, index: usize, at_ms: u64) -> (f32, String) {
+        let timestamps = scanbar_timestamps(at_ms as f64, self.duration_ms);
+        match self.frames() {
+            Some(frames) => {
+                let index = (index as u64).min(frames - 1);
+                (
+                    index as f32 / (frames - 1) as f32,
+                    format!(
+                        "{}/{} - {timestamps}",
+                        human_int(index + 1),
+                        human_int(frames)
+                    ),
+                )
+            }
+            None => ((at_ms as f64 / self.duration_ms as f64) as f32, timestamps),
+        }
+    }
+
+    /// The frame a click (or drag) at `x` along a bar `width` wide goes to,
+    /// for an animation the client plays itself.
+    pub fn frame_at(&self, x: f32, width: f32) -> usize {
+        let proportion = ((x - NUB_WIDTH / 2.0) / (width - NUB_WIDTH)).clamp(0.0, 1.0);
+        let last = self.num_frames.unwrap_or(1).max(1) - 1;
+        (f64::from(proportion) * last as f64 + 0.5) as usize
+    }
+
     /// Where a click (or drag) at `x` along a bar `width` wide goes, in
     /// milliseconds (`_ScanToCurrentMousePos`).
     pub fn seek_to(&self, x: f32, width: f32) -> f64 {
