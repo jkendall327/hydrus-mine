@@ -784,6 +784,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 )
             });
             let open = thumbnail_menu::open_menu(
+                page.store(),
                 page.focused().map(|i| page.results()[i]),
                 selected.len(),
             );
@@ -942,6 +943,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         Ok(())
                     });
                 }
+                Action::OpenSimilar(distance) => {
+                    let (location, search) = {
+                        let page = page.borrow();
+                        let files = page.selected_files();
+                        (
+                            page.location().clone(),
+                            thumbnail_menu::similar_search(page.store(), &files, distance),
+                        )
+                    };
+                    if let Some(search) = search {
+                        change_pages(&|pages| {
+                            pages.open_search(location.clone(), vec![search.clone()]);
+                            Ok(())
+                        });
+                    }
+                }
             }
         }
     });
@@ -1014,6 +1031,8 @@ fn thumbnail_menu_rows(
         Some((title, items)) => (title.as_str().into(), rows(items)),
         None => (SharedString::new(), rows(&[])),
     };
+    let open = slots.open.clone().unwrap_or_default();
+    let (open_similar_title, open_similar) = open.similar.clone().unwrap_or_default();
     let share = slots.share.clone().unwrap_or_default();
     let (share_hashes_title, share_hashes) = share.hashes.clone().unwrap_or_default();
     let (share_hash_title, share_hash) = share.hash.clone().unwrap_or_default();
@@ -1052,8 +1071,11 @@ fn thumbnail_menu_rows(
         delete_menu,
         trash: rows(&slots.trash),
         manage: rows(&slots.manage),
-        has_open: !slots.open.is_empty(),
-        open: groups(&slots.open),
+        has_open: slots.open.is_some(),
+        open_a: rows(&open.a),
+        open_similar_title: open_similar_title.into(),
+        open_similar: rows(&open_similar),
+        open_b: rows(&open.b),
     }
 }
 

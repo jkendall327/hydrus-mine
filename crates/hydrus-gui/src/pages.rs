@@ -338,6 +338,37 @@ impl Pages {
         self.add(page);
     }
 
+    /// Open a new page searching `location` for `predicates`, at the far
+    /// right of the current notebook, and show it; it searches at once
+    /// (the reference's `NewPageQuery` with initial predicates).
+    pub fn open_search(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        predicates: Vec<hydrus_search::Predicate>,
+    ) {
+        let mut page = new_search_page();
+        let PageContent::Search {
+            search,
+            synchronised,
+            ..
+        } = &mut page.content
+        else {
+            unreachable!("a search page");
+        };
+        search.location = location;
+        search.predicates = predicates;
+        let mut opened = SearchPage::restored(
+            self.store.clone(),
+            search.clone(),
+            *synchronised,
+            None,
+            Vec::new(),
+        );
+        opened.refresh();
+        self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+        self.add(page);
+    }
+
     /// Open a page of the kind chosen, at the far right of the current
     /// notebook (as the reference's page chooser does).
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {

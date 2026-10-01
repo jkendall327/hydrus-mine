@@ -3,7 +3,9 @@
 //! refresh; select and remove, by inbox and archive, file domain, client
 //! and selection, with counts; the archive/delete filter; archive and
 //! re-inbox; deleting from each local file domain, deleting physically and
-//! undeleting; manage → tags; open → in a new page; and first, the
+//! undeleting; manage → tags; open → in a new page, similar files in a new
+//! page, and the focused file outside hydrus-rs; share's copying; and
+//! first, the
 //! selection's info (its files' types and size, the focused file's info
 //! lines, and how often they were viewed), whose lines copy themselves
 //! when chosen. Plain Rust, tested against the reference.
@@ -55,6 +57,9 @@ pub enum Action {
     Undelete,
     ManageTags,
     OpenInNewPage,
+    /// Open a page searching for files that look like the selected ones,
+    /// within this hamming distance.
+    OpenSimilar(u64),
     /// Open the focused file as the OS opens it, or in a web browser.
     OpenExternally,
     OpenInWebBrowser,
@@ -394,14 +399,32 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
     }
 }
 
-/// The open menu (`AddOpenMenu`), so far: in a new page, and the focused
+/// The similar-files searches the open menu offers: their names and
+/// hamming distances (`CC.hamming_string_lookup`).
+pub const SIMILAR_DISTANCES: [(&str, u64); 4] = [
+    ("exact match", 0),
+    ("very similar", 2),
+    ("similar", 4),
+    ("speculative", 8),
+];
+
+/// The open menu (`AddOpenMenu`), so far: in a new page; similar files in
+/// a new page, when the focused file is a still image; and the focused
 /// file as the OS opens it (the reference's default launch) or in a web
 /// browser.
-pub fn open_menu(focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
+pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
     let mut open = vec![Entry::Item("in a new page".into(), Action::OpenInNewPage)];
-    // (the reference's "in a new duplicate filter page" and "similar files
-    // in a new page", which hydrus-rs doesn't have yet)
-    if focused.is_some() {
+    // (the reference's "in a new duplicate filter page", which hydrus-rs
+    // doesn't have yet)
+    if let Some(focused) = focused {
+        if !perceptual_hashed(store, &[focused]).is_empty() {
+            // (less the reference's "custom", which asks for the distance)
+            let similar = SIMILAR_DISTANCES
+                .iter()
+                .map(|&(name, distance)| Entry::Item(name.into(), Action::OpenSimilar(distance)))
+                .collect();
+            open.push(Entry::Menu("similar files in a new page".into(), similar));
+        }
         separate(&mut open);
         let prefix = if num_selected > 1 {
             "focused file "
@@ -418,6 +441,42 @@ pub fn open_menu(focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
         ));
     }
     open
+}
+
+/// The sha256 hashes of those of `files` with perceptual hashes (still
+/// images), in their order.
+fn perceptual_hashed(store: &Store, files: &[HashId]) -> Vec<hydrus_core::Sha256> {
+    let Ok(basic) = store.read(|c| hydrus_store::media::load_basic(c, files)) else {
+        return Vec::new();
+    };
+    files
+        .iter()
+        .filter_map(|f| basic.iter().find(|m| m.hash_id == *f))
+        .filter(|m| {
+            m.info
+                .as_ref()
+                .is_some_and(|i| hydrus_media::mimes::has_perceptual_hash(i.mime))
+        })
+        .map(|m| m.hash)
+        .collect()
+}
+
+/// The search for files that look like `files` within `distance`
+/// (`ShowSimilarFilesInNewPage`): `system:similar to` those of them that
+/// are still images, if any are.
+pub fn similar_search(
+    store: &Store,
+    files: &[HashId],
+    distance: u64,
+) -> Option<hydrus_search::Predicate> {
+    use hydrus_search::{Predicate, SystemPredicate};
+    let hashes = perceptual_hashed(store, files);
+    (!hashes.is_empty()).then(|| {
+        Predicate::System(SystemPredicate::SimilarToFiles {
+            files: hashes.into_iter().collect(),
+            max_distance: distance,
+        })
+    })
 }
 
 /// The menu for a page of `files` (in its order) with `selected` selected,
@@ -735,8 +794,47 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
-    pub open: Vec<Vec<SlotItem>>,
+    pub open: Option<OpenSlots>,
     pub share: Option<ShareSlots>,
+}
+
+/// The open menu in the template: its first items and the similar files
+/// submenu, then (after a separator) the focused file's.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct OpenSlots {
+    pub a: Vec<SlotItem>,
+    pub similar: Option<(String, Vec<SlotItem>)>,
+    pub b: Vec<SlotItem>,
+}
+
+impl OpenSlots {
+    fn new(inner: &[Entry]) -> Self {
+        let mut open = Self::default();
+        let mut past_separator = false;
+        for e in inner {
+            match (e, past_separator) {
+                (Entry::Separator, _) => past_separator = true,
+                (Entry::Item(label, action), false) => open.a.push((label.clone(), *action)),
+                (Entry::Item(label, action), true) => open.b.push((label.clone(), *action)),
+                (Entry::Menu(title, sub), _) => open.similar = Some((title.clone(), items(sub))),
+                (Entry::Label(_), _) => {}
+            }
+        }
+        open
+    }
+
+    fn entry(&self) -> Entry {
+        let item = |(label, action): &SlotItem| Entry::Item(label.clone(), *action);
+        let mut inner: Vec<Entry> = self.a.iter().map(item).collect();
+        inner.extend(
+            self.similar
+                .iter()
+                .map(|(title, items)| Entry::Menu(title.clone(), items.iter().map(item).collect())),
+        );
+        separate(&mut inner);
+        inner.extend(self.b.iter().map(item));
+        Entry::Menu("open".into(), inner)
+    }
 }
 
 /// The share menu in the template: the selection's items, its copy
@@ -924,7 +1022,7 @@ impl Slots {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
                     "manage" => slots.manage = items(inner),
-                    "open" => slots.open = groups(inner),
+                    "open" => slots.open = Some(OpenSlots::new(inner)),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
@@ -973,9 +1071,7 @@ impl Slots {
                 self.manage.iter().map(item).collect(),
             ));
         }
-        if !self.open.is_empty() {
-            out.push(menu("open", &self.open));
-        }
+        out.extend(self.open.iter().map(OpenSlots::entry));
         out.extend(self.share.iter().map(ShareSlots::entry));
         out
     }

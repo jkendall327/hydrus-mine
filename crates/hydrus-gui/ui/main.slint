@@ -161,8 +161,13 @@ export struct ThumbnailMenu {
     delete-menu: [MenuRow],
     trash: [MenuRow],
     manage: [MenuRow],
+    // the open menu: its first rows and similar files submenu, then the
+    // focused file's
     has-open: bool,
-    open: MenuGroups,
+    open-a: [MenuRow],
+    open-similar-title: string,
+    open-similar: [MenuRow],
+    open-b: [MenuRow],
     // the share menu: the selection's rows, copy hashes and file ids; then
     // the focused file's path, copy hash and file id
     has-share: bool,
@@ -728,12 +733,19 @@ export component MainWindow inherits Window {
                         }
                         if root.thumbnail-menu.has-open: Menu {
                             title: "open";
-                            for row in root.thumbnail-menu.open.g1: MenuItem {
+                            for row in root.thumbnail-menu.open-a: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
                             }
+                            if root.thumbnail-menu.open-similar-title != "": Menu {
+                                title: root.thumbnail-menu.open-similar-title;
+                                for row in root.thumbnail-menu.open-similar: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
                             MenuSeparator { }
-                            for row in root.thumbnail-menu.open.g2: MenuItem {
+                            for row in root.thumbnail-menu.open-b: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
                             }

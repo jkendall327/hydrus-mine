@@ -5,6 +5,7 @@
 //! left out.
 
 use std::collections::HashSet;
+use std::rc::Rc;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
@@ -30,6 +31,7 @@ fn kept(label: &str) -> Kept {
         "manage" => Kept::Only(&["tags"]),
         "open" => Kept::Only(&[
             "in a new page",
+            "similar files in a new page",
             "using Default OS File Launch",
             "in web browser",
             "focused file using Default OS File Launch",
@@ -112,7 +114,20 @@ fn pruned(entries: &[Value]) -> Vec<Value> {
                                 })
                             })
                     })
-                    .cloned()
+                    .map(|x| match x["menu"].as_str() {
+                        // (less the distance chooser)
+                        Some(sub @ "similar files in a new page") => {
+                            let inner: Vec<Value> = x["entries"]
+                                .as_array()
+                                .unwrap()
+                                .iter()
+                                .filter(|y| *y != "custom")
+                                .cloned()
+                                .collect();
+                            json!({ "menu": sub, "entries": tidy(inner) })
+                        }
+                        _ => x.clone(),
+                    })
                     .collect();
                 Some(json!({ "menu": label, "entries": tidy(inner) }))
             })
@@ -176,7 +191,7 @@ fn the_menu_is_the_reference_s() {
             );
             let share = (!selected.is_empty())
                 .then(|| share_menu(&store, &files, in_order.first().copied(), &in_order));
-            let open = open_menu(in_order.first().copied(), in_order.len());
+            let open = open_menu(&store, in_order.first().copied(), in_order.len());
             let entries = menu(&snapshot.services, &files, &selected, info, open, share);
             let ours = described(&entries);
             // (and the window's template shows it as it is)
@@ -272,7 +287,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     assert_eq!(labels(menu.head.clone())[0].0, "refresh");
     assert_eq!(labels(menu.manage.clone())[0].0, "tags");
     assert_eq!(
-        labels(menu.open.g2.clone())[0].0,
+        labels(menu.open_b.clone())[0].0,
         "using Default OS File Launch"
     );
     let find = |rows: slint::ModelRc<hydrus_gui::MenuRow>, label: &str| {
@@ -294,7 +309,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     ui.invoke_thumbnail_menu_requested(-1);
     let menu = ui.get_thumbnail_menu();
     let tabs_before = bound.pages.borrow().tabs()[0].names.len();
-    ui.invoke_menu_chosen(find(menu.open.g1.clone(), "in a new page"));
+    ui.invoke_menu_chosen(find(menu.open_a.clone(), "in a new page"));
     assert_eq!(bound.pages.borrow().tabs()[0].names.len(), tabs_before + 1);
     let opened = bound.current.borrow().clone();
     assert_eq!(opened.borrow().results(), selected.as_slice());
@@ -317,4 +332,26 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
         ui.get_question()
     );
     ui.invoke_answer(false);
+    // open → similar files in a new page → exact match, on a still
+    // image's thumbnail: a new tab searching for it, which finds itself
+    let at = opened
+        .borrow()
+        .results()
+        .iter()
+        .position(|&f| hydrus_gui::thumbnail_menu::similar_search(&store, &[f], 0).is_some())
+        .unwrap();
+    let still = opened.borrow().results()[at];
+    ui.invoke_thumbnail_menu_requested(i32::try_from(at).unwrap());
+    let menu = ui.get_thumbnail_menu();
+    assert_eq!(menu.open_similar_title, "similar files in a new page");
+    let tabs_before = bound.pages.borrow().tabs()[0].names.len();
+    ui.invoke_menu_chosen(find(menu.open_similar.clone(), "exact match"));
+    assert_eq!(bound.pages.borrow().tabs()[0].names.len(), tabs_before + 1);
+    let similar = bound.current.borrow().clone();
+    assert!(!Rc::ptr_eq(&similar, &opened));
+    assert_eq!(
+        similar.borrow().predicates(),
+        ["system:similar to 1 files with distance of 0"]
+    );
+    assert!(similar.borrow().results().contains(&still));
 }
