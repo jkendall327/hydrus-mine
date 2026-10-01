@@ -192,10 +192,11 @@ impl Animator {
             };
             running.generation += 1;
             running.show_one = true;
+            // (frames decoded before it are passed over as they come, which
+            // frees the decoder to seek; they aren't emptied out here, as
+            // that could take the frame sought too, the decoder running on
+            // meanwhile)
             let _ = running.seeks.send((index, running.generation));
-            // (frames decoded before it are dropped, so the decoder isn't
-            // left waiting to hand them over)
-            while running.frames.try_recv().is_ok() {}
         }
         self.timer.stop();
         self.tick();

@@ -124,6 +124,20 @@ fn animations_play_in_the_viewer_with_the_client_s_own_player() {
         viewer.invoke_scan_started();
         viewer.invoke_scan(x, width);
         // (once the frame is decoded and shown)
+        // (back and forth: each seek lands on its frame, however the
+        // decoder's thread runs meanwhile)
+        for round in 0..20 {
+            let (to, wanted) = if round % 2 == 0 {
+                (5.0, 1)
+            } else {
+                (x, target + 1)
+            };
+            viewer.invoke_scan(to, width);
+            let wanted = format!("{wanted}/{frames} - ");
+            let got = scanbar_reaches(&viewer, &wanted);
+            assert!(got.starts_with(&wanted), "{name} round {round}: {got}");
+        }
+        viewer.invoke_scan(x, width);
         let there = scanbar_reaches(&viewer, &format!("{}/{frames} - ", target + 1));
         assert!(
             there.starts_with(&format!("{}/{frames} - ", target + 1)),
