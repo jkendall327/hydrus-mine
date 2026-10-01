@@ -29,7 +29,9 @@ session" does; a saved session's downloader pages say their downloads
 don't run. The new page goes at the far right of the
 current notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
 the right (or left) being shown, as in the reference; downloader pages
-can't be closed yet, since their queues would run on without them. The
+can't be closed yet, since their queues would run on without them. Ctrl+U
+reopens the page closed last (within the hour, as the reference keeps
+them), where it was and as it was, and shows it. The
 pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
@@ -101,7 +103,8 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/duplicate_filter.rs` with the window drawn headless.
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
-screenshots land in `target/tmp/`). Not yet: reopening closed pages, system
+screenshots land in `target/tmp/`). Not yet: the reference's menu of
+closed pages (Ctrl+U reopens them one at a time), system
 predicates in the autocomplete, collect, the viewer's hover frames, seeking
 and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and

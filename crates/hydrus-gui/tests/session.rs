@@ -3,6 +3,7 @@
 //! (its search, sort and files, not searched again), and the pages we don't
 //! open yet saying so.
 
+use std::rc::Rc;
 use std::sync::Arc;
 
 use slint::{ComponentHandle as _, Model as _};
@@ -273,7 +274,8 @@ fn pages_open_and_close_as_the_reference_does() {
     pages.new_search_page();
     assert_eq!(names(&pages)[1], ["b", "threads", "files"]);
     assert_eq!(shown(&pages), "files");
-    assert!(pages.current().borrow().results().is_empty());
+    let files = pages.current();
+    assert!(files.borrow().results().is_empty());
 
     // the last page closed: the one to its left
     pages.close_shown().unwrap();
@@ -297,6 +299,23 @@ fn pages_open_and_close_as_the_reference_does() {
         names(&again),
         [vec!["pages".to_owned()], vec!["threads".to_owned()]]
     );
+    // ctrl+u reopens them, last closed first, where they were and as they
+    // were, and shows them
+    assert_eq!(pages.closed_count(), 4);
+    assert!(pages.unclose());
+    assert_eq!(names(&pages)[0], ["pages", "c"]);
+    assert_eq!(shown(&pages), "c");
+    assert!(pages.unclose());
+    assert_eq!(names(&pages)[0], ["a", "pages", "c"]);
+    assert_eq!(shown(&pages), "a");
+    assert!(pages.unclose());
+    assert_eq!(names(&pages)[1], ["b", "threads"]);
+    assert_eq!(shown(&pages), "b");
+    assert!(pages.unclose());
+    assert_eq!(names(&pages)[1], ["b", "threads", "files"]);
+    assert_eq!(shown(&pages), "files");
+    assert!(Rc::ptr_eq(&pages.current(), &files));
+    assert!(!pages.unclose());
 
     // the window: ctrl+t / F9 and ctrl+w, and middle-clicking a tab
     let _windows = headless::init();
@@ -337,6 +356,10 @@ fn pages_open_and_close_as_the_reference_does() {
     ui.invoke_close_tab(1, 1);
     assert_eq!(bound.pages.borrow().shown().name, "threads");
     assert_eq!(top(&ui), ["pages"]);
+    // ctrl+u brings it back, shown
+    ui.invoke_unclose_page();
+    assert_eq!(bound.pages.borrow().shown().name, "files");
+    assert_eq!(ui.get_tab_rows().row_data(1).unwrap().selected, 1);
 
     // the top notebook is never without a page
     let store = bound.current.borrow().borrow().store().clone();

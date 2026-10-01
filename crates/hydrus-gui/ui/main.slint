@@ -238,6 +238,7 @@ export component MainWindow inherits Window {
     // ctrl+w closes the page shown
     callback new-page();
     callback close-page();
+    callback unclose-page();
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
@@ -291,6 +292,11 @@ export component MainWindow inherits Window {
             }
             if (event.modifiers.control && (event.text == "w" || event.text == "W")) {
                 root.close-page();
+                return accept;
+            }
+            // as in the reference, ctrl+u reopens the page closed last
+            if (event.modifiers.control && (event.text == "u" || event.text == "U")) {
+                root.unclose-page();
                 return accept;
             }
             reject

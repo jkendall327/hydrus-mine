@@ -239,6 +239,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let change_pages = change_pages.clone();
         move || change_pages(&Pages::close_shown)
     });
+    window.on_unclose_page({
+        let change_pages = change_pages.clone();
+        move || {
+            change_pages(&|pages| {
+                pages.unclose();
+                Ok(())
+            });
+        }
+    });
     window.on_close_tab({
         let change_pages = change_pages.clone();
         move |level, index| {

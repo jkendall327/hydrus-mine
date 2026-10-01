@@ -29,7 +29,22 @@ pub struct Pages {
     path: Vec<usize>,
     /// Pages opened so far, by key.
     open: HashMap<PageKey, Rc<RefCell<SearchPage>>>,
+    /// Pages closed in the last hour, oldest first, to reopen.
+    closed: Vec<Closed>,
 }
+
+/// A closed page, as it was: where it was, and its pages as opened.
+struct Closed {
+    at: std::time::Instant,
+    /// The notebook it was in (`None`: the top one).
+    notebook: Option<PageKey>,
+    index: usize,
+    page: Page,
+    open: Vec<(PageKey, Rc<RefCell<SearchPage>>)>,
+}
+
+/// How long a closed page can be reopened (the reference's).
+const CLOSED_PAGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60 * 60);
 
 impl std::fmt::Debug for Pages {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -57,6 +72,7 @@ impl Pages {
             session,
             path: Vec::new(),
             open: HashMap::new(),
+            closed: Vec::new(),
         };
         pages.select(0, 0);
         Ok(pages)
@@ -77,6 +93,7 @@ impl Pages {
             },
             path: vec![0],
             open: HashMap::new(),
+            closed: Vec::new(),
         };
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
         pages
@@ -411,6 +428,7 @@ impl Pages {
             return Ok(());
         }
         let shown = self.path[depth];
+        let notebook = depth.checked_sub(1).map(|_| self.notebook_key(depth));
         let pages = self.notebook_mut(depth);
         let Some(page) = pages.get(index) else {
             return Ok(());
@@ -424,9 +442,20 @@ impl Pages {
         let remaining = pages.len();
         let mut closed_keys = Vec::new();
         keys(&closed, &mut closed_keys);
-        for key in closed_keys {
-            self.open.remove(&key);
-        }
+        let open = closed_keys
+            .into_iter()
+            .filter_map(|key| self.open.remove(&key).map(|page| (key, page)))
+            .collect();
+        let now = std::time::Instant::now();
+        self.closed
+            .retain(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT);
+        self.closed.push(Closed {
+            at: now,
+            notebook: notebook.flatten(),
+            index,
+            page: closed,
+            open,
+        });
         if index < shown {
             self.path[depth] -= 1;
         } else if index == shown {
@@ -442,6 +471,82 @@ impl Pages {
             }
         }
         Ok(())
+    }
+}
+
+impl Pages {
+    /// The key of the notebook `depth` levels down the way to the page
+    /// shown (`None` for the top one).
+    fn notebook_key(&self, depth: usize) -> Option<PageKey> {
+        let mut pages = self.session.pages.as_slice();
+        let mut key = None;
+        for &i in &self.path[..depth] {
+            let page = &pages[i];
+            key = Some(page.key);
+            match &page.content {
+                PageContent::Pages(children) => pages = children,
+                _ => return None,
+            }
+        }
+        key
+    }
+
+    /// How many closed pages can be reopened.
+    pub fn closed_count(&self) -> usize {
+        let now = std::time::Instant::now();
+        self.closed
+            .iter()
+            .filter(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT)
+            .count()
+    }
+
+    /// Reopen the page closed most recently (in the last hour), where it
+    /// was, as it was, and show it (the reference's "unclose page"); its
+    /// notebook gone, it goes in the top one. Whether there was one.
+    pub fn unclose(&mut self) -> bool {
+        fn path_to(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
+            for (i, page) in pages.iter().enumerate() {
+                if page.key == key {
+                    return Some(vec![i]);
+                }
+                if let PageContent::Pages(children) = &page.content
+                    && let Some(mut rest) = path_to(children, key)
+                {
+                    rest.insert(0, i);
+                    return Some(rest);
+                }
+            }
+            None
+        }
+        let now = std::time::Instant::now();
+        self.closed
+            .retain(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT);
+        let Some(closed) = self.closed.pop() else {
+            return false;
+        };
+        let notebook = closed
+            .notebook
+            .and_then(|key| path_to(&self.session.pages, key));
+        let pages = match &notebook {
+            None => &mut self.session.pages,
+            Some(path) => {
+                let mut pages = &mut self.session.pages;
+                for &i in path {
+                    match &mut pages[i].content {
+                        PageContent::Pages(children) => pages = children,
+                        _ => unreachable!("a closed page's notebook is a notebook"),
+                    }
+                }
+                pages
+            }
+        };
+        let index = closed.index.min(pages.len());
+        pages.insert(index, closed.page);
+        self.open.extend(closed.open);
+        let depth = notebook.as_ref().map_or(0, Vec::len);
+        self.path = notebook.unwrap_or_default();
+        self.select(depth, index);
+        true
     }
 }
 
