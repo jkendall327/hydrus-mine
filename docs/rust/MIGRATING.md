@@ -68,7 +68,8 @@ filters, whether namespaces are shown, the namespace connector,
 underscores and emojis, your namespace order, your tag list sorts and
 your namespace colours; how the media viewer zooms (your zoom levels, each
 file type's scale up and scale down rules, where zooming centres and the
-default zoom, and its rating icon sizes); and
+default zoom, and its rating icon sizes); which file info lines you count
+as interesting and your audio label; and
 your lock password, which `hydrus-gui` asks for before it opens, and your
 favourite searches (a favourite searching for something hydrus-rs can't is
 reported and left out). How files are handled

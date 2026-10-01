@@ -15,7 +15,8 @@ use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
 use hydrus_core::media_viewer::{
-    MediaView, MediaViewerSettings, ScaleAction, ShowAction, ZoomCentre, ZoomRules, ZoomType,
+    InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction, ZoomCentre,
+    ZoomRules, ZoomType,
 };
 use hydrus_core::subscriptions::CheckerOptions;
 
@@ -244,6 +245,50 @@ impl ClientOptions {
             defaults.default_watcher_checker_options.as_ref(),
         );
         whole(&mut self.media_view, defaults.media_view.as_ref());
+    }
+
+    /// How a file's info lines read, and which are interesting.
+    pub fn info_line_settings(&self) -> InfoLineSettings {
+        let mut out = InfoLineSettings::default();
+        for (key, field) in [
+            (
+                "file_info_line_consider_archived_interesting",
+                &mut out.archived_interesting,
+            ),
+            (
+                "file_info_line_consider_archived_time_interesting",
+                &mut out.archived_time_interesting,
+            ),
+            (
+                "file_info_line_consider_file_services_interesting",
+                &mut out.file_services_interesting,
+            ),
+            (
+                "file_info_line_consider_file_services_import_times_interesting",
+                &mut out.file_services_import_times_interesting,
+            ),
+            (
+                "file_info_line_consider_trash_time_interesting",
+                &mut out.trash_time_interesting,
+            ),
+            (
+                "file_info_line_consider_trash_reason_interesting",
+                &mut out.trash_reason_interesting,
+            ),
+            (
+                "hide_uninteresting_modified_time",
+                &mut out.hide_uninteresting_modified_time,
+            ),
+            ("use_nice_resolution_strings", &mut out.nice_resolutions),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        if let Some(label) = self.strings.get("has_audio_label") {
+            out.has_audio_label.clone_from(label);
+        }
+        out
     }
 
     /// The media viewer's options: the zoom steps, where zooming centres,
@@ -570,6 +615,10 @@ mod tests {
         assert_eq!(
             defaults.media_viewer_settings(),
             hydrus_core::media_viewer::MediaViewerSettings::default()
+        );
+        assert_eq!(
+            defaults.info_line_settings(),
+            hydrus_core::media_viewer::InfoLineSettings::default()
         );
     }
 }

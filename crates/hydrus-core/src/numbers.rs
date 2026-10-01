@@ -32,20 +32,26 @@ pub fn float_to_percentage(f: f64) -> String {
 /// `10.3 MB`; every whole digit is kept, and the rounding is half to even,
 /// on the exact value.
 pub fn human_bytes(size: u64) -> String {
-    if size < 1024 {
-        return format!("{}B", human_int(size));
+    human_bytes_ratio(u128::from(size), 1)
+}
+
+/// [`human_bytes`] of `numerator / denominator` exactly (a rate, say): as
+/// the reference words a float, under 1 KB its whole bytes.
+pub fn human_bytes_ratio(numerator: u128, denominator: u128) -> String {
+    let denominator = denominator.max(1);
+    if numerator < 1024 * denominator {
+        return format!("{}B", human_int((numerator / denominator) as u64));
     }
-    let mut divisor: u128 = 1;
+    let mut divisor: u128 = denominator;
     let mut suffix = 0;
-    while u128::from(size) >= divisor * 1024 && suffix < 5 {
+    while numerator >= divisor * 1024 && suffix < 5 {
         divisor *= 1024;
         suffix += 1;
     }
-    let size = u128::from(size);
-    let whole_digits = (size / divisor).to_string().len();
+    let whole_digits = (numerator / divisor).to_string().len();
     let decimals = 3usize.saturating_sub(whole_digits);
     // the value to `decimals` places, rounded half to even
-    let scaled = size * 10u128.pow(decimals as u32);
+    let scaled = numerator * 10u128.pow(decimals as u32);
     let (mut rounded, remainder) = (scaled / divisor, scaled % divisor);
     if remainder * 2 > divisor || (remainder * 2 == divisor && rounded % 2 == 1) {
         rounded += 1;
@@ -136,6 +142,17 @@ mod tests {
             (1_048_575, "1024 KB"),
         ] {
             assert_eq!(human_bytes(size), text, "{size}");
+        }
+        // floats, as rates (checked against BaseToHumanBytes)
+        for (numerator, denominator, text) in [
+            (5127, 10, "512B"),
+            (46186, 10, "4.51 KB"),
+            (2_771_000, 600, "4.51 KB"),
+            (10_239_999, 10_000, "1,023B"),
+            (15270, 1, "14.9 KB"),
+            (10_245_120, 10, "1000 KB"),
+        ] {
+            assert_eq!(human_bytes_ratio(numerator, denominator), text);
         }
     }
 

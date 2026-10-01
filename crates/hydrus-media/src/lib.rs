@@ -51,7 +51,7 @@ pub use phash::{BLANK_PERCEPTUAL_HASH, is_blank as is_blank_perceptual_hash, per
 pub use thumbnail::{
     Thumbnail, ThumbnailFormat, ThumbnailScale, ThumbnailSpec, thumbnail_resolution,
 };
-pub use tools::{Analysis, FileFlags, FileInfo, MediaTools};
+pub use tools::{Analysis, FileFlags, FileInfo, MediaTools, UGOIRA_DEFAULT_FRAME_DURATION_MS};
 
 /// Decode image bytes the way the reference's `GenerateNumPyImage` does
 /// (EXIF rotation, sRGB colour management, RGB/RGBA, useless alpha dropped).

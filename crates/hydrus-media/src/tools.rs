@@ -344,6 +344,21 @@ impl MediaTools {
         if let Some(durations) = from_json {
             return durations;
         }
+        if let Some(durations) = Self::ugoira_note_frame_durations(notes) {
+            return durations;
+        }
+        let n = usize::try_from(num_frames.unwrap_or(0).max(1)).unwrap_or(1);
+        vec![UGOIRA_DEFAULT_FRAME_DURATION_MS; n]
+    }
+
+    /// A ugoira's frame durations from its notes alone
+    /// (`GetFrameDurationsMSFromNote`): its "ugoira json" note, else its
+    /// "ugoira frame delay array"; `None` if neither reads.
+    pub fn ugoira_note_frame_durations(notes: &[(String, String)]) -> Option<Vec<u32>> {
+        let ms = |v: &serde_json::Value| {
+            v.as_f64()
+                .map(|d| d.round().clamp(0.0, f64::from(u32::MAX)) as u32)
+        };
         // (`GetFrameDurationsMSFromNote`: a list whose first delay is an int)
         let note = |name: &str| notes.iter().find(|(n, _)| n == name).map(|(_, t)| t);
         let ints = |delays: &[serde_json::Value]| -> Option<Vec<u32>> {
@@ -363,17 +378,23 @@ impl MediaTools {
             let delays: Option<Vec<serde_json::Value>> =
                 frames.and_then(|frames| frames.iter().map(|f| f.get("delay").cloned()).collect());
             if let Some(durations) = delays.as_deref().and_then(ints) {
-                return durations;
+                return Some(durations);
             }
         }
         if let Some(text) = note("ugoira frame delay array")
             && let Ok(serde_json::Value::Array(delays)) = serde_json::from_str(text)
             && let Some(durations) = ints(&delays)
         {
-            return durations;
+            return Some(durations);
         }
-        let n = usize::try_from(num_frames.unwrap_or(0).max(1)).unwrap_or(1);
-        vec![UGOIRA_DEFAULT_FRAME_DURATION_MS; n]
+        None
+    }
+
+    /// Whether a ugoira has a note timing its frames (`HasFrameTimesNote`).
+    pub fn has_ugoira_frame_times_note(notes: &[(String, String)]) -> bool {
+        notes
+            .iter()
+            .any(|(name, _)| name == "ugoira json" || name == "ugoira frame delay array")
     }
 
     /// Decode an image file to the array the reference hashes and thumbnails

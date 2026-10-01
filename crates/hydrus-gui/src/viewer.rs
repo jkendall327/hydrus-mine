@@ -125,6 +125,26 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
     Some((info.mime, info.width.zip(info.height)))
 }
 
+/// A file's info line as the top hover frame shows it, now.
+pub(crate) fn info_line(store: &Store, id: HashId) -> String {
+    let snapshot = store.snapshot();
+    let settings: hydrus_core::media_viewer::InfoLineSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+        .ok()
+        .and_then(|batch| batch.results.into_iter().next())
+        .map(|media| {
+            crate::info_lines::top_line(
+                &media,
+                &snapshot.services,
+                &settings,
+                hydrus_core::TimestampMs::now().0,
+            )
+        })
+        .unwrap_or_default()
+}
+
 /// A file's duration and frame count, for its scanbar.
 pub(crate) fn timing(store: &Store, id: HashId) -> (Option<u64>, Option<u64>) {
     let info = store

@@ -251,6 +251,11 @@ impl Setting for hydrus_core::media_viewer::MediaViewerSettings {
     const KEY: &'static str = "media_viewer";
 }
 
+/// How a file's info lines read.
+impl Setting for hydrus_core::media_viewer::InfoLineSettings {
+    const KEY: &'static str = "info_lines";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

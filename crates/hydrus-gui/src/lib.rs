@@ -28,6 +28,7 @@ pub mod favourites;
 mod filter_window;
 mod grid;
 pub mod headless;
+pub mod info_lines;
 pub mod manage_tags;
 pub(crate) mod manage_tags_window;
 pub mod media_actions;
@@ -712,6 +713,18 @@ fn open_viewer(
             }
         }
     };
+    // the file's info line, in the top hover frame
+    let show_info = {
+        let model = model.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            window.set_info_line(viewer::info_line(model.store(), model.current()).into());
+        }
+    };
     // the file's ratings, in the top-right hover frame
     window.set_rating_size(settings.rating_icon_size as f32);
     window.set_incdec_height(settings.rating_incdec_height as f32);
@@ -742,6 +755,7 @@ fn open_viewer(
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
         let show_ratings = show_ratings.clone();
+        let show_info = show_info.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -793,6 +807,7 @@ fn open_viewer(
             show_scanbar(0.0);
             drop(model);
             show_ratings();
+            show_info();
         }
     };
     show();
@@ -896,10 +911,15 @@ fn open_viewer(
     // the media shortcuts: F7 and shift+F7, delete and shift+delete
     let act = |action: fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>| {
         let model = model.clone();
+        let show_info = show_info.clone();
         move || {
-            let model = model.borrow();
-            if let Err(e) = action(model.store(), &[model.current()]) {
-                eprintln!("could not change the file: {e}");
+            let changed = {
+                let model = model.borrow();
+                action(model.store(), &[model.current()])
+            };
+            match changed {
+                Ok(()) => show_info(),
+                Err(e) => eprintln!("could not change the file: {e}"),
             }
         }
     };

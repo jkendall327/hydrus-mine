@@ -79,7 +79,13 @@ pointer still (or wherever your zoom centre option says), shift and the
 arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
-With the pointer near the window's top right, the file's ratings show
+With the pointer near the window's top, the file's info line shows there,
+as the reference's top hover frame has it: its "interesting" info lines
+(`src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
+resolution, duration and frames, audio; imported, deleted or in the trash;
+modified, if far from its import; archived) joined with ` | `, as your
+file info line options say (now migrated); archiving or returning the
+file to the inbox updates it. With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
 service, then each numerical, then each inc/dec, in its service's shape
 (a named SVG is drawn as the fat star) and colours, at your viewer rating
@@ -169,7 +175,7 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning) and on several files at once from
 the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
-(file info and buttons, notes), volume, the scanbar's buffering
+(the top one's buttons, notes), volume, the scanbar's buffering
 shading and seeking our own animation player's files (ugoiras and animated
 WebP), playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and

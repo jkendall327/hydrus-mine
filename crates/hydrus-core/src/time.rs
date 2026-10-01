@@ -183,6 +183,47 @@ pub fn timestamp_to_pretty_time_delta(timestamp: i64, now: i64, history_suffix: 
     }
 }
 
+/// A duration in milliseconds as the reference words it
+/// (`HydrusTime.MillisecondsDurationToPrettyTime`): `2 hours 2 minutes`,
+/// `1 minute 1 second`, `2.1 seconds` (`1 seconds` for a whole one, as the
+/// reference has it), `360 milliseconds`, `no duration`.
+#[allow(clippy::float_cmp)] // as the reference tests for a whole number
+pub fn duration_ms_to_pretty(duration_ms: u64) -> String {
+    if duration_ms == 0 {
+        return "no duration".into();
+    }
+    let hours = duration_ms / 3_600_000;
+    let minutes = duration_ms % 3_600_000 / 60_000;
+    let seconds = duration_ms % 60_000 / 1000;
+    let ms = duration_ms % 1000;
+    let plural = |n: u64, unit: &str| {
+        if n == 1 {
+            format!("1 {unit}")
+        } else {
+            format!("{n} {unit}s")
+        }
+    };
+    if hours > 0 {
+        return format!("{} {}", plural(hours, "hour"), plural(minutes, "minute"));
+    }
+    if minutes > 0 {
+        return format!(
+            "{} {}",
+            plural(minutes, "minute"),
+            plural(seconds, "second")
+        );
+    }
+    if seconds > 0 {
+        let detailed = seconds as f64 + ms as f64 / 1000.0;
+        return if detailed.trunc() == detailed {
+            format!("{} seconds", crate::numbers::human_int(detailed as u64))
+        } else {
+            format!("{detailed:.1} seconds")
+        };
+    }
+    plural(ms, "millisecond")
+}
+
 /// A scanbar's place and length, in milliseconds
 /// (`HydrusTime.ValueRangeToScanbarTimestampsMS`): `1:23.033/12:57.067`,
 /// in the units the length needs.
@@ -218,6 +259,30 @@ pub fn scanbar_timestamps(value_ms: f64, range_ms: u64) -> String {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn durations_as_the_reference_words_them() {
+        // (checked against MillisecondsDurationToPrettyTime)
+        for (ms, text) in [
+            (0, "no duration"),
+            (1, "1 millisecond"),
+            (360, "360 milliseconds"),
+            (1000, "1 seconds"),
+            (1500, "1.5 seconds"),
+            (2100, "2.1 seconds"),
+            (2050, "2.0 seconds"),
+            (12345, "12.3 seconds"),
+            (59999, "60.0 seconds"),
+            (60000, "1 minute 0 seconds"),
+            (61000, "1 minute 1 second"),
+            (125_000, "2 minutes 5 seconds"),
+            (3_600_000, "1 hour 0 minutes"),
+            (3_661_000, "1 hour 1 minute"),
+            (7_322_000, "2 hours 2 minutes"),
+        ] {
+            assert_eq!(duration_ms_to_pretty(ms), text, "{ms}");
+        }
+    }
 
     #[test]
     fn scanbar_timestamps_as_the_reference_writes_them() {

@@ -211,6 +211,40 @@ pub struct MediaViewerSettings {
     pub rating_incdec_height: f64,
 }
 
+/// Which of a file's info lines are "interesting" (those the media
+/// viewer's top hover frame shows), and how they read: the options'
+/// `file_info_line_consider_*`, `hide_uninteresting_modified_time`,
+/// `use_nice_resolution_strings` and `has_audio_label`.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct InfoLineSettings {
+    pub archived_interesting: bool,
+    pub archived_time_interesting: bool,
+    pub file_services_interesting: bool,
+    pub file_services_import_times_interesting: bool,
+    pub trash_time_interesting: bool,
+    pub trash_reason_interesting: bool,
+    pub hide_uninteresting_modified_time: bool,
+    pub nice_resolutions: bool,
+    pub has_audio_label: String,
+}
+
+impl Default for InfoLineSettings {
+    fn default() -> Self {
+        Self {
+            archived_interesting: true,
+            archived_time_interesting: true,
+            file_services_interesting: false,
+            file_services_import_times_interesting: false,
+            trash_time_interesting: false,
+            trash_reason_interesting: false,
+            hide_uninteresting_modified_time: true,
+            nice_resolutions: true,
+            has_audio_label: "\u{1F50A}".into(),
+        }
+    }
+}
+
 /// A new client's zoom steps.
 pub const DEFAULT_MEDIA_ZOOMS: [f64; 19] = [
     0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 2.0, 3.0, 5.0, 10.0,

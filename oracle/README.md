@@ -53,6 +53,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_visual_data.py` | `fixtures/visual_data.json`: the visual-duplicates computations, stage by stage |
 | `dump_client_options_defaults.py` | `crates/hydrus-legacy/src/objects/client_options_defaults.json`: a new client's options object |
 | `dump_casefold.py` | `crates/hydrus-core/src/casefold_table.rs`: Python's `str.casefold`, as a table |
+| `record_info_lines.py` | `fixtures/info_lines.json`: each `basic` file's info lines (`GetPrettyMediaResultInfoLines`) at a fixed "now", all of them and the top hover frame's interesting ones, with a new client's options and with the info line options turned the other way |
 | `record_media_tests.py` | `fixtures/media_tests.json`: in-memory predicate tests on the `basic` fixture's files |
 | `record_rating_svg.py` | `fixtures/rating_svg.json`: rating services' SVG icons (bundled, custom, missing) |
 | `record_render.py` | `fixtures/render.json`: `/get_files/render` of each kind of static image, as pixels |

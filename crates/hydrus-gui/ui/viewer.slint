@@ -46,6 +46,11 @@ export component MediaViewerWindow inherits Window {
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
+    // the file's info line, for the top hover frame
+    in property <string> info-line;
+    out property <bool> info-showing: root.info-line != "" && pointer.has-hover
+        && pointer.mouse-y <= info-box.preferred-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
@@ -302,6 +307,24 @@ export component MediaViewerWindow inherits Window {
                     color: #a0a0a0;
                     horizontal-alignment: center;
                 }
+            }
+        }
+        // (nothing in it takes the pointer, so the area below keeps it)
+        info-box := Rectangle {
+            x: (root.width - self.width) / 2;
+            y: 0;
+            width: min(root.width * 0.6, info-text.preferred-width + 24px);
+            height: info-text.preferred-height + 12px;
+            background: #202020e8;
+            visible: root.info-showing;
+            info-text := Text {
+                x: 12px;
+                width: parent.width - 24px;
+                text: root.info-line;
+                color: #f0f0f0;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                overflow: elide;
             }
         }
         ratings-frame := TouchArea {

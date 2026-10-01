@@ -1,0 +1,2283 @@
+{
+ "now": 1790849416,
+ "phases": {
+  "changed": {
+   "booleans": {
+    "file_info_line_consider_archived_interesting": false,
+    "file_info_line_consider_archived_time_interesting": false,
+    "file_info_line_consider_file_services_import_times_interesting": true,
+    "file_info_line_consider_file_services_interesting": true,
+    "file_info_line_consider_trash_reason_interesting": true,
+    "file_info_line_consider_trash_time_interesting": true,
+    "hide_uninteresting_modified_time": false,
+    "use_nice_resolution_strings": false
+   },
+   "files": {
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.91 KB pdf (833x1,167) (0 words)"
+      },
+      {
+       "interesting": false,
+       "text": "6,055 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has human-readable metadata"
+      }
+     ],
+     "top": "5.91 KB pdf (833x1,167) (0 words) | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps)"
+      },
+      {
+       "interesting": false,
+       "text": "2,771 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 4.51 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps) | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "654B webp (300x200)"
+      },
+      {
+       "interesting": false,
+       "text": "654 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "654B webp (300x200) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "30 KB jpeg (800x800)"
+      },
+      {
+       "interesting": false,
+       "text": "30,716 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "30 KB jpeg (800x800) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "20.6 KB flac, 1 seconds, with audio"
+      },
+      {
+       "interesting": false,
+       "text": "21,065 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 20.6 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "20.6 KB flac, 1 seconds, with audio | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "134B zip"
+      },
+      {
+       "interesting": false,
+       "text": "134 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      }
+     ],
+     "top": "134B zip | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps)"
+      },
+      {
+       "interesting": false,
+       "text": "19,729 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 38.5 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.49 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "1,522 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "1.49 KB png (256x256) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "50.5 KB jpeg (1,920x1,080)"
+      },
+      {
+       "interesting": false,
+       "text": "51,681 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "50.5 KB jpeg (1,920x1,080) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.3 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "2,358 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "2.3 KB png (256x256) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.47 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "1,505 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "1.47 KB png (256x256) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.18 KB png (280x210)"
+      },
+      {
+       "interesting": false,
+       "text": "1,209 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.18 KB png (280x210) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "12.1 KB bitmap (64x64)"
+      },
+      {
+       "interesting": false,
+       "text": "12,342 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "12.1 KB bitmap (64x64) | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.37 KB webp (300x200)"
+      },
+      {
+       "interesting": false,
+       "text": "2,426 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "2.37 KB webp (300x200) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "16.2 KB mp3, 2.1 seconds, with audio"
+      },
+      {
+       "interesting": false,
+       "text": "16,553 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 7.83 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "16.2 KB mp3, 2.1 seconds, with audio | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.7 KB jpeg (64x48)"
+      },
+      {
+       "interesting": false,
+       "text": "1,744 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.7 KB jpeg (64x48) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "15.5 KB jpeg (480x640)"
+      },
+      {
+       "interesting": false,
+       "text": "15,895 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "15.5 KB jpeg (480x640) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.91 KB png (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "1,954 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.91 KB png (320x240) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.27 KB jpeg (50x50)"
+      },
+      {
+       "interesting": false,
+       "text": "1,305 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.27 KB jpeg (50x50) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "6.63 KB jpeg (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "6,791 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "6.63 KB jpeg (320x240) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "3.22 KB animated webp (90x90), 360 milliseconds (3 frames, 8.3fps)"
+      },
+      {
+       "interesting": false,
+       "text": "3,296 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 8.94 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "3.22 KB animated webp (90x90), 360 milliseconds (3 frames, 8.3fps) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "36.1 KB tiff (128x96)"
+      },
+      {
+       "interesting": false,
+       "text": "37,004 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has exif metadata"
+      }
+     ],
+     "top": "36.1 KB tiff (128x96) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "10.1 KB jpeg (640x480)"
+      },
+      {
+       "interesting": false,
+       "text": "10,294 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "10.1 KB jpeg (640x480) | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "13.9 KB jpeg (1,000x200)"
+      },
+      {
+       "interesting": false,
+       "text": "14,247 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "13.9 KB jpeg (1,000x200) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.07 KB png (200x150)"
+      },
+      {
+       "interesting": false,
+       "text": "1,095 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.07 KB png (200x150) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "14.9 KB jpeg (640x480)"
+      },
+      {
+       "interesting": false,
+       "text": "15,232 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "14.9 KB jpeg (640x480) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "9.88 KB jpeg (300x300)"
+      },
+      {
+       "interesting": false,
+       "text": "10,121 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "9.88 KB jpeg (300x300) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "11.7 KB jpeg (200x1,000)"
+      },
+      {
+       "interesting": false,
+       "text": "11,989 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "11.7 KB jpeg (200x1,000) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), with audio"
+      },
+      {
+       "interesting": false,
+       "text": "15,270 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 14.9 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "removed from my files 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "sent to trash 1 day 15 hours ago (fixture: trashed)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), with audio | imported: 1 day 15 hours ago | sent to trash 1 day 15 hours ago (fixture: trashed) | modified: 1 day 15 hours ago"
+    },
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "6.2 KB jpeg (123x457)"
+      },
+      {
+       "interesting": false,
+       "text": "6,350 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "6.2 KB jpeg (123x457) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "3.85 KB png (640x480)"
+      },
+      {
+       "interesting": false,
+       "text": "3,947 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "3.85 KB png (640x480) | imported: 1 day 15 hours ago | added to art: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.04 KB png (240x180)"
+      },
+      {
+       "interesting": false,
+       "text": "1,070 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.04 KB png (240x180) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)"
+      },
+      {
+       "interesting": false,
+       "text": "17,508 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 8.55 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "removed from my files 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "sent to trash 1 day 15 hours ago (fixture: trashed)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps) | imported: 1 day 15 hours ago | sent to trash 1 day 15 hours ago (fixture: trashed) | modified: 1 day 15 hours ago"
+    },
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.85 KB jpeg (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "5,990 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "5.85 KB jpeg (320x240) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "13.1 KB jpeg (777x333)"
+      },
+      {
+       "interesting": false,
+       "text": "13,461 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "13.1 KB jpeg (777x333) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    },
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.48 KB static gif (160x120)"
+      },
+      {
+       "interesting": false,
+       "text": "5,609 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "5.48 KB static gif (160x120) | imported: 1 day 15 hours ago | added to my files: 1 day 15 hours ago | modified: 1 day 15 hours ago"
+    }
+   },
+   "has_audio_label": "with audio"
+  },
+  "defaults": {
+   "booleans": {
+    "file_info_line_consider_archived_interesting": true,
+    "file_info_line_consider_archived_time_interesting": true,
+    "file_info_line_consider_file_services_import_times_interesting": false,
+    "file_info_line_consider_file_services_interesting": false,
+    "file_info_line_consider_trash_reason_interesting": false,
+    "file_info_line_consider_trash_time_interesting": false,
+    "hide_uninteresting_modified_time": true,
+    "use_nice_resolution_strings": true
+   },
+   "files": {
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.91 KB pdf (833x1,167) (0 words)"
+      },
+      {
+       "interesting": false,
+       "text": "6,055 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has human-readable metadata"
+      }
+     ],
+     "top": "5.91 KB pdf (833x1,167) (0 words) | imported: 1 day 15 hours ago"
+    },
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps)"
+      },
+      {
+       "interesting": false,
+       "text": "2,771 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 4.51 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps) | imported: 1 day 15 hours ago | modified: 6 years ago | archived: 1 day 15 hours ago"
+    },
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "654B webp (300x200)"
+      },
+      {
+       "interesting": false,
+       "text": "654 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "654B webp (300x200) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "30 KB jpeg (800x800)"
+      },
+      {
+       "interesting": false,
+       "text": "30,716 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "30 KB jpeg (800x800) | imported: 1 day 15 hours ago"
+    },
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "20.6 KB flac, 1 seconds, 🔊"
+      },
+      {
+       "interesting": false,
+       "text": "21,065 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 20.6 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "20.6 KB flac, 1 seconds, 🔊 | imported: 1 day 15 hours ago | modified: 6 years ago | archived: 1 day 15 hours ago"
+    },
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "134B zip"
+      },
+      {
+       "interesting": false,
+       "text": "134 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      }
+     ],
+     "top": "134B zip | imported: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps)"
+      },
+      {
+       "interesting": false,
+       "text": "19,729 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 38.5 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps) | imported: 1 day 15 hours ago"
+    },
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.49 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "1,522 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "1.49 KB png (256x256) | imported: 1 day 15 hours ago"
+    },
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "50.5 KB jpeg (1080p)"
+      },
+      {
+       "interesting": false,
+       "text": "51,681 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "50.5 KB jpeg (1080p) | imported: 1 day 15 hours ago"
+    },
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.3 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "2,358 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "2.3 KB png (256x256) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.47 KB png (256x256)"
+      },
+      {
+       "interesting": false,
+       "text": "1,505 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has transparency"
+      }
+     ],
+     "top": "1.47 KB png (256x256) | imported: 1 day 15 hours ago"
+    },
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.18 KB png (280x210)"
+      },
+      {
+       "interesting": false,
+       "text": "1,209 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.18 KB png (280x210) | imported: 1 day 15 hours ago"
+    },
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "12.1 KB bitmap (64x64)"
+      },
+      {
+       "interesting": false,
+       "text": "12,342 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "12.1 KB bitmap (64x64) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "2.37 KB webp (300x200)"
+      },
+      {
+       "interesting": false,
+       "text": "2,426 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "2.37 KB webp (300x200) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "16.2 KB mp3, 2.1 seconds, 🔊"
+      },
+      {
+       "interesting": false,
+       "text": "16,553 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 7.83 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 6 years ago"
+      },
+      {
+       "interesting": false,
+       "lines": [
+        {
+         "interesting": false,
+         "text": "local: 1 day 15 hours ago"
+        },
+        {
+         "interesting": false,
+         "text": "example.com: 6 years ago"
+        }
+       ],
+       "submenu": "all modified times"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "16.2 KB mp3, 2.1 seconds, 🔊 | imported: 1 day 15 hours ago | modified: 6 years ago"
+    },
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.7 KB jpeg (64x48)"
+      },
+      {
+       "interesting": false,
+       "text": "1,744 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.7 KB jpeg (64x48) | imported: 1 day 15 hours ago"
+    },
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "15.5 KB jpeg (480x640)"
+      },
+      {
+       "interesting": false,
+       "text": "15,895 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "15.5 KB jpeg (480x640) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.91 KB png (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "1,954 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.91 KB png (320x240) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.27 KB jpeg (50x50)"
+      },
+      {
+       "interesting": false,
+       "text": "1,305 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.27 KB jpeg (50x50) | imported: 1 day 15 hours ago"
+    },
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "6.63 KB jpeg (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "6,791 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "6.63 KB jpeg (320x240) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "3.22 KB animated webp (90x90), 360 milliseconds (3 frames, 8.3fps)"
+      },
+      {
+       "interesting": false,
+       "text": "3,296 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 8.94 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "you do not have this file, but you did once"
+      },
+      {
+       "interesting": true,
+       "text": "deleted from this client 1 day 15 hours ago (fixture: fully deleted)"
+      },
+      {
+       "interesting": true,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "3.22 KB animated webp (90x90), 360 milliseconds (3 frames, 8.3fps) | you do not have this file, but you did once | deleted from this client 1 day 15 hours ago (fixture: fully deleted) | modified: 1 day 15 hours ago"
+    },
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "36.1 KB tiff (128x96)"
+      },
+      {
+       "interesting": false,
+       "text": "37,004 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has exif metadata"
+      }
+     ],
+     "top": "36.1 KB tiff (128x96) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "10.1 KB jpeg (480p)"
+      },
+      {
+       "interesting": false,
+       "text": "10,294 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "10.1 KB jpeg (480p) | imported: 1 day 15 hours ago"
+    },
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "13.9 KB jpeg (1,000x200)"
+      },
+      {
+       "interesting": false,
+       "text": "14,247 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "13.9 KB jpeg (1,000x200) | imported: 1 day 15 hours ago"
+    },
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.07 KB png (200x150)"
+      },
+      {
+       "interesting": false,
+       "text": "1,095 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.07 KB png (200x150) | imported: 1 day 15 hours ago"
+    },
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "14.9 KB jpeg (480p)"
+      },
+      {
+       "interesting": false,
+       "text": "15,232 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "14.9 KB jpeg (480p) | imported: 1 day 15 hours ago"
+    },
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "9.88 KB jpeg (300x300)"
+      },
+      {
+       "interesting": false,
+       "text": "10,121 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "9.88 KB jpeg (300x300) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "11.7 KB jpeg (200x1,000)"
+      },
+      {
+       "interesting": false,
+       "text": "11,989 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "11.7 KB jpeg (200x1,000) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), 🔊"
+      },
+      {
+       "interesting": false,
+       "text": "15,270 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 14.9 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "removed from my files 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "sent to trash 1 day 15 hours ago (fixture: trashed)"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "has audio"
+      }
+     ],
+     "top": "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), 🔊 | imported: 1 day 15 hours ago | in the trash | archived: 1 day 15 hours ago"
+    },
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "6.2 KB jpeg (123x457)"
+      },
+      {
+       "interesting": false,
+       "text": "6,350 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "6.2 KB jpeg (123x457) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "3.85 KB png (480p)"
+      },
+      {
+       "interesting": false,
+       "text": "3,947 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to art: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "3.85 KB png (480p) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "1.04 KB png (240x180)"
+      },
+      {
+       "interesting": false,
+       "text": "1,070 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "1.04 KB png (240x180) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)"
+      },
+      {
+       "interesting": false,
+       "text": "17,508 bytes"
+      },
+      {
+       "interesting": false,
+       "text": "approx bitrate: 8.55 KB/s"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "removed from my files 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "sent to trash 1 day 15 hours ago (fixture: trashed)"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      }
+     ],
+     "top": "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps) | imported: 1 day 15 hours ago | in the trash"
+    },
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.85 KB jpeg (320x240)"
+      },
+      {
+       "interesting": false,
+       "text": "5,990 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "5.85 KB jpeg (320x240) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "13.1 KB jpeg (777x333)"
+      },
+      {
+       "interesting": false,
+       "text": "13,461 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "13.1 KB jpeg (777x333) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    },
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077": {
+     "lines": [
+      {
+       "interesting": true,
+       "text": "5.48 KB static gif (160x120)"
+      },
+      {
+       "interesting": false,
+       "text": "5,609 bytes"
+      },
+      {
+       "interesting": true,
+       "text": "imported: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "added to my files: 1 day 15 hours ago"
+      },
+      {
+       "interesting": false,
+       "text": "modified: 1 day 15 hours ago"
+      },
+      {
+       "interesting": true,
+       "text": "archived: 1 day 15 hours ago"
+      }
+     ],
+     "top": "5.48 KB static gif (160x120) | imported: 1 day 15 hours ago | archived: 1 day 15 hours ago"
+    }
+   },
+   "has_audio_label": "🔊"
+  }
+ }
+}
