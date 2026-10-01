@@ -206,6 +206,35 @@ pub fn load_basic(conn: &Connection, hash_ids: &[HashId]) -> Result<Vec<MediaRes
     Ok(results)
 }
 
+/// The file domains each of `hash_ids` is current in.
+pub fn current_domains(
+    conn: &Connection,
+    hash_ids: &[HashId],
+) -> Result<HashMap<HashId, Vec<ServiceId>>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT hash_id, service_id FROM file_domain_current WHERE hash_id IN rarray(?)",
+    )?;
+    let mut out: HashMap<HashId, Vec<ServiceId>> = HashMap::new();
+    let mut rows = stmt.query([id_array(hash_ids)])?;
+    while let Some(r) = rows.next()? {
+        out.entry(r.get(0)?).or_default().push(r.get(1)?);
+    }
+    Ok(out)
+}
+
+/// Which of `hash_ids` have a deletion record in `service`.
+pub fn deleted_from(
+    conn: &Connection,
+    hash_ids: &[HashId],
+    service: ServiceId,
+) -> Result<HashSet<HashId>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT hash_id FROM file_domain_deleted WHERE service_id = ? AND hash_id IN rarray(?)",
+    )?;
+    let rows = stmt.query_map(rusqlite::params![service, id_array(hash_ids)], |r| r.get(0))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 /// Which of `hash_ids` are in the inbox.
 pub fn inboxed(conn: &Connection, hash_ids: &[HashId]) -> Result<HashSet<HashId>> {
     let mut stmt =

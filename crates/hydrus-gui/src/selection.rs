@@ -128,20 +128,26 @@ impl Selection {
 
     /// Select every file (ctrl+A, `_Select` with all).
     pub fn select_all(&mut self, sorted: &[HashId]) {
-        if self.focused.is_none() {
-            self.end_shift_select();
-        }
-        self.selected = sorted.iter().copied().collect();
+        self.select_only(sorted, sorted);
     }
 
     /// Select none (escape, `_Select` with nothing).
     pub fn select_none(&mut self, sorted: &[HashId]) {
-        let moves_focus = self.focused.is_none_or(|f| self.selected.contains(&f));
-        if moves_focus || self.shift_start.is_some_and(|f| self.selected.contains(&f)) {
+        self.select_only(sorted, &[]);
+    }
+
+    /// Select just `files` (`_Select`): the focus goes if its file is no
+    /// longer selected (a selected file is taken to be in view, so none is
+    /// focused instead).
+    pub fn select_only(&mut self, sorted: &[HashId], files: &[HashId]) {
+        let matching: HashSet<HashId> = files.iter().copied().collect();
+        let deselected = |f: HashId| self.selected.contains(&f) && !matching.contains(&f);
+        let moves_focus = self.focused.is_none_or(deselected);
+        if moves_focus || self.shift_start.is_some_and(deselected) {
             self.end_shift_select();
         }
-        self.selected.clear();
-        if moves_focus {
+        self.selected = matching;
+        if moves_focus && self.selected.is_empty() {
             self.set_focused(sorted, None);
         }
     }

@@ -120,6 +120,38 @@ component Tab inherits Rectangle {
     }
 }
 
+// The thumbnails' right-click menu, laid into a fixed template (a menu's
+// markup can't mix items, submenus and separators from one list): each
+// part's items, and a submenu's runs between separators as groups.
+export struct MenuRow {
+    label: string,
+    id: int,
+}
+
+export struct MenuGroups {
+    g1: [MenuRow],
+    g2: [MenuRow],
+    g3: [MenuRow],
+    g4: [MenuRow],
+    g5: [MenuRow],
+    g6: [MenuRow],
+}
+
+export struct ThumbnailMenu {
+    head: [MenuRow],
+    has-select: bool,
+    select: MenuGroups,
+    has-remove: bool,
+    remove: MenuGroups,
+    filter: [MenuRow],
+    delete: [MenuRow],
+    delete-title: string,
+    delete-menu: [MenuRow],
+    trash: [MenuRow],
+    manage: [MenuRow],
+    open: [MenuRow],
+}
+
 export struct ThumbnailRow {
     // the index of the row's first file
     first: int,
@@ -137,6 +169,8 @@ component ThumbnailGrid inherits ListView {
     // a click on a file (-1 for none), with ctrl or shift held
     callback clicked(int, bool, bool);
     callback activated(int);
+    // a right-click on a file (-1 for none), where in the window
+    callback menu-requested(int, length, length);
     property <bool> ctrl;
     property <bool> shift;
 
@@ -194,6 +228,11 @@ component ThumbnailGrid inherits ListView {
                 if (event.kind == PointerEventKind.down) {
                     root.ctrl = event.modifiers.control;
                     root.shift = event.modifiers.shift;
+                    if (event.button == PointerEventButton.right) {
+                        let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
+                        root.menu-requested(column >= 0 ? row.first + column : -1,
+                            self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                    }
                 }
             }
             // (a gap between thumbnails is a click on no file)
@@ -294,6 +333,11 @@ export component MainWindow inherits Window {
     callback select-none();
     callback launch-viewer();
     callback move-focus(int, bool, int, int) -> int;
+    // the right-click menu: asked for on a file (-1 for none), then shown;
+    // an entry chosen
+    in property <ThumbnailMenu> thumbnail-menu;
+    callback thumbnail-menu-requested(int);
+    callback menu-chosen(int);
     callback columns-changed(int);
     // how many thumbnails fit across the grid
     out property <int> grid-columns: grid.columns;
@@ -519,64 +563,180 @@ export component MainWindow inherits Window {
                 // and escape none, the arrows, page up and down, home and
                 // end move (with shift, selecting), and enter opens the
                 // media viewer
-                grid-keys := FocusScope {
+                // the right-click menu, as the reference's (`src/thumbnail_menu.rs`)
+                menu-area := ContextMenuArea {
                     horizontal-stretch: 1;
-                    key-pressed(event) => {
-                        if (event.modifiers.control && (event.text == "a" || event.text == "A")) {
-                            root.select-all();
-                            return accept;
+                    Menu {
+                        for row in root.thumbnail-menu.head: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
                         }
-                        if (event.text == Key.Escape) {
-                            root.select-none();
-                            return accept;
-                        }
-                        if (event.text == Key.Return) {
-                            root.launch-viewer();
-                            return accept;
-                        }
-                        let move = event.modifiers.alt || event.modifiers.control ? -1
-                            : event.text == Key.LeftArrow ? 0 : event.text == Key.RightArrow ? 1
-                            : event.text == Key.UpArrow ? 2 : event.text == Key.DownArrow ? 3
-                            : event.text == Key.PageUp ? 4 : event.text == Key.PageDown ? 5
-                            : event.text == Key.Home ? 6 : event.text == Key.End ? 7 : -1;
-                        if (move >= 0) {
-                            let focused = root.move-focus(move, event.modifiers.shift, grid.columns, grid.page-rows);
-                            if (focused >= 0) {
-                                grid.scroll-to(focused);
+                        MenuSeparator { }
+                        if root.thumbnail-menu.has-select: Menu {
+                            title: "select";
+                            for row in root.thumbnail-menu.select.g1: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
                             }
-                            return accept;
-                        }
-                        if (event.text == Key.F3) {
-                            root.manage-tags-selected();
-                            return accept;
-                        }
-                        if (event.text == Key.F7) {
-                            if (event.modifiers.shift) {
-                                root.inbox-selected();
-                            } else {
-                                root.archive-selected();
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g2: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
                             }
-                            return accept;
-                        }
-                        if (event.text == Key.Delete) {
-                            if (event.modifiers.shift) {
-                                root.undelete-selected();
-                            } else {
-                                root.delete-selected();
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g3: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
                             }
-                            return accept;
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g4: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g5: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g6: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
                         }
-                        reject
+                        if root.thumbnail-menu.has-remove: Menu {
+                            title: "remove";
+                            for row in root.thumbnail-menu.remove.g1: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g2: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g3: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g4: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g5: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g6: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                        }
+                        MenuSeparator { }
+                        for row in root.thumbnail-menu.filter: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.thumbnail-menu.delete: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        if root.thumbnail-menu.delete-title != "": Menu {
+                            title: root.thumbnail-menu.delete-title;
+                            for row in root.thumbnail-menu.delete-menu: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        for row in root.thumbnail-menu.trash: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        if root.thumbnail-menu.manage.length > 0: Menu {
+                            title: "manage";
+                            for row in root.thumbnail-menu.manage: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.open.length > 0: Menu {
+                            title: "open";
+                            for row in root.thumbnail-menu.open: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
                     }
-                    grid := ThumbnailGrid {
-                        width: 100%;
-                        height: 100%;
-                        rows: root.thumbnail-rows;
-                        clicked(i, ctrl, shift) => {
-                            grid-keys.focus();
-                            root.thumbnail-clicked(i, ctrl, shift);
+                    grid-keys := FocusScope {
+                        key-pressed(event) => {
+                            if (event.modifiers.control && (event.text == "a" || event.text == "A")) {
+                                root.select-all();
+                                return accept;
+                            }
+                            if (event.text == Key.Escape) {
+                                root.select-none();
+                                return accept;
+                            }
+                            if (event.text == Key.Return) {
+                                root.launch-viewer();
+                                return accept;
+                            }
+                            let move = event.modifiers.alt || event.modifiers.control ? -1
+                                : event.text == Key.LeftArrow ? 0 : event.text == Key.RightArrow ? 1
+                                : event.text == Key.UpArrow ? 2 : event.text == Key.DownArrow ? 3
+                                : event.text == Key.PageUp ? 4 : event.text == Key.PageDown ? 5
+                                : event.text == Key.Home ? 6 : event.text == Key.End ? 7 : -1;
+                            if (move >= 0) {
+                                let focused = root.move-focus(move, event.modifiers.shift, grid.columns, grid.page-rows);
+                                if (focused >= 0) {
+                                    grid.scroll-to(focused);
+                                }
+                                return accept;
+                            }
+                            if (event.text == Key.F3) {
+                                root.manage-tags-selected();
+                                return accept;
+                            }
+                            if (event.text == Key.F7) {
+                                if (event.modifiers.shift) {
+                                    root.inbox-selected();
+                                } else {
+                                    root.archive-selected();
+                                }
+                                return accept;
+                            }
+                            if (event.text == Key.Delete) {
+                                if (event.modifiers.shift) {
+                                    root.undelete-selected();
+                                } else {
+                                    root.delete-selected();
+                                }
+                                return accept;
+                            }
+                            reject
                         }
-                        activated(i) => { root.thumbnail-activated(i); }
+                        grid := ThumbnailGrid {
+                            width: 100%;
+                            height: 100%;
+                            rows: root.thumbnail-rows;
+                            clicked(i, ctrl, shift) => {
+                                grid-keys.focus();
+                                root.thumbnail-clicked(i, ctrl, shift);
+                            }
+                            activated(i) => { root.thumbnail-activated(i); }
+                            menu-requested(i, x, y) => {
+                                root.thumbnail-menu-requested(i);
+                                menu-area.show({ x: x - menu-area.absolute-position.x, y: y - menu-area.absolute-position.y });
+                            }
+                        }
                     }
                 }
             }

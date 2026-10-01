@@ -309,6 +309,35 @@ impl Pages {
         self.add(new_search_page());
     }
 
+    /// Open `files` in a new page searching `location` (the reference's
+    /// "open in a new page", `ShowFilesInNewPage`), at the far right of
+    /// the current notebook, and show it.
+    pub fn open_files(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        files: Vec<hydrus_core::HashId>,
+    ) {
+        let mut page = new_search_page();
+        let PageContent::Search {
+            search,
+            synchronised,
+            ..
+        } = &mut page.content
+        else {
+            unreachable!("a search page");
+        };
+        search.location = location;
+        let opened = SearchPage::restored(
+            self.store.clone(),
+            search.clone(),
+            *synchronised,
+            None,
+            files,
+        );
+        self.open.insert(page.key, Rc::new(RefCell::new(opened)));
+        self.add(page);
+    }
+
     /// Open a page of the kind chosen, at the far right of the current
     /// notebook (as the reference's page chooser does).
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {

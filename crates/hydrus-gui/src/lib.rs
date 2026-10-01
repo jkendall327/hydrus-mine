@@ -43,6 +43,7 @@ pub mod selection;
 pub mod sort;
 pub mod status;
 pub mod still;
+pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
@@ -581,6 +582,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_delete_selected({
         let page = page.clone();
+        let ask = ask.clone();
         move || {
             let files = selected_files();
             if files.is_empty() {
@@ -671,6 +673,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let reselect = {
         let page = page.clone();
         let rows = rows.clone();
+        let shown = shown.clone();
         move |change: &dyn Fn(&mut SearchPage) -> Option<usize>| {
             let page = page();
             let before = page.borrow().selected_indices();
@@ -709,22 +712,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             });
         }
     });
-    window.on_move_focus(move |to, shift, columns, page_rows| {
-        use selection::Move;
-        let to = match to {
-            0 => Move::Left,
-            1 => Move::Right,
-            2 => Move::Up,
-            3 => Move::Down,
-            4 => Move::PageUp,
-            5 => Move::PageDown,
-            6 => Move::Home,
-            _ => Move::End,
-        };
-        let size = |n: i32| usize::try_from(n).unwrap_or(1);
-        reselect(&|page| page.move_focus(to, shift, size(columns), size(page_rows)))
-            .and_then(|i| i32::try_from(i).ok())
-            .unwrap_or(-1)
+    window.on_move_focus({
+        let reselect = reselect.clone();
+        move |to, shift, columns, page_rows| {
+            use selection::Move;
+            let to = match to {
+                0 => Move::Left,
+                1 => Move::Right,
+                2 => Move::Up,
+                3 => Move::Down,
+                4 => Move::PageUp,
+                5 => Move::PageDown,
+                6 => Move::Home,
+                _ => Move::End,
+            };
+            let size = |n: i32| usize::try_from(n).unwrap_or(1);
+            reselect(&|page| page.move_focus(to, shift, size(columns), size(page_rows)))
+                .and_then(|i| i32::try_from(i).ok())
+                .unwrap_or(-1)
+        }
     });
     // enter: the media viewer, on the focused file (else the first)
     window.on_launch_viewer({
@@ -734,6 +740,135 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let focused = page().borrow().focused().unwrap_or(0);
             if let Some(window) = weak.upgrade() {
                 window.invoke_thumbnail_activated(i32::try_from(focused).unwrap_or(0));
+            }
+        }
+    });
+    // the right-click menu: built for the file clicked (selecting it, as
+    // a click would), and its entries done
+    let menu_state: Rc<RefCell<(Vec<thumbnail_menu::Action>, Vec<thumbnail_menu::FileFacts>)>> =
+        Rc::default();
+    window.on_thumbnail_menu_requested({
+        let page = page.clone();
+        let reselect = reselect.clone();
+        let menu_state = menu_state.clone();
+        let weak = window.as_weak();
+        move |index| {
+            if let Ok(index) = usize::try_from(index) {
+                reselect(&|page| {
+                    page.hit(Some(index), false, false);
+                    None
+                });
+            }
+            let page = page();
+            let page = page.borrow();
+            let files = thumbnail_menu::facts(page.store(), page.results());
+            let selected: std::collections::HashSet<HashId> =
+                page.selected_files().into_iter().collect();
+            let snapshot = page.store().snapshot();
+            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected);
+            let slots = thumbnail_menu::Slots::new(&entries);
+            let mut actions = Vec::new();
+            let window_menu = thumbnail_menu_rows(&slots, &mut actions);
+            *menu_state.borrow_mut() = (actions, files);
+            if let Some(window) = weak.upgrade() {
+                window.set_thumbnail_menu(window_menu);
+            }
+        }
+    });
+    window.on_menu_chosen({
+        let page = page.clone();
+        let weak = window.as_weak();
+        let change_pages = change_pages.clone();
+        let shown = shown.clone();
+        move |id| {
+            use thumbnail_menu::Action;
+            let (Some(window), Ok(id)) = (weak.upgrade(), usize::try_from(id)) else {
+                return;
+            };
+            let Some(action) = menu_state.borrow().0.get(id).copied() else {
+                return;
+            };
+            let page = page();
+            let snapshot = page.borrow().store().snapshot();
+            let Ok(roles) = hydrus_store::content::DomainRoles::new(&snapshot.services) else {
+                return;
+            };
+            let files_of = |filter: thumbnail_menu::Filter| {
+                let state = menu_state.borrow();
+                let selected: std::collections::HashSet<HashId> =
+                    page.borrow().selected_files().into_iter().collect();
+                thumbnail_menu::matching(filter, &state.1, &selected, &roles)
+            };
+            let selected_in = |domain: hydrus_core::ServiceId| {
+                let state = menu_state.borrow();
+                let selected: std::collections::HashSet<HashId> =
+                    page.borrow().selected_files().into_iter().collect();
+                state
+                    .1
+                    .iter()
+                    .filter(|f| selected.contains(&f.file) && f.current.contains(&domain))
+                    .map(|f| f.file)
+                    .collect::<Vec<_>>()
+            };
+            let delete = |files: Vec<HashId>, deletion: media_actions::Deletion| {
+                if !files.is_empty() {
+                    let location = page.borrow().location().clone();
+                    ask(Asked::Delete(files, deletion, location));
+                }
+            };
+            match action {
+                Action::Refresh => {
+                    page.borrow_mut().refresh();
+                    shown(true);
+                }
+                Action::Select(filter) => {
+                    let files = files_of(filter);
+                    reselect(&|page| {
+                        page.select_files(&files);
+                        None
+                    });
+                }
+                Action::Remove(filter) => {
+                    let files = files_of(filter);
+                    page.borrow_mut().remove_files(&files);
+                    shown(true);
+                }
+                Action::ArchiveDeleteFilter => window.invoke_archive_delete_filter(),
+                Action::Archive => window.invoke_archive_selected(),
+                Action::Inbox => window.invoke_inbox_selected(),
+                Action::DeleteFrom(domain) => {
+                    let name = snapshot
+                        .services
+                        .get(domain)
+                        .map(|s| s.name.clone())
+                        .unwrap_or_default();
+                    delete(
+                        selected_in(domain),
+                        media_actions::Deletion::FromDomain { domain, name },
+                    );
+                }
+                Action::DeleteTrashPhysically => {
+                    delete(
+                        selected_in(roles.trash),
+                        media_actions::Deletion::Physically,
+                    );
+                }
+                Action::DeletePhysically => delete(
+                    page.borrow().selected_files(),
+                    media_actions::Deletion::Physically,
+                ),
+                Action::Undelete => window.invoke_undelete_selected(),
+                Action::ManageTags => window.invoke_manage_tags_selected(),
+                Action::OpenInNewPage => {
+                    let (location, files) = {
+                        let page = page.borrow();
+                        (page.location().clone(), page.selected_files())
+                    };
+                    change_pages(&|pages| {
+                        pages.open_files(location.clone(), files.clone());
+                        Ok(())
+                    });
+                }
             }
         }
     });
@@ -751,6 +886,58 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
 /// Called with files a viewer deleted out of the page's domains.
 pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
+
+/// The window's menu template filled from `slots`, each entry's action
+/// put in `actions` at its id.
+fn thumbnail_menu_rows(
+    slots: &thumbnail_menu::Slots,
+    actions: &mut Vec<thumbnail_menu::Action>,
+) -> ThumbnailMenu {
+    let mut rows = |items: &[thumbnail_menu::SlotItem]| -> ModelRc<MenuRow> {
+        let rows: Vec<MenuRow> = items
+            .iter()
+            .map(|(label, action)| {
+                actions.push(*action);
+                MenuRow {
+                    label: label.as_str().into(),
+                    id: i32::try_from(actions.len() - 1).unwrap_or(-1),
+                }
+            })
+            .collect();
+        ModelRc::new(VecModel::from(rows))
+    };
+    let mut groups = |groups: &[Vec<thumbnail_menu::SlotItem>]| {
+        let group = |i: usize| groups.get(i).map_or(&[][..], Vec::as_slice);
+        MenuGroups {
+            g1: rows(group(0)),
+            g2: rows(group(1)),
+            g3: rows(group(2)),
+            g4: rows(group(3)),
+            g5: rows(group(4)),
+            g6: rows(group(5)),
+        }
+    };
+    let select = groups(&slots.select);
+    let remove = groups(&slots.remove);
+    let (delete_title, delete_menu) = match &slots.delete_menu {
+        Some((title, items)) => (title.as_str().into(), rows(items)),
+        None => (SharedString::new(), rows(&[])),
+    };
+    ThumbnailMenu {
+        head: rows(&slots.head),
+        has_select: !slots.select.is_empty(),
+        select,
+        has_remove: !slots.remove.is_empty(),
+        remove,
+        filter: rows(&slots.filter),
+        delete: rows(&slots.delete),
+        delete_title,
+        delete_menu,
+        trash: rows(&slots.trash),
+        manage: rows(&slots.manage),
+        open: rows(&slots.open),
+    }
+}
 
 /// What the main window asks before doing it to the selected files.
 enum Asked {

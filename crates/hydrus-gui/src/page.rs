@@ -477,6 +477,20 @@ impl SearchPage {
         self.count_tags();
     }
 
+    /// Select just `files` (the menu's select), as the reference's
+    /// `_Select` does.
+    pub fn select_files(&mut self, files: &[HashId]) {
+        self.selection.select_only(&self.results, files);
+        self.count_tags();
+    }
+
+    /// Search again (the menu's "refresh"), if the page has a search.
+    pub fn refresh(&mut self) {
+        if self.note.is_none() && !self.predicates.is_empty() {
+            self.search();
+        }
+    }
+
     /// Select every file (ctrl+A).
     pub fn select_all(&mut self) {
         self.selection.select_all(&self.results);

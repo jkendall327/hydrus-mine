@@ -85,7 +85,18 @@ selects every file, escape none, the arrows, page up and down, home and
 end move from the focused file (shift selecting as they go, from the file
 last clicked; the grid scrolls to follow; with nothing focused, the file
 focused last is selected again, or the next one if it has gone) and
-enter opens the media viewer on the focused file. Double-clicking a thumbnail opens the media viewer in its own
+enter opens the media viewer on the focused file. A right-click on a thumbnail selects it
+as a click would and opens the reference's thumbnail menu
+(`src/thumbnail_menu.rs`, checked against the reference's own menus for
+several pages and selections, `oracle/record_thumbnail_menu.py`), so far
+with the entries hydrus-rs can act on: refresh; select and remove (all,
+inbox and archive, each file domain, local and not, not selected, none,
+each with its count); the archive/delete filter; archive and re-inbox;
+delete from each local file domain the selection is in (asking), delete
+trash physically, delete physically and undelete; manage → tags; and
+open → in a new page. Not yet: the selection's info submenu, rearrange,
+clearing deletion records, the other manage entries, locations, urls,
+the rest of open, and share. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or page down and up, or the mouse wheel) move through the page's files,
@@ -201,7 +212,8 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
-repositories (pending and petitioning), dragging thumbnails, the thumbnails' menu, system
+repositories (pending and petitioning), dragging thumbnails, the rest of
+the thumbnails' menu, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
 shading, playing animated JPEG XL, downloader pages' own panels; in
