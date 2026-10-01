@@ -203,6 +203,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 }
             };
         }
+        if let Some(percent) = options
+            .integers
+            .get("video_thumbnail_percentage_in")
+            .and_then(|&p| u32::try_from(p).ok())
+        {
+            thumbnails.video_percentage_in = percent;
+        }
         if let Some(&dpr) = options.integers.get("thumbnail_dpr_percent") {
             thumbnails.dpr_percent = positive(dpr, "thumbnail dpr percent")?;
         }

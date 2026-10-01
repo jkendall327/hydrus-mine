@@ -23,6 +23,14 @@ pub struct ThumbnailSettings {
     pub scale: ThumbnailScale,
     /// Device pixel ratio as a percentage (100 = no scaling).
     pub dpr_percent: u32,
+    /// How far into a video its thumbnail frame is, as a percentage
+    /// (`video_thumbnail_percentage_in`).
+    #[serde(default = "default_video_percentage_in")]
+    pub video_percentage_in: u32,
+}
+
+fn default_video_percentage_in() -> u32 {
+    35
 }
 
 impl Default for ThumbnailSettings {
@@ -32,6 +40,7 @@ impl Default for ThumbnailSettings {
             bounding_height: 125,
             scale: ThumbnailScale::DownOnly,
             dpr_percent: 100,
+            video_percentage_in: default_video_percentage_in(),
         }
     }
 }

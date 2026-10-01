@@ -1510,7 +1510,7 @@ pub(crate) mod tests {
         );
         assert_eq!(
             input.settings["thumbnails"],
-            serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100})
+            serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100, "video_percentage_in": 35})
         );
         // recorded, counting the media viewer and the Client API
         assert_eq!(

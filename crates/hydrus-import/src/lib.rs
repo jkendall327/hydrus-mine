@@ -445,7 +445,7 @@ fn thumbnail_spec(settings: &hydrus_core::thumbnail::ThumbnailSettings) -> Thumb
             Core::ToFill => Media::ToFill,
         },
         dpr_percent: settings.dpr_percent,
-        ..ThumbnailSpec::default()
+        video_percentage_in: settings.video_percentage_in,
     }
 }
 
