@@ -642,7 +642,8 @@ pub(crate) fn configure(conn: &Connection) -> Result<()> {
          PRAGMA temp_store = MEMORY;
          PRAGMA cache_size = -262144;
          PRAGMA mmap_size = 268435456;
-         PRAGMA busy_timeout = 30000;",
+         PRAGMA busy_timeout = 30000;
+         PRAGMA journal_size_limit = 134217728;",
     )?;
     rusqlite::vtab::array::load_module(conn)?;
     Ok(())
