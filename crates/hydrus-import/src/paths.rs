@@ -277,9 +277,24 @@ pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
     Ok(true)
 }
 
+/// `PROCESS_UMASK`'s bits among 0666: read from a new file asked for 0666,
+/// rather than by setting the umask, which other threads could see.
+#[cfg(unix)]
+fn umask() -> u32 {
+    use std::os::unix::fs::PermissionsExt;
+    static UMASK: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
+    *UMASK.get_or_init(|| {
+        tempfile::Builder::new()
+            .permissions(std::fs::Permissions::from_mode(0o666))
+            .tempfile()
+            .and_then(|f| f.as_file().metadata())
+            .map_or(0o022, |m| !m.permissions().mode() & 0o666)
+    })
+}
+
 /// `TryToGiveFileNicePermissionBits`: make sure the owner can read and
-/// write the file and others can read it (0644); nothing in "do not chmod"
-/// mode.
+/// write the file and others can read it (0644, less what the umask
+/// withholds); nothing in "do not chmod" mode.
 pub fn give_nice_permission_bits(path: impl AsRef<Path>) {
     let path = path.as_ref();
     if hydrus_store::paths::do_not_chmod() {
@@ -290,7 +305,7 @@ pub fn give_nice_permission_bits(path: impl AsRef<Path>) {
         use std::os::unix::fs::PermissionsExt;
         if let Ok(meta) = std::fs::metadata(path) {
             let bits = meta.permissions().mode();
-            let desired = 0o644;
+            let desired = 0o644 & !umask();
             if bits & desired != desired {
                 let _ =
                     std::fs::set_permissions(path, std::fs::Permissions::from_mode(bits | desired));
@@ -551,6 +566,27 @@ pub fn elide_filename(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn nice_permission_bits_keep_to_the_umask() {
+        use std::os::unix::fs::PermissionsExt;
+        let status = std::fs::read_to_string("/proc/self/status").unwrap();
+        let reported = status
+            .lines()
+            .find_map(|l| l.strip_prefix("Umask:"))
+            .map(|v| u32::from_str_radix(v.trim(), 8).unwrap())
+            .unwrap();
+        assert_eq!(umask(), reported & 0o666);
+
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("file");
+        std::fs::write(&file, b"").unwrap();
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o200)).unwrap();
+        give_nice_permission_bits(&file);
+        let mode = std::fs::metadata(&file).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o200 | (0o644 & !reported), "umask {reported:o}");
+    }
 
     #[test]
     fn sidecars_are_told_apart_from_files() {

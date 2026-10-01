@@ -70,11 +70,10 @@ pub fn delete_or_recycle(path: impl AsRef<Path>, recycle: bool) -> io::Result<()
     }
 }
 
-#[cfg(test)]
+#[cfg(all(test, unix))]
 mod tests {
     use super::*;
 
-    #[cfg(unix)]
     #[test]
     fn copies_keep_permissions_unless_told_not_to() {
         use std::os::unix::fs::PermissionsExt;
