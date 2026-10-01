@@ -70,13 +70,19 @@ the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
-to the first as in the reference, and escape closes it. As the reference's
+to the first as in the reference, and escape closes it. F3 manages the
+file's tags, as the reference's dialog does on the local tag services:
+the file's tags on the service chosen, and an input whose tag, entered,
+is added to the file (or removed, if it has it already), the tag as typed
+offered first and then the service's tags matching it; double-clicking a
+listed tag removes it, and changes wait until enter with nothing typed
+(or "apply") writes them, escape forgetting them. As the reference's
 default media shortcuts have it, F7 archives the file, shift+F7 returns it
 to the inbox, delete deletes it (from the page's domain, if it searches
 one, else to the trash; in the trash, for good, unless the delete lock
 holds it), asking first, and shift+delete undeletes it; a file deleted out
 of the page's domains leaves the page and the viewer (which closes when
-none are left). The same keys work on the thumbnails, once a click gives
+none are left). The same keys (and F3) work on the thumbnails, once a click gives
 them the keyboard, for the file selected. F12 opens the archive/delete filter, as the reference's
 does, on the file selected (or all the page's files), those in a local
 domain and not in the trash: a left click or F7 keeps the file, a right
@@ -124,7 +130,9 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `crates/hydrus-gui/tests/search_page.rs` drives the page and
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
-closed pages (Ctrl+U reopens them one at a time), system
+closed pages (Ctrl+U reopens them one at a time), managing tags on tag
+repositories (pending and petitioning) and on several files at once from
+the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (file info and buttons, ratings, notes), seeking
 and volume, playing animated JPEG XL, downloader pages' own panels; in

@@ -1,6 +1,7 @@
 // The media viewer's window: one file, fitted to the window. Right and left
 // (or page down and up, or the mouse wheel) move through the page's files;
-// space pauses and plays video; escape closes it. F7 archives the file and
+// space pauses and plays video; escape closes it. F3 manages the file's
+// tags. F7 archives the file and
 // shift+F7 returns it to the inbox; delete deletes it (asking first: enter
 // or escape answers) and shift+delete undeletes it. With the pointer over the
 // window's left fifth, the file's tags show there, as the reference's tags
@@ -32,6 +33,7 @@ export component MediaViewerWindow inherits Window {
     callback delete();
     callback undelete();
     callback answer(bool);
+    callback manage-tags();
 
     forward-focus: keys;
     keys := FocusScope {
@@ -42,6 +44,10 @@ export component MediaViewerWindow inherits Window {
                 } else if (event.text == Key.Escape) {
                     root.answer(false);
                 }
+                return accept;
+            }
+            if (event.text == Key.F3) {
+                root.manage-tags();
                 return accept;
             }
             if (event.text == Key.F7) {

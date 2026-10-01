@@ -5,6 +5,7 @@
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use hydrus_core::HashId;
 use slint::{ModelRc, SharedString, VecModel};
@@ -26,6 +27,8 @@ pub mod favourites;
 mod filter_window;
 mod grid;
 pub mod headless;
+pub mod manage_tags;
+pub(crate) mod manage_tags_window;
 pub mod media_actions;
 pub mod mpv;
 mod page;
@@ -51,6 +54,8 @@ pub struct Bound {
     pub current: Rc<RefCell<Rc<RefCell<SearchPage>>>>,
     pub rows: Rc<ThumbnailRows>,
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
+    /// The manage tags window while one is open.
+    pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -399,6 +404,44 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // F3: manage tags; once applied, the tags are counted again
+    let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let tags_changed: Rc<dyn Fn()> = Rc::new({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().refresh_tags();
+            shown(false);
+        }
+    });
+    let open_manage_tags = {
+        let manage_tags = manage_tags.clone();
+        move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            let Some(model) = manage_tags::ManageTags::new(store, files) else {
+                return;
+            };
+            match manage_tags_window::open(model, &manage_tags, applied) {
+                Ok(window) => *manage_tags.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open manage tags: {e}"),
+            }
+        }
+    };
+    window.on_manage_tags_selected({
+        let page = page.clone();
+        let open_manage_tags = open_manage_tags.clone();
+        let tags_changed = tags_changed.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            if let Some(i) = page.selected() {
+                open_manage_tags(
+                    page.store().clone(),
+                    vec![page.results()[i]],
+                    tags_changed.clone(),
+                );
+            }
+        }
+    });
     // the selected file's shortcuts: F7, shift+F7, delete, shift+delete
     let selected_file = {
         let page = page.clone();
@@ -511,7 +554,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let model = model.with_location(page.location().clone());
-            match open_viewer(model, &viewer, removed.clone()) {
+            let hooks = ViewerHooks {
+                removed: removed.clone(),
+                tags_changed: tags_changed.clone(),
+                manage_tags: Rc::new(open_manage_tags.clone()),
+            };
+            match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the media viewer: {e}"),
             }
@@ -536,6 +584,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         current,
         rows,
         viewer,
+        manage_tags,
         archive_delete,
         filter,
         _thumbnails: thumbnails,
@@ -545,13 +594,28 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 /// Called with files a viewer deleted out of the page's domains.
 pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
 
+/// Opens manage tags on files, calling the hook given once applied.
+type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;
+
+/// What a viewer tells its page of, and how it opens manage tags.
+struct ViewerHooks {
+    removed: Removed,
+    tags_changed: Rc<dyn Fn()>,
+    manage_tags: OpenManageTags,
+}
+
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
 /// when closed.
 fn open_viewer(
     model: MediaViewer,
     slot: &Rc<RefCell<Option<MediaViewerWindow>>>,
-    removed: Removed,
+    hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
+    let ViewerHooks {
+        removed,
+        tags_changed,
+        manage_tags,
+    } = hooks;
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
@@ -611,6 +675,28 @@ fn open_viewer(
         move || {
             model.borrow_mut().previous();
             show();
+        }
+    });
+    // F3: manage the file's tags; once applied, the hover frame's and the
+    // page's are shown again
+    window.on_manage_tags({
+        let model = model.clone();
+        let show = show.clone();
+        move || {
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let show = show.clone();
+            let tags_changed = tags_changed.clone();
+            manage_tags(
+                store,
+                vec![file],
+                Rc::new(move || {
+                    show();
+                    tags_changed();
+                }),
+            );
         }
     });
     // the media shortcuts: F7 and shift+F7, delete and shift+delete

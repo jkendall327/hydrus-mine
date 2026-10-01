@@ -266,6 +266,11 @@ impl SearchPage {
             .collect()
     }
 
+    /// Count the tag list's tags again (after they were changed).
+    pub fn refresh_tags(&mut self) {
+        self.count_tags();
+    }
+
     /// The file domains the page searches.
     pub fn location(&self) -> &hydrus_search::LocationContext {
         &self.context.location

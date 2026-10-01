@@ -1,0 +1,127 @@
+// The manage tags window (F3): the files' tags on the tag service chosen,
+// and an input whose tag, entered, is added to them (or, if they all have
+// it, removed); double-clicking a listed tag removes it. Up and down move
+// through the suggestions. Changes wait: enter with nothing typed (or
+// "apply") applies them, escape (or "cancel") forgets them.
+
+import { Button, ComboBox, LineEdit, ListView } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+
+export component ManageTagsWindow inherits Window {
+    title: "manage tags";
+    preferred-width: 420px;
+    preferred-height: 560px;
+    background: Theme.window;
+
+    in property <[string]> service-names;
+    in-out property <int> service-index;
+    in property <[ListText]> tags;
+    in property <[ListText]> suggestions;
+    in property <int> highlighted: -1;
+    in property <string> error;
+    in-out property <string> text;
+
+    callback service-chosen(int);
+    callback text-edited(string);
+    callback entered();
+    callback move-highlight(int);
+    callback tag-activated(int);
+    callback apply();
+    callback cancel();
+
+    forward-focus: input;
+    FocusScope {
+        capture-key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.move-highlight(-1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow) {
+                root.move-highlight(1);
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            ComboBox {
+                model: root.service-names;
+                current-index <=> root.service-index;
+                selected => { root.service-chosen(self.current-index); }
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                vertical-stretch: 1;
+                ListView {
+                    for tag[i] in root.tags: Rectangle {
+                        height: 20px;
+                        background: pick.has-hover ? Theme.hover : transparent;
+                        Text {
+                            x: 4px;
+                            text: tag.text;
+                            color: tag.colour;
+                            vertical-alignment: center;
+                            overflow: elide;
+                            width: parent.width - 8px;
+                        }
+                        pick := TouchArea {
+                            double-clicked => { root.tag-activated(i); }
+                        }
+                    }
+                }
+            }
+            input := LineEdit {
+                text <=> root.text;
+                placeholder-text: "enter a tag";
+                edited(text) => { root.text-edited(text); }
+                accepted => { root.entered(); }
+            }
+            if root.suggestions.length > 0: Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                height: min(root.suggestions.length, 8) * 22px + 4px;
+                VerticalLayout {
+                    padding: 2px;
+                    alignment: start;
+                    for suggestion[i] in root.suggestions: Rectangle {
+                        height: 22px;
+                        background: i == root.highlighted ? Theme.highlight : transparent;
+                        Text {
+                            x: 4px;
+                            text: suggestion.text;
+                            color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
+                            vertical-alignment: center;
+                            overflow: elide;
+                            width: parent.width - 8px;
+                        }
+                    }
+                }
+            }
+            if root.error != "": Text {
+                text: root.error;
+                color: Theme.error;
+                wrap: word-wrap;
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

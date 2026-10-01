@@ -9,6 +9,7 @@ export { ListText }
 export { Palette } from "std-widgets.slint";
 export { MediaViewerWindow } from "viewer.slint";
 export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { ManageTagsWindow } from "manage_tags.slint";
 export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 
@@ -241,6 +242,7 @@ export component MainWindow inherits Window {
     callback inbox-selected();
     callback delete-selected();
     callback undelete-selected();
+    callback manage-tags-selected();
     callback answer(bool);
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -480,12 +482,17 @@ export component MainWindow inherits Window {
                     }
                 }
                 // the thumbnails' shortcuts, once a click gives them the
-                // keyboard: F7 archives the file selected and shift+F7
+                // keyboard: F3 manages the file selected's tags, F7
+                // archives it and shift+F7
                 // inboxes it, delete deletes it (asking first) and
                 // shift+delete undeletes it
                 grid-keys := FocusScope {
                     horizontal-stretch: 1;
                     key-pressed(event) => {
+                        if (event.text == Key.F3) {
+                            root.manage-tags-selected();
+                            return accept;
+                        }
                         if (event.text == Key.F7) {
                             if (event.modifiers.shift) {
                                 root.inbox-selected();
