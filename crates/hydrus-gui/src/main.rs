@@ -21,6 +21,10 @@ fn main() -> Result<()> {
         .into();
     let store =
         Store::open(&dir).with_context(|| format!("opening the store at {}", dir.display()))?;
+    // one client at a time on a store, as the reference allows one on its
+    // database; held before the session is read, so what the Client API
+    // asks of the pages from now on waits for this client
+    let _open = lock_client(&dir)?;
     let lock: LockPassword = store
         .read(hydrus_store::settings::get)
         .context("reading the lock password")?;
@@ -112,15 +116,12 @@ impl Client {
         });
         let pages = Pages::open(store).context("opening the last session")?;
         let bound = bind(&window, pages);
-        // as the reference does: the last session every five minutes, and on exit
+        // the last session kept as it changes (the reference saves it every
+        // five minutes), and what the Client API asks of the pages done
         let saving = slint::Timer::default();
-        saving.start(slint::TimerMode::Repeated, Duration::from_secs(300), {
-            let pages = bound.pages.clone();
-            move || {
-                if let Err(e) = save(&mut pages.borrow_mut()) {
-                    eprintln!("saving the session failed: {e}");
-                }
-            }
+        saving.start(slint::TimerMode::Repeated, Duration::from_millis(500), {
+            let sync = bound.sync.clone();
+            move || sync()
         });
         // where hydrus had it, and how big (maximised, by its default); kept
         // as it closes, as the reference keeps it
@@ -151,6 +152,21 @@ impl Client {
             _watching: watching,
         })
     }
+}
+
+/// Take the lock the client holds while it is open: a second client on the
+/// store is refused. (Retried for a moment, as the daemon looks at it now
+/// and then.)
+fn lock_client(dir: &std::path::Path) -> Result<std::fs::File> {
+    for _ in 0..20 {
+        if let Some(lock) = hydrus_store::store::lock_gui(dir)
+            .with_context(|| format!("opening the lock file in {}", dir.display()))?
+        {
+            return Ok(lock);
+        }
+        std::thread::sleep(Duration::from_millis(50));
+    }
+    Err(anyhow!("hydrus-gui is already open on {}", dir.display()))
 }
 
 fn save(pages: &mut Pages) -> hydrus_store::Result<()> {

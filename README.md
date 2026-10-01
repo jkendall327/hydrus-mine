@@ -5,7 +5,7 @@ This repository also holds **hydrus-rs**, a reimplementation of the hydrus clien
 What it does so far:
 
 - **Imports a v688 install** without changing it: files (used in place, hardlinked, copied or moved), tags with their siblings and parents, notes, ratings, URLs, file relationships, subscriptions with their histories, import and export folders, duplicates auto-resolution rules, downloader queues and the last session's pages.
-- **Serves the Client API** (`hydrus serve`) with the same port, access keys and services, for Hydrus Companion and other tools: every endpoint except `/manage_pages`, two of them with small gaps (see `parity/manifest.toml`).
+- **Serves the Client API** (`hydrus serve`) with the same port, access keys and services, for Hydrus Companion and other tools: every endpoint except `/manage_pages/new_page`, four of them with small gaps (see `parity/manifest.toml`).
 - **Runs the background work hydrus runs:** downloaders, subscriptions, thread watchers, import and export folders, the similar-files search and duplicates auto-resolution.
 - **A desktop client** (`hydrus-gui`), early, which runs `hydrus serve` while it is open: the last session's pages, search pages with autocomplete, sorting, a tag list and a thumbnail grid, a media viewer (video through mpv), and the duplicate filter, with the reference's comparison statements.
 

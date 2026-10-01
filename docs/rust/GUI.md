@@ -19,6 +19,13 @@ when it closes; one started on its own (as a service, say) runs on, and if
 that one stops, the client starts its own. If the client's daemon can't
 start or stops by itself, a line above the status bar says why (its own
 error: a media location missing, say) with a button to start it again.
+The client keeps its pages in the store as they change (within half a
+second: the session, the page shown, each page's files and selection, and
+the media viewer and its file), so the Client API's `/manage_pages`
+answers from it, and does what that asks of the pages (showing one, adding
+files to one, refreshing one or a notebook's) the next time it looks. It
+opens on the page it showed last, and only one client opens a store at a
+time.
 The main window opens
 where and as big as hydrus had it (maximised, by hydrus's default) and
 keeps its size and place as it closes, as hydrus's frame locations do

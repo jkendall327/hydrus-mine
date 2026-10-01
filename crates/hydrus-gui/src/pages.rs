@@ -6,6 +6,7 @@ use std::collections::HashMap;
 use std::rc::Rc;
 use std::sync::Arc;
 
+use hydrus_core::HashId;
 use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
 use hydrus_core::pages::{DownloaderKind, DuplicatesPage, Page, PageContent, PageKey, Session};
 use hydrus_search::FileSearchContext;
@@ -37,6 +38,17 @@ pub struct Pages {
     /// When each notebook last moved its selection by ctrl+page up or down
     /// (`None`: the top one).
     last_moved: HashMap<Option<PageKey>, std::time::Instant>,
+    /// What [`Pages::sync`] last wrote to the store.
+    synced: Synced,
+}
+
+/// What the store was last told of the pages, so only changes are written.
+#[derive(Debug, Default)]
+struct Synced {
+    pages: Option<Vec<Page>>,
+    shown: Option<PageKey>,
+    /// Each opened page's files and selected files.
+    media: HashMap<PageKey, (Vec<HashId>, Vec<HashId>)>,
 }
 
 /// A closed page, as it was: where it was, and its pages as opened.
@@ -81,8 +93,16 @@ impl Pages {
             closed: Vec::new(),
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
+            synced: Synced::default(),
         };
         pages.select(0, 0);
+        // (on the page shown last, or the Client API asked for since)
+        let shown = pages
+            .store
+            .read(|conn| sessions::shown(conn, LAST_SESSION))?;
+        if let Some(shown) = shown {
+            pages.show(&shown);
+        }
         Ok(pages)
     }
 
@@ -104,6 +124,7 @@ impl Pages {
             closed: Vec::new(),
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
+            synced: Synced::default(),
         };
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
         pages
@@ -162,6 +183,53 @@ impl Pages {
             page = &children[at];
         }
         self.remember();
+    }
+
+    /// Show the page with `key`, wherever it is (a notebook shows the page
+    /// it showed last, its first to begin with): whether there is one.
+    pub fn show(&mut self, key: &PageKey) -> bool {
+        fn path_to(pages: &[Page], key: &PageKey, path: &mut Vec<usize>) -> bool {
+            for (i, page) in pages.iter().enumerate() {
+                path.push(i);
+                if page.key == *key {
+                    return true;
+                }
+                if let PageContent::Pages(children) = &page.content
+                    && path_to(children, key, path)
+                {
+                    return true;
+                }
+                path.pop();
+            }
+            false
+        }
+        let mut path = Vec::new();
+        if !path_to(&self.session.pages, key, &mut path) {
+            return false;
+        }
+        for (level, &index) in path.iter().enumerate() {
+            self.select(level, index);
+        }
+        true
+    }
+
+    /// The pages (not notebooks) at or under the page with `key`; all of
+    /// them for a key that isn't a page's (the top notebook's).
+    pub fn pages_under(&self, key: &PageKey) -> Vec<PageKey> {
+        fn media(pages: &[Page], out: &mut Vec<PageKey>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => media(children, out),
+                    _ => out.push(page.key),
+                }
+            }
+        }
+        let mut out = Vec::new();
+        match self.session.all_pages().into_iter().find(|p| p.key == *key) {
+            Some(page) => media(std::slice::from_ref(page), &mut out),
+            None => media(&self.session.pages, &mut out),
+        }
+        out
     }
 
     /// Note the page each notebook on the way to the page shown shows.
@@ -244,6 +312,21 @@ impl Pages {
     /// The page shown, opened.
     pub fn current(&mut self) -> Rc<RefCell<SearchPage>> {
         let page = self.shown().clone();
+        self.opened(page)
+    }
+
+    /// The page (not a notebook) with `key`, opened.
+    pub fn page(&mut self, key: &PageKey) -> Option<Rc<RefCell<SearchPage>>> {
+        let page = self
+            .session
+            .all_pages()
+            .into_iter()
+            .find(|p| p.key == *key && !matches!(p.content, PageContent::Pages(_)))?
+            .clone();
+        Some(self.opened(page))
+    }
+
+    fn opened(&mut self, page: Page) -> Rc<RefCell<SearchPage>> {
         if let Some(open) = self.open.get(&page.key) {
             return open.clone();
         }
@@ -332,34 +415,69 @@ impl Pages {
 
 impl Pages {
     /// Save the pages as the last session: each page opened as it is now,
-    /// with the files it shows, and the rest as they were.
+    /// with the files it shows and those selected, the rest as they were,
+    /// and the page shown.
     pub fn save(&mut self, now: i64) -> hydrus_store::Result<()> {
+        self.synced = Synced::default();
+        self.sync(now)
+    }
+
+    /// Keep the last session up to date in the store, as [`Pages::save`]
+    /// does, writing only what changed since last time: the Client API's
+    /// `/manage_pages` answers from it.
+    pub fn sync(&mut self, now: i64) -> hydrus_store::Result<()> {
+        type Media = Vec<(PageKey, Vec<HashId>, Vec<HashId>)>;
         fn update(
             pages: &mut [Page],
             open: &HashMap<PageKey, Rc<RefCell<SearchPage>>>,
-            files: &mut Vec<(PageKey, Vec<hydrus_core::HashId>)>,
+            media: &mut Media,
         ) {
             for page in pages {
                 if let PageContent::Pages(children) = &mut page.content {
-                    update(children, open, files);
+                    update(children, open, media);
                 } else if let Some(opened) = open.get(&page.key) {
                     let opened = opened.borrow();
                     page.content = opened.content(&page.content);
-                    files.push((page.key, opened.files()));
+                    media.push((page.key, opened.files(), opened.selected_files()));
                 }
             }
         }
-        let mut files = Vec::new();
-        update(&mut self.session.pages, &self.open, &mut files);
-        let session = self.session.clone();
-        self.store.write(move |ctx| {
+        let mut media = Vec::new();
+        update(&mut self.session.pages, &self.open, &mut media);
+        media.retain(|(key, files, selected)| {
+            self.synced
+                .media
+                .get(key)
+                .is_none_or(|(f, s)| f != files || s != selected)
+        });
+        let session =
+            (self.synced.pages.as_ref() != Some(&self.session.pages)).then(|| self.session.clone());
+        let shown = self.shown().key;
+        let shown_changed = self.synced.shown != Some(shown);
+        if session.is_none() && !shown_changed && media.is_empty() {
+            return Ok(());
+        }
+        let name = self.session.name.clone();
+        let written = self.store.write(move |ctx| {
             let conn = ctx.conn();
-            sessions::save(conn, &session, now)?;
-            for (key, files) in &files {
-                sessions::set_page_files(conn, key, files)?;
+            if let Some(session) = &session {
+                sessions::save(conn, session, now)?;
             }
-            Ok(())
-        })
+            if shown_changed {
+                sessions::set_shown(conn, &name, Some(&shown))?;
+            }
+            for (key, files, selected) in &media {
+                sessions::set_page_files(conn, key, files)?;
+                sessions::set_page_selected(conn, key, selected)?;
+            }
+            Ok(media)
+        })?;
+        self.synced.pages = Some(self.session.pages.clone());
+        self.synced.shown = Some(shown);
+        for (key, files, selected) in written {
+            self.synced.media.insert(key, (files, selected));
+        }
+        Ok(())
     }
 }
 

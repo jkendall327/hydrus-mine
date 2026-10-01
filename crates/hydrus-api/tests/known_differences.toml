@@ -115,3 +115,11 @@ ignore = [
 reason = """Not a difference: the oracle driver turns off the reference's background similar-files \
 search by changing these options in memory while recording, so the recording shows it off; the \
 database, and the migrated copy we report from, keep the stored setting."""
+
+[[difference]]
+scenario = "pages"
+step = 29
+request = "refresh_page"
+skip = true
+reason = """Refreshing a page of pages (here the top notebook) fails in the reference with a server \
+error: notebooks have no RefreshQuery. We accept it, and the client refreshes the pages in it."""

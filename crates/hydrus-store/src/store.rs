@@ -30,20 +30,42 @@ pub const DB_FILE_NAME: &str = "hydrus.db";
 /// (and the commands doing its work hold while they do it).
 pub const SERVE_LOCK_FILE: &str = "serve.lock";
 
-/// Take the lock `hydrus serve` holds while it runs on the store in `dir`:
-/// `None` if another process holds it. It is let go when the file returned
-/// is dropped (or the process ends, however it ends).
-pub fn lock_serving(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+/// The lock file the desktop client holds in a store directory while it is
+/// open.
+pub const GUI_LOCK_FILE: &str = "gui.lock";
+
+/// Take the lock in `name`, in the store directory `dir`: `None` if another
+/// process holds it. It is let go when the file returned is dropped (or the
+/// process ends, however it ends).
+fn lock(dir: &Path, name: &str) -> std::io::Result<Option<std::fs::File>> {
     let file = std::fs::OpenOptions::new()
         .create(true)
         .truncate(false)
         .write(true)
-        .open(dir.join(SERVE_LOCK_FILE))?;
+        .open(dir.join(name))?;
     match file.try_lock() {
         Ok(()) => Ok(Some(file)),
         Err(std::fs::TryLockError::WouldBlock) => Ok(None),
         Err(std::fs::TryLockError::Error(e)) => Err(e),
     }
+}
+
+/// Take the lock `hydrus serve` holds while it runs on the store in `dir`
+/// (see [`lock`]).
+pub fn lock_serving(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, SERVE_LOCK_FILE)
+}
+
+/// Take the lock the desktop client holds while it is open on the store in
+/// `dir` (see [`lock`]).
+pub fn lock_gui(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, GUI_LOCK_FILE)
+}
+
+/// Whether the desktop client is open on the store in `dir`.
+pub fn gui_open(dir: &Path) -> bool {
+    // (the lock is let go at once, if it was free)
+    matches!(lock_gui(dir), Ok(None))
 }
 
 /// Immutable view of the in-memory state.

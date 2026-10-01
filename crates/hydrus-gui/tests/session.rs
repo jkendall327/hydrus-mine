@@ -468,3 +468,139 @@ fn a_saved_session_appends_as_a_page_of_pages() {
         .unwrap();
     assert_eq!(kept_files, everything);
 }
+
+#[test]
+fn the_pages_are_kept_for_the_client_api_and_do_what_it_asks() {
+    let (_dirs, store) = store();
+    let everything = FileSearchContext {
+        predicates: parse_api_search(&serde_json::json!(["system:everything"])).unwrap(),
+        ..FileSearchContext::default()
+    };
+    let all: Vec<HashId> = store
+        .read(|conn| {
+            Ok(search_files(
+                conn,
+                &store.snapshot(),
+                &everything,
+                FileSort {
+                    by: SortBy::ImportTime,
+                    order: SortOrder::Descending,
+                },
+                &Clock::system(),
+            )
+            .unwrap())
+        })
+        .unwrap();
+    assert!(all.len() > 6);
+    let searching = |name: &str| {
+        page(
+            name,
+            PageContent::Search {
+                search: everything.clone(),
+                synchronised: true,
+                sort: None,
+                lock: None,
+                collect: None,
+            },
+        )
+    };
+    let (a, b) = (searching("a"), searching("b"));
+    let nb = page("nb", PageContent::Pages(vec![b.clone()]));
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![a.clone(), nb.clone()],
+    };
+    let (a_files, b_files) = (all[..2].to_vec(), all[2..5].to_vec());
+    let (written_a, written_b) = (a_files.clone(), b_files.clone());
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            sessions::save(conn, &session, 0)?;
+            sessions::set_page_files(conn, &a.key, &written_a)?;
+            sessions::set_page_files(conn, &b.key, &written_b)?;
+            // (shown when the client last closed)
+            sessions::set_shown(conn, LAST_SESSION, Some(&b.key))
+        })
+        .unwrap();
+
+    // it opens on the page shown last
+    let pages = Pages::open(store.clone()).unwrap();
+    assert_eq!(pages.shown().key, b.key);
+    let _windows = headless::init();
+    let window = MainWindow::new().unwrap();
+    let bound = bind(&window, pages);
+    let kept = |key: &PageKey| {
+        let key = *key;
+        store
+            .read(move |conn| {
+                Ok((
+                    sessions::page_files(conn, &key)?,
+                    sessions::page_selected(conn, &key)?,
+                    sessions::shown(conn, LAST_SESSION)?,
+                ))
+            })
+            .unwrap()
+    };
+
+    // the pages as they are: files, selection, the page shown
+    window.invoke_select_all();
+    (bound.sync)();
+    assert_eq!(
+        kept(&b.key),
+        (b_files.clone(), b_files.clone(), Some(b.key))
+    );
+    window.invoke_select_none();
+    (bound.sync)();
+    assert_eq!(kept(&b.key).1, []);
+
+    // files added to a page not opened yet: at its end, once each
+    let added = vec![all[6], all[0], all[5]];
+    let asked = added.clone();
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            sessions::push_command(conn, &a.key, &sessions::PageCommand::AddFiles(asked))?;
+            sessions::push_command(conn, &a.key, &sessions::PageCommand::Focus)
+        })
+        .unwrap();
+    (bound.sync)();
+    let a_now: Vec<HashId> = a_files.iter().copied().chain([all[6], all[5]]).collect();
+    assert_eq!(kept(&a.key), (a_now.clone(), Vec::new(), Some(a.key)));
+    // (focused, it is shown, with the files added)
+    assert_eq!(window.get_tab_rows().row_count(), 1);
+    assert_eq!(bound.current.borrow().borrow().files(), a_now);
+
+    // refreshing a notebook searches its pages again
+    let nb_key = nb.key;
+    store
+        .write(move |ctx| {
+            sessions::push_command(ctx.conn(), &nb_key, &sessions::PageCommand::Refresh)
+        })
+        .unwrap();
+    (bound.sync)();
+    let (b_now, _, _) = kept(&b.key);
+    assert_eq!(b_now.len(), all.len());
+    assert_eq!(kept(&a.key).0, a_now);
+
+    // the media viewer, while open, with the file it shows
+    window.invoke_thumbnail_activated(0);
+    (bound.sync)();
+    let viewers = store.read(sessions::media_viewers).unwrap();
+    assert_eq!(viewers.len(), 1);
+    assert_eq!(viewers[0].canvas_type, 0);
+    assert_eq!(viewers[0].file, Some(a_now[0]));
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    viewer.invoke_next();
+    (bound.sync)();
+    let moved = store.read(sessions::media_viewers).unwrap();
+    assert_eq!(moved[0].file, Some(a_now[1]));
+    assert_eq!(moved[0].canvas_key, viewers[0].canvas_key);
+    viewer.invoke_close_requested();
+    (bound.sync)();
+    assert!(store.read(sessions::media_viewers).unwrap().is_empty());
+}

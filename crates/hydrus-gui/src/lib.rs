@@ -9,6 +9,7 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use hydrus_core::HashId;
+use hydrus_store::sessions;
 use slint::{ModelRc, SharedString, VecModel};
 
 /// The UI compiled from `ui/` (generated code).
@@ -143,6 +144,10 @@ pub struct Bound {
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
     pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
+    /// Do what the Client API asked of the pages (`/manage_pages`), and keep
+    /// the pages and the media viewer in the store as they are, for it to
+    /// answer from: the client runs this every half second.
+    pub sync: Rc<dyn Fn()>,
     /// Shows thumbnails as they are decoded (held to keep it running).
     _thumbnails: Rc<slint::Timer>,
 }
@@ -761,9 +766,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    let viewing: Viewing = Rc::default();
     window.on_thumbnail_activated({
         let page = page.clone();
         let viewer = viewer.clone();
+        let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
         move |index| {
             let page = page();
@@ -780,7 +787,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let model = model.with_location(page.location().clone());
+            *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
             let hooks = ViewerHooks {
+                viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
                 manage_tags: Rc::new(open_manage_tags.clone()),
@@ -1110,6 +1119,79 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // what the Client API asked of the pages, done, and the pages and media
+    // viewer as they are, kept in the store for it
+    let sync: Rc<dyn Fn()> = Rc::new({
+        let pages = pages.clone();
+        let current = current.clone();
+        let shown = shown.clone();
+        let viewing = viewing.clone();
+        let viewers_kept: Rc<RefCell<Option<Vec<sessions::MediaViewer>>>> = Rc::default();
+        move || {
+            let store = pages.borrow().store().clone();
+            let asked = store
+                .write(|ctx| sessions::take_commands(ctx.conn()))
+                .unwrap_or_else(|e| {
+                    eprintln!("could not read what the Client API asked: {e}");
+                    Vec::new()
+                });
+            for (key, command) in asked {
+                let changed = |page: &Rc<RefCell<SearchPage>>| {
+                    if Rc::ptr_eq(page, &current.borrow()) {
+                        shown(true);
+                    }
+                };
+                match command {
+                    sessions::PageCommand::Focus => change_pages(&|pages| {
+                        pages.show(&key);
+                        Ok(())
+                    }),
+                    sessions::PageCommand::AddFiles(files) => {
+                        let page = pages.borrow_mut().page(&key);
+                        if let Some(page) = page
+                            && page.borrow_mut().add_files(&files)
+                        {
+                            changed(&page);
+                        }
+                    }
+                    // (a notebook's pages, all of them for the top one)
+                    sessions::PageCommand::Refresh => {
+                        let keys = pages.borrow().pages_under(&key);
+                        for key in keys {
+                            let page = pages.borrow_mut().page(&key);
+                            if let Some(page) = page {
+                                page.borrow_mut().refresh();
+                                changed(&page);
+                            }
+                        }
+                    }
+                }
+            }
+            let now = std::time::SystemTime::now()
+                .duration_since(std::time::UNIX_EPOCH)
+                .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+            if let Err(e) = pages.borrow_mut().sync(now) {
+                eprintln!("could not keep the pages: {e}");
+            }
+            let viewers: Vec<sessions::MediaViewer> = viewing
+                .borrow()
+                .iter()
+                .map(|&(canvas_key, file)| sessions::MediaViewer {
+                    canvas_key,
+                    // (CANVAS_MEDIA_VIEWER)
+                    canvas_type: 0,
+                    file,
+                })
+                .collect();
+            if viewers_kept.borrow().as_ref() != Some(&viewers) {
+                let written = viewers.clone();
+                match store.write(move |ctx| sessions::set_media_viewers(ctx.conn(), &written)) {
+                    Ok(()) => *viewers_kept.borrow_mut() = Some(viewers),
+                    Err(e) => eprintln!("could not keep the media viewers: {e}"),
+                }
+            }
+        }
+    });
     Bound {
         pages,
         current,
@@ -1118,6 +1200,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         archive_delete,
         filter,
+        sync,
         _thumbnails: thumbnails,
     }
 }
@@ -1643,12 +1726,19 @@ type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn
 
 /// What a viewer tells its page of, and how it opens manage tags.
 struct ViewerHooks {
+    /// The viewer and the file it shows, for the Client API.
+    viewing: Viewing,
     removed: Removed,
     tags_changed: Rc<dyn Fn()>,
     manage_tags: OpenManageTags,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
+
+/// The media viewer while one is open, as the Client API's
+/// `/manage_pages/get_media_viewers` lists it: its canvas key (random) and
+/// the file it shows.
+type Viewing = Rc<RefCell<Option<([u8; 32], Option<HashId>)>>>;
 
 /// A change to files: archiving them, say.
 type FileChange = fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>;
@@ -1673,6 +1763,7 @@ fn open_viewer(
     hooks: ViewerHooks,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let ViewerHooks {
+        viewing,
         removed,
         tags_changed,
         manage_tags,
@@ -1788,6 +1879,7 @@ fn open_viewer(
         let animator = animator.clone();
         let zoomed = zoomed.clone();
         let presenting = presenting.clone();
+        let viewing = viewing.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
         let show_ratings = show_ratings.clone();
@@ -1797,6 +1889,9 @@ fn open_viewer(
                 return;
             };
             let model = model.borrow();
+            if let Some((_, file)) = viewing.borrow_mut().as_mut() {
+                *file = Some(model.current());
+            }
             window.set_caption(model.caption().into());
             let tags: Vec<ListText> = model
                 .tag_rows()
@@ -2503,7 +2598,9 @@ fn open_viewer(
     window.on_close_requested({
         let weak = window.as_weak();
         let slot = slot.clone();
+        let viewing = viewing.clone();
         move || {
+            viewing.borrow_mut().take();
             // (stops playing at once)
             scanning.stop();
             moving.stop();

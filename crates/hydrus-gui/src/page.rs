@@ -321,6 +321,23 @@ impl SearchPage {
         &self.context.location
     }
 
+    /// Add files at the page's end, those it doesn't have, in the order
+    /// given, as files of their own, as the reference's pages take them
+    /// (the Client API's `/manage_pages/add_files`: `AddMediaResults`);
+    /// whether any were added.
+    pub fn add_files(&mut self, files: &[HashId]) -> bool {
+        let mut have: std::collections::HashSet<HashId> = self.files().into_iter().collect();
+        let added: Vec<HashId> = files.iter().copied().filter(|f| have.insert(*f)).collect();
+        if added.is_empty() {
+            return false;
+        }
+        self.came.extend(&added);
+        self.results.extend(&added);
+        self.learn_facts();
+        self.count_tags();
+        true
+    }
+
     /// Take files off the page (deleted from its domain, say), as the
     /// reference's pages drop them, out of their collections (one left
     /// empty goes); a locked search lets go of them too, if it follows

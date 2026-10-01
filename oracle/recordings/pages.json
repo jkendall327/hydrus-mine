@@ -1,5 +1,5 @@
 {
- "recorded_at_ms": 1790789041941,
+ "recorded_at_ms": 1790890656636,
  "reference_version": 688,
  "responses": [
   {
@@ -9,14 +9,14 @@
     "pages": {
      "is_media_page": false,
      "name": "top page notebook",
-     "page_key": "20d0c4cae2d6f901a4fe6e46511bdea5fd8f93aac9620bc9098767e83cebeb5c",
+     "page_key": "2021bfdabd8fe114b6a43b0f6dd758f820733cbe01dfc4c6834189ef9c664916",
      "page_state": 0,
      "page_type": 10,
      "pages": [
       {
        "is_media_page": true,
        "name": "files",
-       "page_key": "ea16b203d85cce9a17efdd7064645ccc1424162741ab0fae3a7063b6ddd6a179",
+       "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
        "page_state": 0,
        "page_type": 6,
        "selected": true
@@ -27,6 +27,394 @@
     "version": 95
    },
    "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "media_viewers": [],
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": true,
+     "management": {},
+     "media": {
+      "hash_ids": [],
+      "hash_ids_selected": [],
+      "num_files": 0,
+      "num_files_selected": 0
+     },
+     "name": "files",
+     "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+     "page_state": 0,
+     "page_type": 6
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": true,
+     "management": {},
+     "media": {
+      "hash_ids": [],
+      "hash_ids_selected": [],
+      "hashes": [],
+      "hashes_selected": [],
+      "num_files": 0,
+      "num_files_selected": 0
+     },
+     "name": "files",
+     "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+     "page_state": 0,
+     "page_type": 6
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": false,
+     "name": "top page notebook",
+     "page_key": "2021bfdabd8fe114b6a43b0f6dd758f820733cbe01dfc4c6834189ef9c664916",
+     "page_state": 0,
+     "page_type": 10
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": false,
+     "name": "top page notebook",
+     "page_key": "2021bfdabd8fe114b6a43b0f6dd758f820733cbe01dfc4c6834189ef9c664916",
+     "page_state": 0,
+     "page_type": 10
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Did not find a page for \"abababababababababababababababababababababababababababababababab\"!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The required parameter \"page_key\" was missing!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": true,
+     "management": {},
+     "media": {
+      "hash_ids": [
+       19,
+       17,
+       21,
+       23,
+       1,
+       2
+      ],
+      "hash_ids_selected": [],
+      "num_files": 6,
+      "num_files_selected": 0
+     },
+     "name": "files",
+     "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+     "page_state": 0,
+     "page_type": 6
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": true,
+     "management": {},
+     "media": {
+      "hash_ids": [
+       19,
+       17,
+       21,
+       23,
+       1,
+       2
+      ],
+      "hash_ids_selected": [],
+      "hashes": [
+       "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+       "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+       "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+       "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+      ],
+      "hashes_selected": [],
+      "num_files": 6,
+      "num_files_selected": 0
+     },
+     "name": "files",
+     "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+     "page_state": 0,
+     "page_type": 6
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "That page key was not for a normal media page!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Could not find that page!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "You need a page key for this request!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Please include some files in your request--file_id or hash based!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "It seems you gave a file_id that does not exist! Was asked about these novel hash_ids: [999999]",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "page_info": {
+     "is_media_page": true,
+     "management": {},
+     "media": {
+      "hash_ids": [
+       19,
+       17,
+       21,
+       23,
+       1,
+       2,
+       64
+      ],
+      "hash_ids_selected": [],
+      "num_files": 7,
+      "num_files_selected": 0
+     },
+     "name": "files",
+     "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+     "page_state": 0,
+     "page_type": 6
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Could not find that page!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The required parameter \"page_key\" was missing!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "hydrus_version": 688,
+    "pages": {
+     "is_media_page": false,
+     "name": "top page notebook",
+     "page_key": "2021bfdabd8fe114b6a43b0f6dd758f820733cbe01dfc4c6834189ef9c664916",
+     "page_state": 0,
+     "page_type": 10,
+     "pages": [
+      {
+       "is_media_page": true,
+       "name": "files",
+       "page_key": "fe595aeb09ab101958f1c7fb41e98c63a5c17df72a8073bf74bb73bccb375343",
+       "page_state": 0,
+       "page_type": 6,
+       "selected": true
+      }
+     ],
+     "selected": true
+    },
+    "version": 95
+   },
+   "status": 200
+  },
+  {
+   "content_type": "",
+   "length": 0,
+   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+   "status": 200
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "Could not find that page!",
+    "exception_type": "NotFoundException",
+    "hydrus_version": 688,
+    "status_code": 404,
+    "version": 95
+   },
+   "status": 404
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The required parameter \"page_key\" was missing!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "status": 400
+  },
+  {
+   "content_type": "application/json",
+   "json": {
+    "error": "The \"client api\" encountered an error it could not handle!\n\nHere is a full traceback of what happened. If you are using the hydrus client, it will be saved to your log. Please forward it to hydrus_dev@proton.me:\n\nTraceback (most recent call last):\n  File \"/root/pyenv/lib/python3.11/site-packages/twisted/python/threadpool.py\", line 269, in inContext\n    result = inContext.theWork()  # type: ignore[attr-defined]\n  File \"/root/pyenv/lib/python3.11/site-packages/twisted/python/threadpool.py\", line 285, in <lambda>\n    inContext.theWork = lambda: context.call(  # type: ignore[attr-defined]\n  File \"/root/pyenv/lib/python3.11/site-packages/twisted/python/context.py\", line 116, in callWithContext\n    return self.currentContext().callWithContext(ctx, func, *args, **kw)\n  File \"/root/pyenv/lib/python3.11/site-packages/twisted/python/context.py\", line 81, in callWithContext\n    return func(*args, **kw)\n  File \"/home/user/hydrus-mine/hydrus/client/networking/api/ClientLocalServerResourcesManagePages.py\", line 157, in _threadDoPOSTJob\n    CG.client_controller.CallBlockingToQtTLW( do_it, page_key )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 548, in CallBlockingToQtTLW\n    return self.CallBlockingToQt( main_tlw, func, *args, **kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 519, in CallBlockingToQt\n    raise e\n  File \"/home/user/hydrus-mine/hydrus/client/ClientController.py\", line 458, in qt_code\n    result = func( *args, **kwargs )\n  File \"/home/user/hydrus-mine/hydrus/client/networking/api/ClientLocalServerResourcesManagePages.py\", line 150, in do_it\n    return CG.client_controller.gui.RefreshPage( page_key )\n  File \"/home/user/hydrus-mine/hydrus/client/gui/ClientGUI.py\", line 8754, in RefreshPage\n    page.RefreshQuery()\nbuiltins.AttributeError: 'PagesNotebook' object has no attribute 'RefreshQuery'\n",
+    "exception_type": "AttributeError",
+    "hydrus_version": 688,
+    "status_code": 500,
+    "version": 95
+   },
+   "status": 500
   },
   {
    "content_type": "application/json",

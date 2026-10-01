@@ -172,6 +172,31 @@ search.
   before it is killed (the reference waits for its jobs as it closes).
   `crates/hydrus-gui/src/daemon.rs` and `crates/hydrus-cli/tests/serve.rs`
   check the starting and stopping.
+- **`/manage_pages` answers from the store**, where the client keeps its
+  pages (the last session, the page shown and each page's files and
+  selection) as they change, within half a second; what the endpoints ask
+  of a page (focusing it, adding files, refreshing it) the client does the
+  next time it looks, after the answer. With the client closed they answer
+  from the session it will open with: added files join it, a focused page
+  is the one it opens on, and refreshing waits until the page is open
+  again. The recorded `pages` scenario (`oracle/recordings/pages.json`)
+  replays in `crates/hydrus-api/tests/conformance.rs` (with the client
+  closed), and `crates/hydrus-api/tests/pages.rs` and the session test in
+  `crates/hydrus-gui/tests/session.rs` cover the rest.
+- **Page keys last.** The reference makes new keys for its pages (and its
+  top notebook) each time it starts; ours are kept with the session, so a
+  tool can keep one.
+- **Refreshing a page of pages refreshes the pages in it.** The
+  reference fails with a server error (notebooks have no `RefreshQuery`).
+- **The client opens on the page it showed last**, or the one
+  `focus_page` asked for while it was closed. The reference opens each
+  notebook on its first page.
+- **A page's selected files are listed in the page's order**
+  (`hash_ids_selected`); the reference's order is its selection set's.
+- **A page's state is always "normal"** (`page_state` 0): our searches
+  finish before the page is shown again, so it is never seen searching.
+- **One client at a time on a store**, as the reference allows one client
+  on its database; a second says the store is already open.
 
 ## Pages (`hydrus-gui`)
 

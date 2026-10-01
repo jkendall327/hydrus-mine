@@ -7,6 +7,7 @@ pub mod database;
 pub mod files;
 pub mod metadata;
 pub mod network;
+pub mod pages;
 pub mod popups;
 pub mod relationships;
 pub mod search;

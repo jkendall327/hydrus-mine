@@ -129,8 +129,8 @@ impl AppState {
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
     use routes::{
-        access, add_files, add_tags, database, files, metadata, network, popups, relationships,
-        search, services, tags, urls,
+        access, add_files, add_tags, database, files, metadata, network, pages, popups,
+        relationships, search, services, tags, urls,
     };
     Router::new()
         .route("/api_version", get(access::api_version))
@@ -269,6 +269,15 @@ pub fn router(state: Arc<AppState>) -> Router {
             post(popups::call_user_callable),
         )
         .route("/manage_popups/get_popups", get(popups::get_popups))
+        .route("/manage_pages/get_pages", get(pages::get_pages))
+        .route("/manage_pages/get_page_info", get(pages::get_page_info))
+        .route(
+            "/manage_pages/get_media_viewers",
+            get(pages::get_media_viewers),
+        )
+        .route("/manage_pages/add_files", post(pages::add_files))
+        .route("/manage_pages/focus_page", post(pages::focus_page))
+        .route("/manage_pages/refresh_page", post(pages::refresh_page))
         .route("/manage_database/mr_bones", get(database::mr_bones))
         .route(
             "/manage_database/get_client_options",

@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -645,6 +645,37 @@ CREATE VIRTUAL TABLE cache_note_fts USING fts5 (
     contentless_delete = 1,
     tokenize = 'unicode61 remove_diacritics 0'
 );
+";
+
+/// The GUI's pages as the Client API sees them (`sessions.rs`): each
+/// session's top notebook key and the page it shows, each page's selected
+/// files, what the API asks of the open GUI's pages, and the GUI's open
+/// media viewers.
+const V11: &str = r"
+ALTER TABLE sessions ADD COLUMN top_key BLOB;
+UPDATE sessions SET top_key = randomblob(32);
+-- the page shown: the deepest on the way to it (NULL: each notebook's first)
+ALTER TABLE sessions ADD COLUMN shown BLOB;
+
+-- hash ids in order, 4 bytes each, little-endian
+ALTER TABLE page_files ADD COLUMN selected BLOB NOT NULL DEFAULT X'';
+
+CREATE TABLE page_commands (
+    id INTEGER PRIMARY KEY,
+    page_key BLOB NOT NULL,
+    -- 'focus', 'add_files' or 'refresh'
+    command TEXT NOT NULL,
+    -- for 'add_files': hash ids in order, 4 bytes each, little-endian
+    hash_ids BLOB NOT NULL DEFAULT X''
+) STRICT;
+
+CREATE TABLE media_viewers (
+    position INTEGER PRIMARY KEY,
+    canvas_key BLOB NOT NULL,
+    canvas_type INTEGER NOT NULL,
+    -- the file shown, if any
+    hash_id INTEGER
+) STRICT;
 ";
 
 /// Open-time connection setup shared by the writer and readers.
