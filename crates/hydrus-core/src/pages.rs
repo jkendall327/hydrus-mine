@@ -191,6 +191,42 @@ pub enum PageSortBy {
     Rating(ServiceKey),
 }
 
+/// How a page collects its files (the reference's `MediaCollect`): by the
+/// tags in these namespaces and the ratings on these services.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageCollect {
+    pub namespaces: Vec<String>,
+    pub ratings: Vec<ServiceKey>,
+    /// Whether the files that match none collect together, or stay single.
+    pub collect_unmatched: bool,
+}
+
+impl Default for PageCollect {
+    /// The reference's: no collecting.
+    fn default() -> Self {
+        Self {
+            namespaces: Vec::new(),
+            ratings: Vec::new(),
+            collect_unmatched: true,
+        }
+    }
+}
+
+impl PageCollect {
+    /// Whether it collects anything (`DoesACollect`).
+    pub fn collects(&self) -> bool {
+        !self.namespaces.is_empty() || !self.ratings.is_empty()
+    }
+}
+
+/// A page's item: one file, or a collection of files (in its order).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum PageMedia {
+    File(crate::HashId),
+    Collection(Vec<crate::HashId>),
+}
+
 /// How pages sort by default: a new page's sort, the sort applied before
 /// any other (which orders its ties), and the namespace sorts offered.
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]

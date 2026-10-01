@@ -37,6 +37,7 @@
 //! second size or ratio predicate replace the first), and tags are always
 //! searched as displayed, in every file domain.
 
+mod collect;
 mod context;
 mod dupes;
 mod leaf;
@@ -161,6 +162,31 @@ pub fn sort_page_files(
         order = page_sort::sort_page(&env, &order, sort)?;
     }
     Ok(order.into_iter().map(HashId).collect())
+}
+
+/// Collect a page's `files` (in the order it shows them) by `collect`, as
+/// the reference's pages collect (`MediaList.Collect`), and sort the files
+/// and collections that make as [`sort_page_files`] does, each collection's
+/// files among themselves.
+#[allow(clippy::too_many_arguments)]
+pub fn collect_page_files(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    files: &[HashId],
+    collect: &hydrus_core::pages::PageCollect,
+    sort: &hydrus_core::pages::PageSort,
+    fallback: Option<&hydrus_core::pages::PageSort>,
+    clock: &Clock,
+) -> Result<Vec<hydrus_core::pages::PageMedia>> {
+    let env = context::Env::new(conn, snapshot, search, clock, context::Strategy::Auto)?;
+    let current: Vec<hydrus_core::ServiceId> = search
+        .location
+        .current()
+        .iter()
+        .filter_map(|key| snapshot.services.by_key(key).ok().map(|s| s.id))
+        .collect();
+    collect::collect_and_sort(&env, &current, files, collect, sort, fallback)
 }
 
 fn search_with_strategy(

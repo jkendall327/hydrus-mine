@@ -803,7 +803,7 @@ fn hue_saturation(colour: Rgb) -> (f64, f64) {
 }
 
 /// The reference's average-colour sort keys.
-fn colour_key(by: SortBy, blurhash: &str, descending: bool) -> Option<Key> {
+pub(super) fn colour_key(by: SortBy, blurhash: &str, descending: bool) -> Option<Key> {
     let colour = average_colour(blurhash)?;
     let lab = lab(colour);
     let chroma = lab.green_red * lab.green_red + lab.blue_yellow * lab.blue_yellow;

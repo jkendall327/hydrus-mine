@@ -850,3 +850,123 @@ fn constructed_predicates_without_text_syntax_work() {
         ..FileSearchContext::default()
     });
 }
+
+/// Pages collect their files and sort the files and collections as the
+/// reference's do, against `oracle/fixtures/media_collect.json` (made by
+/// `oracle/record_media_collect.py`): by namespaces and ratings, unmatched
+/// files collected or single, under every sort but random both ways.
+#[test]
+fn pages_collect_as_the_reference_s_pages_collect() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    let recorded = hydrus_testkit::fixture_json("media_collect.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let unhex = |text: &str| -> Vec<u8> {
+        (0..text.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&text[i..i + 2], 16).unwrap())
+            .collect()
+    };
+    let id_of = |hex: &str| -> HashId {
+        store
+            .read(|c| hydrus_store::master::hash_id(c, &hex.parse().unwrap()))
+            .unwrap()
+            .unwrap()
+    };
+    let search = FileSearchContext {
+        location: LocationContext::single(key(&unhex(recorded["service_key"].as_str().unwrap()))),
+        predicates: Vec::new(),
+        tags: TagContext::default(),
+    };
+    let files: Vec<HashId> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| id_of(h.as_str().unwrap()))
+        .collect();
+    let fallback = PageSort {
+        by: PageSortBy::System(2),
+        ascending: true,
+    };
+    let mut checked = 0;
+    let mut wrong = Vec::new();
+    for case in recorded["cases"].as_array().unwrap() {
+        let c = &case["collect"];
+        let collect = PageCollect {
+            namespaces: c["namespaces"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| n.as_str().unwrap().to_owned())
+                .collect(),
+            ratings: c["ratings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| key(&unhex(r.as_str().unwrap())))
+                .collect(),
+            collect_unmatched: c["collect_unmatched"].as_bool().unwrap(),
+        };
+        for s in case["sorts"].as_array().unwrap() {
+            let sort = &s["sort"];
+            let data = &sort["data"];
+            let sort = PageSort {
+                by: match sort["type"].as_str().unwrap() {
+                    "system" => PageSortBy::System(data.as_i64().unwrap()),
+                    "namespaces" => PageSortBy::Namespaces {
+                        namespaces: data["namespaces"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|n| n.as_str().unwrap().to_owned())
+                            .collect(),
+                        tag_display_type: data["tag_display_type"].as_i64().unwrap(),
+                    },
+                    _ => PageSortBy::Rating(key(&unhex(data.as_str().unwrap()))),
+                },
+                ascending: sort["order"] == 0,
+            };
+            let expected: Vec<PageMedia> = s["media"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|m| match m.as_str() {
+                    Some(h) => PageMedia::File(id_of(h)),
+                    None => PageMedia::Collection(
+                        m.as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|h| id_of(h.as_str().unwrap()))
+                            .collect(),
+                    ),
+                })
+                .collect();
+            let ours = store
+                .read(|conn| {
+                    Ok(super::collect_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &collect,
+                        &sort,
+                        Some(&fallback),
+                        &Clock::system(),
+                    ))
+                })
+                .unwrap()
+                .unwrap();
+            if ours != expected {
+                wrong.push(format!("{c} {sort:?}"));
+            }
+            checked += 1;
+        }
+    }
+    assert!(
+        wrong.is_empty(),
+        "{} of {checked} differ:\n{}",
+        wrong.len(),
+        wrong[..wrong.len().min(25)].join("\n")
+    );
+    assert_eq!(checked, 10 * 64);
+}
