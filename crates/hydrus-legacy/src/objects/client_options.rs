@@ -262,6 +262,13 @@ impl ClientOptions {
         {
             out.default_zoom_type = zoom;
         }
+        let float = |key: &str| self.floats.get(key).copied().filter(|v| *v > 0.0);
+        if let Some(size) = float("media_viewer_rating_icon_size_px") {
+            out.rating_icon_size = size;
+        }
+        if let Some(height) = float("media_viewer_rating_incdec_height_px") {
+            out.rating_incdec_height = height;
+        }
         if let Some(view) = &self.media_view {
             out.media_view = view
                 .iter()

@@ -14,6 +14,28 @@
 
 import { ListText } from "theme.slint";
 
+// one shape of a rating control, its outline and fill
+export struct RatingShape {
+    pen: color,
+    brush: color,
+}
+
+// a rating service's control for the file shown
+export struct RatingRow {
+    // 0 like/dislike, 1 numerical, 2 inc/dec
+    kind: int,
+    // the shape's outline, as SVG path commands in a 12x12 box
+    shape: string,
+    // each shape's colours, left to right
+    shapes: [RatingShape],
+    // between a numerical rating's stars
+    pad: length,
+    // an inc/dec rating's value, and its colours
+    text: string,
+    pen: color,
+    brush: color,
+}
+
 export component MediaViewerWindow inherits Window {
     title: root.caption;
     preferred-width: 1000px;
@@ -24,6 +46,15 @@ export component MediaViewerWindow inherits Window {
     in property <string> caption;
     // the file's tags, for the hover frame
     in property <[ListText]> tags;
+    // the file's ratings, for the top-right hover frame, as the reference
+    // draws them
+    in property <[RatingRow]> ratings;
+    in property <length> rating-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> rating-outline: 1px;
+    out property <bool> ratings-showing: root.ratings.length > 0 && (ratings-frame.has-hover
+        || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
+            && pointer.mouse-y <= ratings-box.preferred-height + 20px));
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
@@ -73,6 +104,9 @@ export component MediaViewerWindow inherits Window {
     callback pan(int, int);
     callback drag(length, length);
     callback canvas-resized(length, length);
+    // a rating control clicked: its row, left (else right), and how far
+    // along it
+    callback rating-clicked(int, bool, float);
     // seek to where a click on the scanbar at x, along a bar this wide,
     // goes; and seek a step back (-1) or forward (1), in milliseconds
     callback scan(length, length);
@@ -267,6 +301,72 @@ export component MediaViewerWindow inherits Window {
                     text: "enter: yes, escape: no";
                     color: #a0a0a0;
                     horizontal-alignment: center;
+                }
+            }
+        }
+        ratings-frame := TouchArea {
+            x: root.width - ratings-box.preferred-width;
+            y: 0;
+            width: ratings-box.preferred-width;
+            height: ratings-box.preferred-height;
+            visible: root.ratings-showing;
+            ratings-box := Rectangle {
+                background: #202020e8;
+                VerticalLayout {
+                    padding: 6px;
+                    spacing: 4px;
+                    alignment: start;
+                    for row[i] in root.ratings: HorizontalLayout {
+                        alignment: end;
+                        Rectangle {
+                            width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                            height: row.kind == 2 ? root.incdec-height : root.rating-size;
+                            if row.kind == 2: Rectangle {
+                                border-width: 1px;
+                                border-color: row.pen;
+                                background: row.brush;
+                                Text {
+                                    x: 0;
+                                    width: parent.width - 2px;
+                                    height: parent.height;
+                                    horizontal-alignment: right;
+                                    vertical-alignment: center;
+                                    text: row.text;
+                                    color: #000000;
+                                    font-size: max(root.incdec-height - 1px, 6px);
+                                }
+                            }
+                            for star[k] in row.shapes: Path {
+                                x: k * (root.rating-size + row.pad);
+                                y: 0;
+                                width: root.rating-size;
+                                height: root.rating-size;
+                                viewbox-width: 12;
+                                viewbox-height: 12;
+                                commands: row.shape;
+                                fill: star.brush;
+                                stroke: star.pen;
+                                stroke-width: root.rating-outline;
+                            }
+                            TouchArea {
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down) {
+                                        if (event.button == PointerEventButton.left) {
+                                            root.rating-clicked(i, true, self.mouse-x / self.width);
+                                        } else if (event.button == PointerEventButton.right) {
+                                            root.rating-clicked(i, false, 0);
+                                        }
+                                    }
+                                }
+                                moved => {
+                                    // (dragging along stars sets them)
+                                    if (row.kind == 1) {
+                                        root.rating-clicked(i, true, self.mouse-x / self.width);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

@@ -204,6 +204,11 @@ pub struct MediaViewerSettings {
     /// By file type or general class (`Mime` code): how it is shown. Types
     /// not listed take their class's.
     pub media_view: BTreeMap<u8, MediaView>,
+    /// The size of a like or numerical rating's shape in the viewer
+    /// (`media_viewer_rating_icon_size_px`).
+    pub rating_icon_size: f64,
+    /// The height of an inc/dec rating (`media_viewer_rating_incdec_height_px`).
+    pub rating_incdec_height: f64,
 }
 
 /// A new client's zoom steps.
@@ -219,6 +224,8 @@ impl Default for MediaViewerSettings {
             zoom_centre: ZoomCentre::Mouse,
             default_zoom_type: ZoomType::DefaultForFiletype,
             media_view: default_media_view(),
+            rating_icon_size: 12.0,
+            rating_incdec_height: 12.0,
         }
     }
 }

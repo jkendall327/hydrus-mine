@@ -36,6 +36,7 @@ mod page;
 pub mod page_chooser;
 mod pages;
 mod playback;
+pub mod ratings;
 pub mod scanbar;
 pub mod sort;
 pub mod still;
@@ -697,7 +698,7 @@ fn open_viewer(
         .store()
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
-    let zoomed = zoom_window!(window, settings);
+    let zoomed = zoom_window!(window, settings.clone());
     // the scanbar of the file mpv plays, if it has one
     let scanbar: Rc<std::cell::Cell<Option<scanbar::Scanbar>>> = Rc::default();
     let show_scanbar = {
@@ -711,6 +712,27 @@ fn open_viewer(
             }
         }
     };
+    // the file's ratings, in the top-right hover frame
+    window.set_rating_size(settings.rating_icon_size as f32);
+    window.set_incdec_height(settings.rating_incdec_height as f32);
+    window.set_rating_outline(ratings::outline_width(settings.rating_icon_size) as f32);
+    let rating_controls: Rc<RefCell<Vec<ratings::Control>>> = Rc::default();
+    let show_ratings = {
+        let model = model.clone();
+        let weak = window.as_weak();
+        let rating_controls = rating_controls.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            let controls = ratings::controls(model.store(), model.current());
+            window.set_ratings(ModelRc::new(VecModel::from(
+                controls.iter().map(rating_row).collect::<Vec<_>>(),
+            )));
+            *rating_controls.borrow_mut() = controls;
+        }
+    };
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
@@ -719,6 +741,7 @@ fn open_viewer(
         let zoomed = zoomed.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
+        let show_ratings = show_ratings.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -768,10 +791,34 @@ fn open_viewer(
             scanbar.set(bar);
             window.set_scanbar_shown(bar.is_some());
             show_scanbar(0.0);
+            drop(model);
+            show_ratings();
         }
     };
     show();
     bind_zoom!(window, zoomed);
+    window.on_rating_clicked({
+        let model = model.clone();
+        move |row, left, proportion| {
+            let control = usize::try_from(row)
+                .ok()
+                .and_then(|row| rating_controls.borrow().get(row).cloned());
+            let Some(control) = control else { return };
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let done = if left {
+                ratings::left_click(&store, file, &control, f64::from(proportion))
+            } else {
+                ratings::right_click(&store, file, &control)
+            };
+            if let Err(e) = done {
+                eprintln!("could not set the rating: {e}");
+            }
+            show_ratings();
+        }
+    });
     // the scanbar follows playing, and seeks
     let scanning = Rc::new(slint::Timer::default());
     scanning.start(slint::TimerMode::Repeated, Duration::from_millis(50), {
@@ -935,6 +982,41 @@ fn open_viewer(
     });
     window.show()?;
     Ok(window)
+}
+
+/// A rating control as the viewer draws it.
+fn rating_row(control: &ratings::Control) -> RatingRow {
+    let colour =
+        |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
+    let shapes: Vec<RatingShape> = control
+        .shapes()
+        .into_iter()
+        .map(|s| RatingShape {
+            pen: colour(s.pen),
+            brush: colour(s.brush),
+        })
+        .collect();
+    let (kind, shape, pad, text) = match &control.kind {
+        ratings::Kind::Like { shape, .. } => (0, *shape, 0.0, String::new()),
+        ratings::Kind::Numerical { shape, config, .. } => {
+            (1, *shape, config.custom_pad.max(0) as f32, String::new())
+        }
+        ratings::Kind::IncDec { value } => (
+            2,
+            "",
+            0.0,
+            hydrus_core::numbers::human_int(value.unsigned_abs()),
+        ),
+    };
+    RatingRow {
+        kind,
+        shape: shape.into(),
+        shapes: ModelRc::new(VecModel::from(shapes)),
+        pad,
+        text: text.into(),
+        pen: colour(control.colours.like.pen),
+        brush: colour(control.colours.like.brush),
+    }
 }
 
 /// Show the tabs of each notebook on the way to the page shown.

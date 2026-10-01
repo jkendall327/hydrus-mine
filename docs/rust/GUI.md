@@ -79,6 +79,13 @@ pointer still (or wherever your zoom centre option says), shift and the
 arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
+With the pointer near the window's top right, the file's ratings show
+there, as in the reference's top-right hover frame: each like/dislike
+service, then each numerical, then each inc/dec, in its service's shape
+(a named SVG is drawn as the fat star) and colours, at your viewer rating
+sizes. A left click likes (again, unrates), a right click dislikes; on
+stars, a left click (or drag) sets the stars there and a right click
+unrates; on an inc/dec, left adds one and right takes one away.
 Under a file mpv plays, the reference's scanbar shows how far through it
 is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
 text), a thin line until the pointer comes near the file's bottom, then
@@ -162,7 +169,7 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning) and on several files at once from
 the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
-(file info and buttons, ratings, notes), volume, the scanbar's buffering
+(file info and buttons, notes), volume, the scanbar's buffering
 shading and seeking our own animation player's files (ugoiras and animated
 WebP), playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and

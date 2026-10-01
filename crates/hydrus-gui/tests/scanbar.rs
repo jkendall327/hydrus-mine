@@ -153,6 +153,15 @@ fn a_file_that_plays_seeks_by_its_bar_and_by_key() {
     let seeked = video.get_scanbar_progress();
     assert!((seeked - half).abs() < 0.15, "{}", video.get_scanbar_text());
     let text = video.get_scanbar_text().to_string();
+    // near the file's bottom, the bar is full height, with its text
+    let bottom = video.get_media_y() + video.get_media_height() - 30.0;
+    video.window().dispatch_event(WindowEvent::PointerMoved {
+        position: slint::LogicalPosition::new(400.0, bottom),
+    });
+    assert!(video.get_bar_near());
+    let pixels = headless::render(&drawn, 800, 600);
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(&shots.join("scanbar.png"), &pixels, 800, 600).unwrap();
     // ctrl and left: 2.5 seconds back (or the start), the file shown as it
     // was (zoomed in, here)
     let window = video.window();
