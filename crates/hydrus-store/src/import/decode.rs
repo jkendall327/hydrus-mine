@@ -118,6 +118,10 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &delete_lock)?;
+    let lock = hydrus_core::lock::LockPassword {
+        sha256: legacy_options.password_hash().map(hex::encode),
+    };
+    insert_setting(&mut input, &lock)?;
     if let Some(options) = &options {
         insert_setting(&mut input, &tag_presentation(options))?;
     }
@@ -1718,6 +1722,38 @@ mod tests {
     use hydrus_legacy::serialisable::SerialisableObject;
 
     use super::*;
+
+    /// The lock password comes across as hydrus stored it (the sha256 of
+    /// "hunter2", in the old options' YAML).
+    #[test]
+    fn the_lock_password_converts() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<hydrus_core::lock::LockPassword>(
+                input.settings["lock_password"].clone(),
+            )
+            .unwrap()
+        };
+        assert!(!decoded(source.path()).is_set());
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let yaml: String = conn
+            .query_row("SELECT options FROM options", [], |r| r.get(0))
+            .unwrap();
+        let yaml = yaml.replace(
+            "password: null\n",
+            "password: !!binary |\n  9S+9MrKzuG/4jvbEkGKChfSCrxXdyylUH5S89Saj9sc=\n",
+        );
+        conn.execute("UPDATE options SET options = ?1", [&yaml])
+            .unwrap();
+        drop(conn);
+        let lock = decoded(source.path());
+        assert_eq!(
+            lock.sha256.as_deref(),
+            Some("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7")
+        );
+        assert!(lock.accepts("hunter2") && !lock.accepts("hunter"));
+    }
 
     /// The user's tag presentation options come across, with the search
     /// page's and media viewer's tag sorts.

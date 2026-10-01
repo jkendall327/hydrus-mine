@@ -12,6 +12,7 @@ pub mod gallery;
 pub mod hash;
 pub mod ids;
 pub mod import_options;
+pub mod lock;
 pub mod mime;
 pub mod network;
 pub mod notes;

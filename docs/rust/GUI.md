@@ -7,7 +7,9 @@ and how we mean to go about it.
 ## Where it stands
 
 `hydrus-gui <store>` opens the last session (the one a migration brings
-over from hydrus), or a single search page if there is none. Its windows
+over from hydrus), or a single search page if there is none; if you had a
+lock password set in hydrus, it asks for it first, as hydrus does, and
+cancelling closes it without opening anything. Its windows
 follow the system's light or dark mode (hydrus's own colour options aren't
 carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its

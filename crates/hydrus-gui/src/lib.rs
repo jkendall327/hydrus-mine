@@ -28,11 +28,13 @@ mod pages;
 mod playback;
 pub mod sort;
 mod thumbnails;
+mod unlock;
 mod viewer;
 
 pub use grid::ThumbnailRows;
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
+pub use unlock::unlock_window;
 pub use viewer::MediaViewer;
 
 /// Pages bound to a window: the pages, the page shown, its grid's rows,

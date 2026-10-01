@@ -223,6 +223,11 @@ impl Setting for hydrus_core::import_options::ImportOptionsManager {
     const KEY: &'static str = "import_options";
 }
 
+/// The desktop client's lock password.
+impl Setting for hydrus_core::lock::LockPassword {
+    const KEY: &'static str = "lock_password";
+}
+
 /// How tags are shown in the GUI.
 impl Setting for hydrus_core::tag_presentation::TagPresentation {
     const KEY: &'static str = "tag_presentation";

@@ -1,0 +1,56 @@
+// Asked for before the client opens when a lock password is set, as the
+// reference asks: until the password is right, or the window is closed.
+
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component UnlockWindow inherits Window {
+    title: "hydrus client";
+    preferred-width: 360px;
+    background: Theme.window;
+
+    // the last password entered was wrong
+    in property <bool> wrong;
+
+    callback entered(string);
+    callback cancelled();
+
+    forward-focus: password;
+    VerticalLayout {
+        padding: 12px;
+        spacing: 8px;
+        Text {
+            text: "Enter your password.";
+            color: Theme.text;
+        }
+        password := LineEdit {
+            input-type: InputType.password;
+            accepted(text) => {
+                if (text != "") {
+                    root.entered(text);
+                    self.text = "";
+                }
+            }
+        }
+        if root.wrong: Text {
+            text: "That isn't the password.";
+            color: Theme.error;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 8px;
+            Button {
+                text: "cancel";
+                clicked => { root.cancelled(); }
+            }
+            Button {
+                text: "ok";
+                enabled: password.text != "";
+                clicked => {
+                    root.entered(password.text);
+                    password.text = "";
+                }
+            }
+        }
+    }
+}
