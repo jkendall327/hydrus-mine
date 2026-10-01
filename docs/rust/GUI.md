@@ -70,7 +70,13 @@ the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
-to the first as in the reference, and escape closes it. With the pointer
+to the first as in the reference, and escape closes it. As the reference's
+default media shortcuts have it, F7 archives the file, shift+F7 returns it
+to the inbox, delete deletes it (from the page's domain, if it searches
+one, else to the trash; in the trash, for good, unless the delete lock
+holds it), asking first, and shift+delete undeletes it; a file deleted out
+of the page's domains leaves the page and the viewer (which closes when
+none are left). With the pointer
 over the window's left fifth, the file's tags show there, as the
 reference's tags hover frame does: its display tags less those your single
 media filters hide, in your media viewer tag sort and namespace colours,

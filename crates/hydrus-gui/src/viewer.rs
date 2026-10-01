@@ -9,6 +9,8 @@ pub struct MediaViewer {
     store: Arc<Store>,
     files: Vec<HashId>,
     index: usize,
+    /// The file domains of the page it was opened from.
+    location: hydrus_search::LocationContext,
 }
 
 impl std::fmt::Debug for MediaViewer {
@@ -27,7 +29,32 @@ impl MediaViewer {
             store,
             files,
             index,
+            location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            )),
         })
+    }
+
+    /// Viewing a page searching `location` (where deletions take its files
+    /// from).
+    #[must_use]
+    pub fn with_location(mut self, location: hydrus_search::LocationContext) -> Self {
+        self.location = location;
+        self
+    }
+
+    pub fn location(&self) -> &hydrus_search::LocationContext {
+        &self.location
+    }
+
+    /// Take the current file out (deleted, say), showing the next; whether
+    /// any are left.
+    pub fn remove_current(&mut self) -> bool {
+        self.files.remove(self.index);
+        if self.index >= self.files.len() {
+            self.index = 0;
+        }
+        !self.files.is_empty()
     }
 
     pub fn store(&self) -> &Arc<Store> {

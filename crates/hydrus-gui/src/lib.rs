@@ -6,6 +6,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use hydrus_core::HashId;
 use slint::{ModelRc, SharedString, VecModel};
 
 /// The UI compiled from `ui/` (generated code).
@@ -23,6 +24,7 @@ pub mod favourites;
 mod filter_window;
 mod grid;
 pub mod headless;
+pub mod media_actions;
 pub mod mpv;
 mod page;
 pub mod page_chooser;
@@ -384,6 +386,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let viewer: Rc<RefCell<Option<MediaViewerWindow>>> = Rc::default();
+    // files deleted from the page's domain leave it
+    let removed: Removed = Rc::new({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |files: &[HashId]| {
+            page().borrow_mut().remove_files(files);
+            shown(true);
+        }
+    });
     window.on_thumbnail_activated({
         let page = page.clone();
         let viewer = viewer.clone();
@@ -397,7 +408,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             ) else {
                 return;
             };
-            match open_viewer(model, &viewer) {
+            let model = model.with_location(page.location().clone());
+            match open_viewer(model, &viewer, removed.clone()) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the media viewer: {e}"),
             }
@@ -427,11 +439,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     }
 }
 
+/// Called with files a viewer deleted out of the page's domains.
+type Removed = Rc<dyn Fn(&[HashId])>;
+
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
 /// when closed.
 fn open_viewer(
     model: MediaViewer,
     slot: &Rc<RefCell<Option<MediaViewerWindow>>>,
+    removed: Removed,
 ) -> Result<MediaViewerWindow, slint::PlatformError> {
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
@@ -486,9 +502,78 @@ fn open_viewer(
             show();
         }
     });
-    window.on_previous(move || {
-        model.borrow_mut().previous();
-        show();
+    window.on_previous({
+        let model = model.clone();
+        let show = show.clone();
+        move || {
+            model.borrow_mut().previous();
+            show();
+        }
+    });
+    // the media shortcuts: F7 and shift+F7, delete and shift+delete
+    let act = |action: fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>| {
+        let model = model.clone();
+        move || {
+            let model = model.borrow();
+            if let Err(e) = action(model.store(), &[model.current()]) {
+                eprintln!("could not change the file: {e}");
+            }
+        }
+    };
+    window.on_archive(act(media_actions::archive));
+    window.on_inbox(act(media_actions::inbox));
+    window.on_undelete(act(media_actions::undelete));
+    let pending: Rc<RefCell<Option<media_actions::Deletion>>> = Rc::default();
+    window.on_delete({
+        let model = model.clone();
+        let pending = pending.clone();
+        let weak = window.as_weak();
+        move || {
+            let model = model.borrow();
+            let deletion =
+                media_actions::deletion(model.store(), model.location(), &[model.current()]);
+            if let (Some(deletion), Some(window)) = (deletion, weak.upgrade()) {
+                window.set_question(deletion.question(1).into());
+                *pending.borrow_mut() = Some(deletion);
+            }
+        }
+    });
+    window.on_answer({
+        let model = model.clone();
+        let weak = window.as_weak();
+        let show = show.clone();
+        move |yes| {
+            let deletion = pending.borrow_mut().take();
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            window.set_question(SharedString::new());
+            let Some(deletion) = deletion.filter(|_| yes) else {
+                return;
+            };
+            let (store, file, location) = {
+                let model = model.borrow();
+                (
+                    model.store().clone(),
+                    model.current(),
+                    model.location().clone(),
+                )
+            };
+            if let Err(e) = media_actions::delete(&store, &[file], &deletion) {
+                eprintln!("could not delete the file: {e}");
+                return;
+            }
+            // (out of the page's domains, it leaves the page and the viewer)
+            if media_actions::still_in(&store, &location, &[file]).is_empty() {
+                removed(&[file]);
+                let any_left = model.borrow_mut().remove_current();
+                if any_left {
+                    show();
+                } else {
+                    window.invoke_close_requested();
+                }
+            }
+        }
     });
     window.on_toggle_pause({
         let playback = playback.clone();

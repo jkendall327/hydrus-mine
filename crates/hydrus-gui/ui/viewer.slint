@@ -1,6 +1,8 @@
 // The media viewer's window: one file, fitted to the window. Right and left
 // (or page down and up, or the mouse wheel) move through the page's files;
-// space pauses and plays video; escape closes it. With the pointer over the
+// space pauses and plays video; escape closes it. F7 archives the file and
+// shift+F7 returns it to the inbox; delete deletes it (asking first: enter
+// or escape answers) and shift+delete undeletes it. With the pointer over the
 // window's left fifth, the file's tags show there, as the reference's tags
 // hover frame does.
 
@@ -18,14 +20,46 @@ export component MediaViewerWindow inherits Window {
     in property <[ListText]> tags;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
+    // a question to answer (a deletion): enter is yes, escape no
+    in property <string> question;
+
     callback next();
     callback previous();
     callback close-requested();
     callback toggle-pause();
+    callback archive();
+    callback inbox();
+    callback delete();
+    callback undelete();
+    callback answer(bool);
 
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
+            if (root.question != "") {
+                if (event.text == Key.Return) {
+                    root.answer(true);
+                } else if (event.text == Key.Escape) {
+                    root.answer(false);
+                }
+                return accept;
+            }
+            if (event.text == Key.F7) {
+                if (event.modifiers.shift) {
+                    root.inbox();
+                } else {
+                    root.archive();
+                }
+                return accept;
+            }
+            if (event.text == Key.Delete) {
+                if (event.modifiers.shift) {
+                    root.undelete();
+                } else {
+                    root.delete();
+                }
+                return accept;
+            }
             if (event.text == Key.RightArrow || event.text == Key.PageDown) {
                 root.next();
                 return accept;
@@ -58,6 +92,29 @@ export component MediaViewerWindow inherits Window {
                     root.previous();
                 }
                 accept
+            }
+        }
+        if root.question != "": Rectangle {
+            width: min(root.width - 40px, 420px);
+            height: 90px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: root.question;
+                    color: #f0f0f0;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "enter: yes, escape: no";
+                    color: #a0a0a0;
+                    horizontal-alignment: center;
+                }
             }
         }
         // (nothing in it takes the pointer, so the area above keeps it)

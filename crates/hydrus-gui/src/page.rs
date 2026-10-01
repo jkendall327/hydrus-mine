@@ -266,6 +266,20 @@ impl SearchPage {
             .collect()
     }
 
+    /// The file domains the page searches.
+    pub fn location(&self) -> &hydrus_search::LocationContext {
+        &self.context.location
+    }
+
+    /// Take files off the page (deleted from its domain, say), as the
+    /// reference's pages drop them.
+    pub fn remove_files(&mut self, files: &[HashId]) {
+        let selected = self.selected.map(|i| self.results[i]);
+        self.results.retain(|id| !files.contains(id));
+        self.selected = selected.and_then(|id| self.results.iter().position(|&r| r == id));
+        self.count_tags();
+    }
+
     pub fn results(&self) -> &[HashId] {
         &self.results
     }
