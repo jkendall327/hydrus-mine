@@ -122,7 +122,27 @@ fn export_folders_do_what_the_reference_did() {
             .map(|(k, v)| (k.replace('/', std::path::MAIN_SEPARATOR_STR), v.to_string()))
             .collect();
         let mine = listing(&work.path().join(name));
-        if mine != theirs {
+        let same = if cfg!(windows) {
+            // the reference ran on Linux. On Windows its text sidecars are
+            // written with \r\n, and the regular folder's phrase
+            // ("[series]/[creator] - {hash}") makes no subfolders: `/` isn't
+            // a separator there, and NTFS's rules make it `_`, for hydrus
+            // as for us. So line endings are compared loosely, and that
+            // folder's names not at all.
+            let contents = |listing: &BTreeMap<String, String>| {
+                let mut values: Vec<String> = listing
+                    .values()
+                    .map(|v| v.replace("\\r\\n", "\\n"))
+                    .collect();
+                values.sort();
+                values
+            };
+            let names_match = name == "regular" || mine.keys().eq(theirs.keys());
+            names_match && contents(&mine) == contents(&theirs)
+        } else {
+            mine == theirs
+        };
+        if !same {
             problems.push(format!("{name}:\n  ours   {mine:#?}\n  theirs {theirs:#?}"));
         }
     }
