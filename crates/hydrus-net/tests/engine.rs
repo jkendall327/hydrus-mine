@@ -119,6 +119,10 @@ async fn redirect_loop(Path(n): Path<u32>) -> Response {
         .unwrap()
 }
 
+async fn whole_uri(uri: axum::http::Uri) -> String {
+    uri.to_string()
+}
+
 async fn slow() -> &'static str {
     tokio::time::sleep(std::time::Duration::from_secs(30)).await;
     "late"
@@ -142,6 +146,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         .route("/file.png", get(ranged))
         .route("/loop/{n}", get(redirect_loop))
         .route("/slow", get(slow))
+        .route("/uri", get(whole_uri))
         .with_state(Arc::clone(&server));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let base = format!("http://{}", listener.local_addr().unwrap());
@@ -501,4 +506,37 @@ async fn a_domain_with_several_serious_errors_waits() {
     let mut request = Request::get(format!("{}/echo", s.base));
     request.one_shot = true;
     s.engine.fetch(&request, &Job::new()).await.unwrap();
+}
+
+#[tokio::test]
+async fn requests_go_through_the_clients_proxy() {
+    let s = setup(|_| Vec::new()).await;
+    // the test server is the proxy too: a proxied request asks it for the
+    // whole URL
+    let engine = NetEngine::new(
+        Arc::clone(&s.store),
+        NetOptions {
+            http_proxy: Some(s.base.clone()),
+            no_proxy: Some("127.0.0.1".into()),
+            obey_bandwidth: false,
+            ..NetOptions::default()
+        },
+    )
+    .unwrap();
+    let fetch = |url: String| {
+        let engine = &engine;
+        async move {
+            engine
+                .fetch(&Request::get(url), &Job::new())
+                .await
+                .unwrap()
+                .text()
+        }
+    };
+    assert_eq!(
+        fetch("http://booru.invalid/uri".into()).await,
+        "http://booru.invalid/uri"
+    );
+    // hosts in no_proxy are asked directly
+    assert_eq!(fetch(format!("{}/uri", s.base)).await, "/uri");
 }

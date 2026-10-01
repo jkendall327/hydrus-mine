@@ -317,6 +317,11 @@ deletes its files from the client, migrated from the reference's database.
   subscription would publish to a popup button or page.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
+- **Subscriptions run one at a time**, as with the reference's default
+  `max_simultaneous_subscriptions`; a higher setting comes across but
+  isn't used yet.
+- **There is no browser impersonation** (the reference's optional
+  `curl_cffi` connections); requests are always plain ones.
 
 ## URL classes
 

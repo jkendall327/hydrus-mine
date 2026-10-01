@@ -33,10 +33,6 @@ use hydrus_store::subscriptions::{self as store_subs, Subscription, Subscription
 use crate::gallery::{KnownSeeds, PageSink, PageTaken, set_gallery_status};
 use crate::{Downloader, WorkError, now};
 
-/// `subscription_network_error_delay`: seconds to wait after a network error.
-pub const NETWORK_ERROR_DELAY: i64 = 12 * 3600;
-/// `subscription_other_error_delay`.
-pub const OTHER_ERROR_DELAY: i64 = 36 * 3600;
 /// `WE_HIT_OLD_GROUND_THRESHOLD`.
 const CAUGHT_UP_RUN: u64 = 5;
 
@@ -371,7 +367,7 @@ impl Downloader {
             Err(RunStop::Network(e)) => {
                 delay(
                     &mut sub,
-                    NETWORK_ERROR_DELAY,
+                    self.network.subscription_network_error_delay,
                     &format!("network error: {e}"),
                 );
             }
@@ -380,7 +376,11 @@ impl Downloader {
                     "The subscription \"{}\" encountered an error when trying to sync: {e}",
                     sub.name
                 ));
-                delay(&mut sub, OTHER_ERROR_DELAY, &format!("error: {e}"));
+                delay(
+                    &mut sub,
+                    self.network.subscription_other_error_delay,
+                    &format!("error: {e}"),
+                );
             }
         }
         // save what the run changed, keeping changes made meanwhile (say, a
@@ -422,8 +422,7 @@ impl Downloader {
             .into_iter()
             .filter(|q| !q.state.paused && q.state.is_sync_due(t))
             .collect();
-        // (process_subs_in_random_order)
-        queries.shuffle(&mut rand::rng());
+        self.order_queries(&mut queries);
         Ok(queries)
     }
 
@@ -475,7 +474,7 @@ impl Downloader {
     fn gug_functional(&self, gugs: &hydrus_core::url::Gugs, gug: &AnyGug) -> Result<(), String> {
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
-        let options = gug_options(classes);
+        let options = gug_options(classes, self.network.gug_percent_twenty_is_space);
         let examples: Vec<String> = match gug {
             AnyGug::Single(g) => vec![
                 g.example_url(options)
@@ -548,7 +547,11 @@ impl Downloader {
         drop(history);
 
         let urls = gugs
-            .gallery_urls(gug, &query.state.query_text, gug_options(classes))
+            .gallery_urls(
+                gug,
+                &query.state.query_text,
+                gug_options(classes, self.network.gug_percent_twenty_is_space),
+            )
             .map_err(|e| RunStop::Failed(e.to_string()))?;
         if urls.is_empty() {
             sub.settings.paused = true;
@@ -735,7 +738,7 @@ impl Downloader {
             .into_iter()
             .filter(|q| !q.state.paused)
             .collect();
-        queries.shuffle(&mut rand::rng());
+        self.order_queries(&mut queries);
         for query in queries {
             if !self.has_file_work(query.queue_id)? {
                 continue;
@@ -815,6 +818,17 @@ impl Downloader {
     }
 }
 
+impl Downloader {
+    /// `_GetQueryHeadersForProcessing`'s order: random, or by name.
+    fn order_queries(&self, queries: &mut [SubscriptionQuery]) {
+        if self.network.process_subs_in_random_order {
+            queries.shuffle(&mut rand::rng());
+        } else {
+            queries.sort_by_cached_key(|q| q.state.human_name().to_owned());
+        }
+    }
+}
+
 /// `_DelayWork`.
 fn delay(sub: &mut Subscription, seconds: i64, reason: &str) {
     sub.settings.no_work_until = now() + seconds;
@@ -825,10 +839,9 @@ fn delay(sub: &mut Subscription, seconds: i64, reason: &str) {
         .clone_into(&mut sub.settings.no_work_until_reason);
 }
 
-fn gug_options(classes: &UrlClasses) -> GugOptions {
+fn gug_options(classes: &UrlClasses, percent_twenty_is_space: bool) -> GugOptions {
     GugOptions {
-        // (replace_percent_twenty_with_space_in_gug_input, off by default)
-        percent_twenty_is_space: false,
+        percent_twenty_is_space,
         collapse_leading_slashes: classes.settings().collapse_leading_slashes,
     }
 }
@@ -922,9 +935,15 @@ impl SubscriptionRunner {
                 soonest = Some(soonest.map_or(when, |s| s.min(when)));
             }
         }
-        // (process_subs_in_random_order)
-        if let Some(sub) = ready.choose(&mut rand::rng()) {
-            return Ok(Ok(sub.clone()));
+        let next = if self.downloader.network.process_subs_in_random_order {
+            ready.choose(&mut rand::rng()).cloned()
+        } else {
+            ready
+                .into_iter()
+                .min_by_key(|sub| hydrus_core::sort::human_sort_key(&sub.name))
+        };
+        if let Some(sub) = next {
+            return Ok(Ok(sub));
         }
         // (look again every few minutes: subscriptions may be changed by
         // other processes, such as the command line)

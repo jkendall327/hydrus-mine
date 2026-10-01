@@ -112,9 +112,11 @@ pub fn run(dir: &Path, action: Action) -> Result<()> {
             folder.settings.check_now = true;
             let (id, settings) = (folder.id(), folder.settings);
             store.write(move |ctx| import_folders::set_settings(ctx.conn(), id, &settings))?;
+            let network: hydrus_store::network::NetworkSettings =
+                store.read(hydrus_store::settings::get)?;
             let net = Arc::new(hydrus_net::NetEngine::new(
                 Arc::clone(&store),
-                hydrus_net::NetOptions::default(),
+                hydrus_net::NetOptions::from_settings(&network),
             )?);
             let importer = hydrus_import::FileImporter::new(
                 Arc::clone(&store),

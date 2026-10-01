@@ -57,21 +57,24 @@ impl AppState {
         let access = store.read(AccessRegistry::load)?;
         let importer =
             hydrus_import::FileImporter::new(Arc::clone(&store), hydrus_media::MediaTools::new());
-        let downloads =
-            hydrus_net::NetEngine::new(Arc::clone(&store), hydrus_net::NetOptions::default())
+        let network: hydrus_store::network::NetworkSettings =
+            store.read(hydrus_store::settings::get)?;
+        let downloads = hydrus_net::NetEngine::new(
+            Arc::clone(&store),
+            hydrus_net::NetOptions::from_settings(&network),
+        )
+        .map_err(|e| tracing::error!(error = %e, "the network engine could not start"))
+        .ok()
+        .and_then(|net| {
+            hydrus_download::Downloader::new(Arc::clone(&store), Arc::new(net), importer.clone())
                 .ok()
-                .and_then(|net| {
-                    hydrus_download::Downloader::new(
-                        Arc::clone(&store),
-                        Arc::new(net),
-                        importer.clone(),
-                    )
-                    .ok()
-                })
-                .map(|downloader| {
-                    // the reference's default `downloader_network_error_delay`
-                    hydrus_download::QueueRunner::new(Arc::new(downloader), 90 * 60)
-                });
+        })
+        .map(|downloader| {
+            hydrus_download::QueueRunner::new(
+                Arc::new(downloader),
+                network.downloader_network_error_delay,
+            )
+        });
         let subscriptions = downloads.as_ref().map(|runner| {
             hydrus_download::subscriptions::SubscriptionRunner::new(Arc::clone(runner.downloader()))
         });

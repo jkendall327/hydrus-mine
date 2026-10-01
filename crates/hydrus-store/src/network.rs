@@ -457,3 +457,69 @@ mod tests {
         );
     }
 }
+
+/// The client options for talking to websites and pacing the downloaders,
+/// under the reference's names.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NetworkSettings {
+    /// Seconds to wait for a connection (`network_timeout`).
+    pub network_timeout: u64,
+    pub connection_error_wait_time: u64,
+    pub serverside_bandwidth_wait_time: u64,
+    /// `max_connection_attempts_allowed`.
+    pub max_connection_attempts: u32,
+    /// `max_request_attempts_allowed_get`.
+    pub max_get_attempts: u32,
+    /// `max_network_jobs`.
+    pub max_jobs: usize,
+    /// `max_network_jobs_per_domain`.
+    pub max_jobs_per_domain: usize,
+    /// `verify_regular_https`.
+    pub verify_https: bool,
+    /// `domain_network_infrastructure_error_number` and `_time_delta`.
+    pub domain_error_number: usize,
+    pub domain_error_window: i64,
+    pub http_proxy: Option<String>,
+    pub https_proxy: Option<String>,
+    pub no_proxy: Option<String>,
+    /// Seconds a downloader queue waits after a gallery page or watcher
+    /// check fails on the network.
+    pub downloader_network_error_delay: u64,
+    pub subscription_network_error_delay: i64,
+    pub subscription_other_error_delay: i64,
+    pub process_subs_in_random_order: bool,
+    pub max_simultaneous_subscriptions: u32,
+    /// `replace_percent_twenty_with_space_in_gug_input`.
+    pub gug_percent_twenty_is_space: bool,
+}
+
+impl Default for NetworkSettings {
+    fn default() -> Self {
+        Self {
+            network_timeout: 10,
+            connection_error_wait_time: 15,
+            serverside_bandwidth_wait_time: 60,
+            max_connection_attempts: 5,
+            max_get_attempts: 5,
+            max_jobs: 15,
+            max_jobs_per_domain: 3,
+            verify_https: true,
+            domain_error_number: 3,
+            domain_error_window: 600,
+            http_proxy: None,
+            https_proxy: None,
+            no_proxy: Some("127.0.0.1".into()),
+            downloader_network_error_delay: 90 * 60,
+            subscription_network_error_delay: 12 * 3600,
+            subscription_other_error_delay: 36 * 3600,
+            process_subs_in_random_order: true,
+            max_simultaneous_subscriptions: 1,
+            gug_percent_twenty_is_space: false,
+        }
+    }
+}
+
+impl crate::settings::Setting for NetworkSettings {
+    const KEY: &'static str = "network";
+}

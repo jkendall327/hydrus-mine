@@ -48,6 +48,10 @@ pub struct NetOptions {
     /// (`domain_network_infrastructure_error_number` and `_time_delta`).
     pub domain_error_number: usize,
     pub domain_error_window: i64,
+    /// Proxies for http and https requests, and the hosts that skip them.
+    pub http_proxy: Option<String>,
+    pub https_proxy: Option<String>,
+    pub no_proxy: Option<String>,
 }
 
 impl Default for NetOptions {
@@ -64,6 +68,31 @@ impl Default for NetOptions {
             obey_bandwidth: true,
             domain_error_number: 3,
             domain_error_window: 600,
+            http_proxy: None,
+            https_proxy: None,
+            no_proxy: None,
+        }
+    }
+}
+
+impl NetOptions {
+    /// The client's network options.
+    pub fn from_settings(s: &hydrus_store::network::NetworkSettings) -> Self {
+        Self {
+            network_timeout: s.network_timeout,
+            connection_error_wait_time: s.connection_error_wait_time,
+            serverside_bandwidth_wait_time: s.serverside_bandwidth_wait_time,
+            max_connection_attempts: s.max_connection_attempts,
+            max_get_attempts: s.max_get_attempts,
+            max_jobs: s.max_jobs,
+            max_jobs_per_domain: s.max_jobs_per_domain,
+            verify_https: s.verify_https,
+            obey_bandwidth: true,
+            domain_error_number: s.domain_error_number,
+            domain_error_window: s.domain_error_window,
+            http_proxy: s.http_proxy.clone(),
+            https_proxy: s.https_proxy.clone(),
+            no_proxy: s.no_proxy.clone(),
         }
     }
 }
@@ -299,13 +328,34 @@ fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
 
 impl NetEngine {
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
-        let client = reqwest::Client::builder()
+        let failed =
+            |e: reqwest::Error| NetError::Network(format!("could not start the HTTP client: {e}"));
+        let mut builder = reqwest::Client::builder()
             .redirect(reqwest::redirect::Policy::none())
             .connect_timeout(Duration::from_secs(options.network_timeout))
             .read_timeout(Duration::from_secs(options.network_timeout * 6))
-            .tls_danger_accept_invalid_certs(!options.verify_https)
-            .build()
-            .map_err(|e| NetError::Network(format!("could not start the HTTP client: {e}")))?;
+            .tls_danger_accept_invalid_certs(!options.verify_https);
+        // (the hosts that skip the proxies only apply when there is one, as
+        // in the reference)
+        let no_proxy = options
+            .no_proxy
+            .as_deref()
+            .and_then(reqwest::NoProxy::from_string);
+        if let Some(proxy) = &options.http_proxy {
+            builder = builder.proxy(
+                reqwest::Proxy::http(proxy)
+                    .map_err(failed)?
+                    .no_proxy(no_proxy.clone()),
+            );
+        }
+        if let Some(proxy) = &options.https_proxy {
+            builder = builder.proxy(
+                reqwest::Proxy::https(proxy)
+                    .map_err(failed)?
+                    .no_proxy(no_proxy),
+            );
+        }
+        let client = builder.build().map_err(failed)?;
         let now = now();
         let (bandwidth_settings, usage) = store
             .read(|conn| {

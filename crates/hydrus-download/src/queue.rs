@@ -771,8 +771,10 @@ pub fn create_gallery_searches(
         .ok_or_else(|| GallerySearchError::NoDownloader(gug_name.to_owned()))?;
     let snapshot = store.snapshot();
     let classes = &snapshot.url_classes;
+    let network: hydrus_store::network::NetworkSettings =
+        store.read(hydrus_store::settings::get)?;
     let options = hydrus_core::url::GugOptions {
-        percent_twenty_is_space: false,
+        percent_twenty_is_space: network.gug_percent_twenty_is_space,
         collapse_leading_slashes: classes.settings().collapse_leading_slashes,
     };
     let defaults: GalleryDefaults = store.read(hydrus_store::settings::get)?;

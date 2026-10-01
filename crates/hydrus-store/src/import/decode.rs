@@ -109,6 +109,55 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let mut network = crate::network::NetworkSettings::default();
+    if let Some(options) = &options {
+        let n = &mut network;
+        let int = |key: &str| options.integers.get(key).copied();
+        let unsigned = |key: &str| int(key).and_then(|v| u64::try_from(v).ok());
+        let small = |key: &str| int(key).and_then(|v| u32::try_from(v).ok());
+        let count = |key: &str| int(key).and_then(|v| usize::try_from(v).ok());
+        let boolean = |key: &str| options.booleans.get(key).copied();
+        let string = |key: &str| options.noneable_strings.get(key).cloned();
+        n.network_timeout = unsigned("network_timeout").unwrap_or(n.network_timeout);
+        n.connection_error_wait_time =
+            unsigned("connection_error_wait_time").unwrap_or(n.connection_error_wait_time);
+        n.serverside_bandwidth_wait_time =
+            unsigned("serverside_bandwidth_wait_time").unwrap_or(n.serverside_bandwidth_wait_time);
+        n.max_connection_attempts =
+            small("max_connection_attempts_allowed").unwrap_or(n.max_connection_attempts);
+        n.max_get_attempts =
+            small("max_request_attempts_allowed_get").unwrap_or(n.max_get_attempts);
+        n.max_jobs = count("max_network_jobs").unwrap_or(n.max_jobs);
+        n.max_jobs_per_domain =
+            count("max_network_jobs_per_domain").unwrap_or(n.max_jobs_per_domain);
+        n.verify_https = boolean("verify_regular_https").unwrap_or(n.verify_https);
+        n.domain_error_number =
+            count("domain_network_infrastructure_error_number").unwrap_or(n.domain_error_number);
+        n.domain_error_window =
+            int("domain_network_infrastructure_error_time_delta").unwrap_or(n.domain_error_window);
+        if let Some(proxy) = string("http_proxy") {
+            n.http_proxy = proxy;
+        }
+        if let Some(proxy) = string("https_proxy") {
+            n.https_proxy = proxy;
+        }
+        if let Some(hosts) = string("no_proxy") {
+            n.no_proxy = hosts;
+        }
+        n.downloader_network_error_delay =
+            unsigned("downloader_network_error_delay").unwrap_or(n.downloader_network_error_delay);
+        n.subscription_network_error_delay =
+            int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
+        n.subscription_other_error_delay =
+            int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        n.process_subs_in_random_order =
+            boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
+        n.max_simultaneous_subscriptions =
+            small("max_simultaneous_subscriptions").unwrap_or(n.max_simultaneous_subscriptions);
+        n.gug_percent_twenty_is_space = boolean("replace_percent_twenty_with_space_in_gug_input")
+            .unwrap_or(n.gug_percent_twenty_is_space);
+    }
+    insert_setting(&mut input, &network)?;
     let mut export = crate::settings::ExportSettings::default();
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {

@@ -1351,6 +1351,16 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn the_network_options_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let network: crate::network::NetworkSettings =
+            serde_json::from_value(input.settings["network"].clone()).unwrap();
+        // the fixture's client kept hydrus's defaults
+        assert_eq!(network, crate::network::NetworkSettings::default());
+    }
+
+    #[test]
     fn the_trash_limits_come_across() {
         let source = legacy_fixture("basic");
         let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();

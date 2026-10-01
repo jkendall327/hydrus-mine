@@ -52,8 +52,10 @@ viewing statistics, URL classes, autocomplete rules, and the duplicate
 filter's batch size and metadata merge options (what "this is better" copies
 or moves between files), and the network side: custom HTTP headers (e.g. a
 User-Agent your browser extension set), every site's cookies, less those
-that had expired, and your bandwidth rules with their recent usage (so
-today's limits carry on). The trash keeps its limits (how old and how big
+that had expired, your bandwidth rules with their recent usage (so
+today's limits carry on), and your connection options (timeouts, retries,
+how many requests at once, HTTPS verification, proxies, and how long the
+downloaders and subscriptions wait after an error). The trash keeps its limits (how old and how big
 it may get before files in it are deleted for good), and `hydrus serve`
 applies them hourly, as hydrus does; files deleted for good go to the
 recycle bin if you had hydrus send them there. Your import options come across too (the defaults for
