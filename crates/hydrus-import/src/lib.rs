@@ -193,7 +193,21 @@ impl FileImporter {
             .storage
             .file_path(&hash, mime)
             .ok_or_else(|| StoreError::Corrupt(format!("no storage location for {hash}")))?;
-        write_into_storage(temp, &file_path)?;
+        let size = std::fs::metadata(temp)?.len();
+        if free_space(&file_path).is_some_and(|free| free < MIN_FREE_SPACE || free < size) {
+            return Err(self.critical_drive_error(format!(
+                "The disk for path \"{}\" is almost full and cannot take the file \"{hash}\", which is {}! Shut the client down now and fix this!",
+                file_path.display(),
+                hydrus_core::numbers::human_bytes(size),
+            )));
+        }
+        if let Err(e) = write_into_storage(temp, &file_path) {
+            return Err(self.critical_drive_error(format!(
+                "Copying the file from \"{}\" to \"{}\" failed ({e})! Other import queues have been paused. You should shut the client down now and fix this!",
+                temp.display(),
+                file_path.display(),
+            )));
+        }
         if let Some(thumbnail) = analysis.thumbnail.as_ref().filter(|t| !t.is_default)
             && let Some(thumb_path) = snap.storage.thumbnail_path(&hash)
         {
@@ -295,7 +309,41 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
     }
 }
 
+/// The least free space an import leaves on a media disk (the reference's).
+const MIN_FREE_SPACE: u64 = 100 * 1_048_576;
+
+/// The free space on the disk `path` is (or will be) on.
+fn free_space(path: &Path) -> Option<u64> {
+    let existing = path.ancestors().find(|p| p.exists())?;
+    fs4::available_space(existing).ok()
+}
+
 impl FileImporter {
+    /// `_HandleCriticalDriveError`: a media disk is full or failing, so stop
+    /// the importers (import folders, subscriptions, file queues) before
+    /// they lose more files, and say why.
+    fn critical_drive_error(&self, message: String) -> ImportError {
+        tracing::error!("{message}");
+        let paused = self.store.write(|ctx| {
+            let conn = ctx.conn();
+            let mut folders: hydrus_store::settings::FolderSettings =
+                hydrus_store::settings::get(conn)?;
+            folders.pause_import_folders = true;
+            hydrus_store::settings::set(conn, &folders)?;
+            let mut pauses: hydrus_store::settings::Pauses = hydrus_store::settings::get(conn)?;
+            pauses.subscriptions = true;
+            pauses.file_queues = true;
+            hydrus_store::settings::set(conn, &pauses)
+        });
+        match paused {
+            Ok(()) => tracing::error!(
+                "A critical drive error has occurred. All importers--subscriptions, import folders, and file import queues--have been paused. Once the issue is clear, resume them (hydrus resume <store> subscriptions, file-queues and import-folders)."
+            ),
+            Err(e) => tracing::error!(error = %e, "pausing the importers failed"),
+        }
+        ImportError::Io(std::io::Error::other(message))
+    }
+
     /// `RegenerateThumbnail`, for a thumbnail that has gone missing: make it
     /// again from the file, under the client's thumbnail settings. Its path,
     /// or `None` when the file has no thumbnail of its own (its type has

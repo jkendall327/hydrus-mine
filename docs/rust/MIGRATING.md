@@ -148,4 +148,8 @@ them in the old folders).
   Only one `hydrus serve` runs on a store at a time, and the commands that
   do its work themselves (`purge`, running an import or export folder or
   the duplicates rules) refuse to while it runs. It stops cleanly on Ctrl-C
-  or SIGTERM, so it can run as a service.
+  or SIGTERM, so it can run as a service. As in hydrus, an import refuses
+  a file when its disk has under 100 MB free (or the copy fails), and
+  pauses the subscriptions, file queues and import folders; `hydrus resume
+  <store> subscriptions` (and `file-queues`, `import-folders`) starts them
+  again.

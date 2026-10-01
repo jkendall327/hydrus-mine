@@ -285,3 +285,37 @@ fn imports_record_xmp_iptc_and_software_flags() {
         assert!(flags.has(flag), "{file}: {flags:?}");
     }
 }
+
+#[test]
+fn a_failed_copy_into_storage_pauses_the_importers() {
+    use hydrus_store::settings::{FolderSettings, Pauses};
+    let w = world();
+    let path = media_dir().join("png_rgb.png");
+    let hash = hydrus_media::hash_file(&path).unwrap().sha256;
+    let dest = w
+        .store
+        .snapshot()
+        .storage
+        .file_path(&hash, hydrus_core::Mime::ImagePng)
+        .unwrap();
+    // a file where its folder should be
+    let folder = dest.parent().unwrap();
+    std::fs::create_dir_all(folder.parent().unwrap()).unwrap();
+    std::fs::write(folder, b"in the way").unwrap();
+
+    let result = w.importer.import_path(&path, &FileImportOptions::default());
+    let error = result.unwrap_err().to_string();
+    assert!(error.contains("failed"), "{error}");
+    let (pauses, folders): (Pauses, FolderSettings) = w
+        .store
+        .read(|c| {
+            Ok((
+                hydrus_store::settings::get(c)?,
+                hydrus_store::settings::get(c)?,
+            ))
+        })
+        .unwrap();
+    assert!(pauses.subscriptions && pauses.file_queues, "{pauses:?}");
+    assert!(folders.pause_import_folders);
+    assert!(!pauses.network_traffic, "only the importers");
+}
