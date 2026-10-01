@@ -68,9 +68,17 @@ favourites isn't here yet, nor collecting). The matching files' thumbnails fill 
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
-window on that file, fitted to the window: right and left (or page down and
-up, or the mouse wheel) move through the page's files, round from the last
-to the first as in the reference, and escape closes it. F3 manages the
+window on that file, at its default zoom (fitted to the window, unless your
+per-filetype zoom rules or your default zoom say otherwise): right and left
+(or page down and up, or the mouse wheel) move through the page's files,
+round from the last to the first as in the reference, and escape or enter
+closes it. As the reference's default shortcuts have it, z switches between
+100% and fitting the window, + and - (or ctrl and the mouse wheel) step
+through your zoom levels and canvas fit, keeping the point under the
+pointer still (or wherever your zoom centre option says), shift and the
+arrow keys pan a twelfth of the way, and dragging moves the file; a file
+zoomed wholly off the window is brought back, and resizing the window fits
+it again. Video renders at the size it's shown, up to twice the window's. F3 manages the
 file's tags, as the reference's dialog does on the local tag services:
 the file's tags on the service chosen, and an input whose tag, entered,
 is added to the file (or removed, if it has it already), the tag as typed
@@ -138,8 +146,11 @@ predicates in the autocomplete, collect, the viewer's other hover frames
 and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
-deleting from the filter, the hover frames, zooming and panning, and
-reviewing auto-resolution's pending pairs.
+deleting from the filter, the hover frames, zooming and panning (there and
+in the archive/delete filter), and reviewing auto-resolution's pending
+pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its
+zoom and pan locks, and "open externally" for the file types shown with
+that button (their thumbnail fills the window instead).
 
 ## Size
 

@@ -246,6 +246,11 @@ impl Setting for hydrus_core::tag_presentation::NamespaceColours {
     const KEY: &'static str = "namespace_colours";
 }
 
+/// How the media viewer shows and zooms files.
+impl Setting for hydrus_core::media_viewer::MediaViewerSettings {
+    const KEY: &'static str = "media_viewer";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

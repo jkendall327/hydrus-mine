@@ -1,0 +1,287 @@
+//! Zooming and panning in the media viewer, as the reference's media
+//! container does it with its default options and shortcuts: z switches
+//! between 100% and canvas fit, + and - (and ctrl and the wheel) step
+//! through the zooms about the pointer, shift and the arrow keys pan, and
+//! dragging moves the file.
+
+// (zooms and positions are exact, as the reference's are)
+#![allow(clippy::float_cmp)]
+
+use std::sync::Arc;
+
+use hydrus_core::Mime;
+use hydrus_core::media_viewer::{MediaViewerSettings, ZoomCentre, ZoomType};
+use hydrus_gui::zoom::Zoom;
+use hydrus_gui::{MainWindow, MediaViewerWindow, Pages, SearchPage, bind, headless};
+use hydrus_store::Store;
+use hydrus_store::import::import_legacy;
+use slint::platform::{Key, PointerEventButton, WindowEvent};
+use slint::{ComponentHandle as _, LogicalPosition, SharedString};
+
+fn big_jpeg() -> Zoom {
+    Zoom::new(
+        MediaViewerSettings::default(),
+        Mime::ImageJpeg,
+        Some((4000, 3000)),
+        (1000, 750),
+        1.0,
+    )
+}
+
+#[test]
+fn zooming_steps_about_the_pointer_and_switches() {
+    // a big image opens fitted, centred
+    let mut zoom = big_jpeg();
+    assert_eq!(zoom.zoom(), 0.25);
+    assert_eq!(zoom.rect(), (0, 0, 1000, 750));
+    // zooming in about the pointer, a quarter of the way across and half
+    // way down, keeps that point still
+    zoom.zoom_in(Some((250, 375)));
+    assert_eq!(zoom.zoom(), 0.3);
+    assert_eq!(zoom.rect(), (-50, -75, 1200, 900));
+    zoom.zoom_out(Some((250, 375)));
+    assert_eq!(zoom.zoom(), 0.25);
+    assert_eq!(zoom.rect(), (0, 0, 1000, 750));
+    // without the pointer over the window, about its centre
+    zoom.zoom_in(None);
+    assert_eq!(zoom.rect(), (-100, -75, 1200, 900));
+    // switching goes to 100%, about the pointer (the window's top left
+    // stays on the same pixel), then back to fitting, centred
+    zoom.switch(Some((0, 0)));
+    assert_eq!(zoom.zoom(), 1.0);
+    assert_eq!(zoom.rect(), (-333, -250, 4000, 3000));
+    zoom.switch(None);
+    assert_eq!(zoom.rect(), (0, 0, 1000, 750));
+    // panning: a twelfth of the smaller of the file and the window
+    zoom.pan(1, 0);
+    zoom.pan(0, -2);
+    assert_eq!(zoom.rect(), (83, -124, 1000, 750));
+    zoom.drag((-83, 124));
+    assert_eq!(zoom.rect(), (0, 0, 1000, 750));
+    // nothing is ever bigger than 32000 pixels a side
+    for _ in 0..30 {
+        zoom.zoom_in(None);
+    }
+    assert_eq!(zoom.zoom(), 8.0);
+    assert_eq!(zoom.rect().2, 32000);
+    // resizing the window fits it again
+    zoom.resize((500, 500), 1.0);
+    assert_eq!(zoom.zoom(), 0.125);
+    assert_eq!(zoom.rect(), (0, 62, 500, 375));
+}
+
+#[test]
+fn a_file_dragged_away_is_rescued_when_zoomed() {
+    let mut zoom = big_jpeg();
+    zoom.drag((-5000, 0));
+    assert_eq!(zoom.rect().0, -5000);
+    // zoomed, it would be wholly off the window: a fifth of it comes back
+    zoom.zoom_in(None);
+    let (x, _, width, _) = zoom.rect();
+    assert_eq!(width, 1200);
+    assert_eq!(x + width - 1, width / 5, "{:?}", zoom.rect());
+}
+
+#[test]
+fn zooms_follow_the_settings() {
+    // a small image fits the window, as the defaults scale up
+    let small = |settings: MediaViewerSettings| {
+        Zoom::new(settings, Mime::ImagePng, Some((300, 200)), (1000, 750), 1.0)
+    };
+    let mut zoom = small(MediaViewerSettings::default());
+    assert_eq!(zoom.zoom_of(ZoomType::Canvas), 1000.0 / 300.0);
+    assert_eq!(zoom.rect(), (0, 41, 1000, 667));
+    // centring on the media's top left instead
+    let mut settings = MediaViewerSettings {
+        zoom_centre: ZoomCentre::MediaTopLeft,
+        ..MediaViewerSettings::default()
+    };
+    let mut top_left = small(settings.clone());
+    top_left.switch(Some((999, 749)));
+    assert_eq!(top_left.rect(), (350, 275, 300, 200), "recentred, fitting");
+    top_left.zoom_out(Some((999, 749)));
+    assert_eq!(top_left.rect(), (350, 275, 270, 180), "the top left stays");
+    // a default zoom of 100% (shown at its size), and other steps
+    settings.default_zoom_type = ZoomType::Full;
+    settings.media_zooms = vec![0.5, 1.0, 4.0];
+    let mut full = small(settings);
+    assert_eq!(full.rect(), (350, 275, 300, 200));
+    full.zoom_in(None);
+    assert_eq!(full.zoom(), 1000.0 / 300.0, "canvas fit is a step");
+    full.zoom_in(None);
+    assert_eq!(full.zoom(), 4.0);
+    full.zoom_in(None);
+    assert_eq!(full.zoom(), 4.0);
+    // a device pixel ratio of 2: 100% is half as many logical pixels
+    zoom.resize((1000, 750), 2.0);
+    zoom.switch(None);
+    assert_eq!(zoom.zoom(), 1.0);
+    assert_eq!(zoom.rect(), (425, 325, 150, 100));
+    // what isn't shown (a PDF's thumbnail) fills the window, unzoomed
+    let mut pdf = Zoom::new(
+        MediaViewerSettings::default(),
+        Mime::ApplicationPdf,
+        Some((600, 800)),
+        (1000, 750),
+        1.0,
+    );
+    pdf.zoom_in(None);
+    pdf.drag((10, 10));
+    assert_eq!(pdf.rect(), (0, 0, 1000, 750));
+}
+
+#[test]
+fn video_renders_at_the_size_shown_up_to_twice_the_window() {
+    let mut video = Zoom::new(
+        MediaViewerSettings::default(),
+        Mime::VideoMp4,
+        Some((3840, 2160)),
+        (1000, 750),
+        1.0,
+    );
+    assert_eq!(video.render_size(), (1000, 562));
+    video.switch(None);
+    assert_eq!(video.render_size(), (2000, 1125));
+    // (what plays is never bigger than 8000 a side)
+    for _ in 0..30 {
+        video.zoom_in(None);
+    }
+    assert!(video.rect().2 <= 8000);
+}
+
+fn key(window: &slint::Window, key: impl Into<SharedString> + Clone) {
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: key.clone().into(),
+    });
+    window.dispatch_event(WindowEvent::KeyReleased { text: key.into() });
+}
+
+fn rect(viewer: &MediaViewerWindow) -> (f32, f32, f32, f32) {
+    (
+        viewer.get_media_x(),
+        viewer.get_media_y(),
+        viewer.get_media_width(),
+        viewer.get_media_height(),
+    )
+}
+
+#[test]
+fn the_viewer_zooms_and_pans_by_key_wheel_and_drag() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:filetype is jpeg".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let batch = store
+        .read(|c| hydrus_store::media::load_basic(c, &files[..1]))
+        .unwrap();
+    let info = batch[0].info.as_ref().unwrap();
+    let (width, height) = (info.width.unwrap() as f32, info.height.unwrap() as f32);
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    slint::platform::update_timers_and_animations();
+    let window = viewer.window();
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: LogicalPosition::new(400.0, 300.0),
+    });
+    // fitted, centred
+    let fitted = rect(&viewer);
+    let fit = (800.0 / width).min(600.0 / height);
+    assert!(
+        (fitted.2 - (width * fit).floor()).abs() <= 1.0,
+        "{fitted:?}"
+    );
+    assert!(fitted.2 == 800.0 || fitted.3 == 600.0, "{fitted:?}");
+    // z: 100%; z again: fitted
+    key(window, "z");
+    assert_eq!((rect(&viewer).2, rect(&viewer).3), (width, height));
+    key(window, "z");
+    assert_eq!(rect(&viewer), fitted);
+    // + and -
+    key(window, "+");
+    assert!(rect(&viewer).2 > fitted.2);
+    key(window, "-");
+    assert_eq!(rect(&viewer), fitted);
+    // ctrl and the wheel
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Control.into(),
+    });
+    window.dispatch_event(WindowEvent::PointerScrolled {
+        position: LogicalPosition::new(400.0, 300.0),
+        delta_x: 0.0,
+        delta_y: 120.0,
+    });
+    window.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Control.into(),
+    });
+    let zoomed = rect(&viewer);
+    assert!(zoomed.2 > fitted.2, "{zoomed:?}");
+    assert_eq!(
+        viewer.get_caption(),
+        format!("1/{}", files.len()),
+        "not moved on"
+    );
+    // shift and right pans right a twelfth of the window
+    window.dispatch_event(WindowEvent::KeyPressed {
+        text: Key::Shift.into(),
+    });
+    key(window, Key::RightArrow);
+    window.dispatch_event(WindowEvent::KeyReleased {
+        text: Key::Shift.into(),
+    });
+    let step = (zoomed.2.min(800.0) / 12.0).floor();
+    assert_eq!(rect(&viewer).0, zoomed.0 + step);
+    assert_eq!(
+        viewer.get_caption(),
+        format!("1/{}", files.len()),
+        "not moved on"
+    );
+    // dragging moves it with the pointer
+    let before = rect(&viewer);
+    let at = |x: f32, y: f32| LogicalPosition::new(x, y);
+    window.dispatch_event(WindowEvent::PointerPressed {
+        position: at(400.0, 300.0),
+        button: PointerEventButton::Left,
+    });
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(380.0, 310.0),
+    });
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(370.0, 330.0),
+    });
+    window.dispatch_event(WindowEvent::PointerReleased {
+        position: at(370.0, 330.0),
+        button: PointerEventButton::Left,
+    });
+    assert_eq!(rect(&viewer).0, before.0 - 30.0);
+    assert_eq!(rect(&viewer).1, before.1 + 30.0);
+    // the next file opens at its default zoom
+    key(window, Key::RightArrow);
+    assert_eq!(viewer.get_caption(), format!("2/{}", files.len()));
+    let next = rect(&viewer);
+    assert!(next.2 == 800.0 || next.3 == 600.0, "{next:?}");
+    // a resized window fits it again
+    headless::render(&drawn, 400, 300);
+    slint::platform::update_timers_and_animations();
+    let resized = rect(&viewer);
+    assert!(resized.2 == 400.0 || resized.3 == 300.0, "{resized:?}");
+    // enter closes the viewer, as escape does
+    key(window, Key::Return);
+    assert!(bound.viewer.borrow().is_none());
+}

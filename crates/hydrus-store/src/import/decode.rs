@@ -165,6 +165,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &mut input,
         &namespace_colours(&legacy_options, options.as_ref()),
     )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::media_viewer_settings)
+            .unwrap_or_default(),
+    )?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();

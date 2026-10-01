@@ -39,6 +39,7 @@ pub mod sort;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod zoom;
 
 pub use grid::ThumbnailRows;
 pub use page::SearchPage;
@@ -620,17 +621,50 @@ fn open_viewer(
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
     let animator = animation::Animator::new();
+    let settings: hydrus_core::media_viewer::MediaViewerSettings = model
+        .borrow()
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    // the file's zoom and position (none for a file of unknown type)
+    let zoom: Rc<RefCell<Option<zoom::Zoom>>> = Rc::default();
+    let place = {
+        let weak = window.as_weak();
+        let zoom = zoom.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let (x, y, width, height) = if let Some(zoom) = zoom.borrow().as_ref() {
+                zoom.rect()
+            } else {
+                let (width, height) = canvas_of(window.window()).0;
+                (0, 0, width, height)
+            };
+            window.set_media_x(x as f32);
+            window.set_media_y(y as f32);
+            window.set_media_width(width as f32);
+            window.set_media_height(height as f32);
+        }
+    };
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
+        let zoom = zoom.clone();
+        let place = place.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
             };
             let model = model.borrow();
             window.set_caption(model.caption().into());
+            let (canvas, ratio) = canvas_of(window.window());
+            *zoom.borrow_mut() = model.shape().map(|(mime, resolution)| {
+                zoom::Zoom::new(settings.clone(), mime, resolution, canvas, ratio)
+            });
+            place();
             let tags: Vec<ListText> = model
                 .tag_rows()
                 .iter()
@@ -640,9 +674,14 @@ fn open_viewer(
             // (for a file that plays, its thumbnail until the first frame)
             window.set_media(model.media().as_ref().map(image).unwrap_or_default());
             let (size, frame) = (weak.clone(), weak.clone());
+            let zoomed = zoom.clone();
             playback.play(
                 model.playable().as_deref(),
                 move || {
+                    // (rendered at the size shown)
+                    if let Some(zoom) = zoomed.borrow().as_ref() {
+                        return Some(zoom.render_size());
+                    }
                     let size = size.upgrade()?.window().size();
                     Some((size.width, size.height))
                 },
@@ -661,6 +700,56 @@ fn open_viewer(
         }
     };
     show();
+    // zooming and panning
+    window.on_canvas_resized({
+        let weak = window.as_weak();
+        let zoom = zoom.clone();
+        let place = place.clone();
+        move |_, _| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if let Some(zoom) = zoom.borrow_mut().as_mut() {
+                let (canvas, ratio) = canvas_of(window.window());
+                zoom.resize(canvas, ratio);
+            }
+            place();
+        }
+    });
+    window.on_zoom({
+        let zoom = zoom.clone();
+        let place = place.clone();
+        move |direction, over, x, y| {
+            if let Some(zoom) = zoom.borrow_mut().as_mut() {
+                let pointer = over.then_some((x as i32, y as i32));
+                match direction.signum() {
+                    1 => zoom.zoom_in(pointer),
+                    -1 => zoom.zoom_out(pointer),
+                    _ => zoom.switch(pointer),
+                }
+            }
+            place();
+        }
+    });
+    window.on_pan({
+        let zoom = zoom.clone();
+        let place = place.clone();
+        move |x, y| {
+            if let Some(zoom) = zoom.borrow_mut().as_mut() {
+                zoom.pan(x, y);
+            }
+            place();
+        }
+    });
+    window.on_drag({
+        let zoom = zoom.clone();
+        move |x, y| {
+            if let Some(zoom) = zoom.borrow_mut().as_mut() {
+                zoom.drag((x.round() as i32, y.round() as i32));
+            }
+            place();
+        }
+    });
     window.on_next({
         let model = model.clone();
         let show = show.clone();
@@ -787,6 +876,13 @@ fn open_viewer(
     });
     window.show()?;
     Ok(window)
+}
+
+/// A window's size in logical pixels, and its device pixel ratio.
+fn canvas_of(window: &slint::Window) -> (zoom::Point, f64) {
+    let ratio = window.scale_factor();
+    let size = window.size().to_logical(ratio);
+    ((size.width as i32, size.height as i32), f64::from(ratio))
 }
 
 /// Show the tabs of each notebook on the way to the page shown.

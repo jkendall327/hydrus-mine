@@ -102,6 +102,18 @@ impl MediaViewer {
         hover_tags(&self.store, self.current())
     }
 
+    /// The current file's type and resolution, for zooming it.
+    pub fn shape(&self) -> Option<(hydrus_core::Mime, Option<(u32, u32)>)> {
+        let info = self
+            .store
+            .read(|conn| hydrus_store::media::load_basic(conn, &[self.current()]))
+            .ok()?
+            .into_iter()
+            .next()?
+            .info?;
+        Some((info.mime, info.width.zip(info.height)))
+    }
+
     /// The current file's frames, if the reference plays its kind with its
     /// own player (ugoiras and animated WebP).
     pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {

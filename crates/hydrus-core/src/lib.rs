@@ -13,6 +13,7 @@ pub mod hash;
 pub mod ids;
 pub mod import_options;
 pub mod lock;
+pub mod media_viewer;
 pub mod mime;
 pub mod network;
 pub mod notes;

@@ -14,6 +14,9 @@
 use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
+use hydrus_core::media_viewer::{
+    MediaView, MediaViewerSettings, ScaleAction, ShowAction, ZoomCentre, ZoomRules, ZoomType,
+};
 use hydrus_core::subscriptions::CheckerOptions;
 
 use super::duplicates::DuplicateMergeOptions;
@@ -68,6 +71,10 @@ pub struct ClientOptions {
     /// `default_thread_watcher_options`).
     pub default_subscription_checker_options: Option<CheckerOptions>,
     pub default_watcher_checker_options: Option<CheckerOptions>,
+    /// How each file type (or general class), by `HC` mime code, is shown
+    /// in the media viewer and the preview (`media_view`); `None` if not
+    /// stored.
+    pub media_view: Option<BTreeMap<i64, MediaView>>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -151,6 +158,7 @@ impl ClientOptions {
                 &settings,
                 "default_thread_watcher_options",
             )?,
+            media_view: media_view(&settings)?,
             dictionary: dictionary.clone(),
         };
         Ok(options)
@@ -235,6 +243,32 @@ impl ClientOptions {
             &mut self.default_watcher_checker_options,
             defaults.default_watcher_checker_options.as_ref(),
         );
+        whole(&mut self.media_view, defaults.media_view.as_ref());
+    }
+
+    /// The media viewer's options: the zoom steps, where zooming centres,
+    /// the default zoom and how each file type is shown.
+    pub fn media_viewer_settings(&self) -> MediaViewerSettings {
+        let mut out = MediaViewerSettings::default();
+        if !self.media_zooms.is_empty() {
+            out.media_zooms.clone_from(&self.media_zooms);
+        }
+        let integer = |key: &str| self.integers.get(key).copied();
+        if let Some(centre) = integer("media_viewer_zoom_center").and_then(ZoomCentre::from_code) {
+            out.zoom_centre = centre;
+        }
+        if let Some(zoom) =
+            integer("media_viewer_default_zoom_type_override").and_then(ZoomType::from_code)
+        {
+            out.default_zoom_type = zoom;
+        }
+        if let Some(view) = &self.media_view {
+            out.media_view = view
+                .iter()
+                .filter_map(|(&mime, view)| Some((u8::try_from(mime).ok()?, *view)))
+                .collect();
+        }
+        out
     }
 }
 
@@ -457,6 +491,64 @@ fn duplicate_action_options(
         .map(Some)
 }
 
+/// The `media_view` dictionary: mime code to (media show action, start
+/// paused, start with embed, preview show action, start paused, start with
+/// embed, (media scale up, scale down, preview scale up, scale down, exact
+/// zooms only, scale up quality, scale down quality)).
+fn media_view(settings: &Settings<'_>) -> DecodeResult<Option<BTreeMap<i64, MediaView>>> {
+    let Some(meta) = settings.get("media_view") else {
+        return Ok(None);
+    };
+    let code = |value: &PyJson, what: &str| int(KIND, value, what);
+    let action = |value: &PyJson| {
+        ShowAction::from_code(code(value, "show action")?)
+            .ok_or_else(|| malformed(KIND, "unknown media viewer show action"))
+    };
+    let scale = |value: &PyJson| {
+        ScaleAction::from_code(code(value, "scale action")?)
+            .ok_or_else(|| malformed(KIND, "unknown media viewer scale action"))
+    };
+    let quality = |value: &PyJson| {
+        u8::try_from(code(value, "zoom quality")?)
+            .map_err(|_| malformed(KIND, "zoom quality out of range"))
+    };
+    dictionary_pairs(expect_object(meta, "media_view")?)?
+        .iter()
+        .map(|(mime, view)| {
+            let mime = mime
+                .as_json()
+                .and_then(PyJson::as_i64)
+                .ok_or_else(|| malformed(KIND, "media_view mime is not an integer"))?;
+            let view = plain(KIND, view, "media view options")?;
+            let [show, paused, embed, p_show, p_paused, p_embed, zoom] =
+                tuple::<7>(KIND, &view, "media view options")?;
+            let [up, down, p_up, p_down, exact, up_quality, down_quality] =
+                tuple::<7>(KIND, zoom, "zoom options")?;
+            Ok((
+                mime,
+                MediaView {
+                    media_show_action: action(show)?,
+                    media_start_paused: boolean(KIND, paused, "start paused")?,
+                    media_start_with_embed: boolean(KIND, embed, "start with embed")?,
+                    preview_show_action: action(p_show)?,
+                    preview_start_paused: boolean(KIND, p_paused, "start paused")?,
+                    preview_start_with_embed: boolean(KIND, p_embed, "start with embed")?,
+                    zoom: ZoomRules {
+                        media_scale_up: scale(up)?,
+                        media_scale_down: scale(down)?,
+                        preview_scale_up: scale(p_up)?,
+                        preview_scale_down: scale(p_down)?,
+                        exact_zooms_only: boolean(KIND, exact, "exact zooms only")?,
+                        scale_up_quality: quality(up_quality)?,
+                        scale_down_quality: quality(down_quality)?,
+                    },
+                },
+            ))
+        })
+        .collect::<DecodeResult<_>>()
+        .map(Some)
+}
+
 #[cfg(test)]
 mod tests {
     use super::ClientOptions;
@@ -467,5 +559,10 @@ mod tests {
         assert!(defaults.booleans.len() > 200);
         assert!(defaults.default_sort.is_some());
         assert_eq!(defaults.default_tag_sorts.len(), 4);
+        // (a new client's media_view, where mpv plays video)
+        assert_eq!(
+            defaults.media_viewer_settings(),
+            hydrus_core::media_viewer::MediaViewerSettings::default()
+        );
     }
 }
