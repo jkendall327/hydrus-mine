@@ -3,8 +3,9 @@
 //! refresh; select and remove, by inbox and archive, file domain, client
 //! and selection, with counts; the archive/delete filter; archive and
 //! re-inbox; deleting from each local file domain, deleting physically and
-//! undeleting; manage → tags; open → in a new page, similar files in a new
-//! page, and the focused file outside hydrus-rs; share's copying; and
+//! undeleting; manage → tags; open → in a new page, in a new duplicate
+//! filter page, similar files in a new page, and the focused file outside
+//! hydrus-rs; share's copying; and
 //! first, the
 //! selection's info (its files' types and size, the focused file's info
 //! lines, and how often they were viewed), whose lines copy themselves
@@ -57,6 +58,8 @@ pub enum Action {
     Undelete,
     ManageTags,
     OpenInNewPage,
+    /// Open a duplicates page searching for pairs among the selected files.
+    OpenInDuplicateFilterPage,
     /// Open a page searching for files that look like the selected ones,
     /// within this hamming distance.
     OpenSimilar(u64),
@@ -408,14 +411,18 @@ pub const SIMILAR_DISTANCES: [(&str, u64); 4] = [
     ("speculative", 8),
 ];
 
-/// The open menu (`AddOpenMenu`), so far: in a new page; similar files in
-/// a new page, when the focused file is a still image; and the focused
-/// file as the OS opens it (the reference's default launch) or in a web
-/// browser.
+/// The open menu (`AddOpenMenu`): in a new page, or a new duplicate filter
+/// page; similar files in a new page, when the focused file is a still
+/// image; and the focused file as the OS opens it (the reference's default
+/// launch) or in a web browser.
 pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
-    let mut open = vec![Entry::Item("in a new page".into(), Action::OpenInNewPage)];
-    // (the reference's "in a new duplicate filter page", which hydrus-rs
-    // doesn't have yet)
+    let mut open = vec![
+        Entry::Item("in a new page".into(), Action::OpenInNewPage),
+        Entry::Item(
+            "in a new duplicate filter page".into(),
+            Action::OpenInDuplicateFilterPage,
+        ),
+    ];
     if let Some(focused) = focused {
         if !perceptual_hashed(store, &[focused]).is_empty() {
             // (less the reference's "custom", which asks for the distance)

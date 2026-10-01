@@ -1608,6 +1608,10 @@ pub(crate) mod tests {
             input.settings["file_handling"],
             serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false})
         );
+        assert_eq!(
+            input.settings["pages"],
+            serde_json::json!({"duplicate_filter_uses_all_my_files": true})
+        );
         // recorded, counting the media viewer and the Client API
         assert_eq!(
             input.settings["file_viewing_statistics"],

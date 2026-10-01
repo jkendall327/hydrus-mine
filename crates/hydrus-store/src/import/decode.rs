@@ -195,6 +195,15 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &handling)?;
+    let mut pages = crate::settings::PageSettings::default();
+    if let Some(uses_all_my_files) = options.as_ref().and_then(|o| {
+        o.booleans
+            .get("open_files_to_duplicate_filter_uses_all_my_files")
+            .copied()
+    }) {
+        pages.duplicate_filter_uses_all_my_files = uses_all_my_files;
+    }
+    insert_setting(&mut input, &pages)?;
     let mut network = crate::network::NetworkSettings::default();
     if let Some(options) = &options {
         let n = &mut network;

@@ -105,7 +105,11 @@ inbox and archive, each file domain, local and not, not selected, none,
 each with its count); the archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
 trash physically, delete physically and undelete; manage → tags; and
-open → in a new page, similar files in a new page (for a focused still
+open → in a new page (locked to the files, with the page's sort), in a
+new duplicate filter page (a duplicates page searching a `system:hash` of
+them, on all my files unless hydrus's
+`open_files_to_duplicate_filter_uses_all_my_files` was off), similar
+files in a new page (for a focused still
 image: a new page searching `system:similar to` the selected still images
 at the reference's exact match, very similar, similar or speculative
 distance, searching at once), or the focused file as the OS opens it (the
@@ -114,8 +118,7 @@ aren't carried over yet) or in a web browser; and share → copying the files' p
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
 rearrange, clearing deletion records, the other manage entries,
-locations, urls, open's duplicate filter page and custom similarity
-distance, and
+locations, urls, open's custom similarity distance, and
 share's exporting and copying of
 files and bitmaps. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your

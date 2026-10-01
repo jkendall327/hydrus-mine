@@ -320,6 +320,7 @@ impl Pages {
         &mut self,
         location: hydrus_search::LocationContext,
         files: Vec<hydrus_core::HashId>,
+        sort: Option<&hydrus_core::pages::PageSort>,
     ) {
         let hashes = self
             .store
@@ -330,11 +331,13 @@ impl Pages {
             search,
             synchronised,
             lock,
-            ..
+            sort: page_sort,
         } = &mut page.content
         else {
             unreachable!("a search page");
         };
+        // (the files keep their order, under the page's sort)
+        *page_sort = sort.cloned();
         search.location = location;
         search.predicates = vec![hydrus_search::Predicate::System(
             hydrus_core::search::predicate::SystemPredicate::Hash {
@@ -349,7 +352,7 @@ impl Pages {
             self.store.clone(),
             search.clone(),
             *synchronised,
-            None,
+            sort,
             files,
         )
         .with_lock(*lock);
@@ -388,6 +391,37 @@ impl Pages {
         self.add(page);
     }
 
+    /// Open a new duplicates page searching `location` for potential pairs
+    /// among `files` (`ShowFilesInNewDuplicatesFilterPage`: both its
+    /// searches a `system:hash` of them), at the far right of the current
+    /// notebook, and show it.
+    pub fn open_duplicates(
+        &mut self,
+        location: hydrus_search::LocationContext,
+        files: &[hydrus_core::HashId],
+    ) {
+        let hashes = self
+            .store
+            .read(|c| hydrus_store::master::hashes(c, files))
+            .unwrap_or_default();
+        let predicates = vec![hydrus_search::Predicate::System(
+            hydrus_core::search::predicate::SystemPredicate::Hash {
+                hashes: hydrus_core::search::predicate::FileHashes::Sha256(
+                    hashes.into_values().collect(),
+                ),
+                inclusive: true,
+            },
+        )];
+        self.add(Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates: new_duplicates_page(location, predicates),
+                sort: None,
+            },
+        });
+    }
+
     /// Open a page of the kind chosen, at the far right of the current
     /// notebook (as the reference's page chooser does).
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {
@@ -403,7 +437,15 @@ impl Pages {
                 key: PageKey::random(),
                 name: "duplicates".into(),
                 content: PageContent::Duplicates {
-                    duplicates: new_duplicates_page(),
+                    duplicates: new_duplicates_page(
+                        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
+                                .to_vec(),
+                        )),
+                        vec![hydrus_search::Predicate::System(
+                            hydrus_search::SystemPredicate::Everything,
+                        )],
+                    ),
                     sort: None,
                 },
             },
@@ -631,19 +673,17 @@ impl Pages {
     }
 }
 
-/// A new search page, as the reference makes one: "files", searching "my
-/// files" and all known tags.
 /// A new duplicates page's search (the reference's
-/// `CreatePageManagerDuplicateFilter`): every file in all my files, a pair
+/// `CreatePageManagerDuplicateFilter`): files in `location` matching
+/// `predicates` (the page chooser's: every file in all my files), a pair
 /// matching if one of its files does, within distance 4.
-fn new_duplicates_page() -> DuplicatesPage {
+fn new_duplicates_page(
+    location: hydrus_search::LocationContext,
+    predicates: Vec<hydrus_search::Predicate>,
+) -> DuplicatesPage {
     let search = FileSearchContext {
-        location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
-        )),
-        predicates: vec![hydrus_search::Predicate::System(
-            hydrus_search::SystemPredicate::Everything,
-        )],
+        location,
+        predicates,
         ..FileSearchContext::default()
     };
     DuplicatesPage::new(DuplicatesSearch {
@@ -655,6 +695,8 @@ fn new_duplicates_page() -> DuplicatesPage {
     })
 }
 
+/// A new search page, as the reference makes one: "files", searching "my
+/// files" and all known tags.
 fn new_search_page() -> Page {
     Page {
         key: PageKey::random(),

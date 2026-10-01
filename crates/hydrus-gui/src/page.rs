@@ -241,10 +241,7 @@ impl SearchPage {
     /// The page as a session keeps it, given what it was opened from.
     pub fn content(&self, opened_from: &PageContent) -> PageContent {
         let sort = if self.sort_changed {
-            Some(PageSort {
-                by: PageSortBy::System(i64::from(self.sort.by.code())),
-                ascending: self.sort.order == SortOrder::Ascending,
-            })
+            Some(self.page_sort())
         } else {
             opened_from.sort().cloned()
         };
@@ -430,6 +427,15 @@ impl SearchPage {
 
     pub fn sort(&self) -> FileSort {
         self.sort
+    }
+
+    /// The sort as a session keeps it (what a page opened from this one
+    /// takes).
+    pub fn page_sort(&self) -> PageSort {
+        PageSort {
+            by: PageSortBy::System(i64::from(self.sort.by.code())),
+            ascending: self.sort.order == SortOrder::Ascending,
+        }
     }
 
     /// Sort by `by`, in its default order (as the reference's sort control

@@ -174,6 +174,27 @@ impl Setting for FileHandlingSettings {
     const KEY: &'static str = "file_handling";
 }
 
+/// How the GUI opens pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageSettings {
+    /// Open files in a new duplicate filter page on all my files, not the
+    /// page's domain (`open_files_to_duplicate_filter_uses_all_my_files`).
+    pub duplicate_filter_uses_all_my_files: bool,
+}
+
+impl Default for PageSettings {
+    fn default() -> Self {
+        Self {
+            duplicate_filter_uses_all_my_files: true,
+        }
+    }
+}
+
+impl Setting for PageSettings {
+    const KEY: &'static str = "pages";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);

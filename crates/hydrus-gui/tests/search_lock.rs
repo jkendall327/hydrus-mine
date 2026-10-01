@@ -4,7 +4,8 @@
 //! page (if it follows removals), refresh leaves the page be, unlocking
 //! makes the search its `system:hash`, the lock button locks a search to
 //! the files in view (asking first as the reference does), and a saved
-//! session keeps the lock.
+//! session keeps the lock. And the thumbnail menu's other page from files:
+//! a new duplicate filter page, searching a `system:hash` of them.
 
 use std::sync::Arc;
 
@@ -232,4 +233,65 @@ fn a_saved_session_keeps_the_lock() {
     assert_eq!(reopened.borrow().lock(), Some(expected));
     assert_eq!(reopened.borrow().results(), &files[..2]);
     assert_eq!(reopened.borrow().locked_count(), 2);
+}
+
+#[test]
+fn the_open_menu_s_pages_are_the_reference_s() {
+    use hydrus_search::{LocationContext, SortBy, SortOrder};
+
+    let fixture = fixture();
+    let _windows = headless::init();
+    let (ui, bound) = window(&fixture.store);
+    let page = bound.current.borrow().clone();
+    page.borrow_mut().set_sort_by(SortBy::FileSize);
+    page.borrow_mut().set_sort_order(SortOrder::Ascending);
+    let files = page.borrow().results().to_vec();
+    // (selected out of the page's order)
+    let chosen = [files[3], files[0], files[2]];
+    page.borrow_mut().select_files(&chosen);
+    let in_order = page.borrow().selected_files();
+
+    // in a new page: with the page's sort, the files as they were
+    ui.invoke_thumbnail_menu_requested(-1);
+    ui.invoke_menu_chosen(find(&ui.get_thumbnail_menu().open_a, "in a new page"));
+    let opened = bound.current.borrow().clone();
+    assert!(!std::rc::Rc::ptr_eq(&opened, &page));
+    assert_eq!(opened.borrow().sort(), page.borrow().sort());
+    assert_eq!(opened.borrow().results(), in_order.as_slice());
+
+    // in a new duplicate filter page: a duplicates page on all my files,
+    // both its searches a system:hash of them
+    ui.invoke_tab_chosen(0, 0);
+    assert!(std::rc::Rc::ptr_eq(&bound.current.borrow().clone(), &page));
+    ui.invoke_thumbnail_menu_requested(-1);
+    ui.invoke_menu_chosen(find(
+        &ui.get_thumbnail_menu().open_a,
+        "in a new duplicate filter page",
+    ));
+    let pages = bound.pages.borrow();
+    let shown = pages.shown();
+    assert_eq!(shown.name, "duplicates");
+    let PageContent::Duplicates { duplicates, .. } = &shown.content else {
+        panic!("{shown:?}");
+    };
+    let all_my_files = LocationContext::single(hydrus_core::ServiceKey::new(
+        hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+    ));
+    let hashes: std::collections::BTreeSet<_> = fixture
+        .store
+        .read(|c| hydrus_store::master::hashes(c, &chosen))
+        .unwrap()
+        .into_values()
+        .collect();
+    let expected = vec![hydrus_search::Predicate::System(
+        hydrus_core::search::predicate::SystemPredicate::Hash {
+            hashes: hydrus_core::search::predicate::FileHashes::Sha256(hashes),
+            inclusive: true,
+        },
+    )];
+    for search in [&duplicates.search.search_1, &duplicates.search.search_2] {
+        assert_eq!(search.location, all_my_files);
+        assert_eq!(search.predicates, expected);
+    }
+    assert_eq!(duplicates.search.max_hamming_distance, 4);
 }

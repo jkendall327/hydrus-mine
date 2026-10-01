@@ -31,6 +31,7 @@ fn kept(label: &str) -> Kept {
         "manage" => Kept::Only(&["tags"]),
         "open" => Kept::Only(&[
             "in a new page",
+            "in a new duplicate filter page",
             "similar files in a new page",
             "using Default OS File Launch",
             "in web browser",

@@ -970,12 +970,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 }
                 Action::OpenInNewPage => {
-                    let (location, files) = {
+                    let (location, files, sort) = {
                         let page = page.borrow();
-                        (page.location().clone(), page.selected_files())
+                        (
+                            page.location().clone(),
+                            page.selected_files(),
+                            page.page_sort(),
+                        )
                     };
                     change_pages(&|pages| {
-                        pages.open_files(location.clone(), files.clone());
+                        pages.open_files(location.clone(), files.clone(), Some(&sort));
+                        Ok(())
+                    });
+                }
+                Action::OpenInDuplicateFilterPage => {
+                    let (location, files) = {
+                        let page = page.borrow();
+                        let settings: hydrus_store::settings::PageSettings = page
+                            .store()
+                            .read(hydrus_store::settings::get)
+                            .unwrap_or_default();
+                        let location = if settings.duplicate_filter_uses_all_my_files {
+                            hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
+                                    .to_vec(),
+                            ))
+                        } else {
+                            page.location().clone()
+                        };
+                        (location, page.selected_files())
+                    };
+                    change_pages(&|pages| {
+                        pages.open_duplicates(location.clone(), &files);
                         Ok(())
                     });
                 }
