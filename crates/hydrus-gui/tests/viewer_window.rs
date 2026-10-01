@@ -42,13 +42,17 @@ fn the_viewer_opens_fullscreen_and_f_switches() {
     };
     ui.invoke_thumbnail_activated(0);
     let shown = viewer();
-    assert!(shown.window().is_fullscreen());
+    // (never fullscreen on macOS, as the reference: there it is maximised,
+    // and f does nothing)
+    let fullscreens = !cfg!(target_os = "macos");
+    assert_eq!(shown.window().is_fullscreen(), fullscreens);
+    assert!(shown.window().is_maximized());
     // f: out of fullscreen, back to maximised; and in again
     shown.invoke_toggle_fullscreen();
     assert!(!shown.window().is_fullscreen());
     assert!(shown.window().is_maximized());
     shown.invoke_toggle_fullscreen();
-    assert!(shown.window().is_fullscreen());
+    assert_eq!(shown.window().is_fullscreen(), fullscreens);
     // hydrus's default doesn't keep the viewer's frame as it closes
     shown.invoke_close_requested();
     assert_eq!(kept(), WindowSettings::default());
