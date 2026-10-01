@@ -450,7 +450,10 @@ autocomplete options, sessions, shortcut sets, recent tags.
    GUI: a tree of pages whose state (a search and its results, an importer)
    lives in `hydrus-store`, decoded from the legacy session objects. The
    Client API's `/manage_pages` endpoints then answer from it, and the GUI
-   renders it.
+   renders it. The work itself (downloads, subscriptions, folders,
+   maintenance) runs in the daemon, `hydrus serve`, which the GUI starts
+   when none is running; the GUI only shows and controls it (DECISIONS.md,
+   2026-10-01).
 2. **View models in plain Rust, views in Slint.** Each screen's behaviour
    (what a click or a key does, what is selected, what is fetched) lives in
    a testable Rust type; Slint files only lay out and bind. Behaviour is

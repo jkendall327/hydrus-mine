@@ -16,6 +16,29 @@ record of what was decided, and why the roadmap looks the way it does.
   - not used: the PTR and other tag repositories; the hydrus server; file
     repositories; IPFS
 
+## Decided (2026-10-01)
+
+- **A rich daemon and a thin GUI** ([#24], [#25]). The real work runs in
+  the daemon, `hydrus serve`: downloads, subscriptions, watchers, import
+  and export folders, maintenance and the Client API. The GUI shows and
+  controls what is in the store, and runs no work of its own. The
+  condition is that using it feels as hydrus does, so opening the GUI is
+  enough: it starts the daemon when none is running for the store, and
+  stops it on closing. A daemon started on its own (as a service, say)
+  runs on. Why: after parity, a web UI is likely to be built on the same
+  daemon, so behaviour belongs in the daemon and in plain Rust, not in
+  Slint.
+- **Pages live in the store.** The GUI saves its pages as they change, and
+  `/manage_pages` answers from the store whether or not the GUI is open;
+  the endpoints that act on pages (focusing one, adding files, refreshing)
+  pass through the store to the GUI.
+- **Downloader pages are views over the daemon's queues**: their progress,
+  and controls (adding URLs and queries, pausing, retrying), with the
+  daemon doing the downloading.
+
+[#24]: https://github.com/jkendall327/hydrus-mine/issues/24
+[#25]: https://github.com/jkendall327/hydrus-mine/issues/25
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked
