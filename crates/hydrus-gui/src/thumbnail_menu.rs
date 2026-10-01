@@ -55,6 +55,9 @@ pub enum Action {
     Undelete,
     ManageTags,
     OpenInNewPage,
+    /// Open the focused file as the OS opens it, or in a web browser.
+    OpenExternally,
+    OpenInWebBrowser,
     /// Copy the entry's text (a label's).
     Copy,
     /// Copy the selected local files' paths, hashes of a kind, or ids.
@@ -391,6 +394,32 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
     }
 }
 
+/// The open menu (`AddOpenMenu`), so far: in a new page, and the focused
+/// file as the OS opens it (the reference's default launch) or in a web
+/// browser.
+pub fn open_menu(focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
+    let mut open = vec![Entry::Item("in a new page".into(), Action::OpenInNewPage)];
+    // (the reference's "in a new duplicate filter page" and "similar files
+    // in a new page", which hydrus-rs doesn't have yet)
+    if focused.is_some() {
+        separate(&mut open);
+        let prefix = if num_selected > 1 {
+            "focused file "
+        } else {
+            ""
+        };
+        open.push(Entry::Item(
+            format!("{prefix}using Default OS File Launch"),
+            Action::OpenExternally,
+        ));
+        open.push(Entry::Item(
+            format!("{prefix}in web browser"),
+            Action::OpenInWebBrowser,
+        ));
+    }
+    open
+}
+
 /// The menu for a page of `files` (in its order) with `selected` selected,
 /// with the selection's `info` first and its `share` menu last.
 #[allow(clippy::too_many_lines)]
@@ -399,6 +428,7 @@ pub fn menu(
     files: &[FileFacts],
     selected: &HashSet<HashId>,
     info: Option<Entry>,
+    open: Vec<Entry>,
     share: Option<Entry>,
 ) -> Vec<Entry> {
     let Ok(roles) = DomainRoles::new(services) else {
@@ -604,10 +634,7 @@ pub fn menu(
             "manage".into(),
             vec![Entry::Item("tags".into(), Action::ManageTags)],
         ));
-        entries.push(Entry::Menu(
-            "open".into(),
-            vec![Entry::Item("in a new page".into(), Action::OpenInNewPage)],
-        ));
+        entries.push(Entry::Menu("open".into(), open));
         entries.extend(share);
     }
     entries
@@ -708,7 +735,7 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
-    pub open: Vec<SlotItem>,
+    pub open: Vec<Vec<SlotItem>>,
     pub share: Option<ShareSlots>,
 }
 
@@ -897,7 +924,7 @@ impl Slots {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
                     "manage" => slots.manage = items(inner),
-                    "open" => slots.open = items(inner),
+                    "open" => slots.open = groups(inner),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
@@ -947,10 +974,7 @@ impl Slots {
             ));
         }
         if !self.open.is_empty() {
-            out.push(Entry::Menu(
-                "open".into(),
-                self.open.iter().map(item).collect(),
-            ));
+            out.push(menu("open", &self.open));
         }
         out.extend(self.share.iter().map(ShareSlots::entry));
         out

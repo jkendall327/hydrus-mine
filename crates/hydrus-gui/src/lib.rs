@@ -783,7 +783,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     &page.selected_files(),
                 )
             });
-            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected, info, share);
+            let open = thumbnail_menu::open_menu(
+                page.focused().map(|i| page.results()[i]),
+                selected.len(),
+            );
+            let entries =
+                thumbnail_menu::menu(&snapshot.services, &files, &selected, info, open, share);
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
@@ -878,6 +883,24 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
                 Action::Copy => copy_to_clipboard(&label),
+                Action::OpenExternally | Action::OpenInWebBrowser => {
+                    let (store, focused) = {
+                        let page = page.borrow();
+                        (
+                            page.store().clone(),
+                            page.focused().map(|i| page.results()[i]),
+                        )
+                    };
+                    if let Some(path) =
+                        focused.and_then(|f| thumbnail_menu::paths(&store, &[f]).pop())
+                    {
+                        if action == Action::OpenExternally {
+                            launch(&path);
+                        } else {
+                            launch(&file_url(&path));
+                        }
+                    }
+                }
                 Action::CopyPaths
                 | Action::CopyHashes(_)
                 | Action::CopyFileIds
@@ -1029,7 +1052,8 @@ fn thumbnail_menu_rows(
         delete_menu,
         trash: rows(&slots.trash),
         manage: rows(&slots.manage),
-        open: rows(&slots.open),
+        has_open: !slots.open.is_empty(),
+        open: groups(&slots.open),
     }
 }
 
@@ -1041,6 +1065,50 @@ type MenuState = Rc<
         Vec<thumbnail_menu::FileFacts>,
     )>,
 >;
+
+/// Open `target` (a path or URL) as the OS opens it.
+fn launch(target: &str) {
+    use std::process::Command;
+    #[cfg(windows)]
+    let mut command = {
+        let mut c = Command::new("cmd");
+        c.args(["/C", "start", ""]).arg(target);
+        c
+    };
+    #[cfg(target_os = "macos")]
+    let mut command = {
+        let mut c = Command::new("open");
+        c.arg(target);
+        c
+    };
+    #[cfg(not(any(windows, target_os = "macos")))]
+    let mut command = {
+        let mut c = Command::new("xdg-open");
+        c.arg(target);
+        c
+    };
+    if let Err(e) = command.spawn() {
+        eprintln!("could not open {target}: {e}");
+    }
+}
+
+/// A `file://` URL for `path`.
+fn file_url(path: &str) -> String {
+    let path = path.replace('\\', "/");
+    let mut url = String::from(if path.starts_with('/') {
+        "file://"
+    } else {
+        "file:///"
+    });
+    for b in path.bytes() {
+        if b.is_ascii_alphanumeric() || b"-._~/:".contains(&b) {
+            url.push(char::from(b));
+        } else {
+            url.push_str(&format!("%{b:02X}"));
+        }
+    }
+    url
+}
 
 /// Put `text` on the clipboard (as the reference's menu labels do when
 /// chosen).
@@ -1650,5 +1718,20 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
         window.set_order_index(i32::from(
             sort.order == hydrus_search::SortOrder::Descending,
         ));
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn file_urls_are_escaped() {
+        assert_eq!(
+            super::file_url("/home/a b/f\u{e9}.jpg"),
+            "file:///home/a%20b/f%C3%A9.jpg"
+        );
+        assert_eq!(
+            super::file_url("C:\\files\\f0\\x.png"),
+            "file:///C:/files/f0/x.png"
+        );
     }
 }

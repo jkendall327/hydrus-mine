@@ -9,7 +9,9 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
-use hydrus_gui::thumbnail_menu::{Entry, GROUPS, Slots, facts, info_menu, menu, share_menu};
+use hydrus_gui::thumbnail_menu::{
+    Entry, GROUPS, Slots, facts, info_menu, menu, open_menu, share_menu,
+};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::{Value, json};
@@ -26,7 +28,13 @@ enum Kept {
 fn kept(label: &str) -> Kept {
     match label {
         "manage" => Kept::Only(&["tags"]),
-        "open" => Kept::Only(&["in a new page"]),
+        "open" => Kept::Only(&[
+            "in a new page",
+            "using Default OS File Launch",
+            "in web browser",
+            "focused file using Default OS File Launch",
+            "focused file in web browser",
+        ]),
         "share" => Kept::Only(&[
             "copy paths",
             "copy hashes",
@@ -168,7 +176,8 @@ fn the_menu_is_the_reference_s() {
             );
             let share = (!selected.is_empty())
                 .then(|| share_menu(&store, &files, in_order.first().copied(), &in_order));
-            let entries = menu(&snapshot.services, &files, &selected, info, share);
+            let open = open_menu(in_order.first().copied(), in_order.len());
+            let entries = menu(&snapshot.services, &files, &selected, info, open, share);
             let ours = described(&entries);
             // (and the window's template shows it as it is)
             let slots = Slots::new(&entries);
@@ -262,6 +271,10 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     };
     assert_eq!(labels(menu.head.clone())[0].0, "refresh");
     assert_eq!(labels(menu.manage.clone())[0].0, "tags");
+    assert_eq!(
+        labels(menu.open.g2.clone())[0].0,
+        "using Default OS File Launch"
+    );
     let find = |rows: slint::ModelRc<hydrus_gui::MenuRow>, label: &str| {
         labels(rows)
             .into_iter()
@@ -281,7 +294,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     ui.invoke_thumbnail_menu_requested(-1);
     let menu = ui.get_thumbnail_menu();
     let tabs_before = bound.pages.borrow().tabs()[0].names.len();
-    ui.invoke_menu_chosen(find(menu.open.clone(), "in a new page"));
+    ui.invoke_menu_chosen(find(menu.open.g1.clone(), "in a new page"));
     assert_eq!(bound.pages.borrow().tabs()[0].names.len(), tabs_before + 1);
     let opened = bound.current.borrow().clone();
     assert_eq!(opened.borrow().results(), selected.as_slice());
