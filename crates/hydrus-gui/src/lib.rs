@@ -16,6 +16,7 @@ mod ui {
 
 pub use ui::*;
 
+mod animation;
 pub mod autocomplete;
 pub mod duplicate_filter;
 pub mod favourites;
@@ -426,10 +427,12 @@ fn open_viewer(
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
+    let animator = animation::Animator::new();
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
+        let animator = animator.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -451,6 +454,12 @@ fn open_viewer(
                     }
                 },
             );
+            let frame = weak.clone();
+            animator.play(model.animation(), move |image| {
+                if let Some(window) = frame.upgrade() {
+                    window.set_media(image);
+                }
+            });
         }
     };
     show();
@@ -468,7 +477,11 @@ fn open_viewer(
     });
     window.on_toggle_pause({
         let playback = playback.clone();
-        move || playback.toggle_pause()
+        let animator = animator.clone();
+        move || {
+            playback.toggle_pause();
+            animator.toggle_pause();
+        }
     });
     window.on_close_requested({
         let weak = window.as_weak();
@@ -476,6 +489,7 @@ fn open_viewer(
         move || {
             // (stops playing at once)
             playback.close();
+            animator.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }

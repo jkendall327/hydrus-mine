@@ -67,6 +67,34 @@ impl MediaViewer {
     pub fn media(&self) -> Option<hydrus_media::Raster> {
         still(&self.store, self.current())
     }
+
+    /// The current file's frames, if the reference plays its kind with its
+    /// own player (ugoiras and animated WebP).
+    pub fn animation(&self) -> Option<hydrus_media::animation::Frames> {
+        animation(&self.store, self.current())
+    }
+}
+
+/// A file's frames, if the reference plays its kind with its own player:
+/// a ugoira (timed by its animation.json, else its notes) or an animated
+/// WebP.
+pub fn animation(store: &Store, id: HashId) -> Option<hydrus_media::animation::Frames> {
+    use hydrus_media::animation::Frames;
+    let snapshot = store.snapshot();
+    let result = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+        .ok()?
+        .results
+        .into_iter()
+        .next()?;
+    let info = result.info.as_ref()?;
+    if !Frames::plays(info.mime) {
+        return None;
+    }
+    let path = snapshot.storage.file_path(&result.hash, info.mime)?;
+    Frames::open(&path, info.mime, &result.notes, info.num_frames)
+        .map_err(|e| eprintln!("could not play {}: {e}", path.display()))
+        .ok()
 }
 
 /// A file as a still: an image decoded whole; anything else by its

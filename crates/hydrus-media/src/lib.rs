@@ -24,6 +24,7 @@
 //!   hashes, perceptual hashes and thumbnails.
 //! - [`perceptual_hash`], [`blurhash()`], [`thumbnail_resolution`].
 
+pub mod animation;
 mod blurhash;
 mod detect;
 pub mod encode;

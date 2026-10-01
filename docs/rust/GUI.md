@@ -69,9 +69,12 @@ thread when its row first comes into view (a blank frame until then). Double-cli
 window on that file, fitted to the window: right and left (or page down and
 up, or the mouse wheel) move through the page's files, round from the last
 to the first as in the reference, and escape closes it. Images are shown
-whole. Video, audio and animations play in mpv, as the reference's defaults
-have it (animated WebP and JPEG XL, and ugoiras, show their first frame
-until there is a native animation player): libmpv is loaded when first
+whole. Ugoiras and animated WebP play with the client's own player, as
+the reference's defaults have it: frames are decoded on a thread of their
+own a few ahead of the one shown, each shown for its duration (a ugoira's
+from its animation.json, else its timing notes), looping, and space
+pauses them (`src/animation.rs`; animated JPEG XL shows its first frame).
+Video, audio and other animations play in mpv: libmpv is loaded when first
 needed, so building needs nothing more, and without it these show their
 thumbnail. A file loops, space pauses it, and the store's `mpv.conf` (else
 hydrus's default one) applies. Frames come from mpv's software renderer, on
@@ -100,7 +103,7 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: reopening closed pages, system
 predicates in the autocomplete, collect, the viewer's hover frames, seeking
-and volume, a native animation player, downloader pages' own panels; in
+and volume, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, zooming and panning, and

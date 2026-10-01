@@ -125,6 +125,7 @@ struct State {
     requested: HashSet<HashId>,
     /// Video, audio and animations play, as in the media viewer.
     playback: Rc<Playback>,
+    animator: Rc<crate::animation::Animator>,
 }
 
 impl State {
@@ -160,6 +161,7 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
     let Some((shown, other)) = state.model.current() else {
         state.shown = None;
         state.playback.stop();
+        state.animator.stop();
         window.set_media(slint::Image::default());
         window.set_index_text("-".into());
         window.set_statements(ModelRc::default());
@@ -192,6 +194,15 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
                 let size = size.upgrade()?.window().size();
                 Some((size.width, size.height))
             },
+            move |image| {
+                if let Some(window) = frame.upgrade() {
+                    window.set_media(image);
+                }
+            },
+        );
+        let frame = window.as_weak();
+        state.animator.play(
+            crate::viewer::animation(state.model.store(), shown),
             move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
@@ -317,6 +328,7 @@ pub(crate) fn open_filter(
         images: HashMap::new(),
         requested: HashSet::new(),
         playback: Playback::new(model_dir.join("mpv.conf")),
+        animator: crate::animation::Animator::new(),
     }));
 
     // ask for the slow statements of the pair shown, if not yet asked
@@ -418,7 +430,11 @@ pub(crate) fn open_filter(
     });
     window.on_toggle_pause({
         let state = state.clone();
-        move || state.borrow().playback.toggle_pause()
+        move || {
+            let state = state.borrow();
+            state.playback.toggle_pause();
+            state.animator.toggle_pause();
+        }
     });
     window.on_switch_media({
         let update = update.clone();
@@ -437,6 +453,7 @@ pub(crate) fn open_filter(
         move || {
             collect.stop();
             state.borrow().playback.close();
+            state.borrow().animator.stop();
             if let Some(window) = weak.upgrade() {
                 let _ = window.hide();
             }
