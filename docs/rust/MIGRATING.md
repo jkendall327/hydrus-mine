@@ -147,8 +147,13 @@ Autocomplete counts and other caches are rebuilt rather than copied.
 | `move` | the files move to the new store | none | left without its files |
 | `in-place` | the new store uses the old install's files | none | shares its files; hydrus-rs never deletes any |
 
-Hardlinks need the new store on the same filesystem as the old files; if
-your files are spread across drives, use `copy` or `in-place`.
+Each drive's files stay on it. Storage locations on the new store's drive
+come into its `client_files`; those on another drive go into a new
+`<location>-hydrus-rs` directory beside the first of them there (for
+`D:\hydrus\client_files`, `D:\hydrus\client_files-hydrus-rs`), which becomes
+one of the store's storage locations with the weight and size limit the
+old ones had. So hardlinks work wherever your files are, and `copy` and
+`move` never fill one drive with another's files.
 
 Only files the database says are stored come across, with their
 thumbnails. Files hydrus had deleted but not yet cleared from disk, and

@@ -365,14 +365,23 @@ fn import_legacy(source: &Path, dest: &Path, mode: TransferMode) -> Result<()> {
         }
     };
     if mode == TransferMode::InPlace {
-        println!("  using the files in {}", transfer.destination.display());
+        println!(
+            "  using the files in {}",
+            transfer.destinations[0].display()
+        );
     } else {
         println!(
             "  {} files, {:.1} GiB, into {}",
             transfer.files,
             transfer.bytes as f64 / f64::from(1u32 << 30),
-            transfer.destination.display()
+            transfer.destinations[0].display()
         );
+        for other in &transfer.destinations[1..] {
+            println!(
+                "  and, for the media on another drive, into {}",
+                other.display()
+            );
+        }
         if transfer.skipped > 0 {
             println!(
                 "  {} files left behind: deleted files hydrus hadn't cleared away yet, or files it doesn't know",
