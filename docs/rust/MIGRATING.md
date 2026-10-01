@@ -42,8 +42,12 @@ as you like.
    hydrus-gui /path/to/new/store
    ```
 
-   Or run the daemon on its own, to keep it working without the client (as
-   a service, say); the client then leaves it running when it closes:
+   The Client API runs if hydrus's did (its service has a port); if it was
+   off, the daemon runs without one, as hydrus does, and `hydrus serve
+   --port N` turns it on anyway. With several stores, give each its own
+   port. Or run the daemon on its own, to keep it working without the
+   client (as a service, say); the client then leaves it running when it
+   closes:
 
    ```sh
    hydrus serve /path/to/new/store
@@ -197,6 +201,8 @@ them in the old folders).
   is in progress, and never when the media is shared with the old install.
 - `hydrus serve` won't start if a media location looks missing (as when a
   drive isn't mounted), rather than write new files where they'd be hidden.
+  A Client API that can't start (its port in use) stops nothing else, as
+  in hydrus: it says so, and everything else runs on.
   Only one `hydrus serve` runs on a store at a time, and the commands that
   do its work themselves (`purge`, running an import or export folder or
   the duplicates rules) refuse to while it runs. It stops cleanly on Ctrl-C

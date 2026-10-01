@@ -18,7 +18,10 @@ itself, then on the path. Closing the client stops the daemon it started
 when it closes; one started on its own (as a service, say) runs on, and if
 that one stops, the client starts its own. If the client's daemon can't
 start or stops by itself, a line above the status bar says why (its own
-error: a media location missing, say) with a button to start it again.
+error: a media location missing, say) with a button to start it again; if
+the daemon runs but its Client API couldn't start (its port in use), the
+line says that, as hydrus's popup does ("Could not start "client api":
+...").
 The client keeps its pages in the store as they change (within half a
 second: the session, the page shown, each page's files and selection, and
 the media viewer and its file), so the Client API's `/manage_pages`

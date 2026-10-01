@@ -13,6 +13,7 @@ use hydrus_core::lock::LockPassword;
 use hydrus_gui::daemon::{self, Daemon};
 use hydrus_gui::{Bound, MainWindow, Pages, bind, unlock_window};
 use hydrus_store::Store;
+use hydrus_store::settings::ClientApiStatus;
 
 fn main() -> Result<()> {
     let dir: PathBuf = std::env::args_os()
@@ -84,34 +85,39 @@ impl Client {
         // the daemon, run while none does (and, as the reference's work
         // does, only once the client is unlocked)
         let daemon = Rc::new(RefCell::new(Daemon::new(store.dir())));
-        let note = |state: daemon::State| match state {
-            daemon::State::Running => slint::SharedString::new(),
-            daemon::State::Failed(why) => format!(
-                "Downloads, subscriptions, import and export folders and the Client API \
-                 aren't running: {why}"
-            )
-            .into(),
+        // what to say of it: why it, or its Client API, isn't running
+        let say = {
+            let store = store.clone();
+            let daemon = daemon.clone();
+            let weak = window.as_weak();
+            move |state: daemon::State| {
+                let api = store
+                    .read(hydrus_store::settings::get::<ClientApiStatus>)
+                    .unwrap_or_default();
+                let note = daemon::note(&state, &api, daemon.borrow().started_pid());
+                if let Some(window) = weak.upgrade() {
+                    let (said, retry) = note.unwrap_or_default();
+                    window.set_daemon_note(said.into());
+                    window.set_daemon_retry(retry);
+                }
+            }
         };
-        window.set_daemon_note(note(daemon.borrow_mut().check()));
+        let state = daemon.borrow_mut().check();
+        say(state);
         let watching = slint::Timer::default();
         watching.start(slint::TimerMode::Repeated, Duration::from_secs(2), {
             let daemon = daemon.clone();
-            let weak = window.as_weak();
+            let say = say.clone();
             move || {
                 let state = daemon.borrow_mut().check();
-                if let Some(window) = weak.upgrade() {
-                    window.set_daemon_note(note(state));
-                }
+                say(state);
             }
         });
         window.on_start_daemon_again({
             let daemon = daemon.clone();
-            let weak = window.as_weak();
             move || {
                 let state = daemon.borrow_mut().retry();
-                if let Some(window) = weak.upgrade() {
-                    window.set_daemon_note(note(state));
-                }
+                say(state);
             }
         });
         let pages = Pages::open(store).context("opening the last session")?;

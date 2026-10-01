@@ -8,15 +8,13 @@ use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand, ValueEnum};
 
 use hydrus_api::AppState;
-use hydrus_api::server::{ServerOptions, serve};
+use hydrus_api::server::{ServerOptions, bind as bind_api, serve_on};
 use hydrus_core::ServiceType;
 use hydrus_store::Store;
-use hydrus_store::services::ServiceKind;
+use hydrus_store::services::{ServerConfig, ServiceKind};
+use hydrus_store::settings::{ClientApiState, ClientApiStatus};
 use hydrus_store::store::DB_FILE_NAME;
 use hydrus_store::transfer::{TransferMode, transfer_media};
-
-/// The reference client's default Client API port.
-const DEFAULT_PORT: u16 = 45869;
 
 mod api_keys;
 mod duplicates;
@@ -51,7 +49,9 @@ enum Command {
     Serve {
         /// The hydrus-rs store directory.
         dir: PathBuf,
-        /// Port to listen on (default: the Client API service's setting).
+        /// Port to listen on (default: the Client API service's setting;
+        /// with none set there, as when hydrus's Client API is off, there is
+        /// no Client API unless this is given).
         #[arg(long)]
         port: Option<u16>,
         /// Address to listen on (default: localhost, or every interface if
@@ -493,29 +493,45 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             list.join("\n")
         );
     }
-    let config = snap
+    let (api_name, config) = snap
         .services
         .of_type(ServiceType::ClientApiService)
         .find_map(|s| match &s.kind {
-            ServiceKind::ClientApi(config) => Some(config.clone()),
+            ServiceKind::ClientApi(config) => Some((s.name.clone(), config.clone())),
             _ => None,
         })
-        .unwrap_or_default();
-    let port = port.or(config.port).unwrap_or(DEFAULT_PORT);
-    let ip = bind.unwrap_or(if config.allow_non_local_connections {
-        IpAddr::V4(Ipv4Addr::UNSPECIFIED)
-    } else {
-        IpAddr::V4(Ipv4Addr::LOCALHOST)
+        .unwrap_or_else(|| ("client api".to_owned(), ServerConfig::default()));
+    // as the reference: a service with no port has no Client API (`--port`
+    // serves it anyway)
+    let options = port.or(config.port).map(|port| {
+        let ip = bind.unwrap_or(if config.allow_non_local_connections {
+            IpAddr::V4(Ipv4Addr::UNSPECIFIED)
+        } else {
+            IpAddr::V4(Ipv4Addr::LOCALHOST)
+        });
+        if config.use_https {
+            tracing::warn!(
+                "the Client API service asks for https, which hydrus-rs does not serve yet; serving http"
+            );
+        }
+        ServerOptions {
+            addr: SocketAddr::new(ip, port),
+            cors: config.support_cors,
+        }
     });
-    if config.use_https {
-        tracing::warn!(
-            "the Client API service asks for https, which hydrus-rs does not serve yet; serving http"
-        );
-    }
-    let options = ServerOptions {
-        addr: SocketAddr::new(ip, port),
-        cors: config.support_cors,
+    // what the Client API is doing, for the desktop client to show
+    let say = {
+        let store = store.clone();
+        let pid = std::process::id();
+        move |state: ClientApiState| {
+            let status = ClientApiStatus { pid, state };
+            if let Err(e) = store.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &status))
+            {
+                tracing::error!(error = %e, "keeping the Client API's status failed");
+            }
+        }
     };
+    say(ClientApiState::Starting);
     let state = AppState::new(store.clone())?;
     let runtime = tokio::runtime::Runtime::new()?;
     runtime.block_on(async move {
@@ -787,7 +803,6 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             });
         }
-        println!("Client API at http://{}", options.addr);
         let net = state
             .downloads
             .as_ref()
@@ -802,7 +817,9 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             });
         }
-        let served = serve(state, &options, async move {
+        // stopping: on a signal, or (attached) with the input closing
+        let (stop, stopped) = tokio::sync::watch::channel(false);
+        tokio::spawn(async move {
             if attached {
                 tokio::select! {
                     () = shutdown_signal() => {}
@@ -812,8 +829,34 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 shutdown_signal().await;
             }
             println!("stopping");
-        })
-        .await;
+            let _ = stop.send(true);
+        });
+        // the Client API, if it is on: one that can't start stops nothing
+        // else, as in the reference
+        let served = match options {
+            None => {
+                say(ClientApiState::Off);
+                println!("The Client API is off: \"{api_name}\" has no port (--port serves it anyway)");
+                until(stopped).await;
+                Ok(())
+            }
+            Some(options) => match bind_api(&options).await {
+                Ok(listener) => {
+                    let addr = listener.local_addr().unwrap_or(options.addr);
+                    say(ClientApiState::Listening(addr.to_string()));
+                    println!("Client API at http://{addr}");
+                    serve_on(listener, state, &options, until(stopped)).await
+                }
+                Err(e) => {
+                    let why = format!("Could not start \"{api_name}\": {e}");
+                    tracing::error!("{why}; everything else runs on");
+                    println!("Client API couldn't start ({why}); everything else runs on");
+                    say(ClientApiState::Failed(why));
+                    until(stopped).await;
+                    Ok(())
+                }
+            },
+        };
         // (the bandwidth used since the last minute's save)
         if let Some(net) = net
             && let Err(e) = net.save_bandwidth()
@@ -823,6 +866,11 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         served
     })?;
     Ok(())
+}
+
+/// Until the daemon is told to stop.
+async fn until(mut stopped: tokio::sync::watch::Receiver<bool>) {
+    let _ = stopped.wait_for(|stopped| *stopped).await;
 }
 
 /// Ctrl-C, or (on Unix) the SIGTERM a service manager stops a program with.

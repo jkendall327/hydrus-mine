@@ -277,8 +277,10 @@ export component MainWindow inherits Window {
     in property <[ThumbnailRow]> thumbnail-rows;
     in property <string> status;
     in property <string> error;
-    // the daemon (`hydrus serve`) not running, and why
+    // the daemon (`hydrus serve`), or its Client API, not running, and why;
+    // and whether starting it again would help
     in property <string> daemon-note;
+    in property <bool> daemon-retry;
     callback start-daemon-again();
     in-out property <string> search-text;
     // the favourite searches menu (none: no button)
@@ -1126,7 +1128,9 @@ export component MainWindow inherits Window {
             }
             if root.daemon-note != "": Rectangle {
                 background: Theme.panel;
-                HorizontalLayout {
+                // (its own height, whatever room is left over)
+                height: note-row.preferred-height;
+                note-row := HorizontalLayout {
                     padding: 4px;
                     padding-left: 6px;
                     spacing: 8px;
@@ -1137,7 +1141,7 @@ export component MainWindow inherits Window {
                         vertical-alignment: center;
                         horizontal-stretch: 1;
                     }
-                    Button {
+                    if root.daemon-retry: Button {
                         text: "start again";
                         clicked => { root.start-daemon-again(); }
                     }

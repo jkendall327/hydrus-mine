@@ -11,6 +11,8 @@ use std::sync::{Arc, Mutex, PoisonError};
 use std::thread::JoinHandle;
 use std::time::{Duration, Instant};
 
+use hydrus_store::settings::{ClientApiState, ClientApiStatus};
+
 /// How long the daemon has to finish what it is doing when the GUI closes,
 /// before it is killed.
 pub const GRACE: Duration = Duration::from_secs(20);
@@ -225,6 +227,11 @@ impl Daemon {
         self.started.is_some()
     }
 
+    /// The process id of the GUI's, while it runs.
+    pub fn started_pid(&self) -> Option<u32> {
+        self.started.as_ref().map(|s| s.child.id())
+    }
+
     /// Stop the GUI's, giving it `grace` to finish what it is doing: whether
     /// it stopped by itself (`None` with none of the GUI's running).
     pub fn stop(&mut self, grace: Duration) -> Option<bool> {
@@ -236,6 +243,28 @@ impl Daemon {
 impl Drop for Daemon {
     fn drop(&mut self) {
         self.stop(GRACE);
+    }
+}
+
+/// What the GUI says of the daemon, if anything, and whether it offers to
+/// start it again: why it isn't running, or why its Client API isn't (one
+/// it started, `started`, said; what an earlier one said doesn't count). A
+/// Client API that is off says nothing, as in the reference.
+pub fn note(state: &State, api: &ClientApiStatus, started: Option<u32>) -> Option<(String, bool)> {
+    match state {
+        State::Failed(why) => Some((
+            format!(
+                "Downloads, subscriptions, import and export folders and the Client API \
+                 aren't running: {why}"
+            ),
+            true,
+        )),
+        State::Running => match &api.state {
+            ClientApiState::Failed(why) if started.is_none_or(|pid| pid == api.pid) => {
+                Some((format!("The Client API isn't running: {why}"), false))
+            }
+            _ => None,
+        },
     }
 }
 
@@ -286,6 +315,15 @@ mod tests {
         while std::io::Read::read(&mut std::io::stdin(), &mut buffer).is_ok_and(|n| n > 0) {}
     }
 
+    /// Held by each test that starts processes: a process started while
+    /// another test holds the lock for a moment (as `running` does) holds a
+    /// copy of it until it is running, so they take turns.
+    static STARTING: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+    fn one_at_a_time() -> std::sync::MutexGuard<'static, ()> {
+        STARTING.lock().unwrap_or_else(PoisonError::into_inner)
+    }
+
     fn until(mut what: impl FnMut() -> bool) {
         let started = Instant::now();
         while !what() {
@@ -299,6 +337,7 @@ mod tests {
 
     #[test]
     fn starts_one_while_none_runs_and_stops_it_on_closing() {
+        let _turn = one_at_a_time();
         let dir = tempfile::tempdir().unwrap();
         let mut daemon = Daemon::launched_by(dir.path(), fake("serve"));
         assert_eq!(daemon.check(), State::Running);
@@ -313,6 +352,7 @@ mod tests {
 
     #[test]
     fn leaves_one_started_on_its_own_and_takes_over_when_it_stops() {
+        let _turn = one_at_a_time();
         let dir = tempfile::tempdir().unwrap();
         let theirs = hydrus_store::store::lock_serving(dir.path())
             .unwrap()
@@ -321,9 +361,6 @@ mod tests {
         assert_eq!(daemon.check(), State::Running);
         assert!(!daemon.started());
         drop(theirs);
-        // (a process another test starts that moment holds a copy of the
-        // lock until it is running)
-        until(|| !running(dir.path()));
         assert_eq!(daemon.check(), State::Running);
         assert!(daemon.started());
         until(|| running(dir.path()));
@@ -332,6 +369,7 @@ mod tests {
 
     #[test]
     fn says_why_its_own_failed_and_waits_to_be_asked_again() {
+        let _turn = one_at_a_time();
         let dir = tempfile::tempdir().unwrap();
         let mut daemon = Daemon::launched_by(dir.path(), fake("fail"));
         assert_eq!(daemon.check(), State::Running);
@@ -349,6 +387,7 @@ mod tests {
 
     #[test]
     fn kills_one_that_does_not_stop() {
+        let _turn = one_at_a_time();
         let dir = tempfile::tempdir().unwrap();
         let mut daemon = Daemon::launched_by(dir.path(), fake("stubborn"));
         daemon.check();
@@ -360,7 +399,37 @@ mod tests {
     }
 
     #[test]
+    fn says_why_the_daemon_or_its_client_api_isnt_running() {
+        let failed = |pid| ClientApiStatus {
+            pid,
+            state: ClientApiState::Failed("Could not start \"client api\": in use".into()),
+        };
+        // the daemon not running, which can be started again
+        let (said, retry) = note(&State::Failed("no drive".into()), &failed(1), None).unwrap();
+        assert!(said.ends_with("aren't running: no drive"), "{said}");
+        assert!(retry);
+        // its Client API not running, which starting again won't change
+        let api = Some((
+            "The Client API isn't running: Could not start \"client api\": in use".to_owned(),
+            false,
+        ));
+        assert_eq!(note(&State::Running, &failed(7), Some(7)), api);
+        assert_eq!(note(&State::Running, &failed(7), None), api);
+        // (what a daemon before the GUI's said is forgotten)
+        assert_eq!(note(&State::Running, &failed(6), Some(7)), None);
+        for state in [
+            ClientApiState::Off,
+            ClientApiState::Starting,
+            ClientApiState::Listening("127.0.0.1:45869".into()),
+        ] {
+            let status = ClientApiStatus { pid: 7, state };
+            assert_eq!(note(&State::Running, &status, Some(7)), None);
+        }
+    }
+
+    #[test]
     fn says_so_when_there_is_no_program_to_start() {
+        let _turn = one_at_a_time();
         let dir = tempfile::tempdir().unwrap();
         let mut daemon = Daemon::launched_by(
             dir.path(),

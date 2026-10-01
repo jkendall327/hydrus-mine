@@ -309,6 +309,34 @@ impl Setting for hydrus_parse::Downloaders {
     const KEY: &'static str = "downloaders";
 }
 
+/// What the daemon (`hydrus serve`) running on the store last said of its
+/// Client API, for the desktop client to show: and which process it was.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct ClientApiStatus {
+    /// The daemon's process id.
+    pub pid: u32,
+    pub state: ClientApiState,
+}
+
+/// Whether the daemon's Client API is running.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum ClientApiState {
+    /// Not said yet.
+    #[default]
+    Starting,
+    /// Off, as its service has no port (as the reference leaves it).
+    Off,
+    /// Listening at this address.
+    Listening(String),
+    /// It couldn't start, as the reference says it (`Could not start
+    /// "client api": ...`); the rest of the daemon runs on.
+    Failed(String),
+}
+
+impl Setting for ClientApiStatus {
+    const KEY: &'static str = "client_api_status";
+}
+
 pub fn get<S: Setting>(conn: &Connection) -> Result<S> {
     let value: Option<String> = conn
         .prepare_cached("SELECT value FROM settings WHERE key = ?")?
