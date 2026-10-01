@@ -1,0 +1,1148 @@
+{
+ "error_dir": {
+  "files": [
+   "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c.jpg",
+   "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.gif",
+   "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.png",
+   "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c.png",
+   "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.mp3",
+   "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3.jpg"
+  ],
+  "missing_hashes": [
+   "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+   "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+   "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+   "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+   "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+   "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+   "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+   "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+   "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+   "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+   "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+   "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+   "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6"
+  ],
+  "text": {
+   "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b.tags.txt": [
+    "blue eyes",
+    "outdoors",
+    "second:tag"
+   ],
+   "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b.urls.txt": [
+    "https://danbooru.donmai.us/posts/1005",
+    "https://example.com/post/5"
+   ],
+   "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c.tags.txt": [
+    "bleu eyes",
+    "blue eyes",
+    "format:jpeg",
+    "multi word tag with spaces",
+    "outdoors",
+    "second:tag"
+   ],
+   "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.tags.txt": [
+    "blue eyes",
+    "character:link",
+    "character:samus aran",
+    "creator:someone else",
+    "indoors",
+    "red hair",
+    "safe",
+    "second:tag"
+   ],
+   "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726.urls.txt": [
+    "https://danbooru.donmai.us/posts/1009",
+    "https://example.com/post/9",
+    "https://gelbooru.com/index.php?page=post&s=view&id=2009"
+   ],
+   "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c.tags.txt": [
+    "character:link",
+    "character:samus aran",
+    "creator:someone else",
+    "safe"
+   ],
+   "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7.tags.txt": [
+    "format:jpeg",
+    "meta:highres",
+    "page:11",
+    "page:2",
+    "series:the legend of zelda",
+    "title:a test image: with colons"
+   ],
+   "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c.tags.txt": [
+    "::)",
+    "bleu eyes",
+    "blue eyes",
+    "chapter:2",
+    "multi word tag with spaces",
+    "outdoors",
+    "second:tag"
+   ],
+   "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134.tags.txt": [
+    "blue eyes",
+    "second:tag",
+    "title:a test image: with colons"
+   ],
+   "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.tags.txt": [
+    "blue_eyes",
+    "filename:bitmap",
+    "safe",
+    "samus",
+    "smile",
+    "source:fixture",
+    "\u00e9clair"
+   ],
+   "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a.urls.txt": [
+    "https://danbooru.donmai.us/posts/1004",
+    "https://example.com/post/4"
+   ],
+   "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.tags.txt": [
+    "blue eyes",
+    "page:10",
+    "safe",
+    "volume:3",
+    "\u30ad\u30e3\u30e9\u30af\u30bf\u30fc:\u521d\u97f3\u30df\u30af"
+   ],
+   "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b.urls.txt": [
+    "https://danbooru.donmai.us/posts/1003",
+    "https://example.com/post/3",
+    "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+   ],
+   "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29.tags.txt": [
+    "blue eyes",
+    "format:jpeg",
+    "safe",
+    "second:tag",
+    "\u30ad\u30e3\u30e9\u30af\u30bf\u30fc:\u521d\u97f3\u30df\u30af"
+   ],
+   "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3.tags.txt": [
+    "page:11",
+    "page:2",
+    "title:a test image: with colons"
+   ],
+   "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3.urls.txt": [
+    "https://danbooru.donmai.us/posts/1007",
+    "https://example.com/post/7"
+   ],
+   "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a.tags.txt": [
+    "creator:anonymous artist",
+    "meta:lowres",
+    "page:3",
+    "series:metroid"
+   ],
+   "all_urls.txt": [
+    "https://danbooru.donmai.us/posts/1003",
+    "https://danbooru.donmai.us/posts/1004",
+    "https://danbooru.donmai.us/posts/1005",
+    "https://danbooru.donmai.us/posts/1007",
+    "https://danbooru.donmai.us/posts/1009",
+    "https://example.com/post/3",
+    "https://example.com/post/4",
+    "https://example.com/post/5",
+    "https://example.com/post/7",
+    "https://example.com/post/9",
+    "https://gelbooru.com/index.php?page=post&s=view&id=2003",
+    "https://gelbooru.com/index.php?page=post&s=view&id=2009"
+   ],
+   "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6.tags.txt": [
+    "filename:jpeg_11",
+    "format:jpeg",
+    "safe",
+    "samus",
+    "smile",
+    "source:fixture"
+   ]
+  }
+ },
+ "files": {
+  "forced_type": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": 1,
+   "inbox": false,
+   "info": [
+    1954,
+    2,
+    320,
+    240,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  },
+  "intact_data_check": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".png"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    2358,
+    2,
+    256,
+    256,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "invalid_remove_record": {
+   "current": [],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    1505,
+    2,
+    256,
+    256,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "invalid_silent_delete": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    1522,
+    2,
+    256,
+    256,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "invalid_try_url": {
+   "current": [
+    "art",
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    10294,
+    1,
+    640,
+    480,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  },
+  "invalid_try_url_else_remove": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    19729,
+    3,
+    120,
+    90,
+    500,
+    5,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    120,
+    90
+   ]
+  },
+  "lost_hashes": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    14247,
+    1,
+    1000,
+    200,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [
+    {
+     "due": true,
+     "job": 3
+    },
+    {
+     "due": true,
+     "job": 10
+    }
+   ],
+   "modified": false,
+   "other_hashes": false,
+   "thumbnail": [
+    150,
+    30
+   ]
+  },
+  "missing_but_locked": {
+   "current": [
+    "hydrus local file storage",
+    "trash"
+   ],
+   "deleted": [
+    "combined local file domains",
+    "my files"
+   ],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    13461,
+    1,
+    777,
+    333,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    64
+   ]
+  },
+  "missing_delete_record": {
+   "current": [],
+   "deleted": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    1095,
+    2,
+    200,
+    150,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  },
+  "missing_log_only": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    51681,
+    1,
+    1920,
+    1080,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    84
+   ]
+  },
+  "missing_no_url_else_remove": {
+   "current": [],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    1209,
+    2,
+    280,
+    210,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  },
+  "missing_remove_record": {
+   "current": [],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    1305,
+    1,
+    50,
+    50,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    50,
+    50
+   ]
+  },
+  "missing_try_url": {
+   "current": [
+    "art",
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    12342,
+    4,
+    64,
+    64,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    64,
+    64
+   ]
+  },
+  "missing_try_url_else_remove": {
+   "current": [
+    "art",
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    6055,
+    10,
+    833,
+    1167,
+    null,
+    null,
+    0,
+    0
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    89,
+    125
+   ]
+  },
+  "neighbour_dupes": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    10121,
+    1,
+    300,
+    300,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "refit_missing": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    6350,
+    1,
+    123,
+    457,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [
+    {
+     "due": true,
+     "job": 22
+    }
+   ],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    33,
+    125
+   ]
+  },
+  "refit_no_thumbnail_type": {
+   "current": [
+    "art",
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".flac"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    21065,
+    16,
+    null,
+    null,
+    1000,
+    null,
+    1,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "refit_right_size": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    11989,
+    1,
+    200,
+    1000,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    25,
+    125
+   ]
+  },
+  "refit_wrong_size": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    15232,
+    1,
+    640,
+    480,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [
+    {
+     "due": true,
+     "job": 22
+    }
+   ],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  },
+  "unreadable_with_urls": {
+   "current": [
+    "art",
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": true,
+   "info": [
+    16553,
+    13,
+    null,
+    null,
+    2065,
+    null,
+    1,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    125,
+    125
+   ]
+  },
+  "unreadable_without_urls": {
+   "current": [],
+   "deleted": [],
+   "files": [],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    30716,
+    1,
+    800,
+    800,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": null
+  },
+  "wrong_resolution": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".jpg"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    15895,
+    1,
+    480,
+    640,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [
+    {
+     "due": true,
+     "job": 1
+    },
+    {
+     "due": true,
+     "job": 9
+    },
+    {
+     "due": true,
+     "job": 17
+    }
+   ],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    93,
+    125
+   ]
+  },
+  "wrong_type": {
+   "current": [
+    "combined local file domains",
+    "hydrus local file storage",
+    "my files"
+   ],
+   "deleted": [],
+   "files": [
+    ".png"
+   ],
+   "forced_mime": null,
+   "inbox": false,
+   "info": [
+    1070,
+    2,
+    240,
+    180,
+    null,
+    null,
+    0,
+    null
+   ],
+   "jobs": [],
+   "modified": true,
+   "other_hashes": true,
+   "thumbnail": [
+    150,
+    112
+   ]
+  }
+ },
+ "garbage": "this is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\nthis is not a file hydrus can read\n",
+ "imported": [
+  {
+   "normalised": "https://danbooru.donmai.us/posts/1003",
+   "page": "missing files redownloader",
+   "url": "https://danbooru.donmai.us/posts/1003"
+  },
+  {
+   "normalised": "https://danbooru.donmai.us/posts/1004",
+   "page": "missing files redownloader",
+   "url": "https://danbooru.donmai.us/posts/1004"
+  },
+  {
+   "normalised": "https://danbooru.donmai.us/posts/1005",
+   "page": "missing files redownloader",
+   "url": "https://danbooru.donmai.us/posts/1005"
+  },
+  {
+   "normalised": "https://danbooru.donmai.us/posts/1007",
+   "page": "missing files redownloader",
+   "url": "https://danbooru.donmai.us/posts/1007"
+  },
+  {
+   "normalised": "https://danbooru.donmai.us/posts/1009",
+   "page": "missing files redownloader",
+   "url": "https://danbooru.donmai.us/posts/1009"
+  },
+  {
+   "normalised": "https://example.com/post/3",
+   "page": "missing files redownloader",
+   "url": "https://example.com/post/3"
+  },
+  {
+   "normalised": "https://example.com/post/4",
+   "page": "missing files redownloader",
+   "url": "https://example.com/post/4"
+  },
+  {
+   "normalised": "https://example.com/post/5",
+   "page": "missing files redownloader",
+   "url": "https://example.com/post/5"
+  },
+  {
+   "normalised": "https://example.com/post/7",
+   "page": "missing files redownloader",
+   "url": "https://example.com/post/7"
+  },
+  {
+   "normalised": "https://example.com/post/9",
+   "page": "missing files redownloader",
+   "url": "https://example.com/post/9"
+  },
+  {
+   "normalised": "https://gelbooru.com/index.php?page=post&s=view&id=2003",
+   "page": "missing files redownloader",
+   "url": "https://gelbooru.com/index.php?page=post&s=view&id=2003"
+  },
+  {
+   "normalised": "https://gelbooru.com/index.php?page=post&s=view&id=2009",
+   "page": "missing files redownloader",
+   "url": "https://gelbooru.com/index.php?page=post&s=view&id=2009"
+  }
+ ],
+ "scenarios": [
+  {
+   "edits": [
+    {
+     "height": 1,
+     "op": "set_info",
+     "width": 1
+    }
+   ],
+   "file": "jpeg_03.jpg",
+   "job": 0,
+   "name": "wrong_resolution"
+  },
+  {
+   "edits": [
+    {
+     "mime": 1,
+     "op": "set_info"
+    },
+    {
+     "ext": ".jpg",
+     "op": "rename_file"
+    }
+   ],
+   "file": "png_01.png",
+   "job": 0,
+   "name": "wrong_type"
+  },
+  {
+   "edits": [
+    {
+     "mime": 1,
+     "op": "force_mime"
+    },
+    {
+     "ext": ".jpg",
+     "op": "rename_file"
+    }
+   ],
+   "file": "png_03.png",
+   "job": 0,
+   "name": "forced_type"
+  },
+  {
+   "edits": [
+    {
+     "op": "forget_hashes"
+    },
+    {
+     "op": "forget_modified"
+    }
+   ],
+   "file": "jpeg_04.jpg",
+   "job": 0,
+   "name": "lost_hashes"
+  },
+  {
+   "edits": [
+    {
+     "op": "garbage"
+    }
+   ],
+   "file": "audio.mp3",
+   "job": 0,
+   "name": "unreadable_with_urls"
+  },
+  {
+   "edits": [
+    {
+     "op": "garbage"
+    }
+   ],
+   "file": "jpeg_06.jpg",
+   "job": 0,
+   "name": "unreadable_without_urls"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "jpeg_08.jpg",
+   "job": 18,
+   "name": "missing_log_only"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "jpeg_10.jpg",
+   "job": 5,
+   "name": "missing_remove_record"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "png_00.png",
+   "job": 21,
+   "name": "missing_delete_record"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "jpeg_11.jpg",
+   "job": 5,
+   "name": "missing_but_locked"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "bitmap.bmp",
+   "job": 11,
+   "name": "missing_try_url"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "document.pdf",
+   "job": 14,
+   "name": "missing_try_url_else_remove"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_file"
+    }
+   ],
+   "file": "png_02.png",
+   "job": 14,
+   "name": "missing_no_url_else_remove"
+  },
+  {
+   "edits": [],
+   "file": "png_alpha_01.png",
+   "job": 6,
+   "name": "intact_data_check"
+  },
+  {
+   "edits": [
+    {
+     "op": "append_byte"
+    }
+   ],
+   "file": "png_alpha_00.png",
+   "job": 13,
+   "name": "invalid_silent_delete"
+  },
+  {
+   "edits": [
+    {
+     "op": "append_byte"
+    }
+   ],
+   "file": "dupe_jpeg_02_q60.jpg",
+   "job": 12,
+   "name": "invalid_try_url"
+  },
+  {
+   "edits": [
+    {
+     "op": "append_byte"
+    }
+   ],
+   "file": "png_alpha_02.png",
+   "job": 6,
+   "name": "invalid_remove_record"
+  },
+  {
+   "edits": [
+    {
+     "op": "append_byte"
+    }
+   ],
+   "file": "gif_animated.gif",
+   "job": 15,
+   "name": "invalid_try_url_else_remove"
+  },
+  {
+   "edits": [
+    {
+     "from": "jpeg_00.jpg",
+     "op": "copy_thumbnail"
+    }
+   ],
+   "file": "jpeg_02.jpg",
+   "job": 2,
+   "name": "refit_wrong_size"
+  },
+  {
+   "edits": [],
+   "file": "jpeg_05.jpg",
+   "job": 2,
+   "name": "refit_right_size"
+  },
+  {
+   "edits": [
+    {
+     "op": "remove_thumbnail"
+    }
+   ],
+   "file": "jpeg_07.jpg",
+   "job": 2,
+   "name": "refit_missing"
+  },
+  {
+   "edits": [],
+   "file": "audio.flac",
+   "job": 2,
+   "name": "refit_no_thumbnail_type"
+  },
+  {
+   "edits": [
+    {
+     "ext": ".png",
+     "op": "copy_file"
+    },
+    {
+     "ext": ".gif",
+     "op": "copy_file"
+    }
+   ],
+   "file": "jpeg_09.jpg",
+   "job": 4,
+   "name": "neighbour_dupes"
+  }
+ ]
+}

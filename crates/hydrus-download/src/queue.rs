@@ -228,6 +228,52 @@ impl QueueRunner {
         Ok(added)
     }
 
+    /// Download missing or damaged files again from their URLs, as the
+    /// reference's integrity checks call `ImportURL(url, "missing files
+    /// redownloader")`: each URL, cleaned and normalised as `_ImportURL`
+    /// does, goes to the URL queue of that name. A URL that isn't a full
+    /// URL, or that a parser should read but none can, is left out (the
+    /// reference shows its error). Returns how many were added.
+    pub fn redownload(self: &Arc<Self>, urls: &[String]) -> Result<usize, StoreError> {
+        if urls.is_empty() {
+            return Ok(0);
+        }
+        let snapshot = self.downloader.store.snapshot();
+        let classes = &snapshot.url_classes;
+        let collapse = classes.settings().collapse_leading_slashes;
+        let mut cleaned = Vec::new();
+        for url in urls {
+            if hydrus_core::url::functions::check_full_url(url).is_err() {
+                tracing::warn!(url, "a missing file's URL could not be parsed at all");
+                continue;
+            }
+            let url = hydrus_core::url::ensure_url_is_encoded(url, true, collapse);
+            let Ok(url) = classes.normalise(&url, true) else {
+                continue;
+            };
+            let capability = classes.parse_capability(&url);
+            if matches!(
+                capability.url_type,
+                UrlType::Gallery | UrlType::Post | UrlType::Watchable
+            ) && let Err(reason) = &capability.parser
+            {
+                tracing::warn!(
+                    url,
+                    "This URL was recognised as a \"{}\" but it cannot be parsed: {reason}",
+                    capability.match_name
+                );
+                continue;
+            }
+            cleaned.push(url);
+        }
+        let queue = self.url_queue_for(
+            Some(hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME),
+            None,
+            None,
+        )?;
+        self.pend_urls(queue.id, &cleaned, &BTreeSet::new(), &[])
+    }
+
     /// Watch a thread (`MultipleWatcherImport.AddURL` on the page from
     /// `GetOrMakeMultipleWatcherPage`): a new watcher on the watcher page
     /// with this page key, else this name, else any, preferring pages with

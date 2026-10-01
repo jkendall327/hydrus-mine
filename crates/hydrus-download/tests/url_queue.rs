@@ -618,3 +618,40 @@ async fn a_queue_with_no_import_destination_pauses_its_files() {
     assert_eq!(seeds[0].status, SeedStatus::Unknown);
     assert!(s.site.hits.lock().is_empty());
 }
+
+#[tokio::test(flavor = "multi_thread")]
+async fn missing_files_download_again_in_their_own_queue() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    // (as the reference's integrity checks send a bad file's URLs)
+    let added = s
+        .runner
+        .redownload(&[format!("{}/post/1", s.base), "not a url".to_owned()])
+        .unwrap();
+    assert_eq!(added, 1);
+    let all = s
+        .store
+        .read(|conn| queues::queues(conn, Some(queues::QueueKind::Urls)))
+        .unwrap();
+    assert_eq!(all.len(), 1);
+    assert_eq!(
+        all[0].name,
+        hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME
+    );
+    wait_until_done(&s.store, all[0].id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, all[0].id))
+        .unwrap();
+    assert_eq!(seeds.len(), 1);
+    assert_eq!(seeds[0].status, SeedStatus::SuccessfulAndNew);
+    // later ones join it
+    s.runner
+        .redownload(&[format!("{}/post/2", s.base)])
+        .unwrap();
+    let all = s
+        .store
+        .read(|conn| queues::queues(conn, Some(queues::QueueKind::Urls)))
+        .unwrap();
+    assert_eq!(all.len(), 1);
+}

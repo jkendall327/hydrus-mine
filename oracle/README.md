@@ -37,6 +37,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
 | `dump_delete_lock.py` | `fixtures/delete_lock.json`: Client API deletes, duplicate deletes and trash emptying with the archived-file delete lock on, and each file's inbox state and domains after each |
 | `dump_tag_rendering.py` | `fixtures/tag_rendering.json`: awkward tags as `RenderTag` shows them to the user under several presentation options |
+| `dump_file_maintenance.py` | `fixtures/file_maintenance.json`: file maintenance on damaged files (wrong metadata, a wrong or forced type, lost hashes, unreadable, missing or altered content, wrong-size or missing thumbnails, stray copies) with the delete lock on: each file's record, disk state and queued jobs afterwards, what `missing_and_invalid_files` holds, and the URLs sent to be downloaded again |
 | `dump_file_handling.py` | `fixtures/file_handling.json`: the corpus's transparency at each `file_has_transparency_strictness`, and its zips' types with comic book detection on and off |
 | `dump_domains.py` | `fixtures/domains.json`: domain helpers over a public-suffix corpus |
 | `dump_url_classes.py` | `fixtures/url_classes.json`: URL classes making referral URLs and next pages |

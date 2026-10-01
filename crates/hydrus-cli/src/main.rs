@@ -289,12 +289,7 @@ fn main() -> Result<()> {
                 println!("no file maintenance jobs are queued");
             }
             for (job, (due, waiting)) in counts {
-                let runs = if hydrus_import::maintenance::runs(job) {
-                    ""
-                } else {
-                    " (not run by hydrus-rs yet)"
-                };
-                println!("{}: {due} due, {waiting} waiting{runs}", job.description());
+                println!("{}: {due} due, {waiting} waiting", job.description());
             }
             Ok(())
         }
@@ -304,13 +299,44 @@ fn main() -> Result<()> {
         } => {
             let _lock = lock_store(&dir, "file maintenance")?;
             let store = Store::open(&dir)?;
-            let importer = hydrus_import::FileImporter::new(store, hydrus_media::MediaTools::new());
+            let importer = hydrus_import::FileImporter::new(
+                std::sync::Arc::clone(&store),
+                hydrus_media::MediaTools::new(),
+            );
             let started = std::time::Instant::now();
             let report = importer.run_file_maintenance(limit.unwrap_or(u64::MAX), u64::MAX)?;
             for (job, n) in &report.done {
                 println!("{}: {n}", job.description());
             }
             println!("{} jobs done in {:.1?}", report.total(), started.elapsed());
+            if report.bad_files > 0 {
+                println!(
+                    "{} files were missing or damaged: see {}",
+                    report.bad_files,
+                    dir.join(hydrus_import::maintenance::ERROR_DIR_NAME)
+                        .display()
+                );
+            }
+            if !report.redownload.is_empty() {
+                // (queued for `hydrus serve` to download)
+                let network: hydrus_store::network::NetworkSettings =
+                    store.read(hydrus_store::settings::get)?;
+                let net = std::sync::Arc::new(hydrus_net::NetEngine::new(
+                    std::sync::Arc::clone(&store),
+                    hydrus_net::NetOptions::from_settings(&network),
+                )?);
+                let downloader =
+                    hydrus_download::Downloader::new(std::sync::Arc::clone(&store), net, importer)?;
+                let runner = hydrus_download::QueueRunner::new(
+                    std::sync::Arc::new(downloader),
+                    network.downloader_network_error_delay,
+                );
+                let added = runner.redownload(&report.redownload)?;
+                println!(
+                    "{added} URLs queued in \"{}\" to download them again",
+                    hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME
+                );
+            }
             Ok(())
         }
         Command::Purge { dir } => {
@@ -572,6 +598,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
         // server is never idle): at most its throttle's worth of work a
         // window, starting a minute in
         let maintainer = store.clone();
+        let redownloader = state.downloads.clone();
         tokio::spawn(async move {
             use hydrus_store::file_maintenance::FileMaintenanceSettings;
             tokio::time::sleep(Duration::from_secs(60)).await;
@@ -591,8 +618,20 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 let budget = settings.active_files.saturating_mul(100);
                 let started = std::time::Instant::now();
                 let worker = importer.clone();
+                let redownloader = redownloader.clone();
                 let done = tokio::task::spawn_blocking(move || {
-                    worker.run_file_maintenance(u64::MAX, budget)
+                    let report = worker.run_file_maintenance(u64::MAX, budget)?;
+                    if !report.redownload.is_empty() {
+                        if let Some(runner) = &redownloader {
+                            runner.redownload(&report.redownload)?;
+                        } else {
+                            tracing::error!(
+                                urls = ?report.redownload,
+                                "missing files could be downloaded again, but the downloader is not running"
+                            );
+                        }
+                    }
+                    Ok::<_, anyhow::Error>(report)
                 })
                 .await;
                 match done {

@@ -89,10 +89,16 @@ it. The file maintenance hydrus had queued comes across (its v682 update
 queued metadata checks for nearly every image, for example): `hydrus
 maintenance <store> jobs` lists it, `hydrus serve` works through it at
 hydrus's pace (your throttle options come across), and `hydrus maintenance
-<store> files` runs it all now. Checking files' metadata flags,
-regenerating their hashes, perceptual hashes, pixel hashes, thumbnails and
-blurhashes, and keeping them in the similar-files search run; integrity
-checks and re-downloads stay queued until hydrus-rs can do them.
+<store> files` runs it all now. Every kind of job runs, as hydrus's
+would: reading files' metadata again (a file whose type has changed is
+renamed), checking their metadata flags, regenerating their hashes,
+thumbnails and blurhashes, and the integrity checks. A missing or damaged
+file is listed in the store's `missing_and_invalid_files` folder with its
+tags and URLs, and, as the job says, moved there, downloaded again from its
+URLs (in a URL queue named "missing files redownloader", which `hydrus
+serve` runs), or its record removed (an archived file the delete lock holds
+goes to the trash instead). With `--files in-place`, files are copied,
+never moved or deleted, so the old install keeps them.
 Duplicates auto-resolution rules come
 across with their progress: every pair's status for every rule (searched,
 tested, waiting for your approval, denied) and each rule's log of what it

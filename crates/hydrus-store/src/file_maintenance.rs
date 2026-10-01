@@ -9,7 +9,7 @@ use std::collections::{BTreeMap, HashSet};
 
 use rusqlite::{Connection, OptionalExtension, params};
 
-use hydrus_core::{HashId, Sha256};
+use hydrus_core::{HashId, Mime, Sha256};
 
 use crate::error::Result;
 use crate::media::FileFlags;
@@ -397,6 +397,21 @@ pub enum JobResult {
     /// Whether the thumbnail was made again.
     Thumbnail(bool),
     Blurhash(String),
+    /// What the file was found to be (`_RegenFileMetadata`).
+    FileMetadata(FileMetadata),
+}
+
+/// A file's metadata as read again from it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct FileMetadata {
+    pub size: u64,
+    pub mime: Mime,
+    pub width: Option<u32>,
+    pub height: Option<u32>,
+    pub duration_ms: Option<u64>,
+    pub num_frames: Option<u64>,
+    pub has_audio: bool,
+    pub num_words: Option<u64>,
 }
 
 /// Record a finished job's result and take it (and the jobs it overrules)
@@ -496,6 +511,70 @@ pub fn clear_job(
         (JobType::ForceThumbnail | JobType::RefitThumbnail, JobResult::Thumbnail(made)) => {
             if *made || job == JobType::ForceThumbnail {
                 add_jobs(conn, &[hash_id], JobType::Blurhash, 0)?;
+            }
+        }
+        (JobType::FileMetadata, JobResult::FileMetadata(m)) => {
+            let original: Option<(Option<u32>, Option<u32>, u8)> = conn
+                .query_row(
+                    "SELECT width, height, mime FROM files WHERE hash_id = ?1",
+                    [hash_id],
+                    |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+                )
+                .optional()?;
+            if let Some((width, height, mime)) = original {
+                conn.execute(
+                    "UPDATE files SET size = ?1, mime = ?2, width = ?3, height = ?4, duration_ms = ?5,
+                     num_frames = ?6, has_audio = ?7, num_words = ?8 WHERE hash_id = ?9",
+                    params![
+                        i64::try_from(m.size).unwrap_or(i64::MAX),
+                        m.mime.code(),
+                        m.width,
+                        m.height,
+                        m.duration_ms.and_then(|d| i64::try_from(d).ok()),
+                        m.num_frames.and_then(|n| i64::try_from(n).ok()),
+                        m.has_audio,
+                        m.num_words.and_then(|n| i64::try_from(n).ok()),
+                        hash_id
+                    ],
+                )?;
+                let update = matches!(
+                    m.mime,
+                    Mime::ApplicationHydrusUpdateContent | Mime::ApplicationHydrusUpdateDefinitions
+                );
+                if !update {
+                    let (has_hashes, has_modified): (bool, bool) = conn.query_row(
+                        "SELECT EXISTS (SELECT 1 FROM hash_digests WHERE hash_id = ?1),
+                                file_modified_ms IS NOT NULL FROM files WHERE hash_id = ?1",
+                        [hash_id],
+                        |r| Ok((r.get(0)?, r.get(1)?)),
+                    )?;
+                    if !has_hashes {
+                        add_jobs(conn, &[hash_id], JobType::OtherHashes, 0)?;
+                    }
+                    if !has_modified {
+                        add_jobs(conn, &[hash_id], JobType::FileModifiedTimestamp, 0)?;
+                    }
+                }
+                if mime != m.mime.code() {
+                    tracing::info!(
+                        hash_id = ?hash_id,
+                        from = Mime::from_code(mime).map_or("unknown", Mime::human_name),
+                        to = m.mime.human_name(),
+                        "File Maintenance: file changed filetype"
+                    );
+                }
+                if m.mime.has_thumbnail() && (width, height) != (m.width, m.height) {
+                    tracing::info!(
+                        hash_id = ?hash_id,
+                        from = ?(width, height),
+                        to = ?(m.width, m.height),
+                        "File Maintenance: file changed resolution"
+                    );
+                    appearance_changed(conn)?;
+                }
+                // (pairs are sorted and shown by these)
+                crate::duplicates::cache::changed(conn)?;
+                reset_auto_resolution = true;
             }
         }
         (JobType::Blurhash, JobResult::Blurhash(blurhash)) => {

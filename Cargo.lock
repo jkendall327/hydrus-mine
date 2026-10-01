@@ -2504,6 +2504,7 @@ dependencies = [
  "hydrus-media",
  "hydrus-store",
  "hydrus-testkit",
+ "jiff",
  "rusqlite",
  "serde_json",
  "tempfile",

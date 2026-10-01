@@ -453,7 +453,9 @@ impl FileImporter {
     }
 }
 
-fn thumbnail_spec(settings: &hydrus_core::thumbnail::ThumbnailSettings) -> ThumbnailSpec {
+pub(crate) fn thumbnail_spec(
+    settings: &hydrus_core::thumbnail::ThumbnailSettings,
+) -> ThumbnailSpec {
     use hydrus_core::thumbnail::ThumbnailScale as Core;
     use hydrus_media::ThumbnailScale as Media;
     ThumbnailSpec {
