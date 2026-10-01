@@ -11,7 +11,7 @@ use std::sync::Arc;
 use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
 use hydrus_gui::thumbnail_menu::{
-    Entry, GROUPS, Slots, facts, info_menu, menu, open_menu, share_menu,
+    Entry, GROUPS, Slots, facts, info_menu, menu, open_menu, share_menu, url_facts, urls_menu,
 };
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
@@ -38,6 +38,7 @@ fn kept(label: &str) -> Kept {
             "focused file using Default OS File Launch",
             "focused file in web browser",
         ]),
+        "urls" => Kept::Only(&["open in browser", "open in a new page", "copy"]),
         "share" => Kept::Only(&[
             "copy paths",
             "copy hashes",
@@ -130,10 +131,27 @@ fn pruned(entries: &[Value]) -> Vec<Value> {
                         _ => x.clone(),
                     })
                     .collect();
-                Some(json!({ "menu": label, "entries": tidy(inner) }))
+                // (a menu left with nothing hydrus-rs has isn't shown)
+                let inner = tidy(inner);
+                (only.is_none() || !inner.is_empty())
+                    .then(|| json!({ "menu": label, "entries": inner }))
             })
             .collect(),
     )
+}
+
+/// The menu's texts as shown: Qt's labels double an `&`.
+fn unescaped(entries: &[Value]) -> Vec<Value> {
+    entries
+        .iter()
+        .map(|e| match e {
+            Value::String(text) => json!(text.replace("&&", "&")),
+            _ => json!({
+                "menu": e["menu"].as_str().unwrap().replace("&&", "&"),
+                "entries": unescaped(e["entries"].as_array().unwrap()),
+            }),
+        })
+        .collect()
 }
 
 fn described(entries: &[Entry]) -> Vec<Value> {
@@ -193,13 +211,24 @@ fn the_menu_is_the_reference_s() {
             let share = (!selected.is_empty())
                 .then(|| share_menu(&store, &files, in_order.first().copied(), &in_order));
             let open = open_menu(&store, in_order.first().copied(), in_order.len());
-            let entries = menu(&snapshot.services, &files, &selected, info, open, share);
+            let urls = (!selected.is_empty())
+                .then(|| urls_menu(&url_facts(&store, in_order.first().copied(), &in_order)))
+                .flatten();
+            let entries = menu(
+                &snapshot.services,
+                &files,
+                &selected,
+                info,
+                urls,
+                open,
+                share,
+            );
             let ours = described(&entries);
             // (and the window's template shows it as it is)
             let slots = Slots::new(&entries);
             assert!(slots.select.len() <= GROUPS && slots.remove.len() <= GROUPS);
             assert_eq!(described(&slots.entries()), ours);
-            let mut theirs = case["menu"].as_array().unwrap().clone();
+            let mut theirs = unescaped(case["menu"].as_array().unwrap());
             // (the selection's info first, less what hydrus-rs doesn't have)
             let info = (!selected.is_empty()).then(|| theirs.remove(0));
             let mut theirs = pruned(&theirs);
@@ -355,4 +384,82 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
         ["system:similar to 1 files with distance of 0"]
     );
     assert!(similar.borrow().results().contains(&still));
+}
+
+#[test]
+fn the_urls_menu_opens_pages_of_a_url_and_asks_before_opening_several() {
+    use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
+    use slint::Model as _;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    // a file with several URLs
+    let (index, facts) = page
+        .borrow()
+        .results()
+        .iter()
+        .enumerate()
+        .map(|(i, &f)| (i, url_facts(&store, Some(f), &[f])))
+        .find(|(_, facts)| facts.focus.len() > 1)
+        .unwrap();
+    let file = page.borrow().results()[index];
+    let rows = |groups: hydrus_gui::MenuGroups| -> Vec<(String, i32)> {
+        [
+            groups.g1, groups.g2, groups.g3, groups.g4, groups.g5, groups.g6,
+        ]
+        .into_iter()
+        .flat_map(|g| (0..g.row_count()).map(move |i| g.row_data(i).unwrap()))
+        .map(|r| (r.label.to_string(), r.id))
+        .collect()
+    };
+    ui.invoke_thumbnail_menu_requested(i32::try_from(index).unwrap());
+    let menu = ui.get_thumbnail_menu();
+    assert!(menu.has_urls && menu.has_url_pages);
+    let pages = rows(menu.urls_pages.clone());
+    let (label, url) = &facts.focus[0];
+    let first = pages
+        .iter()
+        .find(|(l, _)| *l == format!("files with {label}"))
+        .unwrap()
+        .1;
+    // files with the URL: a "url search" page on all my files, finding it
+    let tabs_before = bound.pages.borrow().tabs()[0].names.len();
+    ui.invoke_menu_chosen(first);
+    let names = bound.pages.borrow().tabs()[0].names.clone();
+    assert_eq!(names.len(), tabs_before + 1);
+    assert_eq!(names.last().unwrap(), "url search");
+    let found = bound.current.borrow().clone();
+    assert_eq!(
+        found.borrow().predicates(),
+        [format!("system:has url {url}")]
+    );
+    assert!(found.borrow().results().contains(&file));
+    // back on the first page, opening all its URLs asks first
+    ui.invoke_tab_chosen(0, 0);
+    ui.invoke_thumbnail_menu_requested(i32::try_from(index).unwrap());
+    let visit = rows(ui.get_thumbnail_menu().urls_visit);
+    let all = visit
+        .iter()
+        .find(|(l, _)| l.starts_with("this file's ") && l.ends_with(" urls"))
+        .unwrap()
+        .1;
+    ui.invoke_menu_chosen(all);
+    assert_eq!(
+        ui.get_question(),
+        format!("Open the {} URLs in your web browser?", facts.focus.len())
+    );
+    ui.invoke_answer(false);
+    assert_eq!(ui.get_question(), "");
 }

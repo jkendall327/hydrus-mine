@@ -360,15 +360,17 @@ impl Pages {
         self.add(page);
     }
 
-    /// Open a new page searching `location` for `predicates`, at the far
-    /// right of the current notebook, and show it; it searches at once
-    /// (the reference's `NewPageQuery` with initial predicates).
+    /// Open a new page named `name` searching `location` for `predicates`,
+    /// at the far right of the current notebook, and show it; it searches
+    /// at once (the reference's `NewPageQuery` with initial predicates).
     pub fn open_search(
         &mut self,
         location: hydrus_search::LocationContext,
         predicates: Vec<hydrus_search::Predicate>,
+        name: &str,
     ) {
         let mut page = new_search_page();
+        name.clone_into(&mut page.name);
         let PageContent::Search {
             search,
             synchronised,

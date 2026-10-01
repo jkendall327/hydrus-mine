@@ -163,6 +163,12 @@ export struct ThumbnailMenu {
     manage: [MenuRow],
     // the open menu: its first rows and similar files submenu, then the
     // focused file's
+    // the urls menu: open in browser, open in a new page, and copy
+    has-urls: bool,
+    urls-visit: MenuGroups,
+    has-url-pages: bool,
+    urls-pages: MenuGroups,
+    urls-copy: MenuGroups,
     has-open: bool,
     open-a: [MenuRow],
     open-similar-title: string,
@@ -784,6 +790,105 @@ export component MainWindow inherits Window {
                             for row in root.thumbnail-menu.manage: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.has-urls: Menu {
+                            title: "urls";
+                            Menu {
+                                title: "open in browser";
+                                for row in root.thumbnail-menu.urls-visit.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            if root.thumbnail-menu.has-url-pages: Menu {
+                                title: "open in a new page";
+                                for row in root.thumbnail-menu.urls-pages.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            Menu {
+                                title: "copy";
+                                for row in root.thumbnail-menu.urls-copy.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
                             }
                         }
                         if root.thumbnail-menu.has-open: Menu {

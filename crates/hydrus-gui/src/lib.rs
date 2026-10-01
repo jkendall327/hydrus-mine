@@ -826,12 +826,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 page.focused().map(|i| page.results()[i]),
                 selected.len(),
             );
-            let entries =
-                thumbnail_menu::menu(&snapshot.services, &files, &selected, info, open, share);
+            let url_facts = thumbnail_menu::url_facts(
+                page.store(),
+                page.focused().map(|i| page.results()[i]),
+                &page.selected_files(),
+            );
+            let urls = (!selected.is_empty())
+                .then(|| thumbnail_menu::urls_menu(&url_facts))
+                .flatten();
+            let entries = thumbnail_menu::menu(
+                &snapshot.services,
+                &files,
+                &selected,
+                info,
+                urls,
+                open,
+                share,
+            );
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
-            *menu_state.borrow_mut() = (actions, files);
+            *menu_state.borrow_mut() = (actions, files, url_facts);
             if let Some(window) = weak.upgrade() {
                 window.set_thumbnail_menu(window_menu);
             }
@@ -985,6 +1000,46 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         Ok(())
                     });
                 }
+                Action::OpenUrls(which) | Action::CopyUrls(which) => {
+                    let mut urls = {
+                        let state = menu_state.borrow();
+                        let page = page.borrow();
+                        thumbnail_menu::urls_for(
+                            page.store(),
+                            &state.2,
+                            which,
+                            &page.selected_files(),
+                        )
+                    };
+                    if matches!(action, Action::CopyUrls(_)) {
+                        if !urls.is_empty() {
+                            copy_to_clipboard(&urls.join("\n"));
+                        }
+                    } else {
+                        // (sorted, asking first for more than one, as
+                        // `OpenURLs` does)
+                        urls.sort();
+                        match urls.len() {
+                            0 => {}
+                            1 => launch(&urls[0]),
+                            _ => ask(Asked::OpenUrls(urls)),
+                        }
+                    }
+                }
+                Action::UrlPage(which) => {
+                    let search = thumbnail_menu::url_search(&menu_state.borrow().2, which);
+                    let all_my_files =
+                        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
+                                .to_vec(),
+                        ));
+                    if !search.is_empty() {
+                        change_pages(&|pages| {
+                            pages.open_search(all_my_files.clone(), search.clone(), "url search");
+                            Ok(())
+                        });
+                    }
+                }
                 Action::OpenInDuplicateFilterPage => {
                     let (location, files) = {
                         let page = page.borrow();
@@ -1018,7 +1073,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     };
                     if let Some(search) = search {
                         change_pages(&|pages| {
-                            pages.open_search(location.clone(), vec![search.clone()]);
+                            pages.open_search(location.clone(), vec![search.clone()], "files");
                             Ok(())
                         });
                     }
@@ -1095,6 +1150,7 @@ fn thumbnail_menu_rows(
         Some((title, items)) => (title.as_str().into(), rows(items)),
         None => (SharedString::new(), rows(&[])),
     };
+    let urls = slots.urls.clone().unwrap_or_default();
     let open = slots.open.clone().unwrap_or_default();
     let (open_similar_title, open_similar) = open.similar.clone().unwrap_or_default();
     let share = slots.share.clone().unwrap_or_default();
@@ -1135,6 +1191,11 @@ fn thumbnail_menu_rows(
         delete_menu,
         trash: rows(&slots.trash),
         manage: rows(&slots.manage),
+        has_urls: slots.urls.is_some(),
+        urls_visit: groups(&urls.visit),
+        has_url_pages: urls.pages.is_some(),
+        urls_pages: groups(urls.pages.as_deref().unwrap_or_default()),
+        urls_copy: groups(&urls.copy),
         has_open: slots.open.is_some(),
         open_a: rows(&open.a),
         open_similar_title: open_similar_title.into(),
@@ -1149,6 +1210,7 @@ type MenuState = Rc<
     RefCell<(
         Vec<(thumbnail_menu::Action, String)>,
         Vec<thumbnail_menu::FileFacts>,
+        thumbnail_menu::UrlFacts,
     )>,
 >;
 
@@ -1221,6 +1283,8 @@ enum Asked {
     ),
     /// Locking the page's search to its files, asking this.
     LockSearch(&'static str),
+    /// Opening these URLs in the web browser.
+    OpenUrls(Vec<String>),
 }
 
 impl Asked {
@@ -1240,6 +1304,13 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
+            Self::OpenUrls(urls) => {
+                let mut question = format!("Open the {} URLs in your web browser?", urls.len());
+                if urls.len() > 10 {
+                    question.push_str(" This will take some time.");
+                }
+                question
+            }
         }
     }
 
@@ -1263,6 +1334,12 @@ impl Asked {
             }
             // (the page locks itself)
             Self::LockSearch(_) => Ok(()),
+            Self::OpenUrls(urls) => {
+                for url in urls {
+                    launch(url);
+                }
+                Ok(())
+            }
         };
         if let Err(e) = done {
             eprintln!("could not change the files: {e}");

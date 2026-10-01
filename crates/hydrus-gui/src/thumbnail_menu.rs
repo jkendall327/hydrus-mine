@@ -11,7 +11,7 @@
 //! lines, and how often they were viewed), whose lines copy themselves
 //! when chosen. Plain Rust, tested against the reference.
 
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 
 use hydrus_core::numbers::human_int;
 use hydrus_core::{HashId, ServiceId, ServiceType};
@@ -76,6 +76,23 @@ pub enum Action {
     CopyPath,
     CopyHash(HashKind),
     CopyFileId,
+    /// Open some URLs in the web browser, copy them, or open a page of
+    /// the files that have them.
+    OpenUrls(Urls),
+    CopyUrls(Urls),
+    UrlPage(Urls),
+}
+
+/// What a urls menu entry takes: one of the focused file's URLs (by its
+/// place in the menu), its URLs of a class, all its URLs, the selection's
+/// URLs of a class (by its place), or all the selection's URLs.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Urls {
+    One(u16),
+    Recognised,
+    Focused,
+    Class(u16),
+    Selection,
 }
 
 /// A kind of hash the share menu copies.
@@ -486,14 +503,274 @@ pub fn similar_search(
     })
 }
 
+/// A URL as the reference shows it (`ConvertURLToHumanString`):
+/// percent-decoded, as UTF-8 (`urllib.parse.unquote`).
+pub fn human_url(url: &str) -> String {
+    let bytes = url.as_bytes();
+    let mut out: Vec<u8> = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        let hex = |b: u8| char::from(b).to_digit(16);
+        if bytes[i] == b'%'
+            && let (Some(&h), Some(&l)) = (bytes.get(i + 1), bytes.get(i + 2))
+            && let (Some(h), Some(l)) = (hex(h), hex(l))
+        {
+            out.push(u8::try_from(h * 16 + l).unwrap_or(b'?'));
+            i += 3;
+        } else {
+            out.push(bytes[i]);
+            i += 1;
+        }
+    }
+    String::from_utf8_lossy(&out).into_owned()
+}
+
+/// The URLs the urls menu offers (`AddKnownURLsViewCopyMenu`'s facts).
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct UrlFacts {
+    /// The focused file's URLs and their labels, as listed: those of a URL
+    /// class ("class: url"), then the rest, each sorted.
+    pub focus: Vec<(String, String)>,
+    /// How many of those are of a class.
+    pub matched: usize,
+    /// The selection's URL classes' names, sorted.
+    pub classes: Vec<String>,
+    /// Whether the selection has URLs of no class, or of several classes.
+    pub mixed: bool,
+}
+
+/// Each of `files`' URLs.
+fn file_urls(store: &Store, files: &[HashId]) -> HashMap<HashId, Vec<String>> {
+    let snapshot = store.snapshot();
+    store
+        .read(|c| hydrus_store::media::load(c, &snapshot.services, None, files))
+        .map(|batch| {
+            batch
+                .results
+                .into_iter()
+                .map(|m| (m.hash_id, m.urls))
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+/// What the urls menu offers for the `focused` file and the `selected`
+/// files.
+pub fn url_facts(store: &Store, focused: Option<HashId>, selected: &[HashId]) -> UrlFacts {
+    let classes = &store.snapshot().url_classes;
+    let class_of = |url: &str| classes.class_for(url).map(|c| c.name.clone());
+    let mut facts = UrlFacts::default();
+    if let Some(focused) = focused {
+        let urls = file_urls(store, &[focused])
+            .remove(&focused)
+            .unwrap_or_default();
+        let mut matched: Vec<(String, String)> = Vec::new();
+        let mut unmatched: Vec<String> = Vec::new();
+        for url in urls {
+            match class_of(&url) {
+                Some(class) => matched.push((format!("{class}: {}", human_url(&url)), url)),
+                None => unmatched.push(url),
+            }
+        }
+        matched.sort();
+        unmatched.sort();
+        facts.matched = matched.len();
+        facts.focus = matched;
+        facts
+            .focus
+            .extend(unmatched.into_iter().map(|url| (human_url(&url), url)));
+    }
+    let mut seen: BTreeSet<String> = BTreeSet::new();
+    for urls in file_urls(store, selected).values() {
+        for url in urls {
+            match class_of(url) {
+                Some(class) => {
+                    seen.insert(class);
+                }
+                None => facts.mixed = true,
+            }
+        }
+    }
+    facts.mixed |= seen.len() > 1;
+    facts.classes = seen.into_iter().collect();
+    facts
+}
+
+/// The most of a list a menu shows (`SpamItems`' `MAX_TO_SHOW`).
+const MAX_TO_SHOW: usize = 15;
+
+/// `entries` as `SpamItems` adds them: past the most shown, all but one
+/// and a count of the rest.
+fn spam(menu: &mut Vec<Entry>, entries: Vec<Entry>) {
+    let shown = if entries.len() > MAX_TO_SHOW {
+        MAX_TO_SHOW - 1
+    } else {
+        MAX_TO_SHOW
+    };
+    let more = entries.len().saturating_sub(shown);
+    menu.extend(entries.into_iter().take(shown));
+    if more > 0 {
+        menu.push(Entry::Label(format!("{more} more...")));
+    }
+}
+
+/// The urls menu (`AddKnownURLsViewCopyMenu`), less manage and forcing a
+/// metadata refetch: the focused file's URLs and the selection's, to open
+/// in the web browser, open a page of the files that have them, or copy.
+/// None if there are no URLs to offer.
+pub fn urls_menu(facts: &UrlFacts) -> Option<Entry> {
+    if facts.focus.is_empty() && facts.classes.is_empty() && !facts.mixed {
+        return None;
+    }
+    let mut visit = Vec::new();
+    let mut copy = Vec::new();
+    let mut pages = Vec::new();
+    let one = |i: usize| Urls::One(u16::try_from(i).unwrap_or(u16::MAX));
+    if !facts.focus.is_empty() {
+        let each = |label: &dyn Fn(&str) -> String, action: fn(Urls) -> Action| {
+            facts
+                .focus
+                .iter()
+                .enumerate()
+                .map(|(i, (l, _))| Entry::Item(label(l), action(one(i))))
+                .collect::<Vec<_>>()
+        };
+        spam(&mut visit, each(&|l| l.to_owned(), Action::OpenUrls));
+        spam(&mut copy, each(&|l| l.to_owned(), Action::CopyUrls));
+        spam(
+            &mut pages,
+            each(&|l| format!("files with {l}"), Action::UrlPage),
+        );
+        if facts.focus.len() > 1 {
+            separate(&mut pages);
+            pages.push(Entry::Item(
+                "files with any of the above".into(),
+                Action::UrlPage(Urls::Focused),
+            ));
+        }
+    }
+    let unmatched = facts.focus.len() - facts.matched;
+    let recognised = facts.matched > 1;
+    let all_focused = unmatched > 0 && facts.focus.len() > 1;
+    let both = |visit: &mut Vec<Entry>, copy: &mut Vec<Entry>, label: String, urls: Urls| {
+        visit.push(Entry::Item(label.clone(), Action::OpenUrls(urls)));
+        copy.push(Entry::Item(label, Action::CopyUrls(urls)));
+    };
+    if recognised || all_focused {
+        separate(&mut visit);
+        separate(&mut copy);
+    }
+    if recognised {
+        let label = format!(
+            "this file's {} recognised urls",
+            human_int(facts.matched as u64)
+        );
+        both(&mut visit, &mut copy, label, Urls::Recognised);
+    }
+    if all_focused {
+        let label = format!("this file's {} urls", human_int(facts.focus.len() as u64));
+        both(&mut visit, &mut copy, label, Urls::Focused);
+    }
+    if !facts.classes.is_empty() || facts.mixed {
+        separate(&mut visit);
+        separate(&mut copy);
+    }
+    for (i, class) in facts.classes.iter().enumerate() {
+        let label = format!("these files' {class} urls");
+        both(
+            &mut visit,
+            &mut copy,
+            label,
+            Urls::Class(u16::try_from(i).unwrap_or(u16::MAX)),
+        );
+    }
+    if facts.mixed {
+        both(
+            &mut visit,
+            &mut copy,
+            "all these files' urls".into(),
+            Urls::Selection,
+        );
+    }
+    let mut inner = vec![Entry::Menu("open in browser".into(), visit)];
+    if !facts.focus.is_empty() {
+        inner.push(Entry::Menu("open in a new page".into(), pages));
+    }
+    inner.push(Entry::Menu("copy".into(), copy));
+    Some(Entry::Menu("urls".into(), inner))
+}
+
+/// The URLs a urls menu entry takes, as the reference's actions take them:
+/// the focused file's in the menu's order, the selection's sorted and
+/// without repeats.
+pub fn urls_for(store: &Store, facts: &UrlFacts, which: Urls, selected: &[HashId]) -> Vec<String> {
+    let focus = |range: std::ops::Range<usize>| {
+        facts.focus[range]
+            .iter()
+            .map(|(_, url)| url.clone())
+            .collect::<Vec<_>>()
+    };
+    match which {
+        Urls::One(i) => facts
+            .focus
+            .get(usize::from(i))
+            .map(|(_, url)| vec![url.clone()])
+            .unwrap_or_default(),
+        Urls::Recognised => focus(0..facts.matched),
+        Urls::Focused => focus(0..facts.focus.len()),
+        Urls::Class(i) => {
+            let Some(name) = facts.classes.get(usize::from(i)) else {
+                return Vec::new();
+            };
+            let classes = &store.snapshot().url_classes;
+            let urls: BTreeSet<String> = file_urls(store, selected)
+                .into_values()
+                .flatten()
+                .filter(|url| classes.class_for(url).is_some_and(|c| c.name == *name))
+                .collect();
+            urls.into_iter().collect()
+        }
+        Urls::Selection => {
+            let urls: BTreeSet<String> =
+                file_urls(store, selected).into_values().flatten().collect();
+            urls.into_iter().collect()
+        }
+    }
+}
+
+/// The search for the files that have a urls menu entry's URLs: one, or
+/// any of the focused file's (a page of them is "url search", on all my
+/// files).
+pub fn url_search(facts: &UrlFacts, which: Urls) -> Vec<hydrus_search::Predicate> {
+    use hydrus_core::search::predicate::UrlRule;
+    use hydrus_search::{Predicate, SystemPredicate};
+    let has = |url: &str| {
+        Predicate::System(SystemPredicate::KnownUrl {
+            rule: UrlRule::ExactMatch(url.to_owned()),
+            has: true,
+        })
+    };
+    match which {
+        Urls::One(i) => facts
+            .focus
+            .get(usize::from(i))
+            .map(|(_, url)| vec![has(url)])
+            .unwrap_or_default(),
+        _ => vec![Predicate::Or(
+            facts.focus.iter().map(|(_, url)| has(url)).collect(),
+        )],
+    }
+}
+
 /// The menu for a page of `files` (in its order) with `selected` selected,
 /// with the selection's `info` first and its `share` menu last.
-#[allow(clippy::too_many_lines)]
+#[allow(clippy::too_many_lines, clippy::too_many_arguments)]
 pub fn menu(
     services: &ServiceRegistry,
     files: &[FileFacts],
     selected: &HashSet<HashId>,
     info: Option<Entry>,
+    urls: Option<Entry>,
     open: Vec<Entry>,
     share: Option<Entry>,
 ) -> Vec<Entry> {
@@ -700,6 +977,8 @@ pub fn menu(
             "manage".into(),
             vec![Entry::Item("tags".into(), Action::ManageTags)],
         ));
+        // (the reference's locations, which hydrus-rs doesn't have yet)
+        entries.extend(urls);
         entries.push(Entry::Menu("open".into(), open));
         entries.extend(share);
     }
@@ -801,8 +1080,81 @@ pub struct Slots {
     /// Deleting physically and undeleting.
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
+    pub urls: Option<UrlsSlots>,
     pub open: Option<OpenSlots>,
     pub share: Option<ShareSlots>,
+}
+
+/// The urls menu in the template: its open in browser, open in a new
+/// page and copy submenus' groups.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct UrlsSlots {
+    pub visit: Vec<Vec<SlotItem>>,
+    pub pages: Option<Vec<Vec<SlotItem>>>,
+    pub copy: Vec<Vec<SlotItem>>,
+}
+
+impl UrlsSlots {
+    fn new(inner: &[Entry]) -> Self {
+        let mut urls = Self::default();
+        for e in inner {
+            if let Entry::Menu(title, sub) = e {
+                match title.as_str() {
+                    "open in browser" => urls.visit = groups(sub),
+                    "open in a new page" => urls.pages = Some(groups(sub)),
+                    _ => urls.copy = groups(sub),
+                }
+            }
+        }
+        urls
+    }
+
+    fn entry(&self) -> Entry {
+        let mut inner = vec![group_menu("open in browser", &self.visit)];
+        inner.extend(
+            self.pages
+                .iter()
+                .map(|pages| group_menu("open in a new page", pages)),
+        );
+        inner.push(group_menu("copy", &self.copy));
+        Entry::Menu("urls".into(), inner)
+    }
+}
+
+/// A submenu's runs between separators, its labels as items copying
+/// themselves.
+fn groups(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
+    let mut out: Vec<Vec<SlotItem>> = vec![Vec::new()];
+    for e in entries {
+        match e {
+            Entry::Separator => out.push(Vec::new()),
+            Entry::Item(label, action) => {
+                out.last_mut().expect("one").push((label.clone(), *action));
+            }
+            Entry::Label(label) => {
+                out.last_mut()
+                    .expect("one")
+                    .push((label.clone(), Action::Copy));
+            }
+            Entry::Menu(..) => {}
+        }
+    }
+    out.retain(|g| !g.is_empty());
+    out
+}
+
+/// A submenu of `groups`, separated.
+fn group_menu(title: &str, groups: &[Vec<SlotItem>]) -> Entry {
+    let mut inner = Vec::new();
+    for group in groups {
+        separate(&mut inner);
+        inner.extend(
+            group
+                .iter()
+                .map(|(label, action)| Entry::Item(label.clone(), *action)),
+        );
+    }
+    Entry::Menu(title.into(), inner)
 }
 
 /// The open menu in the template: its first items and the similar files
@@ -989,20 +1341,6 @@ pub const GROUPS: usize = 6;
 
 impl Slots {
     pub fn new(entries: &[Entry]) -> Self {
-        fn groups(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
-            let mut out: Vec<Vec<SlotItem>> = vec![Vec::new()];
-            for e in entries {
-                match e {
-                    Entry::Separator => out.push(Vec::new()),
-                    Entry::Item(label, action) => {
-                        out.last_mut().expect("one").push((label.clone(), *action));
-                    }
-                    Entry::Menu(..) | Entry::Label(_) => {}
-                }
-            }
-            out.retain(|g| !g.is_empty());
-            out
-        }
         let mut slots = Self::default();
         // (the selection's info, if any, comes first)
         let entries = match entries.first() {
@@ -1029,6 +1367,7 @@ impl Slots {
                     "select" => slots.select = groups(inner),
                     "remove" => slots.remove = groups(inner),
                     "manage" => slots.manage = items(inner),
+                    "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
@@ -1042,14 +1381,7 @@ impl Slots {
     /// The menu the template shows.
     pub fn entries(&self) -> Vec<Entry> {
         let item = |(label, action): &SlotItem| Entry::Item(label.clone(), *action);
-        let menu = |title: &str, groups: &[Vec<SlotItem>]| {
-            let mut inner = Vec::new();
-            for group in groups {
-                separate(&mut inner);
-                inner.extend(group.iter().map(item));
-            }
-            Entry::Menu(title.into(), inner)
-        };
+        let menu = group_menu;
         let mut out = Vec::new();
         if let Some(info) = &self.info {
             out.push(info.entry());
@@ -1078,8 +1410,129 @@ impl Slots {
                 self.manage.iter().map(item).collect(),
             ));
         }
+        out.extend(self.urls.iter().map(UrlsSlots::entry));
         out.extend(self.open.iter().map(OpenSlots::entry));
         out.extend(self.share.iter().map(ShareSlots::entry));
         out
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn titles(entries: &[Entry]) -> Vec<String> {
+        entries
+            .iter()
+            .map(|e| match e {
+                Entry::Item(label, _) | Entry::Label(label) => label.clone(),
+                Entry::Menu(title, _) => format!("{title} >"),
+                Entry::Separator => "---".into(),
+            })
+            .collect()
+    }
+
+    #[test]
+    fn urls_show_as_the_reference_shows_them() {
+        assert_eq!(
+            human_url("https://example.com/a%20b/%E3%83%9F?q=%2Fx&r=1"),
+            "https://example.com/a b/ミ?q=/x&r=1"
+        );
+        // a stray % stays, and bad UTF-8 is replaced
+        assert_eq!(human_url("100%zz/%FF"), "100%zz/\u{fffd}");
+    }
+
+    /// Recognised URLs and the selection's classes, which the recorded
+    /// menus (over URLs of no class) don't have, as `AddKnownURLsViewCopyMenu`
+    /// lays them out.
+    #[test]
+    fn the_urls_menu_lays_out_classes_as_the_reference_s() {
+        let facts = UrlFacts {
+            focus: vec![
+                ("booru: https://a/1".into(), "https://a/1".into()),
+                ("booru: https://a/2".into(), "https://a/2".into()),
+                ("https://b/x".into(), "https://b/x".into()),
+            ],
+            matched: 2,
+            classes: vec!["booru".into(), "gallery".into()],
+            mixed: true,
+        };
+        let Some(Entry::Menu(title, inner)) = urls_menu(&facts) else {
+            panic!("a menu");
+        };
+        assert_eq!(title, "urls");
+        assert_eq!(
+            titles(&inner),
+            ["open in browser >", "open in a new page >", "copy >"]
+        );
+        let Entry::Menu(_, visit) = &inner[0] else {
+            panic!()
+        };
+        assert_eq!(
+            titles(visit),
+            [
+                "booru: https://a/1",
+                "booru: https://a/2",
+                "https://b/x",
+                "---",
+                "this file's 2 recognised urls",
+                "this file's 3 urls",
+                "---",
+                "these files' booru urls",
+                "these files' gallery urls",
+                "all these files' urls",
+            ]
+        );
+        let Entry::Menu(_, copy) = &inner[2] else {
+            panic!()
+        };
+        assert_eq!(titles(copy), titles(visit));
+        let Entry::Menu(_, pages) = &inner[1] else {
+            panic!()
+        };
+        assert_eq!(
+            titles(pages),
+            [
+                "files with booru: https://a/1",
+                "files with booru: https://a/2",
+                "files with https://b/x",
+                "---",
+                "files with any of the above",
+            ]
+        );
+        // only one URL, of a class, and one class selected: no more
+        let one = UrlFacts {
+            focus: facts.focus[..1].to_vec(),
+            matched: 1,
+            classes: vec!["booru".into()],
+            mixed: false,
+        };
+        let Some(Entry::Menu(_, inner)) = urls_menu(&one) else {
+            panic!()
+        };
+        let Entry::Menu(_, visit) = &inner[0] else {
+            panic!()
+        };
+        assert_eq!(
+            titles(visit),
+            ["booru: https://a/1", "---", "these files' booru urls"]
+        );
+        // nothing to offer: no menu
+        assert_eq!(urls_menu(&UrlFacts::default()), None);
+        // and past 15, 14 and a count
+        let many = UrlFacts {
+            focus: (0..20)
+                .map(|i| (format!("https://c/{i}"), format!("https://c/{i}")))
+                .collect(),
+            ..UrlFacts::default()
+        };
+        let Some(Entry::Menu(_, inner)) = urls_menu(&many) else {
+            panic!()
+        };
+        let Entry::Menu(_, visit) = &inner[0] else {
+            panic!()
+        };
+        assert_eq!(visit.len(), 15 + 2);
+        assert_eq!(titles(visit)[14], "6 more...");
     }
 }
