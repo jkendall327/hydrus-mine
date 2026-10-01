@@ -1,0 +1,1556 @@
+{
+ "now": 1790881356,
+ "viewers": [
+  {
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2"
+   ],
+   "menus": [
+    {
+     "file": "audio.mp3",
+     "hash": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "16.2 KB mp3, 2.1 seconds, 🔊",
+        "16,553 bytes",
+        "approx bitrate: 7.83 KB/s",
+        "imported: 2 days ago",
+        "added to art: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 2 days ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "has audio",
+        "---",
+        "viewed 4 times in media viewer, totalling 10 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 mp3, 16.2 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom fit",
+        "zoom to max"
+       ],
+       "menu": "zoom: 100%"
+      },
+      "exit fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes (1)",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (1 files)",
+          "my files (1 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (1 files)"
+         ],
+         "menu": "move (merge)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1003",
+          "https://example.com/post/3",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2003",
+          "---",
+          "this file's 3 urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1003",
+          "files with https://example.com/post/3",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2003",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1003",
+          "https://example.com/post/3",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2003",
+          "---",
+          "this file's 3 urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b)",
+          "md5 (eec1078974b0628f45a82d587d89c09f)",
+          "sha1 (09e43ba226935abd2df0309c16d1746d129efeb4)",
+          "sha512 (5ccac7283c7b3c5f7a84c2e90968cb25ca972c60b963fe89aaf2c14924ecfab65dbd8b4c7ffcaf46ca450bbfc1816fdf421a188a7c1fb797bf2f11d4c2666439)",
+          "blurhash (UxJ*;rM{D%Rj9Ft7xuof4Tt7t7oft7RjWBWB)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (4)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a MPV Embed Player."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 2.2222222222222223,
+      "fullscreen": true,
+      "player": "MPV Embed Player",
+      "zoom": 1.0,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "gif_animated.gif",
+     "hash": "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps)",
+        "19,729 bytes",
+        "approx bitrate: 38.5 KB/s",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago"
+       ],
+       "menu": "1 animated gif, 19.3 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 666.67%"
+      },
+      "exit fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1009",
+          "files with https://example.com/post/9",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726)",
+          "md5 (c22755364fedaf4a54cff61d0af0f1c3)",
+          "sha1 (b2dee9d3966ed4a95430a2bc6f47c4b2d21aeb8b)",
+          "sha512 (0f58a8a2ab143b0747c106ae8b0abe151d70a7aa6290d5979e963664ba683d7b1fa524ac471d0ee7718a799a079212ca1d31d4438e20f1ffb2072baa38d994aa)",
+          "blurhash (UnDoXfB{*Sf}t[XnrsaLII#,KcnUotVxnmou)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (14)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a MPV Embed Player."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 6.666666666666667,
+      "fullscreen": true,
+      "player": "MPV Embed Player",
+      "zoom": 6.666666666666667,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "jpeg_00.jpg",
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "1.7 KB jpeg (64x48)",
+        "1,744 bytes",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago"
+       ],
+       "menu": "1 jpeg, 1.7 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 1250%"
+      },
+      "exit fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea)",
+          "md5 (eff5db8e8a1d61d6808051b61ffb6d89)",
+          "sha1 (c1195a50ac5df9c7f172b0a34e94e6272c2c3ee5)",
+          "sha512 (6fa5377b8648190210758b6fc5c30cb69852f5bf5a7a45e2bf598840859a52d83798ece1385fcfe80639a899454acd98e9e808b4d49777e8d46b4286dbc1659d)",
+          "blurhash (UeIisF.Yr=w0+LtKWGjbLTm:RWXPV~xCnif})",
+          "pixel hash (cef682dfac77ee593e55b1cdb939fda265bc7d8d6922788c6a7f86addd74b754)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (17)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a Hydrus Native Static Image."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 12.5,
+      "fullscreen": true,
+      "player": "Hydrus Native Static Image",
+      "zoom": 12.5,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "jpeg_05.jpg",
+     "hash": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "11.7 KB jpeg (200x1,000)",
+        "11,989 bytes",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago",
+        "archived: 2 days ago"
+       ],
+       "menu": "1 jpeg, 11.7 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 80%"
+      },
+      "exit fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "return to inbox",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457)",
+          "md5 (d9cf4f28c1ffedafee12ba958df54bba)",
+          "sha1 (f512fad49d30de86cb32f0179223c42acbbdc020)",
+          "sha512 (5c8b4a37fe1aa6e1526fff0f964484a02d2cfabf6856a20198a15c8aff48d8878a23bd6ab618c65923ba214f0f947fd2bb3077008ccc549ba01f7bb8cf0fbff1)",
+          "blurhash (cWA4lyv.#{v}S|a*x9S$bWk#jJj1rdXMa{)",
+          "pixel hash (af5845c2dc557b7a9ecb3a5b7d7220f0c638ea71a79707802a3ade5c0ce6e0be)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (27)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a Hydrus Native Static Image."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 0.8,
+      "fullscreen": true,
+      "player": "Hydrus Native Static Image",
+      "zoom": 0.8,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "png_alpha_00.png",
+     "hash": "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "1.49 KB png (256x256)",
+        "1,522 bytes",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago",
+        "has transparency"
+       ],
+       "menu": "1 png, 1.49 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 312.50%"
+      },
+      "exit fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c)",
+          "md5 (6d5156451b7cb306458d215ab804b210)",
+          "sha1 (624b947897f36d142a3235b2ed7c033a6f0ed5be)",
+          "sha512 (4a5ce57b26070a34a4f04db091f8b72f247ba9e5db7042dbec2ae0156634c96a7bef2fdc7dff0c2916167fd8b29977a387bee46768ba1affaa205f94be34945a)",
+          "blurhash (UaF6Z,ZkXzRX1bNLr]o[WCs.aOXOxVxGR,bX)",
+          "pixel hash (b23fd74ab911b8d1198b40f8f8202f6ae31f04970d7f6130d1e502927c9d4bff)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (49)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a Hydrus Native Static Image."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 3.125,
+      "fullscreen": true,
+      "player": "Hydrus Native Static Image",
+      "zoom": 3.125,
+      "zoomable": true
+     }
+    }
+   ],
+   "service_key": "6c6f63616c2066696c6573",
+   "viewer": "my files"
+  },
+  {
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173"
+   ],
+   "menus": [
+    {
+     "file": "jpeg_00.jpg",
+     "hash": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "1.7 KB jpeg (64x48)",
+        "1,744 bytes",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago"
+       ],
+       "menu": "1 jpeg, 1.7 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 1243.75%"
+      },
+      "go fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea)",
+          "md5 (eff5db8e8a1d61d6808051b61ffb6d89)",
+          "sha1 (c1195a50ac5df9c7f172b0a34e94e6272c2c3ee5)",
+          "sha512 (6fa5377b8648190210758b6fc5c30cb69852f5bf5a7a45e2bf598840859a52d83798ece1385fcfe80639a899454acd98e9e808b4d49777e8d46b4286dbc1659d)",
+          "blurhash (UeIisF.Yr=w0+LtKWGjbLTm:RWXPV~xCnif})",
+          "pixel hash (cef682dfac77ee593e55b1cdb939fda265bc7d8d6922788c6a7f86addd74b754)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (17)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a Hydrus Native Static Image."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 12.4375,
+      "fullscreen": false,
+      "player": "Hydrus Native Static Image",
+      "zoom": 12.4375,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "tiff_image.tiff",
+     "hash": "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "36.1 KB tiff (128x96)",
+        "37,004 bytes",
+        "imported: 2 days ago",
+        "added to my files: 2 days ago",
+        "modified: 2 days ago",
+        "archived: 2 days ago",
+        "has exif metadata"
+       ],
+       "menu": "1 tiff, 36.1 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 621.88%"
+      },
+      "go fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "return to inbox",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2)",
+          "md5 (d0f2323d428dbdf029f26ddcb4f9887f)",
+          "sha1 (010e5bd816f8f84b62257d7d007339fbf0ae9987)",
+          "sha512 (6dedc58229dd81ae4500d0b0b11c3e823be414c9ad16e5a2745ff75ad5219ffe70e27bc80466f8078ecce0a7f8cc797643cc2289f0027c44e82598b1567044b4)",
+          "blurhash (UWEqHf.bq|m?-xQ=OmgcxUN5ofafOYxTs+nT)",
+          "pixel hash (ef2b8fadab797ff1d44adeb3eef97e4a81221cf56d55b04f31a0d6995e1f5b7c)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (55)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a Hydrus Native Static Image."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 6.21875,
+      "fullscreen": false,
+      "player": "Hydrus Native Static Image",
+      "zoom": 6.21875,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "video_silent.webm",
+     "hash": "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)",
+        "17,508 bytes",
+        "approx bitrate: 8.55 KB/s",
+        "imported: 2 days ago",
+        "removed from my files 2 days ago",
+        "sent to trash 2 days ago (fixture: trashed)",
+        "modified: 2 days ago"
+       ],
+       "menu": "1 webm, 17.1 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 621.88%"
+      },
+      "go fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "archive",
+      "---",
+      "delete physically now",
+      "undelete",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a MPV Embed Player."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 6.21875,
+      "fullscreen": false,
+      "player": "MPV Embed Player",
+      "zoom": 6.21875,
+      "zoomable": true
+     }
+    },
+    {
+     "file": "video_with_audio.mp4",
+     "hash": "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), 🔊",
+        "15,270 bytes",
+        "approx bitrate: 14.9 KB/s",
+        "imported: 2 days ago",
+        "removed from my files 2 days ago",
+        "sent to trash 2 days ago (fixture: trashed)",
+        "modified: 2 days ago",
+        "archived: 2 days ago",
+        "has audio"
+       ],
+       "menu": "1 mp4, 14.9 KB"
+      },
+      "---",
+      {
+       "entries": [
+        "zoom in",
+        "zoom out",
+        "zoom to 100%",
+        "zoom to max"
+       ],
+       "menu": "zoom: 497.50%"
+      },
+      "go fullscreen",
+      {
+       "entries": [
+        "1 second",
+        "5 seconds",
+        "10 seconds",
+        "30 seconds",
+        "1 minute",
+        "very fast",
+        "custom interval",
+        "---",
+        "shuffle this slideshow",
+        "all slideshows shuffle",
+        "---",
+        "this slideshow plays media once through",
+        "always play media once through"
+       ],
+       "menu": "start slideshow"
+      },
+      "---",
+      {
+       "entries": [
+        "mute global",
+        "---",
+        "mute media viewer",
+        "force mute just here",
+        "---",
+        {
+         "slider": "volume",
+         "value": 70
+        }
+       ],
+       "menu": "volume"
+      },
+      "---",
+      "remove from view",
+      "---",
+      "return to inbox",
+      "---",
+      "delete physically now",
+      "undelete",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173)",
+          "md5 (07b71c1aaed0fee1edef7cdf305d6e96)",
+          "sha1 (fc630b461544571af258e9617b00980dcf5a2158)",
+          "sha512 (154ceb97cbbc85aa5158371ec6a8d16aa7562b2c644dcaf142c3774980f5cb6b1de430488f39627cee07b49ed637b96a1b14db10d742f721ebdf60594b8e86fb)",
+          "blurhash (M*KLBiIdrrKos+ofVzOYS@W.niiur?V_ju)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (58)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      },
+      "---",
+      {
+       "entries": [
+        "This is a MPV Embed Player."
+       ],
+       "menu": "player"
+      }
+     ],
+     "viewer": {
+      "at_max_zoom": false,
+      "canvas_zoom": 4.975,
+      "fullscreen": false,
+      "player": "MPV Embed Player",
+      "zoom": 4.975,
+      "zoomable": true
+     }
+    }
+   ],
+   "service_key": "616c6c206c6f63616c2066696c6573",
+   "viewer": "all local files"
+  }
+ ]
+}

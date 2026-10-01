@@ -49,6 +49,7 @@ pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod viewer_menu;
 pub mod windows;
 pub mod zoom;
 
@@ -761,6 +762,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_thumbnail_activated({
         let page = page.clone();
         let viewer = viewer.clone();
+        let change_pages: ChangePages = Rc::new(change_pages.clone());
         move |index| {
             let page = page();
             let page = page.borrow();
@@ -780,6 +782,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
                 manage_tags: Rc::new(open_manage_tags.clone()),
+                change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
                 Ok(window) => *viewer.borrow_mut() = Some(window),
@@ -1047,6 +1050,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     page.borrow_mut().rearrange(to);
                     shown(true);
                 }
+                // (the viewer's menu's own, which the thumbnails' hasn't)
+                Action::Viewer(_) => {}
                 Action::Select(filter) => {
                     let files = files_of(filter);
                     reselect(&|page| {
@@ -1085,165 +1090,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 ),
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
-                Action::Copy => copy_to_clipboard(&label),
-                Action::OpenExternally | Action::OpenInWebBrowser => {
-                    let (store, focused) = {
-                        let page = page.borrow();
-                        (
-                            page.store().clone(),
-                            page.focused().map(|i| page.results()[i]),
-                        )
-                    };
-                    if let Some(path) =
-                        focused.and_then(|f| thumbnail_menu::paths(&store, &[f]).pop())
-                    {
-                        if action == Action::OpenExternally {
-                            launch(&path);
-                        } else {
-                            launch(&file_url(&path));
-                        }
-                    }
-                }
-                Action::CopyFiles | Action::CopyFile => {
+                _ => {
                     let page = page.borrow();
-                    let files = if action == Action::CopyFile {
-                        page.focused()
-                            .map(|i| page.results()[i])
-                            .into_iter()
-                            .collect()
-                    } else {
-                        page.selected_files()
+                    let menu = MenuTarget {
+                        store: page.store(),
+                        location: page.location(),
+                        selected: page.selected_files(),
+                        focused: page.focused().map(|i| page.results()[i]),
+                        sort: Some(page.sort().clone()),
+                        collect: Some(page.collect().clone()),
                     };
-                    copy_files(page.store(), &files);
-                }
-                Action::CopyPaths
-                | Action::CopyHashes(_)
-                | Action::CopyFileIds
-                | Action::CopyPath
-                | Action::CopyHash(_)
-                | Action::CopyFileId => {
-                    let (store, files) = {
-                        let page = page.borrow();
-                        let files = match action {
-                            Action::CopyPath | Action::CopyHash(_) | Action::CopyFileId => page
-                                .focused()
-                                .map(|i| page.results()[i])
-                                .into_iter()
-                                .collect(),
-                            _ => page.selected_files(),
-                        };
-                        (page.store().clone(), files)
-                    };
-                    let lines = match action {
-                        Action::CopyPaths | Action::CopyPath => {
-                            thumbnail_menu::paths(&store, &files)
-                        }
-                        Action::CopyHashes(kind) | Action::CopyHash(kind) => {
-                            thumbnail_menu::hashes(&store, &files, kind)
-                        }
-                        _ => files.iter().map(|f| f.get().to_string()).collect(),
-                    };
-                    if !lines.is_empty() {
-                        copy_to_clipboard(&lines.join("\n"));
-                    }
-                }
-                Action::OpenInNewPage => {
-                    let (location, files, sort, collect) = {
-                        let page = page.borrow();
-                        (
-                            page.location().clone(),
-                            page.selected_files(),
-                            page.sort().clone(),
-                            page.collect().clone(),
-                        )
-                    };
-                    change_pages(&|pages| {
-                        pages.open_files(
-                            location.clone(),
-                            files.clone(),
-                            Some(&sort),
-                            Some(&collect),
-                        );
-                        Ok(())
+                    let state = menu_state.borrow();
+                    shared_menu_action(action, &label, &menu, &state.2, &change_pages, &|urls| {
+                        ask(Asked::OpenUrls(urls));
                     });
-                }
-                Action::OpenUrls(which) | Action::CopyUrls(which) => {
-                    let mut urls = {
-                        let state = menu_state.borrow();
-                        let page = page.borrow();
-                        thumbnail_menu::urls_for(
-                            page.store(),
-                            &state.2,
-                            which,
-                            &page.selected_files(),
-                        )
-                    };
-                    if matches!(action, Action::CopyUrls(_)) {
-                        if !urls.is_empty() {
-                            copy_to_clipboard(&urls.join("\n"));
-                        }
-                    } else {
-                        // (sorted, asking first for more than one, as
-                        // `OpenURLs` does)
-                        urls.sort();
-                        match urls.len() {
-                            0 => {}
-                            1 => launch(&urls[0]),
-                            _ => ask(Asked::OpenUrls(urls)),
-                        }
-                    }
-                }
-                Action::UrlPage(which) => {
-                    let search = thumbnail_menu::url_search(&menu_state.borrow().2, which);
-                    let all_my_files =
-                        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
-                                .to_vec(),
-                        ));
-                    if !search.is_empty() {
-                        change_pages(&|pages| {
-                            pages.open_search(all_my_files.clone(), search.clone(), "url search");
-                            Ok(())
-                        });
-                    }
-                }
-                Action::OpenInDuplicateFilterPage => {
-                    let (location, files) = {
-                        let page = page.borrow();
-                        let settings: hydrus_store::settings::PageSettings = page
-                            .store()
-                            .read(hydrus_store::settings::get)
-                            .unwrap_or_default();
-                        let location = if settings.duplicate_filter_uses_all_my_files {
-                            hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
-                                    .to_vec(),
-                            ))
-                        } else {
-                            page.location().clone()
-                        };
-                        (location, page.selected_files())
-                    };
-                    change_pages(&|pages| {
-                        pages.open_duplicates(location.clone(), &files);
-                        Ok(())
-                    });
-                }
-                Action::OpenSimilar(distance) => {
-                    let (location, search) = {
-                        let page = page.borrow();
-                        let files = page.selected_files();
-                        (
-                            page.location().clone(),
-                            thumbnail_menu::similar_search(page.store(), &files, distance),
-                        )
-                    };
-                    if let Some(search) = search {
-                        change_pages(&|pages| {
-                            pages.open_search(location.clone(), vec![search.clone()], "files");
-                            Ok(())
-                        });
-                    }
                 }
             }
         }
@@ -1260,6 +1120,152 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     }
 }
 
+/// The files a menu acts on: the selection (in order) and the focused
+/// file, where they are, and (for a page) how it sorts and collects.
+struct MenuTarget<'a> {
+    store: &'a hydrus_store::Store,
+    location: &'a hydrus_search::LocationContext,
+    selected: Vec<HashId>,
+    focused: Option<HashId>,
+    sort: Option<hydrus_core::pages::PageSort>,
+    collect: Option<hydrus_core::pages::PageCollect>,
+}
+
+/// Makes changes to the pages, saying why one can't be made.
+type ChangePages = Rc<dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>)>;
+
+/// The viewer's menu shown: each entry's action and label by id, and the
+/// file's URLs it was built from.
+type ViewerMenuState = Rc<
+    RefCell<(
+        Vec<(thumbnail_menu::Action, String)>,
+        thumbnail_menu::UrlFacts,
+    )>,
+>;
+
+/// What the thumbnails' and the viewer's menus both do: copying,
+/// opening externally, the urls submenu's, and opening new pages
+/// (`ask_urls` asks before opening several URLs).
+#[allow(clippy::type_complexity)]
+fn shared_menu_action(
+    action: thumbnail_menu::Action,
+    label: &str,
+    target: &MenuTarget<'_>,
+    url_facts: &thumbnail_menu::UrlFacts,
+    change_pages: &dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>),
+    ask_urls: &dyn Fn(Vec<String>),
+) {
+    use thumbnail_menu::Action;
+    let store = target.store;
+    let focused: Vec<HashId> = target.focused.into_iter().collect();
+    match action {
+        Action::Copy => copy_to_clipboard(label),
+        Action::OpenExternally | Action::OpenInWebBrowser => {
+            if let Some(path) = thumbnail_menu::paths(store, &focused).pop() {
+                if action == Action::OpenExternally {
+                    launch(&path);
+                } else {
+                    launch(&file_url(&path));
+                }
+            }
+        }
+        Action::CopyFiles => copy_files(store, &target.selected),
+        Action::CopyFile => copy_files(store, &focused),
+        Action::CopyPaths
+        | Action::CopyHashes(_)
+        | Action::CopyFileIds
+        | Action::CopyPath
+        | Action::CopyHash(_)
+        | Action::CopyFileId => {
+            let files = match action {
+                Action::CopyPath | Action::CopyHash(_) | Action::CopyFileId => &focused,
+                _ => &target.selected,
+            };
+            let lines = match action {
+                Action::CopyPaths | Action::CopyPath => thumbnail_menu::paths(store, files),
+                Action::CopyHashes(kind) | Action::CopyHash(kind) => {
+                    thumbnail_menu::hashes(store, files, kind)
+                }
+                _ => files.iter().map(|f| f.get().to_string()).collect(),
+            };
+            if !lines.is_empty() {
+                copy_to_clipboard(&lines.join("\n"));
+            }
+        }
+        Action::OpenInNewPage => {
+            let (location, files) = (target.location.clone(), target.selected.clone());
+            let (sort, collect) = (target.sort.clone(), target.collect.clone());
+            change_pages(&|pages| {
+                pages.open_files(
+                    location.clone(),
+                    files.clone(),
+                    sort.as_ref(),
+                    collect.as_ref(),
+                );
+                Ok(())
+            });
+        }
+        Action::OpenUrls(which) | Action::CopyUrls(which) => {
+            let mut urls = thumbnail_menu::urls_for(store, url_facts, which, &target.selected);
+            if matches!(action, Action::CopyUrls(_)) {
+                if !urls.is_empty() {
+                    copy_to_clipboard(&urls.join("\n"));
+                }
+            } else {
+                // (sorted, asking first for more than one, as `OpenURLs`
+                // does)
+                urls.sort();
+                match urls.len() {
+                    0 => {}
+                    1 => launch(&urls[0]),
+                    _ => ask_urls(urls),
+                }
+            }
+        }
+        Action::UrlPage(which) => {
+            let search = thumbnail_menu::url_search(url_facts, which);
+            let all_my_files =
+                hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                ));
+            if !search.is_empty() {
+                change_pages(&|pages| {
+                    pages.open_search(all_my_files.clone(), search.clone(), "url search");
+                    Ok(())
+                });
+            }
+        }
+        Action::OpenInDuplicateFilterPage => {
+            let settings: hydrus_store::settings::PageSettings =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let location = if settings.duplicate_filter_uses_all_my_files {
+                hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                    hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+                ))
+            } else {
+                target.location.clone()
+            };
+            let files = target.selected.clone();
+            change_pages(&|pages| {
+                pages.open_duplicates(location.clone(), &files);
+                Ok(())
+            });
+        }
+        Action::OpenSimilar(distance) => {
+            let location = target.location.clone();
+            if let Some(search) = thumbnail_menu::similar_search(store, &target.selected, distance)
+            {
+                change_pages(&|pages| {
+                    pages.open_search(location.clone(), vec![search.clone()], "files");
+                    Ok(())
+                });
+            }
+        }
+        // (the rest are each menu's own)
+        _ => {}
+    }
+}
+
 /// Called with files a viewer deleted out of the page's domains.
 pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
 
@@ -1272,6 +1278,10 @@ fn thumbnail_menu_rows(
     use thumbnail_menu::Action;
     let actions = std::cell::RefCell::new(actions);
     let id = |action: Action, label: &str| {
+        // (the volume, shown, does nothing: shown disabled)
+        if action == Action::Viewer(viewer_menu::ViewerAction::Volume) {
+            return -1;
+        }
         let mut actions = actions.borrow_mut();
         actions.push((action, label.to_owned()));
         i32::try_from(actions.len() - 1).unwrap_or(-1)
@@ -1370,6 +1380,19 @@ fn thumbnail_menu_rows(
         open_similar_title: open_similar_title.into(),
         open_similar: rows(&open_similar),
         open_b: rows(&open.b),
+        zoom_title: slots
+            .zoom
+            .as_ref()
+            .map_or_else(SharedString::new, |(title, _)| title.as_str().into()),
+        zoom: rows(slots.zoom.as_ref().map_or(&[][..], |(_, items)| items)),
+        has_volume: !slots.volume.is_empty(),
+        volume: groups(&slots.volume),
+        dismiss: rows(&slots.dismiss),
+        player_title: slots
+            .player
+            .as_ref()
+            .map_or_else(SharedString::new, |(title, _)| title.as_str().into()),
+        player: labels(slots.player.as_ref().map_or(&[][..], |(_, lines)| lines)),
     }
 }
 
@@ -1589,6 +1612,15 @@ struct ViewerHooks {
     removed: Removed,
     tags_changed: Rc<dyn Fn()>,
     manage_tags: OpenManageTags,
+    /// Opens pages (from the menu's open and urls entries).
+    change_pages: ChangePages,
+}
+
+/// What the viewer asks before doing it.
+enum ViewerAsked {
+    Delete(media_actions::Deletion),
+    /// Opening these URLs in the web browser.
+    OpenUrls(Vec<String>),
 }
 
 /// Open a viewer window on `model`'s file; it forgets itself from `slot`
@@ -1602,6 +1634,7 @@ fn open_viewer(
         removed,
         tags_changed,
         manage_tags,
+        change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
@@ -1615,14 +1648,19 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
-    // the volume and mutes, as kept, on the window and the player
+    // the volume and mutes, as kept, on the window and the player; and
+    // this viewer's own mute, if forced (`SetPerPlayerMuteState`, for as
+    // long as the viewer is open)
+    let forced_mute: Rc<std::cell::Cell<Option<bool>>> = Rc::default();
     let show_audio = {
         let weak = window.as_weak();
         let playback = playback.clone();
         let store = model.borrow().store().clone();
+        let forced_mute = forced_mute.clone();
         move || {
             let audio = audio::settings(&store);
-            playback.set_audio(audio.current_viewer_volume(), audio.viewer_muted());
+            let muted = forced_mute.get().unwrap_or_else(|| audio.viewer_muted());
+            playback.set_audio(audio.current_viewer_volume(), muted);
             if let Some(window) = weak.upgrade() {
                 window.set_global_muted(audio.global_mute);
                 window.set_viewer_muted(audio.viewer_mute);
@@ -2002,6 +2040,139 @@ fn open_viewer(
             }
         }
     });
+    let pending: Rc<RefCell<Option<ViewerAsked>>> = Rc::default();
+    let ask = {
+        let pending = pending.clone();
+        let weak = window.as_weak();
+        move |asked: ViewerAsked| {
+            if let Some(window) = weak.upgrade() {
+                let question = match &asked {
+                    ViewerAsked::Delete(deletion) => deletion.question(1),
+                    ViewerAsked::OpenUrls(urls) => Asked::OpenUrls(urls.clone()).question(),
+                };
+                window.set_question(question.into());
+                *pending.borrow_mut() = Some(asked);
+            }
+        }
+    };
+    // the right-click menu (`ShowMenuFromSignal`): built for the file shown,
+    // as the viewer is now, and its entries done
+    let menu_state: ViewerMenuState = Rc::default();
+    window.on_context_menu_requested({
+        let model = model.clone();
+        let zoomed = zoomed.clone();
+        let forced_mute = forced_mute.clone();
+        let menu_state = menu_state.clone();
+        let weak = window.as_weak();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let model = model.borrow();
+            let (store, file) = (model.store(), model.current());
+            let state = viewer_menu::ViewerState {
+                zoom: zoomed.state(),
+                fullscreen: window.window().is_fullscreen(),
+                audio: audio::settings(store),
+                forced_mute: forced_mute.get(),
+                player: viewer_menu::player(store, file),
+            };
+            let info_settings: hydrus_core::media_viewer::InfoLineSettings =
+                store.read(hydrus_store::settings::get).unwrap_or_default();
+            let entries = viewer_menu::viewer_menu(
+                store,
+                file,
+                &state,
+                &info_settings,
+                hydrus_core::TimestampMs::now().0,
+            );
+            let slots = thumbnail_menu::Slots::new(&entries);
+            let mut actions = Vec::new();
+            let rows = thumbnail_menu_rows(&slots, &mut actions);
+            *menu_state.borrow_mut() = (actions, thumbnail_menu::url_facts(store, Some(file), &[]));
+            window.set_context_menu(rows);
+        }
+    });
+    window.on_menu_chosen({
+        let model = model.clone();
+        let zoomed = zoomed.clone();
+        let forced_mute = forced_mute.clone();
+        let show_audio = show_audio.clone();
+        let ask = ask.clone();
+        let weak = window.as_weak();
+        move |id| {
+            use thumbnail_menu::Action;
+            use viewer_menu::ViewerAction;
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let chosen = usize::try_from(id)
+                .ok()
+                .and_then(|i| menu_state.borrow().0.get(i).cloned());
+            let Some((action, label)) = chosen else {
+                return;
+            };
+            match action {
+                Action::Viewer(ViewerAction::ZoomIn) => zoomed.zoom(1, None),
+                Action::Viewer(ViewerAction::ZoomOut) => zoomed.zoom(-1, None),
+                Action::Viewer(ViewerAction::ZoomSwitch) => zoomed.zoom(0, None),
+                Action::Viewer(ViewerAction::ZoomMax) => zoomed.zoom_max(),
+                Action::Viewer(ViewerAction::Fullscreen) => window.invoke_toggle_fullscreen(),
+                Action::Viewer(ViewerAction::MuteGlobal) => window.invoke_flip_global_mute(),
+                Action::Viewer(ViewerAction::MuteViewer) => window.invoke_flip_viewer_mute(),
+                Action::Viewer(ViewerAction::ForceMute(muted)) => {
+                    forced_mute.set(muted);
+                    show_audio();
+                }
+                Action::Viewer(ViewerAction::Volume) => {}
+                Action::Viewer(ViewerAction::RemoveFromView) => window.invoke_remove_from_view(),
+                Action::Archive => window.invoke_archive(),
+                Action::Inbox => window.invoke_inbox(),
+                Action::Undelete => window.invoke_undelete(),
+                Action::ManageTags => window.invoke_manage_tags(),
+                Action::DeleteFrom(domain) => {
+                    let name = model
+                        .borrow()
+                        .store()
+                        .snapshot()
+                        .services
+                        .get(domain)
+                        .map(|s| s.name.clone())
+                        .unwrap_or_default();
+                    ask(ViewerAsked::Delete(media_actions::Deletion::FromDomain {
+                        domain,
+                        name,
+                    }));
+                }
+                Action::DeletePhysically => {
+                    ask(ViewerAsked::Delete(media_actions::Deletion::Physically));
+                }
+                _ => {
+                    let model = model.borrow();
+                    let file = model.current();
+                    let target = MenuTarget {
+                        store: model.store(),
+                        location: model.location(),
+                        selected: vec![file],
+                        focused: Some(file),
+                        sort: None,
+                        collect: None,
+                    };
+                    let state = menu_state.borrow();
+                    shared_menu_action(
+                        action,
+                        &label,
+                        &target,
+                        &state.1,
+                        &*change_pages,
+                        &|urls| {
+                            ask(ViewerAsked::OpenUrls(urls));
+                        },
+                    );
+                }
+            }
+        }
+    });
     // ctrl+b and ctrl+n, for a file with a scanbar (`GotoPreviousOrNextFrame`)
     window.on_frame_step({
         let playback = playback.clone();
@@ -2053,18 +2224,15 @@ fn open_viewer(
     window.on_archive(act(media_actions::archive));
     window.on_inbox(act(media_actions::inbox));
     window.on_undelete(act(media_actions::undelete));
-    let pending: Rc<RefCell<Option<media_actions::Deletion>>> = Rc::default();
     window.on_delete({
         let model = model.clone();
-        let pending = pending.clone();
-        let weak = window.as_weak();
+        let ask = ask.clone();
         move || {
             let model = model.borrow();
             let deletion =
                 media_actions::deletion(model.store(), model.location(), &[model.current()]);
-            if let (Some(deletion), Some(window)) = (deletion, weak.upgrade()) {
-                window.set_question(deletion.question(1).into());
-                *pending.borrow_mut() = Some(deletion);
+            if let Some(deletion) = deletion {
+                ask(ViewerAsked::Delete(deletion));
             }
         }
     });
@@ -2073,13 +2241,19 @@ fn open_viewer(
         let weak = window.as_weak();
         let show = show.clone();
         move |yes| {
-            let deletion = pending.borrow_mut().take();
+            let asked = pending.borrow_mut().take();
             let Some(window) = weak.upgrade() else {
                 return;
             };
             window.set_question(SharedString::new());
-            let Some(deletion) = deletion.filter(|_| yes) else {
-                return;
+            let deletion = match asked.filter(|_| yes) {
+                Some(ViewerAsked::Delete(deletion)) => deletion,
+                Some(ViewerAsked::OpenUrls(urls)) => {
+                    let store = model.borrow().store().clone();
+                    Asked::OpenUrls(urls).act(&store, &|_| {});
+                    return;
+                }
+                None => return,
             };
             let (store, file, location) = {
                 let model = model.borrow();

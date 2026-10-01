@@ -86,6 +86,8 @@ pub enum Action {
     UrlPage(Urls),
     /// Move the selected thumbnails (`SIMPLE_REARRANGE_THUMBNAILS`).
     Rearrange(Rearrange),
+    /// One of the media viewer's own entries.
+    Viewer(crate::viewer_menu::ViewerAction),
 }
 
 /// Where rearranging moves the selected thumbnails (`MOVE_HOME`,
@@ -1173,6 +1175,14 @@ pub struct Slots {
     pub select: Vec<Vec<SlotItem>>,
     pub remove: Vec<Vec<SlotItem>>,
     pub rearrange: Vec<SlotItem>,
+    /// The media viewer's zoom submenu: its title and items.
+    pub zoom: Option<(String, Vec<SlotItem>)>,
+    /// The media viewer's volume submenu's groups.
+    pub volume: Vec<Vec<SlotItem>>,
+    /// The media viewer's "remove from view".
+    pub dismiss: Vec<SlotItem>,
+    /// What shows the viewer's file: the submenu's title and its line.
+    pub player: Option<(String, Vec<String>)>,
     /// The archive/delete filter, archiving and re-inboxing.
     pub filter: Vec<SlotItem>,
     /// Deleting from the one local domain the files are in.
@@ -1456,7 +1466,13 @@ impl Slots {
             match e {
                 Entry::Item(label, action) => {
                     let slot = match action {
-                        Action::Refresh => &mut slots.head,
+                        Action::Refresh
+                        | Action::Viewer(crate::viewer_menu::ViewerAction::Fullscreen) => {
+                            &mut slots.head
+                        }
+                        Action::Viewer(crate::viewer_menu::ViewerAction::RemoveFromView) => {
+                            &mut slots.dismiss
+                        }
                         Action::DeleteFrom(_) => &mut slots.delete,
                         Action::DeleteTrashPhysically
                         | Action::DeletePhysically
@@ -1473,6 +1489,20 @@ impl Slots {
                     "urls" => slots.urls = Some(UrlsSlots::new(inner)),
                     "open" => slots.open = Some(OpenSlots::new(inner)),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
+                    "volume" => slots.volume = groups(inner),
+                    "player" => {
+                        let lines = inner
+                            .iter()
+                            .filter_map(|e| match e {
+                                Entry::Label(line) => Some(line.clone()),
+                                _ => None,
+                            })
+                            .collect();
+                        slots.player = Some((title.clone(), lines));
+                    }
+                    t if t.starts_with("zoom: ") => {
+                        slots.zoom = Some((title.clone(), items(inner)));
+                    }
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
                 Entry::Separator | Entry::Label(_) => {}
@@ -1490,6 +1520,9 @@ impl Slots {
             out.push(info.entry());
             separate(&mut out);
         }
+        if let Some((title, items)) = &self.zoom {
+            out.push(Entry::Menu(title.clone(), items.iter().map(item).collect()));
+        }
         out.extend(self.head.iter().map(item));
         separate(&mut out);
         if !self.select.is_empty() {
@@ -1504,6 +1537,11 @@ impl Slots {
                 self.rearrange.iter().map(item).collect(),
             ));
         }
+        if !self.volume.is_empty() {
+            out.push(menu("volume", &self.volume));
+        }
+        separate(&mut out);
+        out.extend(self.dismiss.iter().map(item));
         separate(&mut out);
         out.extend(self.filter.iter().map(item));
         separate(&mut out);
@@ -1522,6 +1560,13 @@ impl Slots {
         out.extend(self.urls.iter().map(UrlsSlots::entry));
         out.extend(self.open.iter().map(OpenSlots::entry));
         out.extend(self.share.iter().map(ShareSlots::entry));
+        if let Some((title, lines)) = &self.player {
+            separate(&mut out);
+            out.push(Entry::Menu(
+                title.clone(),
+                lines.iter().map(|l| Entry::Label(l.clone())).collect(),
+            ));
+        }
         out
     }
 }

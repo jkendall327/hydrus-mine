@@ -18,6 +18,7 @@
 // hover frame does.
 
 import { ListText } from "theme.slint";
+import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 
 // one shape of a rating control, its outline and fill
 export struct RatingShape {
@@ -116,6 +117,11 @@ export component MediaViewerWindow inherits Window {
     callback audio-changed();
     // f: between fullscreen and the window it was
     callback toggle-fullscreen();
+    // the right-click menu (`src/viewer_menu.rs`): asked for, then shown,
+    // its rows' ids chosen
+    in property <ThumbnailMenu> context-menu;
+    callback context-menu-requested();
+    callback menu-chosen(int);
     // home and end: the first file and the last
     callback first();
     callback last();
@@ -297,6 +303,351 @@ export component MediaViewerWindow inherits Window {
             }
             reject
         }
+        // (beneath the rest, so a right-click on the file reaches the
+        // pointer's area, which asks for the menu and shows it here)
+        viewer-menu := ContextMenuArea {
+            x: 0;
+            y: 0;
+            width: root.width;
+            height: root.height;
+            Menu {
+                if root.context-menu.info-is-menu: Menu {
+                    title: root.context-menu.info-title;
+                    for row in root.context-menu.info-before: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.info-sub-title != "": Menu {
+                        title: root.context-menu.info-sub-title;
+                        for row in root.context-menu.info-sub: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.info-after: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.views: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.views-sub-title != "": Menu {
+                        title: root.context-menu.views-sub-title;
+                        for row in root.context-menu.views-sub: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                }
+                if root.context-menu.info-title != "" && !root.context-menu.info-is-menu: MenuItem {
+                    title: root.context-menu.info-title;
+                    activated => { root.menu-chosen(root.context-menu.info-title-id); }
+                }
+                MenuSeparator { }
+                if root.context-menu.zoom-title != "": Menu {
+                    title: root.context-menu.zoom-title;
+                    for row in root.context-menu.zoom: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                for row in root.context-menu.head: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                if root.context-menu.has-select: Menu {
+                    title: "select";
+                    for row in root.context-menu.select.g1: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g2: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g3: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g4: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g5: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g6: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                if root.context-menu.has-remove: Menu {
+                    title: "remove";
+                    for row in root.context-menu.remove.g1: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g2: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g3: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g4: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g5: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g6: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                if root.context-menu.has-rearrange: Menu {
+                    title: "rearrange";
+                    for row in root.context-menu.rearrange: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-volume: Menu {
+                    title: "volume";
+                    for row in root.context-menu.volume.g1: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.volume.g2: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.volume.g3: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.dismiss: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.filter: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.delete: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                if root.context-menu.delete-title != "": Menu {
+                    title: root.context-menu.delete-title;
+                    for row in root.context-menu.delete-menu: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                for row in root.context-menu.trash: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                if root.context-menu.manage.length > 0: Menu {
+                    title: "manage";
+                    for row in root.context-menu.manage: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-urls: Menu {
+                    title: "urls";
+                    Menu {
+                        title: "open in browser";
+                        for row in root.context-menu.urls-visit.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    if root.context-menu.has-url-pages: Menu {
+                        title: "open in a new page";
+                        for row in root.context-menu.urls-pages.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    Menu {
+                        title: "copy";
+                        for row in root.context-menu.urls-copy.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                }
+                if root.context-menu.has-open: Menu {
+                    title: "open";
+                    for row in root.context-menu.open-a: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.open-similar-title != "": Menu {
+                        title: root.context-menu.open-similar-title;
+                        for row in root.context-menu.open-similar: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.open-b: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-share: Menu {
+                    title: "share";
+                    for row in root.context-menu.share-a: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.share-hashes-title != "": Menu {
+                        title: root.context-menu.share-hashes-title;
+                        for row in root.context-menu.share-hashes: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.share-b: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.share-c: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.share-hash-title != "": Menu {
+                        title: root.context-menu.share-hash-title;
+                        for row in root.context-menu.share-hash: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.share-d: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                MenuSeparator { }
+                if root.context-menu.player-title != "": Menu {
+                    title: root.context-menu.player-title;
+                    for row in root.context-menu.player: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+            }
+        }
         Image {
             x: root.media-x;
             y: root.media-y;
@@ -323,6 +674,11 @@ export component MediaViewerWindow inherits Window {
                 // as the reference's default: a middle click closes it
                 if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
                     root.close-requested();
+                }
+                // and a right click shows the menu
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
+                    root.context-menu-requested();
+                    viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
                 }
             }
             moved => {

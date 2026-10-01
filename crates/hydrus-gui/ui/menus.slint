@@ -1,0 +1,79 @@
+// The right-click menus' rows, laid into the windows' fixed templates.
+
+// The thumbnails' right-click menu, laid into a fixed template (a menu's
+// markup can't mix items, submenus and separators from one list): each
+// part's items, and a submenu's runs between separators as groups.
+export struct MenuRow {
+    label: string,
+    id: int,
+}
+
+export struct MenuGroups {
+    g1: [MenuRow],
+    g2: [MenuRow],
+    g3: [MenuRow],
+    g4: [MenuRow],
+    g5: [MenuRow],
+    g6: [MenuRow],
+}
+
+export struct ThumbnailMenu {
+    // the selection's info: a label alone, or a submenu of labels (one
+    // submenu among them), then the views' labels or their summed submenu
+    info-title: string,
+    info-title-id: int,
+    info-is-menu: bool,
+    info-before: [MenuRow],
+    info-sub-title: string,
+    info-sub: [MenuRow],
+    info-after: [MenuRow],
+    views: [MenuRow],
+    views-sub-title: string,
+    views-sub: [MenuRow],
+    head: [MenuRow],
+    has-select: bool,
+    select: MenuGroups,
+    has-remove: bool,
+    remove: MenuGroups,
+    has-rearrange: bool,
+    rearrange: [MenuRow],
+    filter: [MenuRow],
+    delete: [MenuRow],
+    delete-title: string,
+    delete-menu: [MenuRow],
+    trash: [MenuRow],
+    manage: [MenuRow],
+    // the open menu: its first rows and similar files submenu, then the
+    // focused file's
+    // the urls menu: open in browser, open in a new page, and copy
+    has-urls: bool,
+    urls-visit: MenuGroups,
+    has-url-pages: bool,
+    urls-pages: MenuGroups,
+    urls-copy: MenuGroups,
+    has-open: bool,
+    open-a: [MenuRow],
+    open-similar-title: string,
+    open-similar: [MenuRow],
+    open-b: [MenuRow],
+    // the share menu: the selection's rows, copy hashes and file ids; then
+    // the focused file's path, copy hash and file id
+    has-share: bool,
+    share-a: [MenuRow],
+    share-hashes-title: string,
+    share-hashes: [MenuRow],
+    share-b: [MenuRow],
+    share-c: [MenuRow],
+    share-hash-title: string,
+    share-hash: [MenuRow],
+    share-d: [MenuRow],
+    // the media viewer's own: its zoom submenu, the volume submenu's
+    // groups, "remove from view", and what plays the file
+    zoom-title: string,
+    zoom: [MenuRow],
+    has-volume: bool,
+    volume: MenuGroups,
+    dismiss: [MenuRow],
+    player-title: string,
+    player: [MenuRow],
+}

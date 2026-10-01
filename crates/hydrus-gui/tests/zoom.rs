@@ -435,3 +435,39 @@ fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
     key(window, Key::Return);
     assert!(bound.archive_delete.borrow().is_none());
 }
+
+#[test]
+fn zooming_to_max_is_as_the_reference_s() {
+    // (`ZoomMax`: the largest step, 2000%; a still may be up to 32000
+    // logical pixels a side)
+    let mut small = Zoom::new(
+        MediaViewerSettings::default(),
+        Mime::ImagePng,
+        Some((300, 200)),
+        (1000, 750),
+        1.0,
+    );
+    assert!(!small.at_max());
+    small.zoom_max();
+    assert!((small.zoom() - 20.0).abs() < f64::EPSILON);
+    assert!(small.at_max());
+    // a big one stops at the largest size, which is its max too
+    let mut big = big_jpeg();
+    big.zoom_max();
+    assert!(big.zoom() < 20.0, "{}", big.zoom());
+    let (width, height) = big.size();
+    assert!(width == 32000 || height == 32000, "{width}x{height}");
+    assert!(big.at_max());
+    // with exact zooms only, the largest doubling under the largest step
+    let mut settings = MediaViewerSettings::default();
+    for view in settings.media_view.values_mut() {
+        view.zoom.exact_zooms_only = true;
+    }
+    let mut exact = Zoom::new(settings, Mime::ImagePng, Some((30, 20)), (1000, 750), 1.0);
+    exact.zoom_max();
+    assert!(
+        (exact.zoom() - 16.0).abs() < f64::EPSILON,
+        "{}",
+        exact.zoom()
+    );
+}

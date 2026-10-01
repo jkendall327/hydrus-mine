@@ -285,6 +285,44 @@ impl Zoom {
         }
     }
 
+    /// To the largest zoom (`ZoomMax`): the largest of the zoom steps, or
+    /// with exact zooms only, the largest doubling under it.
+    #[allow(clippy::float_cmp)]
+    pub fn zoom_max(&mut self) {
+        if !self.zoomable() {
+            return;
+        }
+        let mut max = self.max_step();
+        if self.settings.view(self.mime).zoom.exact_zooms_only {
+            let mut exact = 1.0;
+            while exact * 2.0 <= max {
+                exact *= 2.0;
+            }
+            max = exact;
+        }
+        if self.current != max {
+            self.change_zoom(max, None);
+        }
+    }
+
+    /// Whether the file is as big as it may be (`IsAtMaxZoom`): at the
+    /// largest zoom step, or as wide or high as the largest size allows.
+    #[allow(clippy::float_cmp)]
+    pub fn at_max(&self) -> bool {
+        let (width, height) = self.size();
+        let max = self.max_dimension();
+        self.current == self.max_step() || width == max || height == max
+    }
+
+    /// The largest zoom step.
+    fn max_step(&self) -> f64 {
+        self.settings
+            .media_zooms
+            .iter()
+            .copied()
+            .fold(f64::MIN, f64::max)
+    }
+
     /// The largest the file may be, on either side: less for what plays.
     fn max_dimension(&self) -> i32 {
         let animated = matches!(
@@ -661,6 +699,23 @@ impl Zoomed {
 
     pub fn drag(&self, delta: Point) {
         self.change(|zoom| zoom.drag(delta));
+    }
+
+    /// To the largest zoom.
+    pub fn zoom_max(&self) {
+        self.change(Zoom::zoom_max);
+    }
+
+    /// The zoom now, the zoom fitting the canvas, and whether it is as big
+    /// as it may be, if the file zooms (for the viewer's menu).
+    pub fn state(&self) -> Option<crate::viewer_menu::ZoomState> {
+        let zoom = self.zoom.borrow();
+        let zoom = zoom.as_ref().filter(|z| z.zoomable())?;
+        Some(crate::viewer_menu::ZoomState {
+            current: zoom.zoom(),
+            canvas: zoom.zoom_of(ZoomType::Canvas),
+            at_max: zoom.at_max(),
+        })
     }
 
     /// The size to render video at, if the file's zoom is known.

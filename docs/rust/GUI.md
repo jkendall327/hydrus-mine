@@ -189,7 +189,20 @@ page's files, round from the last to the first as in the reference, home
 and end go to the first and the last, and escape, enter or a middle click
 closes it; ctrl+r takes the file shown off the viewer and its page,
 showing the next (closing with none left), and ctrl+e opens it as the OS
-opens it, pausing one that plays; ctrl+c copies it, as a file. As the reference's default shortcuts have it, z switches between
+opens it, pausing one that plays; ctrl+c copies it, as a file. A
+right-click opens the reference's viewer menu (checked against it,
+`oracle/record_viewer_menu.py`): the file's info, as the thumbnails' menu
+has it; zoom (in, out, to 100% or fit, to max, titled with the zoom);
+go or exit fullscreen; volume (mute or unmute global and the media
+viewer, force mute or unmute just here and stop forcing, for as long as
+the viewer is open, and the volume, shown: a menu here can't hold the
+reference's slider); remove from view; archive or return to inbox;
+delete from each local file domain it is in (asking), delete physically
+now and undelete for a file in the trash; manage → tags; urls, open and
+share, as the thumbnails' menu has them for the file alone; and the
+player ("This is a MPV Embed Player."). Not yet in it: the slideshow,
+locations, and manage's ratings, notes, times, force filetype and viewing
+stats. As the reference's default shortcuts have it, z switches between
 100% and fitting the window, + and - (or ctrl and the mouse wheel) step
 through your zoom levels and canvas fit, keeping the point under the
 pointer still (or wherever your zoom centre option says), shift and the
