@@ -6,7 +6,8 @@ In the running client, pages of the `basic` fixture's files are opened
 for several selections (none, one file in the inbox, one archived, one
 in the trash, several, all) the grid's own `GetMenu` is built and its
 tree recorded: each entry's text, separators as "---", and submenus with
-their entries; at a fixed "now", for the selection's info lines.
+their entries, once the share menu's other hashes have filled in; at a
+fixed "now", for the selection's info lines.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_thumbnail_menu.py
        (writes fixtures/thumbnail_menu.json)
@@ -167,13 +168,18 @@ def record_pages( controller, gui ):
                     panel._HitMedia( m, i > 0, False )
 
 
-                return tree( panel.GetMenu() )
+                return panel.GetMenu()
 
+
+            menu = qt( build )
+
+            # (the share menu's md5, sha1 and sha512 fill in a moment later)
+            time.sleep( 0.5 )
 
             menus.append( {
                 'selection' : label,
                 'selected' : [ m.GetHash().hex() for m in selected ],
-                'menu' : qt( build ),
+                'menu' : qt( lambda: tree( menu ) ),
             } )
 
 

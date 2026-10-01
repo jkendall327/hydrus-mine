@@ -775,7 +775,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 &settings,
                 hydrus_core::TimestampMs::now().0,
             );
-            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected, info);
+            let share = (!selected.is_empty()).then(|| {
+                thumbnail_menu::share_menu(
+                    page.store(),
+                    &files,
+                    page.focused().map(|i| page.results()[i]),
+                    &page.selected_files(),
+                )
+            });
+            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected, info, share);
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
@@ -870,6 +878,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
                 Action::Copy => copy_to_clipboard(&label),
+                Action::CopyPaths
+                | Action::CopyHashes(_)
+                | Action::CopyFileIds
+                | Action::CopyPath
+                | Action::CopyHash(_)
+                | Action::CopyFileId => {
+                    let (store, files) = {
+                        let page = page.borrow();
+                        let files = match action {
+                            Action::CopyPath | Action::CopyHash(_) | Action::CopyFileId => page
+                                .focused()
+                                .map(|i| page.results()[i])
+                                .into_iter()
+                                .collect(),
+                            _ => page.selected_files(),
+                        };
+                        (page.store().clone(), files)
+                    };
+                    let lines = match action {
+                        Action::CopyPaths | Action::CopyPath => {
+                            thumbnail_menu::paths(&store, &files)
+                        }
+                        Action::CopyHashes(kind) | Action::CopyHash(kind) => {
+                            thumbnail_menu::hashes(&store, &files, kind)
+                        }
+                        _ => files.iter().map(|f| f.get().to_string()).collect(),
+                    };
+                    if !lines.is_empty() {
+                        copy_to_clipboard(&lines.join("\n"));
+                    }
+                }
                 Action::OpenInNewPage => {
                     let (location, files) = {
                         let page = page.borrow();
@@ -952,7 +991,19 @@ fn thumbnail_menu_rows(
         Some((title, items)) => (title.as_str().into(), rows(items)),
         None => (SharedString::new(), rows(&[])),
     };
+    let share = slots.share.clone().unwrap_or_default();
+    let (share_hashes_title, share_hashes) = share.hashes.clone().unwrap_or_default();
+    let (share_hash_title, share_hash) = share.hash.clone().unwrap_or_default();
     ThumbnailMenu {
+        has_share: slots.share.is_some(),
+        share_a: rows(&share.a),
+        share_hashes_title: share_hashes_title.into(),
+        share_hashes: rows(&share_hashes),
+        share_b: rows(&share.b),
+        share_c: rows(&share.c),
+        share_hash_title: share_hash_title.into(),
+        share_hash: rows(&share_hash),
+        share_d: rows(&share.d),
         info_title_id: if info.is_menu || info.title.is_empty() {
             -1
         } else {

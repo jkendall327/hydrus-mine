@@ -97,9 +97,12 @@ inbox and archive, each file domain, local and not, not selected, none,
 each with its count); the archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
 trash physically, delete physically and undelete; manage → tags; and
-open → in a new page. Not yet: the embedded metadata window, rearrange,
-clearing deletion records, the other manage entries, locations, urls,
-the rest of open, and share. Double-clicking a thumbnail opens the media viewer in its own
+open → in a new page; and share → copying the files' paths, hashes
+(sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
+in the menu) and file ids. Not yet: the embedded metadata window,
+rearrange, clearing deletion records, the other manage entries,
+locations, urls, the rest of open, and share's exporting and copying of
+files and bitmaps. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or page down and up, or the mouse wheel) move through the page's files,

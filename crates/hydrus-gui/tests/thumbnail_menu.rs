@@ -9,7 +9,7 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_core::media_viewer::InfoLineSettings;
-use hydrus_gui::thumbnail_menu::{Entry, GROUPS, Slots, facts, info_menu, menu};
+use hydrus_gui::thumbnail_menu::{Entry, GROUPS, Slots, facts, info_menu, menu, share_menu};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::{Value, json};
@@ -27,6 +27,14 @@ fn kept(label: &str) -> Kept {
     match label {
         "manage" => Kept::Only(&["tags"]),
         "open" => Kept::Only(&["in a new page"]),
+        "share" => Kept::Only(&[
+            "copy paths",
+            "copy hashes",
+            "copy file ids",
+            "copy path",
+            "copy hash",
+            "copy file id (",
+        ]),
         "select"
         | "remove"
         | "delete"
@@ -87,7 +95,14 @@ fn pruned(entries: &[Value]) -> Vec<Value> {
                     .unwrap()
                     .iter()
                     .filter(|x| {
-                        *x == "---" || only.is_none_or(|o| o.contains(&x.as_str().unwrap_or("")))
+                        // (a pattern ending "(" takes labels it starts)
+                        let label = x.as_str().or_else(|| x["menu"].as_str()).unwrap_or("");
+                        *x == "---"
+                            || only.is_none_or(|o| {
+                                o.iter().any(|p| {
+                                    label == *p || (p.ends_with('(') && label.starts_with(p))
+                                })
+                            })
                     })
                     .cloned()
                     .collect();
@@ -151,7 +166,9 @@ fn the_menu_is_the_reference_s() {
                 &InfoLineSettings::default(),
                 now_ms,
             );
-            let entries = menu(&snapshot.services, &files, &selected, info);
+            let share = (!selected.is_empty())
+                .then(|| share_menu(&store, &files, in_order.first().copied(), &in_order));
+            let entries = menu(&snapshot.services, &files, &selected, info, share);
             let ours = described(&entries);
             // (and the window's template shows it as it is)
             let slots = Slots::new(&entries);

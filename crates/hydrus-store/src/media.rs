@@ -256,6 +256,22 @@ pub fn viewing_stats(conn: &Connection, hash_ids: &[HashId]) -> Result<Vec<Viewi
     Ok(out)
 }
 
+/// The md5, sha1 and sha512 of each of `hash_ids` the client knows.
+pub fn digests(
+    conn: &Connection,
+    hash_ids: &[HashId],
+) -> Result<HashMap<HashId, [Option<Vec<u8>>; 3]>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT hash_id, md5, sha1, sha512 FROM hash_digests WHERE hash_id IN rarray(?)",
+    )?;
+    let mut out = HashMap::new();
+    let mut rows = stmt.query([id_array(hash_ids)])?;
+    while let Some(r) = rows.next()? {
+        out.insert(r.get(0)?, [r.get(1)?, r.get(2)?, r.get(3)?]);
+    }
+    Ok(out)
+}
+
 /// Which of `hash_ids` are in the inbox.
 pub fn inboxed(conn: &Connection, hash_ids: &[HashId]) -> Result<HashSet<HashId>> {
     let mut stmt =

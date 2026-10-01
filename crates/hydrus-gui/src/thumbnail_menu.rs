@@ -57,6 +57,183 @@ pub enum Action {
     OpenInNewPage,
     /// Copy the entry's text (a label's).
     Copy,
+    /// Copy the selected local files' paths, hashes of a kind, or ids.
+    CopyPaths,
+    CopyHashes(HashKind),
+    CopyFileIds,
+    /// Copy the focused file's path, hash of a kind, or id.
+    CopyPath,
+    CopyHash(HashKind),
+    CopyFileId,
+}
+
+/// A kind of hash the share menu copies.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum HashKind {
+    Sha256,
+    Md5,
+    Sha1,
+    Sha512,
+    Blurhash,
+    PixelHash,
+}
+
+impl HashKind {
+    const DIGESTS: [HashKind; 3] = [HashKind::Md5, HashKind::Sha1, HashKind::Sha512];
+
+    fn name(self) -> &'static str {
+        match self {
+            HashKind::Sha256 => "sha256",
+            HashKind::Md5 => "md5",
+            HashKind::Sha1 => "sha1",
+            HashKind::Sha512 => "sha512",
+            HashKind::Blurhash => "blurhash",
+            HashKind::PixelHash => "pixel hash",
+        }
+    }
+}
+
+/// `files`' hashes of `kind` (in their order, those unknown left out).
+pub fn hashes(store: &Store, files: &[HashId], kind: HashKind) -> Vec<String> {
+    let hex = |b: &[u8]| {
+        use std::fmt::Write as _;
+        b.iter().fold(String::new(), |mut s, x| {
+            let _ = write!(s, "{x:02x}");
+            s
+        })
+    };
+    let read = store.read(|c| {
+        Ok((
+            hydrus_store::media::load_basic(c, files)?,
+            hydrus_store::media::digests(c, files)?,
+        ))
+    });
+    let Ok((basic, digests)) = read else {
+        return Vec::new();
+    };
+    files
+        .iter()
+        .filter_map(|f| {
+            let media = basic.iter().find(|m| m.hash_id == *f)?;
+            let info = media.info.as_ref();
+            let digest = |i: usize| digests.get(f).and_then(|d| d[i].as_deref()).map(hex);
+            match kind {
+                HashKind::Sha256 => Some(media.hash.to_hex()),
+                HashKind::Md5 => digest(0),
+                HashKind::Sha1 => digest(1),
+                HashKind::Sha512 => digest(2),
+                HashKind::Blurhash => info.and_then(|i| i.blurhash.clone()),
+                HashKind::PixelHash => info.and_then(|i| i.pixel_hash).map(|h| h.to_hex()),
+            }
+        })
+        .collect()
+}
+
+/// The paths of those of `files` the client has.
+pub fn paths(store: &Store, files: &[HashId]) -> Vec<String> {
+    let snapshot = store.snapshot();
+    let Ok(basic) = store.read(|c| hydrus_store::media::load_basic(c, files)) else {
+        return Vec::new();
+    };
+    files
+        .iter()
+        .filter_map(|f| {
+            let media = basic.iter().find(|m| m.hash_id == *f)?;
+            let path = snapshot
+                .storage
+                .file_path(&media.hash, media.info.as_ref()?.mime)?;
+            path.exists().then(|| path.display().to_string())
+        })
+        .collect()
+}
+
+/// The share menu (`AddShareMenu`), so far its copying of paths, hashes
+/// and file ids: of the selection, when it is more than the focused file,
+/// and of the focused file.
+pub fn share_menu(
+    store: &Store,
+    files: &[FileFacts],
+    focused: Option<HashId>,
+    selected: &[HashId],
+) -> Entry {
+    let snapshot = store.snapshot();
+    let local_storage = DomainRoles::new(&snapshot.services)
+        .map(|r| r.local_file_storage)
+        .ok();
+    let is_local = |f: HashId| {
+        files
+            .iter()
+            .any(|x| x.file == f && local_storage.is_some_and(|l| x.current.contains(&l)))
+    };
+    let local: Vec<HashId> = selected.iter().copied().filter(|&f| is_local(f)).collect();
+    let more_than_focused = |of: &[HashId]| {
+        !(of.is_empty() || of.len() == 1 && focused.is_some_and(|f| of.contains(&f)))
+    };
+    let mut entries = Vec::new();
+    // (the reference's "export files" and "copy files" first, which
+    // hydrus-rs doesn't have yet)
+    if more_than_focused(&local) {
+        entries.push(Entry::Item("copy paths".into(), Action::CopyPaths));
+    }
+    if more_than_focused(selected) {
+        let mut copy = vec![Entry::Item(
+            "sha256".into(),
+            Action::CopyHashes(HashKind::Sha256),
+        )];
+        for kind in HashKind::DIGESTS {
+            copy.push(Entry::Item(kind.name().into(), Action::CopyHashes(kind)));
+        }
+        let blurhashes = hashes(store, selected, HashKind::Blurhash).len();
+        if blurhashes > 0 {
+            copy.push(Entry::Item(
+                format!("blurhash ({} hashes)", human_int(blurhashes as u64)),
+                Action::CopyHashes(HashKind::Blurhash),
+            ));
+        }
+        let pixel_hashes = hashes(store, selected, HashKind::PixelHash).len();
+        if pixel_hashes > 0 {
+            copy.push(Entry::Item(
+                format!("pixel hashes ({} hashes)", human_int(pixel_hashes as u64)),
+                Action::CopyHashes(HashKind::PixelHash),
+            ));
+        }
+        entries.push(Entry::Menu("copy hashes".into(), copy));
+        entries.push(Entry::Item("copy file ids".into(), Action::CopyFileIds));
+        separate(&mut entries);
+    }
+    if let Some(file) = focused {
+        if is_local(file) {
+            entries.push(Entry::Item("copy path".into(), Action::CopyPath));
+        }
+        let one = |kind: HashKind| hashes(store, &[file], kind).pop();
+        let mut copy = Vec::new();
+        for kind in [
+            HashKind::Sha256,
+            HashKind::Md5,
+            HashKind::Sha1,
+            HashKind::Sha512,
+        ] {
+            let hash = one(kind).unwrap_or_else(|| "unknown".to_owned());
+            copy.push(Entry::Item(
+                format!("{} ({hash})", kind.name()),
+                Action::CopyHash(kind),
+            ));
+        }
+        for kind in [HashKind::Blurhash, HashKind::PixelHash] {
+            if let Some(hash) = one(kind) {
+                copy.push(Entry::Item(
+                    format!("{} ({hash})", kind.name()),
+                    Action::CopyHash(kind),
+                ));
+            }
+        }
+        entries.push(Entry::Menu("copy hash".into(), copy));
+        entries.push(Entry::Item(
+            format!("copy file id ({})", human_int(u64::from(file.get()))),
+            Action::CopyFileId,
+        ));
+    }
+    Entry::Menu("share".into(), entries)
 }
 
 /// What the menu knows of a file.
@@ -215,13 +392,14 @@ fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
 }
 
 /// The menu for a page of `files` (in its order) with `selected` selected,
-/// with the selection's `info` first.
+/// with the selection's `info` first and its `share` menu last.
 #[allow(clippy::too_many_lines)]
 pub fn menu(
     services: &ServiceRegistry,
     files: &[FileFacts],
     selected: &HashSet<HashId>,
     info: Option<Entry>,
+    share: Option<Entry>,
 ) -> Vec<Entry> {
     let Ok(roles) = DomainRoles::new(services) else {
         return vec![Entry::Item("refresh".into(), Action::Refresh)];
@@ -430,6 +608,7 @@ pub fn menu(
             "open".into(),
             vec![Entry::Item("in a new page".into(), Action::OpenInNewPage)],
         ));
+        entries.extend(share);
     }
     entries
 }
@@ -530,6 +709,72 @@ pub struct Slots {
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
     pub open: Vec<SlotItem>,
+    pub share: Option<ShareSlots>,
+}
+
+/// The share menu in the template: the selection's items, its copy
+/// hashes submenu and its file ids item, then (after a separator) the
+/// focused file's path, copy hash submenu and file id.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct ShareSlots {
+    pub a: Vec<SlotItem>,
+    pub hashes: Option<(String, Vec<SlotItem>)>,
+    pub b: Vec<SlotItem>,
+    pub c: Vec<SlotItem>,
+    pub hash: Option<(String, Vec<SlotItem>)>,
+    pub d: Vec<SlotItem>,
+}
+
+impl ShareSlots {
+    fn new(inner: &[Entry]) -> Self {
+        let mut share = Self::default();
+        let mut past_separator = false;
+        for e in inner {
+            match (e, past_separator) {
+                (Entry::Separator, _) => past_separator = true,
+                (Entry::Item(label, action), false) if share.hashes.is_none() => {
+                    share.a.push((label.clone(), *action));
+                }
+                (Entry::Item(label, action), false) => share.b.push((label.clone(), *action)),
+                (Entry::Menu(title, sub), false) => {
+                    share.hashes = Some((title.clone(), items(sub)));
+                }
+                (Entry::Item(label, action), true) if share.hash.is_none() => {
+                    share.c.push((label.clone(), *action));
+                }
+                (Entry::Item(label, action), true) => share.d.push((label.clone(), *action)),
+                (Entry::Menu(title, sub), true) => share.hash = Some((title.clone(), items(sub))),
+                (Entry::Label(_), _) => {}
+            }
+        }
+        share
+    }
+
+    fn entry(&self) -> Entry {
+        let item = |(label, action): &SlotItem| Entry::Item(label.clone(), *action);
+        let menu = |(title, items): &(String, Vec<SlotItem>)| {
+            Entry::Menu(title.clone(), items.iter().map(item).collect())
+        };
+        let mut inner: Vec<Entry> = self.a.iter().map(item).collect();
+        inner.extend(self.hashes.iter().map(menu));
+        inner.extend(self.b.iter().map(item));
+        separate(&mut inner);
+        inner.extend(self.c.iter().map(item));
+        inner.extend(self.hash.iter().map(menu));
+        inner.extend(self.d.iter().map(item));
+        Entry::Menu("share".into(), inner)
+    }
+}
+
+/// A submenu's items.
+fn items(entries: &[Entry]) -> Vec<SlotItem> {
+    entries
+        .iter()
+        .filter_map(|e| match e {
+            Entry::Item(label, action) => Some((label.clone(), *action)),
+            _ => None,
+        })
+        .collect()
 }
 
 /// The selection's info in the template: a label alone, or a submenu of
@@ -612,15 +857,6 @@ pub const GROUPS: usize = 6;
 
 impl Slots {
     pub fn new(entries: &[Entry]) -> Self {
-        fn items(entries: &[Entry]) -> Vec<SlotItem> {
-            entries
-                .iter()
-                .filter_map(|e| match e {
-                    Entry::Item(label, action) => Some((label.clone(), *action)),
-                    _ => None,
-                })
-                .collect()
-        }
         fn groups(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
             let mut out: Vec<Vec<SlotItem>> = vec![Vec::new()];
             for e in entries {
@@ -662,6 +898,7 @@ impl Slots {
                     "remove" => slots.remove = groups(inner),
                     "manage" => slots.manage = items(inner),
                     "open" => slots.open = items(inner),
+                    "share" => slots.share = Some(ShareSlots::new(inner)),
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
                 Entry::Separator | Entry::Label(_) => {}
@@ -715,6 +952,7 @@ impl Slots {
                 self.open.iter().map(item).collect(),
             ));
         }
+        out.extend(self.share.iter().map(ShareSlots::entry));
         out
     }
 }

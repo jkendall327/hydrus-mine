@@ -162,6 +162,17 @@ export struct ThumbnailMenu {
     trash: [MenuRow],
     manage: [MenuRow],
     open: [MenuRow],
+    // the share menu: the selection's rows, copy hashes and file ids; then
+    // the focused file's path, copy hash and file id
+    has-share: bool,
+    share-a: [MenuRow],
+    share-hashes-title: string,
+    share-hashes: [MenuRow],
+    share-b: [MenuRow],
+    share-c: [MenuRow],
+    share-hash-title: string,
+    share-hash: [MenuRow],
+    share-d: [MenuRow],
 }
 
 export struct ThumbnailRow {
@@ -717,6 +728,40 @@ export component MainWindow inherits Window {
                         if root.thumbnail-menu.open.length > 0: Menu {
                             title: "open";
                             for row in root.thumbnail-menu.open: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.has-share: Menu {
+                            title: "share";
+                            for row in root.thumbnail-menu.share-a: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-hashes-title != "": Menu {
+                                title: root.thumbnail-menu.share-hashes-title;
+                                for row in root.thumbnail-menu.share-hashes: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.share-b: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.share-c: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-hash-title != "": Menu {
+                                title: root.thumbnail-menu.share-hash-title;
+                                for row in root.thumbnail-menu.share-hash: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.share-d: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
                             }
