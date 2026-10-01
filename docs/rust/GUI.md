@@ -89,12 +89,15 @@ enter opens the media viewer on the focused file. A right-click on a thumbnail s
 as a click would and opens the reference's thumbnail menu
 (`src/thumbnail_menu.rs`, checked against the reference's own menus for
 several pages and selections, `oracle/record_thumbnail_menu.py`), so far
-with the entries hydrus-rs can act on: refresh; select and remove (all,
+with the entries hydrus-rs can act on: first the selection's info (its
+files' types and size, the focused file's info lines, and how often they
+were viewed; a line chosen is copied to the clipboard, as in the
+reference); refresh; select and remove (all,
 inbox and archive, each file domain, local and not, not selected, none,
 each with its count); the archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
 trash physically, delete physically and undelete; manage → tags; and
-open → in a new page. Not yet: the selection's info submenu, rearrange,
+open → in a new page. Not yet: the embedded metadata window, rearrange,
 clearing deletion records, the other manage entries, locations, urls,
 the rest of open, and share. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your

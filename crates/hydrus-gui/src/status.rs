@@ -73,7 +73,7 @@ pub fn filetype_summary(files: &[Facts]) -> String {
 }
 
 /// `_GetPrettyTotalSize`.
-fn total_size(files: &[Facts]) -> String {
+pub(crate) fn total_size(files: &[Facts]) -> String {
     let total: u64 = files.iter().filter_map(|f| f.size).sum();
     let unknown = files.iter().any(|f| f.size.is_none());
     match (total, unknown) {
@@ -84,7 +84,7 @@ fn total_size(files: &[Facts]) -> String {
 }
 
 /// `_GetPrettyTotalDuration`: nothing unless every file has a duration.
-fn total_duration(files: &[Facts]) -> Option<String> {
+pub(crate) fn total_duration(files: &[Facts]) -> Option<String> {
     let durations: Option<Vec<u64>> = files
         .iter()
         .map(|f| f.duration_ms.filter(|&d| d > 0))

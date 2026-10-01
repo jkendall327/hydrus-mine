@@ -8,7 +8,8 @@ use std::collections::HashSet;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_gui::thumbnail_menu::{Entry, GROUPS, Slots, facts, menu};
+use hydrus_core::media_viewer::InfoLineSettings;
+use hydrus_gui::thumbnail_menu::{Entry, GROUPS, Slots, facts, info_menu, menu};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::{Value, json};
@@ -102,7 +103,7 @@ fn described(entries: &[Entry]) -> Vec<Value> {
             .iter()
             .map(|e| match e {
                 Entry::Separator => json!("---"),
-                Entry::Item(label, _) => json!(label),
+                Entry::Item(label, _) | Entry::Label(label) => json!(label),
                 Entry::Menu(label, inner) => json!({ "menu": label, "entries": described(inner) }),
             })
             .collect(),
@@ -121,6 +122,7 @@ fn the_menu_is_the_reference_s() {
     .unwrap();
     let store: Arc<Store> = Store::open(native.path()).unwrap();
     let snapshot = store.snapshot();
+    let now_ms = fixture["now"].as_i64().unwrap() * 1000;
     let ids = |hashes: &Value| -> Vec<HashId> {
         hashes
             .as_array()
@@ -141,19 +143,46 @@ fn the_menu_is_the_reference_s() {
         let files = facts(&store, &ids(&page["files"]));
         for case in page["menus"].as_array().unwrap() {
             let selected: HashSet<HashId> = ids(&case["selected"]).into_iter().collect();
-            let entries = menu(&snapshot.services, &files, &selected);
+            let in_order = ids(&case["selected"]);
+            let info = info_menu(
+                &store,
+                in_order.first().copied(),
+                &in_order,
+                &InfoLineSettings::default(),
+                now_ms,
+            );
+            let entries = menu(&snapshot.services, &files, &selected, info);
             let ours = described(&entries);
             // (and the window's template shows it as it is)
             let slots = Slots::new(&entries);
             assert!(slots.select.len() <= GROUPS && slots.remove.len() <= GROUPS);
             assert_eq!(described(&slots.entries()), ours);
-            let theirs = pruned(case["menu"].as_array().unwrap());
-            assert_eq!(
+            let mut theirs = case["menu"].as_array().unwrap().clone();
+            // (the selection's info first, less what hydrus-rs doesn't have)
+            let info = (!selected.is_empty()).then(|| theirs.remove(0));
+            let mut theirs = pruned(&theirs);
+            if let Some(mut info) = info {
+                if let Some(entries) = info.get_mut("entries") {
+                    let kept: Vec<Value> = entries
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .filter(|e| *e != "show detailed embedded file metadata")
+                        .cloned()
+                        .collect();
+                    *entries = Value::Array(tidy(kept));
+                }
+                theirs.insert(0, info);
+                theirs.insert(1, json!("---"));
+                theirs = tidy(theirs);
+            }
+            assert!(
+                ours == theirs,
+                "{}: {}\n{}\n!=\n{}",
+                page["page"],
+                case["selection"],
                 serde_json::to_string_pretty(&ours).unwrap(),
                 serde_json::to_string_pretty(&theirs).unwrap(),
-                "{}: {}",
-                page["page"],
-                case["selection"]
             );
             checked += 1;
         }

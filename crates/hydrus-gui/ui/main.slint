@@ -138,6 +138,18 @@ export struct MenuGroups {
 }
 
 export struct ThumbnailMenu {
+    // the selection's info: a label alone, or a submenu of labels (one
+    // submenu among them), then the views' labels or their summed submenu
+    info-title: string,
+    info-title-id: int,
+    info-is-menu: bool,
+    info-before: [MenuRow],
+    info-sub-title: string,
+    info-sub: [MenuRow],
+    info-after: [MenuRow],
+    views: [MenuRow],
+    views-sub-title: string,
+    views-sub: [MenuRow],
     head: [MenuRow],
     has-select: bool,
     select: MenuGroups,
@@ -567,6 +579,41 @@ export component MainWindow inherits Window {
                 menu-area := ContextMenuArea {
                     horizontal-stretch: 1;
                     Menu {
+                        if root.thumbnail-menu.info-is-menu: Menu {
+                            title: root.thumbnail-menu.info-title;
+                            for row in root.thumbnail-menu.info-before: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.info-sub-title != "": Menu {
+                                title: root.thumbnail-menu.info-sub-title;
+                                for row in root.thumbnail-menu.info-sub: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.info-after: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.views: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.views-sub-title != "": Menu {
+                                title: root.thumbnail-menu.views-sub-title;
+                                for row in root.thumbnail-menu.views-sub: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                        }
+                        if root.thumbnail-menu.info-title != "" && !root.thumbnail-menu.info-is-menu: MenuItem {
+                            title: root.thumbnail-menu.info-title;
+                            activated => { root.menu-chosen(root.thumbnail-menu.info-title-id); }
+                        }
+                        MenuSeparator { }
                         for row in root.thumbnail-menu.head: MenuItem {
                             title: row.label;
                             activated => { root.menu-chosen(row.id); }

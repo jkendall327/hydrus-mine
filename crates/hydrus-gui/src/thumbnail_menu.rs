@@ -3,8 +3,10 @@
 //! refresh; select and remove, by inbox and archive, file domain, client
 //! and selection, with counts; the archive/delete filter; archive and
 //! re-inbox; deleting from each local file domain, deleting physically and
-//! undeleting; manage → tags; and open → in a new page. Plain Rust, tested
-//! against the reference.
+//! undeleting; manage → tags; open → in a new page; and first, the
+//! selection's info (its files' types and size, the focused file's info
+//! lines, and how often they were viewed), whose lines copy themselves
+//! when chosen. Plain Rust, tested against the reference.
 
 use std::collections::{BTreeSet, HashSet};
 
@@ -14,10 +16,12 @@ use hydrus_store::Store;
 use hydrus_store::content::DomainRoles;
 use hydrus_store::services::ServiceRegistry;
 
-/// An entry: an item, a submenu, or a separator.
+/// An entry: an item, a label (which copies itself when chosen), a
+/// submenu, or a separator.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Entry {
     Item(String, Action),
+    Label(String),
     Menu(String, Vec<Entry>),
     Separator,
 }
@@ -51,6 +55,8 @@ pub enum Action {
     Undelete,
     ManageTags,
     OpenInNewPage,
+    /// Copy the entry's text (a label's).
+    Copy,
 }
 
 /// What the menu knows of a file.
@@ -91,12 +97,131 @@ fn separate(entries: &mut Vec<Entry>) {
     }
 }
 
-/// The menu for a page of `files` (in its order) with `selected` selected.
+/// The selection's info, first in the menu: a submenu of `selected`'s
+/// types and size (and, for several, their duration), holding the
+/// `focused` file's info lines when one is selected, and how often they
+/// were viewed; or, with nothing in it, a label. `None` with nothing
+/// selected.
+pub fn info_menu(
+    store: &Store,
+    focused: Option<HashId>,
+    selected: &[HashId],
+    settings: &hydrus_core::media_viewer::InfoLineSettings,
+    now_ms: i64,
+) -> Option<Entry> {
+    use crate::info_lines::InfoLine;
+    fn rows(lines: Vec<InfoLine>) -> Vec<Entry> {
+        lines
+            .into_iter()
+            .map(|line| match line.submenu {
+                Some(sub) => Entry::Menu(line.text, rows(sub)),
+                None => Entry::Label(line.text),
+            })
+            .collect()
+    }
+    if selected.is_empty() {
+        return None;
+    }
+    let facts: Vec<crate::status::Facts> = crate::status::facts(store, selected)
+        .into_iter()
+        .map(|(_, f)| f)
+        .collect();
+    let mut label = format!(
+        "{}, {}",
+        crate::status::filetype_summary(&facts),
+        crate::status::total_size(&facts)
+    );
+    let mut entries = Vec::new();
+    let snapshot = store.snapshot();
+    if selected.len() > 1 {
+        if let Some(duration) = crate::status::total_duration(&facts) {
+            label += &format!(", {duration}");
+        }
+    } else if let Some(file) = focused {
+        // (the reference's "show detailed embedded file metadata" comes
+        // first, which hydrus-rs doesn't have yet)
+        if let Ok(mut batch) =
+            store.read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
+            && let Some(media) = batch.results.pop()
+        {
+            entries.extend(rows(crate::info_lines::info_lines(
+                &media,
+                &snapshot.services,
+                settings,
+                now_ms,
+                false,
+            )));
+        }
+    }
+    separate(&mut entries);
+    entries.extend(views_entries(store, selected, now_ms));
+    Some(if entries.iter().all(|e| *e == Entry::Separator) {
+        Entry::Label(label)
+    } else {
+        Entry::Menu(label, entries)
+    })
+}
+
+/// How often `files` were viewed (`AddFileViewingStatsMenu`, the
+/// reference's defaults: the media viewer's and the Client API's views,
+/// summed in a submenu's title when both have some).
+fn views_entries(store: &Store, files: &[HashId], now_ms: i64) -> Vec<Entry> {
+    use hydrus_core::CanvasType;
+    let Ok(stats) = store.read(|c| hydrus_store::media::viewing_stats(c, files)) else {
+        return Vec::new();
+    };
+    let line = |canvases: &[CanvasType]| -> String {
+        let of = || stats.iter().filter(|s| canvases.contains(&s.canvas));
+        let views: u64 = of().map(|s| s.views).sum();
+        let viewtime_ms: u64 = of().map(|s| s.viewtime_ms).sum();
+        let canvas = match canvases {
+            [CanvasType::MediaViewer] => " in media viewer",
+            [CanvasType::ClientApi] => " in client api viewer",
+            _ => "",
+        };
+        if views == 0 {
+            return format!("no view record{canvas}");
+        }
+        let last = match of().filter_map(|s| s.last_viewed).max() {
+            Some(t) => format!(
+                "last {}",
+                hydrus_core::time::timestamp_to_pretty_time_delta(
+                    t.0.div_euclid(1000),
+                    now_ms.div_euclid(1000),
+                    " ago"
+                )
+            ),
+            None => "no recorded last view time".to_owned(),
+        };
+        format!(
+            "viewed {} times{canvas}, totalling {}, {last}",
+            human_int(views),
+            hydrus_core::time::pretty_time_delta_f64(viewtime_ms as f64 / 1000.0)
+        )
+    };
+    let with_views: Vec<CanvasType> = [CanvasType::MediaViewer, CanvasType::ClientApi]
+        .into_iter()
+        .filter(|&c| stats.iter().any(|s| s.canvas == c && s.views > 0))
+        .collect();
+    let lines: Vec<Entry> = with_views
+        .iter()
+        .map(|&c| Entry::Label(line(&[c])))
+        .collect();
+    if with_views.len() > 1 {
+        vec![Entry::Menu(line(&with_views), lines)]
+    } else {
+        lines
+    }
+}
+
+/// The menu for a page of `files` (in its order) with `selected` selected,
+/// with the selection's `info` first.
 #[allow(clippy::too_many_lines)]
 pub fn menu(
     services: &ServiceRegistry,
     files: &[FileFacts],
     selected: &HashSet<HashId>,
+    info: Option<Entry>,
 ) -> Vec<Entry> {
     let Ok(roles) = DomainRoles::new(services) else {
         return vec![Entry::Item("refresh".into(), Action::Refresh)];
@@ -113,6 +238,10 @@ pub fn menu(
     let phrase = |one: &str, several: &str| if multiple { several } else { one }.to_owned();
 
     let mut entries = Vec::new();
+    if let Some(info) = info {
+        entries.push(info);
+        separate(&mut entries);
+    }
     entries.push(Entry::Item("refresh".into(), Action::Refresh));
     if num_files > 0 {
         separate(&mut entries);
@@ -386,6 +515,8 @@ pub type SlotItem = (String, Action);
 /// part in order, a submenu's runs between separators as groups.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct Slots {
+    /// The selection's info.
+    pub info: Option<InfoSlots>,
     pub head: Vec<SlotItem>,
     pub select: Vec<Vec<SlotItem>>,
     pub remove: Vec<Vec<SlotItem>>,
@@ -399,6 +530,81 @@ pub struct Slots {
     pub trash: Vec<SlotItem>,
     pub manage: Vec<SlotItem>,
     pub open: Vec<SlotItem>,
+}
+
+/// The selection's info in the template: a label alone, or a submenu of
+/// labels with at most one submenu among them, then (after a separator)
+/// the views' labels or their summed submenu.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct InfoSlots {
+    pub title: String,
+    pub is_menu: bool,
+    pub before: Vec<String>,
+    pub sub: Option<(String, Vec<String>)>,
+    pub after: Vec<String>,
+    pub views: Vec<String>,
+    pub views_sub: Option<(String, Vec<String>)>,
+}
+
+impl InfoSlots {
+    fn new(entry: &Entry) -> Self {
+        fn labels(entries: &[Entry]) -> Vec<String> {
+            entries
+                .iter()
+                .filter_map(|e| match e {
+                    Entry::Label(text) => Some(text.clone()),
+                    _ => None,
+                })
+                .collect()
+        }
+        let (title, inner) = match entry {
+            Entry::Menu(title, inner) => (title, &inner[..]),
+            Entry::Label(title) | Entry::Item(title, _) => {
+                return Self {
+                    title: title.clone(),
+                    ..Self::default()
+                };
+            }
+            Entry::Separator => return Self::default(),
+        };
+        let mut info = Self {
+            title: title.clone(),
+            is_menu: true,
+            ..Self::default()
+        };
+        let mut past_separator = false;
+        for e in inner {
+            match (e, past_separator) {
+                (Entry::Separator, _) => past_separator = true,
+                (Entry::Label(text), false) if info.sub.is_none() => info.before.push(text.clone()),
+                (Entry::Label(text), false) => info.after.push(text.clone()),
+                (Entry::Menu(title, sub), false) => info.sub = Some((title.clone(), labels(sub))),
+                (Entry::Label(text), true) => info.views.push(text.clone()),
+                (Entry::Menu(title, sub), true) => {
+                    info.views_sub = Some((title.clone(), labels(sub)));
+                }
+                (Entry::Item(..), _) => {}
+            }
+        }
+        info
+    }
+
+    fn entry(&self) -> Entry {
+        if !self.is_menu {
+            return Entry::Label(self.title.clone());
+        }
+        let label = |text: &String| Entry::Label(text.clone());
+        let menu = |(title, lines): &(String, Vec<String>)| {
+            Entry::Menu(title.clone(), lines.iter().map(label).collect())
+        };
+        let mut inner: Vec<Entry> = self.before.iter().map(label).collect();
+        inner.extend(self.sub.iter().map(menu));
+        inner.extend(self.after.iter().map(label));
+        separate(&mut inner);
+        inner.extend(self.views.iter().map(label));
+        inner.extend(self.views_sub.iter().map(menu));
+        Entry::Menu(self.title.clone(), inner)
+    }
 }
 
 /// The most groups the template has for a submenu.
@@ -423,13 +629,21 @@ impl Slots {
                     Entry::Item(label, action) => {
                         out.last_mut().expect("one").push((label.clone(), *action));
                     }
-                    Entry::Menu(..) => {}
+                    Entry::Menu(..) | Entry::Label(_) => {}
                 }
             }
             out.retain(|g| !g.is_empty());
             out
         }
         let mut slots = Self::default();
+        // (the selection's info, if any, comes first)
+        let entries = match entries.first() {
+            Some(first) if !matches!(first, Entry::Item(_, Action::Refresh)) => {
+                slots.info = Some(InfoSlots::new(first));
+                &entries[1..]
+            }
+            _ => entries,
+        };
         for e in entries {
             match e {
                 Entry::Item(label, action) => {
@@ -450,7 +664,7 @@ impl Slots {
                     "open" => slots.open = items(inner),
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
-                Entry::Separator => {}
+                Entry::Separator | Entry::Label(_) => {}
             }
         }
         slots
@@ -468,6 +682,10 @@ impl Slots {
             Entry::Menu(title.into(), inner)
         };
         let mut out = Vec::new();
+        if let Some(info) = &self.info {
+            out.push(info.entry());
+            separate(&mut out);
+        }
         out.extend(self.head.iter().map(item));
         separate(&mut out);
         if !self.select.is_empty() {

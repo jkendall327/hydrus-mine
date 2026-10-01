@@ -235,6 +235,27 @@ pub fn deleted_from(
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
+/// The viewing statistics of `hash_ids`, all together.
+pub fn viewing_stats(conn: &Connection, hash_ids: &[HashId]) -> Result<Vec<ViewingStats>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT canvas_type, views, viewtime_ms, last_viewed_ms FROM file_viewing_stats WHERE hash_id IN rarray(?)",
+    )?;
+    let mut out = Vec::new();
+    let mut rows = stmt.query([id_array(hash_ids)])?;
+    while let Some(r) = rows.next()? {
+        let Some(canvas) = CanvasType::from_code(r.get(0)?) else {
+            continue;
+        };
+        out.push(ViewingStats {
+            canvas,
+            views: r.get::<_, i64>(1)? as u64,
+            viewtime_ms: r.get::<_, i64>(2)? as u64,
+            last_viewed: r.get(3)?,
+        });
+    }
+    Ok(out)
+}
+
 /// Which of `hash_ids` are in the inbox.
 pub fn inboxed(conn: &Connection, hash_ids: &[HashId]) -> Result<HashSet<HashId>> {
     let mut stmt =

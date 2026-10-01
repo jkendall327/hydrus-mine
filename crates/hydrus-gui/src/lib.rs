@@ -745,8 +745,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // the right-click menu: built for the file clicked (selecting it, as
     // a click would), and its entries done
-    let menu_state: Rc<RefCell<(Vec<thumbnail_menu::Action>, Vec<thumbnail_menu::FileFacts>)>> =
-        Rc::default();
+    let menu_state: MenuState = Rc::default();
     window.on_thumbnail_menu_requested({
         let page = page.clone();
         let reselect = reselect.clone();
@@ -765,7 +764,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let selected: std::collections::HashSet<HashId> =
                 page.selected_files().into_iter().collect();
             let snapshot = page.store().snapshot();
-            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected);
+            let settings: hydrus_core::media_viewer::InfoLineSettings = page
+                .store()
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let info = thumbnail_menu::info_menu(
+                page.store(),
+                page.focused().map(|i| page.results()[i]),
+                &page.selected_files(),
+                &settings,
+                hydrus_core::TimestampMs::now().0,
+            );
+            let entries = thumbnail_menu::menu(&snapshot.services, &files, &selected, info);
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let window_menu = thumbnail_menu_rows(&slots, &mut actions);
@@ -785,7 +795,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let (Some(window), Ok(id)) = (weak.upgrade(), usize::try_from(id)) else {
                 return;
             };
-            let Some(action) = menu_state.borrow().0.get(id).copied() else {
+            let Some((action, label)) = menu_state.borrow().0.get(id).cloned() else {
                 return;
             };
             let page = page();
@@ -859,6 +869,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 ),
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
+                Action::Copy => copy_to_clipboard(&label),
                 Action::OpenInNewPage => {
                     let (location, files) = {
                         let page = page.borrow();
@@ -891,22 +902,40 @@ pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
 /// put in `actions` at its id.
 fn thumbnail_menu_rows(
     slots: &thumbnail_menu::Slots,
-    actions: &mut Vec<thumbnail_menu::Action>,
+    actions: &mut Vec<(thumbnail_menu::Action, String)>,
 ) -> ThumbnailMenu {
-    let mut rows = |items: &[thumbnail_menu::SlotItem]| -> ModelRc<MenuRow> {
+    use thumbnail_menu::Action;
+    let actions = std::cell::RefCell::new(actions);
+    let id = |action: Action, label: &str| {
+        let mut actions = actions.borrow_mut();
+        actions.push((action, label.to_owned()));
+        i32::try_from(actions.len() - 1).unwrap_or(-1)
+    };
+    let rows = |items: &[thumbnail_menu::SlotItem]| -> ModelRc<MenuRow> {
         let rows: Vec<MenuRow> = items
             .iter()
-            .map(|(label, action)| {
-                actions.push(*action);
-                MenuRow {
-                    label: label.as_str().into(),
-                    id: i32::try_from(actions.len() - 1).unwrap_or(-1),
-                }
+            .map(|(label, action)| MenuRow {
+                label: label.as_str().into(),
+                id: id(*action, label),
             })
             .collect();
         ModelRc::new(VecModel::from(rows))
     };
-    let mut groups = |groups: &[Vec<thumbnail_menu::SlotItem>]| {
+    // (labels copy themselves)
+    let labels = |lines: &[String]| -> ModelRc<MenuRow> {
+        let rows: Vec<MenuRow> = lines
+            .iter()
+            .map(|label| MenuRow {
+                label: label.as_str().into(),
+                id: id(Action::Copy, label),
+            })
+            .collect();
+        ModelRc::new(VecModel::from(rows))
+    };
+    let info = slots.info.clone().unwrap_or_default();
+    let (info_sub_title, info_sub) = info.sub.clone().unwrap_or_default();
+    let (views_sub_title, views_sub) = info.views_sub.clone().unwrap_or_default();
+    let groups = |groups: &[Vec<thumbnail_menu::SlotItem>]| {
         let group = |i: usize| groups.get(i).map_or(&[][..], Vec::as_slice);
         MenuGroups {
             g1: rows(group(0)),
@@ -924,6 +953,20 @@ fn thumbnail_menu_rows(
         None => (SharedString::new(), rows(&[])),
     };
     ThumbnailMenu {
+        info_title_id: if info.is_menu || info.title.is_empty() {
+            -1
+        } else {
+            id(Action::Copy, &info.title)
+        },
+        info_title: info.title.as_str().into(),
+        info_is_menu: info.is_menu,
+        info_before: labels(&info.before),
+        info_sub_title: info_sub_title.into(),
+        info_sub: labels(&info_sub),
+        info_after: labels(&info.after),
+        views: labels(&info.views),
+        views_sub_title: views_sub_title.into(),
+        views_sub: labels(&views_sub),
         head: rows(&slots.head),
         has_select: !slots.select.is_empty(),
         select,
@@ -936,6 +979,28 @@ fn thumbnail_menu_rows(
         trash: rows(&slots.trash),
         manage: rows(&slots.manage),
         open: rows(&slots.open),
+    }
+}
+
+/// The right-click menu shown: each entry's action and label by id, and
+/// the page's files' facts it was built from.
+type MenuState = Rc<
+    RefCell<(
+        Vec<(thumbnail_menu::Action, String)>,
+        Vec<thumbnail_menu::FileFacts>,
+    )>,
+>;
+
+/// Put `text` on the clipboard (as the reference's menu labels do when
+/// chosen).
+fn copy_to_clipboard(text: &str) {
+    match arboard::Clipboard::new() {
+        Ok(mut clipboard) => {
+            if let Err(e) = clipboard.set_text(text) {
+                eprintln!("could not copy to the clipboard: {e}");
+            }
+        }
+        Err(e) => eprintln!("could not open the clipboard: {e}"),
     }
 }
 

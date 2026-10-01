@@ -6,7 +6,7 @@ In the running client, pages of the `basic` fixture's files are opened
 for several selections (none, one file in the inbox, one archived, one
 in the trash, several, all) the grid's own `GetMenu` is built and its
 tree recorded: each entry's text, separators as "---", and submenus with
-their entries.
+their entries; at a fixed "now", for the selection's info lines.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_thumbnail_menu.py
        (writes fixtures/thumbnail_menu.json)
@@ -53,8 +53,35 @@ def record( session ):
     from hydrus.client import ClientConstants as CC
     from hydrus.client import ClientLocation
 
+    from hydrus.core import HydrusTime
+
     controller = session.controller
     gui = controller.gui
+
+    # (at a fixed now, for the info lines' times)
+    now = int( time.time() )
+
+    real = ( HydrusTime.GetNow, HydrusTime.GetNowMS, HydrusTime.GetNowFloat )
+
+    HydrusTime.GetNow = lambda: now
+    HydrusTime.GetNowMS = lambda: now * 1000
+    HydrusTime.GetNowFloat = lambda: float( now )
+
+    try:
+
+        return { 'now' : now, 'pages' : record_pages( controller, gui ) }
+
+    finally:
+
+        ( HydrusTime.GetNow, HydrusTime.GetNowMS, HydrusTime.GetNowFloat ) = real
+
+
+
+def record_pages( controller, gui ):
+
+    from hydrus.core import HydrusConstants as HC
+    from hydrus.client import ClientConstants as CC
+    from hydrus.client import ClientLocation
 
     hashes = [ bytes.fromhex( f[ 'hash' ] ) for f in MANIFEST[ 'files' ] ]
 
@@ -153,7 +180,7 @@ def record( session ):
         pages.append( { 'page' : name, 'files' : [ m.GetHash().hex() for m in media ], 'menus' : menus } )
 
 
-    return { 'pages' : pages }
+    return pages
 
 
 def ClientMediaFileFilterNone():
