@@ -792,7 +792,29 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 tokio::time::sleep(Duration::from_secs(180)).await;
             }
         });
-        // queues made by other processes (the command line)
+        // queues another process (the desktop client) made or changed, as
+        // it nudges them: looked at every second
+        if let Some(downloads) = state.downloads.clone() {
+            let store = store.clone();
+            tokio::spawn(async move {
+                loop {
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    let nudged = store.read(hydrus_store::queues::any_nudged);
+                    if !matches!(nudged, Ok(true)) {
+                        continue;
+                    }
+                    match store.write(|ctx| hydrus_store::queues::take_nudges(ctx.conn())) {
+                        Ok(queues) => {
+                            for queue in queues {
+                                downloads.nudged(queue);
+                            }
+                        }
+                        Err(e) => tracing::error!(error = %e, "reading nudged queues failed"),
+                    }
+                }
+            });
+        }
+        // queues made by other processes that don't nudge (older ones)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {
                 loop {

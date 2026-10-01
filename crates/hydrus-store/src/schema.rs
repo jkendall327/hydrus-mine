@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -675,6 +675,14 @@ CREATE TABLE media_viewers (
     canvas_type INTEGER NOT NULL,
     -- the file shown, if any
     hash_id INTEGER
+) STRICT;
+";
+
+/// Import queues changed by another process (the desktop client, the
+/// command line), for the daemon to look at now (`queues.rs`).
+const V12: &str = r"
+CREATE TABLE queue_nudges (
+    queue_id INTEGER NOT NULL
 ) STRICT;
 ";
 

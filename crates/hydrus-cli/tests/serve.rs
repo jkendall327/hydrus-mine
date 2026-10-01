@@ -175,3 +175,73 @@ fn with_no_port_there_is_no_client_api() {
     let stopped = exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
     assert!(stopped.success(), "{stopped}");
 }
+
+#[test]
+fn queues_another_process_nudges_are_worked_on_at_once() {
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, QueueKind, SeedStatus, SeedType};
+
+    let (_parent, dir) = store();
+    // (the fixture's client had all new network traffic paused)
+    hydrus_store::Store::open(&dir)
+        .unwrap()
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    let mut serving = serve(&dir, &["--attached"], Stdio::piped());
+    // (a URL that fails at once, as a 404 does)
+    let site = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let url = format!("http://{}/file.jpg", site.local_addr().unwrap());
+    std::thread::spawn(move || {
+        use std::io::{Read as _, Write as _};
+        for mut stream in site.incoming().map_while(Result::ok) {
+            let mut request = [0; 4096];
+            let _ = stream.read(&mut request);
+            let _ = stream.write_all(
+                b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+            );
+        }
+    });
+    let seed = move || NewFileSeed {
+        seed_type: SeedType::Url,
+        data: url.clone(),
+        data_for_comparison: url.clone(),
+        source_time: None,
+        referral_url: None,
+        meta: FileSeedMeta::default(),
+    };
+    let store = hydrus_store::Store::open(&dir).unwrap();
+    let (urls, subscription) = store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let urls =
+                queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+            let subscription =
+                queues::create_queue(conn, QueueKind::Subscription, "a query", None, &options, 0)?;
+            queues::add_file_seeds(conn, urls, &[seed()], false, 0)?;
+            queues::add_file_seeds(conn, subscription, &[seed()], false, 0)?;
+            queues::nudge(conn, urls)?;
+            queues::nudge(conn, subscription)?;
+            Ok((urls, subscription))
+        })
+        .unwrap();
+    let status_of = |queue: i64| {
+        store
+            .read(move |conn| Ok(queues::file_seeds(conn, queue)?[0].status))
+            .unwrap()
+    };
+    // worked on within seconds (the daemon otherwise looks once a minute)
+    let started = Instant::now();
+    while status_of(urls) == SeedStatus::Unknown {
+        assert!(
+            started.elapsed() < Duration::from_secs(20),
+            "the nudged queue wasn't worked on"
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    // (a 404 is "ignored", as hydrus has it)
+    assert_eq!(status_of(urls), SeedStatus::Vetoed);
+    // a subscription's queue is the subscriptions' to run, nudged or not
+    assert_eq!(status_of(subscription), SeedStatus::Unknown);
+    drop(serving.0.stdin.take());
+    exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
+}

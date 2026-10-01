@@ -120,6 +120,24 @@ impl QueueRunner {
         handle.wake.notify_one();
     }
 
+    /// Look at a queue another process changed (nudged): woken if it is
+    /// one this runs (URL lists, gallery searches and watchers).
+    pub fn nudged(self: &Arc<Self>, queue: i64) {
+        let kind = self
+            .downloader
+            .store
+            .read(|conn| queues::queue(conn, queue))
+            .ok()
+            .flatten()
+            .map(|q| q.kind);
+        if matches!(
+            kind,
+            Some(QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery)
+        ) {
+            self.wake(queue);
+        }
+    }
+
     pub fn status(&self, queue: i64) -> UrlQueueStatus {
         self.handles
             .lock()

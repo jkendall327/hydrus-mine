@@ -299,6 +299,33 @@ fn finish_queue((mut queue, options, extra): (Queue, String, String)) -> Result<
 }
 
 /// Make a queue.
+/// Tell whichever process runs the queues (the daemon) that a queue was
+/// made or changed (seeds added, paused or resumed, deleted), so it looks
+/// at it now rather than when it next would.
+pub fn nudge(conn: &Connection, queue: i64) -> Result<()> {
+    conn.execute("INSERT INTO queue_nudges (queue_id) VALUES (?)", [queue])?;
+    Ok(())
+}
+
+/// Whether any queue has been nudged (a cheap read, before taking them).
+pub fn any_nudged(conn: &Connection) -> Result<bool> {
+    Ok(
+        conn.query_row("SELECT EXISTS (SELECT 1 FROM queue_nudges)", [], |r| {
+            r.get(0)
+        })?,
+    )
+}
+
+/// The queues nudged since last time, each once, taken off the list.
+pub fn take_nudges(conn: &Connection) -> Result<Vec<i64>> {
+    let nudged: Vec<i64> = conn
+        .prepare("SELECT DISTINCT queue_id FROM queue_nudges ORDER BY queue_id")?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    conn.execute("DELETE FROM queue_nudges", [])?;
+    Ok(nudged)
+}
+
 pub fn create_queue(
     conn: &Connection,
     kind: QueueKind,
@@ -855,6 +882,19 @@ mod tests {
             referral_url: None,
             meta: FileSeedMeta::default(),
         }
+    }
+
+    #[test]
+    fn nudges_are_taken_once_each() {
+        let conn = conn();
+        assert!(!any_nudged(&conn).unwrap());
+        for queue in [3, 1, 3] {
+            nudge(&conn, queue).unwrap();
+        }
+        assert!(any_nudged(&conn).unwrap());
+        assert_eq!(take_nudges(&conn).unwrap(), [1, 3]);
+        assert!(!any_nudged(&conn).unwrap());
+        assert!(take_nudges(&conn).unwrap().is_empty());
     }
 
     #[test]
