@@ -28,6 +28,8 @@ pub struct FileImportOptions {
     pub destinations_for_already_in_db: bool,
     /// Archive files already in the client (with `automatically_archive`).
     pub archive_already_in_db: bool,
+    /// Import JPEGs and PNGs of more than Pillow's pixel limit.
+    pub allow_decompression_bombs: bool,
 }
 
 impl Default for FileImportOptions {
@@ -44,6 +46,7 @@ impl Default for FileImportOptions {
             automatically_archive: false,
             destinations_for_already_in_db: false,
             archive_already_in_db: true,
+            allow_decompression_bombs: true,
         }
     }
 }
@@ -94,6 +97,7 @@ impl FileImportOptions {
             automatically_archive: locations.automatically_archive,
             destinations_for_already_in_db: locations.destinations_for_already_in_db,
             archive_already_in_db: locations.archive_already_in_db,
+            allow_decompression_bombs: filtering.allow_decompression_bombs,
         }
     }
 

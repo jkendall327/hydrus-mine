@@ -198,7 +198,7 @@ impl Downloader {
         let locations = &options.locations;
 
         let mut urls: Vec<String> = Vec::new();
-        let mut domain_time: Option<(String, i64)> = None;
+        let mut domain_times: Vec<(String, i64)> = Vec::new();
         if locations.associate_primary_urls {
             urls.extend(seed.meta.primary_urls.iter().cloned());
             if seed.seed_type == SeedType::Url {
@@ -208,7 +208,12 @@ impl Downloader {
                     .unwrap_or_default();
                 let time = seed.source_time.unwrap_or(seed.created);
                 if sensible(Some(time)) {
-                    domain_time = Some((domain, time * 1000));
+                    domain_times.push((domain, time * 1000));
+                }
+                if let Some(time) = seed.meta.cloudflare_last_modified
+                    && sensible(Some(time))
+                {
+                    domain_times.push(("cloudflare.com".into(), time * 1000));
                 }
             }
             urls.extend(seed.referral_url.iter().cloned());
@@ -278,7 +283,7 @@ impl Downloader {
         let did_work = !service_tags.is_empty() || !note_updates.is_empty();
         let id = facts.hash_id;
         self.store.write_content(move |w| {
-            if let Some((domain, ms)) = domain_time {
+            for (domain, ms) in domain_times {
                 let time = FileTime::DomainModified(domain);
                 let existing = w.file_time(id, &time)?;
                 if existing.is_none_or(|e| ms < e) {

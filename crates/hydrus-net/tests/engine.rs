@@ -209,12 +209,13 @@ async fn sends_the_clients_headers() {
                 Some(Approval::Approved),
                 None,
             )?;
+            // (denied headers are simply left out)
             network::set_header(
                 ctx.conn(),
                 &NetworkContext::global(),
-                "X-Pending",
+                "X-Denied",
                 Some("no"),
-                Some(Approval::Pending),
+                Some(Approval::Denied),
                 None,
             )
         })
@@ -234,7 +235,7 @@ async fn sends_the_clients_headers() {
     ] {
         assert!(text.contains(expected), "{expected} missing from\n{text}");
     }
-    assert!(!text.contains("x-pending"), "{text}");
+    assert!(!text.contains("x-denied"), "{text}");
 }
 
 #[tokio::test]
@@ -569,4 +570,45 @@ async fn requests_wait_a_little_after_the_computer_wakes() {
     // the wake delay (15 s) passed
     s.engine.sleep_check_at(now + 16_000);
     s.engine.fetch(&request, &Job::new()).await.unwrap();
+}
+
+#[tokio::test]
+async fn a_header_awaiting_approval_holds_its_requests() {
+    let s = setup(|_| Vec::new()).await;
+    let set = |approval| {
+        s.store
+            .write(move |ctx| {
+                network::set_header(
+                    ctx.conn(),
+                    &NetworkContext::global(),
+                    "X-New",
+                    Some("yes"),
+                    Some(approval),
+                    None,
+                )
+            })
+            .unwrap();
+    };
+    set(Approval::Pending);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let fetch = s.engine.fetch(&request, &job);
+    tokio::pin!(fetch);
+    assert!(
+        tokio::time::timeout(std::time::Duration::from_secs(1), &mut fetch)
+            .await
+            .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "waiting for the custom header \"X-New\" to be approved\u{2026}"
+    );
+    set(Approval::Approved);
+    let text = tokio::time::timeout(std::time::Duration::from_secs(10), fetch)
+        .await
+        .expect("it went")
+        .unwrap()
+        .text();
+    assert!(text.contains("x-new: yes"), "{text}");
 }

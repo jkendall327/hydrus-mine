@@ -859,6 +859,8 @@ pub(super) fn file_seed(
             tags: f.tags.iter().cloned().collect(),
             notes: f.notes.clone(),
             hashes: f.hashes.clone(),
+            // (the reference keeps this only while the seed works)
+            cloudflare_last_modified: None,
         },
     })
 }

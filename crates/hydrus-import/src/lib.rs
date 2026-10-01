@@ -171,6 +171,20 @@ impl FileImporter {
         options: &FileImportOptions,
     ) -> Result<ImportResult> {
         let snap = self.store.snapshot();
+        if !options.allow_decompression_bombs
+            && let Ok(info) = self.tools.inspect(temp)
+            && is_decompression_bomb(&info)
+        {
+            // (the reference's job raises this, a veto, from GenerateInfo)
+            let note = "Image seems to be a Decompression Bomb!".to_owned();
+            return Ok(ImportResult {
+                status: ImportStatus::Vetoed,
+                hash: Some(hash),
+                mime: Some(info.mime),
+                note: note.clone(),
+                raised: Some(note),
+            });
+        }
         let spec = thumbnail_spec(&snap.thumbnails);
         let analysis = match self.tools.analyse(temp, &spec) {
             Ok(a) => a,
@@ -307,6 +321,17 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
         note: error.to_string(),
         raised: Some(raised),
     }
+}
+
+/// `IsDecompressionBomb`: a JPEG or PNG Pillow refuses to open, having
+/// more than twice the pixel limit the reference sets (512 MiB / 3).
+fn is_decompression_bomb(info: &hydrus_media::FileInfo) -> bool {
+    const MAX_IMAGE_PIXELS: u64 = (512 * 1024 * 1024) / 3;
+    matches!(info.mime, Mime::ImageJpeg | Mime::ImagePng)
+        && match (info.width, info.height) {
+            (Some(w), Some(h)) => u64::from(w) * u64::from(h) > 2 * MAX_IMAGE_PIXELS,
+            _ => false,
+        }
 }
 
 /// The least free space an import leaves on a media disk (the reference's).

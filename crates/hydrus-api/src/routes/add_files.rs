@@ -307,7 +307,12 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
         .await?;
     Ok(ApiResponse::Json(
         serde_json::json!({
-            "status": result.status.code(),
+            // (the reference reports an import that raised as an error)
+            "status": if result.raised.is_some() {
+                hydrus_import::ImportStatus::Error.code()
+            } else {
+                result.status.code()
+            },
             "hash": result.hash.map(|h| h.to_hex()),
             "note": result.note,
         }),

@@ -501,7 +501,11 @@ impl Downloader {
         let result = self.importer.import_path(path, &file_options)?;
         if let Some(message) = result.raised {
             // the reference's import raised, before the seed took the hash
-            return Err(Stop::Error(message));
+            return Err(if result.status == hydrus_import::ImportStatus::Vetoed {
+                Stop::Veto(message)
+            } else {
+                Stop::Error(message)
+            });
         }
         set_status(seed, seed_status(result.status), result.note);
         if let Some(hash) = result.hash {
@@ -583,6 +587,7 @@ impl Downloader {
             && response.server.as_deref() == Some("cloudflare")
             && (source_time - modified).abs() > 86400 * 2
         {
+            seed.meta.cloudflare_last_modified = Some(modified);
             last_modified = None;
         }
         seed_mut(seed).set_source_time_if_sensible(last_modified);

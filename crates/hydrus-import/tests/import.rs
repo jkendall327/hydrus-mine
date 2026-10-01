@@ -319,3 +319,51 @@ fn a_failed_copy_into_storage_pauses_the_importers() {
     assert!(folders.pause_import_folders);
     assert!(!pauses.network_traffic, "only the importers");
 }
+
+#[test]
+fn decompression_bombs_are_vetoed_when_the_options_say_so() {
+    // a PNG claiming 20000x20000 pixels, past Pillow's limit
+    let chunk = |kind: &[u8], body: &[u8]| {
+        let mut out = (body.len() as u32).to_be_bytes().to_vec();
+        out.extend_from_slice(kind);
+        out.extend_from_slice(body);
+        let mut crc_input = kind.to_vec();
+        crc_input.extend_from_slice(body);
+        out.extend_from_slice(&crc32(&crc_input).to_be_bytes());
+        out
+    };
+    let mut ihdr = 20000u32.to_be_bytes().to_vec();
+    ihdr.extend_from_slice(&20000u32.to_be_bytes());
+    ihdr.extend_from_slice(&[8, 2, 0, 0, 0]);
+    let mut png = b"\x89PNG\r\n\x1a\n".to_vec();
+    png.extend(chunk(b"IHDR", &ihdr));
+    png.extend(chunk(
+        b"IDAT",
+        &[0x78, 0x9c, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01],
+    ));
+    png.extend(chunk(b"IEND", b""));
+    let w = world();
+    let options = FileImportOptions {
+        allow_decompression_bombs: false,
+        ..FileImportOptions::default()
+    };
+    let result = w.importer.import_bytes(&png, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::Vetoed);
+    assert_eq!(result.note, "Image seems to be a Decompression Bomb!");
+}
+
+/// CRC-32 (IEEE), as PNG chunks carry.
+fn crc32(data: &[u8]) -> u32 {
+    let mut crc = 0xFFFF_FFFFu32;
+    for &byte in data {
+        crc ^= u32::from(byte);
+        for _ in 0..8 {
+            crc = if crc & 1 != 0 {
+                (crc >> 1) ^ 0xEDB8_8320
+            } else {
+                crc >> 1
+            };
+        }
+    }
+    !crc
+}

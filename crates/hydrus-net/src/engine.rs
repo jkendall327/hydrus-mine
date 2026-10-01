@@ -609,6 +609,39 @@ impl NetEngine {
         }
     }
 
+    /// Wait while a custom header for these contexts awaits approval: the
+    /// reference holds such a job while it asks in a popup (`IsValid`);
+    /// here the header is approved through the Client API.
+    async fn wait_for_header_approval(
+        &self,
+        contexts: &[NetworkContext],
+        job: &Job,
+    ) -> Result<(), NetError> {
+        loop {
+            let pending = self
+                .store
+                .read(|conn| {
+                    for context in contexts {
+                        if let Some(h) = network::headers(conn, context)?
+                            .into_iter()
+                            .find(|h| h.approval == Approval::Pending)
+                        {
+                            return Ok(Some(h.name));
+                        }
+                    }
+                    Ok(None)
+                })
+                .map_err(|e| NetError::Io(e.to_string()))?;
+            let Some(name) = pending else {
+                return Ok(());
+            };
+            job.set_status(format!(
+                "waiting for the custom header \"{name}\" to be approved\u{2026}"
+            ));
+            job.sleep(5.0).await?;
+        }
+    }
+
     /// Wait for this site's turn to fetch a gallery page of `kind`
     /// (`ClientNetworkingBandwidth.TryToConsumeAGalleryToken`).
     async fn wait_for_gallery_token(
@@ -715,6 +748,8 @@ impl NetEngine {
         };
 
         self.wait_while_paused(job).await?;
+        self.wait_for_header_approval(&attempt.contexts, job)
+            .await?;
         while self.just_woke() {
             job.set_status("looks like computer just woke up, waiting a bit");
             job.sleep(5.0).await?;

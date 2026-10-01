@@ -140,6 +140,10 @@ pub struct FileSeedMeta {
     /// `(hash type, hex)`, the first of each type.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub hashes: Vec<(String, String)>,
+    /// A Cloudflare cache's `Last-Modified` too far from the source time to
+    /// be it (seconds), kept as the file's cloudflare.com time.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cloudflare_last_modified: Option<i64>,
 }
 
 impl FileSeedMeta {
