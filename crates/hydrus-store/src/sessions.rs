@@ -135,6 +135,20 @@ pub fn set_page_files(conn: &Connection, page: &PageKey, files: &[HashId]) -> Re
     Ok(())
 }
 
+/// How many files each page with any kept shows.
+pub fn page_file_counts(conn: &Connection) -> Result<std::collections::HashMap<PageKey, usize>> {
+    let mut stmt = conn.prepare("SELECT page_key, length(hash_ids) / 4 FROM page_files")?;
+    let rows = stmt.query_map([], |r| Ok((r.get::<_, Vec<u8>>(0)?, r.get::<_, i64>(1)?)))?;
+    let mut counts = std::collections::HashMap::new();
+    for row in rows {
+        let (key, n) = row?;
+        if let Ok(key) = key.try_into() {
+            counts.insert(PageKey(key), usize::try_from(n).unwrap_or(0));
+        }
+    }
+    Ok(counts)
+}
+
 /// Set the files selected on a page, in the page's order.
 pub fn set_page_selected(conn: &Connection, page: &PageKey, files: &[HashId]) -> Result<()> {
     conn.execute(

@@ -12,6 +12,138 @@ use crate::ServiceKey;
 use crate::duplicates::{DuplicatesSearch, PairOrder};
 use crate::search::context::FileSearchContext;
 
+/// Which pages' tabs show how many files they have
+/// (`page_file_count_display`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default, serde::Serialize, serde::Deserialize)]
+pub enum FileCountDisplay {
+    All,
+    None,
+    OnlyImporters,
+    /// Every page with any (a new client's).
+    #[default]
+    AllIfAny,
+}
+
+impl FileCountDisplay {
+    /// From the reference's `CC.PAGE_FILE_COUNT_DISPLAY_*`.
+    pub fn from_code(code: i64) -> Option<Self> {
+        Some(match code {
+            0 => Self::All,
+            1 => Self::None,
+            2 => Self::OnlyImporters,
+            3 => Self::AllIfAny,
+            _ => return None,
+        })
+    }
+}
+
+/// How tabs are named (`max_page_name_chars`, `page_file_count_display`,
+/// `import_page_progress_display`, `decorate_page_of_pages_tab_names`,
+/// `page_of_pages_decorator`), and what importers' short summaries count
+/// (`show_new_on_file_seed_short_summary`,
+/// `show_deleted_on_file_seed_short_summary`).
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageNameSettings {
+    pub max_chars: usize,
+    pub file_counts: FileCountDisplay,
+    pub import_progress: bool,
+    pub decorate_notebooks: bool,
+    pub notebook_decorator: String,
+    pub short_summary_new: bool,
+    pub short_summary_deleted: bool,
+}
+
+impl Default for PageNameSettings {
+    /// A new client's.
+    fn default() -> Self {
+        Self {
+            max_chars: 20,
+            file_counts: FileCountDisplay::AllIfAny,
+            import_progress: true,
+            decorate_notebooks: true,
+            notebook_decorator: " \u{2193}".into(),
+            short_summary_new: false,
+            short_summary_deleted: false,
+        }
+    }
+}
+
+/// What a tab is for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TabKind {
+    Page,
+    /// A downloader or other importing page.
+    Importer,
+    Notebook,
+}
+
+/// A tab's name, as the reference writes it (`_RefreshPageName`): the
+/// page's name on one line, elided to the longest the settings allow, then
+/// its number of files and import progress as they say ("url import (5 -
+/// 6/10)"), and a notebook's decoration. `files` is the page's number of
+/// files (a notebook's pages' together), `progress` its import progress
+/// (the done and total of its importers; none when done).
+pub fn tab_name(
+    name: &str,
+    kind: TabKind,
+    files: usize,
+    progress: (usize, usize),
+    settings: &PageNameSettings,
+) -> String {
+    // (`splitlines`, joined; at most 256 characters)
+    let line_break = |c: char| {
+        matches!(
+            c,
+            '\n' | '\r'
+                | '\u{0b}'
+                | '\u{0c}'
+                | '\u{1c}'
+                | '\u{1d}'
+                | '\u{1e}'
+                | '\u{85}'
+                | '\u{2028}'
+                | '\u{2029}'
+        )
+    };
+    let full: Vec<char> = name.chars().filter(|c| !line_break(*c)).take(256).collect();
+    // (`ElideText`)
+    let mut tab: String = if full.len() > settings.max_chars {
+        let keep = if settings.max_chars == 0 {
+            full.len() - 1
+        } else {
+            settings.max_chars - 1
+        };
+        full[..keep].iter().chain(['\u{2026}'].iter()).collect()
+    } else {
+        full.iter().collect()
+    };
+    let shown = match settings.file_counts {
+        FileCountDisplay::All => true,
+        FileCountDisplay::None => false,
+        FileCountDisplay::OnlyImporters => kind == TabKind::Importer,
+        FileCountDisplay::AllIfAny => files > 0,
+    };
+    let mut counts = String::new();
+    if shown {
+        counts.push_str(&crate::numbers::human_int(files as u64));
+    }
+    let (value, range) = progress;
+    if settings.import_progress && range > 0 && value != range {
+        if !counts.is_empty() {
+            counts.push_str(" - ");
+        }
+        counts.push_str(&crate::numbers::value_range(value as u64, range as u64));
+    }
+    if !counts.is_empty() {
+        tab.push_str(&format!(" ({counts})"));
+    }
+    if kind == TabKind::Notebook && settings.decorate_notebooks {
+        tab.push_str(&settings.notebook_decorator);
+    }
+    tab
+}
+
 /// A named tree of pages.
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct Session {

@@ -14,6 +14,12 @@ pub fn human_int(n: u64) -> String {
     out
 }
 
+/// A value of a range, as `processed/total`
+/// (`HydrusNumbers.ValueRangeToPrettyString`).
+pub fn value_range(value: u64, range: u64) -> String {
+    format!("{}/{}", human_int(value.min(range)), human_int(range))
+}
+
 /// A fraction as a percentage with one decimal place, or none for a whole
 /// number: `0.5` -> `50%`, `-0.8951` -> `-89.5%`
 /// (`HydrusNumbers.FloatToPercentage`).

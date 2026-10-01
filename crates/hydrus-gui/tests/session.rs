@@ -204,9 +204,10 @@ fn the_last_session_opens_as_it_was_left() {
     let bound = bind(&ui, Pages::open(store).unwrap());
     let rows = ui.get_tab_rows();
     assert_eq!(rows.row_count(), 2);
+    // (named as the reference names tabs: with the files shown)
     assert_eq!(
         rows.row_data(1).unwrap().names.row_data(0).unwrap(),
-        "my search"
+        "my search (5)"
     );
     assert!(ui.get_status().starts_with("5 "), "{}", ui.get_status());
     assert_eq!(ui.get_note(), "");
@@ -363,7 +364,8 @@ fn pages_open_and_close_as_the_reference_does() {
     ui.invoke_tab_chosen(1, 0);
     ui.invoke_close_tab(1, 1);
     assert_eq!(bound.pages.borrow().shown().name, "threads");
-    assert_eq!(top(&ui), ["pages"]);
+    // (a notebook's tab decorated, as the reference's are)
+    assert_eq!(top(&ui), ["pages \u{2193}"]);
     // ctrl+u brings it back, shown
     ui.invoke_unclose_page();
     assert_eq!(bound.pages.borrow().shown().name, "files");

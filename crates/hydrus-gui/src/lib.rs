@@ -1127,6 +1127,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let viewing = viewing.clone();
         let viewers_kept: Rc<RefCell<Option<Vec<sessions::MediaViewer>>>> = Rc::default();
+        let labels_shown: Rc<RefCell<Vec<Vec<String>>>> = Rc::default();
+        let weak = window.as_weak();
         move || {
             let store = pages.borrow().store().clone();
             let asked = store
@@ -1172,6 +1174,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
             if let Err(e) = pages.borrow_mut().sync(now) {
                 eprintln!("could not keep the pages: {e}");
+            }
+            // the tabs' names, as their files and progress change
+            let labels = pages.borrow().tab_labels();
+            if *labels_shown.borrow() != labels {
+                if let Some(window) = weak.upgrade() {
+                    show_tabs(&window, &pages.borrow());
+                }
+                *labels_shown.borrow_mut() = labels;
             }
             let viewers: Vec<sessions::MediaViewer> = viewing
                 .borrow()
@@ -2674,8 +2684,9 @@ fn show_tabs(window: &MainWindow, pages: &Pages) {
     let rows: Vec<TabRow> = pages
         .tabs()
         .into_iter()
-        .map(|tabs| {
-            let names: Vec<SharedString> = tabs.names.iter().map(|n| n.as_str().into()).collect();
+        .zip(pages.tab_labels())
+        .map(|(tabs, labels)| {
+            let names: Vec<SharedString> = labels.iter().map(|n| n.as_str().into()).collect();
             TabRow {
                 names: ModelRc::new(VecModel::from(names)),
                 selected: i32::try_from(tabs.selected).unwrap_or(0),

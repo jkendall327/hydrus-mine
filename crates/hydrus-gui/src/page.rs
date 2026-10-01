@@ -485,6 +485,12 @@ impl SearchPage {
         &self.results
     }
 
+    /// How far the page's importing has got: its done and total imports
+    /// (none for a page that doesn't import).
+    pub fn import_progress(&self) -> (usize, usize) {
+        (0, 0)
+    }
+
     /// The page's files, in order, its collections' in theirs.
     pub fn files(&self) -> Vec<HashId> {
         self.flatten(&self.results)

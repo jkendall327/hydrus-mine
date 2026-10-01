@@ -18,6 +18,7 @@ use hydrus_core::media_viewer::{
     AudioSettings, InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction,
     SlideshowSettings, ZoomCentre, ZoomRules, ZoomType,
 };
+use hydrus_core::pages::{FileCountDisplay, PageNameSettings};
 use hydrus_core::subscriptions::CheckerOptions;
 use hydrus_core::windows::{FrameLocation, WindowSettings};
 
@@ -316,6 +317,48 @@ impl ClientOptions {
             .get("save_media_viewer_window_size_and_position_on_close")
         {
             out.save_media_viewer_on_close = save;
+        }
+        out
+    }
+
+    /// How tabs are named and what importers' short summaries count
+    /// (`max_page_name_chars`, `page_file_count_display`,
+    /// `import_page_progress_display`, `decorate_page_of_pages_tab_names`,
+    /// `page_of_pages_decorator`, `show_new_on_file_seed_short_summary`,
+    /// `show_deleted_on_file_seed_short_summary`).
+    pub fn page_name_settings(&self) -> PageNameSettings {
+        let mut out = PageNameSettings::default();
+        if let Some(&chars) = self.integers.get("max_page_name_chars") {
+            out.max_chars = usize::try_from(chars).unwrap_or(out.max_chars);
+        }
+        if let Some(display) = self
+            .integers
+            .get("page_file_count_display")
+            .and_then(|&code| FileCountDisplay::from_code(code))
+        {
+            out.file_counts = display;
+        }
+        for (key, field) in [
+            ("import_page_progress_display", &mut out.import_progress),
+            (
+                "decorate_page_of_pages_tab_names",
+                &mut out.decorate_notebooks,
+            ),
+            (
+                "show_new_on_file_seed_short_summary",
+                &mut out.short_summary_new,
+            ),
+            (
+                "show_deleted_on_file_seed_short_summary",
+                &mut out.short_summary_deleted,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        if let Some(decorator) = self.strings.get("page_of_pages_decorator") {
+            out.notebook_decorator.clone_from(decorator);
         }
         out
     }
@@ -811,6 +854,36 @@ mod tests {
     }
 
     #[test]
+    fn the_tab_name_options_come_across() {
+        use hydrus_core::pages::{FileCountDisplay, PageNameSettings};
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.integers.insert("max_page_name_chars".into(), 32);
+        options.integers.insert("page_file_count_display".into(), 2);
+        options
+            .booleans
+            .insert("import_page_progress_display".into(), false);
+        options
+            .booleans
+            .insert("show_deleted_on_file_seed_short_summary".into(), true);
+        options
+            .strings
+            .insert("page_of_pages_decorator".into(), " +".into());
+        assert_eq!(
+            options.page_name_settings(),
+            PageNameSettings {
+                max_chars: 32,
+                file_counts: FileCountDisplay::OnlyImporters,
+                import_progress: false,
+                decorate_notebooks: true,
+                notebook_decorator: " +".into(),
+                short_summary_new: false,
+                short_summary_deleted: true,
+            }
+        );
+    }
+
+    #[test]
     fn the_new_client_defaults_decode() {
         let defaults = ClientOptions::defaults().unwrap();
         assert!(defaults.booleans.len() > 200);
@@ -832,6 +905,10 @@ mod tests {
         assert_eq!(
             defaults.slideshow_settings(),
             hydrus_core::media_viewer::SlideshowSettings::default()
+        );
+        assert_eq!(
+            defaults.page_name_settings(),
+            hydrus_core::pages::PageNameSettings::default()
         );
         // (the main window maximised, the media viewer fullscreen too)
         assert_eq!(

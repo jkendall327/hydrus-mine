@@ -7,7 +7,10 @@ and how we mean to go about it.
 ## Where it stands
 
 `hydrus-gui <store>` opens the last session (the one a migration brings
-over from hydrus), or a single search page if there is none; if you had a
+over from hydrus), or a single search page if there is none, its tabs named
+as hydrus names them (each page's name, elided to the longest hydrus's
+options allow, with its number of files and an importer's progress, a
+notebook's decorated: "url import (5 - 6/10)", "pages (60) ↓"); if you had a
 lock password set in hydrus, it asks for it first, as hydrus does, and
 cancelling closes it without opening anything. Once open, it starts the
 daemon, `hydrus serve`, which does the work (downloads, subscriptions,

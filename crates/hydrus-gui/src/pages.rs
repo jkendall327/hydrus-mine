@@ -15,6 +15,22 @@ use hydrus_store::sessions::{self, LAST_SESSION};
 
 use crate::SearchPage;
 use crate::page_chooser::NewPage;
+use hydrus_core::pages::{PageNameSettings, TabKind, tab_name};
+
+/// What a page's tab is for: importing pages are the reference's own
+/// (`IsImporter`: hard drive, simple downloader, gallery, watcher and URL
+/// pages).
+fn tab_kind(page: &Page) -> TabKind {
+    match &page.content {
+        PageContent::Pages(_) => TabKind::Notebook,
+        PageContent::Downloader { .. }
+        | PageContent::Other {
+            page_type: 1 | 2 | 3 | 4 | 7 | 9,
+            ..
+        } => TabKind::Importer,
+        _ => TabKind::Page,
+    }
+}
 
 /// One notebook's tabs: its pages' names, and which is shown.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -40,6 +56,10 @@ pub struct Pages {
     last_moved: HashMap<Option<PageKey>, std::time::Instant>,
     /// What [`Pages::sync`] last wrote to the store.
     synced: Synced,
+    /// How tabs are named.
+    naming: PageNameSettings,
+    /// How many files each page not yet opened shows, as kept.
+    kept_counts: HashMap<PageKey, usize>,
 }
 
 /// What the store was last told of the pages, so only changes are written.
@@ -94,7 +114,15 @@ impl Pages {
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
+            naming: PageNameSettings::default(),
+            kept_counts: HashMap::new(),
         };
+        (pages.naming, pages.kept_counts) = pages.store.read(|conn| {
+            Ok((
+                hydrus_store::settings::get(conn)?,
+                sessions::page_file_counts(conn)?,
+            ))
+        })?;
         pages.select(0, 0);
         // (on the page shown last, or the Client API asked for since)
         let shown = pages
@@ -125,6 +153,8 @@ impl Pages {
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
+            naming: PageNameSettings::default(),
+            kept_counts: HashMap::new(),
         };
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
         pages
@@ -149,6 +179,57 @@ impl Pages {
             }
         }
         rows
+    }
+
+    /// The tabs' names, as the reference writes them, for each notebook
+    /// on the way to the page shown (as [`Pages::tabs`]): each page's name
+    /// with its number of files and import progress.
+    pub fn tab_labels(&self) -> Vec<Vec<String>> {
+        let mut rows = Vec::new();
+        let mut pages = self.session.pages.as_slice();
+        for &selected in &self.path {
+            rows.push(
+                pages
+                    .iter()
+                    .map(|page| {
+                        let (files, progress) = self.file_summary(page);
+                        tab_name(&page.name, tab_kind(page), files, progress, &self.naming)
+                    })
+                    .collect(),
+            );
+            match &pages[selected].content {
+                PageContent::Pages(children) => pages = children,
+                _ => break,
+            }
+        }
+        rows
+    }
+
+    /// A page's number of files and import progress, a notebook's pages'
+    /// together (`GetNumFileSummary`): progress that is done counts as none.
+    fn file_summary(&self, page: &Page) -> (usize, (usize, usize)) {
+        if let PageContent::Pages(children) = &page.content {
+            return children
+                .iter()
+                .map(|child| self.file_summary(child))
+                .fold((0, (0, 0)), |(f, (v, r)), (cf, (cv, cr))| {
+                    (f + cf, (v + cv, r + cr))
+                });
+        }
+        let files = match self.open.get(&page.key) {
+            Some(opened) => opened.borrow().files().len(),
+            None => self.kept_counts.get(&page.key).copied().unwrap_or(0),
+        };
+        let progress = match self.open.get(&page.key) {
+            Some(opened) => opened.borrow().import_progress(),
+            None => (0, 0),
+        };
+        let progress = if progress.0 == progress.1 {
+            (0, 0)
+        } else {
+            progress
+        };
+        (files, progress)
     }
 
     /// Show the `index`th page of the notebook at `level` (0 is the top):

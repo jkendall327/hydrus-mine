@@ -109,6 +109,115 @@ impl SeedStatus {
     }
 }
 
+/// Seeds by status.
+pub type StatusCounts = BTreeMap<SeedStatus, usize>;
+
+fn count(counts: &StatusCounts, status: SeedStatus) -> usize {
+    counts.get(&status).copied().unwrap_or(0)
+}
+
+fn human(n: usize) -> String {
+    hydrus_core::numbers::human_int(n as u64)
+}
+
+/// `processed/total`, as the reference writes a value of a range
+/// (`ValueRangeToPrettyString`).
+pub fn value_range_text(value: usize, range: usize) -> String {
+    hydrus_core::numbers::value_range(value as u64, range as u64)
+}
+
+/// How many of a file log's seeds are done, of how many
+/// (`FileSeedCacheStatus.GetValueRange`): all but those not yet tried.
+pub fn file_log_value_range(counts: &StatusCounts) -> (usize, usize) {
+    let total: usize = counts.values().sum();
+    (total - count(counts, SeedStatus::Unknown), total)
+}
+
+/// A file log's status in full, as the reference writes it
+/// (`FileSeedCacheStatus.GetStatusText`): "5 successful (2 already in db),
+/// 1 failed".
+pub fn file_log_status(counts: &StatusCounts) -> String {
+    let new = count(counts, SeedStatus::SuccessfulAndNew);
+    let redundant = count(counts, SeedStatus::SuccessfulButRedundant);
+    let mut parts = Vec::new();
+    if new + redundant > 0 {
+        let mut part = format!("{} successful", human(new + redundant));
+        if new == 0 {
+            part.push_str(" (all already in db)");
+        } else if redundant > 0 {
+            part.push_str(&format!(" ({} already in db)", human(redundant)));
+        }
+        parts.push(part);
+    }
+    for (status, what) in [
+        (SeedStatus::Vetoed, "ignored"),
+        (SeedStatus::Deleted, "previously deleted"),
+        (SeedStatus::Error, "failed"),
+        (SeedStatus::Skipped, "skipped"),
+    ] {
+        let n = count(counts, status);
+        if n > 0 {
+            parts.push(format!("{} {what}", human(n)));
+        }
+    }
+    parts.join(", ")
+}
+
+/// A file log's status in short (`GetStatusText(simple = True)`): "6/10 -
+/// 2Ign1F", with the new and the previously deleted as the options say.
+pub fn file_log_short_status(counts: &StatusCounts, show_new: bool, show_deleted: bool) -> String {
+    let (processed, total) = file_log_value_range(counts);
+    if total == 0 {
+        return String::new();
+    }
+    let mut text = if count(counts, SeedStatus::Unknown) > 0 {
+        value_range_text(processed, total)
+    } else {
+        human(processed)
+    };
+    let new = count(counts, SeedStatus::SuccessfulAndNew);
+    if show_new && new > 0 {
+        text.push_str(&format!(" - {}N", human(new)));
+    }
+    let mut short = String::new();
+    for (status, mark, shown) in [
+        (SeedStatus::Vetoed, "Ign", true),
+        (SeedStatus::Deleted, "D", show_deleted),
+        (SeedStatus::Error, "F", true),
+        (SeedStatus::Skipped, "S", true),
+    ] {
+        let n = count(counts, status);
+        if shown && n > 0 {
+            short.push_str(&format!("{}{mark}", human(n)));
+        }
+    }
+    if !short.is_empty() {
+        text.push_str(&format!(" - {short}"));
+    }
+    text
+}
+
+/// A search (gallery) log's status, and how many of its pages are done of
+/// how many (`GenerateGallerySeedLogStatus`): "1 successful, 2 pending".
+pub fn search_log_status(counts: &StatusCounts) -> (String, (usize, usize)) {
+    let mut parts = Vec::new();
+    for (status, what) in [
+        (SeedStatus::SuccessfulAndNew, "successful"),
+        (SeedStatus::Vetoed, "ignored"),
+        (SeedStatus::Error, "failed"),
+        (SeedStatus::Skipped, "skipped"),
+        (SeedStatus::Unknown, "pending"),
+    ] {
+        let n = count(counts, status);
+        if n > 0 {
+            parts.push(format!("{} {what}", human(n)));
+        }
+    }
+    let total: usize = counts.values().sum();
+    let unknown = count(counts, SeedStatus::Unknown);
+    (parts.join(", "), (total - unknown, total))
+}
+
 /// What a file seed is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SeedType {

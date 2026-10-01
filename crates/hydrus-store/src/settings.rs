@@ -309,6 +309,10 @@ impl Setting for hydrus_parse::Downloaders {
     const KEY: &'static str = "downloaders";
 }
 
+impl Setting for hydrus_core::pages::PageNameSettings {
+    const KEY: &'static str = "page_names";
+}
+
 /// What the daemon (`hydrus serve`) running on the store last said of its
 /// Client API, for the desktop client to show: and which process it was.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
