@@ -138,6 +138,8 @@ fn export_filename(
 /// `os.path.normpath`, as text.
 fn normpath(path: &str) -> String {
     let p = Path::new(path);
+    // a Windows drive or share ("C:", or "\\server\share")
+    let mut prefix = String::new();
     let mut out: Vec<String> = Vec::new();
     let absolute = p.has_root();
     for c in p.components() {
@@ -150,8 +152,8 @@ fn normpath(path: &str) -> String {
                     out.push("..".into());
                 }
             }
-            std::path::Component::Prefix(prefix) => {
-                out.push(prefix.as_os_str().to_string_lossy().into_owned());
+            std::path::Component::Prefix(p) => {
+                prefix = p.as_os_str().to_string_lossy().into_owned();
             }
             std::path::Component::Normal(n) => out.push(n.to_string_lossy().into_owned()),
         }
@@ -159,11 +161,11 @@ fn normpath(path: &str) -> String {
     let sep = std::path::MAIN_SEPARATOR_STR;
     let joined = out.join(sep);
     if absolute {
-        format!("{sep}{joined}")
-    } else if joined.is_empty() {
+        format!("{prefix}{sep}{joined}")
+    } else if joined.is_empty() && prefix.is_empty() {
         ".".into()
     } else {
-        joined
+        format!("{prefix}{joined}")
     }
 }
 
@@ -510,4 +512,23 @@ pub fn work_export_folders(store: &Store) -> Result<Vec<(String, ExportRun)>, St
         }
     }
     Ok(runs)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::normpath;
+
+    #[test]
+    fn paths_normalise_as_python_normalises_them() {
+        if cfg!(windows) {
+            assert_eq!(normpath(r"C:\a\b\..\c"), r"C:\a\c");
+            assert_eq!(normpath("C:/a/./b"), r"C:\a\b");
+            assert_eq!(normpath(r"\\server\share\a\..\b"), r"\\server\share\b");
+        } else {
+            assert_eq!(normpath("/a/b/../c"), "/a/c");
+            assert_eq!(normpath("/a/./b//c/"), "/a/b/c");
+            assert_eq!(normpath("a/../../b"), "../b");
+            assert_eq!(normpath(""), ".");
+        }
+    }
 }

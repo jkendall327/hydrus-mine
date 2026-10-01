@@ -2527,6 +2527,7 @@ dependencies = [
  "hayro",
  "hex",
  "hydrus-core",
+ "hydrus-testkit",
  "image-webp",
  "kurbo",
  "lcms2",

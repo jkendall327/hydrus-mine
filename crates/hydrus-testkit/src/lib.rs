@@ -32,6 +32,25 @@ pub fn fixture_json(relative: impl AsRef<Path>) -> serde_json::Value {
         .unwrap_or_else(|e| panic!("fixture {} is not valid json: {e}", path.display()))
 }
 
+/// The ffmpeg the media fixtures were recorded with: Ubuntu 24.04's, on x86-64.
+pub const RECORDED_FFMPEG: &str = "ffmpeg version 6.1.1-";
+
+/// Whether the `ffmpeg` on `PATH` is the one the fixtures were recorded
+/// with. Other versions and builds (and ffmpeg's ARM code) decode frames and
+/// report durations a little differently, for the reference as for us (it
+/// renders the same files through ffmpeg), so tests only compare values
+/// ffmpeg produces when this holds.
+pub fn recording_ffmpeg() -> bool {
+    let Ok(out) = std::process::Command::new("ffmpeg")
+        .arg("-version")
+        .stdin(std::process::Stdio::null())
+        .output()
+    else {
+        return false;
+    };
+    cfg!(target_arch = "x86_64") && out.stdout.starts_with(RECORDED_FFMPEG.as_bytes())
+}
+
 /// Extract the reference database fixture `oracle/fixtures/legacy_db/<name>.tar.gz`
 /// into a fresh temporary directory, which is the database directory
 /// (`client.db`, `client.*.db`, `client_files/`).

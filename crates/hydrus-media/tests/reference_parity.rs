@@ -355,6 +355,24 @@ fn is_known(file: &str, category: &str) -> bool {
         .any(|(f, cats, _)| *f == file && cats.contains(&category))
 }
 
+/// Files whose values (beyond their bytes and type) come from ffmpeg.
+fn through_ffmpeg(mime: Mime) -> bool {
+    use hydrus_media::mimes;
+    mimes::is_video(mime)
+        || mimes::is_audio(mime)
+        || matches!(
+            mime,
+            Mime::ImageAvif
+                | Mime::ImageAvifSequence
+                | Mime::ImageHeic
+                | Mime::ImageHeif
+                | Mime::ImageHeicSequence
+                | Mime::ImageHeifSequence
+                | Mime::ImageJxl
+                | Mime::ApplicationPsd
+        )
+}
+
 #[test]
 fn corpus_matches_reference() {
     let json = fixture();
@@ -368,19 +386,38 @@ fn corpus_matches_reference() {
     for (category, (ok, total)) in &report.counts {
         println!("{category:>40}: {ok}/{total} exact");
     }
+    let recording_ffmpeg = hydrus_testkit::recording_ffmpeg();
+    if !recording_ffmpeg {
+        println!(
+            "not the fixtures' ffmpeg ({}... on x86-64): values from ffmpeg are only reported",
+            hydrus_testkit::RECORDED_FFMPEG
+        );
+    }
+    let mimes: BTreeMap<&str, Mime> = json["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|rec| rec.get("mime_error").is_none())
+        .map(|rec| (rec["file"].as_str().unwrap(), mime(&rec["mime"])))
+        .collect();
     let mut unexpected = Vec::new();
     for (category, list) in &report.mismatches {
         for (file, detail) in list {
             let known = is_known(file, category);
+            let other_ffmpeg = !recording_ffmpeg
+                && !["mime", "hashes"].contains(category)
+                && mimes.get(file.as_str()).is_some_and(|&m| through_ffmpeg(m));
             println!(
                 "{} [{category}] {file}: {detail}",
                 if known {
                     "known difference"
+                } else if other_ffmpeg {
+                    "differs with this ffmpeg"
                 } else {
                     "MISMATCH"
                 }
             );
-            if !known {
+            if !known && !other_ffmpeg {
                 unexpected.push(format!("[{category}] {file}: {detail}"));
             }
         }

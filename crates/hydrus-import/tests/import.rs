@@ -109,7 +109,12 @@ fn imports_match_what_the_reference_records() {
             want["pixel_hash"].as_str().map(str::to_owned),
             "{file}"
         );
-        if let Some(thumbnail) = want["thumbnail"].as_object() {
+        // (a video's frames come from ffmpeg, which decodes differently
+        // between versions)
+        let from_ffmpeg = hydrus_media::mimes::is_video(info.mime);
+        if let Some(thumbnail) = want["thumbnail"].as_object()
+            && (!from_ffmpeg || hydrus_testkit::recording_ffmpeg())
+        {
             assert_eq!(
                 info.blurhash.as_deref(),
                 thumbnail["blurhash"].as_str(),

@@ -3,8 +3,14 @@
 //! reference serialises them), the sidecars beside a file, and the folder
 //! after the reference's `Router.Work`. Each router is decoded here, run by
 //! `hydrus_parse::sidecar::work` on the same files, and the folder compared.
+//!
+//! The reference ran on Linux. Where names differing only in case are one
+//! file (macOS and Windows by default), cases holding such names can't be
+//! set up and are skipped; on Windows, text sidecars are written with
+//! `\r\n`, as Python's text-mode writes are there, so line endings are
+//! compared loosely.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use hydrus_legacy::objects::sidecars::router;
 use hydrus_legacy::serialisable::SerialisableObject;
@@ -34,12 +40,50 @@ fn folder(dir: &std::path::Path, except: &str) -> BTreeMap<String, String> {
         .collect()
 }
 
+/// Whether names that differ only in case are the same file here.
+fn case_insensitive_filesystem() -> bool {
+    let dir = tempfile::tempdir().unwrap();
+    std::fs::write(dir.path().join("case"), b"").unwrap();
+    dir.path().join("CASE").exists()
+}
+
+/// A case's file and sidecar names, before and after.
+fn names(case: &serde_json::Value) -> BTreeSet<&str> {
+    let mut names = BTreeSet::from([case["file"].as_str().unwrap()]);
+    for key in ["before", "after"] {
+        names.extend(case[key].as_object().unwrap().keys().map(String::as_str));
+    }
+    names
+}
+
+fn differ_only_in_case(names: &BTreeSet<&str>) -> bool {
+    let lower: BTreeSet<String> = names.iter().map(|n| n.to_lowercase()).collect();
+    lower.len() < names.len()
+}
+
+/// On Windows, a folder's text with `\r\n` read as `\n`.
+fn line_endings_as_written(folder: BTreeMap<String, String>) -> BTreeMap<String, String> {
+    if !cfg!(windows) {
+        return folder;
+    }
+    folder
+        .into_iter()
+        .map(|(name, text)| (name, text.replace("\r\n", "\n")))
+        .collect()
+}
+
 #[test]
 fn routers_work_like_the_reference() {
     let recorded = hydrus_testkit::fixture_json("sidecars.json");
     let cases = recorded["cases"].as_array().unwrap();
+    let case_insensitive = case_insensitive_filesystem();
+    let mut skipped = 0;
     let mut failures = Vec::new();
     for (i, case) in cases.iter().enumerate() {
+        if case_insensitive && differ_only_in_case(&names(case)) {
+            skipped += 1;
+            continue;
+        }
         let object = SerialisableObject::from_tuple_str(&case["router"].to_string()).unwrap();
         let router = router(&object).unwrap();
         // no dots in the folder: "removing the extension" of a file without
@@ -82,9 +126,9 @@ fn routers_work_like_the_reference() {
                 case["router"]
             )),
         }
-        let after = folder(dir.path(), file_name);
+        let after = line_endings_as_written(folder(dir.path(), file_name));
         let expected: BTreeMap<String, String> =
-            serde_json::from_value(case["after"].clone()).unwrap();
+            line_endings_as_written(serde_json::from_value(case["after"].clone()).unwrap());
         if after != expected {
             failures.push(format!(
                 "case {i}: folder {after:?}\n    reference {expected:?}\n    before {}\n    router {}",
@@ -92,11 +136,14 @@ fn routers_work_like_the_reference() {
             ));
         }
     }
+    if skipped > 0 {
+        println!("skipped {skipped} cases with names differing only in case");
+    }
     assert!(
         failures.is_empty(),
         "{} problems in {} cases; first:\n{}",
         failures.len(),
-        cases.len(),
+        cases.len() - skipped,
         failures
             .iter()
             .take(6)

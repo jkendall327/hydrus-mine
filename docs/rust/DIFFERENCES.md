@@ -67,6 +67,21 @@ without its subdomains, a domain regex, query parameters in another order
 and a name that only matches case-folded, searched through the Client API
 and tested in memory.
 
+## Media (`hydrus-media`)
+
+- **Values from ffmpeg depend on your ffmpeg.** Video and audio (frames,
+  durations) and PSDs are read through ffmpeg, as hydrus reads them, and
+  different ffmpeg versions and builds give slightly different thumbnails
+  and durations, for hydrus too. The parity tests compare these values
+  with the ffmpeg the fixtures were recorded with (Ubuntu 24.04's 6.1, on
+  x86-64); anywhere else they only report them.
+- **AVIF, HEIF and JPEG XL images are decoded by ffmpeg** rather than the
+  Python libraries hydrus uses, so their pixels can differ slightly, and
+  what works depends on the ffmpeg: 6.1 can't read HEIF images at all
+  (they get the default thumbnail) and drops AVIF transparency. Newer
+  ffmpeg (9 at least) reads both, and gives an image's transparency as a
+  separate stream, which we merge back.
+
 ## File lifecycle (`hydrus-store::content`)
 
 Checked by the property tests in `crates/hydrus-store/src/content/tests.rs`

@@ -92,12 +92,16 @@ fn export_folders_do_what_the_reference_did() {
         .unwrap();
     place(work.path());
     let recorded_work = recorded["work"].as_str().unwrap();
-    let ours = work.path().to_string_lossy().into_owned();
     let mut folders: ExportFolders = store.read(hydrus_store::settings::get).unwrap();
     assert_eq!(folders.0.len(), 3);
     for f in &mut folders.0 {
-        assert!(f.path.starts_with(recorded_work), "{}", f.path);
-        f.path = f.path.replacen(recorded_work, &ours, 1);
+        // (with this platform's separators, as a folder picker gives)
+        let rest = f.path.strip_prefix(recorded_work).expect(&f.path);
+        let ours = rest
+            .split('/')
+            .filter(|part| !part.is_empty())
+            .fold(work.path().to_path_buf(), |path, part| path.join(part));
+        f.path = ours.to_string_lossy().into_owned();
     }
     store
         .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &folders))

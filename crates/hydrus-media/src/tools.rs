@@ -337,6 +337,33 @@ impl MediaTools {
     fn ffmpeg_still(&self, path: &Path) -> Result<Raster> {
         let lines = self.ffmpeg.info_lines(path, None)?;
         let (w, h) = parse::video_resolution(&lines, true)?;
+        // newer ffmpeg gives a HEIF or AVIF image's alpha plane as a stream
+        // of its own (older ones drop it): merge it back
+        if let Some((primary, alpha)) = std::fs::read(path)
+            .ok()
+            .and_then(|data| isobmff::alpha_item(&data))
+            && lines.iter().any(|l| l.contains(&format!("[{alpha:#x}]")))
+        {
+            let graph = format!("[0:i:{primary}][0:i:{alpha}]alphamerge");
+            let merged = self.ffmpeg.render_to_stdout(&[
+                OsStr::new("-i"),
+                path.as_os_str(),
+                OsStr::new("-filter_complex"),
+                OsStr::new(&graph),
+                OsStr::new("-frames:v"),
+                OsStr::new("1"),
+                OsStr::new("-loglevel"),
+                OsStr::new("quiet"),
+                OsStr::new("-f"),
+                OsStr::new("rawvideo"),
+                OsStr::new("-pix_fmt"),
+                OsStr::new("rgba"),
+                OsStr::new("-"),
+            ]);
+            if let Ok(raster) = merged.and_then(|raw| Raster::new(w, h, 4, raw)) {
+                return Ok(raster);
+            }
+        }
         let raw = self.ffmpeg.render_to_stdout(&[
             OsStr::new("-i"),
             path.as_os_str(),
