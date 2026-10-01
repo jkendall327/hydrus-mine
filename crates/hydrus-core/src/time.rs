@@ -183,9 +183,60 @@ pub fn timestamp_to_pretty_time_delta(timestamp: i64, now: i64, history_suffix: 
     }
 }
 
+/// A scanbar's place and length, in milliseconds
+/// (`HydrusTime.ValueRangeToScanbarTimestampsMS`): `1:23.033/12:57.067`,
+/// in the units the length needs.
+pub fn scanbar_timestamps(value_ms: f64, range_ms: u64) -> String {
+    // (Python's round, halves to even)
+    let value_ms = value_ms.max(0.0).round_ties_even() as u64;
+    let parts = |ms: u64| {
+        (
+            ms / 3_600_000,
+            ms % 3_600_000 / 60_000,
+            ms % 60_000 / 1000,
+            ms % 1000,
+        )
+    };
+    let (range_hours, range_minutes, range_seconds, _) = parts(range_ms);
+    let phrase = |ms: u64| {
+        let (hours, minutes, seconds, ms) = parts(ms);
+        if range_hours > 0 {
+            format!("{hours}:{minutes:02}:{seconds:02}.{ms:03}")
+        } else if range_minutes > 9 {
+            format!("{minutes:02}:{seconds:02}.{ms:03}")
+        } else if range_minutes > 0 {
+            format!("{minutes}:{seconds:02}.{ms:03}")
+        } else if range_seconds > 9 {
+            format!("{seconds:02}.{ms:03}")
+        } else {
+            format!("{seconds}.{ms:03}")
+        }
+    };
+    format!("{}/{}", phrase(value_ms), phrase(range_ms))
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn scanbar_timestamps_as_the_reference_writes_them() {
+        // (checked against ValueRangeToScanbarTimestampsMS)
+        for (value, range, text) in [
+            (0.0, 67, "0.000/0.067"),
+            (33.0, 67, "0.033/0.067"),
+            (3033.0, 7067, "3.033/7.067"),
+            (23033.0, 57067, "23.033/57.067"),
+            (83033.0, 117_067, "1:23.033/1:57.067"),
+            (83033.0, 777_067, "01:23.033/12:57.067"),
+            (4_383_033.0, 4_377_067, "1:13:03.033/1:12:57.067"),
+            (0.0, 3_600_000, "0:00:00.000/1:00:00.000"),
+            (1500.6, 2000, "1.501/2.000"),
+            (59999.0, 60000, "0:59.999/1:00.000"),
+        ] {
+            assert_eq!(scanbar_timestamps(value, range), text);
+        }
+    }
 
     #[test]
     fn spans_as_the_reference_words_them() {

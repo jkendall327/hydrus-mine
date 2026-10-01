@@ -80,6 +80,23 @@ impl Playback {
         }
     }
 
+    /// Where playing is, in milliseconds, once the file is loaded.
+    pub fn position_ms(&self) -> Option<f64> {
+        if !self.frames.running() {
+            return None;
+        }
+        self.player.borrow().as_ref()?.position_ms()
+    }
+
+    /// Go to `ms` into the file.
+    pub fn seek_ms(&self, ms: f64) {
+        if let Some(player) = self.player.borrow().as_ref()
+            && let Err(e) = player.seek_ms(ms)
+        {
+            eprintln!("could not seek: {e}");
+        }
+    }
+
     pub fn toggle_pause(&self) {
         if let Some(player) = self.player.borrow().as_ref() {
             let _ = player.toggle_pause();

@@ -6,6 +6,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
+use std::time::Duration;
 
 use hydrus_core::HashId;
 use slint::{ModelRc, SharedString, VecModel};
@@ -35,6 +36,7 @@ mod page;
 pub mod page_chooser;
 mod pages;
 mod playback;
+pub mod scanbar;
 pub mod sort;
 pub mod still;
 mod thumbnails;
@@ -696,12 +698,27 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings);
+    // the scanbar of the file mpv plays, if it has one
+    let scanbar: Rc<std::cell::Cell<Option<scanbar::Scanbar>>> = Rc::default();
+    let show_scanbar = {
+        let weak = window.as_weak();
+        let scanbar = scanbar.clone();
+        move |position_ms: f64| {
+            if let (Some(window), Some(bar)) = (weak.upgrade(), scanbar.get()) {
+                let (progress, text) = bar.at(position_ms);
+                window.set_scanbar_progress(progress);
+                window.set_scanbar_text(text.into());
+            }
+        }
+    };
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
+        let scanbar = scanbar.clone();
+        let show_scanbar = show_scanbar.clone();
         move || {
             let Some(window) = weak.upgrade() else {
                 return;
@@ -744,10 +761,53 @@ fn open_viewer(
                     window.set_media(image);
                 }
             });
+            let bar = playable.as_ref().and_then(|_| {
+                let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
+                scanbar::Scanbar::new(duration_ms, num_frames)
+            });
+            scanbar.set(bar);
+            window.set_scanbar_shown(bar.is_some());
+            show_scanbar(0.0);
         }
     };
     show();
     bind_zoom!(window, zoomed);
+    // the scanbar follows playing, and seeks
+    let scanning = Rc::new(slint::Timer::default());
+    scanning.start(slint::TimerMode::Repeated, Duration::from_millis(50), {
+        let playback = playback.clone();
+        let scanbar = scanbar.clone();
+        let show_scanbar = show_scanbar.clone();
+        move || {
+            if scanbar.get().is_some()
+                && let Some(position) = playback.position_ms()
+            {
+                show_scanbar(position);
+            }
+        }
+    });
+    window.on_scan({
+        let playback = playback.clone();
+        let scanbar = scanbar.clone();
+        let show_scanbar = show_scanbar.clone();
+        move |x, width| {
+            if let Some(bar) = scanbar.get() {
+                let to = bar.seek_to(x, width);
+                playback.seek_ms(to);
+                show_scanbar(to);
+            }
+        }
+    });
+    window.on_seek_delta({
+        let playback = playback.clone();
+        move |direction, step| {
+            if let (Some(bar), Some(position)) = (scanbar.get(), playback.position_ms()) {
+                let to = bar.seek_delta(position, direction, u64::try_from(step).unwrap_or(0));
+                playback.seek_ms(to);
+                show_scanbar(to);
+            }
+        }
+    });
     window.on_next({
         let model = model.clone();
         let show = show.clone();
@@ -864,6 +924,7 @@ fn open_viewer(
         let slot = slot.clone();
         move || {
             // (stops playing at once)
+            scanning.stop();
             playback.close();
             animator.stop();
             if let Some(window) = weak.upgrade() {

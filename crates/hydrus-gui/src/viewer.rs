@@ -125,6 +125,15 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
     Some((info.mime, info.width.zip(info.height)))
 }
 
+/// A file's duration and frame count, for its scanbar.
+pub(crate) fn timing(store: &Store, id: HashId) -> (Option<u64>, Option<u64>) {
+    let info = store
+        .read(|conn| hydrus_store::media::load_basic(conn, &[id]))
+        .ok()
+        .and_then(|basic| basic.into_iter().next()?.info);
+    info.map_or((None, None), |info| (info.duration_ms, info.num_frames))
+}
+
 /// A file's still, to draw sharply at its zoom: the file decoded whole
 /// (not a thumbnail standing in for it), if it is a still.
 pub(crate) fn still_of(

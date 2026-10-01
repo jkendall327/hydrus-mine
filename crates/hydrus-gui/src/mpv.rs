@@ -37,6 +37,10 @@ const PARAM_SW_STRIDE: c_int = 19;
 const PARAM_SW_POINTER: c_int = 20;
 const UPDATE_FRAME: u64 = 1;
 
+// `mpv_format` (libmpv/client.h)
+const FORMAT_FLAG: c_int = 3;
+const FORMAT_DOUBLE: c_int = 5;
+
 type Handle = *mut c_void;
 type RenderContext = *mut c_void;
 type UpdateFn = unsafe extern "C" fn(*mut c_void);
@@ -58,6 +62,7 @@ struct Api {
     set_option_string: unsafe extern "C" fn(Handle, *const c_char, *const c_char) -> c_int,
     load_config_file: unsafe extern "C" fn(Handle, *const c_char) -> c_int,
     command: unsafe extern "C" fn(Handle, *mut *const c_char) -> c_int,
+    get_property: unsafe extern "C" fn(Handle, *const c_char, c_int, *mut c_void) -> c_int,
     terminate_destroy: unsafe extern "C" fn(Handle),
     render_create: unsafe extern "C" fn(*mut RenderContext, Handle, *mut RenderParam) -> c_int,
     render_set_update_callback: unsafe extern "C" fn(RenderContext, Option<UpdateFn>, *mut c_void),
@@ -97,6 +102,7 @@ impl Api {
                 set_option_string: *library.get(b"mpv_set_option_string\0")?,
                 load_config_file: *library.get(b"mpv_load_config_file\0")?,
                 command: *library.get(b"mpv_command\0")?,
+                get_property: *library.get(b"mpv_get_property\0")?,
                 terminate_destroy: *library.get(b"mpv_terminate_destroy\0")?,
                 render_create: *library.get(b"mpv_render_context_create\0")?,
                 render_set_update_callback: *library
@@ -284,6 +290,54 @@ impl Player {
 
     pub fn toggle_pause(&self) -> Result<(), String> {
         self.command(&["cycle", "pause"])
+    }
+
+    /// A number property (`time-pos`, `duration`), if mpv has it now.
+    fn number(&self, name: &str) -> Option<f64> {
+        let name = CString::new(name).ok()?;
+        let mut value = 0.0_f64;
+        // SAFETY: a valid handle, a NUL-terminated name, and a double for
+        // mpv to write
+        let error = unsafe {
+            (self.api.get_property)(
+                self.handle,
+                name.as_ptr(),
+                FORMAT_DOUBLE,
+                (&raw mut value).cast(),
+            )
+        };
+        (error >= 0 && value.is_finite()).then_some(value)
+    }
+
+    /// Where playing is, in milliseconds, once a file is loaded.
+    pub fn position_ms(&self) -> Option<f64> {
+        self.number("time-pos").map(|s| s * 1000.0)
+    }
+
+    /// How long the file plays, in milliseconds, once loaded.
+    pub fn duration_ms(&self) -> Option<f64> {
+        self.number("duration").map(|s| s * 1000.0)
+    }
+
+    pub fn paused(&self) -> bool {
+        let mut flag: c_int = 0;
+        // SAFETY: a valid handle, a NUL-terminated name, and an int for mpv
+        // to write
+        let error = unsafe {
+            (self.api.get_property)(
+                self.handle,
+                c"pause".as_ptr(),
+                FORMAT_FLAG,
+                (&raw mut flag).cast(),
+            )
+        };
+        error >= 0 && flag != 0
+    }
+
+    /// Go to `ms` into the file, exactly, as the reference seeks.
+    pub fn seek_ms(&self, ms: f64) -> Result<(), String> {
+        let seconds = format!("{:.3}", ms.max(0.0) / 1000.0);
+        self.command(&["seek", &seconds, "absolute", "exact"])
     }
 
     /// Render at this size from now on (the video is fitted within it).

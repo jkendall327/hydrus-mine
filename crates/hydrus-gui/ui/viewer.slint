@@ -4,7 +4,9 @@
 // escape or enter closes it. As the reference's default shortcuts have it,
 // z switches between 100% and fitting the window, + and - (or ctrl and the
 // mouse wheel) zoom in and out, and shift and the arrow keys (or dragging)
-// move the file. F3 manages the file's tags. F7 archives the file and
+// move the file. Under a file that plays, its scanbar shows how far through
+// it is: a click or drag on it seeks there, and ctrl and left or right seek
+// back 2.5 seconds or on 5. F3 manages the file's tags. F7 archives the file and
 // shift+F7 returns it to the inbox; delete deletes it (asking first: enter
 // or escape answers) and shift+delete undeletes it. With the pointer over the
 // window's left fifth, the file's tags show there, as the reference's tags
@@ -40,6 +42,17 @@ export component MediaViewerWindow inherits Window {
     in property <length> sharp-y;
     in property <length> sharp-width;
     in property <length> sharp-height;
+    // the scanbar under a file mpv plays: the nub's place (0 to 1), and
+    // how far through it is as text
+    in property <bool> scanbar-shown;
+    in property <float> scanbar-progress;
+    in property <string> scanbar-text;
+    // the bar at its full size near the pointer (as the reference's
+    // animation bar pops in), else a thin line
+    property <length> bar-top: root.media-y + root.media-height - 20px;
+    out property <bool> bar-near: pointer.has-hover
+        && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
+        && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
     // where a drag last was
     property <length> drag-x;
     property <length> drag-y;
@@ -60,6 +73,10 @@ export component MediaViewerWindow inherits Window {
     callback pan(int, int);
     callback drag(length, length);
     callback canvas-resized(length, length);
+    // seek to where a click on the scanbar at x, along a bar this wide,
+    // goes; and seek a step back (-1) or forward (1), in milliseconds
+    callback scan(length, length);
+    callback seek-delta(int, int);
 
     changed width => { root.canvas-resized(self.width, self.height); }
     changed height => { root.canvas-resized(self.width, self.height); }
@@ -93,6 +110,14 @@ export component MediaViewerWindow inherits Window {
                 } else {
                     root.delete();
                 }
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.LeftArrow) {
+                root.seek-delta(-1, 2500);
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.RightArrow) {
+                root.seek-delta(1, 5000);
                 return accept;
             }
             if (event.modifiers.shift) {
@@ -187,6 +212,39 @@ export component MediaViewerWindow inherits Window {
                     root.previous();
                 }
                 accept
+            }
+        }
+        if root.scanbar-shown: bar := Rectangle {
+            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed;
+            x: root.media-x;
+            width: root.media-width;
+            height: self.full ? 20px : 5px;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            Rectangle {
+                x: floor((parent.width - 10px) * root.scanbar-progress / 1px) * 1px;
+                width: 10px;
+                background: #b0b0b0;
+            }
+            if bar.full: Text {
+                x: bar.width - self.width - 3px;
+                height: bar.height;
+                vertical-alignment: center;
+                text: root.scanbar-text;
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            scrub := TouchArea {
+                pointer-event(event) => {
+                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                        root.scan(self.mouse-x, self.width);
+                    }
+                }
+                moved => {
+                    root.scan(self.mouse-x, self.width);
+                }
             }
         }
         if root.question != "": Rectangle {

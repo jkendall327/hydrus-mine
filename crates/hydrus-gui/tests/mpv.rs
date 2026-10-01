@@ -48,6 +48,27 @@ fn a_video_plays_into_frames_at_the_size_asked() {
     let frame = picture(&player, (200, 100)).expect("frames at the new size");
     assert_eq!((frame.width(), frame.height()), (200, 100));
 
+    // where it is and how long it is; it seeks exactly
+    let duration = player.duration_ms().expect("its duration, once loaded");
+    assert!(duration > 500.0, "{duration}");
     player.toggle_pause().unwrap();
+    assert!(player.paused());
+    let target = (duration / 2.0).round();
+    player.seek_ms(target).unwrap();
+    let started = Instant::now();
+    let mut position = player.position_ms();
+    while position.is_none_or(|p| (p - target).abs() > 100.0)
+        && started.elapsed() < Duration::from_secs(10)
+    {
+        std::thread::sleep(Duration::from_millis(20));
+        position = player.position_ms();
+    }
+    let position = position.unwrap();
+    assert!(
+        (position - target).abs() <= 100.0,
+        "{position} for {target}"
+    );
+    player.toggle_pause().unwrap();
+    assert!(!player.paused());
     player.stop().unwrap();
 }

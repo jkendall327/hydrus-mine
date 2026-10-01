@@ -79,6 +79,12 @@ pointer still (or wherever your zoom centre option says), shift and the
 arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
+Under a file mpv plays, the reference's scanbar shows how far through it
+is (by frame for an animation of several, with `13/240 - 0.480/9.600` as
+text), a thin line until the pointer comes near the file's bottom, then
+full height; a click or drag on it seeks there, and ctrl and left or right
+seek back 2.5 seconds or on 5 (past the end, round to the start), as the
+reference's defaults have it.
 Slint's software renderer scales images by their nearest pixel, so stills
 are also drawn as the reference draws them: the part showing is cut out
 and resized with the file type's zoom qualities (area shrinking, Lanczos
@@ -156,8 +162,9 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning) and on several files at once from
 the thumbnails, system
 predicates in the autocomplete, collect, the viewer's other hover frames
-(file info and buttons, ratings, notes), seeking
-and volume, playing animated JPEG XL, downloader pages' own panels; in
+(file info and buttons, ratings, notes), volume, the scanbar's buffering
+shading and seeking our own animation player's files (ugoiras and animated
+WebP), playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and
