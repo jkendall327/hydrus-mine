@@ -249,7 +249,7 @@ fn link_or_copy(
                     })?;
                     std::fs::metadata(&dest)?.len()
                 }
-                _ => std::fs::copy(&source, &dest)?,
+                _ => crate::paths::copy_file(&source, &dest)?,
             };
             files.fetch_add(1, Ordering::Relaxed);
             bytes.fetch_add(size, Ordering::Relaxed);

@@ -109,6 +109,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let mut handling = crate::settings::FileHandlingSettings::default();
+    if let Some(options) = &options {
+        let boolean = |key: &str| options.booleans.get(key).copied();
+        handling.comic_book_detection =
+            boolean("allow_comic_book_archive_detection").unwrap_or(handling.comic_book_detection);
+        handling.do_not_chmod = boolean("do_not_do_chmod_mode").unwrap_or(handling.do_not_chmod);
+        if let Some(level) = options
+            .integers
+            .get("file_has_transparency_strictness")
+            .and_then(|&v| u8::try_from(v).ok())
+            .filter(|&v| v <= 2)
+        {
+            handling.transparency_strictness = level;
+        }
+    }
+    insert_setting(&mut input, &handling)?;
     let mut network = crate::network::NetworkSettings::default();
     if let Some(options) = &options {
         let n = &mut network;

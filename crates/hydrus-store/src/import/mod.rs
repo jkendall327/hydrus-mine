@@ -1512,6 +1512,11 @@ pub(crate) mod tests {
             input.settings["thumbnails"],
             serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100, "video_percentage_in": 35})
         );
+        // the reference's defaults
+        assert_eq!(
+            input.settings["file_handling"],
+            serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false})
+        );
         // recorded, counting the media viewer and the Client API
         assert_eq!(
             input.settings["file_viewing_statistics"],

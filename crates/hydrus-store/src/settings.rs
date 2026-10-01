@@ -144,6 +144,36 @@ impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }
 
+/// How files are read and written. As in the reference, these hold for the
+/// whole process, set when an importer is made for the store.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileHandlingSettings {
+    /// Tell comic book archives from other zips
+    /// (`allow_comic_book_archive_detection`).
+    pub comic_book_detection: bool,
+    /// What counts as transparency (`file_has_transparency_strictness`):
+    /// 0, an alpha channel; 1, one that isn't all clear or all opaque; 2,
+    /// one a human might notice.
+    pub transparency_strictness: u8,
+    /// Leave files' permissions alone (`do_not_do_chmod_mode`).
+    pub do_not_chmod: bool,
+}
+
+impl Default for FileHandlingSettings {
+    fn default() -> Self {
+        Self {
+            comic_book_detection: true,
+            transparency_strictness: 2,
+            do_not_chmod: false,
+        }
+    }
+}
+
+impl Setting for FileHandlingSettings {
+    const KEY: &'static str = "file_handling";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);

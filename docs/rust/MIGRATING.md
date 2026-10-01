@@ -58,7 +58,11 @@ how many requests at once, HTTPS verification, proxies, and how long the
 downloaders and subscriptions wait after an error). The trash keeps its limits (how old and how big
 it may get before files in it are deleted for good), and `hydrus serve`
 applies them hourly, as hydrus does; files deleted for good go to the
-recycle bin if you had hydrus send them there. Your import options come across too (the defaults for
+recycle bin if you had hydrus send them there. How files are handled
+comes across as well: where in a video its thumbnail is taken from, whether
+zips are checked for comic book archives, what counts as transparency, and
+whether hydrus leaves files' permissions alone (for drives that refuse
+them). Your import options come across too (the defaults for
 each kind of import, per URL class, and your favourites), so the Client
 API's file imports already follow your file filtering and destination
 settings, and your downloaders' parsers and gallery URL generators are

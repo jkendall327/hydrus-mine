@@ -57,7 +57,11 @@ pub struct FileImporter {
 }
 
 impl FileImporter {
+    /// An importer for `store`, which also applies the store's file
+    /// handling settings to this process (as the reference applies its
+    /// options at boot).
     pub fn new(store: Arc<Store>, tools: MediaTools) -> Self {
+        apply_file_handling(&store);
         Self { store, tools }
     }
 
@@ -70,7 +74,7 @@ impl FileImporter {
     pub fn import_path(&self, path: &Path, options: &FileImportOptions) -> Result<ImportResult> {
         let scratch = self.scratch_dir()?;
         let temp = tempfile::NamedTempFile::new_in(&scratch)?;
-        std::fs::copy(path, temp.path())?;
+        hydrus_store::paths::copy_file(path, temp.path())?;
         let modified = std::fs::metadata(path)
             .and_then(|m| m.modified())
             .ok()
@@ -471,10 +475,11 @@ fn write_into_storage(source: &Path, destination: &Path) -> Result<()> {
         .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
     std::fs::create_dir_all(dir)?;
     let partial = tempfile::NamedTempFile::new_in(dir)?;
-    std::fs::copy(source, partial.path())?;
+    hydrus_store::paths::copy_file(source, partial.path())?;
     partial
         .persist(destination)
         .map_err(|e| ImportError::Io(e.error))?;
+    paths::give_nice_permission_bits(destination);
     Ok(())
 }
 
@@ -489,7 +494,24 @@ fn write_bytes_into_storage(bytes: &[u8], destination: &Path) -> Result<()> {
     partial
         .persist(destination)
         .map_err(|e| ImportError::Io(e.error))?;
+    paths::give_nice_permission_bits(destination);
     Ok(())
+}
+
+/// Apply the store's file handling settings to this process: comic book
+/// detection, what counts as transparency, and whether files' permissions
+/// are left alone.
+pub fn apply_file_handling(store: &Store) {
+    use hydrus_media::TransparencyStrictness as Level;
+    let settings: hydrus_store::settings::FileHandlingSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    hydrus_media::set_comic_book_detection(settings.comic_book_detection);
+    hydrus_media::set_transparency_strictness(match settings.transparency_strictness {
+        0 => Level::ChannelPresence,
+        1 => Level::NotBlackOrWhite,
+        _ => Level::Human,
+    });
+    hydrus_store::paths::set_do_not_chmod(settings.do_not_chmod);
 }
 
 /// Everything the database records about a newly imported file.

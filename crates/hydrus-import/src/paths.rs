@@ -178,7 +178,7 @@ fn move_file(source: &str, dest: &str) -> io::Result<()> {
     if std::fs::rename(source, dest).is_ok() {
         return Ok(());
     }
-    std::fs::copy(source, dest)?;
+    hydrus_store::paths::copy_file(source, dest)?;
     if let Ok(meta) = std::fs::metadata(source)
         && let Ok(modified) = meta.modified()
     {
@@ -267,7 +267,7 @@ pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
             let _ = std::fs::set_permissions(dest, permissions);
         }
     }
-    std::fs::copy(source, dest)?;
+    hydrus_store::paths::copy_file(source, dest)?;
     if let Ok(modified) = source_meta.modified() {
         let _ = std::fs::File::options()
             .write(true)
@@ -278,8 +278,13 @@ pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
 }
 
 /// `TryToGiveFileNicePermissionBits`: make sure the owner can read and
-/// write the file and others can read it (0644).
-pub fn give_nice_permission_bits(path: &str) {
+/// write the file and others can read it (0644); nothing in "do not chmod"
+/// mode.
+pub fn give_nice_permission_bits(path: impl AsRef<Path>) {
+    let path = path.as_ref();
+    if hydrus_store::paths::do_not_chmod() {
+        return;
+    }
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
