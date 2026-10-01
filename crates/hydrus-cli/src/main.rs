@@ -241,6 +241,7 @@ fn main() -> Result<()> {
         Command::Pause { dir, what } => pauses::run(&dir, what, true),
         Command::Resume { dir, what } => pauses::run(&dir, Some(what), false),
         Command::Purge { dir } => {
+            let _lock = lock_store(&dir, "a purge")?;
             let store = Store::open(&dir)?;
             let report = hydrus_store::maintenance::purge_deleted_media(&store, usize::MAX)?;
             println!(
@@ -352,8 +353,29 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
             dir.display()
         );
     }
+    let _lock = lock_store(dir, "a second hydrus serve")?;
     let store = Store::open(dir)?;
     let snap = store.snapshot();
+    let holds_files = store.read(|conn| {
+        let storage = hydrus_store::content::DomainRoles::new(&snap.services)?.local_file_storage;
+        Ok(conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM file_domain_current WHERE service_id = ?1)",
+            [storage],
+            |r| r.get::<_, bool>(0),
+        )?)
+    })?;
+    let missing = snap.storage.missing_locations(holds_files);
+    if !missing.is_empty() {
+        let list: Vec<String> = missing
+            .iter()
+            .map(|p| format!("  {}", p.display()))
+            .collect();
+        bail!(
+            "these media locations are missing (is a drive not mounted?):\n{}\n\
+             hydrus serve won't start without them, so new files aren't written where they'd be hidden",
+            list.join("\n")
+        );
+    }
     let config = snap
         .services
         .of_type(ServiceType::ClientApiService)
@@ -397,6 +419,19 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                     _ => {}
                 }
                 tokio::time::sleep(Duration::from_secs(600)).await;
+            }
+        });
+        // leftovers in the scratch folder: at the start, then hourly
+        let scratch = store.clone();
+        tokio::spawn(async move {
+            loop {
+                let store = scratch.clone();
+                if let Ok(n) = tokio::task::spawn_blocking(move || sweep_scratch(&store)).await
+                    && n > 0
+                {
+                    tracing::info!(files = n, "cleared old temporary files");
+                }
+                tokio::time::sleep(Duration::from_secs(3600)).await;
             }
         });
         // emptying the trash: 30 seconds after starting, then hourly
@@ -588,7 +623,8 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
             .as_ref()
             .map(|d| std::sync::Arc::clone(d.downloader().net()));
         let served = serve(state, &options, async {
-            let _ = tokio::signal::ctrl_c().await;
+            shutdown_signal().await;
+            println!("stopping");
         })
         .await;
         // (the bandwidth used since the last minute's save)
@@ -600,4 +636,78 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
         served
     })?;
     Ok(())
+}
+
+/// Ctrl-C, or (on Unix) the SIGTERM a service manager stops a program with.
+async fn shutdown_signal() {
+    #[cfg(unix)]
+    {
+        use tokio::signal::unix::{SignalKind, signal};
+        if let Ok(mut term) = signal(SignalKind::terminate()) {
+            tokio::select! {
+                _ = tokio::signal::ctrl_c() => {}
+                _ = term.recv() => {}
+            }
+            return;
+        }
+    }
+    let _ = tokio::signal::ctrl_c().await;
+}
+
+/// Delete what an import or download left in the store's scratch folder
+/// when it was killed: anything there over an hour old (anything newer
+/// may be in use).
+fn sweep_scratch(store: &Store) -> usize {
+    let Ok(entries) = std::fs::read_dir(store.dir().join("tmp")) else {
+        return 0;
+    };
+    let hour = Duration::from_secs(3600);
+    let mut swept = 0;
+    for entry in entries.flatten() {
+        let old = entry
+            .metadata()
+            .and_then(|m| m.modified())
+            .is_ok_and(|t| t.elapsed().is_ok_and(|age| age > hour));
+        if old && hydrus_store::paths::delete_path(entry.path()).is_ok() {
+            swept += 1;
+        }
+    }
+    swept
+}
+
+/// Take the lock a running `hydrus serve` holds on its store, for serving
+/// or for work it does itself (`what`), which two processes mustn't do at
+/// once: its "is this file being imported" claims only reach its own
+/// purges. Held until the returned file is dropped.
+pub(crate) fn lock_store(dir: &Path, what: &str) -> Result<std::fs::File> {
+    let file = std::fs::OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .write(true)
+        .open(dir.join("serve.lock"))
+        .with_context(|| format!("opening the lock file in {}", dir.display()))?;
+    match file.try_lock() {
+        Ok(()) => Ok(file),
+        Err(std::fs::TryLockError::WouldBlock) => bail!(
+            "hydrus serve is running on {}, so {what} can't run alongside it; stop it first",
+            dir.display()
+        ),
+        Err(std::fs::TryLockError::Error(e)) => Err(e.into()),
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn one_process_at_a_time_does_what_serve_does() {
+        let dir = tempfile::tempdir().unwrap();
+        let held = lock_store(dir.path(), "serving").unwrap();
+        let refused = lock_store(dir.path(), "a purge").unwrap_err().to_string();
+        assert!(refused.contains("hydrus serve is running"), "{refused}");
+        assert!(refused.contains("a purge"), "{refused}");
+        drop(held);
+        lock_store(dir.path(), "a purge").unwrap();
+    }
 }

@@ -82,6 +82,26 @@ impl FileStorage {
         &self.locations
     }
 
+    /// Locations that look missing, as when a drive isn't mounted: the
+    /// directory isn't there, or (when the store holds files) none of the
+    /// subfolders assigned to it are. The reference won't start without
+    /// them, rather than write new files where they'd be lost.
+    pub fn missing_locations(&self, holds_files: bool) -> Vec<&Path> {
+        self.locations
+            .iter()
+            .filter(|l| !l.prefixes.is_empty())
+            .filter(|l| {
+                !l.path.is_dir()
+                    || (holds_files
+                        && !l
+                            .prefixes
+                            .iter()
+                            .any(|p| l.path.join(&p[..p.len().min(3)]).is_dir()))
+            })
+            .map(|l| l.path.as_path())
+            .collect()
+    }
+
     fn dir_for(&self, kind: char, hash: &Sha256) -> Option<PathBuf> {
         let hex = hash.to_hex();
         let prefix = format!("{kind}{}", &hex[..self.granularity.min(hex.len())]);
@@ -160,5 +180,36 @@ mod tests {
                 .unwrap(),
             PathBuf::from(format!("/base/f3a/b/{hash}"))
         );
+    }
+
+    #[test]
+    fn a_location_without_its_folders_is_missing() {
+        let dir = tempfile::tempdir().unwrap();
+        let location = |path: PathBuf| StorageLocation {
+            path,
+            ideal_weight: Some(1),
+            max_bytes: None,
+            prefixes: vec!["f3a".into(), "t3a".into()],
+        };
+        let mounted = dir.path().join("mounted");
+        std::fs::create_dir_all(mounted.join("f3a")).unwrap();
+        // an empty mount point: the directory, but none of the folders
+        let unmounted = dir.path().join("unmounted");
+        std::fs::create_dir_all(&unmounted).unwrap();
+        let gone = dir.path().join("gone");
+        let s = FileStorage {
+            locations: vec![
+                location(mounted.clone()),
+                location(unmounted.clone()),
+                location(gone.clone()),
+            ],
+            ..FileStorage::default()
+        };
+        assert_eq!(
+            s.missing_locations(true),
+            [unmounted.as_path(), gone.as_path()]
+        );
+        // a new store has made no folders yet
+        assert_eq!(s.missing_locations(false), [gone.as_path()]);
     }
 }

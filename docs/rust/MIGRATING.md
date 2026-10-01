@@ -143,3 +143,9 @@ them in the old folders).
 - Files deleted in hydrus-rs are removed from disk by a background job only
   after the deletion has committed, never while a re-import of the same file
   is in progress, and never when the media is shared with the old install.
+- `hydrus serve` won't start if a media location looks missing (as when a
+  drive isn't mounted), rather than write new files where they'd be hidden.
+  Only one `hydrus serve` runs on a store at a time, and the commands that
+  do its work themselves (`purge`, running an import or export folder or
+  the duplicates rules) refuse to while it runs. It stops cleanly on Ctrl-C
+  or SIGTERM, so it can run as a service.
