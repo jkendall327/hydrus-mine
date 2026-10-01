@@ -1351,6 +1351,35 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn import_options_that_run_programs_are_reported() {
+        use hydrus_core::import_options::{ExternalProgramsOptions, ImportOptionsSlice};
+        let runs = ImportOptionsSlice {
+            external_programs: Some(ExternalProgramsOptions {
+                stored: Some("[...]".into()),
+            }),
+            ..ImportOptionsSlice::default()
+        };
+        let source = legacy_fixture("basic");
+        let mut input =
+            decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert!(
+            decode::external_program_users(&input).is_empty(),
+            "none in the fixture"
+        );
+        input.import_folders.push(ImportFolderInput {
+            name: "inbox".into(),
+            settings: hydrus_parse::folders::ImportFolderSettings::default(),
+            options: runs,
+            paused: false,
+            file_seeds: Vec::new(),
+        });
+        assert_eq!(
+            decode::external_program_users(&input),
+            ["import folder \"inbox\""]
+        );
+    }
+
+    #[test]
     fn the_network_options_come_across() {
         let source = legacy_fixture("basic");
         let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();

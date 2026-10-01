@@ -477,7 +477,61 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             "Duplicates auto-resolution rules were not converted: {e}"
         )),
     }
+    let callers = external_program_users(&input);
+    if !callers.is_empty() {
+        input.warnings.push(format!(
+            "Some import options run a program on each imported file, which hydrus-rs doesn't do yet, so they won't run: {} (the options are kept)",
+            callers.join("; ")
+        ));
+    }
     Ok(input)
+}
+
+/// Where import options are set to run a program on each imported file
+/// (`DoExternalProgramCalls`).
+pub(super) fn external_program_users(input: &ImportInput) -> Vec<String> {
+    use hydrus_core::import_options::{ImportOptionsManager, ImportOptionsSlice};
+    let calls = |s: &ImportOptionsSlice| {
+        s.external_programs
+            .as_ref()
+            .is_some_and(|e| e.stored.is_some())
+    };
+    let mut out = Vec::new();
+    if let Some(Ok(manager)) = input
+        .settings
+        .get(ImportOptionsManager::KEY)
+        .map(|v| serde_json::from_value::<ImportOptionsManager>(v.clone()))
+    {
+        for (caller, slice) in &manager.caller_defaults {
+            if calls(slice) {
+                out.push(format!("the default import options ({caller:?})"));
+            }
+        }
+        if manager.url_class_defaults.iter().any(|(_, s)| calls(s)) {
+            out.push("a URL class's default import options".into());
+        }
+        for (name, slice) in &manager.favourites {
+            if calls(slice) {
+                out.push(format!("the favourite import options \"{name}\""));
+            }
+        }
+    }
+    for sub in &input.subscriptions {
+        if calls(&sub.settings.import_options) {
+            out.push(format!("subscription \"{}\"", sub.name));
+        }
+    }
+    for folder in &input.import_folders {
+        if calls(&folder.options) {
+            out.push(format!("import folder \"{}\"", folder.name));
+        }
+    }
+    for page in &input.downloader_pages {
+        if page.queues.iter().any(|q| calls(&q.options)) {
+            out.push(format!("downloader page \"{}\"", page.name));
+        }
+    }
+    out
 }
 
 /// A duplicates page's filtering.

@@ -321,6 +321,9 @@ deletes its files from the client, migrated from the reference's database.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.
+- **Import options that run a program on each imported file are kept but
+  not run yet.** The migration warns where they are set (which defaults,
+  subscriptions, import folders or downloader pages).
 - **There is no browser impersonation** (the reference's optional
   `curl_cffi` connections); requests are always plain ones.
 
