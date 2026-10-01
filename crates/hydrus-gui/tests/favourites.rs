@@ -1,5 +1,6 @@
 //! Favourite searches: the fixture's comes across from hydrus, shows in
-//! the favourites menu, and loading it sets the page's search and sort.
+//! the favourites menu, and loading it sets the page's search, sort and
+//! collect.
 
 use slint::Model as _;
 
@@ -83,4 +84,47 @@ fn a_favourite_search_loads_into_the_page() {
         "{}",
         ui.get_status()
     );
+}
+
+#[test]
+fn a_favourite_s_collect_collects_the_page() {
+    use hydrus_core::pages::PageCollect;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let favourites: hydrus_store::settings::FavouriteSearches =
+        store.read(hydrus_store::settings::get).unwrap();
+    // hydrus's example search has no collect: the page's stays
+    assert_eq!(favourites.0[0].collect, None);
+    let mut favourite = favourites.0[0].clone();
+    let mut page = SearchPage::new(store.clone());
+    page.load_favourite(&favourite);
+    assert!(!page.collect().collects());
+    let files = page.files().len();
+    assert!(files > 1);
+
+    // one collecting by creator collects what it finds
+    let by_creator = PageCollect {
+        namespaces: vec!["creator".into()],
+        ratings: Vec::new(),
+        collect_unmatched: true,
+    };
+    favourite.collect = Some(by_creator.clone());
+    page.load_favourite(&favourite);
+    assert_eq!(page.collect(), &by_creator);
+    assert!(page.results().len() < files);
+    assert_eq!(page.files().len(), files);
+    // and one collecting nothing uncollects the page, though it doesn't
+    // search: its files stay, single
+    favourite.synchronised = false;
+    favourite.collect = Some(PageCollect::default());
+    page.load_favourite(&favourite);
+    assert!(!page.collect().collects());
+    assert_eq!(page.results().len(), files);
 }

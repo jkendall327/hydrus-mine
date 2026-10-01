@@ -79,6 +79,7 @@ mod tests {
             search: FileSearchContext::default(),
             synchronised: true,
             sort: None,
+            collect: None,
         }
     }
 

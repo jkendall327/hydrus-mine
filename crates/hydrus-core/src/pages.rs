@@ -277,7 +277,7 @@ impl Default for SortSettings {
 
 /// A saved search (the reference's favourite searches), which a search
 /// page can load: its domains, tag service and predicates, whether it
-/// searches as they change, and its sort.
+/// searches as they change, and its sort and collect.
 #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
 pub struct FavouriteSearch {
     /// The menu folder, `/` separating nested ones; none for the top.
@@ -286,6 +286,9 @@ pub struct FavouriteSearch {
     pub search: FileSearchContext,
     pub synchronised: bool,
     pub sort: Option<PageSort>,
+    /// (one that collects nothing still uncollects the page)
+    #[serde(default)]
+    pub collect: Option<PageCollect>,
 }
 
 /// A page's key: 32 random bytes, written as hex.

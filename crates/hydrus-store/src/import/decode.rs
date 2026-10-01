@@ -525,6 +525,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                         search,
                         synchronised: f.synchronised,
                         sort: f.media_sort.as_ref().map(page_sort),
+                        collect: f.media_collect.as_ref().map(page_collect),
                     }),
                     Err(e) => input.warnings.push(format!(
                         "The favourite search \"{}\" searches for something hydrus-rs can't, \
@@ -1716,11 +1717,9 @@ impl SessionContext<'_> {
         };
         let page = data.page;
         let sort = page.sort.as_ref().map(page_sort);
-        let collect = page
-            .collect
-            .as_ref()
-            .map(page_collect)
-            .filter(hydrus_core::pages::PageCollect::collects);
+        // (one collecting nothing is kept for whether unmatched files
+        // would collect, which the page's collect control shows)
+        let collect = page.collect.as_ref().map(page_collect);
         let hashes = data
             .hashes
             .iter()

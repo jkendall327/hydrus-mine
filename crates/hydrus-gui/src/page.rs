@@ -210,6 +210,11 @@ impl SearchPage {
             self.set_page_sort(favourite.sort.as_ref());
             self.sort_changed |= self.sort != before;
         }
+        // (the collect control collects the files shown at once, as its
+        // `SetCollect` broadcasts)
+        if let Some(collect) = &favourite.collect {
+            self.set_collect(collect.clone());
+        }
         if self.synchronised {
             self.search();
         }

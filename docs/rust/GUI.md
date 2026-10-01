@@ -95,9 +95,9 @@ underscores and emojis replaced; checked against `RenderTag`), each in its
 namespace's colour (system predicates in `system`'s; yours come across
 from hydrus). The ★ beside
 the search box lists your favourite searches in hydrus's folders and
-order; choosing one loads its domains, tag service, predicates and sort
-into the page, searching if it is synchronised (saving and editing
-favourites isn't here yet, nor a favourite's collect). The lock button beside them
+order; choosing one loads its domains, tag service, predicates, sort and
+collect into the page (the collect at once, on the files shown), searching
+if it is synchronised (saving and editing favourites isn't here yet). The lock button beside them
 locks the page's search to a `system:hash` of the files in view (asking
 first, as hydrus does, unless the search is empty or already that hash);
 a page opened on files ("open in a new page") starts locked. A locked
