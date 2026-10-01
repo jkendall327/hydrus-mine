@@ -246,7 +246,11 @@ fn a_missing_thumbnail_is_made_again_from_its_file() {
 
     let made = w.importer.regenerate_thumbnail(&w.load(&hash)).unwrap();
     assert_eq!(made.as_deref(), Some(path.as_path()));
-    assert_eq!(std::fs::read(&path).unwrap(), original, "the same thumbnail");
+    assert_eq!(
+        std::fs::read(&path).unwrap(),
+        original,
+        "the same thumbnail"
+    );
 
     // a file that is no longer stored can't give one
     std::fs::remove_file(&path).unwrap();

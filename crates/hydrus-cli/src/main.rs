@@ -299,6 +299,12 @@ fn import_legacy(source: &Path, dest: &Path, mode: TransferMode) -> Result<()> {
             transfer.bytes as f64 / f64::from(1u32 << 30),
             transfer.destination.display()
         );
+        if transfer.skipped > 0 {
+            println!(
+                "  {} files left behind: deleted files hydrus hadn't cleared away yet, or files it doesn't know",
+                transfer.skipped
+            );
+        }
     }
     // custom assets (the user's own star shapes, icons ...)
     let assets = source.join("static");

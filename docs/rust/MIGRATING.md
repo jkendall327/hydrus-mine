@@ -128,6 +128,11 @@ Autocomplete counts and other caches are rebuilt rather than copied.
 Hardlinks need the new store on the same filesystem as the old files; if
 your files are spread across drives, use `copy` or `in-place`.
 
+Only files the database says are stored come across, with their
+thumbnails. Files hydrus had deleted but not yet cleared from disk, and
+anything else in its media folders, are left where they are (`move` leaves
+them in the old folders).
+
 ## Safety
 
 - The import writes to a scratch file and only renames it into place when

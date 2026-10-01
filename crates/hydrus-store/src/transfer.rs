@@ -13,7 +13,12 @@
 //! - **in place**: keep using the reference install's files. The store then
 //!   never deletes media from disk, since the reference install still needs
 //!   them.
+//!
+//! Only media the database says is stored comes across (with its
+//! thumbnail): files the reference was about to delete for good, and
+//! anything else in its folders, are left where they are.
 
+use std::collections::HashSet;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicU64, Ordering};
 
@@ -50,6 +55,9 @@ impl Setting for MediaOwnership {
 pub struct TransferReport {
     pub files: u64,
     pub bytes: u64,
+    /// Files left behind: media no longer stored (the reference had it
+    /// waiting to be deleted) and anything else in its folders.
+    pub skipped: u64,
     /// The store's media directory afterwards.
     pub destination: PathBuf,
 }
@@ -108,6 +116,31 @@ fn files_in(dir: &Path) -> Result<Vec<PathBuf>> {
     Ok(out)
 }
 
+/// The hashes (hex) of the media the store holds: files current in local
+/// file storage. A media file or thumbnail is named by its hash.
+fn stored_hashes(conn: &Connection) -> Result<HashSet<String>> {
+    let services = crate::services::ServiceRegistry::load(conn)?;
+    let storage = crate::content::DomainRoles::new(&services)?.local_file_storage;
+    let mut stmt = conn.prepare(
+        "SELECT h.sha256 FROM file_domain_current d JOIN hashes h USING (hash_id)
+         WHERE d.service_id = ?1",
+    )?;
+    let rows = stmt.query_map([storage], |r| r.get::<_, Vec<u8>>(0))?;
+    let mut out = HashSet::new();
+    for row in rows {
+        out.insert(hex::encode(row?));
+    }
+    Ok(out)
+}
+
+/// Whether a file in the media folders belongs to stored media.
+fn is_stored(path: &Path, stored: &HashSet<String>) -> bool {
+    path.file_name()
+        .and_then(|n| n.to_str())
+        .and_then(|n| n.split('.').next())
+        .is_some_and(|hash| stored.contains(hash))
+}
+
 fn is_cross_device(e: &std::io::Error) -> bool {
     e.kind() == std::io::ErrorKind::CrossesDevices
 }
@@ -147,11 +180,12 @@ pub fn transfer_media(
             destination.display()
         )));
     }
-    std::fs::create_dir_all(destination)?;
     let folders = subfolders(&conn)?;
+    let stored = stored_hashes(&conn)?;
+    std::fs::create_dir_all(destination)?;
     let result = match mode {
-        TransferMode::Move => move_folders(&folders, destination),
-        _ => link_or_copy(&folders, destination, mode),
+        TransferMode::Move => move_folders(&folders, destination, &stored),
+        _ => link_or_copy(&folders, destination, mode, &stored),
     };
     let report = match result {
         Ok(report) => report,
@@ -183,14 +217,20 @@ fn link_or_copy(
     folders: &[Subfolder],
     destination: &Path,
     mode: TransferMode,
+    stored: &HashSet<String>,
 ) -> Result<TransferReport> {
     use rayon::prelude::*;
     let files = AtomicU64::new(0);
     let bytes = AtomicU64::new(0);
+    let skipped = AtomicU64::new(0);
     folders.par_iter().try_for_each(|folder| -> Result<()> {
         let target = destination.join(&folder.relative);
         std::fs::create_dir_all(&target)?;
         for source in files_in(&folder.location.join(&folder.relative))? {
+            if !is_stored(&source, stored) {
+                skipped.fetch_add(1, Ordering::Relaxed);
+                continue;
+            }
             let name = source.file_name().expect("read_dir entries have names");
             let dest = target.join(name);
             let size = match mode {
@@ -219,12 +259,17 @@ fn link_or_copy(
     Ok(TransferReport {
         files: files.into_inner(),
         bytes: bytes.into_inner(),
+        skipped: skipped.into_inner(),
         destination: destination.to_path_buf(),
     })
 }
 
 /// Move whole subfolders; undo the moves made so far if one fails.
-fn move_folders(folders: &[Subfolder], destination: &Path) -> Result<TransferReport> {
+fn move_folders(
+    folders: &[Subfolder],
+    destination: &Path,
+    stored: &HashSet<String>,
+) -> Result<TransferReport> {
     let mut done: Vec<(PathBuf, PathBuf)> = Vec::new();
     let mut report = TransferReport {
         destination: destination.to_path_buf(),
@@ -237,7 +282,10 @@ fn move_folders(folders: &[Subfolder], destination: &Path) -> Result<TransferRep
         for folder in ordered {
             let source = folder.location.join(&folder.relative);
             let target = destination.join(&folder.relative);
-            let files = files_in(&source)?;
+            let (files, others): (Vec<PathBuf>, Vec<PathBuf>) = files_in(&source)?
+                .into_iter()
+                .partition(|f| is_stored(f, stored));
+            report.skipped += others.len() as u64;
             if files.is_empty() {
                 continue;
             }
@@ -276,8 +324,32 @@ fn move_folders(folders: &[Subfolder], destination: &Path) -> Result<TransferRep
 /// Transfer a fixture's media and check the store can still find every file.
 #[cfg(test)]
 mod tests {
+    use std::collections::BTreeSet;
+
     use super::*;
     use crate::import::tests::import_basic;
+
+    fn stem(path: &Path) -> String {
+        let name = path.file_name().unwrap().to_str().unwrap();
+        name.split('.').next().unwrap().to_owned()
+    }
+
+    /// The hashes of the media and thumbnails the reference install had
+    /// waiting to be deleted.
+    fn pending_deletes(install: &Path) -> BTreeSet<String> {
+        let legacy = hydrus_legacy::LegacyDb::open(install).unwrap();
+        let ids: Vec<_> = legacy
+            .deferred_physical_file_deletes()
+            .unwrap()
+            .chain(legacy.deferred_physical_thumbnail_deletes().unwrap())
+            .map(Result::unwrap)
+            .collect();
+        let all: std::collections::HashMap<_, _> =
+            legacy.hashes().unwrap().map(Result::unwrap).collect();
+        let hashes: BTreeSet<String> = ids.iter().map(|id| all[id].to_hex()).collect();
+        assert!(!hashes.is_empty(), "the fixture has some");
+        hashes
+    }
 
     fn file_count(dir: &Path) -> usize {
         walk(dir).len()
@@ -306,17 +378,29 @@ mod tests {
             let (source, dest_dir, db) = import_basic();
             let source_files = source.path().join("client_files");
             let before = file_count(&source_files);
+            let pending = pending_deletes(source.path());
             assert!(before > 0);
             let media = dest_dir.path().join("media");
             let report = transfer_media(&db, &media, mode).unwrap();
-            assert_eq!(report.files as usize, before, "{mode:?}");
-            assert_eq!(file_count(&media), before, "{mode:?}");
-            let expected_left = if mode == TransferMode::Move {
-                0
+            // everything but what the reference was about to delete
+            let pending_files = walk(&source_files)
+                .iter()
+                .filter(|p| pending.contains(&stem(p)))
+                .count();
+            let stored = before - pending_files;
+            assert_eq!(report.files as usize, stored, "{mode:?}");
+            assert_eq!(report.skipped as usize, pending_files, "{mode:?}");
+            assert_eq!(file_count(&media), stored, "{mode:?}");
+            let left: BTreeSet<String> = walk(&source_files).iter().map(|p| stem(p)).collect();
+            if mode == TransferMode::Move {
+                assert_eq!(left, pending, "only the pending deletes stay");
             } else {
-                before
-            };
-            assert_eq!(file_count(&source_files), expected_left, "{mode:?}");
+                assert_eq!(file_count(&source_files), before, "{mode:?}");
+            }
+            assert!(
+                walk(&media).iter().all(|p| !pending.contains(&stem(p))),
+                "{mode:?}"
+            );
 
             // every file the store knows is found under the new location
             let conn = Connection::open(&db).unwrap();
