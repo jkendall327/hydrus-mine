@@ -125,8 +125,9 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
     Some((info.mime, info.width.zip(info.height)))
 }
 
-/// A file's info line as the top hover frame shows it, now.
-pub(crate) fn info_line(store: &Store, id: HashId) -> String {
+/// A file's info line as the top hover frame shows it, now, and its
+/// notes, as (name, text), by name.
+pub(crate) fn info_line(store: &Store, id: HashId) -> (String, Vec<(String, String)>) {
     let snapshot = store.snapshot();
     let settings: hydrus_core::media_viewer::InfoLineSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
@@ -135,12 +136,13 @@ pub(crate) fn info_line(store: &Store, id: HashId) -> String {
         .ok()
         .and_then(|batch| batch.results.into_iter().next())
         .map(|media| {
-            crate::info_lines::top_line(
+            let line = crate::info_lines::top_line(
                 &media,
                 &snapshot.services,
                 &settings,
                 hydrus_core::TimestampMs::now().0,
-            )
+            );
+            (line, media.notes)
         })
         .unwrap_or_default()
 }

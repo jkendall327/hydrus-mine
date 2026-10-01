@@ -713,7 +713,7 @@ fn open_viewer(
             }
         }
     };
-    // the file's info line, in the top hover frame
+    // the file's info line, in the top hover frame, and its notes
     let show_info = {
         let model = model.clone();
         let weak = window.as_weak();
@@ -722,7 +722,16 @@ fn open_viewer(
                 return;
             };
             let model = model.borrow();
-            window.set_info_line(viewer::info_line(model.store(), model.current()).into());
+            let (line, notes) = viewer::info_line(model.store(), model.current());
+            window.set_info_line(line.into());
+            let notes: Vec<NoteRow> = notes
+                .into_iter()
+                .map(|(name, text)| NoteRow {
+                    name: name.into(),
+                    text: text.into(),
+                })
+                .collect();
+            window.set_notes(ModelRc::new(VecModel::from(notes)));
         }
     };
     // the file's ratings, in the top-right hover frame

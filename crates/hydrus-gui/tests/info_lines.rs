@@ -91,6 +91,7 @@ fn info_lines_are_the_reference_s() {
 fn the_viewer_shows_the_top_line_near_its_top() {
     use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
     use slint::ComponentHandle as _;
+    use slint::Model as _;
     use slint::platform::WindowEvent;
 
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -153,4 +154,46 @@ fn the_viewer_shows_the_top_line_near_its_top() {
         viewer.get_info_line()
     );
     assert_eq!(viewer.get_info_line(), line(&store).as_str());
+
+    // a file with notes: they show on the right, under the ratings, while
+    // the pointer is over them
+    viewer.invoke_close_requested();
+    ui.invoke_search_edited("system:has notes".into());
+    ui.invoke_search_accepted();
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    let file = bound.current.borrow().borrow().results()[0];
+    let notes = store
+        .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
+        .unwrap()
+        .results
+        .remove(0)
+        .notes;
+    assert!(!notes.is_empty());
+    let shown: Vec<(String, String)> = (0..viewer.get_notes().row_count())
+        .map(|i| {
+            let row = viewer.get_notes().row_data(i).unwrap();
+            (row.name.to_string(), row.text.to_string())
+        })
+        .collect();
+    assert_eq!(shown, notes);
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    let window = viewer.window();
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(700.0, 300.0),
+    });
+    assert!(!viewer.get_notes_showing());
+    // (below the ratings frame's three rows)
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(780.0, 90.0),
+    });
+    assert!(viewer.get_notes_showing());
+    let pixels = headless::render(&drawn, 800, 600);
+    headless::save_png(&shots.join("notes.png"), &pixels, 800, 600).unwrap();
 }
