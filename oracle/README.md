@@ -35,6 +35,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_media.py` | `fixtures/media.json`: a generated media corpus and the reference's view of it |
 | `dump_bandwidth.py` | `fixtures/bandwidth.json`: bandwidth trackers, rules and the manager stepped through time |
 | `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
+| `dump_delete_lock.py` | `fixtures/delete_lock.json`: Client API deletes, duplicate deletes and trash emptying with the archived-file delete lock on, and each file's inbox state and domains after each |
 | `dump_file_handling.py` | `fixtures/file_handling.json`: the corpus's transparency at each `file_has_transparency_strictness`, and its zips' types with comic book detection on and off |
 | `dump_domains.py` | `fixtures/domains.json`: domain helpers over a public-suffix corpus |
 | `dump_url_classes.py` | `fixtures/url_classes.json`: URL classes making referral URLs and next pages |

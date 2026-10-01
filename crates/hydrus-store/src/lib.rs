@@ -7,6 +7,7 @@ pub mod bandwidth;
 pub mod conn;
 pub mod content;
 pub mod counts;
+pub mod delete_lock;
 pub mod display;
 pub mod domains;
 pub mod duplicates;

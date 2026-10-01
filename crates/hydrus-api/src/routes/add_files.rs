@@ -114,6 +114,37 @@ pub async fn delete_files(
                 ServiceType::LocalFileDomain,
             ],
         );
+        // deleting for good refuses files the delete lock holds, naming them
+        if let Some(storage) = snap
+            .services
+            .of_type(ServiceType::HydrusLocalFileStorage)
+            .next()
+            .map(|s| s.id)
+            .filter(|id| domains.contains(id))
+        {
+            let lookup = hashes.clone();
+            let locked: Vec<Sha256> = app.store.read(move |conn| {
+                let ids = master::hash_ids(conn, &lookup)?;
+                let by_id: std::collections::HashMap<HashId, Sha256> =
+                    ids.iter().map(|(hash, &id)| (id, *hash)).collect();
+                let ids: Vec<HashId> = ids.into_values().collect();
+                Ok(hydrus_store::delete_lock::locked(conn, storage, &ids)?
+                    .into_iter()
+                    .filter_map(|id| by_id.get(&id).copied())
+                    .collect())
+            })?;
+            if !locked.is_empty() {
+                let mut hexes: Vec<String> = locked.iter().map(Sha256::to_hex).collect();
+                hexes.sort();
+                return Err(ApiError::new(
+                    crate::error::ErrorKind::Conflict,
+                    format!(
+                        "Sorry, some of the files you selected are currently delete locked. Their hashes are:\n\n{}",
+                        hexes.join("\n")
+                    ),
+                ));
+            }
+        }
         // deleting records the deletion even for files we've never seen
         app.store.write_content(move |w| {
             let ids = hashes

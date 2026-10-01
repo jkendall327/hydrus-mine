@@ -261,12 +261,36 @@ impl ContentWriter<'_> {
     /// Delete files as a user or the Client API asks: from `domain`, with an
     /// optional reason recorded for files that were in a local domain.
     /// Deleting from the trash deletes from local file storage, i.e. for good.
+    /// Deleting for good keeps to files in local storage, and leaves those
+    /// the delete lock holds (logging them, as the reference reports them).
     pub fn delete_files(
         &mut self,
         domain: ServiceId,
         hashes: &[HashId],
         reason: Option<&str>,
     ) -> Result<()> {
+        let unlocked;
+        let hashes = if domain == self.roles.local_file_storage || domain == self.roles.trash {
+            let storage = self.roles.local_file_storage;
+            let local = self.current_in(storage, hashes)?;
+            let locked: BTreeSet<HashId> = crate::delete_lock::locked(self.conn, storage, hashes)?
+                .into_iter()
+                .collect();
+            if !locked.is_empty() {
+                tracing::warn!(
+                    "Was unable to delete {} file(s) because of a delete lock (archived files can't be deleted for good)",
+                    locked.len()
+                );
+            }
+            unlocked = hashes
+                .iter()
+                .copied()
+                .filter(|h| local.contains_key(h) && !locked.contains(h))
+                .collect::<Vec<_>>();
+            &unlocked[..]
+        } else {
+            hashes
+        };
         let roles = &self.roles;
         let takes_reason = roles.local.contains(&domain)
             || domain == roles.combined_local_media

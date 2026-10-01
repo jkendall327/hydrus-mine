@@ -58,7 +58,12 @@ how many requests at once, HTTPS verification, proxies, and how long the
 downloaders and subscriptions wait after an error). The trash keeps its limits (how old and how big
 it may get before files in it are deleted for good), and `hydrus serve`
 applies them hourly, as hydrus does; files deleted for good go to the
-recycle bin if you had hydrus send them there. How files are handled
+recycle bin if you had hydrus send them there. If you had hydrus lock
+archived files against deletion, the lock comes across too: archived files
+can still go to the trash, but aren't deleted for good (by the Client API,
+by emptying the trash, or by a duplicate decision) until they are back in
+the inbox, and your options to inbox the files duplicate decisions delete
+apply. How files are handled
 comes across as well: where in a video its thumbnail is taken from, whether
 zips are checked for comic book archives, what counts as transparency, and
 whether hydrus leaves files' permissions alone (for drives that refuse

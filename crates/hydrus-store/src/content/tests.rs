@@ -289,6 +289,63 @@ fn import_trash_undelete_and_purge() {
 }
 
 #[test]
+fn the_delete_lock_keeps_archived_files_from_going_for_good() {
+    let w = world();
+    let my_files = w.roles.local[0];
+    let ids = |domain| w.current(domain).into_keys().collect::<Vec<_>>();
+    let mut c = w.writer();
+    c.add_files(my_files, &[(HashId(1), Some(1)), (HashId(2), Some(2))])
+        .unwrap();
+    c.inbox(&hashes(&[1, 2])).unwrap();
+    c.archive(&hashes(&[1])).unwrap();
+    c.finish().unwrap();
+    let lock = crate::delete_lock::DeleteLock {
+        archived: true,
+        ..Default::default()
+    };
+    crate::settings::set(&w.conn, &lock).unwrap();
+    assert_eq!(
+        crate::delete_lock::locked(&w.conn, w.roles.local_file_storage, &hashes(&[1, 2, 3]))
+            .unwrap(),
+        hashes(&[1])
+    );
+
+    // the trash still takes them both
+    let mut c = w.writer();
+    c.delete_files(my_files, &hashes(&[1, 2]), None).unwrap();
+    c.finish().unwrap();
+    assert_eq!(ids(w.roles.trash), hashes(&[1, 2]));
+    // but only the inboxed one goes for good, from the trash or storage
+    let mut c = w.writer();
+    c.delete_files(w.roles.trash, &hashes(&[1, 2]), None)
+        .unwrap();
+    c.delete_files(w.roles.local_file_storage, &hashes(&[1]), Some("x"))
+        .unwrap();
+    c.finish().unwrap();
+    assert_eq!(ids(w.roles.local_file_storage), hashes(&[1]));
+    assert_eq!(ids(w.roles.trash), hashes(&[1]));
+    w.assert_domain_invariants();
+    // inboxed again, it can go
+    let mut c = w.writer();
+    c.inbox(&hashes(&[1])).unwrap();
+    c.delete_files(w.roles.trash, &hashes(&[1]), None).unwrap();
+    c.finish().unwrap();
+    assert!(ids(w.roles.local_file_storage).is_empty());
+
+    // and with the lock off, archived files go
+    crate::settings::set(&w.conn, &crate::delete_lock::DeleteLock::default()).unwrap();
+    let mut c = w.writer();
+    c.add_files(my_files, &[(HashId(3), Some(3))]).unwrap();
+    c.archive(&hashes(&[3])).unwrap();
+    c.delete_files(w.roles.local_file_storage, &hashes(&[3]), None)
+        .unwrap();
+    c.finish().unwrap();
+    assert!(ids(w.roles.local_file_storage).is_empty());
+    w.assert_domain_invariants();
+    w.assert_counts_match_rebuild();
+}
+
+#[test]
 fn deleting_from_one_of_two_local_domains_does_not_trash() {
     let w = world();
     let my_files = w.roles.local[0];

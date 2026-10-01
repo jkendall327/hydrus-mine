@@ -77,19 +77,27 @@ pub fn clear_some(
 ) -> Result<TrashReport> {
     let trash = w.roles().trash;
     let storage = w.roles().local_file_storage;
+    // (files the delete lock holds stay, though they count towards the size)
+    let deletable =
+        crate::delete_lock::sql_condition(w.conn(), "d.hash_id")?.unwrap_or_else(|| "1".into());
     let mut report = TrashReport::default();
     if let Some(mb) = settings.max_size_mb {
         let max = i64::try_from(mb.saturating_mul(1_048_576)).unwrap_or(i64::MAX);
-        let rows: Vec<(HashId, i64)> = {
-            let mut stmt = w.conn().prepare(
-                "SELECT d.hash_id, COALESCE(f.size, 0) FROM file_domain_current d
+        let rows: Vec<(HashId, i64, bool)> = {
+            let mut stmt = w.conn().prepare(&format!(
+                "SELECT d.hash_id, COALESCE(f.size, 0), {deletable} FROM file_domain_current d
                  LEFT JOIN files f USING (hash_id)
-                 WHERE d.service_id = ?1 ORDER BY d.added_ms, d.hash_id",
-            )?;
-            let rows = stmt.query_map([trash], |r| Ok((r.get(0)?, r.get(1)?)))?;
+                 WHERE d.service_id = ?1 ORDER BY d.added_ms, d.hash_id"
+            ))?;
+            let rows = stmt.query_map([trash], |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)))?;
             rows.collect::<rusqlite::Result<_>>()?
         };
-        let mut total: i64 = rows.iter().map(|&(_, size)| size).sum();
+        let mut total: i64 = rows.iter().map(|&(_, size, _)| size).sum();
+        let rows: Vec<(HashId, i64)> = rows
+            .into_iter()
+            .filter(|&(_, _, deletable)| deletable)
+            .map(|(id, size, _)| (id, size))
+            .collect();
         for chunk in rows.chunks(CHUNK) {
             if total <= max || report.over_size >= batch {
                 break;
@@ -110,10 +118,10 @@ pub fn clear_some(
         let cutoff_ms = (w.now_ms() / 1000).saturating_sub(age).saturating_mul(1000);
         let limit = batch.saturating_sub(report.over_size);
         let ids: Vec<HashId> = {
-            let mut stmt = w.conn().prepare(
-                "SELECT hash_id FROM file_domain_current
-                 WHERE service_id = ?1 AND added_ms < ?2 LIMIT ?3",
-            )?;
+            let mut stmt = w.conn().prepare(&format!(
+                "SELECT hash_id FROM file_domain_current d
+                 WHERE service_id = ?1 AND added_ms < ?2 AND {deletable} LIMIT ?3"
+            ))?;
             let rows = stmt.query_map(
                 params![trash, cutoff_ms, i64::try_from(limit).unwrap_or(i64::MAX)],
                 |r| r.get(0),
@@ -274,6 +282,44 @@ mod tests {
             }
         );
         assert_eq!(in_trash(&store), files[9..]);
+    }
+
+    #[test]
+    fn the_delete_lock_keeps_archived_files_in_the_trash() {
+        let (_source, _dir, store, files) = trashed_store();
+        set(
+            &store,
+            TrashSettings {
+                max_age_hours: Some(3),
+                max_size_mb: Some(1),
+            },
+        );
+        let archived = [files[0], files[1], files[5]];
+        let all = files.clone();
+        store
+            .write_content(move |w| {
+                w.inbox(&all)?;
+                w.archive(&archived)?;
+                let lock = crate::delete_lock::DeleteLock {
+                    archived: true,
+                    ..Default::default()
+                };
+                crate::settings::set(w.conn(), &lock)
+            })
+            .unwrap();
+        // the archived files count towards the size but can't go: the seven
+        // others go (2,000,000 bytes less 1,400,000 is under 1 MiB), and of
+        // the files over three hours old only the archived ones are left
+        let report = maintain_trash(&store, 256).unwrap();
+        assert_eq!(
+            report,
+            TrashReport {
+                over_size: 7,
+                over_age: 0
+            }
+        );
+        assert_eq!(in_trash(&store), archived);
+        assert_eq!(maintain_trash(&store, 256).unwrap().total(), 0);
     }
 
     #[test]

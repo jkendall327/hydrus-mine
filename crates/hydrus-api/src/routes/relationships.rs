@@ -9,6 +9,7 @@ use serde_json::{Map, Value as Json, json};
 use hydrus_core::service::builtin_keys;
 use hydrus_core::{DuplicateType, HashId, ServiceId, ServiceKey, Sha256};
 use hydrus_search::{FileSearchContext, LocationContext, TagContext, parse_api_search};
+use hydrus_store::delete_lock::Reinbox;
 use hydrus_store::duplicates::{
     self, DuplicateFilterSettings, DuplicateMergeSettings, FileScope, PairDecision, PairOrder,
     PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
@@ -498,6 +499,12 @@ pub async fn set_file_relationships(
                         delete_a: row.delete_a,
                         delete_b: row.delete_b,
                         deletion_reason: "From Client API (duplicates processing).",
+                        // (only the merge path inboxes, as in the reference)
+                        reinbox: if row.merge {
+                            Reinbox::AfterDuplicateFilter
+                        } else {
+                            Reinbox::Never
+                        },
                     },
                 )?;
             }

@@ -1,0 +1,1084 @@
+{
+ "phases": [
+  {
+   "initial": {
+    "jpeg_00.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_01.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_02.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_03.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_04.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_05.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_06.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_07.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    }
+   },
+   "name": "lock",
+   "pool": [
+    "jpeg_00.jpg",
+    "jpeg_01.jpg",
+    "jpeg_02.jpg",
+    "jpeg_03.jpg",
+    "jpeg_04.jpg",
+    "jpeg_05.jpg",
+    "jpeg_06.jpg",
+    "jpeg_07.jpg"
+   ],
+   "seed_steps": [
+    {
+     "json": {
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+       "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+       "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+      ]
+     },
+     "path": "/add_files/archive_files"
+    },
+    {
+     "json": {
+      "hashes": [
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+       "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+       "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+       "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+      ]
+     },
+     "path": "/add_files/unarchive_files"
+    }
+   ],
+   "settings": {
+    "archived": true,
+    "reinbox_after_archive_delete": false,
+    "reinbox_after_duplicate_filter": false,
+    "reinbox_in_auto_resolution": false
+   },
+   "steps": [
+    {
+     "error": "Sorry, some of the files you selected are currently delete locked. Their hashes are:\n\n663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "exception_type": "ConflictException",
+     "json": {
+      "file_service_key": "616c6c206c6f63616c2066696c6573",
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 409
+    },
+    {
+     "json": {
+      "file_service_key": "6c6f63616c2066696c6573",
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "file_service_key": "7472617368",
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "error": "Sorry, some of the files you selected are currently delete locked. Their hashes are:\n\n663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "exception_type": "ConflictException",
+     "json": {
+      "file_service_key": "616c6c206c6f63616c2066696c6573",
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 409
+    },
+    {
+     "json": {
+      "file_service_key": "616c6c206c6f63616c2066696c6573",
+      "hashes": [
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "file_service_key": "616c6c206c6f63616c206d65646961",
+      "hashes": [
+       "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "relationships": [
+       {
+        "delete_b": true,
+        "do_default_content_merge": true,
+        "hash_a": "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+        "hash_b": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "relationship": 4
+       }
+      ]
+     },
+     "path": "/manage_file_relationships/set_file_relationships",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "relationships": [
+       {
+        "delete_b": true,
+        "do_default_content_merge": false,
+        "hash_a": "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+        "hash_b": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "relationship": 4
+       }
+      ]
+     },
+     "path": "/manage_file_relationships/set_file_relationships",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "file_service_key": "6c6f63616c2066696c6573",
+      "hashes": [
+       "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+      ]
+     },
+     "path": "/add_files/delete_files",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "empty_trash": true,
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [],
+       "inbox": false
+      }
+     }
+    }
+   ]
+  },
+  {
+   "initial": {
+    "jpeg_00.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_01.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_02.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_03.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": false
+    },
+    "jpeg_04.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_05.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_06.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    },
+    "jpeg_07.jpg": {
+     "domains": [
+      "hydrus local file storage",
+      "my files"
+     ],
+     "inbox": true
+    }
+   },
+   "name": "reinbox",
+   "pool": [
+    "jpeg_00.jpg",
+    "jpeg_01.jpg",
+    "jpeg_02.jpg",
+    "jpeg_03.jpg",
+    "jpeg_04.jpg",
+    "jpeg_05.jpg",
+    "jpeg_06.jpg",
+    "jpeg_07.jpg"
+   ],
+   "seed_steps": [
+    {
+     "json": {
+      "hashes": [
+       "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+       "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+       "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+       "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+      ]
+     },
+     "path": "/add_files/archive_files"
+    },
+    {
+     "json": {
+      "hashes": [
+       "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+       "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+       "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+       "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+      ]
+     },
+     "path": "/add_files/unarchive_files"
+    }
+   ],
+   "settings": {
+    "archived": true,
+    "reinbox_after_archive_delete": false,
+    "reinbox_after_duplicate_filter": true,
+    "reinbox_in_auto_resolution": false
+   },
+   "steps": [
+    {
+     "json": {
+      "relationships": [
+       {
+        "delete_b": true,
+        "do_default_content_merge": true,
+        "hash_a": "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+        "hash_b": "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+        "relationship": 4
+       }
+      ]
+     },
+     "path": "/manage_file_relationships/set_file_relationships",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "json": {
+      "relationships": [
+       {
+        "delete_b": true,
+        "do_default_content_merge": false,
+        "hash_a": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+        "hash_b": "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+        "relationship": 4
+       }
+      ]
+     },
+     "path": "/manage_file_relationships/set_file_relationships",
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": true
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     },
+     "status": 200
+    },
+    {
+     "empty_trash": true,
+     "state": {
+      "jpeg_00.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_01.jpg": {
+       "domains": [],
+       "inbox": false
+      },
+      "jpeg_02.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": false
+      },
+      "jpeg_03.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "trash"
+       ],
+       "inbox": false
+      },
+      "jpeg_04.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_05.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_06.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      },
+      "jpeg_07.jpg": {
+       "domains": [
+        "hydrus local file storage",
+        "my files"
+       ],
+       "inbox": true
+      }
+     }
+    }
+   ]
+  }
+ ]
+}

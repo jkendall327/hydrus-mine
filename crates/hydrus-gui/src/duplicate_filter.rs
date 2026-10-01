@@ -19,6 +19,7 @@ use hydrus_duplicates::potentials::PotentialsQuery;
 use hydrus_duplicates::statements::{self, FastComparison};
 use hydrus_search::media::FileFacts;
 use hydrus_store::Store;
+use hydrus_store::delete_lock::Reinbox;
 use hydrus_store::duplicates::{
     self, ComparisonScores, DuplicateFilterSettings, DuplicateMergeSettings, PairDecision,
     PairOrder, PairRelationship, PairSelection,
@@ -514,6 +515,7 @@ impl DuplicateFilter {
                         delete_a,
                         delete_b,
                         deletion_reason: &reason,
+                        reinbox: Reinbox::AfterDuplicateFilter,
                     },
                 )?;
             }

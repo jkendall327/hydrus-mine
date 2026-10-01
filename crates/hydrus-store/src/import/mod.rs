@@ -1514,6 +1514,15 @@ pub(crate) mod tests {
         );
         // the reference's defaults
         assert_eq!(
+            input.settings["delete_lock"],
+            serde_json::json!({
+                "archived": false,
+                "reinbox_after_archive_delete": false,
+                "reinbox_after_duplicate_filter": false,
+                "reinbox_in_auto_resolution": false
+            })
+        );
+        assert_eq!(
             input.settings["file_handling"],
             serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false})
         );

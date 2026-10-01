@@ -15,6 +15,7 @@ use hydrus_core::{ContentStatus, HashId, ServiceId, ServiceKey, TagId};
 
 use super::write::{PairRelationship, RelationshipWriter};
 use crate::content::{ContentWriter, FileTime, MappingAction};
+use crate::delete_lock::{DeleteLock, Reinbox};
 use crate::error::Result;
 use crate::media::{self, MediaResult, Rating};
 use crate::services::ServiceKind;
@@ -154,6 +155,9 @@ pub struct PairDecision<'o> {
     pub delete_b: bool,
     /// Recorded as the reason for deleting a file.
     pub deletion_reason: &'o str,
+    /// Whether an archived file it deletes is inboxed first, with the delete
+    /// lock on (so that it can go for good).
+    pub reinbox: Reinbox,
 }
 
 /// Carry out a decision: merge metadata, delete files, then set the
@@ -176,8 +180,13 @@ pub fn apply_decision(w: &mut ContentWriter<'_>, decision: &PairDecision<'_>) ->
         merge(w, options, &pair, [decision.delete_a, decision.delete_b])?;
     }
     let combined_local = w.roles().combined_local_media;
+    let lock: DeleteLock = crate::settings::get(w.conn())?;
     for (media, delete) in [(ma, decision.delete_a), (mb, decision.delete_b)] {
         if delete && media.is_current_in(combined_local) {
+            // (archived as it was before the merge, as in the reference)
+            if !media.inbox && decision.reinbox.applies(&lock) {
+                w.inbox(&[media.hash_id])?;
+            }
             w.delete_files(
                 combined_local,
                 &[media.hash_id],

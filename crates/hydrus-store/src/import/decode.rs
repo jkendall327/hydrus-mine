@@ -109,6 +109,15 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    let mut delete_lock = crate::delete_lock::DeleteLock::default();
+    if let Some(options) = &options {
+        for (key, field) in delete_lock.by_option_name() {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &delete_lock)?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();
