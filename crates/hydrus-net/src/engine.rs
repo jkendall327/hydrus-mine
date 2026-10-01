@@ -52,6 +52,9 @@ pub struct NetOptions {
     pub http_proxy: Option<String>,
     pub https_proxy: Option<String>,
     pub no_proxy: Option<String>,
+    /// Seconds requests wait after the computer wakes from sleep
+    /// (`wake_delay_period`), for its network to come back.
+    pub wake_delay: u64,
 }
 
 impl Default for NetOptions {
@@ -71,6 +74,7 @@ impl Default for NetOptions {
             http_proxy: None,
             https_proxy: None,
             no_proxy: None,
+            wake_delay: 15,
         }
     }
 }
@@ -93,6 +97,7 @@ impl NetOptions {
             http_proxy: s.http_proxy.clone(),
             https_proxy: s.https_proxy.clone(),
             no_proxy: s.no_proxy.clone(),
+            wake_delay: s.wake_delay_period,
         }
     }
 }
@@ -268,6 +273,9 @@ pub struct NetEngine {
     bandwidth_settings: BandwidthSettings,
     /// When each domain last had serious errors (`DomainOK`).
     domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
+    /// When the sleep check last ran, and (after a wake) when requests may
+    /// go again, in ms.
+    wake: Mutex<(Option<i64>, Option<i64>)>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -314,6 +322,12 @@ struct Progress {
 }
 
 const MAX_REDIRECTS: usize = 30;
+
+fn now_ms() -> i64 {
+    SystemTime::now()
+        .duration_since(UNIX_EPOCH)
+        .map_or(0, |d| i64::try_from(d.as_millis()).unwrap_or(i64::MAX))
+}
 
 fn now() -> i64 {
     SystemTime::now()
@@ -375,8 +389,35 @@ impl NetEngine {
             bandwidth: Mutex::new((manager, now)),
             bandwidth_settings,
             domain_errors: Mutex::default(),
+            wake: Mutex::default(),
             options,
         })
+    }
+
+    /// `SleepCheck`, to call every 15 seconds or so: a minute or more since
+    /// the last call means the computer slept, and requests then wait the
+    /// wake delay for its network to come back.
+    pub fn sleep_check(&self) {
+        self.sleep_check_at(now_ms());
+    }
+
+    /// [`Self::sleep_check`] at a given time (ms since the epoch).
+    #[doc(hidden)]
+    pub fn sleep_check_at(&self, now: i64) {
+        let mut wake = self.wake.lock();
+        let (last, awake_at) = &mut *wake;
+        if last.is_some_and(|t| now - t > 60_000) {
+            let delay = i64::try_from(self.options.wake_delay).unwrap_or(i64::MAX);
+            *awake_at = Some(now.saturating_add(delay.saturating_mul(1000)));
+            tracing::info!("the computer seems to have just woken up; requests wait {delay} s");
+        } else if awake_at.is_some_and(|t| now >= t) {
+            *awake_at = None;
+        }
+        *last = Some(now);
+    }
+
+    fn just_woke(&self) -> bool {
+        self.wake.lock().1.is_some_and(|t| now_ms() < t)
     }
 
     /// Whether requests to `url`'s domain may go (`DomainOK`): not if it or
@@ -674,6 +715,10 @@ impl NetEngine {
         };
 
         self.wait_while_paused(job).await?;
+        while self.just_woke() {
+            job.set_status("looks like computer just woke up, waiting a bit");
+            job.sleep(5.0).await?;
+        }
         if self.options.obey_bandwidth {
             let override_at = request
                 .override_bandwidth_after

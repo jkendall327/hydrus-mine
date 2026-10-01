@@ -540,3 +540,33 @@ async fn requests_go_through_the_clients_proxy() {
     // hosts in no_proxy are asked directly
     assert_eq!(fetch(format!("{}/uri", s.base)).await, "/uri");
 }
+
+#[tokio::test]
+async fn requests_wait_a_little_after_the_computer_wakes() {
+    let s = setup(|_| Vec::new()).await;
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64;
+    // checked a minute and more ago, and now: the computer slept
+    s.engine.sleep_check_at(now - 61_000);
+    s.engine.sleep_check_at(now);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "looks like computer just woke up, waiting a bit"
+    );
+    // the wake delay (15 s) passed
+    s.engine.sleep_check_at(now + 16_000);
+    s.engine.fetch(&request, &Job::new()).await.unwrap();
+}

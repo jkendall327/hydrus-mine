@@ -622,6 +622,16 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
             .downloads
             .as_ref()
             .map(|d| std::sync::Arc::clone(d.downloader().net()));
+        // noticing the computer waking from sleep (requests then wait a
+        // little for its network)
+        if let Some(net) = net.clone() {
+            tokio::spawn(async move {
+                loop {
+                    net.sleep_check();
+                    tokio::time::sleep(Duration::from_secs(15)).await;
+                }
+            });
+        }
         let served = serve(state, &options, async {
             shutdown_signal().await;
             println!("stopping");
