@@ -49,6 +49,7 @@ pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod windows;
 pub mod zoom;
 
 /// A window's zoomed file ([`zoom::Zoomed`]), drawn in its `media-x`,
@@ -1429,6 +1430,8 @@ fn open_viewer(
     let model = Rc::new(RefCell::new(model));
     let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
     let animator = animation::Animator::new();
+    // (where it opens, and how big: fullscreen, by hydrus's default)
+    let settings_frame = windows::settings(model.borrow().store()).media_viewer;
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
         .borrow()
         .store()
@@ -1858,6 +1861,18 @@ fn open_viewer(
             animator.toggle_pause();
         }
     });
+    // F, as the reference's default shortcut: between fullscreen and the
+    // window it was (maximised, to begin with)
+    let maximised_before = Rc::new(std::cell::Cell::new(true));
+    window.on_toggle_fullscreen({
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                windows::switch_fullscreen(window.window(), &maximised_before);
+            }
+        }
+    });
+    let store = model.borrow().store().clone();
     window.on_close_requested({
         let weak = window.as_weak();
         let slot = slot.clone();
@@ -1867,11 +1882,29 @@ fn open_viewer(
             playback.close();
             animator.stop();
             if let Some(window) = weak.upgrade() {
+                // its size and place, if hydrus's option says to keep them
+                let mut frames = windows::settings(&store);
+                if frames.save_media_viewer_on_close {
+                    frames.media_viewer =
+                        frames.media_viewer.saved(windows::state(window.window()));
+                    windows::keep(&store, frames);
+                }
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
         }
     });
+    // (closed by its frame's button, it closes as by escape)
+    window.window().on_close_requested({
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                window.invoke_close_requested();
+            }
+            slint::CloseRequestResponse::KeepWindowShown
+        }
+    });
+    windows::place(window.window(), &settings_frame);
     window.show()?;
     Ok(window)
 }

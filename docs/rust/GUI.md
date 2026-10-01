@@ -9,7 +9,10 @@ and how we mean to go about it.
 `hydrus-gui <store>` opens the last session (the one a migration brings
 over from hydrus), or a single search page if there is none; if you had a
 lock password set in hydrus, it asks for it first, as hydrus does, and
-cancelling closes it without opening anything. Its windows
+cancelling closes it without opening anything. The main window opens
+where and as big as hydrus had it (maximised, by hydrus's default) and
+keeps its size and place as it closes, as hydrus's frame locations do
+(less hydrus's fitting of a window to its screen). Its windows
 follow the system's light or dark mode (hydrus's own colour options aren't
 carried over yet). Each notebook
 on the way to the page shown has a row of tabs, and a notebook opens on its
@@ -160,7 +163,10 @@ locations, urls → manage and force metadata refetch, open's custom
 similarity distance, and
 share's exporting and copying of
 files and bitmaps. Double-clicking a thumbnail opens the media viewer in its own
-window on that file, at its default zoom (fitted to the window, unless your
+window on that file (fullscreen, as hydrus opens it by default, or as
+your hydrus frame for it says; f switches between fullscreen and the
+window it was, and its size and place are kept as it closes if you had
+hydrus's option for that on), at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or page down and up, or the mouse wheel) move through the page's files,
 round from the last to the first as in the reference, and escape or enter

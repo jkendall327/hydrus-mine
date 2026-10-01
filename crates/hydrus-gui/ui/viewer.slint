@@ -112,6 +112,8 @@ export component MediaViewerWindow inherits Window {
     callback volume-changed(int);
     // the volumes or mutes were changed elsewhere (ctrl+g in the main window)
     callback audio-changed();
+    // f: between fullscreen and the window it was
+    callback toggle-fullscreen();
     // the volume a point on the volume control's track (`top` to `top` +
     // `track`, loudest at the top) sets
     pure function volume-at(y: length, top: length, track: length) -> int {
@@ -175,6 +177,10 @@ export component MediaViewerWindow inherits Window {
             // as the reference's global shortcuts have it
             if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
                 root.flip-global-mute();
+                return accept;
+            }
+            if ((event.text == "f" || event.text == "F") && !event.modifiers.control && !event.modifiers.alt) {
+                root.toggle-fullscreen();
                 return accept;
             }
             if (event.text == Key.F7) {

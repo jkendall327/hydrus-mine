@@ -83,6 +83,26 @@ impl Client {
                 }
             }
         });
+        // where hydrus had it, and how big (maximised, by its default); kept
+        // as it closes, as the reference keeps it
+        let store = bound.pages.borrow().store().clone();
+        hydrus_gui::windows::place(
+            window.window(),
+            &hydrus_gui::windows::settings(&store).main_gui,
+        );
+        window.window().on_close_requested({
+            let weak = window.as_weak();
+            move || {
+                if let Some(window) = weak.upgrade() {
+                    let mut frames = hydrus_gui::windows::settings(&store);
+                    frames.main_gui = frames
+                        .main_gui
+                        .saved(hydrus_gui::windows::state(window.window()));
+                    hydrus_gui::windows::keep(&store, frames);
+                }
+                slint::CloseRequestResponse::HideWindow
+            }
+        });
         window.show()?;
         Ok(Self {
             _window: window,

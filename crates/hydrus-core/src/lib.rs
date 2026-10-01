@@ -34,6 +34,7 @@ pub mod thumbnail;
 pub mod time;
 pub mod url;
 pub mod watchers;
+pub mod windows;
 
 pub use content::{
     CanvasType, ContentStatus, ContentType, ContentUpdateAction, DuplicateType, TimestampType,

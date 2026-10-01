@@ -281,6 +281,11 @@ impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";
 }
 
+/// Where the main window and the media viewer open, and how big.
+impl Setting for hydrus_core::windows::WindowSettings {
+    const KEY: &'static str = "windows";
+}
+
 /// The volume and mute the media viewer plays at.
 impl Setting for hydrus_core::media_viewer::AudioSettings {
     const KEY: &'static str = "audio";

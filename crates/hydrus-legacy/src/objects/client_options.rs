@@ -19,6 +19,7 @@ use hydrus_core::media_viewer::{
     ZoomCentre, ZoomRules, ZoomType,
 };
 use hydrus_core::subscriptions::CheckerOptions;
+use hydrus_core::windows::{FrameLocation, WindowSettings};
 
 use super::duplicates::DuplicateMergeOptions;
 use super::location::LocationContext;
@@ -76,6 +77,9 @@ pub struct ClientOptions {
     /// in the media viewer and the preview (`media_view`); `None` if not
     /// stored.
     pub media_view: Option<BTreeMap<i64, MediaView>>,
+    /// Each window's remembered size and place (`frame_locations`), by
+    /// frame key (`main_gui`, `media_viewer`...).
+    pub frame_locations: BTreeMap<String, FrameLocation>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -160,6 +164,7 @@ impl ClientOptions {
                 "default_thread_watcher_options",
             )?,
             media_view: media_view(&settings)?,
+            frame_locations: frame_locations(&settings)?,
             dictionary: dictionary.clone(),
         };
         Ok(options)
@@ -200,6 +205,7 @@ impl ClientOptions {
         keys(&mut self.noneable_integers, &defaults.noneable_integers);
         keys(&mut self.floats, &defaults.floats);
         keys(&mut self.strings, &defaults.strings);
+        keys(&mut self.frame_locations, &defaults.frame_locations);
         keys(&mut self.noneable_strings, &defaults.noneable_strings);
         keys(&mut self.keys, &defaults.keys);
         keys(&mut self.key_lists, &defaults.key_lists);
@@ -291,6 +297,25 @@ impl ClientOptions {
         }
         if let Some(label) = self.strings.get("has_audio_label") {
             out.has_audio_label.clone_from(label);
+        }
+        out
+    }
+
+    /// The main window's and the media viewer's frames, and whether the
+    /// viewer's is saved as it closes.
+    pub fn window_settings(&self) -> WindowSettings {
+        let mut out = WindowSettings::default();
+        if let Some(frame) = self.frame_locations.get("main_gui") {
+            out.main_gui = frame.clone();
+        }
+        if let Some(frame) = self.frame_locations.get("media_viewer") {
+            out.media_viewer = frame.clone();
+        }
+        if let Some(&save) = self
+            .booleans
+            .get("save_media_viewer_window_size_and_position_on_close")
+        {
+            out.save_media_viewer_on_close = save;
         }
         out
     }
@@ -577,6 +602,57 @@ fn duplicate_action_options(
 /// paused, start with embed, preview show action, start paused, start with
 /// embed, (media scale up, scale down, preview scale up, scale down, exact
 /// zooms only, scale up quality, scale down quality)).
+fn frame_locations(settings: &Settings<'_>) -> DecodeResult<BTreeMap<String, FrameLocation>> {
+    let Some(meta) = settings.get("frame_locations") else {
+        return Ok(BTreeMap::new());
+    };
+    let pair = |value: &PyJson, what: &str| -> DecodeResult<Option<(i32, i32)>> {
+        if matches!(value, PyJson::Null) {
+            return Ok(None);
+        }
+        let [a, b] = tuple::<2>(KIND, value, what)?;
+        let number = |v: &PyJson| {
+            i32::try_from(int(KIND, v, what)?)
+                .map_err(|_| malformed(KIND, "frame size out of range"))
+        };
+        Ok(Some((number(a)?, number(b)?)))
+    };
+    dictionary_pairs(expect_object(meta, "frame_locations")?)?
+        .iter()
+        .map(|(key, frame)| {
+            let key = key
+                .as_json()
+                .and_then(PyJson::as_str)
+                .ok_or_else(|| malformed(KIND, "frame key is not a string"))?
+                .to_owned();
+            let frame = plain(KIND, frame, "frame location")?;
+            let [
+                remember_size,
+                remember_position,
+                last_size,
+                last_position,
+                gravity,
+                position,
+                maximised,
+                fullscreen,
+            ] = tuple::<8>(KIND, &frame, "frame location")?;
+            Ok((
+                key,
+                FrameLocation {
+                    remember_size: boolean(KIND, remember_size, "remember size")?,
+                    remember_position: boolean(KIND, remember_position, "remember position")?,
+                    last_size: pair(last_size, "last size")?,
+                    last_position: pair(last_position, "last position")?,
+                    default_gravity: pair(gravity, "default gravity")?.unwrap_or((-1, -1)),
+                    default_position: string(KIND, position, "default position")?,
+                    maximised: boolean(KIND, maximised, "maximised")?,
+                    fullscreen: boolean(KIND, fullscreen, "fullscreen")?,
+                },
+            ))
+        })
+        .collect()
+}
+
 fn media_view(settings: &Settings<'_>) -> DecodeResult<Option<BTreeMap<i64, MediaView>>> {
     let Some(meta) = settings.get("media_view") else {
         return Ok(None);
@@ -679,6 +755,17 @@ mod tests {
         assert_eq!(
             defaults.audio_settings(),
             hydrus_core::media_viewer::AudioSettings::default()
+        );
+        // (the main window maximised, the media viewer fullscreen too)
+        assert_eq!(
+            defaults.window_settings(),
+            hydrus_core::windows::WindowSettings::default()
+        );
+        assert_eq!(
+            defaults.frame_locations.len(),
+            22,
+            "{:?}",
+            defaults.frame_locations.keys()
         );
     }
 }
