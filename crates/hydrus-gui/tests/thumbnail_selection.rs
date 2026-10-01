@@ -164,10 +164,21 @@ fn several_thumbnails_are_selected_and_acted_on() {
     assert_eq!(ui.get_question(), "Archive 3 files?");
     key(Key::Escape);
     assert_eq!(inbox(&store, &chosen), [true, true, true]);
+    let status = ui.get_status().to_string();
+    assert!(
+        status.contains(" selected, all in inbox, totalling "),
+        "{status}"
+    );
     key(Key::F7);
     key(Key::Return);
     assert_eq!(ui.get_question(), "");
     assert_eq!(inbox(&store, &chosen), [false, false, false]);
+    // (the status bar follows)
+    let status = ui.get_status().to_string();
+    assert!(
+        status.contains(" selected, all archived, totalling "),
+        "{status}"
+    );
     // shift+F7 asks too; one file isn't asked about
     with(Some(Key::Shift), &|| key(Key::F7));
     assert_eq!(ui.get_question(), "Send 3 files to inbox?");

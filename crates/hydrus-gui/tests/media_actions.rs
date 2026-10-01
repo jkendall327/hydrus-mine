@@ -125,7 +125,12 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
         deleted_reason.as_deref(),
         Some(media_actions::DELETE_REASON)
     );
-    assert_eq!(ui.get_status(), format!("{} files", after.len()));
+    assert!(
+        ui.get_status()
+            .starts_with(&format!("{} files - totalling ", after.len())),
+        "{}",
+        ui.get_status()
+    );
 
     // shift+delete restores it
     media_actions::undelete(&store, &[file]).unwrap();

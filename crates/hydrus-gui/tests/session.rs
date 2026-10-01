@@ -202,11 +202,11 @@ fn the_last_session_opens_as_it_was_left() {
         rows.row_data(1).unwrap().names.row_data(0).unwrap(),
         "my search"
     );
-    assert_eq!(ui.get_status(), "5 files");
+    assert!(ui.get_status().starts_with("5 "), "{}", ui.get_status());
     assert_eq!(ui.get_note(), "");
     ui.invoke_tab_chosen(1, 1);
     assert_eq!(ui.get_tab_rows().row_data(1).unwrap().selected, 1);
-    assert_eq!(ui.get_status(), "2 files");
+    assert!(ui.get_status().starts_with("2 "), "{}", ui.get_status());
     assert!(ui.get_note().contains("watcher"));
     assert_eq!(bound.current.borrow().borrow().results().len(), 2);
     ui.invoke_tab_chosen(1, 0);

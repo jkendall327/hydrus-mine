@@ -214,7 +214,9 @@ pub struct MediaViewerSettings {
 /// Which of a file's info lines are "interesting" (those the media
 /// viewer's top hover frame shows), and how they read: the options'
 /// `file_info_line_consider_*`, `hide_uninteresting_modified_time`,
-/// `use_nice_resolution_strings` and `has_audio_label`.
+/// `use_nice_resolution_strings` and `has_audio_label`; and whether a page's
+/// status bar describes one file selected by them
+/// (`show_extended_single_file_info_in_status_bar`).
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct InfoLineSettings {
@@ -227,6 +229,7 @@ pub struct InfoLineSettings {
     pub hide_uninteresting_modified_time: bool,
     pub nice_resolutions: bool,
     pub has_audio_label: String,
+    pub single_file_in_status_bar: bool,
 }
 
 impl Default for InfoLineSettings {
@@ -241,6 +244,7 @@ impl Default for InfoLineSettings {
             hide_uninteresting_modified_time: true,
             nice_resolutions: true,
             has_audio_label: "\u{1F50A}".into(),
+            single_file_in_status_bar: true,
         }
     }
 }

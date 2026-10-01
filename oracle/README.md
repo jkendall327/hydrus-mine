@@ -55,6 +55,7 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_casefold.py` | `crates/hydrus-core/src/casefold_table.rs`: Python's `str.casefold`, as a table |
 | `record_info_lines.py` | `fixtures/info_lines.json`: each `basic` file's info lines (`GetPrettyMediaResultInfoLines`) at a fixed "now", all of them and the top hover frame's interesting ones, with a new client's options and with the info line options turned the other way |
 | `record_thumbnail_selection.py` | `fixtures/thumbnail_selection.json`: the thumbnail grid's own selection code (`_HitMedia`, `_Select`, `_SetFocusedMedia`, `_MoveThumbnailFocus`...) run on a stand-in grid through a script of plain, ctrl and shift clicks, select all and none, focus moves and files leaving the page, with the files selected and focused after each step |
+| `record_status_bar.py` | `fixtures/status_bar.json`: a page's status bar text (`_GetPrettyStatusForStatusBar`) at a fixed "now", for pages of the `basic` files (all, images, one type, animations, videos, one file, empty with and without a search's override) with several selections and each file alone, and with the single file info option off |
 | `record_media_tests.py` | `fixtures/media_tests.json`: in-memory predicate tests on the `basic` fixture's files |
 | `record_rating_svg.py` | `fixtures/rating_svg.json`: rating services' SVG icons (bundled, custom, missing) |
 | `record_render.py` | `fixtures/render.json`: `/get_files/render` of each kind of static image, as pixels |

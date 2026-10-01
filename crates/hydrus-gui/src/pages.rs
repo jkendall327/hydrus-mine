@@ -179,10 +179,11 @@ impl Pages {
                 sort,
             } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files),
             PageContent::Downloader { kind, queues, sort } => {
-                let kind = match kind {
-                    DownloaderKind::Gallery => "gallery",
-                    DownloaderKind::Urls => "url",
-                    DownloaderKind::Watchers => "watcher",
+                // (and what the reference's says while empty)
+                let (kind, empty) = match kind {
+                    DownloaderKind::Gallery => ("gallery", "no highlighted query"),
+                    DownloaderKind::Urls => ("url", "empty page"),
+                    DownloaderKind::Watchers => ("watcher", "no highlighted watcher"),
                 };
                 let queues = match queues.len() {
                     1 => "its queue".to_owned(),
@@ -197,6 +198,7 @@ impl Pages {
                     sort.as_ref(),
                     files,
                 )
+                .with_empty_status(empty)
             }
             PageContent::Duplicates { duplicates, sort } => {
                 SearchPage::duplicates_page(store, duplicates, sort.as_ref(), files)

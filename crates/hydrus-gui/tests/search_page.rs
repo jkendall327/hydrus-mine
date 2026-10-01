@@ -41,7 +41,12 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
         format!("system:everything ({everything})")
     );
     assert!(everything > 10, "{everything}");
-    assert_eq!(page.status(), format!("{everything} files"));
+    assert!(
+        page.status()
+            .starts_with(&format!("{everything} files - totalling ")),
+        "{}",
+        page.status()
+    );
 
     // the tag list: every file's tags with how many have each, sorted as the
     // reference sorts them (by the user's namespaces, then a-z)
@@ -207,7 +212,12 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let bound = bind(&ui, Pages::single(SearchPage::new(store)));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
-    assert_eq!(ui.get_status(), format!("{everything} files"));
+    assert!(
+        ui.get_status()
+            .starts_with(&format!("{everything} files - totalling ")),
+        "{}",
+        ui.get_status()
+    );
     assert_eq!(ui.get_predicates().row_count(), 1);
     assert!(ui.get_tags().row_count() > 10);
     // rows are in their namespace's colour (hydrus's defaults here)

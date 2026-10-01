@@ -71,5 +71,10 @@ fn a_favourite_search_loads_into_the_page() {
         .map(|i| ui.get_predicates().row_data(i).unwrap().text.to_string())
         .collect();
     assert_eq!(shown, loaded);
-    assert_eq!(ui.get_status(), format!("{} files", found.len()));
+    assert!(
+        ui.get_status()
+            .starts_with(&format!("{} files - totalling ", found.len())),
+        "{}",
+        ui.get_status()
+    );
 }

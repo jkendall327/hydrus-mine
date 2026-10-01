@@ -40,12 +40,31 @@ pub fn top_line(
     settings: &InfoLineSettings,
     now_ms: i64,
 ) -> String {
+    interesting(media, services, settings, now_ms).join(" | ")
+}
+
+/// A page's status bar's description of the one file selected: the
+/// interesting lines, but submenus, joined with `, `.
+pub fn status_line(
+    media: &MediaResult,
+    services: &ServiceRegistry,
+    settings: &InfoLineSettings,
+    now_ms: i64,
+) -> String {
+    interesting(media, services, settings, now_ms).join(", ")
+}
+
+fn interesting(
+    media: &MediaResult,
+    services: &ServiceRegistry,
+    settings: &InfoLineSettings,
+    now_ms: i64,
+) -> Vec<String> {
     info_lines(media, services, settings, now_ms, true)
-        .iter()
+        .into_iter()
         .filter(|l| l.submenu.is_none())
-        .map(|l| l.text.as_str())
-        .collect::<Vec<_>>()
-        .join(" | ")
+        .map(|l| l.text)
+        .collect()
 }
 
 /// A file's info lines at `now_ms`; with `only_interesting`, just those

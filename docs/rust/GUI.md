@@ -65,7 +65,13 @@ the search box lists your favourite searches in hydrus's folders and
 order; choosing one loads its domains, tag service, predicates and sort
 into the page, searching if it is synchronised (saving and editing
 favourites isn't here yet, nor collecting). The matching files' thumbnails fill the grid, newest import
-first, with the count in the status bar; the grid is a list of rows, so only
+first. The status bar says what the reference's does (`src/status.rs`,
+checked against `_GetPrettyStatusForStatusBar`): how many files and of
+what type ("14 jpegs", "27 images", "36 files"), their total size and,
+if they all have one, duration; with files selected, the same of them
+and how many are in the inbox, or for one file its interesting info
+lines; and an empty page why ("no search", "no files found for this
+search", a downloader page's "no highlighted query"). The grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then).
 Thumbnails are selected as in the reference's grid (`src/selection.rs`,
@@ -193,8 +199,7 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
-repositories (pending and petitioning), the status bar's summary of the
-selection, dragging thumbnails, the thumbnails' menu, system
+repositories (pending and petitioning), dragging thumbnails, the thumbnails' menu, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
 shading, playing animated JPEG XL, downloader pages' own panels; in

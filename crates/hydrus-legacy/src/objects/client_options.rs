@@ -280,6 +280,10 @@ impl ClientOptions {
                 &mut out.hide_uninteresting_modified_time,
             ),
             ("use_nice_resolution_strings", &mut out.nice_resolutions),
+            (
+                "show_extended_single_file_info_in_status_bar",
+                &mut out.single_file_in_status_bar,
+            ),
         ] {
             if let Some(&value) = self.booleans.get(key) {
                 *field = value;

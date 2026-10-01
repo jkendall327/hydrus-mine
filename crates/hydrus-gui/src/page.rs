@@ -2,6 +2,7 @@
 //! or a page that shows files without a search, and which file is selected.
 //! Plain Rust, driven by the window and by tests alike.
 
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use hydrus_core::HashId;
@@ -14,6 +15,7 @@ use hydrus_store::Store;
 
 use crate::autocomplete::Autocomplete;
 use crate::selection::{Move, Selection};
+use crate::status::Facts;
 
 pub struct SearchPage {
     store: Arc<Store>,
@@ -38,6 +40,11 @@ pub struct SearchPage {
     error: Option<String>,
     /// A duplicates page's filtering, which the page can launch.
     duplicates: Option<DuplicatesPage>,
+    /// What the status bar says while the page is empty (the reference's
+    /// `_empty_page_status_override`, forgotten once it shows files).
+    empty_status: std::cell::Cell<Option<&'static str>>,
+    /// The status bar's facts of the files shown (and some no longer).
+    facts: HashMap<HashId, Facts>,
 }
 
 impl std::fmt::Debug for SearchPage {
@@ -73,6 +80,8 @@ impl SearchPage {
             tags: Vec::new(),
             error: None,
             duplicates: None,
+            empty_status: std::cell::Cell::new(Some("no search done yet")),
+            facts: HashMap::new(),
         }
     }
 
@@ -103,6 +112,7 @@ impl SearchPage {
         };
         let mut page = Self::fixed(store, note, sort, files);
         page.duplicates = Some(duplicates);
+        page.empty_status.set(Some("no dupes found"));
         page
     }
 
@@ -137,6 +147,7 @@ impl SearchPage {
         page.synchronised = synchronised;
         page.set_page_sort(sort);
         page.results = files;
+        page.learn_facts();
         page.count_tags();
         page
     }
@@ -183,10 +194,20 @@ impl SearchPage {
     ) -> Self {
         let mut page = Self::new(store);
         page.note = Some(note.into());
+        page.empty_status.set(Some("empty page"));
         page.set_page_sort(sort);
         page.results = files;
+        page.learn_facts();
         page.count_tags();
         page
+    }
+
+    /// What the status bar says while the page is empty (a downloader
+    /// page's "no highlighted query", say).
+    #[must_use]
+    pub fn with_empty_status(self, status: &'static str) -> Self {
+        self.empty_status.set(Some(status));
+        self
     }
 
     /// A session's sort, if it is one we have; otherwise the default stays.
@@ -547,8 +568,11 @@ impl SearchPage {
         // as in the reference, a page with no predicates shows nothing
         if self.predicates.is_empty() {
             self.tags.clear();
+            self.empty_status.set(Some("no search"));
             return;
         }
+        self.empty_status
+            .set(Some("no files found for this search"));
         let search = FileSearchContext {
             predicates: self.predicates.clone(),
             ..self.context.clone()
@@ -564,16 +588,83 @@ impl SearchPage {
             Ok(Err(e)) => self.error = Some(e.to_string()),
             Err(e) => self.error = Some(e.to_string()),
         }
+        self.learn_facts();
         self.count_tags();
     }
 
-    /// The status bar's text.
-    pub fn status(&self) -> String {
-        match self.results.len() {
-            0 => "no files".to_owned(),
-            1 => "1 file".to_owned(),
-            n => format!("{n} files"),
+    /// Read the status bar's facts of the files shown not yet known.
+    fn learn_facts(&mut self) {
+        let unknown: Vec<HashId> = self
+            .results
+            .iter()
+            .copied()
+            .filter(|f| !self.facts.contains_key(f))
+            .collect();
+        if unknown.is_empty() {
+            return;
         }
+        self.facts
+            .extend(crate::status::facts(&self.store, &unknown));
+    }
+
+    /// The status bar's text, as the reference writes it: the files shown,
+    /// and those selected (their inbox read afresh, as archiving changes
+    /// it); for one file selected, its info lines.
+    pub fn status(&self) -> String {
+        let facts = |files: &[HashId]| -> Vec<Facts> {
+            files
+                .iter()
+                .filter_map(|f| self.facts.get(f))
+                .copied()
+                .collect()
+        };
+        let all = facts(&self.results);
+        if !all.is_empty() {
+            self.empty_status.set(None);
+        }
+        let selected_files = self.selected_files();
+        let mut selected = facts(&selected_files);
+        if let Ok(inbox) = self
+            .store
+            .read(|conn| hydrus_store::media::inboxed(conn, &selected_files))
+        {
+            for (fact, file) in selected.iter_mut().zip(&selected_files) {
+                fact.inbox = inbox.contains(file);
+            }
+        }
+        let single_line = match selected_files[..] {
+            [file] => self.single_file_line(file),
+            _ => None,
+        };
+        crate::status::status(
+            &all,
+            &selected,
+            self.empty_status.get(),
+            single_line.as_deref(),
+        )
+    }
+
+    /// One file's interesting info lines, for the status bar, if the
+    /// options show them.
+    fn single_file_line(&self, file: HashId) -> Option<String> {
+        let settings: hydrus_core::media_viewer::InfoLineSettings =
+            self.store.read(hydrus_store::settings::get).ok()?;
+        if !settings.single_file_in_status_bar {
+            return None;
+        }
+        let snapshot = self.store.snapshot();
+        let media = self
+            .store
+            .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[file]))
+            .ok()?
+            .results
+            .pop()?;
+        Some(crate::info_lines::status_line(
+            &media,
+            &snapshot.services,
+            &settings,
+            hydrus_core::TimestampMs::now().0,
+        ))
     }
 
     /// A file's thumbnail, decoded; `None` if it has none on disk.

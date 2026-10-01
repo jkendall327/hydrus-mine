@@ -4,7 +4,7 @@
 //! a GUI. Loading is batched (one query per table for the whole batch) so a
 //! page of thousands of files costs a handful of queries, not thousands.
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::{BTreeMap, HashMap, HashSet};
 
 use rusqlite::Connection;
 
@@ -204,6 +204,14 @@ pub fn load_basic(conn: &Connection, hash_ids: &[HashId]) -> Result<Vec<MediaRes
         .collect();
     load_info(conn, &mut results)?;
     Ok(results)
+}
+
+/// Which of `hash_ids` are in the inbox.
+pub fn inboxed(conn: &Connection, hash_ids: &[HashId]) -> Result<HashSet<HashId>> {
+    let mut stmt =
+        conn.prepare_cached("SELECT hash_id FROM file_inbox WHERE hash_id IN rarray(?)")?;
+    let rows = stmt.query_map([id_array(hash_ids)], |r| r.get(0))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
 /// Fill in each result's file properties.

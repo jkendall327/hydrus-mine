@@ -40,6 +40,7 @@ fn settings_of(phase: &Value) -> InfoLineSettings {
         hide_uninteresting_modified_time: flag("hide_uninteresting_modified_time"),
         nice_resolutions: flag("use_nice_resolution_strings"),
         has_audio_label: phase["has_audio_label"].as_str().unwrap().to_owned(),
+        ..InfoLineSettings::default()
     }
 }
 

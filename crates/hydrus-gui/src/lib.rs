@@ -41,6 +41,7 @@ pub mod ratings;
 pub mod scanbar;
 pub mod selection;
 pub mod sort;
+pub mod status;
 pub mod still;
 mod thumbnails;
 mod unlock;
@@ -541,10 +542,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    // (the status bar counts the selection's inbox)
     let archive_or_inbox = |archive: bool| {
         let page = page.clone();
         let selected_files = selected_files.clone();
         let ask = ask.clone();
+        let shown = shown.clone();
         move || {
             let page = page();
             let store = page.borrow().store().clone();
@@ -552,7 +555,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let files = if archive { inbox } else { archived };
             match files.len() {
                 0 => {}
-                1 => Asked::archive_or_inbox(archive, files).act(&store, &|_| {}),
+                1 => {
+                    Asked::archive_or_inbox(archive, files).act(&store, &|_| {});
+                    shown(false);
+                }
                 _ => ask(Asked::archive_or_inbox(archive, files)),
             }
         }
@@ -562,6 +568,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.on_undelete_selected({
         let page = page.clone();
         let selected_files = selected_files.clone();
+        let shown = shown.clone();
         move || {
             let files = selected_files();
             if !files.is_empty()
@@ -569,6 +576,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             {
                 eprintln!("could not undelete the files: {e}");
             }
+            shown(false);
         }
     });
     window.on_delete_selected({
@@ -589,6 +597,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let page = page.clone();
         let weak = window.as_weak();
         let removed = removed.clone();
+        let shown = shown.clone();
         move |yes| {
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
@@ -597,6 +606,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(asked) = asked.filter(|_| yes) {
                 let store = page().borrow().store().clone();
                 asked.act(&store, &*removed);
+                shown(false);
             }
         }
     });
