@@ -413,6 +413,10 @@ export component MainWindow inherits Window {
     callback select-all();
     callback select-none();
     callback launch-viewer();
+    // the media shortcuts: ctrl+r takes the selected files off the page,
+    // ctrl+e opens the focused file as the OS opens it
+    callback remove-selected();
+    callback open-externally();
     callback move-focus(int, bool, int, int) -> int;
     // the right-click menu: asked for on a file (-1 for none), then shown;
     // an entry chosen
@@ -1049,6 +1053,14 @@ export component MainWindow inherits Window {
                             }
                             if (event.text == Key.Return) {
                                 root.launch-viewer();
+                                return accept;
+                            }
+                            if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
+                                root.remove-selected();
+                                return accept;
+                            }
+                            if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
+                                root.open-externally();
                                 return accept;
                             }
                             let move = event.modifiers.alt || event.modifiers.control ? -1

@@ -832,6 +832,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // ctrl+r: the selected files leave the page (`_Remove`, the selection's
+    // filter), a selected collection with all its files
+    window.on_remove_selected({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let selected = page.borrow().selected_files();
+            if !selected.is_empty() {
+                page.borrow_mut().remove_files(&selected);
+                shown(true);
+            }
+        }
+    });
+    // ctrl+e: the focused file as the OS opens it, if one file is focused
+    // (`_HasFocusSingleton`)
+    window.on_open_externally({
+        let page = page.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let focused = page
+                .focused()
+                .map(|i| page.results()[i])
+                .filter(|&item| page.collection(item).is_none());
+            if let Some(path) =
+                focused.and_then(|f| thumbnail_menu::paths(page.store(), &[f]).pop())
+            {
+                launch(&path);
+            }
+        }
+    });
     // the right-click menu: built for the file clicked (selecting it, as
     // a click would), and its entries done
     let menu_state: MenuState = Rc::default();
@@ -1271,9 +1303,27 @@ type MenuState = Rc<
     )>,
 >;
 
+/// Something that opens a file or URL.
+type Launcher = Rc<dyn Fn(&str)>;
+
+thread_local! {
+    /// What opens files and URLs in place of the OS, if anything.
+    static LAUNCHER: RefCell<Option<Launcher>> = RefCell::new(None);
+}
+
+/// Open files and URLs with `launcher` rather than as the OS opens them
+/// (for tests, which shouldn't open anything), on this thread.
+pub fn set_launcher(launcher: impl Fn(&str) + 'static) {
+    LAUNCHER.with(|l| *l.borrow_mut() = Some(Rc::new(launcher)));
+}
+
 /// Open `target` (a path or URL) as the OS opens it.
 fn launch(target: &str) {
     use std::process::Command;
+    if let Some(launcher) = LAUNCHER.with(|l| l.borrow().clone()) {
+        launcher(target);
+        return;
+    }
     #[cfg(windows)]
     let mut command = {
         let mut c = Command::new("cmd");
@@ -1776,6 +1826,45 @@ fn open_viewer(
         move || {
             model.borrow_mut().last();
             show();
+        }
+    });
+    // ctrl+r: the file leaves the viewer and its page, the next shown
+    // (`_Remove`); with none left, the viewer closes
+    window.on_remove_from_view({
+        let model = model.clone();
+        let show = show.clone();
+        let removed = removed.clone();
+        let weak = window.as_weak();
+        move || {
+            let file = model.borrow().current();
+            removed(&[file]);
+            let any_left = model.borrow_mut().remove_current();
+            if any_left {
+                show();
+            } else if let Some(window) = weak.upgrade() {
+                window.invoke_close_requested();
+            }
+        }
+    });
+    // ctrl+e: the file as the OS opens it, pausing one that plays
+    // (`_MediaFocusWentToExternalProgram`)
+    window.on_open_externally({
+        let model = model.clone();
+        let playback = playback.clone();
+        let animator = animator.clone();
+        move || {
+            let (store, file) = {
+                let model = model.borrow();
+                (model.store().clone(), model.current())
+            };
+            let Some(path) = thumbnail_menu::paths(&store, &[file]).pop() else {
+                return;
+            };
+            launch(&path);
+            if viewer::timing(&store, file).0.is_some_and(|ms| ms > 0) {
+                playback.set_paused(true);
+                animator.set_paused(true);
+            }
         }
     });
     // ctrl+b and ctrl+n, for a file with a scanbar (`GotoPreviousOrNextFrame`)

@@ -129,7 +129,10 @@ selects every file, escape none, the arrows, page up and down, home and
 end move from the focused file (shift selecting as they go, from the file
 last clicked; the grid scrolls to follow; with nothing focused, the file
 focused last is selected again, or the next one if it has gone) and
-enter opens the media viewer on the focused file. A right-click on a thumbnail selects it
+enter opens the media viewer on the focused file; as the reference's media
+shortcuts have it, ctrl+r takes the selected files off the page (not out
+of the client; a selected collection goes whole) and ctrl+e opens the
+focused file (not a collection) as the OS opens it. A right-click on a thumbnail selects it
 as a click would and opens the reference's thumbnail menu
 (`src/thumbnail_menu.rs`, checked against the reference's own menus for
 several pages and selections, `oracle/record_thumbnail_menu.py`), so far
@@ -171,7 +174,9 @@ per-filetype zoom rules or your default zoom say otherwise): right and left
 (or down and up, page down and up, or the mouse wheel) move through the
 page's files, round from the last to the first as in the reference, home
 and end go to the first and the last, and escape, enter or a middle click
-closes it. As the reference's default shortcuts have it, z switches between
+closes it; ctrl+r takes the file shown off the viewer and its page,
+showing the next (closing with none left), and ctrl+e opens it as the OS
+opens it, pausing one that plays. As the reference's default shortcuts have it, z switches between
 100% and fitting the window, + and - (or ctrl and the mouse wheel) step
 through your zoom levels and canvas fit, keeping the point under the
 pointer still (or wherever your zoom centre option says), shift and the

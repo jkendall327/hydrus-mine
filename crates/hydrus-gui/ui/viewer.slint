@@ -121,6 +121,10 @@ export component MediaViewerWindow inherits Window {
     callback last();
     // a frame back (-1) or on (1)
     callback frame-step(int);
+    // ctrl+r: the file leaves the viewer (and its page); ctrl+e: it opens
+    // as the OS opens it
+    callback remove-from-view();
+    callback open-externally();
     // the volume a point on the volume control's track (`top` to `top` +
     // `track`, loudest at the top) sets
     pure function volume-at(y: length, top: length, track: length) -> int {
@@ -242,6 +246,14 @@ export component MediaViewerWindow inherits Window {
             }
             if (event.text == "-") {
                 root.zoom(-1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
+                root.remove-from-view();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
+                root.open-externally();
                 return accept;
             }
             // ctrl+b and ctrl+n: a frame back or on, in a file with a scanbar
