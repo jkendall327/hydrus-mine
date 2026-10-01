@@ -135,7 +135,9 @@ mod tests {
 
     const HOUR_MS: i64 = 3_600_000;
 
-    /// A store whose trash holds ten files, oldest first, each 200,000 bytes.
+    /// A store whose trash holds ten files, oldest first, each 200,000 bytes,
+    /// trashed 9.5 to 0.5 hours ago (half an hour off the limits, so a slow
+    /// run doesn't cross one).
     fn trashed_store() -> (
         tempfile::TempDir,
         tempfile::TempDir,
@@ -166,7 +168,7 @@ mod tests {
                     let age = 10 - i64::try_from(i).unwrap();
                     w.conn().execute(
                         "UPDATE file_domain_current SET added_ms = ?1 WHERE service_id = ?2 AND hash_id = ?3",
-                        params![now - age * HOUR_MS, roles.trash, id],
+                        params![now - age * HOUR_MS + HOUR_MS / 2, roles.trash, id],
                     )?;
                     w.conn()
                         .execute("UPDATE files SET size = 200000 WHERE hash_id = ?1", [id])?;
