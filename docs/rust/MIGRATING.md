@@ -55,7 +55,8 @@ User-Agent your browser extension set), every site's cookies, less those
 that had expired, and your bandwidth rules with their recent usage (so
 today's limits carry on). The trash keeps its limits (how old and how big
 it may get before files in it are deleted for good), and `hydrus serve`
-applies them hourly, as hydrus does. Your import options come across too (the defaults for
+applies them hourly, as hydrus does; files deleted for good go to the
+recycle bin if you had hydrus send them there. Your import options come across too (the defaults for
 each kind of import, per URL class, and your favourites), so the Client
 API's file imports already follow your file filtering and destination
 settings, and your downloaders' parsers and gallery URL generators are

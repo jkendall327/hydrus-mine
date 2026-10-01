@@ -59,7 +59,8 @@ enum Command {
         #[arg(long)]
         bind: Option<IpAddr>,
     },
-    /// Delete from disk the files that were deleted from local storage.
+    /// Delete from disk the files that were deleted from local storage (to
+    /// the recycle bin, if hydrus's "delete to recycle bin" option was on).
     Purge { dir: PathBuf },
     /// Start gallery searches (a gallery downloader page), one per query.
     /// A running `serve` picks them up within a minute.

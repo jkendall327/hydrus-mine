@@ -37,6 +37,10 @@ pub fn purge_deleted_media(store: &Store, batch: usize) -> Result<PurgeReport> {
     {
         return Ok(PurgeReport::default());
     }
+    // (thumbnails are always deleted for good, as in the reference)
+    let recycle = store
+        .read(settings::get::<settings::FolderSettings>)?
+        .delete_to_recycle_bin;
     let snap = store.snapshot();
     let claims = store.media_claims();
     let local_storage = DomainRoles::new(&snap.services)?.local_file_storage;
@@ -76,12 +80,12 @@ pub fn purge_deleted_media(store: &Store, batch: usize) -> Result<PurgeReport> {
                 continue;
             };
             if let Some(path) = mime.and_then(Mime::from_code).and_then(|m| snap.storage.file_path(&hash, m))
-                && remove_if_present(&path)?
+                && remove_if_present(&path, recycle)?
             {
                 report.files_deleted += 1;
             }
             if let Some(path) = snap.storage.thumbnail_path(&hash)
-                && remove_if_present(&path)?
+                && remove_if_present(&path, false)?
             {
                 report.thumbnails_deleted += 1;
             }
@@ -93,11 +97,14 @@ pub fn purge_deleted_media(store: &Store, batch: usize) -> Result<PurgeReport> {
     })
 }
 
-fn remove_if_present(path: &std::path::Path) -> Result<bool> {
-    match std::fs::remove_file(path) {
-        Ok(()) => Ok(true),
+fn remove_if_present(path: &std::path::Path, recycle: bool) -> Result<bool> {
+    match std::fs::symlink_metadata(path) {
         Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(false),
         Err(e) => Err(e.into()),
+        Ok(_) => {
+            crate::paths::delete_or_recycle(path, recycle)?;
+            Ok(true)
+        }
     }
 }
 
@@ -118,6 +125,14 @@ mod tests {
         let (source, dest_dir, db) = import_basic();
         transfer_media(&db, &dest_dir.path().join("media"), TransferMode::Copy).unwrap();
         let store = Store::open(dest_dir.path()).unwrap();
+        // (the fixture recycles deleted files: keep them out of the real bin)
+        let folders = settings::FolderSettings {
+            delete_to_recycle_bin: false,
+            ..settings::FolderSettings::default()
+        };
+        store
+            .write(move |ctx| settings::set(ctx.conn(), &folders))
+            .unwrap();
         let (id, path) = store
             .read(|c| {
                 let (id, hash, mime): (HashId, Vec<u8>, u8) = c.query_row(

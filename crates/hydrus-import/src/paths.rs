@@ -8,6 +8,7 @@ use std::io;
 use std::path::{Component, Path, PathBuf};
 
 use hydrus_core::sort::human_sort;
+pub use hydrus_store::paths::{delete_or_recycle, delete_path};
 
 /// `os.path.normpath`, lexically.
 fn normpath(path: &Path) -> PathBuf {
@@ -227,36 +228,6 @@ pub fn merge_file(source: &str, dest: &str) -> io::Result<bool> {
     }
     move_file(source, dest)?;
     Ok(true)
-}
-
-/// `HydrusPaths.DeletePath`: delete a file (a link itself, not its target)
-/// for good; nothing if it isn't there.
-pub fn delete_path(path: &str) -> io::Result<()> {
-    match std::fs::symlink_metadata(path) {
-        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(e) => Err(e),
-        Ok(meta) if meta.is_dir() => std::fs::remove_dir_all(path),
-        Ok(_) => std::fs::remove_file(path),
-    }
-}
-
-/// `ClientPaths.DeletePath`: to the recycle bin if asked (falling back to
-/// deleting for good, as the reference does when recycling fails), else
-/// for good.
-pub fn delete_or_recycle(path: &str, recycle: bool) -> io::Result<()> {
-    if !recycle {
-        return delete_path(path);
-    }
-    if std::fs::symlink_metadata(path).is_err() {
-        return Ok(());
-    }
-    match trash::delete(path) {
-        Ok(()) => Ok(()),
-        Err(e) => {
-            tracing::warn!("could not recycle {path:?} ({e}); deleting it instead");
-            delete_path(path)
-        }
-    }
 }
 
 /// `MirrorFile`: copy `source` to `dest` (keeping its modified time)

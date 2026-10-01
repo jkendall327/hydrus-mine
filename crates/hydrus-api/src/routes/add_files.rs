@@ -294,7 +294,13 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
                 && delete_after
                 && result.status.is_successful()
             {
-                let _ = std::fs::remove_file(path);
+                let recycle = app
+                    .store
+                    .read(hydrus_store::settings::get::<hydrus_store::settings::FolderSettings>)
+                    .map_or(true, |s| s.delete_to_recycle_bin);
+                if let Err(e) = hydrus_store::paths::delete_or_recycle(path, recycle) {
+                    tracing::warn!(path = %path.display(), error = %e, "deleting an imported file failed");
+                }
             }
             Ok(result)
         })
