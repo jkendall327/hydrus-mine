@@ -1,7 +1,7 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { Button, CheckBox, ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
@@ -277,6 +277,18 @@ export component MainWindow inherits Window {
     in property <[ThumbnailRow]> thumbnail-rows;
     in property <string> status;
     in property <string> error;
+    // a downloader page's importer (the reference's "url downloader" box):
+    // its file log's status and progress, whether it is paused, and its
+    // search log's status
+    in property <bool> importing;
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <bool> import-paused;
+    in property <string> search-status;
+    callback pause-play-files();
+    callback url-entered(string);
+    callback paste-urls();
     // the daemon (`hydrus serve`), or its Client API, not running, and why;
     // and whether starting it again would help
     in property <string> daemon-note;
@@ -481,7 +493,84 @@ export component MainWindow inherits Window {
                 }
             }
             HorizontalLayout {
-                if root.note != "": VerticalBox {
+                if root.importing: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    Text {
+                        text: "url downloader";
+                        font-weight: 700;
+                    }
+                    Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        VerticalLayout {
+                            padding: 6px;
+                            spacing: 4px;
+                            HorizontalLayout {
+                                Text {
+                                    text: "imports";
+                                    font-weight: 600;
+                                    vertical-alignment: center;
+                                    horizontal-stretch: 1;
+                                }
+                                // the reference's own file_pause/file_play
+                                // icons: play while paused
+                                Button {
+                                    icon: root.import-paused ? @image-url("../../../static/file_play.png") : @image-url("../../../static/file_pause.png");
+                                    clicked => { root.pause-play-files(); }
+                                }
+                            }
+                            if root.import-status != "": Text {
+                                text: root.import-status;
+                                wrap: word-wrap;
+                            }
+                            if root.import-progress != "": Text {
+                                text: root.import-progress;
+                            }
+                            ProgressIndicator {
+                                progress: root.import-fraction;
+                            }
+                        }
+                    }
+                    Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        VerticalLayout {
+                            padding: 6px;
+                            spacing: 4px;
+                            Text {
+                                text: "search";
+                                font-weight: 600;
+                            }
+                            if root.search-status != "": Text {
+                                text: root.search-status;
+                                wrap: word-wrap;
+                            }
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        url-box := LineEdit {
+                            horizontal-stretch: 1;
+                            placeholder-text: "any url hydrus recognises, or a raw file url";
+                            accepted(text) => {
+                                root.url-entered(text);
+                                self.text = "";
+                            }
+                        }
+                        // (the reference's paste button: newline-separated
+                        // URLs from the clipboard)
+                        Button {
+                            text: "paste";
+                            clicked => { root.paste-urls(); }
+                        }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.note != "" && !root.importing: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {
@@ -497,7 +586,7 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.note == "": VerticalBox {
+                if root.note == "" && !root.importing: VerticalBox {
                     width: 300px;
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {

@@ -15,6 +15,7 @@ use hydrus_search::{
     collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
+use hydrus_store::queues::{self, StatusCounts};
 
 use crate::autocomplete::Autocomplete;
 use crate::selection::{Move, Selection};
@@ -65,6 +66,73 @@ pub struct SearchPage {
     empty_status: std::cell::Cell<Option<&'static str>>,
     /// The status bar's facts of the files shown (and some no longer).
     facts: HashMap<HashId, Facts>,
+    /// A downloader page's importer, as last read.
+    importer: Option<Importer>,
+    /// The files its importer has brought so far (shown, or taken off the
+    /// page since), so each is added once.
+    presented: std::collections::HashSet<HashId>,
+}
+
+/// A downloader page's importer: the queue it shows (which the daemon
+/// works), as last read from the store.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct Importer {
+    pub queue: i64,
+    /// Its file log's seeds by status.
+    pub files: StatusCounts,
+    /// Its search log's.
+    pub searches: StatusCounts,
+    pub paused: bool,
+}
+
+impl Importer {
+    /// Its file log's status in full ("5 successful (2 already in db), 1
+    /// failed").
+    pub fn files_status(&self) -> String {
+        queues::file_log_status(&self.files)
+    }
+
+    /// Its files done and in all.
+    pub fn progress(&self) -> (usize, usize) {
+        queues::file_log_value_range(&self.files)
+    }
+
+    /// Its files done of all, "6/10" (nothing with none).
+    pub fn progress_text(&self) -> String {
+        match self.progress() {
+            (_, 0) => String::new(),
+            (done, total) => queues::value_range_text(done, total),
+        }
+    }
+
+    /// Its search log's status ("1 successful, 2 pending").
+    pub fn search_status(&self) -> String {
+        queues::search_log_status(&self.searches).0
+    }
+
+    /// Whether it has file work left and isn't paused (`CurrentlyWorking`).
+    pub fn working(&self) -> bool {
+        !self.paused
+            && self
+                .files
+                .get(&queues::SeedStatus::Unknown)
+                .is_some_and(|&n| n > 0)
+    }
+
+    /// Why closing its page needs asking about, as the reference says it
+    /// (`CheckAbleToClose`): still importing, or holding imports.
+    pub fn close_veto(&self) -> Option<String> {
+        if self.working() {
+            return Some("This page is still importing.".into());
+        }
+        let held: usize = self.files.values().sum();
+        (held > 0).then(|| {
+            format!(
+                "This is a urls import page holding {} import objects.",
+                hydrus_core::numbers::human_int(held as u64)
+            )
+        })
+    }
 }
 
 impl std::fmt::Debug for SearchPage {
@@ -107,6 +175,8 @@ impl SearchPage {
             duplicates: None,
             empty_status: std::cell::Cell::new(Some("no search done yet")),
             facts: HashMap::new(),
+            importer: None,
+            presented: std::collections::HashSet::new(),
         }
     }
 
@@ -236,6 +306,113 @@ impl SearchPage {
         page.learn_facts();
         page.count_tags();
         page
+    }
+
+    /// A URL downloader page over `queue`: the files it showed (as a
+    /// session kept them), and those its queue brings from now on, added at
+    /// its end as they come.
+    pub fn url_downloader(
+        store: Arc<Store>,
+        queue: i64,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::fixed(store, "A URL downloader page.", sort, files);
+        page.importer = Some(Importer {
+            queue,
+            ..Importer::default()
+        });
+        page.read_import(true);
+        page
+    }
+
+    /// Its importer, for a downloader page.
+    pub fn importer(&self) -> Option<&Importer> {
+        self.importer.as_ref()
+    }
+
+    /// Read the importer's queue again: its counts and pause, and the files
+    /// it brought since, added at the page's end (as the reference presents
+    /// them to its page). Whether anything changed.
+    pub fn refresh_import(&mut self) -> bool {
+        self.read_import(false)
+    }
+
+    fn read_import(&mut self, first: bool) -> bool {
+        let Some(queue) = self.importer.as_ref().map(|i| i.queue) else {
+            return false;
+        };
+        let read = self.store.read(|c| {
+            Ok((
+                queues::queue(c, queue)?,
+                queues::file_seed_counts(c, queue)?,
+                queues::gallery_seed_counts(c, queue)?,
+                queues::presented_files(c, queue)?,
+            ))
+        });
+        let Ok((row, files, searches, presented)) = read else {
+            return false;
+        };
+        let now = Importer {
+            queue,
+            files,
+            searches,
+            paused: row.is_some_and(|q| q.files_paused),
+        };
+        let mut changed = self.importer.as_ref() != Some(&now);
+        self.importer = Some(now);
+        let arrived: Vec<HashId> = presented
+            .into_iter()
+            .filter(|f| self.presented.insert(*f))
+            .collect();
+        if !first && !arrived.is_empty() {
+            changed |= self.add_files(&arrived);
+        }
+        changed
+    }
+
+    /// Pause or resume the importer (the reference's one switch pauses its
+    /// files and its search together).
+    pub fn pause_play_files(&mut self) {
+        let Some(importer) = &self.importer else {
+            return;
+        };
+        let (queue, paused) = (importer.queue, !importer.paused);
+        let done = self.store.write(move |ctx| {
+            queues::set_paused(ctx.conn(), queue, Some(paused), Some(paused))?;
+            queues::nudge(ctx.conn(), queue)
+        });
+        match done {
+            Ok(()) => {
+                self.refresh_import();
+            }
+            Err(e) => eprintln!("could not pause or resume the importer: {e}"),
+        }
+    }
+
+    /// Hand URLs typed or pasted into the page to the daemon, which adds
+    /// those it can as the reference does (`PendURLs`): each line, trimmed,
+    /// empty ones dropped.
+    pub fn pend_urls(&self, text: &str) {
+        let Some(importer) = &self.importer else {
+            return;
+        };
+        let urls: Vec<String> = text
+            .lines()
+            .map(|line| line.trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}'))
+            .filter(|line| !line.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if urls.is_empty() {
+            return;
+        }
+        let queue = importer.queue;
+        if let Err(e) = self
+            .store
+            .write(move |ctx| queues::request_urls(ctx.conn(), queue, &urls))
+        {
+            eprintln!("could not add the URLs: {e}");
+        }
     }
 
     /// What the status bar says while the page is empty (a downloader
@@ -488,7 +665,7 @@ impl SearchPage {
     /// How far the page's importing has got: its done and total imports
     /// (none for a page that doesn't import).
     pub fn import_progress(&self) -> (usize, usize) {
-        (0, 0)
+        self.importer.as_ref().map_or((0, 0), Importer::progress)
     }
 
     /// The page's files, in order, its collections' in theirs.

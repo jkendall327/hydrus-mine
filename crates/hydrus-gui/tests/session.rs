@@ -606,3 +606,178 @@ fn the_pages_are_kept_for_the_client_api_and_do_what_it_asks() {
     (bound.sync)();
     assert!(store.read(sessions::media_viewers).unwrap().is_empty());
 }
+
+/// A URL downloader page over its queue, which the daemon works (played
+/// here by writing to the queue as it would): made from the page chooser,
+/// handing typed URLs over, showing the queue's status and the files it
+/// brings as they come, pausing, and closing as the reference asks.
+#[test]
+fn a_url_downloader_page_shows_and_controls_its_queue() {
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
+
+    let (_dirs, store) = store();
+    let files: Vec<(HashId, hydrus_core::Sha256)> = store
+        .read(|conn| {
+            let ids: Vec<HashId> = conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 3")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            let hashes = hydrus_store::master::hashes(conn, &ids)?;
+            Ok(ids.iter().map(|id| (*id, hashes[id])).collect())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // download, then urls
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    assert_eq!(bound.pages.borrow().shown().name, "url import");
+    assert!(ui.get_importing());
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    let key = bound.pages.borrow().shown().key;
+    let made = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    assert_eq!(made.page_key.as_deref(), Some(&key.0[..]));
+    assert_eq!(ui.get_import_status(), "");
+    assert_eq!(ui.get_import_progress(), "");
+
+    // typed URLs are handed to the daemon, trimmed
+    ui.invoke_url_entered("  https://site.example/post/1 \u{feff}".into());
+    ui.invoke_url_entered("   ".into());
+    let typed = store
+        .write(move |ctx| queues::take_url_requests(ctx.conn(), queue))
+        .unwrap();
+    assert_eq!(typed, ["https://site.example/post/1"]);
+
+    // the daemon at work: a new file, one already in the database, a
+    // failure and one to go
+    let seed = |n: usize| NewFileSeed {
+        seed_type: SeedType::Url,
+        data: format!("https://site.example/post/{n}"),
+        data_for_comparison: format!("https://site.example/post/{n}"),
+        source_time: None,
+        referral_url: None,
+        meta: FileSeedMeta::default(),
+    };
+    let (first, second) = (files[0].1, files[1].1);
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            queues::add_file_seeds(conn, queue, &[seed(1), seed(2), seed(3), seed(4)], false, 0)?;
+            let mut seeds = queues::file_seeds(conn, queue)?;
+            for (seed, (status, hash)) in seeds.iter_mut().zip([
+                (SeedStatus::SuccessfulAndNew, Some(second)),
+                (SeedStatus::SuccessfulButRedundant, Some(first)),
+                (SeedStatus::Error, None),
+            ]) {
+                seed.status = status;
+                if let Some(hash) = hash {
+                    seed.meta.set_hash("sha256", hash.to_hex());
+                }
+                queues::update_file_seed(conn, seed)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    (bound.sync)();
+    assert_eq!(
+        ui.get_import_status(),
+        "2 successful (1 already in db), 1 failed"
+    );
+    assert_eq!(ui.get_import_progress(), "3/4");
+    assert!((ui.get_import_fraction() - 0.75).abs() < 1e-6);
+    // (its files, in the order they came, and its tab's progress)
+    assert_eq!(
+        bound.current.borrow().borrow().files(),
+        [files[1].0, files[0].0]
+    );
+    let tab = |ui: &MainWindow| -> String {
+        let row = ui.get_tab_rows().row_data(0).unwrap();
+        let shown = usize::try_from(row.selected).unwrap();
+        row.names.row_data(shown).unwrap().to_string()
+    };
+    assert_eq!(tab(&ui), "url import (2 - 3/4)");
+
+    // pausing pauses its files and search, nudging the daemon
+    store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();
+    ui.invoke_pause_play_files();
+    assert!(ui.get_import_paused());
+    let paused = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    assert!(paused.files_paused && paused.gallery_paused);
+    assert_eq!(
+        store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap(),
+        [queue]
+    );
+
+    // closing it asks, as it holds imports; closed, its queue waits
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"url import\"?\n\nThis is a urls import page holding 4 import objects."
+    );
+    ui.invoke_answer(true);
+    assert_ne!(bound.pages.borrow().shown().key, key);
+    let page_closed = |store: &Arc<Store>| {
+        store
+            .read(move |c| Ok(queues::queue(c, queue)?.map(|q| q.page_closed)))
+            .unwrap()
+    };
+    assert_eq!(page_closed(&store), Some(true));
+    // reopened, it runs again
+    ui.invoke_unclose_page();
+    assert_eq!(bound.pages.borrow().shown().key, key);
+    assert_eq!(page_closed(&store), Some(false));
+    // resumed, with work left, it is still importing
+    ui.invoke_pause_play_files();
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"url import\"?\n\nThis page is still importing."
+    );
+    ui.invoke_answer(false);
+    assert_eq!(bound.pages.borrow().shown().key, key);
+    // closed for good as the client closes: the queue goes
+    ui.invoke_close_page();
+    ui.invoke_answer(true);
+    bound.pages.borrow_mut().forget_closed();
+    assert_eq!(page_closed(&store), None);
+}
+
+/// Pages closed when the client last closed (or crashed) don't come back,
+/// nor do their downloads.
+#[test]
+fn queues_of_pages_left_closed_go_when_the_client_opens() {
+    use hydrus_store::queues::{self, QueueKind};
+
+    let (_dirs, store) = store();
+    let queue = store
+        .write(|ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let queue =
+                queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+            queues::set_page_closed(conn, queue, true)?;
+            Ok(queue)
+        })
+        .unwrap();
+    Pages::open(store.clone()).unwrap();
+    assert!(
+        store
+            .read(move |c| queues::queue(c, queue))
+            .unwrap()
+            .is_none()
+    );
+}

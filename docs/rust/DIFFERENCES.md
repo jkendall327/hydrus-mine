@@ -202,6 +202,19 @@ search.
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
+- **A closed URL downloader page's downloads wait** until it is reopened
+  (Ctrl+U), and are deleted with it after the hour or when the client
+  closes (or, after a crash, when it next opens). The reference's closed
+  page imports on out of sight until it is destroyed; ours stops, as the
+  close question's "This page is still importing." suggests, and a daemon
+  left running without the client doesn't work on a page nobody can see.
+  `crates/hydrus-cli/tests/serve.rs` and `crates/hydrus-gui/tests/session.rs`
+  check it.
+- **A URL downloader page shows every file its queue imported or found
+  already in the database**, the reference's default presentation; a
+  page's own presentation options (new files only, say) aren't applied
+  yet, and the page has no sort or collect controls yet: its files are in
+  the queue's order.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 

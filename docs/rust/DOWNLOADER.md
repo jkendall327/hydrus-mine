@@ -15,8 +15,9 @@ migrated (`hydrus_core::bandwidth`): per network context (everything,
 each domain, each subscription query, downloader page and watcher), the
 gallery page waits per site, subscriptions asking before each file, and
 the reference's "go ahead after waiting" for subscription requests,
-gallery pages and files found on posts. What's left is the GUI's
-downloader pages.
+gallery pages and files found on posts. In the GUI, URL downloader pages
+are live views of their queues (adding URLs, pausing, their status and
+files); gallery and watcher pages are next.
 
 ## Goal
 

@@ -251,8 +251,18 @@ pub async fn get_page_info(
                 return Ok(json!({ "page_info": info }));
             }
             info.insert("is_media_page".into(), json!(true));
-            // (a downloader page's importer isn't described yet)
-            info.insert("management".into(), json!({}));
+            // (of the downloader pages, a URL page's importer is described)
+            let management = match &page.content {
+                PageContent::Downloader {
+                    kind: DownloaderKind::Urls,
+                    queues,
+                    ..
+                } if !queues.is_empty() => {
+                    json!({ "urls_import": urls_import(app, queues[0], simple)? })
+                }
+                _ => json!({}),
+            };
+            info.insert("management".into(), management);
             let (files, selected) = app.store.read(|c| {
                 Ok((
                     sessions::page_files(c, &page.key)?,
@@ -282,6 +292,88 @@ pub async fn get_page_info(
         })
         .await?;
     Ok(ApiResponse::json(body, &req))
+}
+
+/// A URL downloader page's importer, as the reference describes it
+/// (`URLsImport.GetAPIInfoDict`): its file log's and search log's status and
+/// progress, with their items unless `simple`, and whether it is paused.
+fn urls_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    use hydrus_store::queues;
+
+    let (naming, row, files, searches, file_seeds, gallery_seeds) = app.store.read(|c| {
+        Ok((
+            hydrus_store::settings::get::<hydrus_core::pages::PageNameSettings>(c)?,
+            queues::queue(c, queue)?,
+            queues::file_seed_counts(c, queue)?,
+            queues::gallery_seed_counts(c, queue)?,
+            (!simple)
+                .then(|| queues::file_seeds(c, queue))
+                .transpose()?,
+            (!simple)
+                .then(|| queues::gallery_seeds(c, queue))
+                .transpose()?,
+        ))
+    })?;
+    let (done, total) = queues::file_log_value_range(&files);
+    let mut imports = json!({
+        "status": queues::file_log_status(&files),
+        "simple_status": queues::file_log_short_status(
+            &files,
+            naming.short_summary_new,
+            naming.short_summary_deleted,
+        ),
+        "total_processed": done,
+        "total_to_process": total,
+    });
+    if let Some(seeds) = file_seeds {
+        let items: Vec<Json> = seeds
+            .iter()
+            .map(|seed| {
+                let hash = seed
+                    .meta
+                    .hashes
+                    .iter()
+                    .find(|(kind, _)| kind == "sha256")
+                    .map(|(_, hex)| hex.clone());
+                json!({
+                    "import_data": seed.data,
+                    "created": seed.created,
+                    "modified": seed.modified,
+                    "source_time": seed.source_time,
+                    "status": seed.status.code(),
+                    "note": seed.note,
+                    "hash": hash,
+                })
+            })
+            .collect();
+        imports["import_items"] = json!(items);
+    }
+    let (status, (done, total)) = queues::search_log_status(&searches);
+    let mut log = json!({
+        "status": status,
+        "total_processed": done,
+        "total_to_process": total,
+    });
+    if let Some(seeds) = gallery_seeds {
+        let items: Vec<Json> = seeds
+            .iter()
+            .map(|seed| {
+                json!({
+                    "url": seed.url,
+                    "created": seed.created,
+                    "modified": seed.modified,
+                    "status": seed.status.code(),
+                    "note": seed.note,
+                })
+            })
+            .collect();
+        log["log_items"] = json!(items);
+    }
+    Ok(json!({
+        "imports": imports,
+        "gallery_log": log,
+        "files_paused": row.is_some_and(|q| q.files_paused),
+    }))
 }
 
 /// Ask a page to do something: of the client, while it is open; otherwise

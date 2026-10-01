@@ -348,3 +348,113 @@ async fn a_store_without_pages_has_a_top_notebook_that_keeps_its_key() {
     let (_, again) = get(&p.router, "/manage_pages/get_pages").await;
     assert_eq!(first["pages"]["page_key"], again["pages"]["page_key"]);
 }
+
+#[tokio::test]
+async fn a_url_pages_importer_is_described_as_the_references() {
+    use hydrus_core::pages::DownloaderKind;
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, QueueKind, SeedStatus, SeedType};
+
+    let fixture = common::imported_store("basic");
+    let store = fixture.state.store.clone();
+    let page_key = PageKey::random();
+    let (queue, hash) = store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let queue = queues::create_queue(
+                conn,
+                QueueKind::Urls,
+                "url import",
+                Some(&page_key.0),
+                &options,
+                0,
+            )?;
+            let seed = |n: usize| NewFileSeed {
+                seed_type: SeedType::Url,
+                data: format!("https://site.example/post/{n}"),
+                data_for_comparison: format!("https://site.example/post/{n}"),
+                source_time: None,
+                referral_url: None,
+                meta: FileSeedMeta::default(),
+            };
+            queues::add_file_seeds(conn, queue, &[seed(1), seed(2), seed(3)], false, 7)?;
+            let mut seeds = queues::file_seeds(conn, queue)?;
+            let hash = hydrus_store::master::hash(conn, HashId(1))?.unwrap();
+            seeds[0].status = SeedStatus::SuccessfulAndNew;
+            seeds[0].meta.set_hash("sha256", hash.to_hex());
+            queues::update_file_seed(conn, &seeds[0])?;
+            seeds[1].status = SeedStatus::Error;
+            seeds[1].note = "404".into();
+            queues::update_file_seed(conn, &seeds[1])?;
+            queues::set_paused(conn, queue, Some(true), Some(true))?;
+            let session = Session {
+                name: LAST_SESSION.into(),
+                pages: vec![Page {
+                    key: page_key,
+                    name: "url import".into(),
+                    content: PageContent::Downloader {
+                        kind: DownloaderKind::Urls,
+                        queues: vec![queue],
+                        sort: None,
+                    },
+                }],
+            };
+            sessions::save(conn, &session, 0)?;
+            Ok((queue, hash))
+        })
+        .unwrap();
+    let router = hydrus_api::router(fixture.state.clone());
+    let (status, body) = get(
+        &router,
+        &format!("/manage_pages/get_page_info?page_key={}", page_key.to_hex()),
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert_eq!(body["page_info"]["page_type"], 7);
+    assert_eq!(
+        body["page_info"]["management"],
+        json!({ "urls_import": {
+            "imports": {
+                "status": "1 successful, 1 failed",
+                "simple_status": "2/3 - 1F",
+                "total_processed": 2,
+                "total_to_process": 3,
+            },
+            "gallery_log": {
+                "status": "",
+                "total_processed": 0,
+                "total_to_process": 0,
+            },
+            "files_paused": true,
+        }})
+    );
+    // and, not simply, each item
+    let (_, body) = get(
+        &router,
+        &format!(
+            "/manage_pages/get_page_info?page_key={}&simple=false",
+            page_key.to_hex()
+        ),
+    )
+    .await;
+    let items = &body["page_info"]["management"]["urls_import"]["imports"]["import_items"];
+    assert_eq!(items.as_array().unwrap().len(), 3);
+    assert_eq!(
+        items[0],
+        json!({
+            "import_data": "https://site.example/post/1",
+            "created": 7,
+            "modified": items[0]["modified"],
+            "source_time": null,
+            "status": 1,
+            "note": "",
+            "hash": hash.to_hex(),
+        })
+    );
+    assert_eq!(items[1]["status"], 4);
+    assert_eq!(items[1]["note"], "404");
+    assert_eq!(items[2]["hash"], Json::Null);
+    let log = &body["page_info"]["management"]["urls_import"]["gallery_log"];
+    assert_eq!(log["log_items"], json!([]));
+    let _ = queue;
+}

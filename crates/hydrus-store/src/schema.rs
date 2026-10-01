@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -683,6 +683,20 @@ CREATE TABLE media_viewers (
 const V12: &str = r"
 CREATE TABLE queue_nudges (
     queue_id INTEGER NOT NULL
+) STRICT;
+";
+
+/// Downloader pages over their queues (`queues.rs`): a queue whose page
+/// was closed waits (until the page is reopened, or the queue goes with
+/// it), and URLs typed into a page, for the daemon to add as hydrus does.
+const V13: &str = r"
+ALTER TABLE import_queues ADD COLUMN page_closed INTEGER NOT NULL DEFAULT 0;
+
+CREATE TABLE queue_url_requests (
+    request_id INTEGER PRIMARY KEY,
+    queue_id INTEGER NOT NULL,
+    -- the URLs, one a line
+    urls TEXT NOT NULL
 ) STRICT;
 ";
 

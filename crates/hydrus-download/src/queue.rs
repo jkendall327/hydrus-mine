@@ -121,21 +121,46 @@ impl QueueRunner {
     }
 
     /// Look at a queue another process changed (nudged): woken if it is
-    /// one this runs (URL lists, gallery searches and watchers).
+    /// one this runs (URL lists, gallery searches and watchers), a URL
+    /// list taking the URLs typed into its page first.
     pub fn nudged(self: &Arc<Self>, queue: i64) {
-        let kind = self
-            .downloader
-            .store
+        let store = &self.downloader.store;
+        let kind = store
             .read(|conn| queues::queue(conn, queue))
             .ok()
             .flatten()
             .map(|q| q.kind);
-        if matches!(
+        if !matches!(
             kind,
             Some(QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery)
         ) {
-            self.wake(queue);
+            return;
         }
+        if kind == Some(QueueKind::Urls) {
+            match store.write(move |ctx| queues::take_url_requests(ctx.conn(), queue)) {
+                Ok(typed) if !typed.is_empty() => {
+                    // (as the page's URL box takes them, `_PendURLs`: full
+                    // URLs only, encoded)
+                    let collapse = store
+                        .snapshot()
+                        .url_classes
+                        .settings()
+                        .collapse_leading_slashes;
+                    let urls: Vec<String> = typed
+                        .iter()
+                        .map(|url| url.trim())
+                        .filter(|url| hydrus_core::url::functions::check_full_url(url).is_ok())
+                        .map(|url| hydrus_core::url::ensure_url_is_encoded(url, true, collapse))
+                        .collect();
+                    if let Err(e) = self.pend_urls(queue, &urls, &BTreeSet::new(), &[]) {
+                        tracing::error!(queue, "adding a page's URLs: {e}");
+                    }
+                }
+                Ok(_) => {}
+                Err(e) => tracing::error!(queue, "reading a page's URLs: {e}"),
+            }
+        }
+        self.wake(queue);
     }
 
     pub fn status(&self, queue: i64) -> UrlQueueStatus {
@@ -533,7 +558,7 @@ impl QueueRunner {
                         }
                     }
                 }
-                if state.check_due(now()) && pauses.watchers_run() {
+                if state.check_due(now()) && pauses.watchers_run() && !queue.page_closed {
                     self.check_watcher(&queue, state, handle).await;
                     continue;
                 }
@@ -544,8 +569,10 @@ impl QueueRunner {
             let over_limit = search
                 .as_ref()
                 .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
+            // (a closed page's queue waits: "page is closed")
             if queue.kind != QueueKind::Watcher
                 && !queue.gallery_paused
+                && !queue.page_closed
                 && !over_limit
                 && pauses.galleries_run()
             {
@@ -566,7 +593,11 @@ impl QueueRunner {
             let files_blocked = watcher
                 .as_ref()
                 .is_some_and(|w| !w.can_do_network_work(now()));
-            let next = if queue.files_paused || files_blocked || !pauses.files_run() {
+            let next = if queue.files_paused
+                || queue.page_closed
+                || files_blocked
+                || !pauses.files_run()
+            {
                 None
             } else {
                 match store.read(|conn| queues::next_file_seed(conn, queue_id)) {

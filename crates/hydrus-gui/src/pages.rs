@@ -17,6 +17,19 @@ use crate::SearchPage;
 use crate::page_chooser::NewPage;
 use hydrus_core::pages::{PageNameSettings, TabKind, tab_name};
 
+/// The URL downloader queues of a page and the pages in it.
+fn url_queues(page: &Page) -> Vec<i64> {
+    match &page.content {
+        PageContent::Downloader {
+            kind: DownloaderKind::Urls,
+            queues,
+            ..
+        } => queues.clone(),
+        PageContent::Pages(children) => children.iter().flat_map(url_queues).collect(),
+        _ => Vec::new(),
+    }
+}
+
 /// What a page's tab is for: importing pages are the reference's own
 /// (`IsImporter`: hard drive, simple downloader, gallery, watcher and URL
 /// pages).
@@ -81,6 +94,9 @@ struct Closed {
     open: Vec<(PageKey, Rc<RefCell<SearchPage>>)>,
 }
 
+/// A new URL downloader page's name (the reference's).
+const URL_PAGE_NAME: &str = "url import";
+
 /// How long a closed page can be reopened (the reference's).
 const CLOSED_PAGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60 * 60);
 
@@ -117,6 +133,11 @@ impl Pages {
             naming: PageNameSettings::default(),
             kept_counts: HashMap::new(),
         };
+        // (pages closed when the client last closed, or crashed, go with
+        // their downloads)
+        pages
+            .store
+            .write(|ctx| hydrus_store::queues::delete_closed_queues(ctx.conn()))?;
         (pages.naming, pages.kept_counts) = pages.store.read(|conn| {
             Ok((
                 hydrus_store::settings::get(conn)?,
@@ -425,6 +446,13 @@ impl Pages {
             } => SearchPage::restored(store, search, synchronised, sort.as_ref(), files)
                 .with_lock(lock)
                 .with_collect(collect),
+            PageContent::Downloader {
+                kind: DownloaderKind::Urls,
+                queues,
+                sort,
+            } if queues.len() == 1 => {
+                SearchPage::url_downloader(store, queues[0], sort.as_ref(), files)
+            }
             PageContent::Downloader { kind, queues, sort } => {
                 // (and what the reference's says while empty)
                 let (kind, empty) = match kind {
@@ -746,7 +774,38 @@ impl Pages {
                 content: PageContent::Pages(Vec::new()),
             },
             NewPage::Session(name) => return self.append_session(name),
-            NewPage::Urls | NewPage::Watcher | NewPage::Gallery | NewPage::SimpleDownloader => {
+            NewPage::Urls => {
+                let key = PageKey::random();
+                let now = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+                let queue = self
+                    .store
+                    .write(move |ctx| {
+                        let conn = ctx.conn();
+                        let queue = hydrus_store::queues::create_queue(
+                            conn,
+                            hydrus_store::queues::QueueKind::Urls,
+                            URL_PAGE_NAME,
+                            Some(&key.0),
+                            &hydrus_core::import_options::ImportOptionsSlice::default(),
+                            now,
+                        )?;
+                        hydrus_store::queues::nudge(conn, queue)?;
+                        Ok(queue)
+                    })
+                    .map_err(|e| format!("could not make the page's queue: {e}"))?;
+                Page {
+                    key,
+                    name: URL_PAGE_NAME.into(),
+                    content: PageContent::Downloader {
+                        kind: DownloaderKind::Urls,
+                        queues: vec![queue],
+                        sort: None,
+                    },
+                }
+            }
+            NewPage::Watcher | NewPage::Gallery | NewPage::SimpleDownloader => {
                 return Err(
                     "hydrus-gui can't open downloader pages yet (`hydrus serve` runs the \
                      downloaders, and the Client API can add to them)"
@@ -812,6 +871,12 @@ impl Pages {
     }
 
     /// Close the page shown (or the empty notebook shown).
+    /// Where the page shown is: its depth, and its index in its notebook.
+    pub fn shown_position(&self) -> (usize, usize) {
+        let depth = self.path.len() - 1;
+        (depth, self.path[depth])
+    }
+
     pub fn close_shown(&mut self) -> Result<(), String> {
         let depth = self.path.len() - 1;
         self.close(depth, self.path[depth])
@@ -823,8 +888,14 @@ impl Pages {
     /// as the reference does. Downloader pages are kept: their queues would
     /// run on without them.
     pub fn close(&mut self, depth: usize, index: usize) -> Result<(), String> {
+        // (a URL downloader page's queue waits while it is closed; the
+        // others' queues would run on without them)
         fn has_downloader(page: &Page) -> bool {
             match &page.content {
+                PageContent::Downloader {
+                    kind: DownloaderKind::Urls,
+                    ..
+                } => false,
                 PageContent::Downloader { .. } => true,
                 PageContent::Pages(children) => children.iter().any(has_downloader),
                 _ => false,
@@ -849,7 +920,9 @@ impl Pages {
         };
         if has_downloader(page) {
             return Err(
-                "downloader pages can't be closed yet: `hydrus serve` runs their queues".into(),
+                "gallery and watcher downloader pages can't be closed yet: `hydrus serve` runs \
+                 their queues"
+                    .into(),
             );
         }
         let closed = pages.remove(index);
@@ -860,9 +933,10 @@ impl Pages {
             .into_iter()
             .filter_map(|key| self.open.remove(&key).map(|page| (key, page)))
             .collect();
+        let queues = url_queues(&closed);
+        self.close_queues(&queues, true);
+        self.forget_old_closed();
         let now = std::time::Instant::now();
-        self.closed
-            .retain(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT);
         self.closed.push(Closed {
             at: now,
             notebook: notebook.flatten(),
@@ -917,6 +991,92 @@ impl Pages {
     /// Reopen the page closed most recently (in the last hour), where it
     /// was, as it was, and show it (the reference's "unclose page"); its
     /// notebook gone, it goes in the top one. Whether there was one.
+    /// Mark downloader queues' pages closed (they wait), or open again.
+    fn close_queues(&self, queues: &[i64], closed: bool) {
+        if queues.is_empty() {
+            return;
+        }
+        let queues = queues.to_vec();
+        if let Err(e) = self.store.write(move |ctx| {
+            for queue in &queues {
+                hydrus_store::queues::set_page_closed(ctx.conn(), *queue, closed)?;
+            }
+            Ok(())
+        }) {
+            eprintln!("could not close or reopen a downloader page's queue: {e}");
+        }
+    }
+
+    /// Forget pages closed over an hour ago, as the reference does: their
+    /// downloads go with them.
+    fn forget_old_closed(&mut self) {
+        let now = std::time::Instant::now();
+        let (old, kept): (Vec<Closed>, Vec<Closed>) = self
+            .closed
+            .drain(..)
+            .partition(|c| now.duration_since(c.at) >= CLOSED_PAGE_TIMEOUT);
+        self.closed = kept;
+        self.delete_queues(old.iter().flat_map(|c| url_queues(&c.page)).collect());
+    }
+
+    /// Forget every closed page, their downloads with them (as the client
+    /// closes: the reference's closed pages don't outlive it).
+    pub fn forget_closed(&mut self) {
+        let closed = std::mem::take(&mut self.closed);
+        self.delete_queues(closed.iter().flat_map(|c| url_queues(&c.page)).collect());
+    }
+
+    fn delete_queues(&self, queues: Vec<i64>) {
+        if queues.is_empty() {
+            return;
+        }
+        if let Err(e) = self.store.write(move |ctx| {
+            for queue in &queues {
+                hydrus_store::queues::delete_queue(ctx.conn(), *queue)?;
+            }
+            Ok(())
+        }) {
+            eprintln!("could not delete a closed page's queue: {e}");
+        }
+    }
+
+    /// What closing the page at `depth`'s `index` needs asking first, as
+    /// the reference asks it (`AskIfAbleToClose`): for a URL downloader
+    /// page still importing or holding imports.
+    pub fn close_question(&mut self, depth: usize, index: usize) -> Option<String> {
+        let page = self.notebook_at(depth)?.get(index)?.clone();
+        if !matches!(
+            page.content,
+            PageContent::Downloader {
+                kind: DownloaderKind::Urls,
+                ..
+            }
+        ) {
+            return None;
+        }
+        let opened = self.page(&page.key)?;
+        let veto = opened.borrow().importer()?.close_veto()?;
+        Some(format!("Close \"{}\"?\n\n{veto}", page.name))
+    }
+
+    /// The pages of the notebook at `depth` on the way to the page shown
+    /// (0 is the top).
+    fn notebook_at(&self, depth: usize) -> Option<&[Page]> {
+        let mut pages = self.session.pages.as_slice();
+        for &i in self.path.get(..depth)? {
+            match &pages.get(i)?.content {
+                PageContent::Pages(children) => pages = children,
+                _ => return None,
+            }
+        }
+        Some(pages)
+    }
+
+    /// The pages opened so far.
+    pub fn open_pages(&self) -> Vec<Rc<RefCell<SearchPage>>> {
+        self.open.values().cloned().collect()
+    }
+
     pub fn unclose(&mut self) -> bool {
         fn path_to(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
             for (i, page) in pages.iter().enumerate() {
@@ -932,12 +1092,13 @@ impl Pages {
             }
             None
         }
-        let now = std::time::Instant::now();
-        self.closed
-            .retain(|c| now.duration_since(c.at) < CLOSED_PAGE_TIMEOUT);
+        self.forget_old_closed();
         let Some(closed) = self.closed.pop() else {
             return false;
         };
+        // (its downloads run again)
+        let queues = url_queues(&closed.page);
+        self.close_queues(&queues, false);
         let notebook = closed
             .notebook
             .and_then(|key| path_to(&self.session.pages, key));

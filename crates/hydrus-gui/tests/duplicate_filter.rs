@@ -370,11 +370,23 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     assert_eq!(bound.pages.borrow().shown().name, "duplicates");
     assert!(ui.get_can_filter());
     assert!(ui.get_note().contains("potential pairs to filter"));
-    // downloader pages can't be made here yet
+    // download, then urls, makes a URL downloader page; the other
+    // downloaders' pages can't be made here yet
     ui.invoke_new_page();
     ui.invoke_chooser_pressed(4);
+    assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "urls");
     ui.invoke_chooser_pressed(8);
-    assert!(ui.get_error().contains("downloader pages"));
+    assert_eq!(bound.pages.borrow().shown().name, "url import");
+    assert_eq!(ui.get_error(), "");
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    assert_eq!(ui.get_chooser_labels().row_data(3).unwrap(), "watcher");
+    ui.invoke_chooser_pressed(4);
+    assert!(
+        ui.get_error().contains("downloader pages"),
+        "{}",
+        ui.get_error()
+    );
     assert_eq!(ui.get_chooser_labels().row_count(), 0);
 }
 

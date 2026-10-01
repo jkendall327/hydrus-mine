@@ -64,6 +64,8 @@ fn main() -> Result<()> {
         ));
     };
     save(&mut client.bound.pages.borrow_mut()).context("saving the session")?;
+    // (closed pages don't outlive the client; their downloads go with them)
+    client.bound.pages.borrow_mut().forget_closed();
     // (as hydrus stops its downloads on closing)
     client.daemon.borrow_mut().stop(daemon::GRACE);
     Ok(())

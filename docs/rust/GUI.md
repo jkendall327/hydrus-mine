@@ -47,26 +47,42 @@ runs along the top tabs), f5 searches the page again (resuming a paused
 search; a locked one stays), and ctrl+s and ctrl+m give the keyboard to
 the search box and the thumbnails. A search page opens as it was left: its
 search, its sort and the files it showed, not searched again until its
-search changes (and then only if it is synchronised). Downloader pages and
-the pages we don't open yet show their files, and say what they are.
+search changes (and then only if it is synchronised). Gallery and watcher
+pages and the pages we don't open yet show their files, and say what they
+are; URL downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
 again, as the reference does. Ctrl+T or F9 opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
-on it; special opens a page of pages or a duplicates page; downloader
-pages can't be made here yet. With other saved sessions (those hydrus had,
+on it; special opens a page of pages or a duplicates page; download, then
+urls, opens a URL downloader page (the other downloaders' pages can't be
+made here yet). With other saved sessions (those hydrus had,
 say), a "sessions" button lists them, and choosing one appends a copy of
 its pages in a page of pages named after it, as the reference's "append
 session" does; a saved session's downloader pages say their downloads
 don't run. The new page goes at the far right of the
 current notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
-the right (or left) being shown, as in the reference; downloader pages
-can't be closed yet, since their queues would run on without them. Ctrl+U
+the right (or left) being shown, as in the reference; closing a URL
+downloader page that is still importing, or holds anything, asks first, as
+the reference does, and gallery and watcher pages can't be closed yet,
+since their queues would run on without them. Ctrl+U
 reopens the page closed last (within the hour, as the reference keeps
 them), where it was and as it was, and shows it. The
 pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
+
+A URL downloader page shows its queue as the daemon works on it, as the
+reference's does: its sidebar's "imports" box has the file log's status as
+hydrus words it ("2 successful (all already in db)"), its progress ("2/2")
+and bar, and the reference's pause/play button, which pauses or resumes the
+queue's files; the "search" box has its search log's status; and the files
+it imports, or finds already in the database, join the page as they come,
+in the queue's order. URLs typed into its box (enter) or pasted with its
+paste button, one per line, go to the daemon, which adds those it
+recognises (as the reference's page does) and starts on them within a
+second. A closed URL page's downloads wait while Ctrl+U can bring the page
+back, and go after the hour or when the client closes.
 
 On a search page, at the top of its sidebar, the
 sort control offers every system sort type named and ordered as in the
@@ -374,7 +390,9 @@ the thumbnails' menu, system
 predicates in the autocomplete, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
-shading, playing animated JPEG XL, downloader pages' own panels; in
+shading, playing animated JPEG XL, gallery and watcher pages' own panels, a URL
+page's file and search log windows, import options button and network
+job's progress; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and

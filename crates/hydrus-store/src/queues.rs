@@ -11,6 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use rusqlite::{Connection, OptionalExtension, Row, params};
 use serde::{Deserialize, Serialize};
 
+use hydrus_core::HashId;
 use hydrus_core::import_options::ImportOptionsSlice;
 
 use crate::error::{Result, StoreError};
@@ -60,6 +61,9 @@ pub struct Queue {
     pub created: i64,
     pub files_paused: bool,
     pub gallery_paused: bool,
+    /// Its page was closed: it waits until the page is reopened (the
+    /// reference's "page is closed"), or goes with it.
+    pub page_closed: bool,
     /// This importer's own import options.
     pub options: ImportOptionsSlice,
     /// What else its kind keeps.
@@ -379,8 +383,8 @@ fn status(code: i64) -> Result<SeedStatus> {
 
 // queues -----------------------------------------------------------------------
 
-const QUEUE_COLUMNS: &str =
-    "queue_id, kind, name, page_key, created, files_paused, gallery_paused, options, extra";
+const QUEUE_COLUMNS: &str = "queue_id, kind, name, page_key, created, files_paused, gallery_paused, \
+     options, extra, page_closed";
 
 fn queue_from_row(row: &Row<'_>) -> rusqlite::Result<(Queue, String, String)> {
     let kind: String = row.get(1)?;
@@ -393,6 +397,7 @@ fn queue_from_row(row: &Row<'_>) -> rusqlite::Result<(Queue, String, String)> {
             created: row.get(4)?,
             files_paused: row.get(5)?,
             gallery_paused: row.get(6)?,
+            page_closed: row.get(9)?,
             options: ImportOptionsSlice::default(),
             extra: serde_json::Value::Null,
         },
@@ -521,7 +526,99 @@ pub fn rename_queue(conn: &Connection, id: i64, name: &str) -> Result<()> {
 }
 
 /// Delete a queue and its seeds.
+/// Close or reopen a queue's page (see [`Queue::page_closed`]).
+pub fn set_page_closed(conn: &Connection, id: i64, closed: bool) -> Result<()> {
+    conn.execute(
+        "UPDATE import_queues SET page_closed = ? WHERE queue_id = ?",
+        params![closed, id],
+    )?;
+    nudge(conn, id)
+}
+
+/// Delete the queues of pages closed and not reopened (as the reference's
+/// closed pages go once the client closes): how many there were.
+pub fn delete_closed_queues(conn: &Connection) -> Result<usize> {
+    let closed: Vec<i64> = conn
+        .prepare("SELECT queue_id FROM import_queues WHERE page_closed = 1")?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    for &id in &closed {
+        delete_queue(conn, id)?;
+    }
+    Ok(closed.len())
+}
+
+/// Hand URLs typed into a URL queue's page to whoever runs the queues (the
+/// daemon), to add as the reference adds them (`PendURLs`).
+pub fn request_urls(conn: &Connection, queue: i64, urls: &[String]) -> Result<()> {
+    conn.execute(
+        "INSERT INTO queue_url_requests (queue_id, urls) VALUES (?, ?)",
+        params![queue, urls.join("\n")],
+    )?;
+    nudge(conn, queue)
+}
+
+/// The URLs handed to a queue (see [`request_urls`]), in order, taken.
+pub fn take_url_requests(conn: &Connection, queue: i64) -> Result<Vec<String>> {
+    let lines: Vec<String> = conn
+        .prepare("SELECT urls FROM queue_url_requests WHERE queue_id = ? ORDER BY request_id")?
+        .query_map([queue], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    conn.execute("DELETE FROM queue_url_requests WHERE queue_id = ?", [queue])?;
+    Ok(lines
+        .iter()
+        .flat_map(|urls| urls.lines().map(str::to_owned))
+        .collect())
+}
+
+/// The files a queue's page shows, in the queue's order: those its seeds
+/// imported, or found already in the database (`FileSeed.ShouldPresent`,
+/// with the reference's default presentation, all files).
+pub fn presented_files(conn: &Connection, queue: i64) -> Result<Vec<HashId>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT metadata FROM file_seeds WHERE queue_id = ? AND status IN (1, 2, 9)
+         ORDER BY position",
+    )?;
+    let metas: Vec<String> = stmt
+        .query_map([queue], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    let mut hashes = Vec::new();
+    for meta in metas {
+        let meta: FileSeedMeta = parse(&meta, "file seed metadata")?;
+        if let Some(hash) = meta
+            .hashes
+            .iter()
+            .find(|(kind, _)| kind == "sha256")
+            .and_then(|(_, hex)| hex.parse::<hydrus_core::Sha256>().ok())
+        {
+            hashes.push(hash);
+        }
+    }
+    let ids = crate::master::hash_ids(conn, &hashes)?;
+    let mut seen = std::collections::HashSet::new();
+    Ok(hashes
+        .iter()
+        .filter_map(|h| ids.get(h).copied())
+        .filter(|id| seen.insert(*id))
+        .collect())
+}
+
+/// Seeds of a queue's search log (gallery pages) by status.
+pub fn gallery_seed_counts(conn: &Connection, queue: i64) -> Result<StatusCounts> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT status, COUNT(*) FROM gallery_seeds WHERE queue_id = ? GROUP BY status",
+    )?;
+    let rows = stmt.query_map([queue], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))?;
+    let mut counts = StatusCounts::new();
+    for row in rows {
+        let (code, n) = row?;
+        *counts.entry(status(code)?).or_default() += usize::try_from(n).unwrap_or(0);
+    }
+    Ok(counts)
+}
+
 pub fn delete_queue(conn: &Connection, id: i64) -> Result<()> {
+    conn.execute("DELETE FROM queue_url_requests WHERE queue_id = ?", [id])?;
     conn.prepare_cached("DELETE FROM file_seeds WHERE queue_id = ?")?
         .execute([id])?;
     conn.prepare_cached("DELETE FROM gallery_seeds WHERE queue_id = ?")?
@@ -978,6 +1075,7 @@ mod tests {
 
     fn conn() -> Connection {
         let mut conn = Connection::open_in_memory().unwrap();
+        crate::schema::configure(&conn).unwrap();
         crate::schema::migrate(&mut conn).unwrap();
         conn
     }
@@ -1004,6 +1102,98 @@ mod tests {
         assert_eq!(take_nudges(&conn).unwrap(), [1, 3]);
         assert!(!any_nudged(&conn).unwrap());
         assert!(take_nudges(&conn).unwrap().is_empty());
+    }
+
+    #[test]
+    fn a_pages_queue_waits_while_closed_and_goes_with_it() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let kept = create_queue(&conn, QueueKind::Urls, "kept", None, &opts, 0).unwrap();
+        let closed = create_queue(&conn, QueueKind::Urls, "closed", None, &opts, 0).unwrap();
+        add_file_seeds(&conn, closed, &[seed("https://a.example/1")], false, 0).unwrap();
+        request_urls(&conn, closed, &["https://a.example/2".into()]).unwrap();
+        set_page_closed(&conn, closed, true).unwrap();
+        // (nudged, for the daemon to stop its work now)
+        assert_eq!(take_nudges(&conn).unwrap(), [closed]);
+        assert!(queue(&conn, closed).unwrap().unwrap().page_closed);
+        assert!(!queue(&conn, kept).unwrap().unwrap().page_closed);
+        // reopened, it runs again
+        set_page_closed(&conn, closed, false).unwrap();
+        assert!(!queue(&conn, closed).unwrap().unwrap().page_closed);
+        // closed for good: it and everything of it go
+        set_page_closed(&conn, closed, true).unwrap();
+        assert_eq!(delete_closed_queues(&conn).unwrap(), 1);
+        assert!(queue(&conn, closed).unwrap().is_none());
+        assert!(file_seeds(&conn, closed).unwrap().is_empty());
+        assert!(take_url_requests(&conn, closed).unwrap().is_empty());
+        assert!(queue(&conn, kept).unwrap().is_some());
+    }
+
+    #[test]
+    fn urls_typed_into_a_page_are_handed_over_once_in_order() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let a = create_queue(&conn, QueueKind::Urls, "a", None, &opts, 0).unwrap();
+        let b = create_queue(&conn, QueueKind::Urls, "b", None, &opts, 0).unwrap();
+        request_urls(
+            &conn,
+            a,
+            &["https://x.example/1".into(), "https://x.example/2".into()],
+        )
+        .unwrap();
+        request_urls(&conn, b, &["https://y.example/1".into()]).unwrap();
+        request_urls(&conn, a, &["https://x.example/3".into()]).unwrap();
+        assert_eq!(take_nudges(&conn).unwrap(), [a, b]);
+        assert_eq!(
+            take_url_requests(&conn, a).unwrap(),
+            [
+                "https://x.example/1",
+                "https://x.example/2",
+                "https://x.example/3"
+            ]
+        );
+        assert!(take_url_requests(&conn, a).unwrap().is_empty());
+        assert_eq!(
+            take_url_requests(&conn, b).unwrap(),
+            ["https://y.example/1"]
+        );
+    }
+
+    #[test]
+    fn a_queues_page_shows_the_files_its_seeds_brought_in_order() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let q = create_queue(&conn, QueueKind::Urls, "q", None, &opts, 0).unwrap();
+        let hash = |n: u8| hydrus_core::Sha256::from_slice(&[n; 32]).unwrap();
+        let ids: Vec<HashId> = (1..=3)
+            .map(|n| crate::master::intern_hash(&conn, &hash(n)).unwrap())
+            .collect();
+        let urls = [
+            "https://a.example/1",
+            "https://a.example/2",
+            "https://a.example/3",
+            "https://a.example/4",
+            "https://a.example/5",
+        ];
+        let seeds: Vec<NewFileSeed> = urls.iter().map(|u| seed(u)).collect();
+        add_file_seeds(&conn, q, &seeds, false, 0).unwrap();
+        let mut stored = file_seeds(&conn, q).unwrap();
+        // new, failed (with a hash), already in db (the first file again),
+        // already in db, and not tried yet
+        for (seed, (status, file)) in stored.iter_mut().zip([
+            (SeedStatus::SuccessfulAndNew, Some(2)),
+            (SeedStatus::Error, Some(3)),
+            (SeedStatus::SuccessfulButRedundant, Some(2)),
+            (SeedStatus::SuccessfulButRedundant, Some(1)),
+            (SeedStatus::Unknown, None),
+        ]) {
+            seed.status = status;
+            if let Some(n) = file {
+                seed.meta.set_hash("sha256", hash(n).to_hex());
+            }
+            update_file_seed(&conn, seed).unwrap();
+        }
+        assert_eq!(presented_files(&conn, q).unwrap(), [ids[1], ids[0]]);
     }
 
     #[test]

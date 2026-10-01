@@ -245,7 +245,7 @@ notes = "lists the media viewer; the archive/delete and duplicate filters are no
 [[api]]
 path = "/manage_pages/get_page_info"
 status = "partial"
-notes = "a downloader page's management (its importer) is reported empty until downloader pages show their queues"
+notes = "a URL downloader page's importer is reported as the reference reports it; gallery and watcher pages' are reported empty until their pages show their queues"
 
 [[api]]
 path = "/manage_pages/get_pages"

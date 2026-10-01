@@ -245,3 +245,84 @@ fn queues_another_process_nudges_are_worked_on_at_once() {
     drop(serving.0.stdin.take());
     exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
 }
+
+#[test]
+fn urls_typed_into_a_page_are_added_and_a_closed_pages_queue_waits() {
+    use hydrus_store::queues::{self, QueueKind, SeedStatus};
+
+    let (_parent, dir) = store();
+    hydrus_store::Store::open(&dir)
+        .unwrap()
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    let mut serving = serve(&dir, &["--attached"], Stdio::piped());
+    let site = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = site.local_addr().unwrap().port();
+    let base = format!("http://127.0.0.1:{port}");
+    // (another host for the closed page's, so its turn isn't after the
+    // open page's)
+    let other = format!("http://localhost:{port}");
+    std::thread::spawn(move || {
+        use std::io::{Read as _, Write as _};
+        for mut stream in site.incoming().map_while(Result::ok) {
+            let mut request = [0; 4096];
+            let _ = stream.read(&mut request);
+            let _ = stream.write_all(
+                b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\nConnection: close\r\n\r\n",
+            );
+        }
+    });
+    let store = hydrus_store::Store::open(&dir).unwrap();
+    let (open, closed) = {
+        let (base, other) = (base.clone(), other.clone());
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let options = hydrus_core::import_options::ImportOptionsSlice::default();
+                let open =
+                    queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+                let closed =
+                    queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+                queues::set_page_closed(conn, closed, true)?;
+                // (as the page hands them over: the daemon keeps full URLs)
+                queues::request_urls(conn, open, &["not a url".into(), format!("{base}/post/1")])?;
+                queues::request_urls(conn, closed, &[format!("{other}/post/2")])?;
+                Ok((open, closed))
+            })
+            .unwrap()
+    };
+    let seeds_of = |queue: i64| {
+        store
+            .read(move |conn| {
+                Ok(queues::file_seeds(conn, queue)?
+                    .into_iter()
+                    .map(|s| (s.data, s.status))
+                    .collect::<Vec<_>>())
+            })
+            .unwrap()
+    };
+    let started = Instant::now();
+    while seeds_of(open)
+        .first()
+        .is_none_or(|s| s.1 == SeedStatus::Unknown)
+    {
+        assert!(
+            started.elapsed() < Duration::from_secs(20),
+            "{:?}",
+            seeds_of(open)
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    assert_eq!(
+        seeds_of(open),
+        [(format!("{base}/post/1"), SeedStatus::Vetoed)]
+    );
+    // (the closed page's URL is added, but waits)
+    std::thread::sleep(Duration::from_secs(3));
+    assert_eq!(
+        seeds_of(closed),
+        [(format!("{other}/post/2"), SeedStatus::Unknown)]
+    );
+    drop(serving.0.stdin.take());
+    exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
+}

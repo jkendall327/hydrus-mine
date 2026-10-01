@@ -334,10 +334,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             show_chooser();
         }
     });
-    window.on_close_page({
-        let change_pages = change_pages.clone();
-        move || change_pages(&Pages::close_shown)
-    });
     window.on_unclose_page({
         let change_pages = change_pages.clone();
         move || {
@@ -355,15 +351,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 pages.move_selection(delta as isize, std::time::Instant::now());
                 Ok(())
             });
-        }
-    });
-    window.on_close_tab({
-        let change_pages = change_pages.clone();
-        move |level, index| {
-            let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) else {
-                return;
-            };
-            change_pages(&|pages| pages.close(level, index));
         }
     });
     window.on_search_edited({
@@ -677,6 +664,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         let removed = removed.clone();
         let shown = shown.clone();
+        let change_pages = change_pages.clone();
         move |yes| {
             let asked = pending.borrow_mut().take();
             if let Some(window) = weak.upgrade() {
@@ -688,9 +676,68 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     shown(false);
                     return;
                 }
+                if let Asked::ClosePage(depth, index, _) = asked {
+                    change_pages(&|pages| pages.close(depth, index));
+                    return;
+                }
                 let store = page().borrow().store().clone();
                 asked.act(&store, &*removed);
                 shown(false);
+            }
+        }
+    });
+    // ctrl+w, and a middle click on a tab: a URL downloader page still
+    // importing, or holding imports, asks first (`AskIfAbleToClose`)
+    let close = {
+        let pages = pages.clone();
+        let change_pages = change_pages.clone();
+        let ask = ask.clone();
+        move |depth: usize, index: usize| {
+            let question = pages.borrow_mut().close_question(depth, index);
+            match question {
+                Some(question) => ask(Asked::ClosePage(depth, index, question)),
+                None => change_pages(&|pages| pages.close(depth, index)),
+            }
+        }
+    };
+    window.on_close_page({
+        let pages = pages.clone();
+        let close = close.clone();
+        move || {
+            let shown = pages.borrow().shown_position();
+            close(shown.0, shown.1);
+        }
+    });
+    window.on_close_tab({
+        let close = close.clone();
+        move |level, index| {
+            if let (Ok(level), Ok(index)) = (usize::try_from(level), usize::try_from(index)) {
+                close(level, index);
+            }
+        }
+    });
+    // a URL downloader page's importer: pausing, and URLs typed or pasted
+    window.on_pause_play_files({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().pause_play_files();
+            shown(false);
+        }
+    });
+    window.on_url_entered({
+        let page = page.clone();
+        move |text| page().borrow().pend_urls(&text)
+    });
+    window.on_paste_urls({
+        let page = page.clone();
+        let weak = window.as_weak();
+        move || match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
+            Ok(text) => page().borrow().pend_urls(&text),
+            Err(e) => {
+                if let Some(window) = weak.upgrade() {
+                    window.set_error(format!("Problem pasting! {e}").into());
+                }
             }
         }
     });
@@ -1167,6 +1214,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             }
                         }
                     }
+                }
+            }
+            // downloader pages' importers, as the daemon works them
+            let open = pages.borrow().open_pages();
+            for page in open {
+                if page.borrow().importer().is_some()
+                    && page.borrow_mut().refresh_import()
+                    && Rc::ptr_eq(&page, &current.borrow())
+                {
+                    shown(true);
                 }
             }
             let now = std::time::SystemTime::now()
@@ -1669,6 +1726,8 @@ enum Asked {
     LockSearch(&'static str),
     /// Opening these URLs in the web browser.
     OpenUrls(Vec<String>),
+    /// Closing the page at this depth and index, asking this.
+    ClosePage(usize, usize, String),
 }
 
 impl Asked {
@@ -1688,6 +1747,7 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
+            Self::ClosePage(_, _, question) => question.clone(),
             Self::OpenUrls(urls) => {
                 let mut question = format!("Open the {} URLs in your web browser?", urls.len());
                 if urls.len() > 10 {
@@ -1716,8 +1776,8 @@ impl Asked {
                     }
                 })
             }
-            // (the page locks itself)
-            Self::LockSearch(_) => Ok(()),
+            // (the page locks itself; the pages close it)
+            Self::LockSearch(_) | Self::ClosePage(..) => Ok(()),
             Self::OpenUrls(urls) => {
                 for url in urls {
                     launch(url);
@@ -2708,6 +2768,20 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
 /// any error, and the status bar; or, for a page without a search, why.
 fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<FavouriteRow>) {
     window.set_note(page.note().unwrap_or_default().into());
+    let importer = page.importer();
+    window.set_importing(importer.is_some());
+    if let Some(importer) = importer {
+        window.set_import_status(importer.files_status().into());
+        window.set_import_progress(importer.progress_text().into());
+        #[allow(clippy::cast_precision_loss)] // (a progress bar)
+        let fraction = match importer.progress() {
+            (_, 0) => 0.0,
+            (done, total) => done as f32 / total as f32,
+        };
+        window.set_import_fraction(fraction);
+        window.set_import_paused(importer.paused);
+        window.set_search_status(importer.search_status().into());
+    }
     // (only a page with a search can load one)
     window.set_favourites(if page.note().is_none() {
         favourites.clone()

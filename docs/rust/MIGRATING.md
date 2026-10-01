@@ -143,7 +143,9 @@ pages' work comes across as queues named after their pages: a URL
 downloader page as one queue, a gallery downloader page as one per search,
 a watcher page as one per watcher, each with every URL, file and gallery
 page it held and whether it was paused; `hydrus serve` carries on with
-them, and `hydrus queues <store> list` shows them. A duplicates page
+them (a URL downloader page shows its queue's progress and files in
+`hydrus-gui` as it goes, as hydrus's does), and `hydrus queues <store>
+list` shows them. A duplicates page
 comes across with its search, pair sort and group mode, and launches the
 duplicate filter (a store imported before duplicates pages were read
 opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (import from
