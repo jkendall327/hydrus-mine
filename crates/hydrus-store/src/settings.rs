@@ -174,6 +174,10 @@ impl Setting for FileHandlingSettings {
     const KEY: &'static str = "file_handling";
 }
 
+impl Setting for hydrus_core::pages::SortSettings {
+    const KEY: &'static str = "sorts";
+}
+
 /// How the GUI opens pages.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

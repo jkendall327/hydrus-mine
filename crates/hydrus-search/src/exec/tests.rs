@@ -719,6 +719,56 @@ fn limits_apply_after_sorting() {
 }
 
 #[test]
+fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
+    let store = &SHARED.store;
+    let search = FileSearchContext {
+        location: LocationContext::single(key(builtin_keys::MY_FILES)),
+        predicates: vec![Predicate::System(SystemPredicate::Everything)],
+        tags: TagContext::default(),
+    };
+    let files = run(
+        store,
+        &search,
+        FileSort {
+            by: SortBy::ImportTime,
+            order: SortOrder::Ascending,
+        },
+        Planner::Auto,
+    );
+    let snapshot = store.snapshot();
+    let sort = |files: &[HashId], by, fallback| {
+        store
+            .read(|conn| {
+                Ok(super::sort_page_files(
+                    conn,
+                    &snapshot,
+                    &search,
+                    files,
+                    FileSort {
+                        by,
+                        order: SortOrder::Ascending,
+                    },
+                    fallback,
+                    &Clock::system(),
+                ))
+            })
+            .unwrap()
+            .unwrap()
+    };
+    // by type, the largest files first among each type's
+    let largest_first = FileSort {
+        by: SortBy::FileSize,
+        order: SortOrder::Descending,
+    };
+    let by_size = sort(&files, SortBy::FileSize, None);
+    let mut largest = by_size.clone();
+    largest.reverse();
+    let with_fallback = sort(&files, SortBy::Mime, Some(largest_first));
+    assert_eq!(with_fallback, sort(&largest, SortBy::Mime, None));
+    assert_ne!(with_fallback, sort(&files, SortBy::Mime, None));
+}
+
+#[test]
 fn import_time_sorts_agree_whether_probed_or_from_the_cached_order() {
     for location in [
         LocationContext::default(),

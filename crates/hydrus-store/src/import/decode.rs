@@ -204,6 +204,21 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         pages.duplicate_filter_uses_all_my_files = uses_all_my_files;
     }
     insert_setting(&mut input, &pages)?;
+    let mut sorts = hydrus_core::pages::SortSettings::default();
+    if let Some(options) = &options {
+        if let Some(sort) = &options.default_sort {
+            sorts.default_sort = page_sort(sort);
+        }
+        if let Some(sort) = &options.fallback_sort {
+            sorts.fallback_sort = page_sort(sort);
+        }
+        sorts.namespace_sorts = options
+            .default_namespace_sorts
+            .iter()
+            .map(page_sort)
+            .collect();
+    }
+    insert_setting(&mut input, &sorts)?;
     let mut network = crate::network::NetworkSettings::default();
     if let Some(options) = &options {
         let n = &mut network;

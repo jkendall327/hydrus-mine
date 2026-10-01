@@ -191,6 +191,48 @@ pub enum PageSortBy {
     Rating(ServiceKey),
 }
 
+/// How pages sort by default: a new page's sort, the sort applied before
+/// any other (which orders its ties), and the namespace sorts offered.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct SortSettings {
+    /// `default_sort`.
+    pub default_sort: PageSort,
+    /// `fallback_sort`.
+    pub fallback_sort: PageSort,
+    /// `default_namespace_sorts`.
+    pub namespace_sorts: Vec<PageSort>,
+}
+
+impl Default for SortSettings {
+    /// The reference's: file size, smallest first; import time, oldest
+    /// first; and series-creator-title-volume-chapter-page and
+    /// creator-series-title-volume-chapter-page, as displayed.
+    fn default() -> Self {
+        let namespaces = |names: [&str; 6]| PageSort {
+            by: PageSortBy::Namespaces {
+                namespaces: names.iter().map(|&n| n.to_owned()).collect(),
+                tag_display_type: 1,
+            },
+            ascending: true,
+        };
+        Self {
+            default_sort: PageSort {
+                by: PageSortBy::System(0),
+                ascending: true,
+            },
+            fallback_sort: PageSort {
+                by: PageSortBy::System(2),
+                ascending: true,
+            },
+            namespace_sorts: vec![
+                namespaces(["series", "creator", "title", "volume", "chapter", "page"]),
+                namespaces(["creator", "series", "title", "volume", "chapter", "page"]),
+            ],
+        }
+    }
+}
+
 /// A saved search (the reference's favourite searches), which a search
 /// page can load: its domains, tag service and predicates, whether it
 /// searches as they change, and its sort.

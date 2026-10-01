@@ -123,7 +123,13 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     );
     page.type_text("");
 
-    // sorting: a new type comes with its default order
+    // sorting: a new page sorts by the options' default (the fixture's,
+    // hydrus's own: smallest first); a new type comes with its default
+    // order
+    assert_eq!(page.sort().by, SortBy::FileSize);
+    assert_eq!(page.sort().order, SortOrder::Ascending);
+    page.set_sort_by(SortBy::ImportTime);
+    assert_eq!(page.sort().order, SortOrder::Descending, "newest first");
     let newest_first = page.results().to_vec();
     page.set_sort_order(SortOrder::Ascending);
     let oldest_first: Vec<_> = page.results().to_vec();
@@ -164,6 +170,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     // that one file, without counts
     let mut single = SearchPage::new(store.clone());
     single.enter();
+    single.set_sort_by(SortBy::ImportTime);
     single.select(0);
     let mut listed: Vec<String> = single
         .tag_rows()
@@ -212,6 +219,14 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let bound = bind(&ui, Pages::single(SearchPage::new(store)));
     ui.invoke_search_edited("system:everything".into());
     ui.invoke_search_accepted();
+    // newest first (a new page sorts by the options' default, file size)
+    let sort_names = ui.get_sort_names();
+    let name_of = |i: i32| sort_names.row_data(usize::try_from(i).unwrap()).unwrap();
+    assert_eq!(name_of(ui.get_sort_index()), "file: filesize");
+    let import_time = (0..sort_names.row_count())
+        .find(|&i| sort_names.row_data(i).unwrap() == "time: import time")
+        .unwrap();
+    ui.invoke_sort_chosen(i32::try_from(import_time).unwrap());
     assert!(
         ui.get_status()
             .starts_with(&format!("{everything} files - totalling ")),
@@ -255,10 +270,6 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert!(sizes(&bound.rows).iter().all(|&w| w == 0));
     bound.rows.wait();
     assert!(sizes(&bound.rows).iter().any(|&w| w > 0));
-    let sort_names = ui.get_sort_names();
-    let import_time = (0..sort_names.row_count())
-        .find(|&i| sort_names.row_data(i).unwrap() == "time: import time")
-        .unwrap();
     assert_eq!(ui.get_sort_index(), i32::try_from(import_time).unwrap());
     assert_eq!(ui.get_order_names().row_data(1).unwrap(), "newest first");
     assert_eq!(ui.get_order_index(), 1);

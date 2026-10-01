@@ -43,6 +43,9 @@ fn the_archive_delete_filter_keeps_and_deletes() {
     ui.invoke_search_edited("system:inbox".into());
     ui.invoke_search_accepted();
     let page = bound.current.borrow().clone();
+    // newest first
+    page.borrow_mut()
+        .set_sort_by(hydrus_search::SortBy::ImportTime);
     let files = page.borrow().results().to_vec();
     let n = files.len();
     assert!(n > 4);

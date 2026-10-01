@@ -142,15 +142,67 @@ fn cmp_keys(a: &Key, b: &Key) -> Ordering {
         .unwrap_or(Ordering::Equal)
 }
 
-/// Sort `rows` (in ascending id order) by key, stably; files of `files`
-/// without a row follow, in id order.
-fn order<K>(
+/// How a sort orders ties and files with no value.
+#[derive(Debug, Clone, Copy)]
+pub(crate) enum Mode<'a> {
+    /// As the database sorts a search (the Client API's): ties in file id
+    /// order, and files with no value last in both directions.
+    Database,
+    /// As a page sorts its files (`MediaSort.Sort`): ties in this order
+    /// (files not in it after, by id), and files with no value where the
+    /// page reads one (never viewed as 0 views, no time as -1) sorted with
+    /// the rest.
+    Page(&'a [u32]),
+}
+
+/// The key a page gives a file with no row for `by`, where it gives one
+/// (`deal_with_none` and its kin); `None` where such files go last in both
+/// directions, as in the database.
+fn page_missing(by: SortBy) -> Option<Key> {
+    match by {
+        SortBy::MediaViews | SortBy::MediaViewtime => Some(key(0.0)),
+        SortBy::FileSize
+        | SortBy::Duration
+        | SortBy::Width
+        | SortBy::Height
+        | SortBy::NumFrames
+        | SortBy::Mime
+        | SortBy::Ratio
+        | SortBy::NumPixels
+        | SortBy::Framerate
+        | SortBy::LastViewedTime
+        | SortBy::ModifiedTime => Some(key(-1.0)),
+        SortBy::ApproxBitrate => Some([-1.0, -1.0, 0.0]),
+        _ => None,
+    }
+}
+
+/// Sort `rows` by key, stably, from file id order (or, for a page, its
+/// order); files of `files` without a row take `missing` (a page's), else
+/// follow in that order.
+fn order<K: Clone>(
     files: &RoaringBitmap,
     mut rows: Vec<(u32, K)>,
     descending: bool,
     cmp: impl Fn(&K, &K) -> Ordering,
+    mode: Mode<'_>,
+    missing: Option<K>,
 ) -> Vec<u32> {
-    rows.sort_by_key(|(id, _)| *id);
+    let rank: HashMap<u32, usize> = match mode {
+        Mode::Database => HashMap::new(),
+        Mode::Page(base) => base.iter().enumerate().map(|(i, &id)| (id, i)).collect(),
+    };
+    let place = |id: u32| (rank.get(&id).copied().unwrap_or(usize::MAX), id);
+    if let (Mode::Page(_), Some(missing)) = (mode, missing) {
+        let with: RoaringBitmap = rows.iter().map(|(id, _)| *id).collect();
+        rows.extend(
+            files
+                .iter()
+                .filter(|id| !with.contains(*id))
+                .map(|id| (id, missing.clone())),
+        );
+    }
+    rows.sort_by_key(|(id, _)| place(*id));
     if descending {
         rows.sort_by(|a, b| cmp(&b.1, &a.1));
     } else {
@@ -163,7 +215,9 @@ fn order<K>(
             out.push(id);
         }
     }
-    out.extend(files.iter().filter(|id| !with_rows.contains(*id)));
+    let mut rest: Vec<u32> = files.iter().filter(|id| !with_rows.contains(*id)).collect();
+    rest.sort_by_key(|&id| place(id));
+    out.extend(rest);
     out
 }
 
@@ -298,10 +352,23 @@ fn file_columns(
     Ok(out)
 }
 
-/// Sort `files` by `sort`.
+/// Sort `files` by `sort`, as the database sorts a search.
 pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Result<Vec<u32>> {
+    sort_in(env, files, sort, Mode::Database)
+}
+
+/// Sort `files` by `sort`, as the database or a page sorts them.
+#[allow(clippy::too_many_lines)]
+pub(crate) fn sort_in(
+    env: &Env<'_>,
+    files: &RoaringBitmap,
+    sort: FileSort,
+    mode: Mode<'_>,
+) -> Result<Vec<u32>> {
     let desc = sort.order == SortOrder::Descending;
-    let by_key = |rows: Vec<(u32, Key)>| order(files, rows, desc, cmp_keys);
+    let page = matches!(mode, Mode::Page(_));
+    let missing = if page { page_missing(sort.by) } else { None };
+    let by_key = |rows: Vec<(u32, Key)>| order(files, rows, desc, cmp_keys, mode, missing);
     Ok(match sort.by {
         SortBy::FileSize => by_key(file_column(env, "size", files)?),
         SortBy::Duration => by_key(file_column(env, "duration_ms", files)?),
@@ -371,7 +438,23 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
             if let Some(service) = service
                 && let Some(order) = import_order(env, service, files)?
             {
-                return in_order(env, service, files, &order, desc);
+                let sorted = in_order(env, service, files, &order, desc)?;
+                if !page {
+                    return Ok(sorted);
+                }
+                // a page sorts files not in the domain as imported at -1,
+                // by id
+                let in_domain = env.domain_cache().files(env.conn, service, false)?;
+                let (mut inside, outside): (Vec<u32>, Vec<u32>) =
+                    sorted.into_iter().partition(|id| in_domain.contains(*id));
+                return Ok(if desc {
+                    inside.extend(outside.into_iter().rev());
+                    inside
+                } else {
+                    let mut out = outside;
+                    out.extend(inside);
+                    out
+                });
             }
             let rows: Vec<(u32, Option<i64>)> = match service {
                 Some(service) => rows(
@@ -384,11 +467,20 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
                 None => Vec::new(),
             };
             // the file id breaks ties between files imported together
-            by_key(
-                rows.into_iter()
-                    .map(|(id, t)| (id, [t.unwrap_or(-1) as f64, f64::from(id), 0.0]))
-                    .collect(),
-            )
+            let mut keys: Vec<(u32, Key)> = rows
+                .into_iter()
+                .map(|(id, t)| (id, [t.unwrap_or(-1) as f64, f64::from(id), 0.0]))
+                .collect();
+            if page {
+                let with: RoaringBitmap = keys.iter().map(|(id, _)| *id).collect();
+                keys.extend(
+                    files
+                        .iter()
+                        .filter(|id| !with.contains(*id))
+                        .map(|id| (id, [-1.0, f64::from(id), 0.0])),
+                );
+            }
+            by_key(keys)
         }
         SortBy::ModifiedTime => {
             let mut earliest: HashMap<u32, i64> = HashMap::new();
@@ -426,18 +518,51 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
             .map(|(id, t)| (id, key(t.unwrap_or(-1) as f64)))
             .collect(),
         ),
-        SortBy::ArchivedTime => by_key(
-            rows::<Option<i64>>(
+        SortBy::ArchivedTime => {
+            let archived = rows::<Option<i64>>(
                 env,
                 "SELECT hash_id, archived_ms FROM file_archived WHERE 1",
                 "file_archived",
                 &[],
                 files,
-            )?
-            .into_iter()
-            .map(|(id, t)| (id, key(t.unwrap_or(-1) as f64)))
-            .collect(),
-        ),
+            )?;
+            if page {
+                // a page sorts the inbox before the archive, then by when
+                let inbox: RoaringBitmap = rows::<i64>(
+                    env,
+                    "SELECT hash_id, 1 FROM file_inbox WHERE 1",
+                    "file_inbox",
+                    &[],
+                    files,
+                )?
+                .into_iter()
+                .map(|(id, _)| id)
+                .collect();
+                let when: HashMap<u32, i64> = archived
+                    .into_iter()
+                    .map(|(id, t)| (id, t.unwrap_or(-1)))
+                    .collect();
+                by_key(
+                    files
+                        .iter()
+                        .map(|id| {
+                            let archive = if inbox.contains(id) { 0.0 } else { 1.0 };
+                            (
+                                id,
+                                [archive, when.get(&id).copied().unwrap_or(-1) as f64, 0.0],
+                            )
+                        })
+                        .collect(),
+                )
+            } else {
+                by_key(
+                    archived
+                        .into_iter()
+                        .map(|(id, t)| (id, key(t.unwrap_or(-1) as f64)))
+                        .collect(),
+                )
+            }
+        }
         SortBy::MediaViews | SortBy::MediaViewtime => {
             let column = if sort.by == SortBy::MediaViews {
                 "views"
@@ -489,7 +614,8 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
                     .collect(),
             )
         }
-        SortBy::NumCollectionFiles => files.iter().collect(),
+        // (every file is one file, not a collection)
+        SortBy::NumCollectionFiles => by_key(files.iter().map(|id| (id, key(1.0))).collect()),
         SortBy::Random => {
             let mut ids: Vec<u32> = files.iter().collect();
             ids.shuffle(&mut rand::rng());
@@ -505,7 +631,7 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
                         .map(|(id, h)| (id.get(), h.0)),
                 );
             }
-            order(files, rows, desc, Ord::cmp)
+            order(files, rows, desc, Ord::cmp, mode, None)
         }
         SortBy::PixelHash => {
             let rows = rows::<Option<Vec<u8>>>(
@@ -518,7 +644,7 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
             .into_iter()
             .filter_map(|(id, h)| Some((id, h?)))
             .collect();
-            order(files, rows, desc, Ord::cmp)
+            order(files, rows, desc, Ord::cmp, mode, None)
         }
         SortBy::Blurhash
         | SortBy::AverageColourLightness
@@ -537,7 +663,7 @@ pub(crate) fn sort(env: &Env<'_>, files: &RoaringBitmap, sort: FileSort) -> Resu
             .filter_map(|(id, b)| Some((id, b?)))
             .collect();
             if sort.by == SortBy::Blurhash {
-                order(files, blurhashes, desc, Ord::cmp)
+                order(files, blurhashes, desc, Ord::cmp, mode, None)
             } else {
                 let rows = blurhashes
                     .into_iter()
@@ -765,11 +891,36 @@ mod tests {
     fn ties_keep_id_order_in_both_directions() {
         let files: RoaringBitmap = [1, 2, 3, 4, 5].into_iter().collect();
         let rows = vec![(3, key(1.0)), (1, key(1.0)), (2, key(0.0)), (4, key(2.0))];
+        let db = Mode::Database;
         assert_eq!(
-            order(&files, rows.clone(), false, cmp_keys),
+            order(&files, rows.clone(), false, cmp_keys, db, None),
             [2, 1, 3, 4, 5]
         );
-        assert_eq!(order(&files, rows, true, cmp_keys), [4, 1, 3, 2, 5]);
+        assert_eq!(
+            order(&files, rows, true, cmp_keys, db, None),
+            [4, 1, 3, 2, 5]
+        );
+    }
+
+    #[test]
+    fn a_page_s_ties_keep_its_order_and_its_files_without_values_its_default() {
+        let files: RoaringBitmap = [1, 2, 3, 4, 5].into_iter().collect();
+        let rows = vec![(3, key(1.0)), (1, key(1.0)), (2, key(0.0)), (4, key(2.0))];
+        let page = Mode::Page(&[5, 4, 3, 2, 1]);
+        // 3 and 1 tie, in the page's order; 5 has no value, so goes last
+        assert_eq!(
+            order(&files, rows.clone(), false, cmp_keys, page, None),
+            [2, 3, 1, 4, 5]
+        );
+        assert_eq!(
+            order(&files, rows.clone(), true, cmp_keys, page, None),
+            [4, 3, 1, 2, 5]
+        );
+        // unless the page gives it one
+        assert_eq!(
+            order(&files, rows, false, cmp_keys, page, Some(key(-1.0))),
+            [5, 2, 3, 1, 4]
+        );
     }
 
     #[test]

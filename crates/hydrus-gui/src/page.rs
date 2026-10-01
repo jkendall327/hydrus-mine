@@ -10,7 +10,7 @@ use hydrus_core::pages::{DuplicatesPage, HashLock, PageContent, PageSort, PageSo
 use hydrus_core::search::predicate::{FileHashes, SystemPredicate};
 use hydrus_search::{
     Clock, FileSearchContext, FileSort, Predicate, SortBy, SortOrder, TextContext,
-    parse_api_search, predicate_text, search_files, sort_files,
+    parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
 
@@ -37,6 +37,9 @@ pub struct SearchPage {
     /// Whether the sort was changed since the page was opened (a sort we
     /// can't use yet is kept until then).
     sort_changed: bool,
+    /// The sort applied first, which orders the sort's ties (the options'
+    /// `fallback_sort`).
+    fallback: Option<FileSort>,
     /// In the sort's order.
     results: Vec<HashId>,
     selection: Selection,
@@ -68,6 +71,8 @@ impl SearchPage {
     pub fn new(store: Arc<Store>) -> Self {
         let mut autocomplete = Autocomplete::new(store.clone());
         autocomplete.clear();
+        let sorts: hydrus_core::pages::SortSettings =
+            store.read(hydrus_store::settings::get).unwrap_or_default();
         Self {
             autocomplete,
             store,
@@ -77,12 +82,14 @@ impl SearchPage {
             locked: false,
             lock_syncs: HashLock::default(),
             note: None,
-            // the reference's default: newest import first
-            sort: FileSort {
-                by: SortBy::ImportTime,
-                order: SortOrder::Descending,
-            },
+            // the options' default sort (the reference's own, file size
+            // smallest first, for one we can't use yet)
+            sort: system_sort(&sorts.default_sort).unwrap_or(FileSort {
+                by: SortBy::FileSize,
+                order: SortOrder::Ascending,
+            }),
             sort_changed: false,
+            fallback: system_sort(&sorts.fallback_sort),
             results: Vec::new(),
             selection: Selection::default(),
             tags: Vec::new(),
@@ -221,20 +228,8 @@ impl SearchPage {
 
     /// A session's sort, if it is one we have; otherwise the default stays.
     fn set_page_sort(&mut self, sort: Option<&PageSort>) {
-        if let Some(PageSort {
-            by: PageSortBy::System(code),
-            ascending,
-        }) = sort
-            && let Some(by) = SortBy::from_code(*code)
-        {
-            self.sort = FileSort {
-                by,
-                order: if *ascending {
-                    SortOrder::Ascending
-                } else {
-                    SortOrder::Descending
-                },
-            };
+        if let Some(sort) = sort.and_then(system_sort) {
+            self.sort = sort;
         }
     }
 
@@ -456,17 +451,20 @@ impl SearchPage {
         self.resort();
     }
 
-    /// Sort the files shown again (a new sort doesn't search again).
+    /// Sort the files shown again (a new sort doesn't search again), as
+    /// the reference's pages sort: the fallback sort first, then the
+    /// page's, from the order they are in.
     fn resort(&mut self) {
         let snapshot = self.store.snapshot();
         let clock = Clock::system();
         match self.store.read(|conn| {
-            Ok(sort_files(
+            Ok(sort_page_files(
                 conn,
                 &snapshot,
                 &self.context,
                 &self.results,
                 self.sort,
+                self.fallback,
                 &clock,
             ))
         }) {
@@ -726,7 +724,10 @@ impl SearchPage {
             .store
             .read(|conn| Ok(search_files(conn, &snapshot, &search, sort, &clock)))
         {
-            Ok(Ok(found)) => self.results = found,
+            Ok(Ok(found)) => {
+                self.results = found;
+                self.resort();
+            }
             Ok(Err(e)) => self.error = Some(e.to_string()),
             Err(e) => self.error = Some(e.to_string()),
         }
@@ -919,4 +920,19 @@ pub(crate) fn tag_rows(
             (tag, row)
         })
         .collect()
+}
+
+/// A stored sort as the system sort it is, if it is one we know.
+fn system_sort(sort: &PageSort) -> Option<FileSort> {
+    match sort.by {
+        PageSortBy::System(code) => Some(FileSort {
+            by: SortBy::from_code(code)?,
+            order: if sort.ascending {
+                SortOrder::Ascending
+            } else {
+                SortOrder::Descending
+            },
+        }),
+        _ => None,
+    }
 }

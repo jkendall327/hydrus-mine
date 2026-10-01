@@ -84,6 +84,8 @@ fn a_file_s_ratings_are_set_by_clicks() {
     let (_legacy, _native, store) = store();
     let mut page = SearchPage::new(store.clone());
     page.enter();
+    // the newest file
+    page.set_sort_by(hydrus_search::SortBy::ImportTime);
     let file = page.results()[0];
     // the fixture's services: a like/dislike, a numerical of five stars
     // allowing zero, and an inc/dec
