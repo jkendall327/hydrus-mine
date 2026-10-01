@@ -8,7 +8,8 @@
 use std::sync::Arc;
 
 use hydrus_core::HashId;
-use hydrus_core::media_viewer::{AudioSettings, InfoLineSettings};
+use hydrus_core::media_viewer::{AudioSettings, InfoLineSettings, SlideshowSettings};
+use hydrus_gui::slideshow::Slideshow;
 use hydrus_gui::thumbnail_menu::Slots;
 use hydrus_gui::viewer_menu::{Player, ViewerState, ZoomState, player, viewer_menu};
 use hydrus_store::Store;
@@ -59,6 +60,9 @@ fn the_viewer_s_menu_is_the_reference_s() {
                 audio: AudioSettings::default(),
                 forced_mute: None,
                 player: ours,
+                // (no slideshow yet, and the options' defaults)
+                slideshow: Slideshow::new(&SlideshowSettings::default()),
+                slideshow_settings: SlideshowSettings::default(),
             };
             let entries = viewer_menu(&store, file, &state, &InfoLineSettings::default(), now_ms);
             let ours = described(&entries);

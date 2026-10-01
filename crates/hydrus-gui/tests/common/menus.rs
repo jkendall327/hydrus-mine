@@ -57,7 +57,7 @@ pub fn kept(label: &str) -> Kept {
         l if l.starts_with("delete from ") => Kept::All,
         // the media viewer's
         "volume" | "remove from view" | "go fullscreen" | "exit fullscreen" | "return to inbox"
-        | "player" => Kept::All,
+        | "player" | "start slideshow" | "slideshow running" => Kept::All,
         l if l.starts_with("zoom: ") => Kept::All,
         _ => Kept::No,
     }
@@ -146,6 +146,10 @@ pub fn unescaped(entries: &[Value]) -> Vec<Value> {
             _ if e.get("slider").is_some() => {
                 json!(format!("{}: {}", e["slider"].as_str().unwrap(), e["value"]))
             }
+            _ if e.get("check").is_some() => json!({
+                "check": e["check"].as_str().unwrap().replace("&&", "&"),
+                "checked": e["checked"],
+            }),
             _ => json!({
                 "menu": e["menu"].as_str().unwrap().replace("&&", "&"),
                 "entries": unescaped(e["entries"].as_array().unwrap()),
@@ -161,6 +165,7 @@ pub fn described(entries: &[Entry]) -> Vec<Value> {
             .map(|e| match e {
                 Entry::Separator => json!("---"),
                 Entry::Item(label, _) | Entry::Label(label) => json!(label),
+                Entry::Check(label, _, checked) => json!({ "check": label, "checked": checked }),
                 Entry::Menu(label, inner) => json!({ "menu": label, "entries": described(inner) }),
             })
             .collect(),

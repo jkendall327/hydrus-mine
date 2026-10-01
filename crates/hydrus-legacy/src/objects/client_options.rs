@@ -16,7 +16,7 @@ use std::collections::BTreeMap;
 use hydrus_core::ServiceKey;
 use hydrus_core::media_viewer::{
     AudioSettings, InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction,
-    ZoomCentre, ZoomRules, ZoomType,
+    SlideshowSettings, ZoomCentre, ZoomRules, ZoomType,
 };
 use hydrus_core::subscriptions::CheckerOptions;
 use hydrus_core::windows::{FrameLocation, WindowSettings};
@@ -316,6 +316,49 @@ impl ClientOptions {
             .get("save_media_viewer_window_size_and_position_on_close")
         {
             out.save_media_viewer_on_close = save;
+        }
+        out
+    }
+
+    /// The slideshows' periods and options (`slideshow_durations`,
+    /// `slideshows_progress_randomly`, `slideshow_*`).
+    pub fn slideshow_settings(&self) -> SlideshowSettings {
+        let mut out = SlideshowSettings {
+            durations: self.slideshow_durations.clone(),
+            ..SlideshowSettings::default()
+        };
+        for (key, field) in [
+            ("slideshows_progress_randomly", &mut out.shuffle),
+            (
+                "slideshow_always_play_duration_media_once_through",
+                &mut out.once_through,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            (
+                "slideshow_short_duration_loop_percentage",
+                &mut out.short_loop_percentage,
+            ),
+            (
+                "slideshow_short_duration_loop_seconds",
+                &mut out.short_loop_seconds,
+            ),
+            (
+                "slideshow_short_duration_cutoff_percentage",
+                &mut out.short_cutoff_percentage,
+            ),
+            (
+                "slideshow_long_duration_overspill_percentage",
+                &mut out.long_overspill_percentage,
+            ),
+        ] {
+            if let Some(&value) = self.noneable_integers.get(key) {
+                *field = value;
+            }
         }
         out
     }
@@ -738,6 +781,36 @@ mod tests {
     }
 
     #[test]
+    fn the_slideshow_options_come_across() {
+        use hydrus_core::media_viewer::SlideshowSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.slideshow_durations = vec![2.5, 15.0];
+        options
+            .booleans
+            .insert("slideshows_progress_randomly".into(), true);
+        options
+            .noneable_integers
+            .insert("slideshow_short_duration_loop_seconds".into(), None);
+        options.noneable_integers.insert(
+            "slideshow_long_duration_overspill_percentage".into(),
+            Some(80),
+        );
+        assert_eq!(
+            options.slideshow_settings(),
+            SlideshowSettings {
+                durations: vec![2.5, 15.0],
+                shuffle: true,
+                once_through: false,
+                short_loop_percentage: Some(20),
+                short_loop_seconds: None,
+                short_cutoff_percentage: Some(75),
+                long_overspill_percentage: Some(80),
+            }
+        );
+    }
+
+    #[test]
     fn the_new_client_defaults_decode() {
         let defaults = ClientOptions::defaults().unwrap();
         assert!(defaults.booleans.len() > 200);
@@ -755,6 +828,10 @@ mod tests {
         assert_eq!(
             defaults.audio_settings(),
             hydrus_core::media_viewer::AudioSettings::default()
+        );
+        assert_eq!(
+            defaults.slideshow_settings(),
+            hydrus_core::media_viewer::SlideshowSettings::default()
         );
         // (the main window maximised, the media viewer fullscreen too)
         assert_eq!(

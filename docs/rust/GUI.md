@@ -193,16 +193,40 @@ opens it, pausing one that plays; ctrl+c copies it, as a file. A
 right-click opens the reference's viewer menu (checked against it,
 `oracle/record_viewer_menu.py`): the file's info, as the thumbnails' menu
 has it; zoom (in, out, to 100% or fit, to max, titled with the zoom);
-go or exit fullscreen; volume (mute or unmute global and the media
+go or exit fullscreen; the slideshow (below); volume (mute or unmute global and the media
 viewer, force mute or unmute just here and stop forcing, for as long as
 the viewer is open, and the volume, shown: a menu here can't hold the
 reference's slider); remove from view; archive or return to inbox;
 delete from each local file domain it is in (asking), delete physically
 now and undelete for a file in the trash; manage → tags; urls, open and
 share, as the thumbnails' menu has them for the file alone; and the
-player ("This is a MPV Embed Player."). Not yet in it: the slideshow,
-locations, and manage's ratings, notes, times, force filetype and viewing
-stats. As the reference's default shortcuts have it, z switches between
+player ("This is a MPV Embed Player."). Not yet in it: locations, and
+manage's ratings, notes, times, force filetype and viewing stats. The
+slideshow submenu (`AppendSlideshowMenu`, checked against the reference's
+as a slideshow starts, stops, resumes and shuffles,
+`oracle/record_slideshow.py`) starts a slideshow at one of your options'
+periods (1, 5, 10, 30 seconds and a minute, by default), very fast, or a
+custom interval you type (one that doesn't read as seconds is said so);
+stops it or resumes it at its period; and switches shuffling and playing
+files through, for this viewer or (kept in the options) every new one. A
+running slideshow shows the next file (or, shuffling, a random other one)
+once its period has passed since the file was shown, by it or by you; a
+file that plays bends the period as the reference's does
+(`_CalculateAnySpecialSlideshowPeriodForCurrentMedia`, checked against
+it for 2205 durations, periods and option sets): a short one moves on once
+it fits a part of the period or some seconds, or stops at its end and
+moves on if it is most of the period; one about as long, a little over,
+stops at its end and moves on; one of no known duration stops the
+slideshow; and with playing through on, a file that plays is shown until
+it has played through. Unlike the reference's, a slideshow doesn't wait
+while a menu is open (Slint doesn't say when one is), so the menu's
+entries act on the file it was opened on, though the slideshow has moved
+on (as does a deletion asked about); it does wait while the viewer asks
+something (a deletion, a period). And mpv stops at a
+file's end when told to (as the reference's code reads, its mpv forgets
+being told: it clears that once it has loaded the file, which it does
+after the slideshow tells it). Each file now starts playing though the last was
+paused, as the reference's do. As the reference's default shortcuts have it, z switches between
 100% and fitting the window, + and - (or ctrl and the mouse wheel) step
 through your zoom levels and canvas fit, keeping the point under the
 pointer still (or wherever your zoom centre option says), shift and the

@@ -8,10 +8,11 @@ for several files in turn (an image in the inbox, an archived one, an
 animation, a video or audio file with sound, a trashed one) its own
 `ShowMenuFromSignal` builds the menu, which is captured rather than shown,
 and its tree recorded: each entry's text, separators as "---", submenus
-with their entries, and the volume slider as `{"slider": label, "value":
-value}`. With each: what the menu reads from the viewer (the zoom, the
-canvas's fit zoom, whether it is at its largest zoom, whether the frame
-is fullscreen), at a fixed "now", for the info lines.
+with their entries, checkable entries as `{"check": text, "checked":
+bool}`, and the volume slider as `{"slider": label, "value": value}`.
+With each: what the menu reads from the viewer (the zoom, the canvas's
+fit zoom, whether it is at its largest zoom, whether the frame is
+fullscreen), at a fixed "now", for the info lines.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_viewer_menu.py
        (writes fixtures/viewer_menu.json)
@@ -54,6 +55,10 @@ def tree( menu ):
             slider = widget.findChild( QW.QSlider )
 
             out.append( { 'slider' : label.text() if label is not None else '', 'value' : slider.value() if slider is not None else None } )
+
+        elif action.isCheckable():
+
+            out.append( { 'check' : action.text(), 'checked' : action.isChecked() } )
 
         else:
 

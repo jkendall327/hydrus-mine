@@ -6,6 +6,9 @@
 export struct MenuRow {
     label: string,
     id: int,
+    // an item checked or not (the slideshow's)
+    checkable: bool,
+    checked: bool,
 }
 
 export struct MenuGroups {
@@ -67,10 +70,12 @@ export struct ThumbnailMenu {
     share-hash-title: string,
     share-hash: [MenuRow],
     share-d: [MenuRow],
-    // the media viewer's own: its zoom submenu, the volume submenu's
-    // groups, "remove from view", and what plays the file
+    // the media viewer's own: its zoom submenu, the slideshow and volume
+    // submenus' groups, "remove from view", and what plays the file
     zoom-title: string,
     zoom: [MenuRow],
+    slideshow-title: string,
+    slideshow: MenuGroups,
     has-volume: bool,
     volume: MenuGroups,
     dismiss: [MenuRow],

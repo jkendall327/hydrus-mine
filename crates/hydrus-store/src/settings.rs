@@ -291,6 +291,11 @@ impl Setting for hydrus_core::media_viewer::AudioSettings {
     const KEY: &'static str = "audio";
 }
 
+/// The media viewer's slideshows.
+impl Setting for hydrus_core::media_viewer::SlideshowSettings {
+    const KEY: &'static str = "slideshow";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

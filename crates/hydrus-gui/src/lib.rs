@@ -42,6 +42,7 @@ mod playback;
 pub mod ratings;
 pub mod scanbar;
 pub mod selection;
+pub mod slideshow;
 pub mod sort;
 pub mod status;
 pub mod still;
@@ -1134,12 +1135,14 @@ struct MenuTarget<'a> {
 /// Makes changes to the pages, saying why one can't be made.
 type ChangePages = Rc<dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>)>;
 
-/// The viewer's menu shown: each entry's action and label by id, and the
-/// file's URLs it was built from.
+/// The viewer's menu shown: each entry's action and label by id, the
+/// file's URLs it was built from, and the file (which its entries act on,
+/// though a slideshow has moved on since).
 type ViewerMenuState = Rc<
     RefCell<(
         Vec<(thumbnail_menu::Action, String)>,
         thumbnail_menu::UrlFacts,
+        Option<HashId>,
     )>,
 >;
 
@@ -1292,6 +1295,7 @@ fn thumbnail_menu_rows(
             .map(|(label, action)| MenuRow {
                 label: label.as_str().into(),
                 id: id(*action, label),
+                ..MenuRow::default()
             })
             .collect();
         ModelRc::new(VecModel::from(rows))
@@ -1303,6 +1307,7 @@ fn thumbnail_menu_rows(
             .map(|label| MenuRow {
                 label: label.as_str().into(),
                 id: id(Action::Copy, label),
+                ..MenuRow::default()
             })
             .collect();
         ModelRc::new(VecModel::from(rows))
@@ -1321,6 +1326,32 @@ fn thumbnail_menu_rows(
             g6: rows(group(5)),
         }
     };
+    // (with their checks)
+    let check_groups = |groups: &[Vec<thumbnail_menu::CheckSlot>]| {
+        let group = |i: usize| -> ModelRc<MenuRow> {
+            let rows: Vec<MenuRow> = groups
+                .get(i)
+                .map_or(&[][..], Vec::as_slice)
+                .iter()
+                .map(|(label, action, checked)| MenuRow {
+                    label: label.as_str().into(),
+                    id: id(*action, label),
+                    checkable: checked.is_some(),
+                    checked: checked.unwrap_or(false),
+                })
+                .collect();
+            ModelRc::new(VecModel::from(rows))
+        };
+        MenuGroups {
+            g1: group(0),
+            g2: group(1),
+            g3: group(2),
+            g4: group(3),
+            g5: group(4),
+            g6: group(5),
+        }
+    };
+    let (slideshow_title, slideshow_groups) = slots.slideshow.clone().unwrap_or_default();
     let select = groups(&slots.select);
     let remove = groups(&slots.remove);
     let (delete_title, delete_menu) = match &slots.delete_menu {
@@ -1385,6 +1416,8 @@ fn thumbnail_menu_rows(
             .as_ref()
             .map_or_else(SharedString::new, |(title, _)| title.as_str().into()),
         zoom: rows(slots.zoom.as_ref().map_or(&[][..], |(_, items)| items)),
+        slideshow_title: slideshow_title.into(),
+        slideshow: check_groups(&slideshow_groups),
         has_volume: !slots.volume.is_empty(),
         volume: groups(&slots.volume),
         dismiss: rows(&slots.dismiss),
@@ -1616,9 +1649,17 @@ struct ViewerHooks {
     change_pages: ChangePages,
 }
 
+/// A change to files: archiving them, say.
+type FileChange = fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>;
+
+/// A change to a viewer's slideshow, made at a time (in seconds) with a
+/// file shown.
+type ChangeSlideshow<'a> = dyn Fn(&mut slideshow::Slideshow, f64, slideshow::Shown) + 'a;
+
 /// What the viewer asks before doing it.
 enum ViewerAsked {
-    Delete(media_actions::Deletion),
+    /// Deleting this file.
+    Delete(media_actions::Deletion, HashId),
     /// Opening these URLs in the web browser.
     OpenUrls(Vec<String>),
 }
@@ -1736,12 +1777,16 @@ fn open_viewer(
             *rating_controls.borrow_mut() = controls;
         }
     };
+    // what the file shown is, for the slideshow's timing: one the viewer
+    // plays (`CurrentlyPresentingMediaWithDuration`), with its duration
+    let presenting = Rc::new(std::cell::Cell::new(slideshow::Shown::Still));
     let show = {
         let model = model.clone();
         let weak = window.as_weak();
         let playback = playback.clone();
         let animator = animator.clone();
         let zoomed = zoomed.clone();
+        let presenting = presenting.clone();
         let scanbar = scanbar.clone();
         let show_scanbar = show_scanbar.clone();
         let show_ratings = show_ratings.clone();
@@ -1790,6 +1835,14 @@ fn open_viewer(
                 }
             });
             let (duration_ms, num_frames) = viewer::timing(model.store(), model.current());
+            presenting.set(
+                if (playable.is_some() && mpv::available()) || own.is_some() {
+                    #[allow(clippy::cast_precision_loss)] // (milliseconds)
+                    slideshow::Shown::Playing(duration_ms.map(|ms| ms as f64 / 1000.0))
+                } else {
+                    slideshow::Shown::Still
+                },
+            );
             let bar = match (playable.is_some(), own) {
                 (true, _) => scanbar::Scanbar::new(duration_ms, num_frames).map(|b| (b, false)),
                 (false, Some((frames, total_ms))) => scanbar::Scanbar::new(
@@ -1961,54 +2014,153 @@ fn open_viewer(
             }
         }
     });
-    window.on_next({
-        let model = model.clone();
-        let show = show.clone();
-        move || {
-            model.borrow_mut().next();
-            show();
+    // the slideshow (`CanvasMediaListBrowser`'s), timed in seconds from
+    // the viewer opening: this viewer's shuffling and playing through are
+    // the options' to begin with
+    let opened = std::time::Instant::now();
+    let now = move || opened.elapsed().as_secs_f64();
+    let slideshow_settings = {
+        let store = model.borrow().store().clone();
+        move || slideshow::settings(&store)
+    };
+    let slideshow = Rc::new(std::cell::Cell::new(slideshow::Slideshow::new(
+        &slideshow_settings(),
+    )));
+    // change it, telling the player whether to stop at the file's end
+    let with_slideshow: Rc<dyn Fn(&ChangeSlideshow<'_>)> = Rc::new({
+        let slideshow = slideshow.clone();
+        let presenting = presenting.clone();
+        let playback = playback.clone();
+        let animator = animator.clone();
+        move |change| {
+            let mut changed = slideshow.get();
+            change(&mut changed, now(), presenting.get());
+            slideshow.set(changed);
+            playback.set_stop_at_end(changed.stops_player());
+            animator.set_stop_at_end(changed.stops_player());
         }
     });
-    window.on_previous({
+    // a file shown by the user starts the period again (`userChangedMedia`)
+    let user_moved = {
+        let slideshow = slideshow.clone();
+        let with_slideshow = with_slideshow.clone();
+        let slideshow_settings = slideshow_settings.clone();
+        move || {
+            if slideshow.get().running() {
+                let settings = slideshow_settings();
+                with_slideshow(&|s, now, shown| s.shown(now, shown, &settings));
+            }
+        }
+    };
+    let moving = slint::Timer::default();
+    moving.start(slint::TimerMode::Repeated, Duration::from_millis(100), {
         let model = model.clone();
         let show = show.clone();
+        let slideshow = slideshow.clone();
+        let presenting = presenting.clone();
+        let playback = playback.clone();
+        let animator = animator.clone();
+        let with_slideshow = with_slideshow.clone();
+        let slideshow_settings = slideshow_settings.clone();
+        let weak = window.as_weak();
         move || {
-            model.borrow_mut().previous();
-            show();
+            // (not while the viewer asks something, as the reference's
+            // waits while a menu is open)
+            let asking = weak.upgrade().is_some_and(|w| {
+                !w.get_question().is_empty() || w.get_period_asked() || !w.get_warning().is_empty()
+            });
+            let current = slideshow.get();
+            if asking && current.running() {
+                return;
+            }
+            let played = playback.played_through() || animator.played_through();
+            if !current.due(now(), presenting.get(), played) {
+                return;
+            }
+            let moved = {
+                let mut model = model.borrow_mut();
+                let before = model.index();
+                if current.shuffling() {
+                    model.random();
+                } else {
+                    model.next();
+                }
+                model.index() != before
+            };
+            if moved {
+                show();
+            }
+            let settings = slideshow_settings();
+            with_slideshow(&|s, now, shown| s.shown(now, shown, &settings));
         }
     });
-    window.on_first({
+    let navigate = |go: fn(&mut viewer::MediaViewer)| {
         let model = model.clone();
         let show = show.clone();
+        let user_moved = user_moved.clone();
         move || {
-            model.borrow_mut().first();
+            go(&mut model.borrow_mut());
             show();
+            user_moved();
+        }
+    };
+    window.on_next(navigate(viewer::MediaViewer::next));
+    window.on_previous(navigate(viewer::MediaViewer::previous));
+    window.on_first(navigate(viewer::MediaViewer::first));
+    window.on_last(navigate(viewer::MediaViewer::last));
+    window.on_period_answered({
+        let weak = window.as_weak();
+        let with_slideshow = with_slideshow.clone();
+        let slideshow_settings = slideshow_settings.clone();
+        move |accepted, text| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            window.set_period_asked(false);
+            window.invoke_refocus();
+            if !accepted {
+                return;
+            }
+            match slideshow::parse_period(&text) {
+                Some(period) => {
+                    let settings = slideshow_settings();
+                    with_slideshow(&|s, now, shown| s.start(period, now, shown, &settings));
+                }
+                None => window.set_warning("Could not parse that slideshow period!".into()),
+            }
         }
     });
-    window.on_last({
-        let model = model.clone();
-        let show = show.clone();
-        move || {
-            model.borrow_mut().last();
-            show();
-        }
-    });
-    // ctrl+r: the file leaves the viewer and its page, the next shown
-    // (`_Remove`); with none left, the viewer closes
-    window.on_remove_from_view({
+    // a file leaves the viewer and its page: the next is shown if it was
+    // shown; with none left, the viewer closes
+    let remove_file: Rc<dyn Fn(HashId)> = Rc::new({
         let model = model.clone();
         let show = show.clone();
         let removed = removed.clone();
         let weak = window.as_weak();
+        move |file| {
+            removed(&[file]);
+            let shown = model.borrow().current() == file;
+            let any_left = model.borrow_mut().remove(file);
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if !any_left {
+                window.invoke_close_requested();
+            } else if shown {
+                show();
+            } else {
+                // (the one shown stays, its place in the list changed)
+                window.set_caption(model.borrow().caption().into());
+            }
+        }
+    });
+    // ctrl+r: the file shown (`_Remove`)
+    window.on_remove_from_view({
+        let model = model.clone();
+        let remove_file = remove_file.clone();
         move || {
             let file = model.borrow().current();
-            removed(&[file]);
-            let any_left = model.borrow_mut().remove_current();
-            if any_left {
-                show();
-            } else if let Some(window) = weak.upgrade() {
-                window.invoke_close_requested();
-            }
+            remove_file(file);
         }
     });
     // ctrl+c: the file, as a file
@@ -2047,7 +2199,7 @@ fn open_viewer(
         move |asked: ViewerAsked| {
             if let Some(window) = weak.upgrade() {
                 let question = match &asked {
-                    ViewerAsked::Delete(deletion) => deletion.question(1),
+                    ViewerAsked::Delete(deletion, _) => deletion.question(1),
                     ViewerAsked::OpenUrls(urls) => Asked::OpenUrls(urls.clone()).question(),
                 };
                 window.set_question(question.into());
@@ -2055,6 +2207,37 @@ fn open_viewer(
             }
         }
     };
+    // a change to a file (archiving, say), its info line shown again
+    let change_file: Rc<dyn Fn(FileChange, HashId)> = Rc::new({
+        let model = model.clone();
+        let show_info = show_info.clone();
+        move |change, file| {
+            let changed = change(model.borrow().store(), &[file]);
+            match changed {
+                Ok(()) => show_info(),
+                Err(e) => eprintln!("could not change the file: {e}"),
+            }
+        }
+    });
+    // manage a file's tags; once applied, the hover frame's and the page's
+    // are shown again
+    let manage_tags_of: Rc<dyn Fn(HashId)> = Rc::new({
+        let model = model.clone();
+        let show = show.clone();
+        move |file| {
+            let store = model.borrow().store().clone();
+            let show = show.clone();
+            let tags_changed = tags_changed.clone();
+            manage_tags(
+                store,
+                vec![file],
+                Rc::new(move || {
+                    show();
+                    tags_changed();
+                }),
+            );
+        }
+    });
     // the right-click menu (`ShowMenuFromSignal`): built for the file shown,
     // as the viewer is now, and its entries done
     let menu_state: ViewerMenuState = Rc::default();
@@ -2062,6 +2245,7 @@ fn open_viewer(
         let model = model.clone();
         let zoomed = zoomed.clone();
         let forced_mute = forced_mute.clone();
+        let slideshow = slideshow.clone();
         let menu_state = menu_state.clone();
         let weak = window.as_weak();
         move || {
@@ -2076,6 +2260,8 @@ fn open_viewer(
                 audio: audio::settings(store),
                 forced_mute: forced_mute.get(),
                 player: viewer_menu::player(store, file),
+                slideshow: slideshow.get(),
+                slideshow_settings: slideshow::settings(store),
             };
             let info_settings: hydrus_core::media_viewer::InfoLineSettings =
                 store.read(hydrus_store::settings::get).unwrap_or_default();
@@ -2089,7 +2275,11 @@ fn open_viewer(
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
             let rows = thumbnail_menu_rows(&slots, &mut actions);
-            *menu_state.borrow_mut() = (actions, thumbnail_menu::url_facts(store, Some(file), &[]));
+            *menu_state.borrow_mut() = (
+                actions,
+                thumbnail_menu::url_facts(store, Some(file), &[]),
+                Some(file),
+            );
             window.set_context_menu(rows);
         }
     });
@@ -2097,6 +2287,11 @@ fn open_viewer(
         let model = model.clone();
         let zoomed = zoomed.clone();
         let forced_mute = forced_mute.clone();
+        let change_file = change_file.clone();
+        let manage_tags_of = manage_tags_of.clone();
+        let remove_file = remove_file.clone();
+        let with_slideshow = with_slideshow.clone();
+        let slideshow_settings = slideshow_settings.clone();
         let show_audio = show_audio.clone();
         let ask = ask.clone();
         let weak = window.as_weak();
@@ -2112,6 +2307,11 @@ fn open_viewer(
             let Some((action, label)) = chosen else {
                 return;
             };
+            // (the file the menu was for, though a slideshow has moved on)
+            let file = menu_state
+                .borrow()
+                .2
+                .unwrap_or_else(|| model.borrow().current());
             match action {
                 Action::Viewer(ViewerAction::ZoomIn) => zoomed.zoom(1, None),
                 Action::Viewer(ViewerAction::ZoomOut) => zoomed.zoom(-1, None),
@@ -2125,11 +2325,39 @@ fn open_viewer(
                     show_audio();
                 }
                 Action::Viewer(ViewerAction::Volume) => {}
-                Action::Viewer(ViewerAction::RemoveFromView) => window.invoke_remove_from_view(),
-                Action::Archive => window.invoke_archive(),
-                Action::Inbox => window.invoke_inbox(),
-                Action::Undelete => window.invoke_undelete(),
-                Action::ManageTags => window.invoke_manage_tags(),
+                Action::Viewer(ViewerAction::RemoveFromView) => remove_file(file),
+                Action::Viewer(ViewerAction::PausePlaySlideshow) => {
+                    let settings = slideshow_settings();
+                    with_slideshow(&|s, now, shown| s.pause_play(now, shown, &settings));
+                }
+                Action::Viewer(ViewerAction::StartSlideshow(Some(viewer_menu::Seconds(
+                    period,
+                )))) => {
+                    let settings = slideshow_settings();
+                    with_slideshow(&|s, now, shown| s.start(period, now, shown, &settings));
+                }
+                Action::Viewer(ViewerAction::StartSlideshow(None)) => window.set_period_asked(true),
+                Action::Viewer(ViewerAction::FlipShuffle) => {
+                    with_slideshow(&|s, _, _| s.set_shuffling(!s.shuffling()));
+                }
+                Action::Viewer(ViewerAction::FlipOnceThrough) => {
+                    with_slideshow(&|s, _, _| s.set_once_through(!s.once_through()));
+                }
+                Action::Viewer(ViewerAction::FlipGlobalShuffle) => {
+                    let store = model.borrow().store().clone();
+                    let shuffle = slideshow::change(&store, |o| o.shuffle = !o.shuffle).shuffle;
+                    with_slideshow(&|s, _, _| s.set_shuffling(shuffle));
+                }
+                Action::Viewer(ViewerAction::FlipGlobalOnceThrough) => {
+                    let store = model.borrow().store().clone();
+                    let once = slideshow::change(&store, |o| o.once_through = !o.once_through)
+                        .once_through;
+                    with_slideshow(&|s, _, _| s.set_once_through(once));
+                }
+                Action::Archive => change_file(media_actions::archive, file),
+                Action::Inbox => change_file(media_actions::inbox, file),
+                Action::Undelete => change_file(media_actions::undelete, file),
+                Action::ManageTags => manage_tags_of(file),
                 Action::DeleteFrom(domain) => {
                     let name = model
                         .borrow()
@@ -2139,17 +2367,19 @@ fn open_viewer(
                         .get(domain)
                         .map(|s| s.name.clone())
                         .unwrap_or_default();
-                    ask(ViewerAsked::Delete(media_actions::Deletion::FromDomain {
-                        domain,
-                        name,
-                    }));
+                    ask(ViewerAsked::Delete(
+                        media_actions::Deletion::FromDomain { domain, name },
+                        file,
+                    ));
                 }
                 Action::DeletePhysically => {
-                    ask(ViewerAsked::Delete(media_actions::Deletion::Physically));
+                    ask(ViewerAsked::Delete(
+                        media_actions::Deletion::Physically,
+                        file,
+                    ));
                 }
                 _ => {
                     let model = model.borrow();
-                    let file = model.current();
                     let target = MenuTarget {
                         store: model.store(),
                         location: model.location(),
@@ -2188,37 +2418,18 @@ fn open_viewer(
     // page's are shown again
     window.on_manage_tags({
         let model = model.clone();
-        let show = show.clone();
         move || {
-            let (store, file) = {
-                let model = model.borrow();
-                (model.store().clone(), model.current())
-            };
-            let show = show.clone();
-            let tags_changed = tags_changed.clone();
-            manage_tags(
-                store,
-                vec![file],
-                Rc::new(move || {
-                    show();
-                    tags_changed();
-                }),
-            );
+            let file = model.borrow().current();
+            manage_tags_of(file);
         }
     });
     // the media shortcuts: F7 and shift+F7, delete and shift+delete
-    let act = |action: fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>| {
+    let act = |change: FileChange| {
         let model = model.clone();
-        let show_info = show_info.clone();
+        let change_file = change_file.clone();
         move || {
-            let changed = {
-                let model = model.borrow();
-                action(model.store(), &[model.current()])
-            };
-            match changed {
-                Ok(()) => show_info(),
-                Err(e) => eprintln!("could not change the file: {e}"),
-            }
+            let file = model.borrow().current();
+            change_file(change, file);
         }
     };
     window.on_archive(act(media_actions::archive));
@@ -2232,22 +2443,21 @@ fn open_viewer(
             let deletion =
                 media_actions::deletion(model.store(), model.location(), &[model.current()]);
             if let Some(deletion) = deletion {
-                ask(ViewerAsked::Delete(deletion));
+                ask(ViewerAsked::Delete(deletion, model.current()));
             }
         }
     });
     window.on_answer({
         let model = model.clone();
         let weak = window.as_weak();
-        let show = show.clone();
         move |yes| {
             let asked = pending.borrow_mut().take();
             let Some(window) = weak.upgrade() else {
                 return;
             };
             window.set_question(SharedString::new());
-            let deletion = match asked.filter(|_| yes) {
-                Some(ViewerAsked::Delete(deletion)) => deletion,
+            let (deletion, file) = match asked.filter(|_| yes) {
+                Some(ViewerAsked::Delete(deletion, file)) => (deletion, file),
                 Some(ViewerAsked::OpenUrls(urls)) => {
                     let store = model.borrow().store().clone();
                     Asked::OpenUrls(urls).act(&store, &|_| {});
@@ -2255,13 +2465,9 @@ fn open_viewer(
                 }
                 None => return,
             };
-            let (store, file, location) = {
+            let (store, location) = {
                 let model = model.borrow();
-                (
-                    model.store().clone(),
-                    model.current(),
-                    model.location().clone(),
-                )
+                (model.store().clone(), model.location().clone())
             };
             if let Err(e) = media_actions::delete(&store, &[file], &deletion) {
                 eprintln!("could not delete the file: {e}");
@@ -2269,13 +2475,7 @@ fn open_viewer(
             }
             // (out of the page's domains, it leaves the page and the viewer)
             if media_actions::still_in(&store, &location, &[file]).is_empty() {
-                removed(&[file]);
-                let any_left = model.borrow_mut().remove_current();
-                if any_left {
-                    show();
-                } else {
-                    window.invoke_close_requested();
-                }
+                remove_file(file);
             }
         }
     });
@@ -2305,6 +2505,7 @@ fn open_viewer(
         move || {
             // (stops playing at once)
             scanning.stop();
+            moving.stop();
             playback.close();
             animator.stop();
             if let Some(window) = weak.upgrade() {

@@ -1,5 +1,5 @@
 {
- "now": 1790881356,
+ "now": 1790885476,
  "viewers": [
   {
    "files": [
@@ -46,13 +46,13 @@
         "16.2 KB mp3, 2.1 seconds, 🔊",
         "16,553 bytes",
         "approx bitrate: 7.83 KB/s",
-        "imported: 2 days ago",
-        "added to art: 2 days ago",
-        "added to my files: 2 days ago",
+        "imported: 2 days 1 hour ago",
+        "added to art: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
         "modified: 6 years ago",
         {
          "entries": [
-          "local: 2 days ago",
+          "local: 2 days 1 hour ago",
           "example.com: 6 years ago"
          ],
          "menu": "all modified times"
@@ -84,11 +84,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -255,9 +267,9 @@
         "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps)",
         "19,729 bytes",
         "approx bitrate: 38.5 KB/s",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago"
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago"
        ],
        "menu": "1 animated gif, 19.3 KB"
       },
@@ -282,11 +294,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -436,9 +460,9 @@
         "---",
         "1.7 KB jpeg (64x48)",
         "1,744 bytes",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago"
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago"
        ],
        "menu": "1 jpeg, 1.7 KB"
       },
@@ -463,11 +487,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -595,10 +631,10 @@
         "---",
         "11.7 KB jpeg (200x1,000)",
         "11,989 bytes",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago",
-        "archived: 2 days ago"
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago",
+        "archived: 2 days 1 hour ago"
        ],
        "menu": "1 jpeg, 11.7 KB"
       },
@@ -623,11 +659,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -755,9 +803,9 @@
         "---",
         "1.49 KB png (256x256)",
         "1,522 bytes",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago",
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago",
         "has transparency"
        ],
        "menu": "1 png, 1.49 KB"
@@ -783,11 +831,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -956,9 +1016,9 @@
         "---",
         "1.7 KB jpeg (64x48)",
         "1,744 bytes",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago"
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago"
        ],
        "menu": "1 jpeg, 1.7 KB"
       },
@@ -983,11 +1043,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -1115,10 +1187,10 @@
         "---",
         "36.1 KB tiff (128x96)",
         "37,004 bytes",
-        "imported: 2 days ago",
-        "added to my files: 2 days ago",
-        "modified: 2 days ago",
-        "archived: 2 days ago",
+        "imported: 2 days 1 hour ago",
+        "added to my files: 2 days 1 hour ago",
+        "modified: 2 days 1 hour ago",
+        "archived: 2 days 1 hour ago",
         "has exif metadata"
        ],
        "menu": "1 tiff, 36.1 KB"
@@ -1144,11 +1216,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -1277,10 +1361,10 @@
         "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)",
         "17,508 bytes",
         "approx bitrate: 8.55 KB/s",
-        "imported: 2 days ago",
-        "removed from my files 2 days ago",
-        "sent to trash 2 days ago (fixture: trashed)",
-        "modified: 2 days ago"
+        "imported: 2 days 1 hour ago",
+        "removed from my files 2 days 1 hour ago",
+        "sent to trash 2 days 1 hour ago (fixture: trashed)",
+        "modified: 2 days 1 hour ago"
        ],
        "menu": "1 webm, 17.1 KB"
       },
@@ -1305,11 +1389,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },
@@ -1417,11 +1513,11 @@
         "14.9 KB mp4 (160x120), 1 seconds (10 frames, 10fps), 🔊",
         "15,270 bytes",
         "approx bitrate: 14.9 KB/s",
-        "imported: 2 days ago",
-        "removed from my files 2 days ago",
-        "sent to trash 2 days ago (fixture: trashed)",
-        "modified: 2 days ago",
-        "archived: 2 days ago",
+        "imported: 2 days 1 hour ago",
+        "removed from my files 2 days 1 hour ago",
+        "sent to trash 2 days 1 hour ago (fixture: trashed)",
+        "modified: 2 days 1 hour ago",
+        "archived: 2 days 1 hour ago",
         "has audio"
        ],
        "menu": "1 mp4, 14.9 KB"
@@ -1447,11 +1543,23 @@
         "very fast",
         "custom interval",
         "---",
-        "shuffle this slideshow",
-        "all slideshows shuffle",
+        {
+         "check": "shuffle this slideshow",
+         "checked": false
+        },
+        {
+         "check": "all slideshows shuffle",
+         "checked": false
+        },
         "---",
-        "this slideshow plays media once through",
-        "always play media once through"
+        {
+         "check": "this slideshow plays media once through",
+         "checked": false
+        },
+        {
+         "check": "always play media once through",
+         "checked": false
+        }
        ],
        "menu": "start slideshow"
       },

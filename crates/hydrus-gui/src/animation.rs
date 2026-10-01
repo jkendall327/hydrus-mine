@@ -56,6 +56,16 @@ struct Running {
     show_one: bool,
     status: Status,
     durations: Vec<u32>,
+    /// How many times it has come round from its last frame to its first
+    /// (`_playthrough_count`).
+    playthroughs: u32,
+    /// Whether it stops on its last frame rather than come round
+    /// (`StopForSlideshow`), and the first frame, held there until it
+    /// plays on.
+    stop_at_end: bool,
+    held: Option<Decoded>,
+    /// The frame shown last, if any.
+    last_shown: Option<usize>,
 }
 
 impl Animator {
@@ -131,6 +141,10 @@ impl Animator {
                 paused: false,
             },
             durations,
+            playthroughs: 0,
+            stop_at_end: false,
+            held: None,
+            last_shown: None,
         });
         self.tick();
     }
@@ -143,10 +157,29 @@ impl Animator {
             let Some(running) = running.as_mut().filter(|r| !r.paused || r.show_one) else {
                 return;
             };
-            match running.frames.try_recv() {
+            let next = match running.held.take() {
+                Some(frame) => Ok(frame),
+                None => running.frames.try_recv(),
+            };
+            match next {
                 // (decoded before the latest seek)
                 Ok(frame) if frame.generation != running.generation => 0,
                 Ok(frame) => {
+                    // round from the last frame to the first: played through
+                    // (told to stop there, it stays on the last)
+                    let frames = running.status.frames;
+                    if !running.show_one
+                        && frame.index == 0
+                        && running.last_shown == Some(frames.saturating_sub(1))
+                    {
+                        running.playthroughs += 1;
+                        if running.stop_at_end {
+                            running.paused = true;
+                            running.held = Some(frame);
+                            return;
+                        }
+                    }
+                    running.last_shown = Some(frame.index);
                     (running.show)(frame.pixels.image());
                     running.status.index = frame.index;
                     running.status.at_ms = frame.at_ms;
@@ -275,6 +308,22 @@ impl Animator {
         }
     }
 
+    /// Whether it has played through (`HasPlayedOnceThrough`).
+    pub fn played_through(&self) -> bool {
+        self.running
+            .borrow()
+            .as_ref()
+            .is_some_and(|r| r.playthroughs > 0)
+    }
+
+    /// Stop on the last frame rather than come round, or not
+    /// (`StopForSlideshow`): until the next file.
+    pub fn set_stop_at_end(&self, stop: bool) {
+        if let Some(running) = self.running.borrow_mut().as_mut() {
+            running.stop_at_end = stop;
+        }
+    }
+
     pub fn toggle_pause(self: &Rc<Self>) {
         let paused = self.status().is_some_and(|s| s.paused);
         self.set_paused(!paused);
@@ -284,5 +333,60 @@ impl Animator {
     pub fn stop(&self) {
         self.timer.stop();
         self.running.borrow_mut().take();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::{Duration, Instant};
+
+    use super::*;
+
+    fn frames() -> Frames {
+        let path = hydrus_testkit::fixture_path("media/webp_anim.webp");
+        Frames::open(&path, hydrus_core::Mime::AnimationWebp, &[], None).unwrap()
+    }
+
+    /// Run the timers until `done`, or ten seconds have passed; whether done.
+    fn until(animator: &Animator, done: impl Fn(&Animator) -> bool) -> bool {
+        let started = Instant::now();
+        while started.elapsed() < Duration::from_secs(10) {
+            slint::platform::update_timers_and_animations();
+            if done(animator) {
+                return true;
+            }
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        false
+    }
+
+    #[test]
+    fn an_animation_plays_through_and_may_stop_at_its_end() {
+        let _windows = crate::headless::init();
+        let animator = Animator::new();
+        animator.play(Some(frames()), |_| {});
+        let count = animator.status().unwrap().frames;
+        assert!(count > 1);
+        assert!(!animator.played_through());
+        // round once: played through, and playing on
+        assert!(until(&animator, Animator::played_through));
+        assert!(!animator.status().unwrap().paused);
+        // told to stop at its end: it stops there, on its last frame
+        animator.set_stop_at_end(true);
+        assert!(until(&animator, |a| a.status().is_some_and(|s| s.paused)));
+        assert_eq!(animator.status().unwrap().index, count - 1);
+        // (and stays there)
+        let started = Instant::now();
+        while started.elapsed() < Duration::from_millis(300) {
+            slint::platform::update_timers_and_animations();
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        let status = animator.status().unwrap();
+        assert!(status.paused && status.index == count - 1, "{status:?}");
+        // a new file plays on, not yet played through
+        animator.play(Some(frames()), |_| {});
+        assert!(!animator.played_through());
+        assert!(until(&animator, Animator::played_through));
+        assert!(!animator.status().unwrap().paused);
     }
 }

@@ -1,13 +1,14 @@
 //! The media viewer's right-click menu, as the reference's
 //! (`CanvasMediaListBrowser.ShowMenuFromSignal`), for the file shown:
-//! its info, the zoom, fullscreen, the volume, removing it from view,
+//! its info, the zoom, fullscreen, the slideshow, the volume, removing it
+//! from view,
 //! archiving, deleting, managing its tags, its urls, opening and sharing
 //! it, and what plays it. The parts it shares with the thumbnails' menu
 //! (info, urls, open, share) are built as that one builds them for one
 //! file selected and focused, as the reference's are. Plain Rust: the
 //! window lays it into its template as the thumbnails' menu is laid.
 
-use hydrus_core::media_viewer::{AudioSettings, InfoLineSettings};
+use hydrus_core::media_viewer::{AudioSettings, InfoLineSettings, SlideshowSettings};
 use hydrus_core::{HashId, ServiceType};
 use hydrus_store::Store;
 
@@ -36,7 +37,31 @@ pub enum ViewerAction {
     Volume,
     /// Take the file off the viewer and its page (`_Remove`).
     RemoveFromView,
+    /// Stop the slideshow, or resume it (`SIMPLE_PAUSE_PLAY_SLIDESHOW`).
+    PausePlaySlideshow,
+    /// Start a slideshow at a period, or one asked for
+    /// (`SIMPLE_START_SLIDESHOW`).
+    StartSlideshow(Option<Seconds>),
+    /// Flip this slideshow's shuffling, or every new one's (the options').
+    FlipShuffle,
+    FlipGlobalShuffle,
+    /// Flip whether this slideshow plays a file through before moving on,
+    /// or every new one does (the options').
+    FlipOnceThrough,
+    FlipGlobalOnceThrough,
 }
+
+/// A period in seconds (compared by its bits, so that actions compare).
+#[derive(Debug, Clone, Copy)]
+pub struct Seconds(pub f64);
+
+impl PartialEq for Seconds {
+    fn eq(&self, other: &Self) -> bool {
+        self.0.to_bits() == other.0.to_bits()
+    }
+}
+
+impl Eq for Seconds {}
 
 /// What shows the file (`GetCurrentMediaPlayerLabel`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -70,7 +95,7 @@ pub struct ZoomState {
 }
 
 /// What the viewer's menu reads from the viewer.
-#[derive(Debug, Clone, Copy, PartialEq)]
+#[derive(Debug, Clone, PartialEq)]
 pub struct ViewerState {
     /// The zoom, if the file zooms.
     pub zoom: Option<ZoomState>,
@@ -79,6 +104,9 @@ pub struct ViewerState {
     /// This viewer's own mute, if forced.
     pub forced_mute: Option<bool>,
     pub player: Player,
+    /// The viewer's slideshow, and the options' periods and defaults.
+    pub slideshow: crate::slideshow::Slideshow,
+    pub slideshow_settings: SlideshowSettings,
 }
 
 /// A zoom as the reference writes it (`ConvertZoomToPercentage`):
@@ -142,6 +170,10 @@ pub fn viewer_menu(
             "go fullscreen"
         },
         ViewerAction::Fullscreen,
+    ));
+    entries.push(crate::slideshow::slideshow_menu(
+        &state.slideshow,
+        &state.slideshow_settings,
     ));
     entries.push(Entry::Separator);
     entries.push(volume_menu(state));
@@ -332,6 +364,8 @@ mod tests {
             audio,
             forced_mute,
             player: Player::StaticImage,
+            slideshow: crate::slideshow::Slideshow::default(),
+            slideshow_settings: SlideshowSettings::default(),
         }
     }
 
@@ -342,7 +376,7 @@ mod tests {
         inner
             .iter()
             .map(|e| match e {
-                Entry::Item(l, _) | Entry::Label(l) => l.clone(),
+                Entry::Item(l, _) | Entry::Label(l) | Entry::Check(l, _, _) => l.clone(),
                 Entry::Menu(t, _) => t.clone(),
                 Entry::Separator => "---".into(),
             })

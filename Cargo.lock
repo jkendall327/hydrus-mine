@@ -2489,6 +2489,7 @@ dependencies = [
  "hydrus-testkit",
  "libloading",
  "png",
+ "rand 0.10.3",
  "rusqlite",
  "serde_json",
  "slint",

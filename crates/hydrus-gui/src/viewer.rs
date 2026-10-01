@@ -11,6 +11,8 @@ pub struct MediaViewer {
     index: usize,
     /// The file domains of the page it was opened from.
     location: hydrus_search::LocationContext,
+    /// Where each random file was gone to from, latest last.
+    random_history: Vec<usize>,
 }
 
 impl std::fmt::Debug for MediaViewer {
@@ -32,6 +34,7 @@ impl MediaViewer {
             location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
                 hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
             )),
+            random_history: Vec::new(),
         })
     }
 
@@ -50,9 +53,20 @@ impl MediaViewer {
     /// Take the current file out (deleted, say), showing the next; whether
     /// any are left.
     pub fn remove_current(&mut self) -> bool {
-        self.files.remove(self.index);
-        if self.index >= self.files.len() {
-            self.index = 0;
+        self.remove(self.current())
+    }
+
+    /// Take `file` out: if it is the one shown, the next is shown, else the
+    /// one shown stays; whether any are left.
+    pub fn remove(&mut self, file: HashId) -> bool {
+        if let Some(at) = self.files.iter().position(|&f| f == file) {
+            self.files.remove(at);
+            if at < self.index {
+                self.index -= 1;
+            }
+            if self.index >= self.files.len() {
+                self.index = 0;
+            }
         }
         !self.files.is_empty()
     }
@@ -76,6 +90,31 @@ impl MediaViewer {
 
     pub fn previous(&mut self) {
         self.index = self.index.checked_sub(1).unwrap_or(self.files.len() - 1);
+    }
+
+    /// A random other file, noting where it came from
+    /// (`MediaList.GetRandom`); with one file, that one.
+    pub fn random(&mut self) {
+        let count = self.files.len();
+        if count < 2 {
+            return;
+        }
+        self.random_history.push(self.index);
+        loop {
+            let index = rand::random_range(0..count);
+            if index != self.index {
+                self.index = index;
+                return;
+            }
+        }
+    }
+
+    /// Back to where the last random file came from, if anywhere
+    /// (`MediaList.UndoRandom`).
+    pub fn undo_random(&mut self) {
+        if let Some(index) = self.random_history.pop() {
+            self.index = index.min(self.files.len() - 1);
+        }
     }
 
     /// The first file (`SIMPLE_VIEW_FIRST`).

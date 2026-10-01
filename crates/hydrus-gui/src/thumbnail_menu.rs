@@ -27,6 +27,8 @@ pub enum Entry {
     Label(String),
     Menu(String, Vec<Entry>),
     Separator,
+    /// An item that is checked or not.
+    Check(String, Action, bool),
 }
 
 /// Which files a select or remove takes (the reference's `FileFilter`).
@@ -1177,6 +1179,8 @@ pub struct Slots {
     pub rearrange: Vec<SlotItem>,
     /// The media viewer's zoom submenu: its title and items.
     pub zoom: Option<(String, Vec<SlotItem>)>,
+    /// The media viewer's slideshow submenu: its title and groups.
+    pub slideshow: Option<(String, Vec<Vec<CheckSlot>>)>,
     /// The media viewer's volume submenu's groups.
     pub volume: Vec<Vec<SlotItem>>,
     /// The media viewer's "remove from view".
@@ -1248,11 +1252,50 @@ fn groups(entries: &[Entry]) -> Vec<Vec<SlotItem>> {
                     .expect("one")
                     .push((label.clone(), Action::Copy));
             }
-            Entry::Menu(..) => {}
+            Entry::Menu(..) | Entry::Check(..) => {}
         }
     }
     out.retain(|g| !g.is_empty());
     out
+}
+
+/// An item of a submenu with checked items: checked or not, if it can be.
+pub type CheckSlot = (String, Action, Option<bool>);
+
+/// A submenu's runs between separators, checked items and all.
+fn check_groups(entries: &[Entry]) -> Vec<Vec<CheckSlot>> {
+    let mut out: Vec<Vec<CheckSlot>> = vec![Vec::new()];
+    for e in entries {
+        match e {
+            Entry::Separator => out.push(Vec::new()),
+            Entry::Item(label, action) => {
+                out.last_mut()
+                    .expect("one")
+                    .push((label.clone(), *action, None));
+            }
+            Entry::Check(label, action, checked) => {
+                out.last_mut()
+                    .expect("one")
+                    .push((label.clone(), *action, Some(*checked)));
+            }
+            Entry::Label(_) | Entry::Menu(..) => {}
+        }
+    }
+    out.retain(|g| !g.is_empty());
+    out
+}
+
+/// A submenu of `groups` with checked items, separated.
+fn check_group_menu(title: &str, groups: &[Vec<CheckSlot>]) -> Entry {
+    let mut inner = Vec::new();
+    for group in groups {
+        separate(&mut inner);
+        inner.extend(group.iter().map(|(label, action, checked)| match checked {
+            Some(checked) => Entry::Check(label.clone(), *action, *checked),
+            None => Entry::Item(label.clone(), *action),
+        }));
+    }
+    Entry::Menu(title.into(), inner)
 }
 
 /// A submenu of `groups`, separated.
@@ -1288,7 +1331,7 @@ impl OpenSlots {
                 (Entry::Item(label, action), false) => open.a.push((label.clone(), *action)),
                 (Entry::Item(label, action), true) => open.b.push((label.clone(), *action)),
                 (Entry::Menu(title, sub), _) => open.similar = Some((title.clone(), items(sub))),
-                (Entry::Label(_), _) => {}
+                (Entry::Label(_) | Entry::Check(..), _) => {}
             }
         }
         open
@@ -1340,7 +1383,7 @@ impl ShareSlots {
                 }
                 (Entry::Item(label, action), true) => share.d.push((label.clone(), *action)),
                 (Entry::Menu(title, sub), true) => share.hash = Some((title.clone(), items(sub))),
-                (Entry::Label(_), _) => {}
+                (Entry::Label(_) | Entry::Check(..), _) => {}
             }
         }
         share
@@ -1400,7 +1443,7 @@ impl InfoSlots {
         }
         let (title, inner) = match entry {
             Entry::Menu(title, inner) => (title, &inner[..]),
-            Entry::Label(title) | Entry::Item(title, _) => {
+            Entry::Label(title) | Entry::Item(title, _) | Entry::Check(title, ..) => {
                 return Self {
                     title: title.clone(),
                     ..Self::default()
@@ -1424,7 +1467,7 @@ impl InfoSlots {
                 (Entry::Menu(title, sub), true) => {
                     info.views_sub = Some((title.clone(), labels(sub)));
                 }
-                (Entry::Item(..), _) => {}
+                (Entry::Item(..) | Entry::Check(..), _) => {}
             }
         }
         info
@@ -1490,6 +1533,9 @@ impl Slots {
                     "open" => slots.open = Some(OpenSlots::new(inner)),
                     "share" => slots.share = Some(ShareSlots::new(inner)),
                     "volume" => slots.volume = groups(inner),
+                    "start slideshow" | "slideshow running" => {
+                        slots.slideshow = Some((title.clone(), check_groups(inner)));
+                    }
                     "player" => {
                         let lines = inner
                             .iter()
@@ -1505,7 +1551,7 @@ impl Slots {
                     }
                     _ => slots.delete_menu = Some((title.clone(), items(inner))),
                 },
-                Entry::Separator | Entry::Label(_) => {}
+                Entry::Separator | Entry::Label(_) | Entry::Check(..) => {}
             }
         }
         slots
@@ -1524,6 +1570,9 @@ impl Slots {
             out.push(Entry::Menu(title.clone(), items.iter().map(item).collect()));
         }
         out.extend(self.head.iter().map(item));
+        if let Some((title, groups)) = &self.slideshow {
+            out.push(check_group_menu(title, groups));
+        }
         separate(&mut out);
         if !self.select.is_empty() {
             out.push(menu("select", &self.select));
@@ -1579,7 +1628,9 @@ mod tests {
         entries
             .iter()
             .map(|e| match e {
-                Entry::Item(label, _) | Entry::Label(label) => label.clone(),
+                Entry::Item(label, _) | Entry::Label(label) | Entry::Check(label, ..) => {
+                    label.clone()
+                }
                 Entry::Menu(title, _) => format!("{title} >"),
                 Entry::Separator => "---".into(),
             })

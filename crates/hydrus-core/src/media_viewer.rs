@@ -307,6 +307,48 @@ impl AudioSettings {
     }
 }
 
+/// The media viewer's slideshows (the reference's slideshow options): the
+/// periods its menu offers, whether new slideshows shuffle and play a
+/// file with a duration through at least once, and when a file with a
+/// duration bends the period (each `None` if turned off): a short one may
+/// move on once it has played through in a part of the period
+/// (`short_loop_percentage`) or a number of seconds (`short_loop_seconds`),
+/// or as soon as it ends if it is most of the period
+/// (`short_cutoff_percentage`); a long one may run over by a part of the
+/// period to finish (`long_overspill_percentage`).
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct SlideshowSettings {
+    /// `slideshow_durations`, in seconds.
+    pub durations: Vec<f64>,
+    /// `slideshows_progress_randomly`.
+    pub shuffle: bool,
+    /// `slideshow_always_play_duration_media_once_through`.
+    pub once_through: bool,
+    /// `slideshow_short_duration_loop_percentage`.
+    pub short_loop_percentage: Option<i64>,
+    /// `slideshow_short_duration_loop_seconds`.
+    pub short_loop_seconds: Option<i64>,
+    /// `slideshow_short_duration_cutoff_percentage`.
+    pub short_cutoff_percentage: Option<i64>,
+    /// `slideshow_long_duration_overspill_percentage`.
+    pub long_overspill_percentage: Option<i64>,
+}
+
+impl Default for SlideshowSettings {
+    fn default() -> Self {
+        Self {
+            durations: vec![1.0, 5.0, 10.0, 30.0, 60.0],
+            shuffle: false,
+            once_through: false,
+            short_loop_percentage: Some(20),
+            short_loop_seconds: Some(10),
+            short_cutoff_percentage: Some(75),
+            long_overspill_percentage: Some(50),
+        }
+    }
+}
+
 /// A new client's zoom steps.
 pub const DEFAULT_MEDIA_ZOOMS: [f64; 19] = [
     0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 2.0, 3.0, 5.0, 10.0,

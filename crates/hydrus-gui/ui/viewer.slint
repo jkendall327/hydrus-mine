@@ -15,8 +15,10 @@
 // shift+F7 returns it to the inbox; delete deletes it (asking first: enter
 // or escape answers) and shift+delete undeletes it. With the pointer over the
 // window's left fifth, the file's tags show there, as the reference's tags
-// hover frame does.
+// hover frame does. A right-click opens the viewer's menu, whose slideshow
+// submenu may ask for a period to type.
 
+import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 
@@ -82,6 +84,16 @@ export component MediaViewerWindow inherits Window {
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
+    // a slideshow period being asked for (the custom interval): enter
+    // starts it, escape doesn't
+    in-out property <bool> period-asked;
+    callback period-answered(bool, string);
+    // something said (a period that didn't read), until enter or escape
+    in-out property <string> warning;
+    // the keys back to the window, once a box that took them is gone
+    public function refocus() {
+        keys.focus();
+    }
 
     // where the file is drawn: its box at its zoom
     in property <length> media-x;
@@ -181,6 +193,12 @@ export component MediaViewerWindow inherits Window {
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
+            if (root.warning != "") {
+                if (event.text == Key.Return || event.text == Key.Escape) {
+                    root.warning = "";
+                }
+                return accept;
+            }
             if (root.question != "") {
                 if (event.text == Key.Return) {
                     root.answer(true);
@@ -356,6 +374,36 @@ export component MediaViewerWindow inherits Window {
                 for row in root.context-menu.head: MenuItem {
                     title: row.label;
                     activated => { root.menu-chosen(row.id); }
+                }
+                if root.context-menu.slideshow-title != "": Menu {
+                    title: root.context-menu.slideshow-title;
+                    for row in root.context-menu.slideshow.g1: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g2: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g3: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g4: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
                 }
                 MenuSeparator { }
                 if root.context-menu.has-select: Menu {
@@ -830,6 +878,65 @@ export component MediaViewerWindow inherits Window {
                 }
                 Text {
                     text: "enter: yes, escape: no";
+                    color: #a0a0a0;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+        if root.period-asked: Rectangle {
+            width: min(root.width - 40px, 360px);
+            height: 96px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: "Enter the interval, in seconds.";
+                    color: #f0f0f0;
+                    horizontal-alignment: center;
+                }
+                FocusScope {
+                    capture-key-pressed(event) => {
+                        if (event.text == Key.Escape) {
+                            root.period-answered(false, "");
+                            return accept;
+                        }
+                        return reject;
+                    }
+                    LineEdit {
+                        text: "15.0";
+                        init => {
+                            self.focus();
+                            self.select-all();
+                        }
+                        accepted(text) => {
+                            root.period-answered(true, text);
+                        }
+                    }
+                }
+            }
+        }
+        if root.warning != "": Rectangle {
+            width: min(root.width - 40px, 420px);
+            height: 70px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: root.warning;
+                    color: #f0f0f0;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "enter or escape: ok";
                     color: #a0a0a0;
                     horizontal-alignment: center;
                 }

@@ -16,7 +16,19 @@ pub(crate) struct Playback {
     frames: slint::Timer,
     /// The volume and mute to play at.
     audio: Cell<(u8, bool)>,
+    /// Whether the file stops at its end rather than play again
+    /// (`StopForSlideshow`).
+    stop_at_end: Cell<bool>,
+    /// How many times it has gone back to its start, as it loops (or is
+    /// sought there), and where it was last seen, in milliseconds.
+    restarts: Cell<u32>,
+    last_position: Cell<Option<f64>>,
 }
+
+/// Going back to within this many milliseconds of the start is a restart
+/// (the reference counts seeks to under a tenth of a second; seen every
+/// 10 milliseconds or so, a little more).
+const RESTARTED_MS: f64 = 250.0;
 
 impl Playback {
     pub fn new(conf: PathBuf) -> Rc<Self> {
@@ -25,6 +37,9 @@ impl Playback {
             player: RefCell::new(None),
             frames: slint::Timer::default(),
             audio: Cell::new((100, false)),
+            stop_at_end: Cell::new(false),
+            restarts: Cell::new(0),
+            last_position: Cell::new(None),
         })
     }
 
@@ -36,6 +51,10 @@ impl Playback {
         size: impl Fn() -> Option<(u32, u32)> + 'static,
         show: impl Fn(slint::Image) + 'static,
     ) {
+        // (a new file plays on, and hasn't played through)
+        self.stop_at_end.set(false);
+        self.restarts.set(0);
+        self.last_position.set(None);
         let Some(path) = path.filter(|_| mpv::available()) else {
             self.stop();
             return;
@@ -53,6 +72,11 @@ impl Playback {
         if let Some(player) = player.as_ref() {
             if let Err(e) = player.load(path) {
                 eprintln!("mpv could not play {}: {e}", path.display());
+            }
+            // (each file plays from the start, though the last was paused,
+            // as the reference's `SetMedia` has it)
+            if let Err(e) = player.set_paused(false) {
+                eprintln!("could not play: {e}");
             }
             // (as the reference sets them on each file it loads)
             let (volume, mute) = self.audio.get();
@@ -76,8 +100,38 @@ impl Playback {
                 if let Some(frame) = player.frame() {
                     show(frame);
                 }
+                this.watch_restarts(player);
             },
         );
+    }
+
+    /// Note the file going back to its start; told to stop at its end, it
+    /// pauses there, at the start (as the reference's player pauses on
+    /// seeking to it).
+    fn watch_restarts(&self, player: &mpv::Player) {
+        let Some(position) = player.position_ms() else {
+            return;
+        };
+        let before = self.last_position.replace(Some(position));
+        if before.is_some_and(|before| position < before) && position < RESTARTED_MS {
+            self.restarts.set(self.restarts.get() + 1);
+            if self.stop_at_end.get() {
+                let _ = player.set_paused(true);
+                let _ = player.seek_ms(0.0);
+                self.last_position.set(Some(0.0));
+            }
+        }
+    }
+
+    /// Whether the file has played through (`HasPlayedOnceThrough`).
+    pub fn played_through(&self) -> bool {
+        self.restarts.get() > 0
+    }
+
+    /// Stop at the file's end rather than play it again, or not
+    /// (`StopForSlideshow`): until the next file.
+    pub fn set_stop_at_end(&self, stop: bool) {
+        self.stop_at_end.set(stop);
     }
 
     /// Stop playing (the player is kept for the next file).
@@ -147,5 +201,54 @@ impl Playback {
     pub fn close(&self) {
         self.frames.stop();
         self.player.borrow_mut().take();
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use std::time::{Duration, Instant};
+
+    use super::*;
+
+    /// Run the timers until `done`, or fifteen seconds have passed; whether
+    /// done.
+    fn until(done: impl Fn() -> bool) -> bool {
+        let started = Instant::now();
+        while started.elapsed() < Duration::from_secs(15) {
+            slint::platform::update_timers_and_animations();
+            if done() {
+                return true;
+            }
+            std::thread::sleep(Duration::from_millis(2));
+        }
+        false
+    }
+
+    #[test]
+    fn a_file_plays_through_and_may_stop_at_its_end() {
+        if !mpv::available() {
+            eprintln!("libmpv is not installed here; skipped");
+            return;
+        }
+        let _windows = crate::headless::init();
+        let playback = Playback::new(PathBuf::from("no mpv.conf"));
+        // (a second long)
+        let video = hydrus_testkit::fixture_path("media/mp4_h264.mp4");
+        playback.play(Some(&video), || Some((64, 48)), |_| {});
+        assert!(!playback.played_through());
+        // round once: played through, and playing on
+        assert!(until(|| playback.played_through()));
+        assert!(!playback.paused());
+        // told to stop at its end: it pauses back at its start
+        playback.set_stop_at_end(true);
+        assert!(until(|| playback.paused()));
+        let at = || playback.position_ms().unwrap_or(f64::MAX);
+        assert!(until(|| at() < RESTARTED_MS), "{}", at());
+        // a new file plays on, not yet played through
+        playback.play(Some(&video), || Some((64, 48)), |_| {});
+        assert!(!playback.played_through());
+        assert!(until(|| playback.played_through()));
+        assert!(!playback.paused());
+        playback.close();
     }
 }
