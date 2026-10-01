@@ -58,6 +58,10 @@ enum Command {
         /// the Client API service allows non-local connections).
         #[arg(long)]
         bind: Option<IpAddr>,
+        /// Stop when standard input closes: as when the program that
+        /// started this one (the desktop client) exits, or crashes.
+        #[arg(long)]
+        attached: bool,
     },
     /// Upkeep of the store's own data.
     Maintenance {
@@ -198,7 +202,12 @@ fn main() -> Result<()> {
             dest,
             files,
         } => import_legacy(&source, &dest, files.into()),
-        Command::Serve { dir, port, bind } => run_server(&dir, port, bind),
+        Command::Serve {
+            dir,
+            port,
+            bind,
+            attached,
+        } => run_server(&dir, port, bind, attached),
         Command::Gallery { dir, search } => {
             if !dir.join(DB_FILE_NAME).exists() {
                 bail!(
@@ -454,7 +463,7 @@ fn mode_name(mode: TransferMode) -> &'static str {
     }
 }
 
-fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()> {
+fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: bool) -> Result<()> {
     if !dir.join(DB_FILE_NAME).exists() {
         bail!(
             "{} is not a hydrus-rs store (no {DB_FILE_NAME})",
@@ -793,8 +802,15 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 }
             });
         }
-        let served = serve(state, &options, async {
-            shutdown_signal().await;
+        let served = serve(state, &options, async move {
+            if attached {
+                tokio::select! {
+                    () = shutdown_signal() => {}
+                    () = input_closed() => {}
+                }
+            } else {
+                shutdown_signal().await;
+            }
             println!("stopping");
         })
         .await;
@@ -825,6 +841,25 @@ async fn shutdown_signal() {
     let _ = tokio::signal::ctrl_c().await;
 }
 
+/// Standard input closing (`serve --attached`): the program that started
+/// this one has exited, or crashed.
+async fn input_closed() {
+    let (closed, on_close) = tokio::sync::oneshot::channel();
+    std::thread::spawn(move || {
+        let mut input = std::io::stdin().lock();
+        let mut buffer = [0; 256];
+        loop {
+            match std::io::Read::read(&mut input, &mut buffer) {
+                Ok(0) => break,
+                Err(e) if e.kind() != std::io::ErrorKind::Interrupted => break,
+                _ => {}
+            }
+        }
+        let _ = closed.send(());
+    });
+    let _ = on_close.await;
+}
+
 /// Delete what an import or download left in the store's scratch folder
 /// when it was killed: anything there over an hour old (anything newer
 /// may be in use).
@@ -851,19 +886,14 @@ fn sweep_scratch(store: &Store) -> usize {
 /// once: its "is this file being imported" claims only reach its own
 /// purges. Held until the returned file is dropped.
 pub(crate) fn lock_store(dir: &Path, what: &str) -> Result<std::fs::File> {
-    let file = std::fs::OpenOptions::new()
-        .create(true)
-        .truncate(false)
-        .write(true)
-        .open(dir.join("serve.lock"))
-        .with_context(|| format!("opening the lock file in {}", dir.display()))?;
-    match file.try_lock() {
-        Ok(()) => Ok(file),
-        Err(std::fs::TryLockError::WouldBlock) => bail!(
+    match hydrus_store::store::lock_serving(dir)
+        .with_context(|| format!("opening the lock file in {}", dir.display()))?
+    {
+        Some(file) => Ok(file),
+        None => bail!(
             "hydrus serve is running on {}, so {what} can't run alongside it; stop it first",
             dir.display()
         ),
-        Err(std::fs::TryLockError::Error(e)) => Err(e.into()),
     }
 }
 

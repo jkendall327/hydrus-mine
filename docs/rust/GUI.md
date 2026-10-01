@@ -9,7 +9,17 @@ and how we mean to go about it.
 `hydrus-gui <store>` opens the last session (the one a migration brings
 over from hydrus), or a single search page if there is none; if you had a
 lock password set in hydrus, it asks for it first, as hydrus does, and
-cancelling closes it without opening anything. The main window opens
+cancelling closes it without opening anything. Once open, it starts the
+daemon, `hydrus serve`, which does the work (downloads, subscriptions,
+import and export folders, maintenance and the Client API), unless one is
+already running on the store; it looks for the `hydrus` program beside
+itself, then on the path. Closing the client stops the daemon it started
+(giving it 20 seconds to finish what it is doing), as hydrus's work stops
+when it closes; one started on its own (as a service, say) runs on, and if
+that one stops, the client starts its own. If the client's daemon can't
+start or stops by itself, a line above the status bar says why (its own
+error: a media location missing, say) with a button to start it again.
+The main window opens
 where and as big as hydrus had it (maximised, by hydrus's default) and
 keeps its size and place as it closes, as hydrus's frame locations do
 (less hydrus's fitting of a window to its screen). Its windows

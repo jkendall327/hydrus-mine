@@ -33,8 +33,17 @@ as you like.
 
    `/path/to/hydrus/db` is the directory holding `client.db`. The new store
    directory must not exist yet (or be empty).
-4. Serve the Client API with the same port, access keys and services as
-   before:
+4. Open the desktop client, which runs the daemon (`hydrus serve`: the
+   downloads, subscriptions, import and export folders, maintenance and the
+   Client API, with the same port, access keys and services as before)
+   while it is open, as hydrus does:
+
+   ```sh
+   hydrus-gui /path/to/new/store
+   ```
+
+   Or run the daemon on its own, to keep it working without the client (as
+   a service, say); the client then leaves it running when it closes:
 
    ```sh
    hydrus serve /path/to/new/store

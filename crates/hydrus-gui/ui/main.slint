@@ -277,6 +277,9 @@ export component MainWindow inherits Window {
     in property <[ThumbnailRow]> thumbnail-rows;
     in property <string> status;
     in property <string> error;
+    // the daemon (`hydrus serve`) not running, and why
+    in property <string> daemon-note;
+    callback start-daemon-again();
     in-out property <string> search-text;
     // the favourite searches menu (none: no button)
     in property <[FavouriteRow]> favourites;
@@ -1118,6 +1121,25 @@ export component MainWindow inherits Window {
                                 menu-area.show({ x: x - menu-area.absolute-position.x, y: y - menu-area.absolute-position.y });
                             }
                         }
+                    }
+                }
+            }
+            if root.daemon-note != "": Rectangle {
+                background: Theme.panel;
+                HorizontalLayout {
+                    padding: 4px;
+                    padding-left: 6px;
+                    spacing: 8px;
+                    Text {
+                        text: root.daemon-note;
+                        color: Theme.error;
+                        wrap: word-wrap;
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                    Button {
+                        text: "start again";
+                        clicked => { root.start-daemon-again(); }
                     }
                 }
             }

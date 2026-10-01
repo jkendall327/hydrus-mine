@@ -162,6 +162,17 @@ search.
   distances, the pair gets the smaller.** The reference records whichever
   its tree walk reached first.
 
+## The client and the daemon (`hydrus-gui`, `hydrus serve`)
+
+- **The work runs in a separate process.** Downloads, subscriptions,
+  import and export folders, maintenance and the Client API run in `hydrus
+  serve`, which the client starts while none runs (DECISIONS.md,
+  2026-10-01). So a daemon started on its own runs on after the client
+  closes; the client's own one gets 20 seconds to finish what it is doing
+  before it is killed (the reference waits for its jobs as it closes).
+  `crates/hydrus-gui/src/daemon.rs` and `crates/hydrus-cli/tests/serve.rs`
+  check the starting and stopping.
+
 ## Pages (`hydrus-gui`)
 
 - **The page chooser takes the top row's digits too.** The reference takes

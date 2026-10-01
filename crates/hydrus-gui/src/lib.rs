@@ -25,6 +25,7 @@ mod archive_delete_window;
 pub mod audio;
 pub mod autocomplete;
 pub mod collect;
+pub mod daemon;
 pub mod duplicate_filter;
 pub mod favourites;
 mod filter_window;

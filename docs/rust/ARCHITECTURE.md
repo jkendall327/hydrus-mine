@@ -113,7 +113,7 @@ unknown or not-yet-supported objects are preserved verbatim in a
 | `hydrus-search` | Predicates, the system-predicate text parser, query planning and execution. |
 | `hydrus-api` | The Client API HTTP server. |
 | `hydrus-cli` | The `hydrus` binary: `serve`, `import-legacy`, maintenance commands. |
-| `hydrus-gui` | The `hydrus-gui` desktop client (Slint): view models in plain Rust, views in `ui/`. |
+| `hydrus-gui` | The `hydrus-gui` desktop client (Slint): view models in plain Rust, views in `ui/`. It shows and controls the store; the work runs in `hydrus serve`, which it starts while none runs. |
 | `hydrus-testkit` | Dev-only test helpers: extracting fixture databases, loading fixture JSON. |
 | `xtask` | Project automation: parity ratchet, conformance runs, benchmarks. |
 

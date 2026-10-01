@@ -10,6 +10,7 @@ use anyhow::{Context as _, Result, anyhow};
 use slint::ComponentHandle as _;
 
 use hydrus_core::lock::LockPassword;
+use hydrus_gui::daemon::{self, Daemon};
 use hydrus_gui::{Bound, MainWindow, Pages, bind, unlock_window};
 use hydrus_store::Store;
 
@@ -58,19 +59,57 @@ fn main() -> Result<()> {
         ));
     };
     save(&mut client.bound.pages.borrow_mut()).context("saving the session")?;
+    // (as hydrus stops its downloads on closing)
+    client.daemon.borrow_mut().stop(daemon::GRACE);
     Ok(())
 }
 
-/// The open client: its window, its pages, and the timer saving them.
+/// The open client: its window, its pages, the timer saving them, and the
+/// daemon doing the work (with the timer watching it).
 struct Client {
     _window: MainWindow,
     bound: Bound,
     _saving: slint::Timer,
+    daemon: Rc<RefCell<Daemon>>,
+    _watching: slint::Timer,
 }
 
 impl Client {
     fn open(store: Arc<Store>) -> Result<Self> {
         let window = MainWindow::new()?;
+        // the daemon, run while none does (and, as the reference's work
+        // does, only once the client is unlocked)
+        let daemon = Rc::new(RefCell::new(Daemon::new(store.dir())));
+        let note = |state: daemon::State| match state {
+            daemon::State::Running => slint::SharedString::new(),
+            daemon::State::Failed(why) => format!(
+                "Downloads, subscriptions, import and export folders and the Client API \
+                 aren't running: {why}"
+            )
+            .into(),
+        };
+        window.set_daemon_note(note(daemon.borrow_mut().check()));
+        let watching = slint::Timer::default();
+        watching.start(slint::TimerMode::Repeated, Duration::from_secs(2), {
+            let daemon = daemon.clone();
+            let weak = window.as_weak();
+            move || {
+                let state = daemon.borrow_mut().check();
+                if let Some(window) = weak.upgrade() {
+                    window.set_daemon_note(note(state));
+                }
+            }
+        });
+        window.on_start_daemon_again({
+            let daemon = daemon.clone();
+            let weak = window.as_weak();
+            move || {
+                let state = daemon.borrow_mut().retry();
+                if let Some(window) = weak.upgrade() {
+                    window.set_daemon_note(note(state));
+                }
+            }
+        });
         let pages = Pages::open(store).context("opening the last session")?;
         let bound = bind(&window, pages);
         // as the reference does: the last session every five minutes, and on exit
@@ -108,6 +147,8 @@ impl Client {
             _window: window,
             bound,
             _saving: saving,
+            daemon,
+            _watching: watching,
         })
     }
 }
