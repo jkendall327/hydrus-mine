@@ -313,6 +313,69 @@ impl MediaTools {
         info.num_frames = archive::ugoira_zip_frame_paths(&zip).map(|p| p.len() as u64);
     }
 
+    /// A ugoira's frames, in `GetFramePathsUgoira`'s order, opened as
+    /// `GeneratePILImage` opens them (EXIF-rotated, RGB or RGBA).
+    pub fn ugoira_frames(&self, path: &Path) -> Result<Vec<Raster>> {
+        let damaged = || MediaError::damaged("Could not read the ugoira's frames!");
+        let mut zip = Zip::open(path).ok_or_else(damaged)?;
+        let names = archive::ugoira_frame_paths(&mut zip).ok_or_else(damaged)?;
+        names
+            .iter()
+            .map(|name| raster_from_bytes(&zip.read(name).ok_or_else(damaged)?, false))
+            .collect()
+    }
+
+    /// `GetFrameDurationsMSUgoira`: how long each of a ugoira's frames
+    /// shows, in ms: from its animation.json, else its "ugoira json" or
+    /// "ugoira frame delay array" note (`notes` are (name, text)), else
+    /// 125ms for each of its `num_frames`.
+    pub fn ugoira_frame_durations(
+        path: &Path,
+        notes: &[(String, String)],
+        num_frames: Option<u64>,
+    ) -> Vec<u32> {
+        let ms = |v: &serde_json::Value| {
+            v.as_f64()
+                .map(|d| d.round().clamp(0.0, f64::from(u32::MAX)) as u32)
+        };
+        let from_json = Zip::open(path)
+            .and_then(|mut zip| archive::ugoira_json_delays(&mut zip))
+            .and_then(|delays| delays.iter().map(ms).collect::<Option<Vec<u32>>>());
+        if let Some(durations) = from_json {
+            return durations;
+        }
+        // (`GetFrameDurationsMSFromNote`: a list whose first delay is an int)
+        let note = |name: &str| notes.iter().find(|(n, _)| n == name).map(|(_, t)| t);
+        let ints = |delays: &[serde_json::Value]| -> Option<Vec<u32>> {
+            delays.first().filter(|d| d.is_i64() || d.is_u64())?;
+            delays.iter().map(ms).collect()
+        };
+        if let Some(text) = note("ugoira json")
+            && let Ok(json) = serde_json::from_str::<serde_json::Value>(text)
+        {
+            let frames = match &json {
+                serde_json::Value::Array(frames) => Some(frames),
+                serde_json::Value::Object(o) => {
+                    o.get("frames").and_then(serde_json::Value::as_array)
+                }
+                _ => None,
+            };
+            let delays: Option<Vec<serde_json::Value>> =
+                frames.and_then(|frames| frames.iter().map(|f| f.get("delay").cloned()).collect());
+            if let Some(durations) = delays.as_deref().and_then(ints) {
+                return durations;
+            }
+        }
+        if let Some(text) = note("ugoira frame delay array")
+            && let Ok(serde_json::Value::Array(delays)) = serde_json::from_str(text)
+            && let Some(durations) = ints(&delays)
+        {
+            return durations;
+        }
+        let n = usize::try_from(num_frames.unwrap_or(0).max(1)).unwrap_or(1);
+        vec![UGOIRA_DEFAULT_FRAME_DURATION_MS; n]
+    }
+
     /// Decode an image file to the array the reference hashes and thumbnails
     /// (`GenerateNumPyImage`): EXIF-rotated, colour-managed to sRGB, RGB or
     /// RGBA, useless alpha removed.
@@ -719,6 +782,9 @@ fn cover_bytes(path: &Path, mime: Mime) -> Option<Vec<u8>> {
 }
 
 /// Info keys the reference never shows as human-readable metadata.
+/// A ugoira frame's duration when nothing says (`UGOIRA_DEFAULT_FRAME_DURATION_MS`).
+pub const UGOIRA_DEFAULT_FRAME_DURATION_MS: u32 = 125;
+
 const NOT_HUMAN_READABLE: &[&str] = &[
     "exif",
     "Raw profile type exif",

@@ -1,0 +1,1324 @@
+{
+ "hashes": {
+  "ugoira_json.zip": "9e509cefa19766dbf2e24a82afe92d1b4fdd69827f9c1e498b746c9db0395fb6",
+  "ugoira_list_json.zip": "273e0c6c7e5af20e937e76b98c4bba45c3153b8dfd49aeb238fc0309c4f7ec54",
+  "ugoira_plain.zip": "9ae58caf5ef7c2b7b963ed8af5b83d3c270d1ce459e8f0ae128f58cc0d315270",
+  "ugoira_rotated.zip": "3528cb95090bf60ea7dd50510bb67efee0a2edb9cf7aaaed523479a0b8c778ec"
+ },
+ "notes": [
+  {
+   "file": "ugoira_plain.zip",
+   "notes": {
+    "ugoira frame delay array": "[50, 60, 70, 80, 90]"
+   },
+   "state": "delay array note"
+  },
+  {
+   "file": "ugoira_plain.zip",
+   "notes": {
+    "ugoira frame delay array": "[50, 60, 70, 80, 90]",
+    "ugoira json": "{\"frames\": [{\"file\": \"000000.jpg\", \"delay\": 200}, {\"file\": \"000001.jpg\", \"delay\": 201}, {\"file\": \"000002.jpg\", \"delay\": 202}, {\"file\": \"000003.jpg\", \"delay\": 203}, {\"file\": \"000004.jpg\", \"delay\": 204}]}"
+   },
+   "state": "both notes"
+  },
+  {
+   "file": "ugoira_json.zip",
+   "notes": {
+    "ugoira frame delay array": "[50, 60, 70, 80, 90]"
+   },
+   "state": "delay array note"
+  }
+ ],
+ "renders": [
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "apng",
+   "params": {},
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "9037a128a8ec4f0ee7da2e6164c31ddb50d863345ea162fa307496c034dc5934",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "4fd97d500e933803bee5cbd94709d4f8ccc832edeba758e35e947d37b98c8818",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "apng",
+   "params": {},
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "9037a128a8ec4f0ee7da2e6164c31ddb50d863345ea162fa307496c034dc5934",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "4fd97d500e933803bee5cbd94709d4f8ccc832edeba758e35e947d37b98c8818",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_list_json.zip",
+   "label": "apng",
+   "params": {},
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_list_json.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 40,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_list_json.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "79d5af5360435fcf2cb879894c10c8bd08d110c5629ea5b6b9a8e6f6ef69f7ca",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "6e372ed97a0cfcf7afbb3207ba37cbc7923be88780da4bb32cf2f2d367863771",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "a573c0593d45348c026ecc5197936fe7f150abfdcf27ef7c220dca1421813ad3",
+      "size": [
+       60,
+       80
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_rotated.zip",
+   "label": "apng",
+   "params": {},
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "380a57f2905a3dc2c90cc0a360358a711484f77dd1f40579e5cf89af1520b446",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "5c7470af32890601eef4772472c00f745c4814725f3b77e4826b615f7d5e0108",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "36239ced0a25e0b02af7e62bd9463935abb9126c4c6e61dac9fd5d0f55323f40",
+      "size": [
+       60,
+       80
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_rotated.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "79d5af5360435fcf2cb879894c10c8bd08d110c5629ea5b6b9a8e6f6ef69f7ca",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "6e372ed97a0cfcf7afbb3207ba37cbc7923be88780da4bb32cf2f2d367863771",
+      "size": [
+       60,
+       80
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "a573c0593d45348c026ecc5197936fe7f150abfdcf27ef7c220dca1421813ad3",
+      "size": [
+       60,
+       80
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_rotated.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "cache_control": "max-age=4",
+   "content_type": "application/json",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "json": {
+    "error": "Invalid render format!",
+    "exception_type": "BadRequestException",
+    "hydrus_version": 688,
+    "status_code": 400,
+    "version": 95
+   },
+   "label": "png",
+   "params": {
+    "render_format": 2
+   },
+   "state": "no notes",
+   "status": 400
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 125,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/apng",
+   "disposition": "attachment",
+   "file": "ugoira_plain.zip",
+   "label": "download",
+   "params": {
+    "download": "true"
+   },
+   "state": "no notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 50,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "apng",
+   "params": {},
+   "state": "delay array note",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 50,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "9037a128a8ec4f0ee7da2e6164c31ddb50d863345ea162fa307496c034dc5934",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "4fd97d500e933803bee5cbd94709d4f8ccc832edeba758e35e947d37b98c8818",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "delay array note",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 50,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "delay array note",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 200,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 201,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 202,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 203,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 204,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "apng",
+   "params": {},
+   "state": "both notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 200,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 201,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 202,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 203,
+      "mode": "RGB",
+      "pixels_sha256": "9037a128a8ec4f0ee7da2e6164c31ddb50d863345ea162fa307496c034dc5934",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 204,
+      "mode": "RGB",
+      "pixels_sha256": "4fd97d500e933803bee5cbd94709d4f8ccc832edeba758e35e947d37b98c8818",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "both notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 200,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 201,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 202,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 203,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 204,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=3600",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_plain.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "both notes",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "PNG",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/apng",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "apng",
+   "params": {},
+   "state": "delay array note",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "d4574c29d3fe9a989a5a1ae78698dec7fe1f673bdb5952665b527c972646fc92",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "6416a38999cb3061aeb0fe94b772955b25b558a9f420481fce6a0d53162cca76",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "e5751bab5b3b4a597669acee3a904f0b60c27d0acd5548dfc8d7e8a77d8e7aed",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "9037a128a8ec4f0ee7da2e6164c31ddb50d863345ea162fa307496c034dc5934",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "4fd97d500e933803bee5cbd94709d4f8ccc832edeba758e35e947d37b98c8818",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "webp",
+   "params": {
+    "render_format": 83
+   },
+   "state": "delay array note",
+   "status": 200
+  },
+  {
+   "animation": {
+    "format": "WEBP",
+    "frames": [
+     {
+      "duration": 60,
+      "mode": "RGB",
+      "pixels_sha256": "2086bda8d7c94687ad3b44e4b75b503c4ed9577f706ccb924eade9a7b1e6d613",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 70,
+      "mode": "RGB",
+      "pixels_sha256": "e62925fa2571f004e507fbbf93da55bbb5047cb1571663c63cd9c162bd5f666f",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 80,
+      "mode": "RGB",
+      "pixels_sha256": "06d0dc11157364dce02c2236bf6b541459b9ba8c9661424831f58a34fc95a07c",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 90,
+      "mode": "RGB",
+      "pixels_sha256": "fcbddeb78b3d29e6874c40e8e7be0b5ad883bfd8b57c4925586cee20ea5711b4",
+      "size": [
+       80,
+       60
+      ]
+     },
+     {
+      "duration": 100,
+      "mode": "RGB",
+      "pixels_sha256": "82f6d5793babaf287f8a0201ad4d6bfae595541be80d46487b93ce627f773588",
+      "size": [
+       80,
+       60
+      ]
+     }
+    ],
+    "loop": 0
+   },
+   "cache_control": "max-age=31536000",
+   "content_type": "image/webp",
+   "disposition": "inline",
+   "file": "ugoira_json.zip",
+   "label": "webp_lossless",
+   "params": {
+    "render_format": 83,
+    "render_quality": 101
+   },
+   "state": "delay array note",
+   "status": 200
+  }
+ ]
+}

@@ -56,6 +56,7 @@ export QT_QPA_PLATFORM=offscreen
 | `record_media_tests.py` | `fixtures/media_tests.json`: in-memory predicate tests on the `basic` fixture's files |
 | `record_rating_svg.py` | `fixtures/rating_svg.json`: rating services' SVG icons (bundled, custom, missing) |
 | `record_render.py` | `fixtures/render.json`: `/get_files/render` of each kind of static image, as pixels |
+| `record_ugoira_render.py` | `fixtures/ugoira_render.json`: `/get_files/render` of the corpus's ugoiras as APNG and animated WebP, with and without timing notes: headers, and each frame's duration, size and pixels |
 | `record_url_class_search.py` | `fixtures/url_class_search.json`: searches by URL class, through the Client API and in memory |
 | `record_similar_files.py` | `fixtures/similar_files.json`: the similar-files search on generated near-duplicates |
 | `record_auto_resolution.py` | `fixtures/auto_resolution_run.json` + `legacy_db/auto_resolution.tar.gz`: auto-resolution rules run on generated files |

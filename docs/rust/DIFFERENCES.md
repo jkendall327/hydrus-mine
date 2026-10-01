@@ -371,8 +371,12 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
   asked for (80 by default) unless it is over 100; only a lossless encoder is
   available to us, so every WebP render is what the reference gives for a
   quality over 100. PNG and JPEG renders decode to exactly the reference's
-  pixels.
-- **Ugoiras are not rendered yet** (a 400 says so).
+  pixels. The same goes for ugoiras rendered as animated WebP; as APNG
+  (their default), their frames and timings are exactly the reference's
+  (`oracle/fixtures/ugoira_render.json`).
+- **A ugoira frame without a duration takes the default (125ms)** when its
+  timings (in a note) are fewer than its frames; the reference fails with
+  a 500.
 
 ## Popups (`/manage_popups/*`)
 
