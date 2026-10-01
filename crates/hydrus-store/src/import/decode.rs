@@ -477,6 +477,28 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             "Duplicates auto-resolution rules were not converted: {e}"
         )),
     }
+    match db.logins() {
+        Ok(Some(logins)) => {
+            let active: Vec<_> = logins.into_iter().filter(|l| l.active).collect();
+            if !active.is_empty() {
+                let list: Vec<String> = active
+                    .iter()
+                    .map(|l| format!("{} ({})", l.domain, l.script))
+                    .collect();
+                input.warnings.push(format!(
+                    "hydrus logged in to these sites with login scripts, which hydrus-rs doesn't run: {}. Their requests carry only the cookies you have for them, so keep those fresh (Hydrus Companion can send them)",
+                    list.join(", ")
+                ));
+                let domains =
+                    crate::network::LoginDomains(active.into_iter().map(|l| l.domain).collect());
+                insert_setting(&mut input, &domains)?;
+            }
+        }
+        Ok(None) => {}
+        Err(e) => input
+            .warnings
+            .push(format!("The login settings could not be read: {e}")),
+    }
     let callers = external_program_users(&input);
     if !callers.is_empty() {
         input.warnings.push(format!(

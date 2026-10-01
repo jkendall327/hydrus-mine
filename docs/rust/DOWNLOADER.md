@@ -122,9 +122,10 @@ show named queues as pages.
    reference on the same site is task "End-to-end downloader oracle".
 
 Login scripts are not planned: logins come from cookies (Companion sends
-them), which already migrate and work. A migrated downloader that names a
-login script is reported, and its requests go out with the domain's cookies
-as usual.
+them), which already migrate and work. The migration reports each site
+hydrus logged in to with a login script, and those sites' requests go out
+with the domain's cookies as usual; a file such a site refuses (403) says
+that its cookies may need refreshing.
 
 ## Decisions (from the questions in issue #1)
 

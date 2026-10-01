@@ -256,6 +256,11 @@ impl Downloader {
         let outcome = self.work(seed, options, job, &mut did_work).await;
         match outcome {
             Ok(()) => {}
+            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => set_status(
+                seed,
+                SeedStatus::Vetoed,
+                "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into(),
+            ),
             Err(Stop::Veto(note)) => set_status(seed, SeedStatus::Vetoed, note),
             Err(Stop::Error(note)) => set_status(seed, SeedStatus::Error, note),
             Err(Stop::Failed(e)) => {
@@ -457,6 +462,13 @@ impl Downloader {
                 "The parser found nothing in the document, and while the document initially seemed to actually be an importable file, it looks like it failed to import too! This is probably some malformed JSON or something.".into(),
             )),
         }
+    }
+
+    /// Whether the reference logged in to `url`'s site with a login script.
+    fn had_login(&self, url: &str) -> bool {
+        self.store
+            .read(hydrus_store::settings::get::<hydrus_store::network::LoginDomains>)
+            .is_ok_and(|logins| logins.covers(url))
     }
 
     fn scratch_dir(&self) -> std::io::Result<std::path::PathBuf> {

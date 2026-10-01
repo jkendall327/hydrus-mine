@@ -41,6 +41,7 @@ pub mod import_options;
 pub mod legacy_import_options;
 mod legacy_options;
 mod location;
+pub mod logins;
 pub mod parsers;
 pub mod predicates;
 mod services;

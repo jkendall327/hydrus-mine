@@ -526,3 +526,38 @@ impl Default for NetworkSettings {
 impl crate::settings::Setting for NetworkSettings {
     const KEY: &'static str = "network";
 }
+
+/// The domains the reference logged in to with a login script (which
+/// hydrus-rs doesn't run), so a refusal from one can say why.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct LoginDomains(pub Vec<String>);
+
+impl crate::settings::Setting for LoginDomains {
+    const KEY: &'static str = "login_domains";
+}
+
+impl LoginDomains {
+    /// Whether `url`'s domain, or one it is under, had a login.
+    pub fn covers(&self, url: &str) -> bool {
+        let Ok(domain) = hydrus_core::url::url_domain(url) else {
+            return false;
+        };
+        psl::all_applicable_domains(&domain)
+            .iter()
+            .any(|d| self.0.iter().any(|login| login == d))
+    }
+}
+
+#[cfg(test)]
+mod login_tests {
+    use super::LoginDomains;
+
+    #[test]
+    fn a_login_covers_its_domain_and_subdomains() {
+        let logins = LoginDomains(vec!["example.com".into()]);
+        assert!(logins.covers("https://example.com/post/1"));
+        assert!(logins.covers("https://img.example.com/file.jpg"));
+        assert!(!logins.covers("https://other.com/post/1"));
+        assert!(!logins.covers("not a url"));
+    }
+}

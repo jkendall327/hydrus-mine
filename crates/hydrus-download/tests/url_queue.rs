@@ -39,6 +39,9 @@ async fn post(State(site): State<Arc<Site>>, Path(id): Path<String>) -> Response
     if id == "404" {
         return (StatusCode::NOT_FOUND, "no such post").into_response();
     }
+    if id == "403" {
+        return (StatusCode::FORBIDDEN, "log in first").into_response();
+    }
     if id == "500" {
         return (StatusCode::INTERNAL_SERVER_ERROR, "the site broke").into_response();
     }
@@ -549,4 +552,30 @@ async fn a_file_that_fails_does_not_hold_up_the_rest_of_its_queue() {
     );
     assert!(seeds[0].note.contains("500"), "{}", seeds[0].note);
     assert_eq!(s.runner.status(queue.id).delayed_until, None);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_refusal_from_a_site_hydrus_logged_in_to_says_why() {
+    let s = setup().await;
+    let host = s.base.trim_start_matches("http://").to_owned();
+    let logins = hydrus_store::network::LoginDomains(vec![host]);
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &logins))
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/403", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    wait_until_done(&s.store, queue.id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::Vetoed);
+    assert!(seeds[0].note.contains("login script"), "{}", seeds[0].note);
 }

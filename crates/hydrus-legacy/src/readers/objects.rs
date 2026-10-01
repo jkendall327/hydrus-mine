@@ -276,6 +276,11 @@ impl LegacyDb {
         self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)
     }
 
+    /// The login manager's per-domain logins (type 48), if stored.
+    pub fn logins(&self) -> Result<Option<Vec<crate::objects::logins::LegacyLogin>>> {
+        self.singleton(SerialisableType(48), crate::objects::logins::logins)
+    }
+
     /// The bandwidth manager's rules (type 94), if stored.
     pub fn bandwidth_manager(
         &self,
