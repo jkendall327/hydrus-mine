@@ -32,6 +32,7 @@ pub mod subscriptions;
 pub mod synth;
 pub mod text;
 pub mod transfer;
+pub mod trash;
 pub mod urls;
 
 pub use conn::{Db, Paused, WriteCtx};

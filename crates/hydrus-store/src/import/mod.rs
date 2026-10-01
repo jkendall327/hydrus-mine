@@ -1351,6 +1351,15 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn the_trash_limits_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let trash: crate::trash::TrashSettings =
+            serde_json::from_value(input.settings["trash"].clone()).unwrap();
+        assert_eq!(trash, crate::trash::TrashSettings::default());
+    }
+
+    #[test]
     fn a_default_install_keeps_the_default_bandwidth_rules() {
         let source = legacy_fixture("basic");
         let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();

@@ -86,6 +86,11 @@ conformance runner, which skips exactly the recorded fields listed in
   record leaves the cache reporting the combined-local-media deletion and
   "deleted from anywhere" membership that the database no longer has. We
   have no such cache and report what the reference reports after a restart.
+- **The trash is emptied whether or not you are busy.** Hydrus skips its
+  hourly trash maintenance while you are using the client, unless
+  "maintain the trash in normal time" is on (it is by default). `hydrus
+  serve` has no user to be busy, so it always runs it, with your maximum
+  trash age and size; the switch isn't carried over.
 
 ## Duplicates (`hydrus-store::duplicates`)
 

@@ -59,6 +59,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
     }
     insert_setting(&mut input, &gallery)?;
 
+    // (the reference keeps "no limit" as None; its defaults fill missing keys)
+    let limit = |key| {
+        legacy_options
+            .get(key)
+            .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+            .and_then(|n| u64::try_from(n).ok())
+    };
+    let trash = crate::trash::TrashSettings {
+        max_age_hours: limit("trash_max_age"),
+        max_size_mb: limit("trash_max_size"),
+    };
+    insert_setting(&mut input, &trash)?;
+
     let mut folders = crate::settings::FolderSettings::default();
     if let Some(value) = legacy_options
         .get("delete_to_recycle_bin")

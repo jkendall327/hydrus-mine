@@ -392,6 +392,28 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                 tokio::time::sleep(Duration::from_secs(600)).await;
             }
         });
+        // emptying the trash: 30 seconds after starting, then hourly
+        let trash = store.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_secs(30)).await;
+            loop {
+                let store = trash.clone();
+                match tokio::task::spawn_blocking(move || {
+                    hydrus_store::trash::maintain_trash(&store, 256)
+                })
+                .await
+                {
+                    Ok(Ok(report)) if report.total() > 0 => tracing::info!(
+                        over_size = report.over_size,
+                        over_age = report.over_age,
+                        "deleted files from the trash"
+                    ),
+                    Ok(Err(e)) => tracing::error!(error = %e, "emptying the trash failed"),
+                    _ => {}
+                }
+                tokio::time::sleep(Duration::from_secs(3600)).await;
+            }
+        });
         if let Some(downloads) = &state.downloads
             && let Err(e) = downloads.start_all()
         {
