@@ -125,7 +125,7 @@ fn the_archive_delete_filter_keeps_and_deletes() {
 
     // F12 with a file selected: just it; finishing asks, and escape goes
     // back to it
-    ui.invoke_thumbnail_clicked(2);
+    ui.invoke_thumbnail_clicked(2, false, false);
     let selected = after[2];
     ui.invoke_archive_delete_filter();
     let window = filter();

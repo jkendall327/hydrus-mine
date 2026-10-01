@@ -143,3 +143,26 @@ pub fn still_in(store: &Store, location: &LocationContext, files: &[HashId]) -> 
         .map(|m| m.hash_id)
         .collect()
 }
+
+/// Of `files`, those in the inbox, and those archived (in the client), as
+/// F7 and shift+F7 act on them.
+pub fn by_inbox(store: &Store, files: &[HashId]) -> (Vec<HashId>, Vec<HashId>) {
+    let snapshot = store.snapshot();
+    let Ok(roles) = DomainRoles::new(&snapshot.services) else {
+        return (Vec::new(), Vec::new());
+    };
+    let Ok(batch) =
+        store.read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))
+    else {
+        return (Vec::new(), Vec::new());
+    };
+    let (mut inbox, mut archived) = (Vec::new(), Vec::new());
+    for media in &batch.results {
+        if media.inbox {
+            inbox.push(media.hash_id);
+        } else if media.is_current_in(roles.local_file_storage) {
+            archived.push(media.hash_id);
+        }
+    }
+    (inbox, archived)
+}

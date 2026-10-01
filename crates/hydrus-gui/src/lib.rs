@@ -39,6 +39,7 @@ mod pages;
 mod playback;
 pub mod ratings;
 pub mod scanbar;
+pub mod selection;
 pub mod sort;
 pub mod still;
 mod thumbnails;
@@ -502,58 +503,85 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     window.on_manage_tags_selected({
         let page = page.clone();
+        let manage_tags = manage_tags.clone();
         let open_manage_tags = open_manage_tags.clone();
         let tags_changed = tags_changed.clone();
         move || {
             let page = page();
             let page = page.borrow();
-            if let Some(i) = page.selected() {
-                open_manage_tags(
-                    page.store().clone(),
-                    vec![page.results()[i]],
-                    tags_changed.clone(),
-                );
+            let files = page.selected_files();
+            if files.is_empty() {
+                return;
+            }
+            let title = format!(
+                "manage tags for {} files",
+                hydrus_core::numbers::human_int(files.len() as u64)
+            );
+            open_manage_tags(page.store().clone(), files, tags_changed.clone());
+            if let Some(window) = manage_tags.borrow().as_ref() {
+                window.set_window_title(title.into());
             }
         }
     });
-    // the selected file's shortcuts: F7, shift+F7, delete, shift+delete
-    let selected_file = {
+    // the selected files' shortcuts: F7, shift+F7, delete, shift+delete;
+    // as the reference's defaults have it, archiving or inboxing several
+    // asks first, and deleting always does
+    let selected_files = {
         let page = page.clone();
-        move || {
-            let page = page();
-            let page = page.borrow();
-            page.selected().map(|i| page.results()[i])
-        }
+        move || page().borrow().selected_files()
     };
-    let act = |action: fn(&hydrus_store::Store, &[HashId]) -> hydrus_store::Result<()>| {
-        let page = page.clone();
-        let selected_file = selected_file.clone();
-        move || {
-            if let Some(file) = selected_file()
-                && let Err(e) = action(page().borrow().store(), &[file])
-            {
-                eprintln!("could not change the file: {e}");
+    let pending: Rc<RefCell<Option<Asked>>> = Rc::default();
+    let ask = {
+        let pending = pending.clone();
+        let weak = window.as_weak();
+        move |asked: Asked| {
+            if let Some(window) = weak.upgrade() {
+                window.set_question(asked.question().into());
+                *pending.borrow_mut() = Some(asked);
             }
         }
     };
-    window.on_archive_selected(act(media_actions::archive));
-    window.on_inbox_selected(act(media_actions::inbox));
-    window.on_undelete_selected(act(media_actions::undelete));
-    let pending: Rc<RefCell<Option<(HashId, media_actions::Deletion)>>> = Rc::default();
+    let archive_or_inbox = |archive: bool| {
+        let page = page.clone();
+        let selected_files = selected_files.clone();
+        let ask = ask.clone();
+        move || {
+            let page = page();
+            let store = page.borrow().store().clone();
+            let (inbox, archived) = media_actions::by_inbox(&store, &selected_files());
+            let files = if archive { inbox } else { archived };
+            match files.len() {
+                0 => {}
+                1 => Asked::archive_or_inbox(archive, files).act(&store, &|_| {}),
+                _ => ask(Asked::archive_or_inbox(archive, files)),
+            }
+        }
+    };
+    window.on_archive_selected(archive_or_inbox(true));
+    window.on_inbox_selected(archive_or_inbox(false));
+    window.on_undelete_selected({
+        let page = page.clone();
+        let selected_files = selected_files.clone();
+        move || {
+            let files = selected_files();
+            if !files.is_empty()
+                && let Err(e) = media_actions::undelete(page().borrow().store(), &files)
+            {
+                eprintln!("could not undelete the files: {e}");
+            }
+        }
+    });
     window.on_delete_selected({
         let page = page.clone();
-        let pending = pending.clone();
-        let weak = window.as_weak();
         move || {
-            let Some(file) = selected_file() else {
+            let files = selected_files();
+            if files.is_empty() {
                 return;
-            };
+            }
             let page = page();
             let page = page.borrow();
-            let deletion = media_actions::deletion(page.store(), page.location(), &[file]);
-            if let (Some(deletion), Some(window)) = (deletion, weak.upgrade()) {
-                window.set_question(deletion.question(1).into());
-                *pending.borrow_mut() = Some((file, deletion));
+            if let Some(deletion) = media_actions::deletion(page.store(), page.location(), &files) {
+                ask(Asked::Delete(files, deletion, page.location().clone()));
             }
         }
     });
@@ -566,24 +594,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(window) = weak.upgrade() {
                 window.set_question(SharedString::new());
             }
-            let Some((file, deletion)) = asked.filter(|_| yes) else {
-                return;
-            };
-            let (store, location) = {
-                let page = page();
-                let page = page.borrow();
-                (page.store().clone(), page.location().clone())
-            };
-            if let Err(e) = media_actions::delete(&store, &[file], &deletion) {
-                eprintln!("could not delete the file: {e}");
-                return;
-            }
-            if media_actions::still_in(&store, &location, &[file]).is_empty() {
-                removed(&[file]);
+            if let Some(asked) = asked.filter(|_| yes) {
+                let store = page().borrow().store().clone();
+                asked.act(&store, &*removed);
             }
         }
     });
-    // F12: the archive/delete filter, on the file selected, else them all
+    // F12: the archive/delete filter, on the files selected, else them all
     let archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>> = Rc::default();
     window.on_archive_delete_filter({
         let page = page.clone();
@@ -592,9 +609,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             let page = page();
             let page = page.borrow();
-            let files = match page.selected() {
-                Some(i) => vec![page.results()[i]],
-                None => page.results().to_vec(),
+            let files = match page.selected_files() {
+                selected if selected.is_empty() => page.results().to_vec(),
+                selected => selected,
             };
             let Some(model) = archive_delete::ArchiveDeleteFilter::new(
                 page.store().clone(),
@@ -639,18 +656,75 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    window.on_thumbnail_clicked({
+    // a change to the selection draws the rows it changed, and counts the
+    // selection's tags
+    let reselect = {
+        let page = page.clone();
         let rows = rows.clone();
-        move |index| {
+        move |change: &dyn Fn(&mut SearchPage) -> Option<usize>| {
             let page = page();
-            let before = page.borrow().selected();
-            page.borrow_mut()
-                .select(usize::try_from(index).unwrap_or(usize::MAX));
-            let after = page.borrow().selected();
-            for changed in [before, after].into_iter().flatten() {
-                rows.file_changed(changed);
-            }
+            let before = page.borrow().selected_indices();
+            let focused = change(&mut page.borrow_mut());
+            let after = page.borrow().selected_indices();
+            rows.selection_changed(&before, &after);
             shown(false);
+            focused
+        }
+    };
+    window.on_thumbnail_clicked({
+        let reselect = reselect.clone();
+        move |index, ctrl, shift| {
+            let index = usize::try_from(index).ok();
+            reselect(&|page| {
+                page.hit(index, ctrl, shift);
+                None
+            });
+        }
+    });
+    window.on_select_all({
+        let reselect = reselect.clone();
+        move || {
+            reselect(&|page| {
+                page.select_all();
+                None
+            });
+        }
+    });
+    window.on_select_none({
+        let reselect = reselect.clone();
+        move || {
+            reselect(&|page| {
+                page.select_none();
+                None
+            });
+        }
+    });
+    window.on_move_focus(move |to, shift, columns, page_rows| {
+        use selection::Move;
+        let to = match to {
+            0 => Move::Left,
+            1 => Move::Right,
+            2 => Move::Up,
+            3 => Move::Down,
+            4 => Move::PageUp,
+            5 => Move::PageDown,
+            6 => Move::Home,
+            _ => Move::End,
+        };
+        let size = |n: i32| usize::try_from(n).unwrap_or(1);
+        reselect(&|page| page.move_focus(to, shift, size(columns), size(page_rows)))
+            .and_then(|i| i32::try_from(i).ok())
+            .unwrap_or(-1)
+    });
+    // enter: the media viewer, on the focused file (else the first)
+    window.on_launch_viewer({
+        let page = page.clone();
+        let weak = window.as_weak();
+        move || {
+            let focused = page().borrow().focused().unwrap_or(0);
+            if let Some(window) = weak.upgrade() {
+                window.invoke_thumbnail_activated(i32::try_from(focused).unwrap_or(0));
+            }
         }
     });
     Bound {
@@ -667,6 +741,62 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
 
 /// Called with files a viewer deleted out of the page's domains.
 pub(crate) type Removed = Rc<dyn Fn(&[HashId])>;
+
+/// What the main window asks before doing it to the selected files.
+enum Asked {
+    Archive(Vec<HashId>),
+    Inbox(Vec<HashId>),
+    /// Deleting, as the page's file domains have it.
+    Delete(
+        Vec<HashId>,
+        media_actions::Deletion,
+        hydrus_search::LocationContext,
+    ),
+}
+
+impl Asked {
+    fn archive_or_inbox(archive: bool, files: Vec<HashId>) -> Self {
+        if archive {
+            Self::Archive(files)
+        } else {
+            Self::Inbox(files)
+        }
+    }
+
+    /// The question, as the reference asks it.
+    fn question(&self) -> String {
+        let count = |files: &[HashId]| hydrus_core::numbers::human_int(files.len() as u64);
+        match self {
+            Self::Archive(files) => format!("Archive {} files?", count(files)),
+            Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
+            Self::Delete(files, deletion, _) => deletion.question(files.len()),
+        }
+    }
+
+    /// Do it; files deleted from the page's domains leave it.
+    fn act(&self, store: &hydrus_store::Store, removed: &dyn Fn(&[HashId])) {
+        let done = match self {
+            Self::Archive(files) => media_actions::archive(store, files),
+            Self::Inbox(files) => media_actions::inbox(store, files),
+            Self::Delete(files, deletion, location) => {
+                media_actions::delete(store, files, deletion).map(|()| {
+                    let still = media_actions::still_in(store, location, files);
+                    let gone: Vec<HashId> = files
+                        .iter()
+                        .copied()
+                        .filter(|f| !still.contains(f))
+                        .collect();
+                    if !gone.is_empty() {
+                        removed(&gone);
+                    }
+                })
+            }
+        };
+        if let Err(e) = done {
+            eprintln!("could not change the files: {e}");
+        }
+    }
+}
 
 /// Opens manage tags on files, calling the hook given once applied.
 type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;

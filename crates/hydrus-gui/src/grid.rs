@@ -131,6 +131,19 @@ impl ThumbnailRows {
         self.notify.row_changed(index / self.columns.get());
     }
 
+    /// The files selected changed from `before` to `after` (by index):
+    /// the rows whose files' selection changed are drawn again.
+    pub fn selection_changed(&self, before: &BTreeSet<usize>, after: &BTreeSet<usize>) {
+        let columns = self.columns.get();
+        let rows: BTreeSet<usize> = before
+            .symmetric_difference(after)
+            .map(|i| i / columns)
+            .collect();
+        for row in rows {
+            self.notify.row_changed(row);
+        }
+    }
+
     /// The file's thumbnail if decoded; otherwise a blank, and it is asked for.
     fn image(&self, id: HashId, index: usize) -> slint::Image {
         if let Some(image) = self.cache.borrow().get(&id) {
@@ -168,7 +181,7 @@ impl Model for ThumbnailRows {
         let thumbnails: Vec<Thumbnail> = (start..end)
             .map(|i| Thumbnail {
                 image: self.image(results[i], i),
-                selected: page.selected() == Some(i),
+                selected: page.is_selected(i),
             })
             .collect();
         Some(ThumbnailRow {

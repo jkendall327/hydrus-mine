@@ -180,7 +180,9 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     }
     let selected = {
         let page = page.borrow();
-        page.results()[page.selected().expect("a click selects")]
+        let selected = page.selected_files();
+        assert_eq!(selected.len(), 1, "a click selects");
+        selected[0]
     };
     let key = |key: slint::platform::Key| {
         let text: slint::SharedString = key.into();

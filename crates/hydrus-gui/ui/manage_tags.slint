@@ -8,7 +8,9 @@ import { Button, ComboBox, LineEdit, ListView } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 
 export component ManageTagsWindow inherits Window {
-    title: "manage tags";
+    // ("manage tags for 3 files" from the thumbnails, as the reference has it)
+    in property <string> window-title: "manage tags";
+    title: root.window-title;
     preferred-width: 420px;
     preferred-height: 560px;
     background: Theme.window;

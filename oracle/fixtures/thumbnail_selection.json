@@ -1,0 +1,675 @@
+{
+ "columns": 4,
+ "files": 12,
+ "page_rows": 2,
+ "steps": [
+  {
+   "focused": 2,
+   "selected": [
+    2
+   ],
+   "step": [
+    "click",
+    2,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 2,
+   "selected": [
+    2,
+    5
+   ],
+   "step": [
+    "click",
+    5,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 6,
+   "selected": [
+    6
+   ],
+   "step": [
+    "move",
+    "right",
+    false
+   ]
+  },
+  {
+   "focused": 6,
+   "selected": [
+    6,
+    7,
+    8,
+    9
+   ],
+   "step": [
+    "click",
+    9,
+    false,
+    true
+   ]
+  },
+  {
+   "focused": 6,
+   "selected": [
+    4,
+    5,
+    6
+   ],
+   "step": [
+    "click",
+    4,
+    false,
+    true
+   ]
+  },
+  {
+   "focused": 6,
+   "selected": [
+    4,
+    6
+   ],
+   "step": [
+    "click",
+    5,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 8,
+   "selected": [
+    8
+   ],
+   "step": [
+    "click",
+    8,
+    false,
+    true
+   ]
+  },
+  {
+   "focused": 8,
+   "selected": [
+    8,
+    9,
+    10,
+    11
+   ],
+   "step": [
+    "move",
+    "down",
+    true
+   ]
+  },
+  {
+   "focused": 8,
+   "selected": [
+    7,
+    8
+   ],
+   "step": [
+    "move",
+    "up",
+    true
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    7,
+    8
+   ],
+   "step": [
+    "click",
+    7,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [
+    8
+   ],
+   "step": [
+    "click",
+    7,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    7
+   ],
+   "step": [
+    "move",
+    "left",
+    false
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "step": [
+    "all"
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11
+   ],
+   "step": [
+    "move",
+    "home",
+    true
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [],
+   "step": [
+    "none"
+   ]
+  },
+  {
+   "focused": 8,
+   "selected": [
+    8
+   ],
+   "step": [
+    "move",
+    "right",
+    false
+   ]
+  },
+  {
+   "focused": 3,
+   "selected": [
+    3
+   ],
+   "step": [
+    "click",
+    3,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 3,
+   "selected": [
+    3,
+    4,
+    5,
+    6
+   ],
+   "step": [
+    "click",
+    6,
+    false,
+    true
+   ]
+  },
+  {
+   "focused": 3,
+   "selected": [
+    3,
+    6
+   ],
+   "step": [
+    "remove",
+    [
+     4,
+     5
+    ]
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    7
+   ],
+   "step": [
+    "move",
+    "right",
+    false
+   ]
+  },
+  {
+   "focused": 9,
+   "selected": [
+    9
+   ],
+   "step": [
+    "click",
+    9,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 9,
+   "selected": [
+    9,
+    10
+   ],
+   "step": [
+    "click",
+    10,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 9,
+   "selected": [
+    8,
+    9,
+    10
+   ],
+   "step": [
+    "click",
+    8,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [
+    8,
+    10
+   ],
+   "step": [
+    "remove",
+    [
+     9
+    ]
+   ]
+  },
+  {
+   "focused": 8,
+   "selected": [
+    8,
+    10
+   ],
+   "step": [
+    "move",
+    "right",
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [
+    10
+   ],
+   "step": [
+    "remove",
+    [
+     8
+    ]
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    7
+   ],
+   "step": [
+    "move",
+    "left",
+    false
+   ]
+  },
+  {
+   "focused": 11,
+   "selected": [
+    11
+   ],
+   "step": [
+    "move",
+    "page_down",
+    false
+   ]
+  },
+  {
+   "focused": 11,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "move",
+    "page_up",
+    true
+   ]
+  },
+  {
+   "focused": 11,
+   "selected": [
+    11
+   ],
+   "step": [
+    "move",
+    "end",
+    true
+   ]
+  },
+  {
+   "focused": 11,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "click",
+    0,
+    true,
+    true
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "move",
+    "home",
+    false
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "click",
+    null,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [],
+   "step": [
+    "click",
+    null,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0
+   ],
+   "step": [
+    "move",
+    "left",
+    false
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1
+   ],
+   "step": [
+    "click",
+    1,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    3
+   ],
+   "step": [
+    "click",
+    3,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    2,
+    3
+   ],
+   "step": [
+    "click",
+    2,
+    false,
+    true
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "all"
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "click",
+    6,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [],
+   "step": [
+    "none"
+   ]
+  },
+  {
+   "focused": 0,
+   "selected": [
+    0
+   ],
+   "step": [
+    "move",
+    "up",
+    false
+   ]
+  },
+  {
+   "focused": 2,
+   "selected": [
+    2
+   ],
+   "step": [
+    "click",
+    2,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 2,
+   "selected": [
+    2,
+    6
+   ],
+   "step": [
+    "click",
+    6,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": 2,
+   "selected": [
+    2,
+    6
+   ],
+   "step": [
+    "click",
+    2,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": 7,
+   "selected": [
+    7
+   ],
+   "step": [
+    "move",
+    "right",
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [],
+   "step": [
+    "click",
+    null,
+    false,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [
+    3
+   ],
+   "step": [
+    "click",
+    3,
+    true,
+    false
+   ]
+  },
+  {
+   "focused": null,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "all"
+   ]
+  },
+  {
+   "focused": 10,
+   "selected": [
+    0,
+    1,
+    2,
+    3,
+    6,
+    7,
+    10,
+    11
+   ],
+   "step": [
+    "click",
+    10,
+    false,
+    true
+   ]
+  }
+ ]
+}

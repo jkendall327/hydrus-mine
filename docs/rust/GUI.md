@@ -50,7 +50,7 @@ highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
 and double-clicking one removes it. Below them, as the reference's
-"selection tags" box, the tags of the selected file (or with nothing
+"selection tags" box, the tags of the selected files (or with nothing
 selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag
 domain less those your tag display filters hide from it, sorted by your
@@ -67,7 +67,17 @@ into the page, searching if it is synchronised (saving and editing
 favourites isn't here yet, nor collecting). The matching files' thumbnails fill the grid, newest import
 first, with the count in the status bar; the grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
-thread when its row first comes into view (a blank frame until then). Double-clicking a thumbnail opens the media viewer in its own
+thread when its row first comes into view (a blank frame until then).
+Thumbnails are selected as in the reference's grid (`src/selection.rs`,
+checked step by step against the grid's own code,
+`oracle/record_thumbnail_selection.py`): a click selects just the file (or,
+on one already selected, leaves the selection be), ctrl+click adds or
+takes one away, shift+click selects from where the last click started (a
+second shift+click moving the range's end), a click between thumbnails
+selects none, and with the grid's keyboard ctrl+a selects every file,
+escape none, the arrows, page up and down, home and end move (shift
+selecting as they go; the grid scrolls to follow) and enter opens the
+media viewer on the focused file. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or page down and up, or the mouse wheel) move through the page's files,
@@ -124,8 +134,10 @@ one, else to the trash; in the trash, for good, unless the delete lock
 holds it), asking first, and shift+delete undeletes it; a file deleted out
 of the page's domains leaves the page and the viewer (which closes when
 none are left). The same keys (and F3) work on the thumbnails, once a click gives
-them the keyboard, for the file selected. F12 opens the archive/delete filter, as the reference's
-does, on the file selected (or all the page's files), those in a local
+them the keyboard, for every file selected: F7 and shift+F7 on several
+ask first ("Archive 3 files?"), as the reference's defaults have it, and
+manage tags says how many files it has ("manage tags for 3 files"). F12 opens the archive/delete filter, as the reference's
+does, on the files selected (or all the page's files), those in a local
 domain and not in the trash: a left click or F7 keeps the file, a right
 click or delete deletes it, a middle click or backspace goes back, up
 skips it, and F12 or escape stops; finishing (or stopping, with anything
@@ -181,8 +193,8 @@ options. The model is `src/duplicate_filter.rs`, tested in
 `tests/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
-repositories (pending and petitioning) and on several files at once from
-the thumbnails, system
+repositories (pending and petitioning), the status bar's summary of the
+selection, dragging thumbnails, the thumbnails' menu, system
 predicates in the autocomplete, collect, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
 shading, playing animated JPEG XL, downloader pages' own panels; in

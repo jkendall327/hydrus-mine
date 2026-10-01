@@ -13,6 +13,7 @@ use hydrus_search::{
 use hydrus_store::Store;
 
 use crate::autocomplete::Autocomplete;
+use crate::selection::{Move, Selection};
 
 pub struct SearchPage {
     store: Arc<Store>,
@@ -30,7 +31,7 @@ pub struct SearchPage {
     sort_changed: bool,
     /// In the sort's order.
     results: Vec<HashId>,
-    selected: Option<usize>,
+    selection: Selection,
     /// The selection's tags (or, with nothing selected, the page's): each
     /// tag, and its row as the list shows it.
     tags: Vec<(String, String)>,
@@ -44,7 +45,7 @@ impl std::fmt::Debug for SearchPage {
         f.debug_struct("SearchPage")
             .field("predicates", &self.predicates)
             .field("results", &self.results.len())
-            .field("selected", &self.selected)
+            .field("selected", &self.selection.count())
             .field("error", &self.error)
             .finish_non_exhaustive()
     }
@@ -68,7 +69,7 @@ impl SearchPage {
             },
             sort_changed: false,
             results: Vec::new(),
-            selected: None,
+            selection: Selection::default(),
             tags: Vec::new(),
             error: None,
             duplicates: None,
@@ -279,9 +280,8 @@ impl SearchPage {
     /// Take files off the page (deleted from its domain, say), as the
     /// reference's pages drop them.
     pub fn remove_files(&mut self, files: &[HashId]) {
-        let selected = self.selected.map(|i| self.results[i]);
+        self.selection.remove(&self.results, files);
         self.results.retain(|id| !files.contains(id));
-        self.selected = selected.and_then(|id| self.results.iter().position(|&r| r == id));
         self.count_tags();
     }
 
@@ -313,7 +313,6 @@ impl SearchPage {
 
     /// Sort the files shown again (a new sort doesn't search again).
     fn resort(&mut self) {
-        let selected = self.selected.map(|i| self.results[i]);
         let snapshot = self.store.snapshot();
         let clock = Clock::system();
         match self.store.read(|conn| {
@@ -330,11 +329,34 @@ impl SearchPage {
             Ok(Err(e)) => self.error = Some(e.to_string()),
             Err(e) => self.error = Some(e.to_string()),
         }
-        self.selected = selected.and_then(|id| self.results.iter().position(|&r| r == id));
     }
 
-    pub fn selected(&self) -> Option<usize> {
-        self.selected
+    /// The selected files, in the page's order.
+    pub fn selected_files(&self) -> Vec<HashId> {
+        self.selection.files(&self.results)
+    }
+
+    /// The selected files' indices.
+    pub fn selected_indices(&self) -> std::collections::BTreeSet<usize> {
+        self.results
+            .iter()
+            .enumerate()
+            .filter(|(_, f)| self.selection.is_selected(**f))
+            .map(|(i, _)| i)
+            .collect()
+    }
+
+    /// Whether the file at `index` is selected.
+    pub fn is_selected(&self, index: usize) -> bool {
+        self.results
+            .get(index)
+            .is_some_and(|&f| self.selection.is_selected(f))
+    }
+
+    /// The focused file's index, if a file is focused.
+    pub fn focused(&self) -> Option<usize> {
+        let focused = self.selection.focused()?;
+        self.results.iter().position(|&f| f == focused)
     }
 
     /// Why the last change could not be made, if it couldn't.
@@ -418,12 +440,52 @@ impl SearchPage {
         }
     }
 
+    /// A plain click on the file at `index`.
     pub fn select(&mut self, index: usize) {
-        self.selected = (index < self.results.len()).then_some(index);
+        self.hit(Some(index), false, false);
+    }
+
+    /// A click on the file at `index` (or on none), with ctrl or shift
+    /// held, as the reference's thumbnail grid takes it.
+    pub fn hit(&mut self, index: Option<usize>, ctrl: bool, shift: bool) {
+        let file = index.and_then(|i| self.results.get(i).copied());
+        if index.is_some() && file.is_none() {
+            return;
+        }
+        self.selection.hit(&self.results, file, ctrl, shift);
         self.count_tags();
     }
 
-    /// The tag list's rows: the selected file's tags, or with nothing
+    /// Select every file (ctrl+A).
+    pub fn select_all(&mut self) {
+        self.selection.select_all(&self.results);
+        self.count_tags();
+    }
+
+    /// Select no file (escape).
+    pub fn select_none(&mut self) {
+        self.selection.select_none(&self.results);
+        self.count_tags();
+    }
+
+    /// Move the focus (the arrows, page up and down, home and end; with
+    /// shift, selecting as they go) in a grid `columns` wide showing
+    /// `page_rows` rows; the index of the file moved to.
+    pub fn move_focus(
+        &mut self,
+        to: Move,
+        shift: bool,
+        columns: usize,
+        page_rows: usize,
+    ) -> Option<usize> {
+        let moved = self
+            .selection
+            .move_focus(&self.results, to, shift, columns, page_rows);
+        self.count_tags();
+        moved
+    }
+
+    /// The tag list's rows: the selected files' tags, or with nothing
     /// selected every file's, with how many have each (`tag (3) (+1)`).
     pub fn tag_rows(&self) -> Vec<&str> {
         self.tags.iter().map(|(_, row)| row.as_str()).collect()
@@ -464,9 +526,9 @@ impl SearchPage {
     /// petitioned, less those the user hides from it, sorted by its default
     /// sort.
     fn count_tags(&mut self) {
-        let files: Vec<HashId> = match self.selected {
-            Some(i) => vec![self.results[i]],
-            None => self.results.clone(),
+        let files = match self.selected_files() {
+            selected if selected.is_empty() => self.results.clone(),
+            selected => selected,
         };
         let snapshot = self.store.snapshot();
         let service = snapshot
@@ -480,7 +542,7 @@ impl SearchPage {
 
     fn search(&mut self) {
         self.error = None;
-        self.selected = None;
+        self.selection.clear();
         self.results.clear();
         // as in the reference, a page with no predicates shows nothing
         if self.predicates.is_empty() {

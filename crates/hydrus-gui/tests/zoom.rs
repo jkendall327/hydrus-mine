@@ -377,7 +377,7 @@ fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
     assert!(bound.viewer.borrow().is_none());
 
     // the archive/delete filter zooms and pans the same way
-    ui.invoke_thumbnail_clicked(0);
+    ui.invoke_thumbnail_clicked(0, false, false);
     ui.invoke_archive_delete_filter();
     let filter = bound
         .archive_delete

@@ -231,7 +231,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     };
     assert_eq!(colour_of("character:"), (0, 170, 0));
     assert_eq!(colour_of("blue eyes"), (0, 111, 250));
-    ui.invoke_thumbnail_clicked(1);
+    ui.invoke_thumbnail_clicked(1, false, false);
     let selected_tags = ui.get_tags().row_count();
     assert!(selected_tags > 0 && selected_tags < 10);
     // a row is made at once, with blanks until its thumbnails are decoded
@@ -252,7 +252,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(ui.get_sort_index(), i32::try_from(import_time).unwrap());
     assert_eq!(ui.get_order_names().row_data(1).unwrap(), "newest first");
     assert_eq!(ui.get_order_index(), 1);
-    ui.invoke_thumbnail_clicked(0);
+    ui.invoke_thumbnail_clicked(0, false, false);
     // (the screenshot shows the autocomplete too)
     ui.invoke_search_edited("samus".into());
     assert_eq!(ui.get_search_text(), "samus");

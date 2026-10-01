@@ -132,8 +132,24 @@ component ThumbnailGrid inherits ListView {
     in property <length> thumbnail-size: 150px;
     in property <length> gap: 4px;
     out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
-    callback clicked(int);
+    // how many rows a page up or down moves
+    out property <int> page-rows: max(1, floor(self.visible-height / (self.thumbnail-size + self.gap)));
+    // a click on a file (-1 for none), with ctrl or shift held
+    callback clicked(int, bool, bool);
     callback activated(int);
+    property <bool> ctrl;
+    property <bool> shift;
+
+    // scroll so the file at `index` shows
+    public function scroll-to(index: int) {
+        let span = root.thumbnail-size + root.gap;
+        let top = floor(index / root.columns) * span;
+        if (top < -root.content-y) {
+            root.content-y = -top;
+        } else if (top + span > -root.content-y + root.visible-height) {
+            root.content-y = -(top + span - root.visible-height);
+        }
+    }
 
     // which of a row's `count` thumbnails is at (x, y), or -1 for a gap
     pure function thumbnail-at(count: int, x: length, y: length) -> int {
@@ -174,11 +190,16 @@ component ThumbnailGrid inherits ListView {
         // double-click's second click would land on one that never saw the
         // first
         TouchArea {
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down) {
+                    root.ctrl = event.modifiers.control;
+                    root.shift = event.modifiers.shift;
+                }
+            }
+            // (a gap between thumbnails is a click on no file)
             clicked => {
                 let column = root.thumbnail-at(row.thumbnails.length, self.pressed-x, self.pressed-y);
-                if (column >= 0) {
-                    root.clicked(row.first + column);
-                }
+                root.clicked(column >= 0 ? row.first + column : -1, root.ctrl, root.shift);
             }
             // as in the reference, double-clicking a thumbnail opens the viewer
             double-clicked => {
@@ -262,8 +283,17 @@ export component MainWindow inherits Window {
     callback chooser-pressed(int);
     callback chooser-enter();
     callback chooser-cancel();
-    callback thumbnail-clicked(int);
+    // a click on a file (-1 for none), with ctrl or shift held
+    callback thumbnail-clicked(int, bool, bool);
     callback thumbnail-activated(int);
+    // the thumbnails' keyboard: select all, select none, open the viewer,
+    // and move the focus (0 left, 1 right, 2 up, 3 down, 4 page up, 5 page
+    // down, 6 home, 7 end; with shift selecting, in a grid so many columns
+    // wide showing so many rows), saying the file moved to, to scroll to (-1: none)
+    callback select-all();
+    callback select-none();
+    callback launch-viewer();
+    callback move-focus(int, bool, int, int) -> int;
     callback columns-changed(int);
     // how many thumbnails fit across the grid
     out property <int> grid-columns: grid.columns;
@@ -482,13 +512,40 @@ export component MainWindow inherits Window {
                     }
                 }
                 // the thumbnails' shortcuts, once a click gives them the
-                // keyboard: F3 manages the file selected's tags, F7
-                // archives it and shift+F7
-                // inboxes it, delete deletes it (asking first) and
-                // shift+delete undeletes it
+                // keyboard: F3 manages the files selected's tags, F7
+                // archives them and shift+F7
+                // inboxes them, delete deletes them (asking first) and
+                // shift+delete undeletes them; ctrl+a selects every file
+                // and escape none, the arrows, page up and down, home and
+                // end move (with shift, selecting), and enter opens the
+                // media viewer
                 grid-keys := FocusScope {
                     horizontal-stretch: 1;
                     key-pressed(event) => {
+                        if (event.modifiers.control && (event.text == "a" || event.text == "A")) {
+                            root.select-all();
+                            return accept;
+                        }
+                        if (event.text == Key.Escape) {
+                            root.select-none();
+                            return accept;
+                        }
+                        if (event.text == Key.Return) {
+                            root.launch-viewer();
+                            return accept;
+                        }
+                        let move = event.modifiers.alt || event.modifiers.control ? -1
+                            : event.text == Key.LeftArrow ? 0 : event.text == Key.RightArrow ? 1
+                            : event.text == Key.UpArrow ? 2 : event.text == Key.DownArrow ? 3
+                            : event.text == Key.PageUp ? 4 : event.text == Key.PageDown ? 5
+                            : event.text == Key.Home ? 6 : event.text == Key.End ? 7 : -1;
+                        if (move >= 0) {
+                            let focused = root.move-focus(move, event.modifiers.shift, grid.columns, grid.page-rows);
+                            if (focused >= 0) {
+                                grid.scroll-to(focused);
+                            }
+                            return accept;
+                        }
                         if (event.text == Key.F3) {
                             root.manage-tags-selected();
                             return accept;
@@ -515,9 +572,9 @@ export component MainWindow inherits Window {
                         width: 100%;
                         height: 100%;
                         rows: root.thumbnail-rows;
-                        clicked(i) => {
+                        clicked(i, ctrl, shift) => {
                             grid-keys.focus();
-                            root.thumbnail-clicked(i);
+                            root.thumbnail-clicked(i, ctrl, shift);
                         }
                         activated(i) => { root.thumbnail-activated(i); }
                     }
