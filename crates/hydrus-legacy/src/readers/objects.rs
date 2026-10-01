@@ -335,6 +335,15 @@ impl LegacyDb {
         Ok(latest.into_values().collect())
     }
 
+    /// The names of the saved GUI sessions (type 104), a-z.
+    pub fn gui_session_names(&self) -> Result<Vec<String>> {
+        Ok(self
+            .latest_named(SerialisableType(104))?
+            .into_iter()
+            .map(|row| row.name)
+            .collect())
+    }
+
     /// The latest save of the GUI session `name` (type 104), and the stored
     /// data of its pages by hash (a page whose data is missing is left out).
     /// `None` if there is no such session.

@@ -56,6 +56,8 @@ pub struct ImportInput {
     pub downloader_pages: Vec<DownloaderPageInput>,
     /// The session the reference opens with, as a tree of pages.
     pub session: Option<SessionInput>,
+    /// The other saved sessions, kept to load later.
+    pub other_sessions: Vec<SessionInput>,
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
@@ -1177,34 +1179,39 @@ impl Copier<'_> {
             }
         }
 
-        let Some(session) = &input.session else {
-            return Ok(());
-        };
-        let mut files = Vec::new();
-        let pages = session
-            .pages
-            .iter()
-            .map(|p| convert(p, page_queues, &mut files))
-            .collect();
-        let all: Vec<hydrus_core::Sha256> =
-            files.iter().flat_map(|(_, h)| h.iter().copied()).collect();
-        let ids = crate::master::hash_ids(self.conn, &all)?;
-        for (key, hashes) in &files {
-            let hash_ids: Vec<hydrus_core::HashId> =
-                hashes.iter().filter_map(|h| ids.get(h).copied()).collect();
-            crate::sessions::set_page_files(self.conn, key, &hash_ids)?;
-        }
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_secs() as i64);
-        // what the reference opened with is what we open with
-        let session = Session {
-            name: crate::sessions::LAST_SESSION.to_owned(),
-            pages,
-        };
-        crate::sessions::save(self.conn, &session, now)?;
-        *self.report.rows.entry("sessions".into()).or_default() += 1;
-        *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
+        // what the reference opened with is what we open with; the other
+        // sessions are kept by their names
+        let sessions = input
+            .session
+            .iter()
+            .map(|s| (crate::sessions::LAST_SESSION, s))
+            .chain(input.other_sessions.iter().map(|s| (s.name.as_str(), s)));
+        for (name, session) in sessions {
+            let mut files = Vec::new();
+            let pages = session
+                .pages
+                .iter()
+                .map(|p| convert(p, page_queues, &mut files))
+                .collect();
+            let all: Vec<hydrus_core::Sha256> =
+                files.iter().flat_map(|(_, h)| h.iter().copied()).collect();
+            let ids = crate::master::hash_ids(self.conn, &all)?;
+            for (key, hashes) in &files {
+                let hash_ids: Vec<hydrus_core::HashId> =
+                    hashes.iter().filter_map(|h| ids.get(h).copied()).collect();
+                crate::sessions::set_page_files(self.conn, key, &hash_ids)?;
+            }
+            let session = Session {
+                name: name.to_owned(),
+                pages,
+            };
+            crate::sessions::save(self.conn, &session, now)?;
+            *self.report.rows.entry("sessions".into()).or_default() += 1;
+            *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
+        }
         Ok(())
     }
 
@@ -1873,6 +1880,141 @@ mod network_tests {
         }
     }
 
+    /// The other saved sessions come across under their names, with their
+    /// downloader pages kept but making no queues (the reference only runs
+    /// them while the session is open).
+    #[test]
+    fn other_saved_sessions_come_across_without_running_their_downloaders() {
+        use hydrus_core::pages::PageContent;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["sessions"].as_array().unwrap();
+        let downloader_pages = |session: &serde_json::Value| -> usize {
+            session["facts"]["pages"]
+                .as_object()
+                .unwrap()
+                .values()
+                .filter(|p| {
+                    let v = &p["page"]["variables"];
+                    [
+                        "urls_import",
+                        "multiple_gallery_import",
+                        "multiple_watcher_import",
+                    ]
+                    .iter()
+                    .any(|k| v.get(*k).is_some())
+                })
+                .count()
+        };
+        let busiest = sessions.iter().max_by_key(|s| downloader_pages(s)).unwrap();
+        assert!(downloader_pages(busiest) > 0);
+        plant_session(source.path(), "my downloads", &[busiest]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+
+        let conn = Connection::open(&dest).unwrap();
+        let names: Vec<String> = crate::sessions::names(&conn)
+            .unwrap()
+            .into_iter()
+            .map(|(n, _)| n)
+            .collect();
+        assert!(names.contains(&"my downloads".to_owned()), "{names:?}");
+        assert!(names.contains(&crate::sessions::LAST_SESSION.to_owned()));
+        let kept = crate::sessions::load(&conn, "my downloads")
+            .unwrap()
+            .unwrap();
+        let mut hashes = Vec::new();
+        page_hashes(&busiest["facts"]["tree"], &mut hashes);
+        let pages = kept.all_pages();
+        let leaves: Vec<_> = pages
+            .iter()
+            .filter(|p| !matches!(p.content, PageContent::Pages(_)))
+            .collect();
+        assert_eq!(leaves.len(), hashes.len(), "every page comes across");
+        assert!(
+            leaves
+                .iter()
+                .all(|p| !matches!(p.content, PageContent::Downloader { .. }))
+        );
+        let stored = leaves
+            .iter()
+            .filter(|p| matches!(p.content, PageContent::Other { .. }))
+            .count();
+        assert!(stored >= downloader_pages(busiest));
+        // and no queues: the fixture's own last session has none
+        let queues: i64 = conn
+            .query_row(
+                "SELECT count(*) FROM import_queues WHERE kind IN ('urls', 'gallery', 'watcher')",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(queues, 0);
+    }
+
+    /// When hydrus opens with a named session, that one is ours (with its
+    /// downloaders), and hydrus's own "last session" is kept under another
+    /// name rather than replacing it.
+    #[test]
+    fn a_named_startup_session_keeps_hydrus_s_last_session_apart() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let busiest = recorded["sessions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .max_by_key(|s| s["page_data"].as_object().unwrap().len())
+            .unwrap();
+        plant_session(source.path(), "my downloads", &[busiest]);
+        {
+            let conn = Connection::open(source.path().join("client.db")).unwrap();
+            let yaml: String = conn
+                .query_row("SELECT options FROM options", [], |r| r.get(0))
+                .unwrap();
+            let yaml = yaml.replace(
+                "default_gui_session: last session\n",
+                "default_gui_session: my downloads\n",
+            );
+            conn.execute("UPDATE options SET options = ?1", [&yaml])
+                .unwrap();
+        }
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(source.path(), &dest).unwrap();
+        let conn = Connection::open(&dest).unwrap();
+        let names: Vec<String> = crate::sessions::names(&conn)
+            .unwrap()
+            .into_iter()
+            .map(|(n, _)| n)
+            .collect();
+        assert_eq!(
+            names,
+            ["exit session", "last session", "last session (from hydrus)"],
+            "the named one is what we open with"
+        );
+        let ours = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let mut hashes = Vec::new();
+        page_hashes(&busiest["facts"]["tree"], &mut hashes);
+        let leaves = ours
+            .all_pages()
+            .into_iter()
+            .filter(|p| !matches!(p.content, hydrus_core::pages::PageContent::Pages(_)))
+            .count();
+        assert_eq!(leaves, hashes.len(), "ours is the planted one");
+        let queues: i64 = conn
+            .query_row(
+                "SELECT count(*) FROM import_queues WHERE kind IN ('urls', 'gallery', 'watcher')",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert!(queues > 0, "the session opened with runs its downloaders");
+    }
+
     /// A session made by the reference (`oracle/dump_gui_sessions.py`)
     /// planted in a reference database as its last session (over an older
     /// save of it): each downloader page's work comes over as queues named
@@ -2080,6 +2222,12 @@ mod network_tests {
     /// "last session", each saved after the one before (so the last one is
     /// the one it opens with), with the files their pages show.
     fn plant_last_session(source: &Path, sessions: &[&serde_json::Value]) {
+        plant_session(source, "last session", sessions);
+    }
+
+    /// Plant `sessions` (saves of the reference's, oldest first) as saves of
+    /// the session `name`.
+    fn plant_session(source: &Path, name: &str, sessions: &[&serde_json::Value]) {
         let conn = Connection::open(source.join("client.db")).unwrap();
         // (the fixture's client saved its own last session when it closed)
         let latest: i64 = conn
@@ -2103,8 +2251,8 @@ mod network_tests {
             }
             let container = &session["container"];
             conn.execute(
-                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, 'last session', ?, ?, ?)",
-                params![container[2].as_i64(), timestamp, container[3].to_string()],
+                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, ?, ?, ?, ?)",
+                params![name, container[2].as_i64(), timestamp, container[3].to_string()],
             )
             .unwrap();
             for (hash, stored) in session["page_data"].as_object().unwrap() {

@@ -346,3 +346,92 @@ fn pages_open_and_close_as_the_reference_does() {
     assert_eq!(names(&pages), [vec!["files".to_owned()]]);
     assert_ne!(pages.shown().key, first);
 }
+
+/// A saved session (one kept from hydrus) loads from the page chooser's
+/// "sessions" menu into a page of pages named after it, its pages showing
+/// the files they showed; the saved session itself stays as it was.
+#[test]
+fn a_saved_session_appends_as_a_page_of_pages() {
+    use hydrus_gui::page_chooser::{NewPage, PageChooser};
+
+    let (_dirs, store) = store();
+    let everything: Vec<HashId> = store
+        .read(|conn| {
+            Ok(conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 4")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?)
+        })
+        .unwrap();
+    let search = FileSearchContext {
+        predicates: parse_api_search(&serde_json::json!(["system:inbox"])).unwrap(),
+        ..FileSearchContext::default()
+    };
+    let saved_page = page(
+        "inbox things",
+        PageContent::Search {
+            search,
+            synchronised: true,
+            sort: None,
+        },
+    );
+    let saved = Session {
+        name: "my session".into(),
+        pages: vec![saved_page.clone()],
+    };
+    let files = everything.clone();
+    let saved_again = saved.clone();
+    store
+        .write(move |ctx| {
+            sessions::save(ctx.conn(), &saved_again, 0)?;
+            sessions::set_page_files(ctx.conn(), &saved_page.key, &files)
+        })
+        .unwrap();
+
+    let mut chooser = PageChooser::new(&store);
+    // file search, download, special, and the sessions
+    assert_eq!(chooser.labels()[1], "sessions");
+    assert_eq!(chooser.press(2), None);
+    let offered: Vec<String> = chooser
+        .labels()
+        .into_iter()
+        .filter(|l| !l.is_empty())
+        .collect();
+    assert!(offered.contains(&"my session".to_owned()), "{offered:?}");
+    assert!(
+        !offered.contains(&LAST_SESSION.to_owned()),
+        "not the one open"
+    );
+    let position = chooser
+        .labels()
+        .iter()
+        .position(|l| l == "my session")
+        .unwrap();
+    let choice = chooser.press(position + 1).unwrap();
+    assert_eq!(choice, NewPage::Session("my session".into()));
+
+    let mut pages = Pages::open(store.clone()).unwrap();
+    pages.new_page(&choice).unwrap();
+    let tabs = pages.tabs();
+    assert_eq!(tabs[0].names.last().unwrap(), "my session");
+    assert_eq!(tabs[1].names, ["inbox things"]);
+    {
+        let opened = pages.current();
+        let opened = opened.borrow();
+        assert_eq!(opened.predicates(), ["system:inbox"]);
+        assert_eq!(opened.results(), everything, "the files it showed");
+    }
+    pages.save(1).unwrap();
+    // twice is two copies; the saved one is untouched
+    pages.new_page(&choice).unwrap();
+    pages.save(2).unwrap();
+    let kept = store
+        .read(|conn| sessions::load(conn, "my session"))
+        .unwrap()
+        .unwrap();
+    assert_eq!(kept, saved);
+    let kept_files = store
+        .read(|conn| sessions::page_files(conn, &saved.pages[0].key))
+        .unwrap();
+    assert_eq!(kept_files, everything);
+}

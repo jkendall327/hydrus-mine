@@ -197,19 +197,26 @@ impl Pages {
             PageContent::Other {
                 page_type, sort, ..
             } => {
-                let kind = match page_type {
-                    2 => "simple downloader",
-                    3 => "import from disk",
-                    5 => "petitions",
-                    8 => "duplicates",
-                    _ => "kind of",
+                let note = match page_type {
+                    // (a saved session's, kept without its queues)
+                    1 | 7 | 9 => {
+                        let kind = match page_type {
+                            1 => "gallery",
+                            9 => "watcher",
+                            _ => "url",
+                        };
+                        format!(
+                            "A {kind} downloader page from a saved session. Its downloads were \
+                             kept but don't run in hydrus-rs."
+                        )
+                    }
+                    2 => "A simple downloader page, which hydrus-gui doesn't open yet.".into(),
+                    3 => "An import from disk page, which hydrus-gui doesn't open yet.".into(),
+                    5 => "A petitions page, which hydrus-gui doesn't open yet.".into(),
+                    8 => "A duplicates page, which hydrus-gui doesn't open yet.".into(),
+                    _ => "A kind of page hydrus-gui doesn't open yet.".into(),
                 };
-                SearchPage::fixed(
-                    store,
-                    format!("A {kind} page, which hydrus-gui doesn't open yet."),
-                    sort.as_ref(),
-                    files,
-                )
+                SearchPage::fixed(store, note, sort.as_ref(), files)
             }
             PageContent::Pages(_) => {
                 SearchPage::fixed(store, "An empty page of pages.", None, files)
@@ -307,6 +314,7 @@ impl Pages {
                 name: "pages".into(),
                 content: PageContent::Pages(Vec::new()),
             },
+            NewPage::Session(name) => return self.append_session(name),
             NewPage::Urls | NewPage::Watcher | NewPage::Gallery | NewPage::SimpleDownloader => {
                 return Err(
                     "hydrus-gui can't open downloader pages yet (`hydrus serve` runs the \
@@ -319,14 +327,57 @@ impl Pages {
         Ok(())
     }
 
-    /// Add `page` at the far right of the current notebook, and show it.
+    /// Append the saved session `name` as a page of pages named after it,
+    /// at the far right of the current notebook, and show it (the
+    /// reference's "append session"). Its pages are copies, with their
+    /// files, so the saved session stays as it was.
+    pub fn append_session(&mut self, name: &str) -> Result<(), String> {
+        fn rekey(pages: &mut [Page], copies: &mut Vec<(PageKey, PageKey)>) {
+            for page in pages {
+                let new = PageKey::random();
+                copies.push((page.key, new));
+                page.key = new;
+                if let PageContent::Pages(children) = &mut page.content {
+                    rekey(children, copies);
+                }
+            }
+        }
+        let saved = self
+            .store
+            .read(|conn| sessions::load(conn, name))
+            .map_err(|e| e.to_string())?
+            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
+        let mut pages = saved.pages;
+        let mut copies = Vec::new();
+        rekey(&mut pages, &mut copies);
+        self.store
+            .write(move |ctx| {
+                for (old, new) in &copies {
+                    let files = sessions::page_files(ctx.conn(), old)?;
+                    if !files.is_empty() {
+                        sessions::set_page_files(ctx.conn(), new, &files)?;
+                    }
+                }
+                Ok(())
+            })
+            .map_err(|e| e.to_string())?;
+        self.add(Page {
+            key: PageKey::random(),
+            name: name.to_owned(),
+            content: PageContent::Pages(pages),
+        });
+        Ok(())
+    }
+
+    /// Add `page` at the far right of the current notebook, and show it
+    /// (a notebook of pages, on its first page).
     fn add(&mut self, page: Page) {
         let depth = self.current_depth();
         let pages = self.notebook_mut(depth);
         pages.push(page);
         let index = pages.len() - 1;
         self.path.truncate(depth);
-        self.path.push(index);
+        self.select(depth, index);
     }
 
     /// Close the page shown (or the empty notebook shown).

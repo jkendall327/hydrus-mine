@@ -1,6 +1,8 @@
 //! The "new page" chooser (the reference's `DialogPageChooser`): a 3×3 grid
 //! of buttons, laid out as a number pad, through a few menus (file search,
-//! download, special) to the kind of page to open.
+//! download, special) to the kind of page to open. With saved sessions to
+//! load, a "sessions" menu offers them too (the reference's menu bar's
+//! "pages > sessions > append session", which hydrus-gui has no bar for).
 
 use hydrus_core::service::builtin_keys;
 use hydrus_core::{ServiceKey, ServiceType};
@@ -19,6 +21,8 @@ enum Menu {
     FileSearch,
     Download,
     Special,
+    /// The saved sessions, from this one on.
+    Sessions(usize),
 }
 
 impl Menu {
@@ -28,6 +32,8 @@ impl Menu {
             Menu::FileSearch => "file search",
             Menu::Download => "download",
             Menu::Special => "special",
+            Menu::Sessions(0) => "sessions",
+            Menu::Sessions(_) => "more sessions",
         }
     }
 }
@@ -47,12 +53,14 @@ pub enum NewPage {
     /// An empty page of pages.
     Pages,
     Duplicates,
+    /// A saved session's pages, in a page of pages named after it.
+    Session(String),
 }
 
 impl NewPage {
     fn label(&self) -> &str {
         match self {
-            NewPage::Search { name, .. } => name,
+            NewPage::Search { name, .. } | NewPage::Session(name) => name,
             NewPage::Urls => "urls",
             NewPage::Watcher => "watcher",
             NewPage::Gallery => "gallery",
@@ -70,6 +78,8 @@ pub struct PageChooser {
     /// File search pages it offers: the local file domains, then "all my
     /// files", then the trash (the reference's defaults).
     domains: Vec<(ServiceKey, String)>,
+    /// The saved sessions there are to load (not the one open), a-z.
+    sessions: Vec<String>,
     /// Indexed by button number - 1.
     buttons: [Option<Entry>; 9],
 }
@@ -92,8 +102,16 @@ impl PageChooser {
                 domains.push((service.key.clone(), service.name.clone()));
             }
         }
+        let sessions = store
+            .read(hydrus_store::sessions::names)
+            .unwrap_or_default()
+            .into_iter()
+            .map(|(name, _)| name)
+            .filter(|name| name != hydrus_store::sessions::LAST_SESSION)
+            .collect();
         let mut chooser = Self {
             domains,
+            sessions,
             buttons: Default::default(),
         };
         chooser.show(Menu::Home);
@@ -104,8 +122,19 @@ impl PageChooser {
         let entries: Vec<Entry> = match menu {
             Menu::Home => [Menu::FileSearch, Menu::Download, Menu::Special]
                 .into_iter()
+                .chain((!self.sessions.is_empty()).then_some(Menu::Sessions(0)))
                 .map(Entry::Menu)
                 .collect(),
+            Menu::Sessions(from) => {
+                // eight and "more" when they don't fit
+                let rest = &self.sessions[from.min(self.sessions.len())..];
+                let shown = if rest.len() > 9 { 8 } else { rest.len() };
+                rest[..shown]
+                    .iter()
+                    .map(|name| Entry::Page(NewPage::Session(name.clone())))
+                    .chain((rest.len() > 9).then_some(Entry::Menu(Menu::Sessions(from + 8))))
+                    .collect()
+            }
             Menu::FileSearch => self
                 .domains
                 .iter()

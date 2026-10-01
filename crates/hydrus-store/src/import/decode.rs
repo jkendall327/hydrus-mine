@@ -463,6 +463,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &|key| scales.get(key).copied(),
         &mut input,
     );
+    other_sessions(
+        db,
+        &legacy_options,
+        &|key| scales.get(key).copied(),
+        &mut input,
+    );
     match db.favourite_search_manager() {
         Ok(Some(manager)) => {
             let mut converted = Vec::new();
@@ -1532,6 +1538,7 @@ fn session(
         pages: &pages,
         scales,
         input,
+        downloaders: true,
     };
     let pages = top.iter().filter_map(|node| context.page(node)).collect();
     input.session = Some(super::SessionInput {
@@ -1540,11 +1547,75 @@ fn session(
     });
 }
 
+/// The other saved sessions, to load later. As the owner chose, their
+/// downloader pages are kept but make no queues: the reference only runs a
+/// session's downloaders while it is open, and ours would run at once.
+fn other_sessions(
+    db: &LegacyDb,
+    legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+    input: &mut ImportInput,
+) {
+    let opened = legacy_options
+        .get("default_gui_session")
+        .and_then(hydrus_legacy::objects::YamlValue::as_str)
+        .unwrap_or("last session")
+        .to_owned();
+    let names = match db.gui_session_names() {
+        Ok(names) => names,
+        Err(e) => {
+            input.warnings.push(format!(
+                "The saved sessions could not be listed, so only the one hydrus opens with was carried over: {e}"
+            ));
+            return;
+        }
+    };
+    for name in names.into_iter().filter(|n| *n != opened) {
+        let (session, pages) = match db.gui_session(&name) {
+            Ok(Some(found)) => found,
+            Ok(None) => continue,
+            Err(e) => {
+                input.warnings.push(format!(
+                    "Session \"{name}\" could not be read, so it was not carried over (the \
+                     original is kept): {e}"
+                ));
+                continue;
+            }
+        };
+        let hydrus_legacy::objects::gui_sessions::SessionNode::Notebook { pages: top, .. } =
+            &session.top
+        else {
+            continue;
+        };
+        let mut context = SessionContext {
+            name: &name,
+            pages: &pages,
+            scales,
+            input,
+            downloaders: false,
+        };
+        let pages = top.iter().filter_map(|node| context.page(node)).collect();
+        // (our own "last session" is the one we open with)
+        let kept_name = if name == crate::sessions::LAST_SESSION {
+            format!("{name} (from hydrus)")
+        } else {
+            name.clone()
+        };
+        input.other_sessions.push(super::SessionInput {
+            name: kept_name,
+            pages,
+        });
+    }
+}
+
 struct SessionContext<'a> {
     name: &'a str,
     pages: &'a HashMap<Vec<u8>, hydrus_legacy::readers::StoredHashedObject>,
     scales: &'a dyn Fn(&ServiceKey) -> Option<StarScale>,
     input: &'a mut ImportInput,
+    /// Whether downloader pages bring their queues (the session opened
+    /// with) or are only kept (the others).
+    downloaders: bool,
 }
 
 impl SessionContext<'_> {
@@ -1728,6 +1799,13 @@ impl SessionContext<'_> {
                 });
             }
         };
+        if !self.downloaders {
+            return Some(super::PageInput {
+                name: page.name,
+                content: kept(sort),
+                hashes,
+            });
+        }
         let kind = match page.page_type {
             hydrus_legacy::objects::gui_sessions::page_type::URLS => DownloaderKind::Urls,
             hydrus_legacy::objects::gui_sessions::page_type::GALLERY => DownloaderKind::Gallery,

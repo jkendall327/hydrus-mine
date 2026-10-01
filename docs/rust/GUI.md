@@ -22,7 +22,11 @@ again, as the reference does. Ctrl+T or F9 opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; downloader
-pages can't be made here yet. The new page goes at the far right of the
+pages can't be made here yet. With other saved sessions (those hydrus had,
+say), a "sessions" button lists them, and choosing one appends a copy of
+its pages in a page of pages named after it, as the reference's "append
+session" does; a saved session's downloader pages say their downloads
+don't run. The new page goes at the far right of the
 current notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
 the right (or left) being shown, as in the reference; downloader pages
 can't be closed yet, since their queues would run on without them. The

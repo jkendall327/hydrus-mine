@@ -123,8 +123,13 @@ them, and `hydrus queues <store> list` shows them. A duplicates page
 comes across with its search, pair sort and group mode, and launches the
 duplicate filter (a store imported before duplicates pages were read
 opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (import from
-disk, simple downloader...) are kept as they were stored. Configuration hydrus-rs doesn't use yet (your other
-saved sessions, the GUI's options) is kept verbatim inside the new store,
+disk, simple downloader...) are kept as they were stored. Your other saved
+sessions come across under their names (hydrus's own "last session", if
+you opened with another, as "last session (from hydrus)"), for the page
+chooser's "sessions" button: their search and duplicates pages as above,
+but their downloader pages only kept, making no queues, since hydrus only
+runs a session's downloads while it is open. Configuration hydrus-rs
+doesn't use yet (the GUI's options) is kept verbatim inside the new store,
 so later versions can pick it up without a re-import.
 
 Client API access keys come across, so your browser extension and other
