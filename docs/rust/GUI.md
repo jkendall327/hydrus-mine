@@ -78,7 +78,13 @@ through your zoom levels and canvas fit, keeping the point under the
 pointer still (or wherever your zoom centre option says), shift and the
 arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
-it again. Video renders at the size it's shown, up to twice the window's. F3 manages the
+it again. Video renders at the size it's shown, up to twice the window's.
+Slint's software renderer scales images by their nearest pixel, so stills
+are also drawn as the reference draws them: the part showing is cut out
+and resized with the file type's zoom qualities (area shrinking, Lanczos
+growing, by default; cubic is drawn with Lanczos), off the UI thread, to
+exactly the pixels it covers, over the quickly scaled still once ready
+(`src/still.rs`; the filters do the same). F3 manages the
 file's tags, as the reference's dialog does on the local tag services:
 the file's tags on the service chosen, and an input whose tag, entered,
 is added to the file (or removed, if it has it already), the tag as typed

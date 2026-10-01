@@ -8,7 +8,10 @@
 //! sizes are whole logical pixels, as Qt's are. Plain Rust, tested
 //! directly.
 
+use std::cell::RefCell;
 use std::collections::BTreeMap;
+use std::rc::Rc;
+use std::sync::Arc;
 
 use hydrus_core::Mime;
 use hydrus_core::media_viewer::{
@@ -385,16 +388,45 @@ impl Zoom {
 /// Where a file is drawn: (x, y, width, height).
 pub type Rect = (i32, i32, i32, i32);
 
+/// A still drawn sharply over the window's quickly scaled one.
+#[derive(Debug, Clone)]
+pub(crate) struct Overlay {
+    pub image: slint::Image,
+    /// Where, in logical pixels.
+    pub rect: (f32, f32, f32, f32),
+    /// Whether it hides what is under it (else that is hidden).
+    pub opaque: bool,
+}
+
+type Setter<T> = Rc<dyn Fn(T)>;
+
+/// The still drawn sharply ([`crate::still`]), its renderer, and what was
+/// asked of it and is showing.
+#[derive(Default)]
+struct Sharp {
+    still: Option<Arc<hydrus_media::Raster>>,
+    renderer: Option<crate::still::Renderer>,
+    polling: slint::Timer,
+    /// The newest render asked for.
+    asked: u64,
+    plan: Option<crate::still::Plan>,
+    /// The overlay showing: its plan, the file's box then, and its image.
+    shown: Option<(crate::still::Plan, Rect, slint::Image)>,
+}
+
 /// A window's zoomed file, kept as the file, the window and the user
-/// change it, and drawn by the window's own setter.
+/// change it, and drawn by the window's own setters: the file's box, and
+/// a still's sharp overlay.
 #[derive(Clone)]
 pub(crate) struct Zoomed {
     settings: MediaViewerSettings,
-    zoom: std::rc::Rc<std::cell::RefCell<Option<Zoom>>>,
+    zoom: Rc<RefCell<Option<Zoom>>>,
+    sharp: Rc<RefCell<Sharp>>,
     /// The window's canvas and device pixel ratio, while it is open.
-    canvas: std::rc::Rc<dyn Fn() -> Option<(Point, f64)>>,
+    canvas: Rc<dyn Fn() -> Option<(Point, f64)>>,
     /// Draw the file at (x, y, width, height).
-    draw: std::rc::Rc<dyn Fn(Rect)>,
+    draw: Setter<Rect>,
+    overlay: Setter<Option<Overlay>>,
 }
 
 impl std::fmt::Debug for Zoomed {
@@ -406,46 +438,48 @@ impl std::fmt::Debug for Zoomed {
 }
 
 impl Zoomed {
-    /// For `window`, whose whole is the canvas, drawing with `draw`.
-    pub fn of<W: slint::ComponentHandle + 'static>(
-        window: &W,
-        settings: MediaViewerSettings,
-        draw: impl Fn(&W, Rect) + 'static,
-    ) -> Self {
-        Self::within(
-            window,
-            settings,
-            |window| {
-                let window = window.window();
-                let size = window.size().to_logical(window.scale_factor());
-                (size.width as i32, size.height as i32)
-            },
-            draw,
-        )
-    }
-
     /// For `window`, whose canvas (in logical pixels) `canvas` gives.
     pub fn within<W: slint::ComponentHandle + 'static>(
         window: &W,
         settings: MediaViewerSettings,
         canvas: impl Fn(&W) -> Point + 'static,
         draw: impl Fn(&W, Rect) + 'static,
+        overlay: impl Fn(&W, Option<Overlay>) + 'static,
     ) -> Self {
-        let (sized, drawn) = (window.as_weak(), window.as_weak());
+        let (sized, drawn, overlaid) = (window.as_weak(), window.as_weak(), window.as_weak());
         Self {
             settings,
-            zoom: std::rc::Rc::default(),
-            canvas: std::rc::Rc::new(move || {
+            zoom: Rc::default(),
+            sharp: Rc::default(),
+            canvas: Rc::new(move || {
                 let window = sized.upgrade()?;
                 let ratio = f64::from(window.window().scale_factor());
                 Some((canvas(&window), ratio))
             }),
-            draw: std::rc::Rc::new(move |rect| {
+            draw: Rc::new(move |rect| {
                 if let Some(window) = drawn.upgrade() {
                     draw(&window, rect);
                 }
             }),
+            overlay: Rc::new(move |shown| {
+                if let Some(window) = overlaid.upgrade() {
+                    overlay(&window, shown);
+                }
+            }),
         }
+    }
+
+    /// The file shown next is this still (its file decoded whole), to be
+    /// drawn sharply; or isn't one.
+    pub fn set_still(&self, still: Option<Arc<hydrus_media::Raster>>) {
+        let mut sharp = self.sharp.borrow_mut();
+        sharp.still = still;
+        sharp.asked += 1;
+        sharp.plan = None;
+        sharp.shown = None;
+        sharp.polling.stop();
+        drop(sharp);
+        (self.overlay)(None);
     }
 
     /// Show a file of this type and resolution (none: of unknown type) at
@@ -468,8 +502,118 @@ impl Zoomed {
             (0, 0, width, height)
         };
         (self.draw)(rect);
+        self.sharpen(rect);
     }
 
+    /// Draw the still sharply at `rect`: what was drawn moved along with
+    /// it, if just moved, while the part now showing is rendered.
+    fn sharpen(&self, rect: Rect) {
+        let plan = {
+            let sharp = self.sharp.borrow();
+            let zoom = self.zoom.borrow();
+            match (sharp.still.as_ref(), zoom.as_ref(), (self.canvas)()) {
+                (Some(still), Some(zoom), Some((canvas, ratio))) if zoom.zoomable() => {
+                    let rules = self.settings.view(zoom.mime).zoom;
+                    crate::still::plan(rect, canvas, ratio, (still.width(), still.height()), &rules)
+                }
+                _ => None,
+            }
+        };
+        let mut sharp = self.sharp.borrow_mut();
+        let Some(plan) = plan else {
+            if sharp.shown.take().is_some() || sharp.plan.take().is_some() {
+                sharp.asked += 1;
+                sharp.polling.stop();
+                drop(sharp);
+                (self.overlay)(None);
+            }
+            return;
+        };
+        let opaque = sharp
+            .still
+            .as_ref()
+            .is_some_and(|still| !still.has_alpha_channel());
+        // what shows already, at the same zoom, moves with the file
+        let moved = sharp.shown.as_ref().and_then(|(shown, then, image)| {
+            (then.2 == rect.2 && then.3 == rect.3).then(|| {
+                let (dx, dy) = ((rect.0 - then.0) as f32, (rect.1 - then.1) as f32);
+                Overlay {
+                    image: image.clone(),
+                    rect: (
+                        shown.rect.0 + dx,
+                        shown.rect.1 + dy,
+                        shown.rect.2,
+                        shown.rect.3,
+                    ),
+                    opaque,
+                }
+            })
+        });
+        let unchanged = sharp
+            .shown
+            .as_ref()
+            .is_some_and(|(shown, _, _)| shown.clip == plan.clip && shown.target == plan.target);
+        if moved.is_none() {
+            sharp.shown = None;
+        }
+        if unchanged {
+            // (just moved: nothing to render)
+            if let Some((shown, then, _)) = sharp.shown.as_mut() {
+                *shown = plan;
+                *then = rect;
+            }
+            sharp.plan = Some(plan);
+            sharp.asked += 1;
+            sharp.polling.stop();
+        } else if sharp.plan != Some(plan) {
+            sharp.asked += 1;
+            sharp.plan = Some(plan);
+            let (id, still) = (
+                sharp.asked,
+                sharp.still.clone().expect("planned for a still"),
+            );
+            sharp
+                .renderer
+                .get_or_insert_with(crate::still::Renderer::new)
+                .request(id, still, plan);
+            let this = Rc::downgrade(&self.sharp);
+            let overlay = self.overlay.clone();
+            sharp.polling.start(
+                slint::TimerMode::Repeated,
+                std::time::Duration::from_millis(8),
+                move || {
+                    let Some(this) = this.upgrade() else { return };
+                    let Ok(mut sharp) = this.try_borrow_mut() else {
+                        return;
+                    };
+                    let newest = sharp
+                        .renderer
+                        .as_ref()
+                        .and_then(crate::still::Renderer::newest);
+                    let Some((id, pixels)) = newest else { return };
+                    if id != sharp.asked {
+                        return;
+                    }
+                    sharp.polling.stop();
+                    let Some(plan) = sharp.plan else { return };
+                    let image = pixels.image();
+                    let opaque = sharp
+                        .still
+                        .as_ref()
+                        .is_some_and(|still| !still.has_alpha_channel());
+                    sharp.shown = Some((plan, rect, image.clone()));
+                    drop(sharp);
+                    overlay(Some(Overlay {
+                        image,
+                        rect: plan.rect,
+                        opaque,
+                    }));
+                },
+            );
+        }
+        drop(sharp);
+        (self.overlay)(moved);
+    }
     /// Apply a change to the zoom, then draw.
     fn change(&self, change: impl FnOnce(&mut Zoom)) {
         if let Some(zoom) = self.zoom.borrow_mut().as_mut() {

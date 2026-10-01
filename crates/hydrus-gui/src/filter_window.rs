@@ -14,6 +14,7 @@ use slint::{ComponentHandle, ModelRc, SharedString, VecModel};
 use hydrus_core::HashId;
 use hydrus_duplicates::content::StoreContent;
 use hydrus_duplicates::statements::{self, FAST_KEYS, SLOW_KEYS, Statement};
+use hydrus_media::Raster;
 use hydrus_search::media::FileFacts;
 use hydrus_store::Store;
 use hydrus_store::duplicates::ComparisonScores;
@@ -84,7 +85,17 @@ impl SlowStatements {
 /// Files decoded ahead of showing them, on a thread of their own.
 struct Stills {
     requests: Sender<HashId>,
-    results: Receiver<(HashId, Option<Pixels>)>,
+    results: Receiver<(HashId, Option<(Pixels, Raster)>)>,
+}
+
+/// A file decoded: as shown, and whole.
+type Decoded = (slint::Image, Option<Arc<Raster>>);
+
+fn decoded(raster: Option<Raster>) -> Decoded {
+    (
+        raster.as_ref().map(crate::image).unwrap_or_default(),
+        raster.map(Arc::new),
+    )
 }
 
 impl Stills {
@@ -96,8 +107,8 @@ impl Stills {
             .name("filter stills".into())
             .spawn(move || {
                 for id in jobs {
-                    let pixels = crate::viewer::still(&store, id).as_ref().map(Pixels::new);
-                    if done.send((id, pixels)).is_err() {
+                    let decoded = crate::viewer::still(&store, id).map(|r| (Pixels::new(&r), r));
+                    if done.send((id, decoded)).is_err() {
                         break;
                     }
                 }
@@ -119,8 +130,9 @@ struct State {
     shown: Option<(HashId, HashId)>,
     statements: Vec<Statement>,
     slow_done: bool,
-    /// Files decoded, the pair shown's and those coming up.
-    images: HashMap<HashId, slint::Image>,
+    /// Files decoded, the pair shown's and those coming up: as shown, and
+    /// whole, to draw sharply.
+    images: HashMap<HashId, Decoded>,
     /// Files asked of the stills thread and not yet back.
     requested: HashSet<HashId>,
     /// Video, audio and animations play, as in the media viewer.
@@ -171,10 +183,23 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         return;
     };
     let newly_shown = state.shown != Some((shown, other));
+    let (image, raster) = state
+        .images
+        .entry(shown)
+        .or_insert_with(|| decoded(crate::viewer::still(state.model.store(), shown)))
+        .clone();
+    window.set_media(image);
     if newly_shown {
+        let store = state.model.store();
+        let path = crate::viewer::playable(store, shown);
+        let animation = crate::viewer::animation(store, shown);
         // going between a pair's files keeps the zoom and position; a new
         // pair starts at the first's default zoom, centred
-        let shape = crate::viewer::shape(state.model.store(), shown);
+        let shape = crate::viewer::shape(store, shown);
+        let still = path.is_none() && animation.is_none();
+        state
+            .zoomed
+            .set_still(crate::viewer::still_of(raster, shape, still));
         if state.shown == Some((other, shown)) {
             state.zoomed.switch_to(shape);
         } else {
@@ -183,20 +208,6 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
         state.shown = Some((shown, other));
         state.slow_done = false;
         state.statements.clear();
-    }
-    let image = state
-        .images
-        .entry(shown)
-        .or_insert_with(|| {
-            crate::viewer::still(state.model.store(), shown)
-                .as_ref()
-                .map(crate::image)
-                .unwrap_or_default()
-        })
-        .clone();
-    window.set_media(image);
-    if newly_shown {
-        let path = crate::viewer::playable(state.model.store(), shown);
         let (size, frame) = (window.as_weak(), window.as_weak());
         let zoomed = state.zoomed.clone();
         state.playback.play(
@@ -215,14 +226,11 @@ fn show(window: &DuplicateFilterWindow, state: &mut State) {
             },
         );
         let frame = window.as_weak();
-        state.animator.play(
-            crate::viewer::animation(state.model.store(), shown),
-            move |image| {
-                if let Some(window) = frame.upgrade() {
-                    window.set_media(image);
-                }
-            },
-        );
+        state.animator.play(animation, move |image| {
+            if let Some(window) = frame.upgrade() {
+                window.set_media(image);
+            }
+        });
     }
     window.set_index_text(state.model.index_text().into());
     // the file shown against the other: the fast statements, then the slow
@@ -337,22 +345,12 @@ pub(crate) fn open_filter(
         .store()
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
-    let zoomed = crate::zoom::Zoomed::within(
-        &window,
-        settings,
-        |window| {
-            (
-                window.get_canvas_width() as i32,
-                window.get_canvas_height() as i32,
-            )
-        },
-        |window, (x, y, width, height)| {
-            window.set_media_x(x as f32);
-            window.set_media_y(y as f32);
-            window.set_media_width(width as f32);
-            window.set_media_height(height as f32);
-        },
-    );
+    let zoomed = crate::zoom_window!(window, settings, |window: &DuplicateFilterWindow| {
+        (
+            window.get_canvas_width() as i32,
+            window.get_canvas_height() as i32,
+        )
+    });
     crate::bind_zoom!(window, zoomed);
     let state = Rc::new(RefCell::new(State {
         model,
@@ -423,11 +421,14 @@ pub(crate) fn open_filter(
         let stills = stills.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
-            while let Ok((id, pixels)) = stills.results.try_recv() {
+            while let Ok((id, decoded)) = stills.results.try_recv() {
                 let mut state = state.borrow_mut();
                 state.requested.remove(&id);
-                let image = pixels.map(Pixels::image).unwrap_or_default();
-                state.images.insert(id, image);
+                let entry = match decoded {
+                    Some((pixels, raster)) => (pixels.image(), Some(Arc::new(raster))),
+                    None => (slint::Image::default(), None),
+                };
+                state.images.insert(id, entry);
             }
             while let Ok((pair, made)) = slow.results.try_recv() {
                 let mut state = state.borrow_mut();

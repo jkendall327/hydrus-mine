@@ -27,6 +27,14 @@ export component ArchiveDeleteWindow inherits Window {
     in property <length> media-y;
     in property <length> media-width: root.width;
     in property <length> media-height: root.height;
+    // the still drawn sharply over it, once rendered (see still.rs)
+    in property <image> sharp;
+    in property <bool> sharp-shown;
+    in property <bool> sharp-opaque: true;
+    in property <length> sharp-x;
+    in property <length> sharp-y;
+    in property <length> sharp-width;
+    in property <length> sharp-height;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     callback keep();
@@ -124,7 +132,16 @@ export component ArchiveDeleteWindow inherits Window {
             width: root.media-width;
             height: root.media-height;
             source: root.media;
+            visible: !root.sharp-shown || root.sharp-opaque;
             image-fit: contain;
+        }
+        if root.sharp-shown: Image {
+            x: root.sharp-x;
+            y: root.sharp-y;
+            width: root.sharp-width;
+            height: root.sharp-height;
+            source: root.sharp;
+            image-fit: fill;
         }
         pointer := TouchArea {
             scroll-event(event) => {

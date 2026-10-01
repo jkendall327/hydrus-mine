@@ -36,21 +36,52 @@ pub mod page_chooser;
 mod pages;
 mod playback;
 pub mod sort;
+pub mod still;
 mod thumbnails;
 mod unlock;
 mod viewer;
 pub mod zoom;
 
 /// A window's zoomed file ([`zoom::Zoomed`]), drawn in its `media-x`,
-/// `media-y`, `media-width` and `media-height`.
+/// `media-y`, `media-width` and `media-height`, and a still's sharp
+/// overlay in its `sharp` properties; its canvas is the window, or what
+/// `$canvas` gives.
 macro_rules! zoom_window {
     ($window:expr, $settings:expr) => {
-        $crate::zoom::Zoomed::of(&$window, $settings, |window, (x, y, width, height)| {
-            window.set_media_x(x as f32);
-            window.set_media_y(y as f32);
-            window.set_media_width(width as f32);
-            window.set_media_height(height as f32);
+        $crate::zoom_window!($window, $settings, |window| {
+            let window = slint::ComponentHandle::window(window);
+            let size = window.size().to_logical(window.scale_factor());
+            (size.width as i32, size.height as i32)
         })
+    };
+    ($window:expr, $settings:expr, $canvas:expr) => {
+        $crate::zoom::Zoomed::within(
+            &$window,
+            $settings,
+            $canvas,
+            |window, (x, y, width, height)| {
+                window.set_media_x(x as f32);
+                window.set_media_y(y as f32);
+                window.set_media_width(width as f32);
+                window.set_media_height(height as f32);
+            },
+            |window, overlay| match overlay {
+                Some(overlay) => {
+                    let (x, y, width, height) = overlay.rect;
+                    window.set_sharp(overlay.image);
+                    window.set_sharp_x(x);
+                    window.set_sharp_y(y);
+                    window.set_sharp_width(width);
+                    window.set_sharp_height(height);
+                    window.set_sharp_opaque(overlay.opaque);
+                    window.set_sharp_shown(true);
+                }
+                None => {
+                    window.set_sharp_shown(false);
+                    window.set_sharp(slint::Image::default());
+                }
+            },
+        )
     };
 }
 pub(crate) use zoom_window;
@@ -677,7 +708,6 @@ fn open_viewer(
             };
             let model = model.borrow();
             window.set_caption(model.caption().into());
-            zoomed.show(model.shape());
             let tags: Vec<ListText> = model
                 .tag_rows()
                 .iter()
@@ -685,11 +715,16 @@ fn open_viewer(
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             // (for a file that plays, its thumbnail until the first frame)
-            window.set_media(model.media().as_ref().map(image).unwrap_or_default());
+            let (shape, media) = (model.shape(), model.media().map(Arc::new));
+            let (playable, animation) = (model.playable(), model.animation());
+            window.set_media(media.as_deref().map(image).unwrap_or_default());
+            let still = playable.is_none() && animation.is_none();
+            zoomed.set_still(viewer::still_of(media, shape, still));
+            zoomed.show(shape);
             let (size, frame) = (weak.clone(), weak.clone());
             let zoomed = zoomed.clone();
             playback.play(
-                model.playable().as_deref(),
+                playable.as_deref(),
                 move || {
                     // (rendered at the size shown)
                     zoomed.render_size().or_else(|| {
@@ -704,7 +739,7 @@ fn open_viewer(
                 },
             );
             let frame = weak.clone();
-            animator.play(model.animation(), move |image| {
+            animator.play(animation, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
                 }

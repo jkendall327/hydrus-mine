@@ -43,6 +43,14 @@ export component DuplicateFilterWindow inherits Window {
     in property <length> media-y;
     in property <length> media-width: area.width;
     in property <length> media-height: area.height;
+    // the still drawn sharply over it, once rendered (see still.rs)
+    in property <image> sharp;
+    in property <bool> sharp-shown;
+    in property <bool> sharp-opaque: true;
+    in property <length> sharp-x;
+    in property <length> sharp-y;
+    in property <length> sharp-width;
+    in property <length> sharp-height;
     out property <length> canvas-width: area.width;
     out property <length> canvas-height: area.height;
 
@@ -129,7 +137,16 @@ export component DuplicateFilterWindow inherits Window {
                     width: root.media-width;
                     height: root.media-height;
                     source: root.media;
+                    visible: !root.sharp-shown || root.sharp-opaque;
                     image-fit: contain;
+                }
+                if root.sharp-shown: Image {
+                    x: root.sharp-x;
+                    y: root.sharp-y;
+                    width: root.sharp-width;
+                    height: root.sharp-height;
+                    source: root.sharp;
+                    image-fit: fill;
                 }
                 Text {
                     x: 8px;

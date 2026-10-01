@@ -256,8 +256,51 @@ fn the_viewer_and_the_archive_delete_filter_zoom_and_pan() {
         "{fitted:?}"
     );
     assert!(fitted.2 == 800.0 || fitted.3 == 600.0, "{fitted:?}");
-    // z: 100%; z again: fitted
+    // drawn sharply, once rendered: exactly the reference's resize of the
+    // file to the pixels it covers
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(120);
+    while !viewer.get_sharp_shown() && std::time::Instant::now() < deadline {
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+    assert!(viewer.get_sharp_shown(), "the sharp still arrived");
+    let sharp = (
+        viewer.get_sharp_x(),
+        viewer.get_sharp_y(),
+        viewer.get_sharp_width(),
+        viewer.get_sharp_height(),
+    );
+    assert_eq!(sharp, fitted);
+    let hash = &batch[0].hash;
+    let path = store.snapshot().storage.file_path(hash, info.mime).unwrap();
+    let still = hydrus_media::decode_image(&std::fs::read(path).unwrap()).unwrap();
+    let plan = hydrus_gui::still::plan(
+        (
+            fitted.0 as i32,
+            fitted.1 as i32,
+            fitted.2 as i32,
+            fitted.3 as i32,
+        ),
+        (800, 600),
+        1.0,
+        (still.width(), still.height()),
+        &MediaViewerSettings::default().view(Mime::ImageJpeg).zoom,
+    )
+    .unwrap();
+    let expected = hydrus_gui::still::render(&still, &plan);
+    let pixels = headless::render(&drawn, 800, 600);
+    let (x0, y0) = (fitted.0 as usize, fitted.1 as usize);
+    let (columns, rows) = (expected.width() as usize, expected.height() as usize);
+    for row in 0..rows {
+        for column in 0..columns {
+            let on_screen = &pixels[((y0 + row) * 800 + x0 + column) * 4..][..3];
+            let rendered = &expected.data()[(row * columns + column) * 3..][..3];
+            assert_eq!(on_screen, rendered, "at {column},{row}");
+        }
+    }
+    // z: 100% (nothing to resize, so drawn as it is); z again: fitted
     key(window, "z");
+    assert!(!viewer.get_sharp_shown());
     assert_eq!((rect(&viewer).2, rect(&viewer).3), (width, height));
     key(window, "z");
     assert_eq!(rect(&viewer), fitted);

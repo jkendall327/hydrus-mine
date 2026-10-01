@@ -125,6 +125,17 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
     Some((info.mime, info.width.zip(info.height)))
 }
 
+/// A file's still, to draw sharply at its zoom: the file decoded whole
+/// (not a thumbnail standing in for it), if it is a still.
+pub(crate) fn still_of(
+    media: Option<std::sync::Arc<hydrus_media::Raster>>,
+    shape: Option<(hydrus_core::Mime, Option<(u32, u32)>)>,
+    still: bool,
+) -> Option<std::sync::Arc<hydrus_media::Raster>> {
+    let resolution = shape?.1?;
+    media.filter(|m| still && (m.width(), m.height()) == resolution)
+}
+
 /// A file's tags as the tags hover frame lists them, each with its colour.
 pub(crate) fn hover_tags(store: &Store, id: HashId) -> Vec<(String, [u8; 3])> {
     let colours: hydrus_core::tag_presentation::NamespaceColours =

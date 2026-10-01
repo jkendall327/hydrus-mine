@@ -62,13 +62,18 @@ pub(crate) fn open(
                 return;
             };
             let store = model.store();
-            zoomed.show(crate::viewer::shape(store, file));
-            window.set_media(
-                crate::viewer::still(store, file)
-                    .as_ref()
-                    .map(crate::image)
-                    .unwrap_or_default(),
+            let (shape, media) = (
+                crate::viewer::shape(store, file),
+                crate::viewer::still(store, file).map(std::sync::Arc::new),
             );
+            let (playable, animation) = (
+                crate::viewer::playable(store, file),
+                crate::viewer::animation(store, file),
+            );
+            window.set_media(media.as_deref().map(crate::image).unwrap_or_default());
+            let still = playable.is_none() && animation.is_none();
+            zoomed.set_still(crate::viewer::still_of(media, shape, still));
+            zoomed.show(shape);
             let tags: Vec<ListText> = crate::viewer::hover_tags(store, file)
                 .iter()
                 .map(|(row, rgb)| list_text(row, *rgb))
@@ -77,7 +82,7 @@ pub(crate) fn open(
             let (size, frame) = (weak.clone(), weak.clone());
             let zoomed = zoomed.clone();
             playback.play(
-                crate::viewer::playable(store, file).as_deref(),
+                playable.as_deref(),
                 move || {
                     // (rendered at the size shown)
                     zoomed.render_size().or_else(|| {
@@ -92,7 +97,7 @@ pub(crate) fn open(
                 },
             );
             let frame = weak.clone();
-            animator.play(crate::viewer::animation(store, file), move |image| {
+            animator.play(animation, move |image| {
                 if let Some(window) = frame.upgrade() {
                     window.set_media(image);
                 }
