@@ -2,7 +2,7 @@
 
 use std::net::{IpAddr, Ipv4Addr, SocketAddr};
 use std::path::{Path, PathBuf};
-use std::time::Duration;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
 use anyhow::{Context, Result, bail};
 use clap::{Parser, Subcommand, ValueEnum};
@@ -148,6 +148,16 @@ enum MaintenanceAction {
     /// Drop and rebuild every derived table (autocomplete counts and word
     /// indexes, the notes' search index) from the primary data.
     RebuildCaches,
+    /// List the file maintenance jobs waiting (those hydrus had queued come
+    /// across), and which this build runs.
+    Jobs,
+    /// Run the due file maintenance jobs this build runs (checking files'
+    /// metadata flags, regenerating their hashes...).
+    Files {
+        /// At most this many jobs.
+        #[arg(long)]
+        limit: Option<u64>,
+    },
 }
 
 #[derive(Clone, Copy, ValueEnum)]
@@ -263,6 +273,44 @@ fn main() -> Result<()> {
             let started = std::time::Instant::now();
             store.write(|ctx| hydrus_store::maintenance::rebuild_caches(ctx.conn()))?;
             println!("rebuilt the caches in {:.1?}", started.elapsed());
+            Ok(())
+        }
+        Command::Maintenance {
+            dir,
+            action: MaintenanceAction::Jobs,
+        } => {
+            use hydrus_store::file_maintenance::job_counts;
+            let store = Store::open(&dir)?;
+            let now = SystemTime::now()
+                .duration_since(UNIX_EPOCH)
+                .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+            let counts = store.read(|conn| job_counts(conn, now))?;
+            if counts.is_empty() {
+                println!("no file maintenance jobs are queued");
+            }
+            for (job, (due, waiting)) in counts {
+                let runs = if hydrus_import::maintenance::runs(job) {
+                    ""
+                } else {
+                    " (not run by hydrus-rs yet)"
+                };
+                println!("{}: {due} due, {waiting} waiting{runs}", job.description());
+            }
+            Ok(())
+        }
+        Command::Maintenance {
+            dir,
+            action: MaintenanceAction::Files { limit },
+        } => {
+            let _lock = lock_store(&dir, "file maintenance")?;
+            let store = Store::open(&dir)?;
+            let importer = hydrus_import::FileImporter::new(store, hydrus_media::MediaTools::new());
+            let started = std::time::Instant::now();
+            let report = importer.run_file_maintenance(limit.unwrap_or(u64::MAX), u64::MAX)?;
+            for (job, n) in &report.done {
+                println!("{}: {n}", job.description());
+            }
+            println!("{} jobs done in {:.1?}", report.total(), started.elapsed());
             Ok(())
         }
         Command::Purge { dir } => {
@@ -508,6 +556,46 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>) -> Result<()>
                         tokio::time::sleep(Duration::from_secs(600)).await;
                     }
                     _ => tokio::time::sleep(Duration::from_secs(30)).await,
+                }
+            }
+        });
+        // file maintenance, as the reference's manager does while active (a
+        // server is never idle): at most its throttle's worth of work a
+        // window, starting a minute in
+        let maintainer = store.clone();
+        tokio::spawn(async move {
+            use hydrus_store::file_maintenance::FileMaintenanceSettings;
+            tokio::time::sleep(Duration::from_secs(60)).await;
+            let importer = std::sync::Arc::new(hydrus_import::FileImporter::new(
+                maintainer.clone(),
+                hydrus_media::MediaTools::new(),
+            ));
+            loop {
+                let settings: FileMaintenanceSettings = maintainer
+                    .read(hydrus_store::settings::get)
+                    .unwrap_or_default();
+                if !settings.during_active {
+                    tokio::time::sleep(Duration::from_secs(60)).await;
+                    continue;
+                }
+                let window = Duration::from_secs(settings.active_seconds.max(1));
+                let budget = settings.active_files.saturating_mul(100);
+                let started = std::time::Instant::now();
+                let worker = importer.clone();
+                let done = tokio::task::spawn_blocking(move || {
+                    worker.run_file_maintenance(u64::MAX, budget)
+                })
+                .await;
+                match done {
+                    Ok(Ok(report)) if report.total() > 0 => {
+                        tracing::debug!(jobs = report.total(), "file maintenance");
+                        tokio::time::sleep(window.saturating_sub(started.elapsed())).await;
+                    }
+                    Ok(Err(e)) => {
+                        tracing::error!(error = %e, "file maintenance failed");
+                        tokio::time::sleep(Duration::from_secs(600)).await;
+                    }
+                    _ => tokio::time::sleep(Duration::from_secs(60)).await,
                 }
             }
         });

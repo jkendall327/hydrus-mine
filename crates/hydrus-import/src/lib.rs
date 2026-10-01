@@ -6,6 +6,7 @@
 //! options' rules, copy it into file storage and record it. Every source of
 //! files (the Client API, import folders, downloaders) goes through here.
 
+pub mod maintenance;
 pub mod options;
 pub mod paths;
 pub mod status;

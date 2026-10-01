@@ -330,6 +330,12 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
         &source_dir.join("client.mappings.db"),
         "src_mappings",
     )?;
+    // (only its file maintenance queue is copied; the rest is caches)
+    let caches = source_dir.join("client.caches.db");
+    let has_caches = caches.exists();
+    if has_caches {
+        attach_read_only(&conn, &caches, "src_caches")?;
+    }
 
     let version: u32 = conn.query_row("SELECT version FROM src.version", [], |r| r.get(0))?;
     if version != SUPPORTED_REFERENCE_VERSION {
@@ -364,10 +370,16 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.session(input, &page_queues)?;
     copier.import_folders(input)?;
     copier.auto_resolution(input)?;
+    if has_caches {
+        copier.file_maintenance()?;
+    }
     copier.derived()?;
     tx.commit()?;
 
     conn.execute_batch("DETACH src; DETACH src_master; DETACH src_mappings;")?;
+    if has_caches {
+        conn.execute_batch("DETACH src_caches;")?;
+    }
     if SourceFingerprint::take(source_dir)? != fingerprint {
         return Err(StoreError::Invalid(
             "the source database changed while it was being imported; close hydrus and try again"
@@ -733,6 +745,24 @@ impl Copier<'_> {
                     "INSERT INTO tag_display_application (display_service_id, kind, position, source_service_id)
                      SELECT master_service_id, {kind}, service_index, application_service_id FROM src.{table}"
                 ),
+            )?;
+        }
+        Ok(())
+    }
+
+    /// The file maintenance jobs the reference had queued (`file_maintenance.rs`).
+    fn file_maintenance(&mut self) -> Result<()> {
+        let exists: bool = self.conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM src_caches.sqlite_master WHERE name = 'file_maintenance_jobs')",
+            [],
+            |r| r.get(0),
+        )?;
+        if exists {
+            self.copy(
+                "file_maintenance_jobs",
+                "INSERT OR IGNORE INTO file_maintenance_jobs (hash_id, job_type, time_can_start)
+                 SELECT hash_id, job_type, time_can_start FROM src_caches.file_maintenance_jobs
+                 WHERE job_type BETWEEN 0 AND 26",
             )?;
         }
         Ok(())
@@ -1541,6 +1571,11 @@ pub(crate) mod tests {
             })
         );
         // the reference's defaults
+        assert_eq!(
+            input.settings["file_maintenance"],
+            serde_json::to_value(crate::file_maintenance::FileMaintenanceSettings::default())
+                .unwrap()
+        );
         assert_eq!(
             input.settings["tag_presentation"],
             serde_json::to_value(hydrus_core::tag_presentation::TagPresentation::default())

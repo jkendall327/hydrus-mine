@@ -118,6 +118,42 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &delete_lock)?;
+    let mut maintenance = crate::file_maintenance::FileMaintenanceSettings::default();
+    if let Some(options) = &options {
+        let m = &mut maintenance;
+        for (key, field) in [
+            ("file_maintenance_during_idle", &mut m.during_idle),
+            ("file_maintenance_during_active", &mut m.during_active),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("file_maintenance_idle_throttle_files", &mut m.idle_files),
+            (
+                "file_maintenance_idle_throttle_time_delta",
+                &mut m.idle_seconds,
+            ),
+            (
+                "file_maintenance_active_throttle_files",
+                &mut m.active_files,
+            ),
+            (
+                "file_maintenance_active_throttle_time_delta",
+                &mut m.active_seconds,
+            ),
+        ] {
+            if let Some(value) = options
+                .integers
+                .get(key)
+                .and_then(|&v| u64::try_from(v).ok())
+            {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &maintenance)?;
     let lock = hydrus_core::lock::LockPassword {
         sha256: legacy_options.password_hash().map(hex::encode),
     };

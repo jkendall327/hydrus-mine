@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -71,6 +71,20 @@ CREATE TABLE bandwidth_usage (
     tracker TEXT NOT NULL,
     PRIMARY KEY (context_kind, context_data)
 ) STRICT;
+";
+
+/// The file maintenance queue (`file_maintenance.rs`): jobs per file, as
+/// the reference queues them (`file_maintenance_jobs` in its caches db).
+const V10: &str = r"
+CREATE TABLE file_maintenance_jobs (
+    hash_id INTEGER NOT NULL,
+    -- ClientFilesMaintenance.REGENERATE_FILE_DATA_JOB_*
+    job_type INTEGER NOT NULL,
+    -- in seconds: the job runs once this has passed
+    time_can_start INTEGER NOT NULL,
+    PRIMARY KEY (hash_id, job_type)
+) STRICT;
+CREATE INDEX file_maintenance_jobs_due ON file_maintenance_jobs (job_type, time_can_start);
 ";
 
 /// Duplicates auto-resolution rules (`duplicates/auto.rs`): each rule, the

@@ -249,12 +249,13 @@ pub fn search_some_files(
 
 /// `EnsureFileIsCorrectlyInOrOutOfPairDiscoverySearch` after a file's
 /// perceptual hashes were set: searched afresh if they changed, left alone
-/// if not, and not searched at all if they are all blank.
+/// if not, and not searched at all if they are all blank. Whether they
+/// changed.
 pub fn set_perceptual_hashes(
     conn: &Connection,
     hash_id: HashId,
     phashes: &[Vec<u8>],
-) -> Result<()> {
+) -> Result<bool> {
     let current: HashSet<Vec<u8>> = conn
         .prepare_cached(
             "SELECT phash FROM perceptual_hashes NATURAL JOIN file_perceptual_hashes WHERE hash_id = ?",
@@ -292,6 +293,39 @@ pub fn set_perceptual_hashes(
         conn.prepare_cached("DELETE FROM similar_search_status WHERE hash_id = ?")?
             .execute([hash_id])?;
     }
+    Ok(changed)
+}
+
+/// `EnsureFileIsCorrectlyInOrOutOfPairDiscoverySearch`: a file with a
+/// useful (not blank) perceptual hash is in the similar-files search
+/// (waiting to be searched if it wasn't), and one without isn't.
+pub fn ensure_in_or_out_of_search(conn: &Connection, hash_id: HashId) -> Result<()> {
+    let phashes: Vec<Vec<u8>> = conn
+        .prepare_cached(
+            "SELECT phash FROM perceptual_hashes NATURAL JOIN file_perceptual_hashes WHERE hash_id = ?",
+        )?
+        .query_map([hash_id], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    let useful = phashes
+        .iter()
+        .filter_map(|p| phash_value(p))
+        .any(|p| !is_blank(p));
+    if useful {
+        conn.prepare_cached(
+            "INSERT OR IGNORE INTO similar_search_status (hash_id, searched_distance) VALUES (?, NULL)",
+        )?
+        .execute([hash_id])?;
+        Ok(())
+    } else {
+        stop_searching(conn, hash_id)
+    }
+}
+
+/// `StopSearchingFile`: the file leaves the similar-files search (pairs it
+/// already found stay).
+pub fn stop_searching(conn: &Connection, hash_id: HashId) -> Result<()> {
+    conn.prepare_cached("DELETE FROM similar_search_status WHERE hash_id = ?")?
+        .execute([hash_id])?;
     Ok(())
 }
 

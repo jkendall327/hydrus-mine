@@ -85,7 +85,15 @@ subscriptions <store> list` shows them. What you had paused from hydrus's
 "network > pause" menu (subscriptions, all new network traffic, the
 downloader queues) stays paused: `hydrus pause <store>` shows what is, and
 `hydrus resume <store> subscriptions` (or `network`, `queues`...) resumes
-it. Duplicates auto-resolution rules come
+it. The file maintenance hydrus had queued comes across (its v682 update
+queued metadata checks for nearly every image, for example): `hydrus
+maintenance <store> jobs` lists it, `hydrus serve` works through it at
+hydrus's pace (your throttle options come across), and `hydrus maintenance
+<store> files` runs it all now. Checking files' metadata flags,
+regenerating their hashes, perceptual hashes, pixel hashes, thumbnails and
+blurhashes, and keeping them in the similar-files search run; integrity
+checks and re-downloads stay queued until hydrus-rs can do them.
+Duplicates auto-resolution rules come
 across with their progress: every pair's status for every rule (searched,
 tested, waiting for your approval, denied) and each rule's log of what it
 did, so no rule redoes its work; `hydrus duplicates <store> rules` shows
