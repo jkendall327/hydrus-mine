@@ -74,16 +74,18 @@ lines; and an empty page why ("no search", "no files found for this
 search", a downloader page's "no highlighted query"). The grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then).
-Thumbnails are selected as in the reference's grid (`src/selection.rs`,
-checked step by step against the grid's own code,
-`oracle/record_thumbnail_selection.py`): a click selects just the file (or,
-on one already selected, leaves the selection be), ctrl+click adds or
-takes one away, shift+click selects from where the last click started (a
-second shift+click moving the range's end), a click between thumbnails
-selects none, and with the grid's keyboard ctrl+a selects every file,
-escape none, the arrows, page up and down, home and end move (shift
-selecting as they go; the grid scrolls to follow) and enter opens the
-media viewer on the focused file. Double-clicking a thumbnail opens the media viewer in its own
+Thumbnails are selected as in the reference's grid (v688's default one;
+`src/selection.rs`, checked step by step against that grid driven in the
+running reference, `oracle/record_thumbnail_selection.py`): a click
+selects just the file (or, on one already selected, leaves the selection
+be), ctrl+click adds or takes one away, shift+click selects from where
+the last click started (a second shift+click moving the range's end), a
+click between thumbnails selects none, and with the grid's keyboard ctrl+a
+selects every file, escape none, the arrows, page up and down, home and
+end move from the focused file (shift selecting as they go, from the file
+last clicked; the grid scrolls to follow; with nothing focused, the file
+focused last is selected again, or the next one if it has gone) and
+enter opens the media viewer on the focused file. Double-clicking a thumbnail opens the media viewer in its own
 window on that file, at its default zoom (fitted to the window, unless your
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or page down and up, or the mouse wheel) move through the page's files,

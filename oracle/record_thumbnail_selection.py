@@ -1,21 +1,16 @@
 #!/usr/bin/env python3
 """Record the reference's thumbnail grid selection.
 
-The thumbnail grid's own selection code (`MediaResultsPanel._HitMedia`,
-`_Select`, `_SetFocusedMedia`, `_DeselectSelect`, the shift-select
-helpers, and `MediaResultsPanelThumbnails._MoveThumbnailFocus`,
-`_ScrollHome` and `_ScrollEnd`) is run on a stand-in grid of twelve files,
-four columns wide and two rows a page, through a script of clicks (plain,
-ctrl, shift; on a file or on none), select all and none, focus moves and
-files leaving the page. After each step, the files selected and the one
-focused are recorded.
-
-The stand-in has the attributes those methods use; drawing does nothing,
-and a selected file is always taken to be in view (so selecting all
-doesn't move the focus). Files leaving the page do as the grid's
-`_RemoveMediaDirectly` does: the focus cleared if it leaves, then the
-files dropped from the selection and the list, and shift-selecting ended.
-A new client's options (ctrl and shift clicks don't focus).
+In the running client, a page of the `basic` fixture's files is opened on
+"my files", and its grid (v688's default, `MediaResultsPanelThumbnails-
+GraphicsViewTest`) is driven through a script: clicks (plain, ctrl,
+shift; on a file or on none, through `_HitMedia` as a mouse press does),
+select all and none, the thumbnail shortcuts' focus moves (through
+`ProcessApplicationCommand`, as the arrows, page up and down, home and
+end do) and files leaving the page (`_RemoveMediaDirectly`, as a delete
+does). After each step, the files selected and the one focused are
+recorded, files named by their place in the page at the start. The grid's
+row length and rows a page are recorded too. A new client's options.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_thumbnail_selection.py
        (writes fixtures/thumbnail_selection.json)
@@ -24,20 +19,20 @@ Usage: QT_QPA_PLATFORM=offscreen python oracle/record_thumbnail_selection.py
 import json
 import os
 import sys
+import time
 
 HERE = os.path.dirname( os.path.abspath( __file__ ) )
 
-sys.path.insert( 0, os.path.dirname( HERE ) )
+sys.path.insert( 0, HERE )
 
 OUT = os.path.join( HERE, 'fixtures', 'thumbnail_selection.json' )
-
-NUM_FILES = 12
-COLUMNS = 4
-PAGE_ROWS = 2
 
 # ( 'click', file or None, ctrl, shift ), ( 'all', ), ( 'none', ),
 # ( 'move', direction, shift ), ( 'remove', [ files ] )
 SCRIPT = [
+    # nothing focused yet: the keyboard moves from a ctrl+clicked file
+    ( 'click', 4, True, False ),
+    ( 'move', 'right', False ),
     ( 'click', 2, False, False ),
     ( 'click', 5, True, False ),
     ( 'move', 'right', False ),
@@ -91,169 +86,87 @@ SCRIPT = [
     ( 'click', 3, True, False ),
     ( 'all', ),
     ( 'click', 10, False, True ),
+    # the focused file ctrl+clicked away: shift and the keyboard still move
+    # from it
+    ( 'click', 12, False, False ),
+    ( 'click', 12, True, False ),
+    ( 'move', 'right', True ),
+    # a ctrl+clicked file leaving: the keyboard moves from the focused one
+    ( 'none', ),
+    ( 'click', 14, False, False ),
+    ( 'click', 16, True, False ),
+    ( 'remove', [ 16 ] ),
+    ( 'move', 'right', True ),
 ]
 
 
-class FakeMedia( object ):
-
-    def __init__( self, i ):
-
-        self.i = i
-        self._selected = False
+MANIFEST = json.load( open( os.path.join( HERE, 'fixtures', 'legacy_db', 'basic.manifest.json' ) ) )
 
 
-    def __repr__( self ):
+def record( session ):
 
-        return 'file {}'.format( self.i )
-
-
-    def Deselect( self ):
-
-        self._selected = False
-
-
-    def GetDisplayMedia( self ):
-
-        return self
-
-
-    def GetDurationMS( self ):
-
-        return None
-
-
-    def IsSelected( self ):
-
-        return self._selected
-
-
-    def Select( self ):
-
-        self._selected = True
-
-
-
-class Signal( object ):
-
-    def emit( self, *args ):
-
-        pass
-
-
-
-def record():
-
-    from hydrus.core import HydrusLists
-    from hydrus.client import ClientGlobals as CG
-    from hydrus.client import ClientOptions
-    from hydrus.client.gui.pages import ClientGUIMediaResultsPanel
-    from hydrus.client.gui.pages import ClientGUIMediaResultsPanelThumbnails
+    from hydrus.client import ClientConstants as CC
+    from hydrus.client import ClientLocation
+    from hydrus.client import ClientApplicationCommand as CAC
     from hydrus.client.media import ClientMediaFileFilter
 
-    class Controller( object ):
+    controller = session.controller
+    gui = controller.gui
 
-        new_options = ClientOptions.ClientOptions()
+    def qt( f ):
 
-
-    CG.client_controller = Controller()
-
-    base = ClientGUIMediaResultsPanel.MediaResultsPanel
-    thumbnails = ClientGUIMediaResultsPanelThumbnails.MediaResultsPanelThumbnails
-
-    class Grid( object ):
-
-        _HitMedia = base._HitMedia
-        _DeselectSelect = base._DeselectSelect
-        _Select = base._Select
-        _SetFocusedMedia = base._SetFocusedMedia
-        _StartShiftSelect = base._StartShiftSelect
-        _EndShiftSelect = base._EndShiftSelect
-        _MoveThumbnailFocus = thumbnails._MoveThumbnailFocus
-        _ScrollHome = thumbnails._ScrollHome
-        _ScrollEnd = thumbnails._ScrollEnd
-
-        def __init__( self, media ):
-
-            self._sorted_media = HydrusLists.FastIndexUniqueList( media )
-            self._selected_media = set()
-            self._focused_media = None
-            self._last_hit_media = None
-            self._next_best_media_if_focuses_removed = None
-            self._shift_select_started_with_this_media = None
-            self._media_added_in_current_shift_select = set()
-            self._num_columns = COLUMNS
-            self._num_rows_per_actual_page = PAGE_ROWS
-            self.focusMediaCleared = Signal()
-            self.focusMediaChanged = Signal()
+        return controller.CallBlockingToQt( gui, f )
 
 
-        def GetSortedMedia( self ):
+    hashes = [ bytes.fromhex( f[ 'hash' ] ) for f in MANIFEST[ 'files' ] ]
 
-            return self._sorted_media
+    location = ClientLocation.LocationContext.STATICCreateSimple( CC.LOCAL_FILE_SERVICE_KEY )
 
+    # (wide enough for several thumbnails a row)
+    qt( lambda: gui.resize( 1400, 900 ) )
 
-        def GetSelectedMedia( self ):
+    page = qt( lambda: gui._notebook.NewPageQuery( location, initial_hashes = hashes ) )
 
-            return self._selected_media
+    panel = None
 
+    for _ in range( 600 ):
 
-        def _MediaIsVisible( self, media ):
+        candidate = qt( lambda: page.GetMediaResultsPanel() )
 
-            return True
+        if hasattr( candidate, '_thumbnail_layout' ) and len( candidate._sorted_media ) > 0:
 
+            panel = candidate
 
-        def _PublishSelectionChange( self, tags_changed = False ):
-
-            pass
-
-
-        def _RedrawMedia( self, media ):
-
-            pass
+            break
 
 
-        def _ScrollToMedia( self, media ):
-
-            pass
+        time.sleep( 0.05 )
 
 
-        def Remove( self, media ):
+    if panel is None:
 
-            # as MediaResultsPanelThumbnails._RemoveMediaDirectly does
-            if self._focused_media is not None and self._focused_media in media:
-
-                self._SetFocusedMedia( None )
+        raise Exception( 'the page never loaded' )
 
 
-            for m in media:
+    # let it lay itself out
+    time.sleep( 1 )
 
-                m.Deselect()
+    media = qt( lambda: list( panel._sorted_media ) )
 
-
-            self._selected_media.difference_update( media )
-
-            self._sorted_media = HydrusLists.FastIndexUniqueList( [ m for m in self._sorted_media if m not in media ] )
-
-            self._EndShiftSelect()
-
-
-
-    media = [ FakeMedia( i ) for i in range( NUM_FILES ) ]
-
-    grid = Grid( media )
+    index_of = { m : i for ( i, m ) in enumerate( media ) }
 
     moves = {
-        'left' : ( 0, -1 ),
-        'right' : ( 0, 1 ),
-        'up' : ( -1, 0 ),
-        'down' : ( 1, 0 ),
-        'page_up' : ( -PAGE_ROWS, 0 ),
-        'page_down' : ( PAGE_ROWS, 0 ),
+        'left' : CAC.MOVE_LEFT,
+        'right' : CAC.MOVE_RIGHT,
+        'up' : CAC.MOVE_UP,
+        'down' : CAC.MOVE_DOWN,
+        'page_up' : CAC.MOVE_PAGE_UP,
+        'page_down' : CAC.MOVE_PAGE_DOWN,
+        'home' : CAC.MOVE_HOME,
+        'end' : CAC.MOVE_END,
     }
 
-    steps = []
-
-    for step in SCRIPT:
+    def do( step ):
 
         ( action, *args ) = step
 
@@ -261,55 +174,56 @@ def record():
 
             ( i, ctrl, shift ) = args
 
-            grid._HitMedia( None if i is None else media[ i ], ctrl, shift )
+            panel._HitMedia( None if i is None else media[ i ], ctrl, shift )
 
         elif action == 'all':
 
-            grid._Select( ClientMediaFileFilter.FileFilter( ClientMediaFileFilter.FILE_FILTER_ALL ) )
+            panel._Select( ClientMediaFileFilter.FileFilter( ClientMediaFileFilter.FILE_FILTER_ALL ) )
 
         elif action == 'none':
 
-            grid._Select( ClientMediaFileFilter.FileFilter( ClientMediaFileFilter.FILE_FILTER_NONE ) )
+            panel._Select( ClientMediaFileFilter.FileFilter( ClientMediaFileFilter.FILE_FILTER_NONE ) )
 
         elif action == 'move':
 
             ( direction, shift ) = args
 
-            if direction == 'home':
+            status = CAC.SELECTION_STATUS_SHIFT if shift else CAC.SELECTION_STATUS_NORMAL
 
-                grid._ScrollHome( shift )
+            command = CAC.ApplicationCommand.STATICCreateSimpleCommand( CAC.SIMPLE_MOVE_THUMBNAIL_FOCUS, simple_data = ( moves[ direction ], status ) )
 
-            elif direction == 'end':
-
-                grid._ScrollEnd( shift )
-
-            else:
-
-                ( rows, columns ) = moves[ direction ]
-
-                grid._MoveThumbnailFocus( rows, columns, shift )
-
+            panel.ProcessApplicationCommand( command )
 
         elif action == 'remove':
 
             ( files, ) = args
 
-            grid.Remove( { media[ i ] for i in files } )
+            panel._RemoveMediaDirectly( { media[ i ] for i in files }, set() )
 
 
-        steps.append( {
+        return {
             'step' : list( step ),
-            'selected' : sorted( m.i for m in grid._selected_media ),
-            'focused' : None if grid._focused_media is None else grid._focused_media.i,
-        } )
+            'selected' : sorted( index_of[ m ] for m in panel._selected_media ),
+            'focused' : None if panel._focused_media is None else index_of[ panel._focused_media ],
+        }
 
 
-    return { 'files' : NUM_FILES, 'columns' : COLUMNS, 'page_rows' : PAGE_ROWS, 'steps' : steps }
+    columns = qt( lambda: panel._thumbnail_layout._thumbs_in_a_row )
+    page_rows = qt( lambda: panel._thumbnail_layout._thumbs_in_a_col )
+
+    steps = [ qt( lambda: do( step ) ) for step in SCRIPT ]
+
+    return { 'files' : len( media ), 'columns' : columns, 'page_rows' : page_rows, 'steps' : steps }
 
 
 def main():
 
-    result = record()
+    import hydrus_driver
+    import record_api
+
+    db_dir = record_api.unpack_fixture( 'basic' )
+
+    result = hydrus_driver.run_client( db_dir, record )
 
     with open( OUT, 'w' ) as f:
 

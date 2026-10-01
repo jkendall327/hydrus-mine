@@ -1,5 +1,6 @@
 //! Which of a page's files are selected, and which is focused, as the
-//! reference's thumbnail grid has them (`MediaResultsPanel`): a click
+//! reference's thumbnail grid has them (v688's default grid,
+//! `MediaResultsPanelThumbnailsGraphicsViewTest`): a click
 //! selects just the file (or, on one already selected, leaves the
 //! selection be), ctrl+click adds or takes away one, shift+click selects
 //! from where the last click started to the file, and the arrows, home,
@@ -15,12 +16,13 @@ use hydrus_core::HashId;
 pub struct Selection {
     selected: HashSet<HashId>,
     focused: Option<HashId>,
-    /// Where the keyboard moves from: the focused file, or a file
-    /// ctrl+clicked or shift+clicked since.
+    /// The file last focused, ctrl+clicked or shift+clicked: where shift
+    /// and the keyboard move from.
     last_hit: Option<HashId>,
-    /// Where it moves from once the focused file is gone (the reference's
-    /// `_next_best_media_if_focuses_removed`).
-    next_best: Option<HashId>,
+    /// The file focused before the focus went (the reference's
+    /// `_previously_focused_media_when_nothing_now`), which the keyboard
+    /// then selects; moved past files leaving the page.
+    ghost: Option<HashId>,
     /// Where a shift+click's range starts, and the files the range added.
     shift_start: Option<HashId>,
     shift_added: HashSet<HashId>,
@@ -144,10 +146,13 @@ impl Selection {
         }
     }
 
-    /// Move the focus (`_MoveThumbnailFocus`, `_ScrollHome`, `_ScrollEnd`),
-    /// selecting as a click would (with shift, as a shift+click); in a grid
-    /// `columns` wide showing `page_rows` rows. Says the file moved to, by
-    /// index, for the grid to scroll to (with shift, it isn't focused).
+    /// Move the focus (the thumbnail shortcuts' `SIMPLE_MOVE_THUMBNAIL_FOCUS`,
+    /// `_MoveThumbnailFocus`, `_ScrollHome`, `_ScrollEnd`), selecting as a
+    /// click would (with shift, as a shift+click), in a grid `columns`
+    /// wide showing `page_rows` rows: from the focused file (with shift,
+    /// the one last hit); with none, the one focused before is selected
+    /// again. Says the file moved to, by index, for the grid to scroll to
+    /// (with shift, it isn't focused).
     pub fn move_focus(
         &mut self,
         sorted: &[HashId],
@@ -157,48 +162,78 @@ impl Selection {
         page_rows: usize,
     ) -> Option<usize> {
         let last = sorted.len().checked_sub(1)?;
-        let (rows, mut step) = match to {
-            Move::Home | Move::End => {
-                let index = if to == Move::Home { 0 } else { last };
-                self.hit(sorted, Some(sorted[index]), false, shift);
+        if let Move::Home | Move::End = to {
+            let index = if to == Move::Home { 0 } else { last };
+            self.hit(sorted, Some(sorted[index]), false, shift);
+            return Some(index);
+        }
+        let at = |f: HashId| sorted.iter().position(|&s| s == f);
+        // (`_MediaToUseWhenMovingFocus`, the reference's defaults; the arms
+        // in its order of preference, so two alike stay apart)
+        #[allow(clippy::match_same_arms)]
+        let from = match (shift, self.last_hit, self.focused, self.ghost) {
+            (true, Some(hit), _, _) => hit,
+            (_, _, Some(focused), _) => focused,
+            (_, _, None, Some(ghost)) => {
+                // (back where it was, so the keyboard shows where it is;
+                // never a file no longer on the page, which the reference
+                // would select)
+                let index = at(ghost)?;
+                self.hit(sorted, Some(ghost), false, shift);
                 return Some(index);
             }
-            Move::Left => (0, -1),
-            Move::Right => (0, 1),
-            Move::Up => (-1, 0),
-            Move::Down => (1, 0),
-            Move::PageUp => (-(page_rows.max(1) as isize), 0),
-            Move::PageDown => (page_rows.max(1) as isize, 0),
+            (false, Some(hit), None, None) => hit,
+            _ => sorted[0],
         };
-        let from = if let Some(file) = self.last_hit {
-            file
-        } else if let Some(file) = self.next_best {
-            // (as if the focus were between it and the next)
-            if step == -1 {
-                step = 0;
-            }
-            file
-        } else {
-            sorted[0]
+        let current = at(from)? as isize;
+        let (columns, page_rows) = (columns.max(1) as isize, page_rows.max(1) as isize);
+        let to = match to {
+            Move::Left => current - 1,
+            Move::Right => current + 1,
+            Move::Up => current - columns,
+            Move::Down => current + columns,
+            Move::PageUp => current - columns * page_rows,
+            Move::PageDown => current + columns * page_rows,
+            Move::Home | Move::End => unreachable!("moved above"),
         };
-        let Some(current) = sorted.iter().position(|&f| f == from) else {
-            self.set_focused(sorted, None);
-            return None;
-        };
-        let to = (current as isize + step + columns as isize * rows).clamp(0, last as isize);
-        let to = to as usize;
+        let to = to.clamp(0, last as isize) as usize;
         self.hit(sorted, Some(sorted[to]), false, shift);
         Some(to)
     }
 
     /// `files` are leaving the page (whose files are `sorted`, them
-    /// still among them).
+    /// still among them; `_RemoveMediaDirectly`): the focus goes, and the
+    /// place it was moves on past them (or, if that runs to the end, back
+    /// from the end).
     pub fn remove(&mut self, sorted: &[HashId], files: &[HashId]) {
         if self.focused.is_some_and(|f| files.contains(&f)) {
             self.set_focused(sorted, None);
         }
+        if let Some(ghost) = self.ghost
+            && let Some(mut index) = sorted.iter().position(|&f| f == ghost)
+        {
+            let last = sorted.len() - 1;
+            let mut candidate = ghost;
+            while index < last && files.contains(&candidate) {
+                index += 1;
+                candidate = sorted[index];
+            }
+            if index == last {
+                // (as the reference does, from the end, not from the ghost)
+                candidate = ghost;
+                while index > 0 && files.contains(&candidate) {
+                    index -= 1;
+                    candidate = sorted[index];
+                }
+            }
+            self.ghost = Some(candidate);
+        }
         for f in files {
             self.selected.remove(f);
+        }
+        let gone = |f: &Option<HashId>| f.is_some_and(|f| files.contains(&f));
+        if gone(&self.last_hit) {
+            self.last_hit = None;
         }
         self.end_shift_select();
     }
@@ -208,33 +243,19 @@ impl Selection {
         *self = Self::default();
     }
 
-    /// `_SetFocusedMedia`: and where the keyboard would move from were it
-    /// gone, the file or, if selected, the first unselected one before it.
+    /// `_SetFocusedMedia`: and when the focus goes, where it was.
     fn set_focused(&mut self, sorted: &[HashId], file: Option<HashId>) {
         if file == self.focused {
             return;
         }
-        self.next_best = None;
-        for candidate in [file, self.focused].into_iter().flatten() {
-            let Some(mut i) = sorted.iter().position(|&f| f == candidate) else {
-                continue;
-            };
-            let mut next_best = Some(candidate);
-            while next_best.is_some_and(|f| self.selected.contains(&f)) {
-                if i == 0 {
-                    next_best = None;
-                    break;
-                }
-                i -= 1;
-                next_best = Some(sorted[i]);
-            }
-            if next_best.is_some() {
-                self.next_best = next_best;
-                break;
-            }
-        }
+        self.ghost = match (file, self.focused) {
+            (None, Some(focused)) if sorted.contains(&focused) => Some(focused),
+            _ => None,
+        };
         self.focused = file;
-        self.last_hit = file;
+        if file.is_some() {
+            self.last_hit = file;
+        }
     }
 
     fn start_shift_select(&mut self, file: HashId) {
