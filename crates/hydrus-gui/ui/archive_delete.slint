@@ -6,7 +6,8 @@
 // commits, f forgets, and escape goes back to filtering. As in the media
 // viewer, z switches between 100% and fitting the window, + and - (or ctrl
 // and the mouse wheel) zoom, and shift and the arrow keys pan. With the
-// pointer over the window's left fifth, the file's tags show there.
+// pointer over the window's left fifth, the file's tags show there; near
+// its top, the file's info line.
 
 import { ListText } from "theme.slint";
 
@@ -35,6 +36,11 @@ export component ArchiveDeleteWindow inherits Window {
     in property <length> sharp-y;
     in property <length> sharp-width;
     in property <length> sharp-height;
+    // the file's info line, for the top hover frame
+    in property <string> info-line;
+    out property <bool> info-showing: root.info-line != "" && pointer.has-hover
+        && pointer.mouse-y <= info-box.preferred-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
     out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     callback keep();
@@ -188,6 +194,24 @@ export component ArchiveDeleteWindow inherits Window {
                     color: #a0a0a0;
                     horizontal-alignment: center;
                 }
+            }
+        }
+        // (nothing in it takes the pointer, so the area below keeps it)
+        info-box := Rectangle {
+            x: (root.width - self.width) / 2;
+            y: 0;
+            width: min(root.width * 0.6, info-text.preferred-width + 24px);
+            height: info-text.preferred-height + 12px;
+            background: #202020e8;
+            visible: root.info-showing && root.question == "";
+            info-text := Text {
+                x: 12px;
+                width: parent.width - 24px;
+                text: root.info-line;
+                color: #f0f0f0;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                overflow: elide;
             }
         }
         // (nothing in it takes the pointer, so the area above keeps it)

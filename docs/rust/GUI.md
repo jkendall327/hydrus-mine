@@ -136,7 +136,8 @@ media viewer shortcuts have it. With the pointer
 over the window's left fifth, the file's tags show there, as the
 reference's tags hover frame does: its display tags less those your single
 media filters hide, in your media viewer tag sort and namespace colours,
-pending ones marked `(+)` (it doesn't scroll yet). Images are shown
+pending ones marked `(+)` (it doesn't scroll yet); near its top, the
+file's info line, as in the media viewer. Images are shown
 whole. Ugoiras and animated WebP play with the client's own player, as
 the reference's defaults have it: frames are decoded on a thread of their
 own a few ahead of the one shown, each shown for its duration (a ugoira's

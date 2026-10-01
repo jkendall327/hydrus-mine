@@ -197,3 +197,72 @@ fn the_viewer_shows_the_top_line_near_its_top() {
     let pixels = headless::render(&drawn, 800, 600);
     headless::save_png(&shots.join("notes.png"), &pixels, 800, 600).unwrap();
 }
+
+#[test]
+fn the_archive_delete_filter_shows_the_top_line_too() {
+    use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
+    use slint::ComponentHandle as _;
+    use slint::platform::WindowEvent;
+
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:inbox".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    ui.invoke_archive_delete_filter();
+    let filter = bound
+        .archive_delete
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    let snapshot = store.snapshot();
+    let line = |file| {
+        let media = store
+            .read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
+            .unwrap()
+            .results
+            .remove(0);
+        top_line(
+            &media,
+            &snapshot.services,
+            &InfoLineSettings::default(),
+            hydrus_core::TimestampMs::now().0,
+        )
+    };
+    assert_eq!(filter.get_info_line(), line(files[0]).as_str());
+    // (each file's own)
+    filter.invoke_skip();
+    assert_ne!(line(files[0]), line(files[1]));
+    assert_eq!(filter.get_info_line(), line(files[1]).as_str());
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 800, 600);
+    let window = filter.window();
+    let at = |x: f32, y: f32| slint::LogicalPosition::new(x, y);
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(400.0, 300.0),
+    });
+    assert!(!filter.get_info_showing());
+    window.dispatch_event(WindowEvent::PointerMoved {
+        position: at(400.0, 10.0),
+    });
+    assert!(filter.get_info_showing());
+    let pixels = headless::render(&drawn, 800, 600);
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(
+        &shots.join("archive_delete_info_line.png"),
+        &pixels,
+        800,
+        600,
+    )
+    .unwrap();
+}
