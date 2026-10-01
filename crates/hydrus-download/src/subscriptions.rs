@@ -11,7 +11,7 @@
 //! import options, and the query's own tags are added to them.
 
 use std::collections::{BTreeSet, HashMap, VecDeque};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use rand::seq::{IndexedRandom as _, SliceRandom as _};
 
@@ -37,14 +37,8 @@ use crate::{Downloader, WorkError, now};
 pub const NETWORK_ERROR_DELAY: i64 = 12 * 3600;
 /// `subscription_other_error_delay`.
 pub const OTHER_ERROR_DELAY: i64 = 36 * 3600;
-/// `subscription_file_error_cancel_threshold`.
-const FILE_ERROR_CANCEL_THRESHOLD: u32 = 5;
 /// `WE_HIT_OLD_GROUND_THRESHOLD`.
 const CAUGHT_UP_RUN: u64 = 5;
-/// `domain_network_infrastructure_error_number` in
-/// `domain_network_infrastructure_error_time_delta` seconds.
-const DOMAIN_ERRORS: usize = 3;
-const DOMAIN_ERROR_WINDOW: Duration = Duration::from_secs(600);
 
 /// What a subscription run did, and what a person should hear about.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -77,36 +71,6 @@ impl From<WorkError> for RunStop {
 impl From<hydrus_store::StoreError> for RunStop {
     fn from(e: hydrus_store::StoreError) -> Self {
         RunStop::Failed(e.to_string())
-    }
-}
-
-/// Recent connection failures per domain (`DomainOK`).
-#[derive(Debug, Default)]
-pub(crate) struct DomainErrors(HashMap<String, VecDeque<Instant>>);
-
-impl DomainErrors {
-    fn domain(url: &str) -> String {
-        hydrus_core::url::url_domain(url).unwrap_or_default()
-    }
-
-    fn report(&mut self, url: &str) {
-        self.0
-            .entry(Self::domain(url))
-            .or_default()
-            .push_back(Instant::now());
-    }
-
-    fn ok(&mut self, url: &str) -> bool {
-        let Some(errors) = self.0.get_mut(&Self::domain(url)) else {
-            return true;
-        };
-        while errors
-            .front()
-            .is_some_and(|t| t.elapsed() > DOMAIN_ERROR_WINDOW)
-        {
-            errors.pop_front();
-        }
-        errors.len() < DOMAIN_ERRORS
     }
 }
 
@@ -387,7 +351,6 @@ impl Downloader {
             return Ok(report);
         }
         let started_with = sub.settings.clone();
-        let mut errors = DomainErrors::default();
         let result = async {
             loop {
                 let due = self.due_queries(&sub)?;
@@ -400,8 +363,7 @@ impl Downloader {
                 }
                 self.sync_queries(&mut sub, due, job, &mut report).await?;
             }
-            self.work_on_queries_files(&mut sub, job, &mut errors, &mut report)
-                .await
+            self.work_on_queries_files(&mut sub, job, &mut report).await
         }
         .await;
         match result {
@@ -765,7 +727,6 @@ impl Downloader {
         &self,
         sub: &mut Subscription,
         job: &Job,
-        errors: &mut DomainErrors,
         report: &mut RunReport,
     ) -> Result<(), RunStop> {
         let mut queries: Vec<SubscriptionQuery> = self
@@ -775,13 +736,11 @@ impl Downloader {
             .filter(|q| !q.state.paused)
             .collect();
         queries.shuffle(&mut rand::rng());
-        let mut error_count = 0;
         for query in queries {
             if !self.has_file_work(query.queue_id)? {
                 continue;
             }
-            self.work_on_query_files(sub, &query, job, errors, &mut error_count, report)
-                .await?;
+            self.work_on_query_files(sub, &query, job, report).await?;
         }
         Ok(())
     }
@@ -792,8 +751,6 @@ impl Downloader {
         sub: &mut Subscription,
         query: &SubscriptionQuery,
         job: &Job,
-        errors: &mut DomainErrors,
-        error_count: &mut u32,
         report: &mut RunReport,
     ) -> Result<(), RunStop> {
         let queue = query.queue_id;
@@ -817,7 +774,7 @@ impl Downloader {
             {
                 return Err(RunStop::Stop);
             }
-            if !errors.ok(&seed.data) {
+            if !self.net.domain_ok(&seed.data) {
                 if done_work {
                     delay(sub, 3600, "domain errors, will try again later");
                 }
@@ -842,28 +799,9 @@ impl Downloader {
                 &sub.settings.import_options,
                 &lookup,
             )?;
-            match self.work_on_url(&mut seed, &options, job).await {
-                Ok(_) => {}
-                Err(WorkError::Network(e)) => {
-                    // (the seed is marked as an error)
-                    errors.report(&seed.data);
-                    tracing::info!("subscription \"{}\": {e}", sub.name);
-                    tokio::time::sleep(Duration::from_secs(3)).await;
-                }
-                Err(e) => {
-                    crate::seeds::set_status(&mut seed, SeedStatus::Error, e.to_string());
-                    *error_count += 1;
-                    if *error_count >= FILE_ERROR_CANCEL_THRESHOLD {
-                        let saved = seed.clone();
-                        self.store
-                            .write(move |ctx| queues::update_file_seed(ctx.conn(), &saved))?;
-                        return Err(RunStop::Failed(format!(
-                            "The subscription {} encountered several errors when downloading files, so it abandoned its sync.",
-                            sub.name
-                        )));
-                    }
-                }
-            }
+            // (as in the reference, a file's failure is the file's: it
+            // doesn't count towards abandoning the sync)
+            self.work_on_url(&mut seed, &options, job).await;
             if let Err(e) = self.write_query_tags(&seed, &query.state.tag_import_options) {
                 tracing::error!("adding a query's tags: {e}");
             }

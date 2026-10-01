@@ -1,9 +1,10 @@
 //! Running URL queues: each works through its file seeds in order, one at
 //! a time, as a reference "urls downloader" page does.
 //!
-//! A network failure pauses the queue's file work for the client's
-//! downloader network error delay (90 minutes by default), as the
-//! reference's pages do, rather than burning through the rest of the queue.
+//! A file that fails is marked as failed and the queue carries on, as in
+//! the reference; a gallery page or watcher check that fails on the
+//! network pauses the queue for the client's downloader network error
+//! delay (90 minutes by default), as the reference's pages do.
 
 use std::collections::{BTreeSet, HashMap};
 use std::sync::Arc;
@@ -682,19 +683,8 @@ impl QueueRunner {
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
-        let result = self.downloader.work_on_url(&mut seed, &options, &job).await;
+        let did_work = self.downloader.work_on_url(&mut seed, &options, &job).await;
         *handle.job.lock() = None;
-        let did_work = match result {
-            Ok(did_work) => did_work,
-            Err(WorkError::Network(e)) => {
-                self.delay(handle, &e);
-                false
-            }
-            Err(e) => {
-                crate::seeds::set_status(&mut seed, SeedStatus::Error, e.to_string());
-                false
-            }
-        };
         if let Err(e) = self
             .downloader
             .store

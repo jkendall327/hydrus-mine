@@ -219,7 +219,7 @@ struct FileFetch<'a> {
 }
 
 /// Network failures as `WorkOnURL` treats them: some statuses end the seed
-/// as vetoed, the rest are for the queue to wait out.
+/// as vetoed, the rest as an error.
 fn network(e: NetError) -> Stop {
     match &e {
         NetError::Status {
@@ -242,28 +242,31 @@ fn network(e: NetError) -> Stop {
 impl Downloader {
     /// Work on a URL seed: find and import its file(s) and write what was
     /// learned. Updates `seed` (the caller saves it); whether anything
-    /// substantial (network or import) was done. A network failure the
-    /// queue should wait out comes back as [`WorkError::Network`], with the
-    /// seed marked as an error.
+    /// substantial (network or import) was done. As in the reference, a
+    /// failure only ends this seed (vetoed or an error) and its queue
+    /// carries on; a site that keeps failing is paused by the network
+    /// engine instead.
     pub async fn work_on_url(
         &self,
         seed: &mut FileSeed,
         options: &FullImportOptions,
         job: &Job,
-    ) -> Result<bool, WorkError> {
+    ) -> bool {
         let mut did_work = false;
         let outcome = self.work(seed, options, job, &mut did_work).await;
         match outcome {
             Ok(()) => {}
             Err(Stop::Veto(note)) => set_status(seed, SeedStatus::Vetoed, note),
             Err(Stop::Error(note)) => set_status(seed, SeedStatus::Error, note),
-            Err(Stop::Failed(WorkError::Network(e))) => {
+            Err(Stop::Failed(e)) => {
                 set_status(seed, SeedStatus::Error, e.to_string());
-                return Err(WorkError::Network(e));
+                // (a moment's pause before the next, as the reference has)
+                if matches!(e, WorkError::Network(_)) {
+                    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+                }
             }
-            Err(Stop::Failed(e)) => set_status(seed, SeedStatus::Error, e.to_string()),
         }
-        Ok(did_work)
+        did_work
     }
 
     async fn work(

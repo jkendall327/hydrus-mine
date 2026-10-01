@@ -42,6 +42,12 @@ pub struct NetOptions {
     /// Apply the bandwidth rules and the gallery page waits (tests talking
     /// to a local server turn them off).
     pub obey_bandwidth: bool,
+    /// After this many serious errors (connection failures, server errors)
+    /// from a domain within `domain_error_window` seconds, requests to it
+    /// wait until there are fewer; 0 never waits
+    /// (`domain_network_infrastructure_error_number` and `_time_delta`).
+    pub domain_error_number: usize,
+    pub domain_error_window: i64,
 }
 
 impl Default for NetOptions {
@@ -56,6 +62,8 @@ impl Default for NetOptions {
             max_jobs_per_domain: 3,
             verify_https: true,
             obey_bandwidth: true,
+            domain_error_number: 3,
+            domain_error_window: 600,
         }
     }
 }
@@ -229,6 +237,8 @@ pub struct NetEngine {
     /// The bandwidth rules and usage, and when the usage was last saved.
     bandwidth: Mutex<(Manager, i64)>,
     bandwidth_settings: BandwidthSettings,
+    /// When each domain last had serious errors (`DomainOK`).
+    domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -314,8 +324,56 @@ impl NetEngine {
             domain_slots: Mutex::default(),
             bandwidth: Mutex::new((manager, now)),
             bandwidth_settings,
+            domain_errors: Mutex::default(),
             options,
         })
+    }
+
+    /// Whether requests to `url`'s domain may go (`DomainOK`): not if it or
+    /// a parent domain has had too many serious errors recently.
+    pub fn domain_ok(&self, url: &str) -> bool {
+        let number = self.options.domain_error_number;
+        if number == 0 {
+            return true;
+        }
+        let Ok(domain) = hydrus_core::url::url_domain(url) else {
+            return true;
+        };
+        let cutoff = now() - self.options.domain_error_window;
+        let mut errors = self.domain_errors.lock();
+        let mut ok = true;
+        for domain in psl::all_applicable_domains(&domain) {
+            if let Some(times) = errors.get_mut(&domain) {
+                times.retain(|&t| t > cutoff);
+                if times.is_empty() {
+                    errors.remove(&domain);
+                } else if times.len() >= number {
+                    ok = false;
+                }
+            }
+        }
+        ok
+    }
+
+    /// Count a serious error against `url`'s domain and its parents.
+    fn report_domain_error(&self, url: &str) {
+        let Ok(domain) = hydrus_core::url::url_domain(url) else {
+            return;
+        };
+        let now = now();
+        let mut errors = self.domain_errors.lock();
+        for domain in psl::all_applicable_domains(&domain) {
+            errors.entry(domain).or_default().push(now);
+        }
+    }
+
+    /// Wait while `url`'s domain is having trouble.
+    async fn wait_for_domain(&self, url: &str, job: &Job) -> Result<(), NetError> {
+        while !self.domain_ok(url) {
+            job.set_status("This domain has had several serious errors recently. Waiting a bit.");
+            job.sleep(10.0).await?;
+        }
+        Ok(())
     }
 
     pub fn bandwidth_settings(&self) -> &BandwidthSettings {
@@ -507,6 +565,11 @@ impl NetEngine {
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
         let result = self.fetch_inner(request, job).await;
+        if let Err(e) = &result
+            && e.is_infrastructure()
+        {
+            self.report_domain_error(&request.url);
+        }
         let mut state = job.state.lock();
         state.done = true;
         match &result {
@@ -573,6 +636,9 @@ impl NetEngine {
                 job,
             )
             .await?;
+        }
+        if !request.one_shot {
+            self.wait_for_domain(&request.url, job).await?;
         }
         let gallery_token = scope
             .gallery_token

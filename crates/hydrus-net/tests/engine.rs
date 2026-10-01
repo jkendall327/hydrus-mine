@@ -84,6 +84,7 @@ async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Respon
             .body(Body::from("slow down"))
             .unwrap(),
         "404" => (StatusCode::NOT_FOUND, "not here").into_response(),
+        "500" => (StatusCode::INTERNAL_SERVER_ERROR, "broken").into_response(),
         _ => (StatusCode::OK, format!("ok after {n}")).into_response(),
     }
 }
@@ -453,4 +454,51 @@ async fn nothing_goes_out_while_all_new_network_traffic_is_paused() {
         .await
         .expect("it went")
         .unwrap();
+}
+
+#[tokio::test]
+async fn a_domain_with_several_serious_errors_waits() {
+    let s = setup(|_| Vec::new()).await;
+    let fetch = |path: &str| {
+        let request = Request::get(format!("{}/flaky/{path}", s.base));
+        let engine = &s.engine;
+        async move { engine.fetch(&request, &Job::new()).await }
+    };
+    // a missing file is the file's problem, not the site's
+    for _ in 0..5 {
+        assert!(fetch("404").await.is_err());
+    }
+    assert!(s.engine.domain_ok(&s.base));
+    for _ in 0..3 {
+        match fetch("500").await {
+            Err(NetError::Status {
+                kind: StatusKind::Server,
+                ..
+            }) => {}
+            other => panic!("{other:?}"),
+        }
+    }
+    assert!(
+        !s.engine.domain_ok(&s.base),
+        "three server errors in ten minutes"
+    );
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "This domain has had several serious errors recently. Waiting a bit."
+    );
+    // a one-shot request goes anyway
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.one_shot = true;
+    s.engine.fetch(&request, &Job::new()).await.unwrap();
 }

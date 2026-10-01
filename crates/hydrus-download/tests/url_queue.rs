@@ -39,6 +39,9 @@ async fn post(State(site): State<Arc<Site>>, Path(id): Path<String>) -> Response
     if id == "404" {
         return (StatusCode::NOT_FOUND, "no such post").into_response();
     }
+    if id == "500" {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "the site broke").into_response();
+    }
     let html = format!(
         r#"<html><head><title>post {id}</title></head><body>
         <ul id="tags"><li class="tag">blue eyes</li><li class="tag">creator:someone</li><li class="tag">post {id}</li></ul>
@@ -519,4 +522,31 @@ async fn queues_wait_while_their_downloads_are_paused_globally() {
         .unwrap();
     s.runner.wake(queue.id);
     wait_until_done(&s.store, queue.id).await;
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_file_that_fails_does_not_hold_up_the_rest_of_its_queue() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/500", s.base), format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    wait_until_done(&s.store, queue.id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    let statuses: Vec<SeedStatus> = seeds.iter().map(|seed| seed.status).collect();
+    assert_eq!(
+        statuses,
+        [SeedStatus::Error, SeedStatus::SuccessfulAndNew],
+        "{seeds:?}"
+    );
+    assert!(seeds[0].note.contains("500"), "{}", seeds[0].note);
+    assert_eq!(s.runner.status(queue.id).delayed_until, None);
 }

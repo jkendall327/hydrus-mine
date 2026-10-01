@@ -56,6 +56,21 @@ pub enum NetError {
 }
 
 impl NetError {
+    /// The reference's `NetworkInfrastructureException`s: the site (or the
+    /// way to it) is in trouble, which counts against its domain.
+    pub fn is_infrastructure(&self) -> bool {
+        matches!(
+            self,
+            NetError::Connection(_)
+                | NetError::Infrastructure(_)
+                | NetError::Bandwidth(_)
+                | NetError::Status {
+                    kind: StatusKind::Censorship | StatusKind::Server,
+                    ..
+                }
+        )
+    }
+
     pub fn is_not_found(&self) -> bool {
         matches!(
             self,
