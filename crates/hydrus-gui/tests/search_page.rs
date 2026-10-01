@@ -126,10 +126,14 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     // sorting: a new page sorts by the options' default (the fixture's,
     // hydrus's own: smallest first); a new type comes with its default
     // order
-    assert_eq!(page.sort().by, SortBy::FileSize);
-    assert_eq!(page.sort().order, SortOrder::Ascending);
+    assert_eq!(page.file_sort().unwrap().by, SortBy::FileSize);
+    assert_eq!(page.file_sort().unwrap().order, SortOrder::Ascending);
     page.set_sort_by(SortBy::ImportTime);
-    assert_eq!(page.sort().order, SortOrder::Descending, "newest first");
+    assert_eq!(
+        page.file_sort().unwrap().order,
+        SortOrder::Descending,
+        "newest first"
+    );
     let newest_first = page.results().to_vec();
     page.set_sort_order(SortOrder::Ascending);
     let oldest_first: Vec<_> = page.results().to_vec();
@@ -138,10 +142,18 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
         newest_first
     );
     page.set_sort_by(SortBy::FileSize);
-    assert_eq!(page.sort().order, SortOrder::Descending, "largest first");
+    assert_eq!(
+        page.file_sort().unwrap().order,
+        SortOrder::Descending,
+        "largest first"
+    );
     assert_eq!(page.results().len(), everything);
     page.set_sort_by(SortBy::Width);
-    assert_eq!(page.sort().order, SortOrder::Ascending, "slimmest first");
+    assert_eq!(
+        page.file_sort().unwrap().order,
+        SortOrder::Ascending,
+        "slimmest first"
+    );
     page.set_sort_by(SortBy::ImportTime);
     assert_eq!(page.results(), newest_first);
 

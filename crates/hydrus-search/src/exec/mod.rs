@@ -41,6 +41,7 @@ mod context;
 mod dupes;
 mod leaf;
 mod numbers;
+mod page_sort;
 mod plan;
 mod similar;
 mod sort;
@@ -143,26 +144,23 @@ pub fn sort_files(
 /// Sort a page's `files` (in the order it shows them) as the reference's
 /// pages sort (`MediaList.Sort`): by the `fallback` sort first, then by
 /// `sort`, each stably; files with no value take the page's defaults (no
-/// views as 0, no time as -1, the inbox before the archive).
+/// views as 0, no time as -1, the inbox before the archive). Sorts by
+/// system sort types, by namespaces' tags, and by rating.
 pub fn sort_page_files(
     conn: &Connection,
     snapshot: &Snapshot,
     search: &FileSearchContext,
     files: &[HashId],
-    sort: FileSort,
-    fallback: Option<FileSort>,
+    sort: &hydrus_core::pages::PageSort,
+    fallback: Option<&hydrus_core::pages::PageSort>,
     clock: &Clock,
 ) -> Result<Vec<HashId>> {
     let env = context::Env::new(conn, snapshot, search, clock, context::Strategy::Auto)?;
-    let bitmap: roaring::RoaringBitmap = files.iter().map(|h| h.0).collect();
-    let mut base: Vec<u32> = files.iter().map(|h| h.0).collect();
-    if let Some(fallback) = fallback {
-        base = sort::sort_in(&env, &bitmap, fallback, sort::Mode::Page(&base))?;
+    let mut order: Vec<u32> = files.iter().map(|h| h.0).collect();
+    for sort in fallback.into_iter().chain([sort]) {
+        order = page_sort::sort_page(&env, &order, sort)?;
     }
-    Ok(sort::sort_in(&env, &bitmap, sort, sort::Mode::Page(&base))?
-        .into_iter()
-        .map(HashId)
-        .collect())
+    Ok(order.into_iter().map(HashId).collect())
 }
 
 fn search_with_strategy(

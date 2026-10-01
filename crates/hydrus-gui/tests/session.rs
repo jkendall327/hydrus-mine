@@ -129,8 +129,8 @@ fn the_last_session_opens_as_it_was_left() {
         let opened = opened.borrow();
         assert_eq!(opened.predicates(), ["system:everything"]);
         assert_eq!(opened.results(), shown, "as left, not searched again");
-        assert_eq!(opened.sort().by, SortBy::FileSize);
-        assert_eq!(opened.sort().order, SortOrder::Descending);
+        assert_eq!(opened.file_sort().unwrap().by, SortBy::FileSize);
+        assert_eq!(opened.file_sort().unwrap().order, SortOrder::Descending);
         assert!(opened.note().is_none());
     }
     // a new sort sorts the files shown, and doesn't search again
@@ -177,8 +177,8 @@ fn the_last_session_opens_as_it_was_left() {
         let opened = again.current();
         let opened = opened.borrow();
         assert_eq!(opened.predicates(), ["system:everything", "system:inbox"]);
-        assert_eq!(opened.sort().by, SortBy::FileSize);
-        assert_eq!(opened.sort().order, SortOrder::Ascending);
+        assert_eq!(opened.file_sort().unwrap().by, SortBy::FileSize);
+        assert_eq!(opened.file_sort().unwrap().order, SortOrder::Ascending);
         assert_eq!(opened.results(), inbox);
     }
     again.select(1, 1);

@@ -38,15 +38,21 @@ opened with its search, sort and files, the others as they were.
 
 On a search page, at the top of its sidebar, the
 sort control offers every system sort type named and ordered as in the
-reference, each with its two orders ("oldest first", "newest first"...);
-choosing a type picks its default order, as the reference does. Pages sort
+reference, each with its two orders ("oldest first", "newest first"...),
+then your namespace sorts ("tags: series-creator-title-volume-chapter-page",
+a-z or z-a) and each rating service ("rating: stars", by name), and a
+session's own namespace sort where a page has one; choosing a type picks
+its default order, as the reference does. Pages sort
 as the reference's pages do (`MediaList.Sort`, checked against it): your
 fallback sort first (hydrus's default: import time, oldest first), then the
 page's, so ties fall in the fallback's order, with files that have no value
 placed as the reference's pages place them (never viewed as no views, the
 inbox before the archive). A new page sorts by your default sort (hydrus's
-own: file size, smallest first); namespace and rating sorts come across from
-hydrus but aren't applied yet. With nothing typed, the search
+own: file size, smallest first). A namespace sort orders files by their
+subtags in each namespace in turn (current and pending, in all known tags,
+in human order, as the reference's `GetComparableNamespaceSlice`); a rating
+sort by the rating, unrated files counting as -1 (0 on an inc/dec
+service). With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds in the page's file domains, counted as the reference's
 `_GetFileSystemPredicates` does (the reference also offers the system

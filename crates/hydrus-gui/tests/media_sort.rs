@@ -1,7 +1,8 @@
 //! Pages sort their files as the reference's pages do, against
 //! `oracle/fixtures/media_sort.json` (made by `oracle/record_media_sort.py`):
-//! the options' fallback sort first, then the sort chosen, each stably,
-//! with the page's defaults for files with no value; and the options'
+//! the options' fallback sort first, then the sort chosen (a system
+//! sort, by namespaces' tags, or by rating), each stably, with the page's
+//! defaults for files with no value; and the options'
 //! default, fallback and namespace sorts come across from hydrus.
 
 use std::sync::Arc;
@@ -11,7 +12,7 @@ use serde_json::Value;
 use hydrus_core::HashId;
 use hydrus_core::pages::{PageSort, PageSortBy, SortSettings};
 use hydrus_gui::SearchPage;
-use hydrus_search::{FileSearchContext, LocationContext, SortBy, SortOrder};
+use hydrus_search::{FileSearchContext, LocationContext, SortOrder};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
@@ -84,7 +85,7 @@ fn the_sort_options_come_across_from_hydrus() {
     assert_eq!(sorts.namespace_sorts, namespace_sorts);
     // and a new page sorts by the default sort
     let page = SearchPage::new(fixture.store.clone());
-    assert_eq!(page.page_sort(), sorts.default_sort);
+    assert_eq!(page.sort().clone(), sorts.default_sort);
 }
 
 #[test]
@@ -115,9 +116,6 @@ fn pages_sort_as_the_reference_s_pages_sort() {
         let files = ids(&page["files"]);
         for case in page["sorts"].as_array().unwrap() {
             let sort = page_sort(&case["sort"]);
-            let PageSortBy::System(code) = sort.by else {
-                continue;
-            };
             // a page showing the files as the reference's did, sorted anew
             let mut ours = SearchPage::restored(
                 store.clone(),
@@ -129,7 +127,7 @@ fn pages_sort_as_the_reference_s_pages_sort() {
                 None,
                 files.clone(),
             );
-            ours.set_sort_by(SortBy::from_code(code).unwrap());
+            ours.set_sort_type(sort.by.clone());
             ours.set_sort_order(if sort.ascending {
                 SortOrder::Ascending
             } else {
@@ -145,5 +143,88 @@ fn pages_sort_as_the_reference_s_pages_sort() {
             checked += 1;
         }
     }
-    assert_eq!(checked, 108);
+    // every system sort but random, three namespace sorts and three
+    // rating services, both ways, on two pages
+    assert_eq!(checked, 136);
+}
+
+#[test]
+fn the_sort_control_offers_namespace_and_rating_sorts() {
+    use hydrus_gui::{MainWindow, Pages, bind, headless};
+    use slint::Model as _;
+
+    let fixture = fixture();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(fixture.store.clone())));
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let names: Vec<String> = {
+        let names = ui.get_sort_names();
+        (0..names.row_count())
+            .map(|i| names.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    // after the system sorts, the options' namespace sorts, then each
+    // rating service, by name
+    let at = |name: &str| {
+        names
+            .iter()
+            .position(|n| n == name)
+            .unwrap_or_else(|| panic!("{name} in {names:?}"))
+    };
+    let namespaces = at("tags: series-creator-title-volume-chapter-page");
+    assert_eq!(
+        names[namespaces..],
+        [
+            "tags: series-creator-title-volume-chapter-page",
+            "tags: creator-series-title-volume-chapter-page",
+            "rating: counter",
+            "rating: favourites",
+            "rating: stars",
+        ]
+    );
+    let orders = |ui: &MainWindow| -> Vec<String> {
+        let orders = ui.get_order_names();
+        (0..orders.row_count())
+            .map(|i| orders.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    // a namespace sort: a-z first
+    ui.invoke_sort_chosen(i32::try_from(namespaces).unwrap());
+    let page = bound.current.borrow().clone();
+    assert_eq!(
+        page.borrow().sort().by,
+        PageSortBy::Namespaces {
+            namespaces: ["series", "creator", "title", "volume", "chapter", "page"]
+                .map(String::from)
+                .to_vec(),
+            tag_display_type: 1,
+        }
+    );
+    assert!(page.borrow().sort().ascending);
+    assert_eq!(orders(&ui), ["a-z", "z-a"]);
+    assert_eq!(ui.get_order_index(), 0);
+    // a rating: descending first
+    ui.invoke_sort_chosen(i32::try_from(at("rating: stars")).unwrap());
+    assert!(matches!(page.borrow().sort().by, PageSortBy::Rating(_)));
+    assert!(!page.borrow().sort().ascending);
+    assert_eq!(orders(&ui), ["ascending", "descending"]);
+    assert_eq!(ui.get_order_index(), 1);
+    ui.invoke_order_chosen(0);
+    assert!(page.borrow().sort().ascending);
+    // and a sort the options don't offer (a session's custom one) is listed
+    // for the page sorted by it
+    page.borrow_mut().set_sort_type(PageSortBy::Namespaces {
+        namespaces: vec!["page".into()],
+        tag_display_type: 1,
+    });
+    ui.invoke_order_chosen(0);
+    let names = ui.get_sort_names();
+    assert_eq!(
+        names
+            .row_data(usize::try_from(ui.get_sort_index()).unwrap())
+            .unwrap(),
+        "tags: page"
+    );
 }

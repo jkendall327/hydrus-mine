@@ -33,12 +33,18 @@ fn a_favourite_search_loads_into_the_page() {
     for p in &loaded {
         by_hand.add_predicate(p);
     }
-    by_hand.set_sort_by(page.sort().by);
-    by_hand.set_sort_order(page.sort().order);
+    by_hand.set_sort_by(page.file_sort().unwrap().by);
+    by_hand.set_sort_order(page.file_sort().unwrap().order);
     assert_eq!(by_hand.results(), found);
     // its sort: largest file first
-    assert_eq!(page.sort().by, hydrus_search::SortBy::FileSize);
-    assert_eq!(page.sort().order, hydrus_search::SortOrder::Descending);
+    assert_eq!(
+        page.file_sort().unwrap().by,
+        hydrus_search::SortBy::FileSize
+    );
+    assert_eq!(
+        page.file_sort().unwrap().order,
+        hydrus_search::SortOrder::Descending
+    );
 
     // in the window: the menu, then loading it
     let windows = headless::init();

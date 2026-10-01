@@ -1,6 +1,7 @@
 //! The sort control's choices, named and ordered as the reference's
 //! (`CC.sort_type_string_lookup`, `MediaSort.GetSortOrderStrings`).
 
+use hydrus_core::pages::PageSortBy;
 use hydrus_search::{SortBy, SortOrder};
 
 /// One sort type as the control offers it.
@@ -216,6 +217,95 @@ pub fn choices() -> Vec<SortChoice> {
     };
     choices.sort_by_key(key);
     choices
+}
+
+/// A sort type the control offers a page, with the store's: a system
+/// sort, one of the options' namespace sorts, or a rating service's
+/// (`_PopulateSortMenuOrList`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct PageChoice {
+    pub by: PageSortBy,
+    /// e.g. `time: import time`, `tags: series-creator-title`, `rating:
+    /// favourites`.
+    pub name: String,
+    /// The two orders' names, ascending first.
+    pub orders: [&'static str; 2],
+    /// Whether the order chosen with the type is ascending.
+    pub default_ascending: bool,
+}
+
+/// The sort types offered for a page sorted by `current`: the system ones
+/// in the control's order, then the options' namespace sorts, then each
+/// rating service; and `current`, if it is none of those (a custom
+/// namespace sort, say).
+pub fn page_choices(store: &hydrus_store::Store, current: &PageSortBy) -> Vec<PageChoice> {
+    let mut out: Vec<PageChoice> = choices()
+        .into_iter()
+        .map(|c| PageChoice {
+            by: PageSortBy::System(i64::from(c.by.code())),
+            name: c.name,
+            orders: c.orders,
+            default_ascending: c.default_order == SortOrder::Ascending,
+        })
+        .collect();
+    let sorts: hydrus_core::pages::SortSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let snapshot = store.snapshot();
+    // (by name, as the reference's services manager lists them)
+    let mut ratings: Vec<_> = snapshot
+        .services
+        .all()
+        .filter(|s| s.service_type().is_rating_service())
+        .collect();
+    ratings.sort_by_key(|s| s.name.to_lowercase());
+    let ratings = ratings
+        .into_iter()
+        .map(|s| PageSortBy::Rating(s.key.clone()));
+    let mut others: Vec<PageSortBy> = sorts
+        .namespace_sorts
+        .into_iter()
+        .map(|s| s.by)
+        .chain(ratings)
+        .collect();
+    if !out.iter().any(|c| c.by == *current) && !others.contains(current) {
+        others.push(current.clone());
+    }
+    out.extend(
+        others
+            .into_iter()
+            .map(|by| other_choice(&snapshot.services, by)),
+    );
+    out
+}
+
+/// A namespace or rating sort as the control offers it
+/// (`GetSortTypeString`, `GetSortOrderStrings`).
+fn other_choice(services: &hydrus_store::services::ServiceRegistry, by: PageSortBy) -> PageChoice {
+    match &by {
+        PageSortBy::Namespaces { namespaces, .. } => PageChoice {
+            name: format!("tags: {}", namespaces.join("-")),
+            by,
+            orders: ["a-z", "z-a"],
+            default_ascending: true,
+        },
+        PageSortBy::Rating(key) => PageChoice {
+            name: format!(
+                "rating: {}",
+                services
+                    .by_key(key)
+                    .map_or("unknown service", |s| s.name.as_str())
+            ),
+            by,
+            orders: ["ascending", "descending"],
+            default_ascending: false,
+        },
+        PageSortBy::System(code) => PageChoice {
+            name: format!("unknown sort {code}"),
+            by,
+            orders: ["ascending", "descending"],
+            default_ascending: true,
+        },
+    }
 }
 
 #[cfg(test)]

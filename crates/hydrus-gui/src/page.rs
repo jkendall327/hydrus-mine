@@ -33,13 +33,12 @@ pub struct SearchPage {
     lock_syncs: HashLock,
     /// Why the page shows files without a search, if it does.
     note: Option<String>,
-    sort: FileSort,
-    /// Whether the sort was changed since the page was opened (a sort we
-    /// can't use yet is kept until then).
+    sort: PageSort,
+    /// Whether the sort was changed since the page was opened.
     sort_changed: bool,
     /// The sort applied first, which orders the sort's ties (the options'
     /// `fallback_sort`).
-    fallback: Option<FileSort>,
+    fallback: PageSort,
     /// In the sort's order.
     results: Vec<HashId>,
     selection: Selection,
@@ -82,14 +81,10 @@ impl SearchPage {
             locked: false,
             lock_syncs: HashLock::default(),
             note: None,
-            // the options' default sort (the reference's own, file size
-            // smallest first, for one we can't use yet)
-            sort: system_sort(&sorts.default_sort).unwrap_or(FileSort {
-                by: SortBy::FileSize,
-                order: SortOrder::Ascending,
-            }),
+            // the options' default sort
+            sort: sorts.default_sort,
             sort_changed: false,
-            fallback: system_sort(&sorts.fallback_sort),
+            fallback: sorts.fallback_sort,
             results: Vec::new(),
             selection: Selection::default(),
             tags: Vec::new(),
@@ -192,7 +187,7 @@ impl SearchPage {
         self.predicates = predicates;
         self.synchronised = favourite.synchronised;
         if favourite.sort.is_some() {
-            let before = self.sort;
+            let before = self.sort.clone();
             self.set_page_sort(favourite.sort.as_ref());
             self.sort_changed |= self.sort != before;
         }
@@ -226,17 +221,17 @@ impl SearchPage {
         self
     }
 
-    /// A session's sort, if it is one we have; otherwise the default stays.
+    /// A session's sort, if it has one; otherwise the default stays.
     fn set_page_sort(&mut self, sort: Option<&PageSort>) {
-        if let Some(sort) = sort.and_then(system_sort) {
-            self.sort = sort;
+        if let Some(sort) = sort {
+            self.sort = sort.clone();
         }
     }
 
     /// The page as a session keeps it, given what it was opened from.
     pub fn content(&self, opened_from: &PageContent) -> PageContent {
         let sort = if self.sort_changed {
-            Some(self.page_sort())
+            Some(self.sort.clone())
         } else {
             opened_from.sort().cloned()
         };
@@ -420,33 +415,36 @@ impl SearchPage {
         &self.results
     }
 
-    pub fn sort(&self) -> FileSort {
-        self.sort
+    /// The page's sort.
+    pub fn sort(&self) -> &PageSort {
+        &self.sort
     }
 
-    /// The sort as a session keeps it (what a page opened from this one
-    /// takes).
-    pub fn page_sort(&self) -> PageSort {
-        PageSort {
-            by: PageSortBy::System(i64::from(self.sort.by.code())),
-            ascending: self.sort.order == SortOrder::Ascending,
-        }
+    /// The page's sort as a system sort, if it is one.
+    pub fn file_sort(&self) -> Option<FileSort> {
+        system_sort(&self.sort)
     }
 
-    /// Sort by `by`, in its default order (as the reference's sort control
-    /// does when the type changes).
+    /// Sort by the system sort `by`, in its default order (as the
+    /// reference's sort control does when the type changes).
     pub fn set_sort_by(&mut self, by: SortBy) {
-        let order = crate::sort::choices()
+        self.set_sort_type(PageSortBy::System(i64::from(by.code())));
+    }
+
+    /// Sort by `by` (a system, namespace or rating sort), in its default
+    /// order.
+    pub fn set_sort_type(&mut self, by: PageSortBy) {
+        let ascending = crate::sort::page_choices(&self.store, &by)
             .into_iter()
             .find(|c| c.by == by)
-            .map_or(SortOrder::Ascending, |c| c.default_order);
-        self.sort = FileSort { by, order };
+            .is_none_or(|c| c.default_ascending);
+        self.sort = PageSort { by, ascending };
         self.sort_changed = true;
         self.resort();
     }
 
     pub fn set_sort_order(&mut self, order: SortOrder) {
-        self.sort.order = order;
+        self.sort.ascending = order == SortOrder::Ascending;
         self.sort_changed = true;
         self.resort();
     }
@@ -463,8 +461,8 @@ impl SearchPage {
                 &snapshot,
                 &self.context,
                 &self.results,
-                self.sort,
-                self.fallback,
+                &self.sort,
+                Some(&self.fallback),
                 &clock,
             ))
         }) {
@@ -717,7 +715,13 @@ impl SearchPage {
             predicates: self.predicates.clone(),
             ..self.context.clone()
         };
-        let sort = self.sort;
+        // (the database sorts by the page's sort if it is a system one, for
+        // a system:limit to take the first by it; the page then sorts the
+        // files as a page does)
+        let sort = system_sort(&self.sort).unwrap_or(FileSort {
+            by: SortBy::ImportTime,
+            order: SortOrder::Descending,
+        });
         let snapshot = self.store.snapshot();
         let clock = Clock::system();
         match self

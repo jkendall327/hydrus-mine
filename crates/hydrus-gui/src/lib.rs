@@ -410,16 +410,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
-    let choices = sort::choices();
-    let names: Vec<SharedString> = choices.iter().map(|c| c.name.as_str().into()).collect();
-    window.set_sort_names(ModelRc::new(VecModel::from(names)));
+    // (the sort types offered are the page's, as `refresh` lists them)
     window.on_sort_chosen({
         let page = page.clone();
         let shown = shown.clone();
-        let choices = choices.clone();
         move |index| {
+            let page = page();
+            let choices = {
+                let page = page.borrow();
+                sort::page_choices(page.store(), &page.sort().by)
+            };
             if let Some(choice) = usize::try_from(index).ok().and_then(|i| choices.get(i)) {
-                page().borrow_mut().set_sort_by(choice.by);
+                page.borrow_mut().set_sort_type(choice.by.clone());
                 shown(true);
             }
         }
@@ -975,7 +977,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         (
                             page.location().clone(),
                             page.selected_files(),
-                            page.page_sort(),
+                            page.sort().clone(),
                         )
                     };
                     change_pages(&|pages| {
@@ -1813,14 +1815,14 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     window.set_error(page.error().unwrap_or_default().into());
     window.set_status(page.status().into());
     let sort = page.sort();
-    let choices = sort::choices();
+    let choices = sort::page_choices(page.store(), &sort.by);
+    let names: Vec<SharedString> = choices.iter().map(|c| c.name.as_str().into()).collect();
+    window.set_sort_names(ModelRc::new(VecModel::from(names)));
     if let Some(i) = choices.iter().position(|c| c.by == sort.by) {
         window.set_sort_index(i32::try_from(i).unwrap_or(0));
         let orders: Vec<SharedString> = choices[i].orders.iter().map(|&o| o.into()).collect();
         window.set_order_names(ModelRc::new(VecModel::from(orders)));
-        window.set_order_index(i32::from(
-            sort.order == hydrus_search::SortOrder::Descending,
-        ));
+        window.set_order_index(i32::from(!sort.ascending));
     }
 }
 

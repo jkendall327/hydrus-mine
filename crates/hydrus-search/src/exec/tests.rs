@@ -736,7 +736,11 @@ fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
         Planner::Auto,
     );
     let snapshot = store.snapshot();
-    let sort = |files: &[HashId], by, fallback| {
+    let system = |by: SortBy, ascending| hydrus_core::pages::PageSort {
+        by: hydrus_core::pages::PageSortBy::System(i64::from(by.code())),
+        ascending,
+    };
+    let sort = |files: &[HashId], by, fallback: Option<&hydrus_core::pages::PageSort>| {
         store
             .read(|conn| {
                 Ok(super::sort_page_files(
@@ -744,10 +748,7 @@ fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
                     &snapshot,
                     &search,
                     files,
-                    FileSort {
-                        by,
-                        order: SortOrder::Ascending,
-                    },
+                    &system(by, true),
                     fallback,
                     &Clock::system(),
                 ))
@@ -756,14 +757,11 @@ fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
             .unwrap()
     };
     // by type, the largest files first among each type's
-    let largest_first = FileSort {
-        by: SortBy::FileSize,
-        order: SortOrder::Descending,
-    };
+    let largest_first = system(SortBy::FileSize, false);
     let by_size = sort(&files, SortBy::FileSize, None);
     let mut largest = by_size.clone();
     largest.reverse();
-    let with_fallback = sort(&files, SortBy::Mime, Some(largest_first));
+    let with_fallback = sort(&files, SortBy::Mime, Some(&largest_first));
     assert_eq!(with_fallback, sort(&largest, SortBy::Mime, None));
     assert_ne!(with_fallback, sort(&files, SortBy::Mime, None));
 }
