@@ -19,6 +19,7 @@ pub(crate) mod cvx;
 pub(crate) mod decode;
 pub(crate) mod exif;
 pub(crate) mod icc;
+pub(crate) mod metadata;
 pub(crate) mod pil;
 pub(crate) mod resample;
 

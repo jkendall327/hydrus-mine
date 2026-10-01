@@ -14,7 +14,7 @@ use crate::formats::archive::{self, Zip};
 use crate::formats::{apng, clip, flash, gif, isobmff, ole, pdf, pdn, psd, svg, webp};
 use crate::hashes::{self, FileHashes};
 use crate::imaging::decode::{self, InfoValue, Opened};
-use crate::imaging::{Raster, resample};
+use crate::imaging::{Raster, metadata, resample};
 use crate::thumbnail::{self, Thumbnail, ThumbnailSpec};
 use crate::{blurhash, detect, mimes, phash};
 
@@ -43,6 +43,13 @@ pub struct FileFlags {
     pub has_icc_profile: bool,
     /// Text metadata such as PNG comments or generation parameters.
     pub has_human_readable_embedded_metadata: bool,
+    /// An XMP packet.
+    pub has_xmp: bool,
+    /// IPTC fields worth showing.
+    pub has_iptc: bool,
+    /// The program that made or edited it (a PNG's Software, Creator or
+    /// Source text, or a "Created with ..." comment).
+    pub has_software_source: bool,
 }
 
 /// Everything importing a file computes.
@@ -585,6 +592,12 @@ impl MediaTools {
             flags.has_human_readable_embedded_metadata =
                 mimes::can_have_human_readable_embedded_metadata(mime)
                     && is_human_readable(&opened);
+            flags.has_xmp = mimes::can_have_xmp(mime)
+                && opened.xmp.as_deref().is_some_and(metadata::xmp_is_readable);
+            flags.has_iptc = mimes::can_have_iptc(mime)
+                && opened.iptc.as_deref().is_some_and(metadata::has_shown_iptc);
+            flags.has_software_source = mimes::can_have_software_source(mime)
+                && metadata::has_software_source(&opened.text_info);
         }
         flags
     }
@@ -763,16 +776,7 @@ const NOT_HUMAN_READABLE: &[&str] = &[
 
 /// `GetSoftwareSourceFromCommentInfoField` matched: such comments are not counted.
 fn is_software_comment(text: &str) -> bool {
-    for verb in ["Created", "Converted", "Cropped", "Compressed", "Edited"] {
-        for v in [verb.to_owned(), verb.to_lowercase()] {
-            if let Some(rest) = text.strip_prefix(&format!("{v} with "))
-                && rest.chars().next().is_some_and(|c| c != '\n')
-            {
-                return true;
-            }
-        }
-    }
-    false
+    metadata::software_from_comment(text).is_some()
 }
 
 /// `HasHumanReadableEmbeddedMetadata` over Pillow's `info` dict.

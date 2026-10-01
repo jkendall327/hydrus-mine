@@ -23,6 +23,10 @@ pub(crate) struct Opened {
     /// Entries of Pillow's `info` dict that could count as human-readable
     /// embedded metadata (after `load()`).
     pub text_info: Vec<(String, InfoValue)>,
+    /// `info['xmp']`, when Pillow gives it as bytes.
+    pub xmp: Option<Vec<u8>>,
+    /// The IPTC block `IptcImagePlugin.getiptcinfo` would parse.
+    pub iptc: Option<Vec<u8>>,
 }
 
 /// The shape of an `info` value, as far as `render_dict` cares.
@@ -82,6 +86,8 @@ fn plain(image: PilImage) -> Opened {
     Opened {
         image,
         text_info: Vec::new(),
+        xmp: None,
+        iptc: None,
     }
 }
 
@@ -171,6 +177,8 @@ struct JpegHeader {
     exif: Option<Vec<u8>>,
     xmp: Option<Vec<u8>>,
     icc_chunks: Vec<Vec<u8>>,
+    /// "Photoshop 3.0" APP13 segments.
+    photoshop: Vec<Vec<u8>>,
 }
 
 fn jpeg_header(data: &[u8]) -> Result<JpegHeader> {
@@ -180,6 +188,7 @@ fn jpeg_header(data: &[u8]) -> Result<JpegHeader> {
         exif: None,
         xmp: None,
         icc_chunks: Vec::new(),
+        photoshop: Vec::new(),
     };
     let mut i = 2;
     loop {
@@ -223,6 +232,7 @@ fn jpeg_header(data: &[u8]) -> Result<JpegHeader> {
                 h.xmp = payload.splitn(2, |&b| b == 0).nth(1).map(<[u8]>::to_vec);
             }
             0xE2 if payload.starts_with(b"ICC_PROFILE\x00") => h.icc_chunks.push(payload.to_vec()),
+            0xED if payload.starts_with(b"Photoshop 3.0\x00") => h.photoshop.push(payload.to_vec()),
             0xDA => return Ok(h),
             _ => {}
         }
@@ -278,7 +288,13 @@ fn open_jpeg(data: &[u8]) -> Result<Opened> {
         .map(exif::summarise_exif_blob)
         .unwrap_or_default();
     image.exif = exif::with_xmp_fallback(summary, header.xmp.as_deref());
-    Ok(plain(image))
+    let segments: Vec<&[u8]> = header.photoshop.iter().map(Vec::as_slice).collect();
+    let iptc = super::metadata::photoshop_resources(&segments).remove(&0x0404);
+    Ok(Opened {
+        xmp: header.xmp,
+        iptc,
+        ..plain(image)
+    })
 }
 
 // ---------------------------------------------------------------------- PNG
@@ -477,6 +493,7 @@ fn open_png(data: &[u8]) -> Result<Opened> {
     let mut seen_idat = false;
     let mut exif_blob: Option<Vec<u8>> = None;
     let mut xmp: Option<Vec<u8>> = None;
+    let mut info_xmp: Option<Vec<u8>> = None;
     let mut raw_exif_text: Option<String> = None;
     for chunk in &chunks {
         let before_idat = !seen_idat;
@@ -539,6 +556,9 @@ fn open_png(data: &[u8]) -> Result<Opened> {
             b"tEXt" | b"zTXt" | b"iTXt" => {
                 if &chunk.kind == b"iTXt" && chunk.data.starts_with(b"XML:com.adobe.xmp\x00") {
                     xmp = Some(chunk.data.to_vec());
+                    if let Some(value) = itxt_value(chunk.data) {
+                        info_xmp = Some(value);
+                    }
                 }
                 if let Some((k, v)) = png_text(chunk) {
                     if k == "Raw profile type exif"
@@ -644,7 +664,33 @@ fn open_png(data: &[u8]) -> Result<Opened> {
     };
     let xmp_value = xmp.as_deref().and_then(|x| x.splitn(2, |&b| b == 0).nth(1));
     image.exif = exif::with_xmp_fallback(summary, xmp_value);
-    Ok(Opened { image, text_info })
+    Ok(Opened {
+        image,
+        text_info,
+        xmp: info_xmp,
+        iptc: None,
+    })
+}
+
+/// The text of an `iTXt` chunk as `PngImagePlugin.chunk_iTXt` reads it
+/// (inflated if compressed); `None` where it gives up on the chunk.
+fn itxt_value(data: &[u8]) -> Option<Vec<u8>> {
+    let (_, rest) = split_at_nul(data)?;
+    let [flag, method, rest @ ..] = rest else {
+        return None;
+    };
+    let (_, rest) = split_at_nul(rest)?;
+    let (_, value) = split_at_nul(rest)?;
+    match (flag, method) {
+        (0, _) => Some(value.to_vec()),
+        (_, 0) => zlib_inflate(value).ok(),
+        _ => None,
+    }
+}
+
+fn split_at_nul(data: &[u8]) -> Option<(&[u8], &[u8])> {
+    let i = data.iter().position(|&b| b == 0)?;
+    Some((&data[..i], &data[i + 1..]))
 }
 
 fn decode_hex(s: &str) -> Option<Vec<u8>> {
@@ -737,8 +783,12 @@ fn open_webp(data: &[u8]) -> Result<Opened> {
     let summary = find(b"EXIF")
         .map(|e| exif::summarise_exif_blob(&e))
         .unwrap_or_default();
-    image.exif = exif::with_xmp_fallback(summary, find(b"XMP ").as_deref());
-    Ok(plain(image))
+    let xmp = find(b"XMP ").filter(|x| !x.is_empty());
+    image.exif = exif::with_xmp_fallback(summary, xmp.as_deref());
+    Ok(Opened {
+        xmp,
+        ..plain(image)
+    })
 }
 
 // ---------------------------------------------------------------------- BMP
@@ -1226,7 +1276,68 @@ fn open_tiff(data: &[u8]) -> Result<Opened> {
     image.check()?;
     image.icc_profile = icc;
     image.exif = exif::summarise_tiff(data, None);
-    Ok(plain(image))
+    // XMP (as BYTE or UNDEFINED, which Pillow gives as bytes) and the raw
+    // IPTC/NAA block
+    let xmp = tiff_raw_tag(data, 700)
+        .filter(|(kind, _)| matches!(kind, 1 | 7))
+        .map(|(_, bytes)| bytes);
+    let iptc = tiff_raw_tag(data, 33723).map(|(_, bytes)| bytes);
+    Ok(Opened {
+        xmp,
+        iptc,
+        ..plain(image)
+    })
+}
+
+/// A tag of a TIFF's first directory: its type and the bytes of its value,
+/// as stored.
+fn tiff_raw_tag(data: &[u8], tag: u16) -> Option<(u16, Vec<u8>)> {
+    let big = match data.get(..4)? {
+        b"II*\0" => false,
+        b"MM\0*" => true,
+        _ => return None,
+    };
+    let u16_at = |i: usize| -> Option<u16> {
+        let b: [u8; 2] = data.get(i..i + 2)?.try_into().ok()?;
+        Some(if big {
+            u16::from_be_bytes(b)
+        } else {
+            u16::from_le_bytes(b)
+        })
+    };
+    let u32_at = |i: usize| -> Option<u32> {
+        let b: [u8; 4] = data.get(i..i + 4)?.try_into().ok()?;
+        Some(if big {
+            u32::from_be_bytes(b)
+        } else {
+            u32::from_le_bytes(b)
+        })
+    };
+    let ifd = u32_at(4)? as usize;
+    let entries = usize::from(u16_at(ifd)?);
+    for n in 0..entries {
+        let entry = ifd + 2 + n * 12;
+        if u16_at(entry)? != tag {
+            continue;
+        }
+        let kind = u16_at(entry + 2)?;
+        let count = u32_at(entry + 4)? as usize;
+        let unit = match kind {
+            1 | 2 | 6 | 7 => 1,
+            3 | 8 => 2,
+            4 | 9 | 11 | 13 => 4,
+            5 | 10 | 12 => 8,
+            _ => return None,
+        };
+        let size = count.checked_mul(unit)?;
+        let start = if size <= 4 {
+            entry + 8
+        } else {
+            u32_at(entry + 8)? as usize
+        };
+        return Some((kind, data.get(start..start.checked_add(size)?)?.to_vec()));
+    }
+    None
 }
 
 // ---------------------------------------------------------------------- QOI

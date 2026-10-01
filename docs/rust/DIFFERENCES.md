@@ -80,7 +80,8 @@ and tested in memory.
   what works depends on the ffmpeg: 6.1 can't read HEIF images at all
   (they get the default thumbnail) and drops AVIF transparency. Newer
   ffmpeg (9 at least) reads both, and gives an image's transparency as a
-  separate stream, which we merge back.
+  separate stream, which we merge back. XMP inside AVIF and HEIF images
+  isn't looked for yet, so those files don't get the XMP flag at import.
 
 ## File lifecycle (`hydrus-store::content`)
 

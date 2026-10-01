@@ -264,3 +264,24 @@ fn a_missing_thumbnail_is_made_again_from_its_file() {
     assert!(w.importer.regenerate_thumbnail(&w.load(&hash)).is_err());
     assert!(!path.exists());
 }
+
+#[test]
+fn imports_record_xmp_iptc_and_software_flags() {
+    let w = world();
+    let options = FileImportOptions::default();
+    let dir = hydrus_testkit::fixture_path("metadata");
+    for (file, flag) in [
+        ("jpeg_xmp.jpg", FileFlags::XMP),
+        ("jpeg_iptc_keywords.jpg", FileFlags::IPTC),
+        ("png_creator.png", FileFlags::SOFTWARE_SOURCE),
+    ] {
+        let hash = w
+            .importer
+            .import_path(&dir.join(file), &options)
+            .unwrap()
+            .hash
+            .unwrap();
+        let flags = w.load(&hash).info.unwrap().flags;
+        assert!(flags.has(flag), "{file}: {flags:?}");
+    }
+}

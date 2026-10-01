@@ -1,0 +1,1555 @@
+{
+ "files": [
+  {
+   "file": "media/apng_3frames.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 23
+  },
+  {
+   "file": "media/apng_late_actl.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/apng_odd_delays.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 23
+  },
+  {
+   "file": "media/apng_rgba.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 23
+  },
+  {
+   "file": "media/apng_single_frame.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/avi_mpeg4.avi",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 27
+  },
+  {
+   "file": "media/avif_alpha.avif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 65
+  },
+  {
+   "file": "media/avif_sequence.avifs",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 66
+  },
+  {
+   "file": "media/avif_still.avif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 65
+  },
+  {
+   "file": "media/bmp_1bit.bmp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 4
+  },
+  {
+   "file": "media/bmp_24.bmp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 4
+  },
+  {
+   "file": "media/bmp_32_rgba.bmp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 4
+  },
+  {
+   "file": "media/bmp_8bit.bmp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 4
+  },
+  {
+   "file": "media/bmp_gray.bmp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 4
+  },
+  {
+   "file": "media/cbz_flat.cbz",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 73
+  },
+  {
+   "file": "media/cbz_folder.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 73
+  },
+  {
+   "file": "media/clip_inches_zero_fps.clip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 45
+  },
+  {
+   "file": "media/clip_mm_anim.clip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 45
+  },
+  {
+   "file": "media/clip_pixels.clip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 45
+  },
+  {
+   "file": "media/djvu.djvu",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 72
+  },
+  {
+   "file": "media/doc_legacy.doc",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 80
+  },
+  {
+   "file": "media/docx.docx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 76
+  },
+  {
+   "file": "media/docx_default.docx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 76
+  },
+  {
+   "file": "media/docx_nowords.docx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 76
+  },
+  {
+   "file": "media/empty.bin",
+   "mime_error": "ZeroSizeFileException"
+  },
+  {
+   "file": "media/epub2.epub",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 71
+  },
+  {
+   "file": "media/epub3.epub",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 71
+  },
+  {
+   "file": "media/epub_nocover.epub",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 71
+  },
+  {
+   "file": "media/exe.exe",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 52
+  },
+  {
+   "file": "media/flac.flac",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 16
+  },
+  {
+   "file": "media/flac_cover.flac",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 16
+  },
+  {
+   "file": "media/flash_cws.swf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 5
+  },
+  {
+   "file": "media/flash_fws.swf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 5
+  },
+  {
+   "file": "media/flash_zws.swf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 5
+  },
+  {
+   "file": "media/flv_h264.flv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 9
+  },
+  {
+   "file": "media/gif_anim.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 3
+  },
+  {
+   "file": "media/gif_anim_noduration.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 3
+  },
+  {
+   "file": "media/gif_anim_transparent.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 3
+  },
+  {
+   "file": "media/gif_grey.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 68
+  },
+  {
+   "file": "media/gif_small_frame.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 68
+  },
+  {
+   "file": "media/gif_static.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 68
+  },
+  {
+   "file": "media/gif_static_transparent.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 68
+  },
+  {
+   "file": "media/gzip.gz",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 58
+  },
+  {
+   "file": "media/heic_alpha.heic",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 63
+  },
+  {
+   "file": "media/heic_still.heic",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 63
+  },
+  {
+   "file": "media/html.html",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 8
+  },
+  {
+   "file": "media/hydrus_encrypted.zip.encrypted",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 12
+  },
+  {
+   "file": "media/ico_bmp.ico",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 7
+  },
+  {
+   "file": "media/ico_png.ico",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 7
+  },
+  {
+   "file": "media/jpeg_1x1.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_420.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_422.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_444_q95.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_cmyk.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_comment.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_exif_software.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_flat.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_gray.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_icc_p3.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_icc_srgb.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_large.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_mirror.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient2.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient3.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient4.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient5.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient6.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient7.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_orient8.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_progressive.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_tall.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_tiny.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/jpeg_wide.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "media/json.json",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 22
+  },
+  {
+   "file": "media/json_as_data.dat",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 22
+  },
+  {
+   "file": "media/jxl_still.jxl",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 85
+  },
+  {
+   "file": "media/krita.kra",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 55
+  },
+  {
+   "file": "media/krita_mimetype_late.kra",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 55
+  },
+  {
+   "file": "media/m4a_aac.m4a",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 36
+  },
+  {
+   "file": "media/m4v_h264.m4v",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mka_flac.mka",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 48
+  },
+  {
+   "file": "media/mka_vorbis.mka",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 48
+  },
+  {
+   "file": "media/mkv_h264.mkv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 20
+  },
+  {
+   "file": "media/mkv_vp9_aac.mkv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 20
+  },
+  {
+   "file": "media/mov_h264.mov",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 26
+  },
+  {
+   "file": "media/mp3.mp3",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 13
+  },
+  {
+   "file": "media/mp3_cover.mp3",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 13
+  },
+  {
+   "file": "media/mp4_25fps_odd.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mp4_audio.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 49
+  },
+  {
+   "file": "media/mp4_h264.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mp4_h264_aac.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mp4_rotated.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mp4_sar.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mp4_silent_audio.mp4",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 14
+  },
+  {
+   "file": "media/mpeg_mpeg1.mpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 25
+  },
+  {
+   "file": "media/ogg_opus.ogg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 15
+  },
+  {
+   "file": "media/ogg_vorbis.ogg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 15
+  },
+  {
+   "file": "media/ogv_theora.ogv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 47
+  },
+  {
+   "file": "media/ole_doc.doc",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 80
+  },
+  {
+   "file": "media/ole_ppt.ppt",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 82
+  },
+  {
+   "file": "media/ole_unknown.bin",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 79
+  },
+  {
+   "file": "media/ole_word_by_app.doc",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 80
+  },
+  {
+   "file": "media/ole_xls_by_app.xls",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 81
+  },
+  {
+   "file": "media/openraster.ora",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 89
+  },
+  {
+   "file": "media/paintnet.pdn",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 86
+  },
+  {
+   "file": "media/pdf_empty_title.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_encrypted_owner.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_encrypted_user.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_image.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_keywords_only.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_multipage.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/pdf_text.pdf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 10
+  },
+  {
+   "file": "media/png_1bit.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_1x1.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_chrm_rgba.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_exif.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_flat.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_gama_chrm.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_gray16.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_icc_p3.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_interlaced.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_l.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_la.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_late_text.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_p.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_p_trns.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgb.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgb16.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba16.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_clear.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_nearly_opaque.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_opaque.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_software.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_srgb_chunk.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_tall.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_text.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_wide.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/png_ztxt.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "media/ppt_legacy.ppt",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 82
+  },
+  {
+   "file": "media/pptx.pptx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 78
+  },
+  {
+   "file": "media/pptx_nothumb.pptx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 78
+  },
+  {
+   "file": "media/procreate.procreate",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 69
+  },
+  {
+   "file": "media/procreate_notsilica.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 11
+  },
+  {
+   "file": "media/procreate_rotated.procreate",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 69
+  },
+  {
+   "file": "media/psd_icc.psd",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 35
+  },
+  {
+   "file": "media/psd_rgb.psd",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 35
+  },
+  {
+   "file": "media/psd_rgba.psd",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 35
+  },
+  {
+   "file": "media/qoi_rgb.qoi",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 70
+  },
+  {
+   "file": "media/qoi_rgba.qoi",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 70
+  },
+  {
+   "file": "media/ra_ac3.ra",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 38
+  },
+  {
+   "file": "media/random.bin",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 101
+  },
+  {
+   "file": "media/rar4.rar",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 31
+  },
+  {
+   "file": "media/rar5.rar",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 31
+  },
+  {
+   "file": "media/rm_rv10.rm",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 37
+  },
+  {
+   "file": "media/rtf.rtf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 75
+  },
+  {
+   "file": "media/sai2.sai2",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 54
+  },
+  {
+   "file": "media/sevenzip.7z",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 32
+  },
+  {
+   "file": "media/svg_sized.svg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 56
+  },
+  {
+   "file": "media/svg_viewbox.svg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 56
+  },
+  {
+   "file": "media/text.txt",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 101
+  },
+  {
+   "file": "media/tiff_gray_deflate.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "media/tiff_lzw_rgba.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "media/tiff_orient6.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "media/tiff_palette.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "media/tiff_raw.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "media/ts_mpeg2.ts",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 25
+  },
+  {
+   "file": "media/tta.tta",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 39
+  },
+  {
+   "file": "media/ugoira_json.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 74
+  },
+  {
+   "file": "media/ugoira_list_json.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 74
+  },
+  {
+   "file": "media/ugoira_plain.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 74
+  },
+  {
+   "file": "media/ugoira_rotated.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 74
+  },
+  {
+   "file": "media/wav.wav",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 46
+  },
+  {
+   "file": "media/wavpack.wv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 53
+  },
+  {
+   "file": "media/webm_vp8.webm",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 21
+  },
+  {
+   "file": "media/webm_vp9_opus.webm",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 21
+  },
+  {
+   "file": "media/webp_alpha.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 33
+  },
+  {
+   "file": "media/webp_alpha_lossless.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 33
+  },
+  {
+   "file": "media/webp_anim.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 83
+  },
+  {
+   "file": "media/webp_anim_alpha.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 83
+  },
+  {
+   "file": "media/webp_exif_orient6.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 33
+  },
+  {
+   "file": "media/webp_lossless.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 33
+  },
+  {
+   "file": "media/webp_lossy.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 33
+  },
+  {
+   "file": "media/wma.wma",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 17
+  },
+  {
+   "file": "media/wmv_wmv2.wmv",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 18
+  },
+  {
+   "file": "media/xcf.xcf",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 57
+  },
+  {
+   "file": "media/xlsx.xlsx",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 77
+  },
+  {
+   "file": "media/zip_encrypted.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 11
+  },
+  {
+   "file": "media/zip_mixed_images.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 11
+  },
+  {
+   "file": "media/zip_one_image.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 11
+  },
+  {
+   "file": "media/zip_plain.zip",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 11
+  },
+  {
+   "file": "metadata/gif_comment_created_with.gif",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 68
+  },
+  {
+   "file": "metadata/jpeg_comment_created_with.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_after_unwanted.jpg",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_blank.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_caption.jpg",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_empty_field.jpg",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_invalid.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_keywords.jpg",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_long.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_truncated.jpg",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_iptc_version_only.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_photoshop_no_iptc.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_xmp.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_xmp_empty.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_xmp_not_utf8.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 1
+  },
+  {
+   "file": "metadata/jpeg_xmp_padded.jpg",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 1
+  },
+  {
+   "file": "metadata/png_comment_created_with.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_comment_plain.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_creator.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_lowercase_comment.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_software_itxt.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_software_late.png",
+   "has_iptc": false,
+   "has_software_source": true,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_source_blank.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_xmp.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_xmp_as_text.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_xmp_compressed.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_xmp_late.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 2
+  },
+  {
+   "file": "metadata/png_xmp_not_utf8.png",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 2
+  },
+  {
+   "file": "metadata/tiff_iptc.tiff",
+   "has_iptc": true,
+   "has_software_source": false,
+   "has_xmp": false,
+   "mime": 34
+  },
+  {
+   "file": "metadata/tiff_xmp.tiff",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 34
+  },
+  {
+   "file": "metadata/webp_xmp.webp",
+   "has_iptc": false,
+   "has_software_source": false,
+   "has_xmp": true,
+   "mime": 33
+  }
+ ]
+}

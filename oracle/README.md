@@ -33,6 +33,8 @@ export QT_QPA_PLATFORM=offscreen
 | `dump_duplicate_merges.py` | `fixtures/duplicate_merges.json`: what duplicate decisions with metadata merges leave in the reference's database |
 | `dump_note_merges.py` | `fixtures/note_merges.json`: note merging ("merge cleverly") on duplicate decisions |
 | `dump_media.py` | `fixtures/media.json`: a generated media corpus and the reference's view of it |
+| `dump_bandwidth.py` | `fixtures/bandwidth.json`: bandwidth trackers, rules and the manager stepped through time |
+| `dump_metadata_flags.py` | `fixtures/metadata_flags.json`: the XMP, IPTC and software/source flags of the corpus and of `fixtures/metadata/` (images carrying those) |
 | `dump_domains.py` | `fixtures/domains.json`: domain helpers over a public-suffix corpus |
 | `dump_url_classes.py` | `fixtures/url_classes.json`: URL classes making referral URLs and next pages |
 | `dump_gugs.py` | `fixtures/gugs.json`: gallery URL generators on random searches |

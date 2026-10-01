@@ -426,6 +426,9 @@ impl FileRecord {
                 a.flags.has_human_readable_embedded_metadata,
                 FileFlags::HUMAN_READABLE_METADATA,
             ),
+            (a.flags.has_xmp, FileFlags::XMP),
+            (a.flags.has_iptc, FileFlags::IPTC),
+            (a.flags.has_software_source, FileFlags::SOFTWARE_SOURCE),
         ] {
             if on {
                 flags |= flag;
