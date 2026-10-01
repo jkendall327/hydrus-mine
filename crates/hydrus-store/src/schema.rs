@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -58,6 +58,18 @@ CREATE TABLE page_files (
     page_key BLOB PRIMARY KEY,
     -- hash ids in order, 4 bytes each, little-endian
     hash_ids BLOB NOT NULL
+) STRICT;
+";
+
+/// Bandwidth usage per network context (`bandwidth.rs`), so limits over
+/// days hold across restarts.
+const V9: &str = r"
+CREATE TABLE bandwidth_usage (
+    context_kind INTEGER NOT NULL,
+    context_data TEXT NOT NULL,
+    -- hydrus_core::bandwidth::Tracker (JSON)
+    tracker TEXT NOT NULL,
+    PRIMARY KEY (context_kind, context_data)
 ) STRICT;
 ";
 

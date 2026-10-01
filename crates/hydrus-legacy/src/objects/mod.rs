@@ -28,6 +28,7 @@
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 pub mod auto_resolution;
+pub mod bandwidth;
 mod client_api;
 mod client_options;
 pub mod domain;

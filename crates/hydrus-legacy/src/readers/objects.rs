@@ -276,6 +276,41 @@ impl LegacyDb {
         self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)
     }
 
+    /// The bandwidth manager's rules (type 94), if stored.
+    pub fn bandwidth_manager(
+        &self,
+    ) -> Result<Option<crate::objects::bandwidth::LegacyBandwidthManager>> {
+        self.singleton(
+            SerialisableType(94),
+            crate::objects::bandwidth::bandwidth_manager,
+        )
+    }
+
+    /// The bandwidth manager's usage containers (type 97), by name. Each is
+    /// decoded on its own: one that can't be read comes back as its error.
+    #[allow(clippy::type_complexity)]
+    pub fn bandwidth_trackers(
+        &self,
+    ) -> Result<
+        Vec<(
+            String,
+            std::result::Result<crate::objects::bandwidth::LegacyTrackerContainer, LegacyError>,
+        )>,
+    > {
+        Ok(self
+            .latest_named(SerialisableType(97))?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named tracker {:?}", row.name);
+                let decoded = row
+                    .parse()
+                    .and_then(|object| crate::objects::bandwidth::tracker_container(&object))
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
+            })
+            .collect())
+    }
+
     /// The latest object of each name of one type in `json_dumps_named`.
     fn latest_named(&self, kind: SerialisableType) -> Result<Vec<StoredNamedObject>> {
         let mut latest: std::collections::BTreeMap<String, StoredNamedObject> =

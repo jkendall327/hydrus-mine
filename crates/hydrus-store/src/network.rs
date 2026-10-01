@@ -15,36 +15,7 @@ use hydrus_core::url::psl;
 
 use crate::error::{Result, StoreError};
 
-/// `CC.NETWORK_CONTEXT_GLOBAL`.
-pub const CONTEXT_GLOBAL: i64 = 0;
-/// `CC.NETWORK_CONTEXT_DOMAIN`.
-pub const CONTEXT_DOMAIN: i64 = 2;
-
-/// What a network rule applies to.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct NetworkContext {
-    /// `CC.NETWORK_CONTEXT_*`.
-    pub kind: i64,
-    /// The domain for domain contexts; empty for the global context; hex for
-    /// contexts keyed by bytes.
-    pub data: String,
-}
-
-impl NetworkContext {
-    pub fn global() -> Self {
-        Self {
-            kind: CONTEXT_GLOBAL,
-            data: String::new(),
-        }
-    }
-
-    pub fn domain(domain: impl Into<String>) -> Self {
-        Self {
-            kind: CONTEXT_DOMAIN,
-            data: domain.into(),
-        }
-    }
-}
+pub use hydrus_core::network::{CONTEXT_DOMAIN, CONTEXT_GLOBAL, NetworkContext};
 
 /// A cookie, as Python's cookie jar keeps it.
 #[derive(Debug, Clone, PartialEq, Eq)]

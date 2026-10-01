@@ -3,6 +3,7 @@
 //! See `docs/rust/STORE.md` for the schema design and consistency rules.
 
 pub mod autocomplete;
+pub mod bandwidth;
 pub mod conn;
 pub mod content;
 pub mod counts;

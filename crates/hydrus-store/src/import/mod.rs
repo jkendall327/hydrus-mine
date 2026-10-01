@@ -59,6 +59,9 @@ pub struct ImportInput {
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
+    /// Each network context's bandwidth usage so far (the rules are a
+    /// setting).
+    pub bandwidth_usage: Vec<(NetworkContext, hydrus_core::bandwidth::Tracker)>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
 }
@@ -863,6 +866,12 @@ impl Copier<'_> {
             .rows
             .entry("network_cookies".into())
             .or_default() += input.cookies.len() as u64;
+        crate::bandwidth::save_usage(self.conn, &input.bandwidth_usage)?;
+        *self
+            .report
+            .rows
+            .entry("bandwidth_usage".into())
+            .or_default() += input.bandwidth_usage.len() as u64;
         Ok(())
     }
 
@@ -1321,6 +1330,36 @@ pub(crate) mod tests {
         let dest = dest_dir.path().join("hydrus.db");
         import_legacy(source.path(), &dest).unwrap();
         (source, dest_dir, dest)
+    }
+
+    #[test]
+    fn a_default_install_keeps_the_default_bandwidth_rules() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let stored: crate::bandwidth::BandwidthSettings =
+            serde_json::from_value(input.settings["bandwidth"].clone()).unwrap();
+        let sorted = |mut v: Vec<(NetworkContext, hydrus_core::bandwidth::Rules)>| {
+            v.sort_by(|a, b| a.0.cmp(&b.0));
+            v
+        };
+        let defaults = crate::bandwidth::BandwidthSettings::default();
+        assert_eq!(sorted(stored.rules.clone()), sorted(defaults.rules.clone()));
+        assert_eq!(stored, BandwidthSettingsOrdered::with_rules(defaults, stored.rules.clone()));
+        // a fresh install has used no bandwidth yet
+        assert!(input.bandwidth_usage.is_empty());
+    }
+
+    /// `settings` with `rules` in place of its own (to compare the rest).
+    struct BandwidthSettingsOrdered;
+
+    impl BandwidthSettingsOrdered {
+        fn with_rules(
+            mut settings: crate::bandwidth::BandwidthSettings,
+            rules: Vec<(NetworkContext, hydrus_core::bandwidth::Rules)>,
+        ) -> crate::bandwidth::BandwidthSettings {
+            settings.rules = rules;
+            settings
+        }
     }
 
     #[test]

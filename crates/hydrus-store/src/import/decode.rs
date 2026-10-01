@@ -251,6 +251,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         insert_setting(&mut input, &autocomplete_settings(&manager))?;
     }
     network_input(db, &mut input)?;
+    bandwidth_input(db, options.as_ref(), &mut input)?;
     match db.url_class_settings() {
         Ok(Some(mut url_classes)) => {
             url_classes.collapse_leading_slashes = options
@@ -869,6 +870,108 @@ fn appearance(appearance: &legacy::StarAppearance) -> Result<StarAppearance> {
 }
 
 /// Custom headers and unexpired cookies.
+/// The bandwidth rules (with the options that pace gallery pages) and each
+/// network context's usage so far, so today's limits carry on.
+fn bandwidth_input(
+    db: &LegacyDb,
+    options: Option<&legacy::ClientOptions>,
+    input: &mut ImportInput,
+) -> Result<()> {
+    use crate::bandwidth::BandwidthSettings;
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules, Tracker};
+    use hydrus_core::network::NetworkContext;
+
+    let context = |c: &legacy::bandwidth::LegacyNetworkContext| NetworkContext {
+        kind: c.kind,
+        data: c.data.clone().unwrap_or_default(),
+    };
+    let mut settings = BandwidthSettings::default();
+    match db.bandwidth_manager() {
+        Ok(Some(manager)) => {
+            let mut rules = Vec::new();
+            for (c, legacy_rules) in &manager.rules {
+                let mut converted = Rules::default();
+                for &(kind, span, max) in legacy_rules {
+                    let Some(kind) = BandwidthType::from_code(kind) else {
+                        input.warnings.push(format!(
+                            "A bandwidth rule of unknown type {kind} on {} was dropped",
+                            context(c).to_human_string()
+                        ));
+                        continue;
+                    };
+                    converted.add(Rule::new(
+                        kind,
+                        span.and_then(|s| u64::try_from(s).ok()),
+                        u64::try_from(max).unwrap_or(0),
+                    ));
+                }
+                rules.push((context(c), converted));
+            }
+            settings.rules = rules;
+        }
+        Ok(None) => {}
+        Err(e) => input.warnings.push(format!(
+            "The bandwidth rules could not be read, so the defaults apply: {e}"
+        )),
+    }
+    if let Some(options) = options {
+        for (key, field) in [
+            (
+                "gallery_page_wait_period_pages",
+                &mut settings.gallery_page_wait_pages,
+            ),
+            (
+                "gallery_page_wait_period_subscriptions",
+                &mut settings.gallery_page_wait_subscriptions,
+            ),
+            ("watcher_page_wait_period", &mut settings.watcher_page_wait),
+        ] {
+            if let Some(&n) = options.integers.get(key) {
+                *field = n;
+            }
+        }
+        if let Some(&b) = options
+            .booleans
+            .get("override_bandwidth_on_file_urls_from_post_urls")
+        {
+            settings.override_on_file_urls_from_posts = b;
+        }
+    }
+    insert_setting(input, &settings)?;
+
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    match db.bandwidth_trackers() {
+        Ok(trackers) => {
+            for (name, decoded) in trackers {
+                match decoded {
+                    Ok(t) => {
+                        let c = context(&t.context);
+                        // (downloader and watcher pages' usage isn't kept)
+                        if c.is_ephemeral() {
+                            continue;
+                        }
+                        let counters = t.counters.map(|v| {
+                            v.into_iter()
+                                .map(|(k, n)| (k, u64::try_from(n).unwrap_or(0)))
+                                .collect()
+                        });
+                        input
+                            .bandwidth_usage
+                            .push((c, Tracker::from_counters(counters, now)));
+                    }
+                    Err(e) => input.warnings.push(format!(
+                        "Bandwidth usage {name:?} could not be read, so it starts afresh: {e}"
+                    )),
+                }
+            }
+        }
+        Err(e) => input.warnings.push(format!(
+            "Bandwidth usage could not be read, so it starts afresh: {e}"
+        )),
+    }
+    Ok(())
+}
+
 fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
     use crate::network::{Approval, Cookie, CustomHeader, NetworkContext};
 

@@ -4,6 +4,7 @@
 //! written in: typed ids, content hashes, file types, services, tags and the
 //! enumerations that are part of the persisted format and the Client API.
 
+pub mod bandwidth;
 pub mod casefold;
 pub mod content;
 pub mod duplicates;
@@ -12,6 +13,7 @@ pub mod hash;
 pub mod ids;
 pub mod import_options;
 pub mod mime;
+pub mod network;
 pub mod notes;
 pub mod numbers;
 pub mod pages;
