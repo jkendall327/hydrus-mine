@@ -15,8 +15,8 @@ use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
 use hydrus_core::media_viewer::{
-    InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction, ZoomCentre,
-    ZoomRules, ZoomType,
+    AudioSettings, InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction,
+    ZoomCentre, ZoomRules, ZoomType,
 };
 use hydrus_core::subscriptions::CheckerOptions;
 
@@ -291,6 +291,32 @@ impl ClientOptions {
         }
         if let Some(label) = self.strings.get("has_audio_label") {
             out.has_audio_label.clone_from(label);
+        }
+        out
+    }
+
+    /// The volumes and mutes (`global_audio_*`, `media_viewer_audio_*`).
+    pub fn audio_settings(&self) -> AudioSettings {
+        let mut out = AudioSettings::default();
+        for (key, field) in [
+            ("global_audio_mute", &mut out.global_mute),
+            ("media_viewer_audio_mute", &mut out.viewer_mute),
+            (
+                "media_viewer_uses_its_own_audio_volume",
+                &mut out.viewer_uses_its_own_volume,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("global_audio_volume", &mut out.global_volume),
+            ("media_viewer_audio_volume", &mut out.viewer_volume),
+        ] {
+            if let Some(&value) = self.integers.get(key) {
+                *field = u8::try_from(value.clamp(0, 100)).unwrap_or(*field);
+            }
         }
         out
     }
@@ -610,6 +636,32 @@ mod tests {
     use super::ClientOptions;
 
     #[test]
+    fn the_volumes_and_mutes_come_across() {
+        use hydrus_core::media_viewer::AudioSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.booleans.insert("global_audio_mute".into(), true);
+        options
+            .booleans
+            .insert("media_viewer_uses_its_own_audio_volume".into(), true);
+        options.integers.insert("global_audio_volume".into(), 35);
+        // (out of the slider's range, as a hand-edited option might be)
+        options
+            .integers
+            .insert("media_viewer_audio_volume".into(), 150);
+        assert_eq!(
+            options.audio_settings(),
+            AudioSettings {
+                global_volume: 35,
+                global_mute: true,
+                viewer_volume: 100,
+                viewer_mute: false,
+                viewer_uses_its_own_volume: true,
+            }
+        );
+    }
+
+    #[test]
     fn the_new_client_defaults_decode() {
         let defaults = ClientOptions::defaults().unwrap();
         assert!(defaults.booleans.len() > 200);
@@ -623,6 +675,10 @@ mod tests {
         assert_eq!(
             defaults.info_line_settings(),
             hydrus_core::media_viewer::InfoLineSettings::default()
+        );
+        assert_eq!(
+            defaults.audio_settings(),
+            hydrus_core::media_viewer::AudioSettings::default()
         );
     }
 }

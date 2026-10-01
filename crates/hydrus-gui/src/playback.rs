@@ -2,7 +2,7 @@
 //! animations, as the reference's defaults have it): the player is made when
 //! first needed, and its frames are shown as they come.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
 use std::time::Duration;
@@ -14,6 +14,8 @@ pub(crate) struct Playback {
     conf: PathBuf,
     player: RefCell<Option<mpv::Player>>,
     frames: slint::Timer,
+    /// The volume and mute to play at.
+    audio: Cell<(u8, bool)>,
 }
 
 impl Playback {
@@ -22,6 +24,7 @@ impl Playback {
             conf,
             player: RefCell::new(None),
             frames: slint::Timer::default(),
+            audio: Cell::new((100, false)),
         })
     }
 
@@ -47,10 +50,15 @@ impl Playback {
                 }
             }
         }
-        if let Some(player) = player.as_ref()
-            && let Err(e) = player.load(path)
-        {
-            eprintln!("mpv could not play {}: {e}", path.display());
+        if let Some(player) = player.as_ref() {
+            if let Err(e) = player.load(path) {
+                eprintln!("mpv could not play {}: {e}", path.display());
+            }
+            // (as the reference sets them on each file it loads)
+            let (volume, mute) = self.audio.get();
+            if let Err(e) = player.set_audio(volume, mute) {
+                eprintln!("could not set mpv's volume: {e}");
+            }
         }
         let this = Rc::downgrade(self);
         self.frames.start(
@@ -113,6 +121,16 @@ impl Playback {
     pub fn toggle_pause(&self) {
         if let Some(player) = self.player.borrow().as_ref() {
             let _ = player.toggle_pause();
+        }
+    }
+
+    /// Play at `volume` (0 to 100), muted or not, from now on.
+    pub fn set_audio(&self, volume: u8, mute: bool) {
+        self.audio.set((volume, mute));
+        if let Some(player) = self.player.borrow().as_ref()
+            && let Err(e) = player.set_audio(volume, mute)
+        {
+            eprintln!("could not set mpv's volume: {e}");
         }
     }
 

@@ -6,7 +6,10 @@
 // mouse wheel) zoom in and out, and shift and the arrow keys (or dragging)
 // move the file. Under a file that plays, its scanbar shows how far through
 // it is: a click or drag on it seeks there, and ctrl and left or right seek
-// back 2.5 seconds or on 5. F3 manages the file's tags. F7 archives the file and
+// back 2.5 seconds or on 5. Beside the scanbar of a file with sound, its
+// volume control: ctrl+g (or a click on it) mutes and unmutes everything,
+// and with the pointer on it the volume and the viewer's own mute show
+// above it. F3 manages the file's tags. F7 archives the file and
 // shift+F7 returns it to the inbox; delete deletes it (asking first: enter
 // or escape answers) and shift+delete undeletes it. With the pointer over the
 // window's left fifth, the file's tags show there, as the reference's tags
@@ -95,6 +98,25 @@ export component MediaViewerWindow inherits Window {
     in property <bool> scanbar-shown;
     in property <float> scanbar-progress;
     in property <string> scanbar-text;
+    // the volume control at the scanbar's right, for a file mpv plays with
+    // sound: the global mute, and the viewer's own and its volume (0 to 100)
+    in property <bool> volume-shown;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    // whether the volume control is open (the scanbar stays full meanwhile,
+    // as the reference's controls bar does while its popup shows)
+    in-out property <bool> volume-open;
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    // the volumes or mutes were changed elsewhere (ctrl+g in the main window)
+    callback audio-changed();
+    // the volume a point on the volume control's track (`top` to `top` +
+    // `track`, loudest at the top) sets
+    pure function volume-at(y: length, top: length, track: length) -> int {
+        return max(0, min(100, round((top + track - y) / track * 100)));
+    }
     // the bar at its full size near the pointer (as the reference's
     // animation bar pops in), else a thin line
     property <length> bar-top: root.media-y + root.media-height - 20px;
@@ -148,6 +170,11 @@ export component MediaViewerWindow inherits Window {
             }
             if (event.text == Key.F3) {
                 root.manage-tags();
+                return accept;
+            }
+            // as the reference's global shortcuts have it
+            if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
+                root.flip-global-mute();
                 return accept;
             }
             if (event.text == Key.F7) {
@@ -269,9 +296,9 @@ export component MediaViewerWindow inherits Window {
             }
         }
         if root.scanbar-shown: bar := Rectangle {
-            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed;
+            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
             x: root.media-x;
-            width: root.media-width;
+            width: root.media-width - (root.volume-shown ? 24px : 0px);
             height: self.full ? 20px : 5px;
             y: root.media-y + root.media-height - self.height;
             background: #303030;
@@ -303,6 +330,77 @@ export component MediaViewerWindow inherits Window {
                 }
                 moved => {
                     root.scan(self.mouse-x, self.width);
+                }
+            }
+        }
+        // the reference's `VolumeControl`: the global mute, and with the
+        // pointer on it, above it the volume (`VolumeSlider`) and the
+        // viewer's own mute (`AudioMuteButton`); its bottom row stays put
+        if root.scanbar-shown && root.volume-shown: volume-box := Rectangle {
+            property <bool> open: volume-area.has-hover || volume-area.pressed;
+            changed open => { root.volume-open = self.open; }
+            property <length> line: 20px;
+            property <length> track-top: 10px;
+            property <length> track: 100px;
+            // the volume and the viewer's mute, above the global mute
+            property <length> popup: self.track + 2 * self.track-top + self.line;
+            width: 24px;
+            height: self.open ? self.popup + self.line : root.bar-near ? self.line : 5px;
+            x: root.media-x + root.media-width - self.width;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            if volume-box.open: Rectangle {
+                x: (volume-box.width - self.width) / 2;
+                y: volume-box.track-top;
+                width: 4px;
+                height: volume-box.track;
+                background: #606060;
+            }
+            if volume-box.open: Rectangle {
+                x: 4px;
+                y: volume-box.track-top + volume-box.track * (1 - root.volume / 100) - 3px;
+                width: volume-box.width - 8px;
+                height: 6px;
+                background: #b0b0b0;
+            }
+            if volume-box.open: Text {
+                y: volume-box.popup - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.viewer-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            if volume-box.height >= volume-box.line: Text {
+                y: volume-box.height - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.global-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            volume-area := TouchArea {
+                pointer-event(event) => {
+                    if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                        if (self.mouse-y >= volume-box.height - volume-box.line) {
+                            root.flip-global-mute();
+                        } else if (volume-box.open && self.mouse-y >= volume-box.popup - volume-box.line) {
+                            root.flip-viewer-mute();
+                        } else if (volume-box.open) {
+                            root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
+                        }
+                    }
+                }
+                moved => {
+                    if (self.pressed && volume-box.open && self.pressed-y < volume-box.popup - volume-box.line) {
+                        root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
+                    }
                 }
             }
         }

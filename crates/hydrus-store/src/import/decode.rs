@@ -179,6 +179,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             .map(legacy::ClientOptions::info_line_settings)
             .unwrap_or_default(),
     )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::audio_settings)
+            .unwrap_or_default(),
+    )?;
     let mut handling = crate::settings::FileHandlingSettings::default();
     if let Some(options) = &options {
         let boolean = |key: &str| options.booleans.get(key).copied();

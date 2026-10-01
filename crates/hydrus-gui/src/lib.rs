@@ -22,6 +22,7 @@ pub use ui::*;
 mod animation;
 pub mod archive_delete;
 mod archive_delete_window;
+pub mod audio;
 pub mod autocomplete;
 pub mod collect;
 pub mod duplicate_filter;
@@ -687,6 +688,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // F12: the archive/delete filter, on the files selected, else them all
     let archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>> = Rc::default();
+    window.on_flip_global_mute({
+        let pages = pages.clone();
+        let viewer = viewer.clone();
+        move || {
+            audio::flip_global_mute(pages.borrow().store());
+            if let Some(viewer) = viewer.borrow().as_ref() {
+                viewer.invoke_audio_changed();
+            }
+        }
+    });
     window.on_archive_delete_filter({
         let page = page.clone();
         let archive_delete = archive_delete.clone();
@@ -1424,6 +1435,22 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
+    // the volume and mutes, as kept, on the window and the player
+    let show_audio = {
+        let weak = window.as_weak();
+        let playback = playback.clone();
+        let store = model.borrow().store().clone();
+        move || {
+            let audio = audio::settings(&store);
+            playback.set_audio(audio.current_viewer_volume(), audio.viewer_muted());
+            if let Some(window) = weak.upgrade() {
+                window.set_global_muted(audio.global_mute);
+                window.set_viewer_muted(audio.viewer_mute);
+                window.set_volume(i32::from(audio.current_viewer_volume()));
+            }
+        }
+    };
+    show_audio();
     // the scanbar of the file playing, if it has one, and which player
     // plays it: mpv, or the client's own (`true`)
     let scanbar: Rc<std::cell::Cell<Option<(scanbar::Scanbar, bool)>>> = Rc::default();
@@ -1556,6 +1583,9 @@ fn open_viewer(
             };
             scanbar.set(bar);
             window.set_scanbar_shown(bar.is_some());
+            window.set_volume_shown(playable.is_some() && model.has_audio());
+            // (a control made afresh starts closed)
+            window.set_volume_open(false);
             show_scanbar(0.0);
             drop(model);
             show_ratings();
@@ -1564,6 +1594,34 @@ fn open_viewer(
     };
     show();
     bind_zoom!(window, zoomed);
+    window.on_audio_changed(show_audio.clone());
+    window.on_flip_global_mute({
+        let store = model.borrow().store().clone();
+        let show_audio = show_audio.clone();
+        move || {
+            audio::flip_global_mute(&store);
+            show_audio();
+        }
+    });
+    window.on_flip_viewer_mute({
+        let store = model.borrow().store().clone();
+        let show_audio = show_audio.clone();
+        move || {
+            audio::change(&store, |a| a.viewer_mute = !a.viewer_mute);
+            show_audio();
+        }
+    });
+    window.on_volume_changed({
+        let store = model.borrow().store().clone();
+        let show_audio = show_audio.clone();
+        move |volume| {
+            let volume = u8::try_from(volume.clamp(0, 100)).unwrap_or(0);
+            if audio::settings(&store).current_viewer_volume() != volume {
+                audio::change(&store, |a| a.set_viewer_volume(volume));
+                show_audio();
+            }
+        }
+    });
     window.on_rating_clicked({
         let model = model.clone();
         move |row, left, proportion| {

@@ -249,6 +249,64 @@ impl Default for InfoLineSettings {
     }
 }
 
+/// Sound (the reference's audio options, less the preview's, which
+/// hydrus-rs has no preview for): the global volume and mute, and the
+/// media viewer's own. The viewer plays at its own volume only if it
+/// uses it, and is muted if either mute is on.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct AudioSettings {
+    /// `global_audio_volume`, 0 to 100.
+    pub global_volume: u8,
+    /// `global_audio_mute`.
+    pub global_mute: bool,
+    /// `media_viewer_audio_volume`.
+    pub viewer_volume: u8,
+    /// `media_viewer_audio_mute`.
+    pub viewer_mute: bool,
+    /// `media_viewer_uses_its_own_audio_volume`.
+    pub viewer_uses_its_own_volume: bool,
+}
+
+impl Default for AudioSettings {
+    fn default() -> Self {
+        Self {
+            global_volume: 70,
+            global_mute: false,
+            viewer_volume: 70,
+            viewer_mute: false,
+            viewer_uses_its_own_volume: false,
+        }
+    }
+}
+
+impl AudioSettings {
+    /// The media viewer's volume (`GetCorrectCurrentVolume`).
+    pub fn current_viewer_volume(&self) -> u8 {
+        if self.viewer_uses_its_own_volume {
+            self.viewer_volume
+        } else {
+            self.global_volume
+        }
+    }
+
+    /// Whether the media viewer is muted (`GetCorrectCurrentMute`).
+    pub fn viewer_muted(&self) -> bool {
+        self.viewer_mute || self.global_mute
+    }
+
+    /// Set the volume the viewer's slider moves: the viewer's own if it
+    /// uses it, else the global one (`VolumeSlider`, `ChangeVolume`).
+    pub fn set_viewer_volume(&mut self, volume: u8) {
+        let volume = volume.min(100);
+        if self.viewer_uses_its_own_volume {
+            self.viewer_volume = volume;
+        } else {
+            self.global_volume = volume;
+        }
+    }
+}
+
 /// A new client's zoom steps.
 pub const DEFAULT_MEDIA_ZOOMS: [f64; 19] = [
     0.01, 0.05, 0.1, 0.15, 0.2, 0.3, 0.5, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.5, 2.0, 3.0, 5.0, 10.0,

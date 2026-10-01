@@ -197,7 +197,14 @@ frame under the pointer, and ctrl and the arrows go to the frame showing
 that much earlier or later (or if that is the frame shown, the one
 before or after it), timed as the reference times them (a WebP's frames
 by its frame chunks). Playing pauses while the scanbar is dragged and
-resumes when it is let go, as in the reference.
+resumes when it is let go, as in the reference. A file mpv plays that has
+sound plays at your hydrus volume (70 by default; the media viewer's own
+if you had it use its own), muted if hydrus's global or media viewer mute
+is on, and its scanbar has the reference's volume control at its right:
+a click there (or ctrl+g, in the viewer or the main window) mutes and
+unmutes everything, and with the pointer on it the volume slider and the
+viewer's own mute show above it, the scanbar staying full meanwhile;
+changes are kept, as hydrus keeps them in its options.
 Slint's software renderer scales images by their nearest pixel, so stills
 are also drawn as the reference draws them: the part showing is cut out
 and resized with the file type's zoom qualities (area shrinking, Lanczos
@@ -278,7 +285,8 @@ closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of
 the thumbnails' menu, system
 predicates in the autocomplete, the viewer's other hover frames
-(the top one's buttons; editing, copying and hiding notes), volume, the scanbar's buffering
+(the top one's buttons; editing, copying and hiding notes), the volume shortcuts
+other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, downloader pages' own panels; in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,

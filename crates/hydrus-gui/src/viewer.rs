@@ -89,6 +89,16 @@ impl MediaViewer {
         playable(&self.store, self.current())
     }
 
+    /// Whether the current file has sound (for which the viewer shows its
+    /// volume control, as the reference's `ShouldHaveVolumeControl`).
+    pub fn has_audio(&self) -> bool {
+        self.store
+            .read(|conn| hydrus_store::media::load_basic(conn, &[self.current()]))
+            .ok()
+            .and_then(|results| results.into_iter().next()?.info)
+            .is_some_and(|info| info.has_audio)
+    }
+
     /// The current file as a still: an image decoded whole; anything else by
     /// its thumbnail.
     pub fn media(&self) -> Option<hydrus_media::Raster> {

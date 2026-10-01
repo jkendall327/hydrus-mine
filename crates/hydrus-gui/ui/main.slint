@@ -377,6 +377,7 @@ export component MainWindow inherits Window {
     callback close-page();
     callback unclose-page();
     callback archive-delete-filter();
+    callback flip-global-mute();
     // the selected file's shortcuts, and a question's answer
     callback archive-selected();
     callback inbox-selected();
@@ -467,6 +468,12 @@ export component MainWindow inherits Window {
             // as in the reference, F12 opens the archive/delete filter
             if (event.text == Key.F12) {
                 root.archive-delete-filter();
+                return accept;
+            }
+            // as the reference's global shortcuts have it, ctrl+g mutes and
+            // unmutes everything
+            if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
+                root.flip-global-mute();
                 return accept;
             }
             // as in the reference, ctrl+u reopens the page closed last

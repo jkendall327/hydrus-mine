@@ -281,6 +281,11 @@ impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";
 }
 
+/// The volume and mute the media viewer plays at.
+impl Setting for hydrus_core::media_viewer::AudioSettings {
+    const KEY: &'static str = "audio";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";

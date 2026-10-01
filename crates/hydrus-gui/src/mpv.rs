@@ -319,19 +319,39 @@ impl Player {
         self.number("duration").map(|s| s * 1000.0)
     }
 
-    pub fn paused(&self) -> bool {
+    /// A flag property (`pause`, `mute`): false if mpv hasn't it.
+    fn flag(&self, name: &std::ffi::CStr) -> bool {
         let mut flag: c_int = 0;
         // SAFETY: a valid handle, a NUL-terminated name, and an int for mpv
         // to write
         let error = unsafe {
             (self.api.get_property)(
                 self.handle,
-                c"pause".as_ptr(),
+                name.as_ptr(),
                 FORMAT_FLAG,
                 (&raw mut flag).cast(),
             )
         };
         error >= 0 && flag != 0
+    }
+
+    pub fn paused(&self) -> bool {
+        self.flag(c"pause")
+    }
+
+    /// Play at `volume` (0 to 100), muted or not.
+    pub fn set_audio(&self, volume: u8, mute: bool) -> Result<(), String> {
+        self.command(&["set", "volume", &volume.min(100).to_string()])?;
+        self.command(&["set", "mute", if mute { "yes" } else { "no" }])
+    }
+
+    /// The volume mpv plays at, 0 to 100 (or more, if a config allows).
+    pub fn volume(&self) -> Option<f64> {
+        self.number("volume")
+    }
+
+    pub fn muted(&self) -> bool {
+        self.flag(c"mute")
     }
 
     pub fn set_paused(&self, paused: bool) -> Result<(), String> {

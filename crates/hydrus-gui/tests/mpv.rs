@@ -70,5 +70,13 @@ fn a_video_plays_into_frames_at_the_size_asked() {
     );
     player.toggle_pause().unwrap();
     assert!(!player.paused());
+
+    // it plays at the volume, muted or not, asked
+    player.set_audio(40, true).unwrap();
+    assert_eq!(player.volume(), Some(40.0));
+    assert!(player.muted());
+    player.set_audio(70, false).unwrap();
+    assert_eq!(player.volume(), Some(70.0));
+    assert!(!player.muted());
     player.stop().unwrap();
 }
