@@ -15,6 +15,15 @@ it opens on, and each page's controls in the order they are laid out:
   (and `"unit"`) for a number that may be "none" (`NoneableSpinCtrl`);
 - `{"choice": current text, "items": [texts]}` for a dropdown;
 - `{"text": text}` for a text box, `{"button": text}` for a button;
+- `{"noneable_text": text or null, "none_phrase": text}` for text that may
+  be none (`NoneableTextCtrl`);
+- `{"duration": seconds, "units": [...], "min": seconds}` for a time delta
+  (`TimeDeltaWidget`), its units those it shows of "days", "hours",
+  "minutes", "seconds" and "milliseconds"; and for one behind a button
+  (`TimeDeltaButton`) the same with the button's `"button_text"`;
+- `{"velocity": [number, seconds], "number_min": n, "number_max": n,
+  "per": text, "units": [...], "min": seconds}` for a number per time
+  (`VelocityCtrl`), `"per"` the text between them;
 - `{"tabs": [{"tab": name, "items": [...]}]}` for tabs;
 - `{"widget": class name}`, with its `"value"` if it has one (`GetValue`)
   or the `"items"` laid out in it, for anything else.
@@ -87,13 +96,48 @@ def walk( layout ):
     return out
 
 
+def units( w ):
+
+    names = [ 'days', 'hours', 'minutes', 'seconds', 'milliseconds' ]
+
+    return [ name for name in names if getattr( w, '_show_' + name, False ) ]
+
+
 def describe( w ):
 
     from qtpy import QtWidgets as QW
 
+    from hydrus.client.gui.metadata import ClientGUITime
     from hydrus.client.gui.widgets import ClientGUICommon
 
-    if isinstance( w, ClientGUICommon.StaticBox ):
+    if isinstance( w, ClientGUITime.VelocityCtrl ):
+
+        per = [ c.text() for c in w.findChildren( QW.QLabel ) if c.parentWidget() is w ]
+
+        ( number, seconds ) = w.GetValue()
+
+        out = {
+            'velocity' : [ number, seconds ],
+            'number_min' : w._num.minimum(),
+            'number_max' : w._num.maximum(),
+            'per' : per[ 0 ] if len( per ) > 0 else '',
+            'units' : units( w._times ),
+            'min' : w._times._min,
+        }
+
+    elif isinstance( w, ClientGUITime.TimeDeltaWidget ):
+
+        out = { 'duration' : w.GetValue(), 'units' : units( w ), 'min' : w._min }
+
+    elif isinstance( w, ClientGUITime.TimeDeltaButton ):
+
+        out = { 'duration' : w.GetValue(), 'units' : units( w ), 'min' : w._min, 'button_text' : w.text() }
+
+    elif isinstance( w, ClientGUICommon.NoneableTextCtrl ):
+
+        out = { 'noneable_text' : w.GetValue(), 'none_phrase' : w._checkbox.text() }
+
+    elif isinstance( w, ClientGUICommon.StaticBox ):
 
         out = { 'box' : w._title_st.text(), 'items' : walk( w._sizer ) }
 
