@@ -118,7 +118,7 @@ impl QueueRunner {
         for queue in all {
             if matches!(
                 queue.kind,
-                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery
+                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
             ) {
                 self.wake(queue.id);
             }
@@ -164,7 +164,9 @@ impl QueueRunner {
             .map(|q| q.kind);
         if !matches!(
             kind,
-            Some(QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery)
+            Some(
+                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
+            )
         ) {
             return;
         }
@@ -813,10 +815,10 @@ impl QueueRunner {
         let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
             .chain(seed.referral_url.as_deref())
             .collect();
-        let caller = if queue.kind == QueueKind::Watcher {
-            CallerType::WatcherUrls
-        } else {
-            CallerType::PostUrls
+        let caller = match queue.kind {
+            QueueKind::Watcher => CallerType::WatcherUrls,
+            QueueKind::LocalImport => CallerType::LocalImport,
+            _ => CallerType::PostUrls,
         };
         let options = match self
             .downloader
@@ -843,6 +845,9 @@ impl QueueRunner {
             handle.status.lock().files_status = e.into();
             return false;
         }
+        if let Some(local) = queues::LocalImport::of(queue) {
+            return self.work_on_path_seed(seed, options, local, handle).await;
+        }
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
         *handle.file_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
@@ -856,6 +861,60 @@ impl QueueRunner {
             tracing::error!("saving a file seed: {e}");
         }
         did_work
+    }
+}
+
+impl QueueRunner {
+    /// `HDDImport._WorkOnFiles`: import a local import's file from its
+    /// path, then delete it if the import says to (to the recycle bin, if
+    /// the options say) once it is in the database.
+    async fn work_on_path_seed(
+        &self,
+        mut seed: FileSeed,
+        options: crate::FullImportOptions,
+        local: queues::LocalImport,
+        handle: &Handle,
+    ) -> bool {
+        handle.status.lock().files_status = "importing".into();
+        let downloader = Arc::clone(&self.downloader);
+        let worked = tokio::task::spawn_blocking(move || {
+            let folders: hydrus_store::settings::FolderSettings = downloader
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            if let Err(e) = downloader.import_path_seed(
+                &mut seed,
+                &options,
+                folders.copy_import_files_to_temp_dir,
+            ) {
+                tracing::error!(path = %seed.data, "importing a file: {e}");
+            }
+            if local.delete_after_success
+                && seed.status.is_successful()
+                && let Err(e) = hydrus_store::paths::delete_or_recycle(
+                    &seed.data,
+                    folders.delete_to_recycle_bin,
+                )
+            {
+                tracing::error!(path = %seed.data, "deleting an imported file: {e}");
+            }
+            downloader
+                .store
+                .write(move |ctx| queues::update_file_seed(ctx.conn(), &seed))
+        })
+        .await;
+        handle.status.lock().files_status.clear();
+        match worked {
+            Ok(Ok(())) => true,
+            Ok(Err(e)) => {
+                tracing::error!("saving a file seed: {e}");
+                true
+            }
+            Err(e) => {
+                tracing::error!("importing a file: {e}");
+                false
+            }
+        }
     }
 }
 

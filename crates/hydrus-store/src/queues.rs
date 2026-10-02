@@ -26,6 +26,9 @@ pub enum QueueKind {
     Subscription,
     /// An import folder (its settings are the queue's extra).
     ImportFolder,
+    /// Files imported from disk (the reference's "import" page,
+    /// `HDDImport`; its [`LocalImport`] settings are the queue's extra).
+    LocalImport,
 }
 
 impl QueueKind {
@@ -36,6 +39,7 @@ impl QueueKind {
             QueueKind::Watcher => "watcher",
             QueueKind::Subscription => "subscription",
             QueueKind::ImportFolder => "import_folder",
+            QueueKind::LocalImport => "local_import",
         }
     }
 
@@ -46,6 +50,7 @@ impl QueueKind {
             "watcher" => QueueKind::Watcher,
             "subscription" => QueueKind::Subscription,
             "import_folder" => QueueKind::ImportFolder,
+            "local_import" => QueueKind::LocalImport,
             _ => return None,
         })
     }
@@ -453,6 +458,57 @@ pub fn create_queue(
     )?
     .execute(params![kind.as_str(), name, page_key, now, json(options)])?;
     Ok(conn.last_insert_rowid())
+}
+
+/// A local import's settings (`HDDImport`'s), kept as its queue's extra.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct LocalImport {
+    /// Delete each file (to the recycle bin, if the options say) once it
+    /// is imported or found already in the database.
+    pub delete_after_success: bool,
+}
+
+impl LocalImport {
+    /// A queue's, if it is a local import.
+    pub fn of(queue: &Queue) -> Option<Self> {
+        (queue.kind == QueueKind::LocalImport)
+            .then(|| serde_json::from_value(queue.extra.clone()).unwrap_or_default())
+    }
+}
+
+/// Make a local import of `paths`, each a path seed with its modified time
+/// (seconds) as its source time, in order (`HDDImport.__init__`); its id.
+pub fn create_local_import(
+    conn: &Connection,
+    page_key: Option<&[u8]>,
+    options: &ImportOptionsSlice,
+    paths: &[(String, Option<i64>)],
+    settings: LocalImport,
+    now: i64,
+) -> Result<i64> {
+    let id = create_queue(
+        conn,
+        QueueKind::LocalImport,
+        "import",
+        page_key,
+        options,
+        now,
+    )?;
+    set_queue_extra(conn, id, &serde_json::to_value(settings)?)?;
+    let seeds: Vec<NewFileSeed> = paths
+        .iter()
+        .map(|(path, modified)| NewFileSeed {
+            seed_type: SeedType::Path,
+            data: path.clone(),
+            data_for_comparison: path.clone(),
+            source_time: *modified,
+            referral_url: None,
+            meta: FileSeedMeta::default(),
+        })
+        .collect();
+    add_file_seeds(conn, id, &seeds, false, now)?;
+    Ok(id)
 }
 
 pub fn queue(conn: &Connection, id: i64) -> Result<Option<Queue>> {

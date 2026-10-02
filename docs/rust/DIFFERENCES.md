@@ -417,6 +417,19 @@ deletes its files from the client, migrated from the reference's database.
   and we take them in the order sidecars are read. The reference, written
   for Linux, takes them in its set's order, so either may win.
 
+## Local imports (`hydrus-download::queue`)
+
+Checked by `crates/hydrus-download/tests/local_import.rs`.
+
+- **A local import (the reference's "import" page, `HDDImport`) is an
+  import queue the daemon works**, as it does a URL downloader page's: its
+  files are imported in order from their paths, each with its modified
+  time as its source time, a missing one vetoed ("Source file does not
+  exist!"), and, if the import says, each one in the database afterwards
+  deleted (to the recycle bin, if the options say). Its sidecars (the
+  reference's metadata routers) and tags given per path aren't supported
+  yet.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server
