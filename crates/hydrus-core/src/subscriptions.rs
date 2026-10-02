@@ -115,6 +115,25 @@ impl CheckerOptions {
         (found, period)
     }
 
+    /// How fast files were appearing at the last check, as a watcher's
+    /// box words it (`GetPrettyCurrentVelocity`): "at last check, found 5
+    /// files in previous 1 day".
+    pub fn pretty_current_velocity(&self, seeds: &[SeedTime], last_check_time: i64) -> String {
+        if seeds.is_empty() {
+            return if last_check_time == 0 {
+                "no files yet".into()
+            } else {
+                "no files, unable to determine velocity".into()
+            };
+        }
+        let (found, delta) = self.current_velocity(seeds, last_check_time);
+        format!(
+            "at last check, found {} files in previous {}",
+            crate::numbers::human_int(found.max(0) as u64),
+            crate::time::pretty_time_delta(delta, false)
+        )
+    }
+
     pub fn has_static_check_time(&self) -> bool {
         self.never_faster_than == self.never_slower_than
     }

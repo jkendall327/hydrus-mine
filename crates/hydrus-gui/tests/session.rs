@@ -291,7 +291,13 @@ fn pages_open_and_close_as_the_reference_does() {
     // the last page closed: the one to its left
     pages.close_shown().unwrap();
     assert_eq!(shown(&pages), "threads");
-    assert!(pages.close_shown().is_err(), "a downloader page stays");
+    // a watcher page closes too (its watchers wait), and ctrl+u brings it
+    // back where it was
+    pages.close_shown().unwrap();
+    assert_eq!(names(&pages)[1], ["b"]);
+    assert!(pages.unclose());
+    assert_eq!(names(&pages)[1], ["b", "threads"]);
+    assert_eq!(shown(&pages), "threads");
     pages.select(1, 0);
     pages.close_shown().unwrap();
     assert_eq!(names(&pages)[1], ["threads"]);
@@ -351,14 +357,13 @@ fn pages_open_and_close_as_the_reference_does() {
     assert_eq!(bound.pages.borrow().shown().name, "files");
     ui.invoke_close_page();
     assert_eq!(bound.pages.borrow().shown().name, "threads");
+    // a watcher page closes too (its watchers hold no imports here, so
+    // without asking), and ctrl+u brings it back
     ui.invoke_close_page();
-    assert!(ui.get_error().contains("downloader"));
-    ui.set_error("".into());
-    ui.invoke_close_tab(0, 0);
-    assert!(
-        ui.get_error().contains("downloader"),
-        "nor a notebook holding one"
-    );
+    assert_eq!(ui.get_question(), "");
+    assert_ne!(bound.pages.borrow().shown().name, "threads");
+    ui.invoke_unclose_page();
+    assert_eq!(bound.pages.borrow().shown().name, "threads");
     // a tab other than the one shown closes without changing what is shown
     ui.invoke_new_page();
     ui.invoke_chooser_pressed(8);
@@ -1096,4 +1101,215 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
                 .page_closed
         );
     }
+}
+
+#[test]
+fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, QueueKind, SeedStatus, SeedType};
+    use hydrus_store::watchers::watcher_state;
+
+    let (_dirs, store) = store();
+    let files: Vec<(HashId, hydrus_core::Sha256)> = store
+        .read(|conn| {
+            let ids: Vec<HashId> = conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            let hashes = hydrus_store::master::hashes(conn, &ids)?;
+            Ok(ids.iter().map(|id| (*id, hashes[id])).collect())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // download, then watcher: an empty watcher page
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(4);
+    assert_eq!(bound.pages.borrow().shown().name, "watcher");
+    assert!(ui.get_watcher_page() && !ui.get_gallery_page());
+    let data = ui.get_watcher_data();
+    assert_eq!(data.top_status, "waiting for new watchers");
+    assert!(!data.highlighted);
+    assert_eq!(ui.get_status(), "no highlighted watcher");
+
+    // threads entered (a line that isn't one dropped) become watchers with
+    // the client's checker options, the first shown
+    let (one, two) = (
+        "https://boards.example/thread/1",
+        "https://boards.example/thread/2",
+    );
+    ui.invoke_watcher_urls(format!("{one}\n not a url \n{two}\n").into());
+    let key = bound.pages.borrow().shown().key;
+    let made = store
+        .read(move |c| queues::queues_with_page_key(c, &key.0))
+        .unwrap();
+    assert_eq!(made.len(), 2);
+    let checkers: hydrus_core::subscriptions::CheckerDefaults =
+        store.read(hydrus_store::settings::get).unwrap();
+    for queue in &made {
+        assert_eq!(
+            (queue.kind, queue.name.as_str()),
+            (QueueKind::Watcher, "watcher")
+        );
+        assert_eq!(watcher_state(queue).unwrap().checker, checkers.watchers);
+    }
+    let (first, second) = (made[0].id, made[1].id);
+    assert_eq!(watcher_state(&made[0]).unwrap().url, one);
+    let row = |ui: &MainWindow, row: usize| -> Vec<String> {
+        let cells = ui.get_watcher_rows().row_data(row).unwrap();
+        (0..cells.row_count())
+            .map(|i| cells.row_data(i).unwrap().text.to_string())
+            .collect()
+    };
+    let data = ui.get_watcher_data();
+    assert_eq!(data.top_status, "2 watchers - 0/0");
+    assert!(data.highlighted);
+    assert_eq!(
+        (data.subject.as_str(), data.url.as_str()),
+        ("no subject", one)
+    );
+    assert_eq!(row(&ui, 0)[0], "* unknown subject");
+    assert_eq!(row(&ui, 0)[3], "just added");
+    // a thread the page watches already is not watched again (it says so,
+    // once it no longer says it was just added, as in the reference)
+    ui.invoke_watcher_urls(one.into());
+    assert_eq!(
+        store
+            .read(move |c| queues::queues_with_page_key(c, &key.0))
+            .unwrap()
+            .len(),
+        2
+    );
+    assert_eq!(row(&ui, 0)[3], "just added");
+
+    // the daemon at work: the thread's title, and the shown watcher's
+    // files join the page
+    let file = files[0].1;
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let mut state = watcher_state(&queues::queue(conn, first)?.unwrap()).unwrap();
+            "a thread".clone_into(&mut state.subject);
+            queues::set_queue_extra(conn, first, &serde_json::to_value(&state).unwrap())?;
+            let seed = NewFileSeed {
+                seed_type: SeedType::Url,
+                data: "https://boards.example/file/1".into(),
+                data_for_comparison: "https://boards.example/file/1".into(),
+                source_time: None,
+                referral_url: None,
+                meta: FileSeedMeta::default(),
+            };
+            queues::add_file_seeds(conn, first, &[seed], false, 0)?;
+            let mut seeds = queues::file_seeds(conn, first)?;
+            let seed = seeds.last_mut().unwrap();
+            seed.status = SeedStatus::SuccessfulAndNew;
+            seed.meta.set_hash("sha256", file.to_hex());
+            queues::update_file_seed(conn, seed)
+        })
+        .unwrap();
+    (bound.sync)();
+    assert_eq!(bound.current.borrow().borrow().files(), [files[0].0]);
+    let data = ui.get_watcher_data();
+    assert_eq!(data.top_status, "2 watchers - 1/1");
+    assert_eq!(data.subject, "a thread");
+    assert!(
+        data.velocity_line
+            .starts_with("at last check, found 1 files"),
+        "{}",
+        data.velocity_line
+    );
+
+    // pausing the shown watcher's checking, from its box, then checking it
+    // now (which resumes it), each nudging the daemon
+    store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();
+    ui.invoke_watcher_pause_play(true, true);
+    let state = |queue: i64| {
+        watcher_state(
+            &store
+                .read(move |c| queues::queue(c, queue))
+                .unwrap()
+                .unwrap(),
+        )
+        .unwrap()
+    };
+    assert!(state(first).checking_paused);
+    assert!(ui.get_watcher_data().checking_paused);
+    assert_eq!(ui.get_watcher_data().checker_line, "paused");
+    ui.invoke_watcher_check_now(true);
+    assert!(state(first).check_now && !state(first).checking_paused);
+    assert!(!ui.get_watcher_data().can_check_now);
+    assert_eq!(
+        store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap(),
+        [first]
+    );
+
+    // the other's files paused, from the list
+    let other = (0..2).find(|&r| !row(&ui, r)[0].starts_with('*')).unwrap();
+    ui.invoke_watcher_row_pressed(i32::try_from(other).unwrap());
+    ui.invoke_watcher_pause_play(false, false);
+    assert!(
+        store
+            .read(move |c| queues::queue(c, second))
+            .unwrap()
+            .unwrap()
+            .files_paused
+    );
+    assert_eq!(row(&ui, other)[1], "\u{23F8}");
+
+    // kept with the page: its watchers, the one shown, its checker
+    bound.pages.borrow_mut().sync(5).unwrap();
+    let saved = store
+        .read(|c| sessions::load(c, LAST_SESSION))
+        .unwrap()
+        .unwrap();
+    let kept = saved
+        .all_pages()
+        .into_iter()
+        .find(|p| p.key == key)
+        .unwrap()
+        .clone();
+    let PageContent::Downloader {
+        queues: kept_queues,
+        page: Some(kept_state),
+        ..
+    } = kept.content
+    else {
+        panic!("{kept:?}");
+    };
+    assert_eq!(kept_queues, [first, second]);
+    assert_eq!(kept_state.highlighted, Some(first));
+    assert_eq!(kept_state.checker, Some(checkers.watchers.clone()));
+
+    // removing the selected (not shown) watcher asks, as the reference does
+    ui.invoke_watcher_remove();
+    assert_eq!(
+        ui.get_question(),
+        "Remove the 1 selected watchers?\n\n1 are not yet DEAD."
+    );
+    ui.invoke_answer(true);
+    assert!(
+        store
+            .read(move |c| queues::queue(c, second))
+            .unwrap()
+            .is_none()
+    );
+    assert_eq!(ui.get_watcher_data().top_status, "1 watchers - 1/1");
+
+    // closing asks while it holds anything; closed, its watcher waits
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"watcher\"?\n\nThis is a watcher page holding 1 import objects."
+    );
+    ui.invoke_answer(true);
+    assert_ne!(bound.pages.borrow().shown().key, key);
+    assert!(
+        store
+            .read(move |c| queues::queue(c, first))
+            .unwrap()
+            .unwrap()
+            .page_closed
+    );
 }

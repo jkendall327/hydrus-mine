@@ -47,26 +47,25 @@ runs along the top tabs), f5 searches the page again (resuming a paused
 search; a locked one stays), and ctrl+s and ctrl+m give the keyboard to
 the search box and the thumbnails. A search page opens as it was left: its
 search, its sort and the files it showed, not searched again until its
-search changes (and then only if it is synchronised). Watcher pages and
-the pages we don't open yet show their files, and say what they are; URL
-and gallery downloader pages are live (below).
+search changes (and then only if it is synchronised). The pages we don't
+open yet show their files, and say what they are; URL, gallery and watcher
+downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
 again, as the reference does. Ctrl+T or F9 opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; download, then
-urls or gallery, opens a URL or gallery downloader page (a watcher page
-can't be made here yet). With other saved sessions (those hydrus had,
+urls, gallery or watcher, opens that downloader page (a simple
+downloader page can't be made here yet). With other saved sessions (those hydrus had,
 say), a "sessions" button lists them, and choosing one appends a copy of
 its pages in a page of pages named after it, as the reference's "append
 session" does; a saved session's downloader pages say their downloads
 don't run. The new page goes at the far right of the
 current notebook, and Ctrl+W or a middle click on a tab closes it, the next tab to
-the right (or left) being shown, as in the reference; closing a URL or
-gallery downloader page that is still importing, or holds anything, asks
-first, as the reference does ("This page is still importing."), and
-watcher pages can't be closed yet, since their queues would run on
-without them. Ctrl+U
+the right (or left) being shown, as in the reference; closing a
+downloader page that is still importing, or holds anything, asks first,
+as the reference does ("This page is still importing."), and a closed
+page's queues wait. Ctrl+U
 reopens the page closed last (within the hour, as the reference keeps
 them), where it was and as it was, and shows it. The
 pages are saved as the last session
@@ -112,6 +111,28 @@ shown if hydrus's option to highlight new queries is on (as it is by
 default). The downloader list offers the downloaders hydrus displays,
 by name, then the rest; the page's own downloader and file limit are
 kept as you change them, and carried over from hydrus.
+
+A watcher downloader page is the reference's as well. Its "watchers" box
+says how its watchers stand ("3 watchers - 12/40", "waiting for new
+watchers") and lists them as the reference does: subject, files and
+checking status (the stop character for a watcher whose thread died or
+404'd), status ("pending", "working", when it next checks, "DEAD",
+"404", and for fifteen seconds "just added"), items and added; by status
+at first, and by any column. Its buttons highlight a watcher (or a
+double-click does), clear the highlight, pause or resume its files or its
+checking, check it now, retry its ignored or failed files, and remove it,
+asking as the reference does ("Remove the 1 selected watchers?", saying
+how many still work or aren't yet DEAD). Thread URLs typed into its
+"watcher url" box, or pasted, one a line, become watchers with the page's
+checker and import options; one the page watches already isn't watched
+twice, and the first new one is shown if hydrus's option to highlight new
+watchers is on. The "highlighted watcher" box has its thread's subject
+and URL, its "imports" (files line and pause, file log status and
+progress, download in progress) and its "checker": how fast the thread
+was getting files ("at last check, found 5 files in previous 1 day"),
+checking's pause, when it checks next ("next check in 4 minutes",
+"checking imminently") or what it is doing, a "check now" button, its
+check log's status and its check in progress.
 
 On a search page, at the top of its sidebar, the
 sort control offers every system sort type named and ordered as in the
@@ -435,7 +456,7 @@ predicates in the autocomplete, the rest of the viewer's hover frames
 window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
-shading, playing animated JPEG XL, watcher pages' own panels, downloader
+shading, playing animated JPEG XL, downloader
 pages' file and search log windows and import options buttons, and a
 download's cog and error menus (bandwidth rules, the last error); in
 the duplicates page, editing its search and the preparation and

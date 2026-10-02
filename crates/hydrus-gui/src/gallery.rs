@@ -131,24 +131,28 @@ pub fn live_line(text: &str, paused: bool, working: bool) -> String {
     }
 }
 
-/// What a search is up to (`GetSimpleStatus`), in the list's sort order.
+/// What a search or watcher is up to (`GetSimpleStatus`), in the lists'
+/// sort order (`downloader_enum_sort_lookup`).
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum SimpleStatus {
     Done,
     Working,
     Pending,
+    /// Waiting until a time (a watcher's next check, say).
+    Deferred,
     Pausing,
     Paused,
 }
 
 impl SimpleStatus {
+    /// Its words, where they are fixed (a deferred one says until when).
     pub fn text(self) -> &'static str {
         match self {
             SimpleStatus::Done => "DONE",
             SimpleStatus::Working => "working",
             SimpleStatus::Pending => "pending",
             SimpleStatus::Pausing => "pausing\u{2026}",
-            SimpleStatus::Paused => "",
+            SimpleStatus::Paused | SimpleStatus::Deferred => "",
         }
     }
 }
@@ -194,11 +198,11 @@ impl Column {
 }
 
 /// A finished, paused or going log, as the list sorts and shows it.
-fn pause_rank(finished: bool, paused: bool) -> i8 {
+pub(crate) fn pause_rank(finished: bool, paused: bool) -> i8 {
     if finished { -1 } else { i8::from(!paused) }
 }
 
-fn has_work(counts: &StatusCounts) -> bool {
+pub(crate) fn has_work(counts: &StatusCounts) -> bool {
     counts.get(&SeedStatus::Unknown).is_some_and(|&n| n > 0)
 }
 

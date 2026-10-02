@@ -40,6 +40,7 @@ pub mod text;
 pub mod transfer;
 pub mod trash;
 pub mod urls;
+pub mod watchers;
 
 pub use conn::{Db, Paused, WriteCtx};
 pub use error::{Result, StoreError};

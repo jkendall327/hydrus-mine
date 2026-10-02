@@ -6,7 +6,8 @@ import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, ImporterBoxes } from "importing.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
-export { DownloadLine, GalleryData }
+import { WatcherData, WatcherSidebar } from "watcher.slint";
+export { DownloadLine, GalleryData, WatcherData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText }
 
@@ -320,6 +321,21 @@ export component MainWindow inherits Window {
     callback gallery-paste();
     callback gallery-gug(int);
     callback gallery-limit(bool, int);
+    // a watcher page's sidebar (watcher.slint)
+    in property <bool> watcher-page;
+    in property <WatcherData> watcher-data;
+    in property <[[StandardListViewItem]]> watcher-rows;
+    in-out property <int> watcher-current-row: -1;
+    callback watcher-row-pressed(int);
+    callback watcher-sort(int, bool);
+    callback watcher-highlight();
+    callback watcher-clear-highlight();
+    callback watcher-pause-play(bool, bool);
+    callback watcher-check-now(bool);
+    callback watcher-retry(bool);
+    callback watcher-remove();
+    callback watcher-urls(string);
+    callback watcher-paste();
     callback pause-play-files();
     callback url-entered(string);
     callback paste-urls();
@@ -559,7 +575,37 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.importing && !root.gallery-page: VerticalBox {
+                if root.watcher-page: VerticalBox {
+                    width: 400px;
+                    alignment: start;
+                    WatcherSidebar {
+                        data: root.watcher-data;
+                        rows: root.watcher-rows;
+                        current-row <=> root.watcher-current-row;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        row-pressed(row) => { root.watcher-row-pressed(row); }
+                        sort(column, ascending) => { root.watcher-sort(column, ascending); }
+                        highlight => { root.watcher-highlight(); }
+                        clear-highlight => { root.watcher-clear-highlight(); }
+                        pause-play(checking, shown) => { root.watcher-pause-play(checking, shown); }
+                        check-now(shown) => { root.watcher-check-now(shown); }
+                        retry(ignored) => { root.watcher-retry(ignored); }
+                        remove => { root.watcher-remove(); }
+                        urls-entered(text) => { root.watcher-urls(text); }
+                        paste => { root.watcher-paste(); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {
@@ -600,7 +646,7 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.note != "" && !root.importing && !root.gallery-page: VerticalBox {
+                if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {
@@ -616,7 +662,7 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.note == "" && !root.importing && !root.gallery-page: VerticalBox {
+                if root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {

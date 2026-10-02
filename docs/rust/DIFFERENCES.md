@@ -229,8 +229,11 @@ search.
   page's own presentation options (new files only, say) aren't applied
   yet, and the page has no sort or collect controls yet: its files are in
   the queue's order.
-- **A gallery downloader page's list selects one search at a time**, and
-  its buttons act on that one; the reference's list selects several. Its
+- **A gallery or watcher downloader page's list selects one search or
+  watcher at a time**, and its buttons act on that one; the reference's
+  lists select several. A watcher page has no checker or import options
+  buttons yet (the page's options, from hydrus, are given to new
+  watchers), nor "update selected with current options". Its
   downloader list is flat (the reference nests a site's downloaders and
   greys out ones that can't work), and its searches' import options and
   file limits can't be edited from the page yet. Its columns are as
@@ -247,7 +250,8 @@ search.
   service, as the reference's show-in-file-manager package uses, or else
   the folder opened), from where it can be dragged. For the same reason
   the open menus offer "in file browser" whether or not hydrus's advanced
-  mode is on (the reference offers it only in advanced mode).
+  mode is on (the reference offers it only in advanced mode). Dragging
+  out for real is jkendall327/hydrus-mine#26.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 

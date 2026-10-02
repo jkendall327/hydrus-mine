@@ -382,11 +382,8 @@ fn the_filter_opens_from_a_duplicates_page_and_compares_the_pair() {
     ui.invoke_chooser_pressed(4);
     assert_eq!(ui.get_chooser_labels().row_data(3).unwrap(), "watcher");
     ui.invoke_chooser_pressed(4);
-    assert!(
-        ui.get_error().contains("downloader pages"),
-        "{}",
-        ui.get_error()
-    );
+    assert_eq!(bound.pages.borrow().shown().name, "watcher");
+    assert_eq!(ui.get_error(), "");
     assert_eq!(ui.get_chooser_labels().row_count(), 0);
 }
 

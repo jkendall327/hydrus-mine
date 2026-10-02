@@ -17,15 +17,11 @@ use crate::SearchPage;
 use crate::page_chooser::NewPage;
 use hydrus_core::pages::{DownloaderPageSettings, PageNameSettings, TabKind, tab_name};
 
-/// The URL and gallery downloader queues of a page and the pages in it,
-/// which wait while it is closed.
+/// The downloader queues of a page and the pages in it, which wait while
+/// it is closed.
 fn closable_queues(page: &Page) -> Vec<i64> {
     match &page.content {
-        PageContent::Downloader {
-            kind: DownloaderKind::Urls | DownloaderKind::Gallery,
-            queues,
-            ..
-        } => queues.clone(),
+        PageContent::Downloader { queues, .. } => queues.clone(),
         PageContent::Pages(children) => children.iter().flat_map(closable_queues).collect(),
         _ => Vec::new(),
     }
@@ -497,6 +493,20 @@ impl Pages {
                 files,
             ),
             PageContent::Downloader {
+                kind: DownloaderKind::Watchers,
+                queues,
+                sort,
+                page: state,
+            } => SearchPage::watcher_downloader(
+                store,
+                page.key,
+                &page.name,
+                queues,
+                state.map(|s| *s),
+                sort.as_ref(),
+                files,
+            ),
+            PageContent::Downloader {
                 kind, queues, sort, ..
             } => {
                 // (and what the reference's says while empty)
@@ -861,12 +871,18 @@ impl Pages {
                     page: Some(Box::new(crate::page::new_gallery_state(&self.store))),
                 },
             },
-            NewPage::Watcher | NewPage::SimpleDownloader => {
-                return Err(
-                    "hydrus-gui can't open downloader pages yet (`hydrus serve` runs the \
-                     downloaders, and the Client API can add to them)"
-                        .into(),
-                );
+            NewPage::Watcher => Page {
+                key: PageKey::random(),
+                name: hydrus_store::watchers::DEFAULT_WATCHER_PAGE_NAME.into(),
+                content: PageContent::Downloader {
+                    kind: DownloaderKind::Watchers,
+                    queues: Vec::new(),
+                    sort: None,
+                    page: Some(Box::new(crate::page::new_watcher_state(&self.store))),
+                },
+            },
+            NewPage::SimpleDownloader => {
+                return Err("hydrus-gui can't open simple downloader pages yet".into());
             }
         };
         self.add(page);
@@ -941,22 +957,9 @@ impl Pages {
     /// Close the `index`th tab of the notebook `depth` levels down the way
     /// to the page shown (a notebook closes with its pages). If it was
     /// shown, the one to its right is shown (or, if it was last, its left),
-    /// as the reference does. Downloader pages are kept: their queues would
-    /// run on without them.
+    /// as the reference does. A downloader page's queues wait while it is
+    /// closed.
     pub fn close(&mut self, depth: usize, index: usize) -> Result<(), String> {
-        // (a URL or gallery downloader page's queues wait while it is
-        // closed; a watcher page's would run on without it)
-        fn has_downloader(page: &Page) -> bool {
-            match &page.content {
-                PageContent::Downloader {
-                    kind: DownloaderKind::Urls | DownloaderKind::Gallery,
-                    ..
-                } => false,
-                PageContent::Downloader { .. } => true,
-                PageContent::Pages(children) => children.iter().any(has_downloader),
-                _ => false,
-            }
-        }
         fn keys(page: &Page, out: &mut Vec<PageKey>) {
             out.push(page.key);
             if let PageContent::Pages(children) = &page.content {
@@ -971,18 +974,13 @@ impl Pages {
         let shown = self.path[depth];
         let notebook = depth.checked_sub(1).map(|_| self.notebook_key(depth));
         let pages = self.notebook_mut(depth);
-        let Some(page) = pages.get(index) else {
+        if index >= pages.len() {
             return Ok(());
-        };
-        if has_downloader(page) {
-            return Err(
-                "watcher downloader pages can't be closed yet: `hydrus serve` runs their queues"
-                    .into(),
-            );
         }
         let mut closed = pages.remove(index);
         let remaining = pages.len();
-        // (as it is now: a gallery page's searches made since it opened)
+        // (as it is now: a gallery or watcher page's queues made since it
+        // opened)
         refresh_contents(std::slice::from_mut(&mut closed), &self.open);
         let mut closed_keys = Vec::new();
         keys(&closed, &mut closed_keys);
@@ -1110,7 +1108,7 @@ impl Pages {
         if !matches!(
             page.content,
             PageContent::Downloader {
-                kind: DownloaderKind::Urls | DownloaderKind::Gallery,
+                kind: DownloaderKind::Urls | DownloaderKind::Gallery | DownloaderKind::Watchers,
                 ..
             }
         ) {

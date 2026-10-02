@@ -16,7 +16,7 @@ use tokio::sync::Notify;
 use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
 use hydrus_core::network::NetworkContext;
-use hydrus_core::subscriptions::{CheckerDefaults, SeedTime};
+use hydrus_core::subscriptions::CheckerDefaults;
 use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
 use hydrus_net::{BandwidthScope, Job};
@@ -443,16 +443,7 @@ impl QueueRunner {
 
     /// Check a watcher's thread now (`WatcherImport.CheckNow`).
     pub fn check_watcher_now(self: &Arc<Self>, queue: i64) -> Result<(), StoreError> {
-        let store = &self.downloader.store;
-        let Some(q) = store.read(|conn| queues::queue(conn, queue))? else {
-            return Ok(());
-        };
-        let Some(mut state) = watcher_state(&q) else {
-            return Ok(());
-        };
-        let times = seed_times(&store.read(|conn| queues::file_seeds(conn, queue))?);
-        state.check_now(&times, now());
-        save_watcher_state(store, queue, &state)?;
+        hydrus_store::watchers::check_now(&self.downloader.store, queue, now())?;
         self.wake(queue);
         Ok(())
     }
@@ -866,15 +857,9 @@ fn rand_token() -> [u8; 32] {
     rand::random()
 }
 
-/// The name of a new watcher page (the reference's).
-pub const DEFAULT_WATCHER_PAGE_NAME: &str = "watcher";
-
+use hydrus_store::watchers::seed_times;
 /// A watcher queue's state.
-pub fn watcher_state(queue: &Queue) -> Option<WatcherState> {
-    (queue.kind == QueueKind::Watcher)
-        .then(|| serde_json::from_value(queue.extra.clone()).ok())
-        .flatten()
-}
+pub use hydrus_store::watchers::{DEFAULT_WATCHER_PAGE_NAME, watcher_state};
 
 fn save_watcher_state(
     store: &hydrus_store::Store,
@@ -883,16 +868,6 @@ fn save_watcher_state(
 ) -> Result<(), StoreError> {
     let extra = serde_json::to_value(state).expect("plain data serialises");
     store.write(move |ctx| queues::set_queue_extra(ctx.conn(), queue, &extra))
-}
-
-fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
-    seeds
-        .iter()
-        .map(|s| SeedTime {
-            source_time: s.source_time,
-            created: s.created,
-        })
-        .collect()
 }
 
 pub use hydrus_store::gallery::{DEFAULT_GALLERY_PAGE_NAME, GallerySearchError};

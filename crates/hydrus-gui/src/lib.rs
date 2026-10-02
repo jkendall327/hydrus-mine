@@ -54,6 +54,7 @@ mod thumbnails;
 mod unlock;
 mod viewer;
 pub mod viewer_menu;
+mod watcher;
 pub mod windows;
 pub mod zoom;
 
@@ -927,6 +928,148 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(false);
         }
     });
+    // a watcher page's sidebar, as a gallery page's: a row pressed selects
+    // its watcher, twice (a double click) shows it
+    window.on_watcher_row_pressed({
+        let page = page.clone();
+        let shown = shown.clone();
+        let last: Rc<Cell<Option<(i32, std::time::Instant)>>> = Rc::default();
+        move |row| {
+            let page = page();
+            let queue = usize::try_from(row)
+                .ok()
+                .and_then(|row| page.borrow().watchers()?.watchers.get(row).map(|w| w.queue));
+            let Some(queue) = queue else {
+                return;
+            };
+            let now = std::time::Instant::now();
+            let double = last.get().is_some_and(|(r, at)| {
+                r == row && now.duration_since(at) < std::time::Duration::from_millis(400)
+            });
+            page.borrow_mut().select_query(Some(queue));
+            if double {
+                last.set(None);
+                page.borrow_mut().highlight_query(Some(queue));
+                shown(true);
+            } else {
+                last.set(Some((row, now)));
+                shown(false);
+            }
+        }
+    });
+    window.on_watcher_sort({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |column, ascending| {
+            if let Some(column) = usize::try_from(column)
+                .ok()
+                .and_then(watcher::Column::from_index)
+            {
+                page().borrow_mut().sort_watchers(column, ascending);
+                shown(false);
+            }
+        }
+    });
+    window.on_watcher_highlight({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let selected = page.borrow().watchers().and_then(|w| w.selected);
+            if selected.is_some() {
+                page.borrow_mut().highlight_query(selected);
+                shown(true);
+            }
+        }
+    });
+    window.on_watcher_clear_highlight({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().highlight_query(None);
+            shown(true);
+        }
+    });
+    // (the list's selected watcher, or the one shown)
+    let watcher_of = |page: &Rc<RefCell<SearchPage>>, of_shown: bool| {
+        page.borrow().watchers().and_then(|w| {
+            if of_shown {
+                w.state.highlighted
+            } else {
+                w.selected
+            }
+        })
+    };
+    window.on_watcher_pause_play({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |checking, of_shown| {
+            let page = page();
+            if let Some(queue) = watcher_of(&page, of_shown) {
+                page.borrow_mut().pause_play_watcher(queue, checking);
+                shown(false);
+            }
+        }
+    });
+    window.on_watcher_check_now({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |of_shown| {
+            let page = page();
+            if let Some(queue) = watcher_of(&page, of_shown) {
+                page.borrow_mut().check_watcher_now(queue);
+                shown(false);
+            }
+        }
+    });
+    window.on_watcher_retry({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |ignored| {
+            let page = page();
+            if let Some(queue) = watcher_of(&page, false) {
+                page.borrow_mut().retry_query(queue, ignored);
+                shown(false);
+            }
+        }
+    });
+    window.on_watcher_remove({
+        let page = page.clone();
+        let ask = ask.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let Some(queue) = page.watchers().and_then(|w| w.selected) else {
+                return;
+            };
+            if let Some(question) = page.remove_watcher_question(queue) {
+                ask(Asked::RemoveQuery(queue, question));
+            }
+        }
+    });
+    let pend_watchers = {
+        let page = page.clone();
+        let shown = shown.clone();
+        move |text: &str| {
+            page().borrow_mut().pend_watchers(text);
+            shown(true);
+        }
+    };
+    window.on_watcher_urls({
+        let pend_watchers = pend_watchers.clone();
+        move |text| pend_watchers(&text)
+    });
+    window.on_watcher_paste({
+        let weak = window.as_weak();
+        move || match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
+            Ok(text) => pend_watchers(&text),
+            Err(e) => {
+                if let Some(window) = weak.upgrade() {
+                    window.set_error(format!("Problem pasting! {e}").into());
+                }
+            }
+        }
+    });
     // the search's lock (the reference's lock button, and the lock box's
     // unlock button and cog)
     window.on_lock_search({
@@ -1406,8 +1549,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             // page shown again when files came, else just its importer
             let open = pages.borrow().open_pages();
             for page in open {
-                if page.borrow().importer().is_none() && page.borrow().gallery().is_none() {
-                    continue;
+                {
+                    let page = page.borrow();
+                    if page.importer().is_none()
+                        && page.gallery().is_none()
+                        && page.watchers().is_none()
+                    {
+                        continue;
+                    }
                 }
                 let refreshed = page.borrow_mut().refresh_import();
                 if !Rc::ptr_eq(&page, &current.borrow()) {
@@ -1422,6 +1571,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                                 show_importer(&window, importer);
                             }
                             show_gallery(&window, &page);
+                            show_watchers(&window, &page);
                         }
                     }
                     page::ImportRefresh::Nothing => {}
@@ -3164,6 +3314,69 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
     });
 }
 
+fn show_watchers(window: &MainWindow, page: &SearchPage) {
+    use hydrus_store::queues::SeedStatus;
+    let Some(view) = page.watchers() else {
+        return;
+    };
+    let now = page::now();
+    let rows: Vec<ModelRc<slint::StandardListViewItem>> = view
+        .rows(now)
+        .iter()
+        .map(|cells| {
+            let cells: Vec<slint::StandardListViewItem> = cells
+                .iter()
+                .map(|c| slint::StandardListViewItem::from(c.as_str()))
+                .collect();
+            ModelRc::new(VecModel::from(cells))
+        })
+        .collect();
+    window.set_watcher_rows(ModelRc::new(VecModel::from(rows)));
+    let current = view
+        .selected
+        .and_then(|s| view.watchers.iter().position(|w| w.queue == s));
+    window.set_watcher_current_row(current.map_or(-1, |i| i32::try_from(i).unwrap_or(-1)));
+    let (top_status, bottom_status) = watcher::totals(&view.watchers);
+    let highlighted = view.state.highlighted;
+    let selected = view.selected.and_then(|s| view.watcher(s));
+    let has = |w: Option<&watcher::WatcherRow>, status| {
+        w.is_some_and(|w| w.files.get(&status).is_some_and(|&n| n > 0))
+    };
+    let shown = highlighted.and_then(|h| view.watcher(h));
+    window.set_watcher_data(WatcherData {
+        top_status: top_status.into(),
+        bottom_status: bottom_status.into(),
+        has_selection: selected.is_some(),
+        can_highlight: selected.is_some_and(|w| Some(w.queue) != highlighted),
+        can_clear_highlight: highlighted.is_some(),
+        can_retry_ignored: has(selected, SeedStatus::Vetoed),
+        can_retry_failed: has(selected, SeedStatus::Error),
+        highlighted: shown.is_some(),
+        // (`WatcherReviewPanel`: "no subject" for one with none yet)
+        subject: shown
+            .map(|w| match w.subject() {
+                "" | "unknown subject" => "no subject",
+                subject => subject,
+            })
+            .unwrap_or_default()
+            .into(),
+        url: shown
+            .map(|w| w.state.url.as_str())
+            .unwrap_or_default()
+            .into(),
+        files_line: shown.map(|w| w.files_line(now)).unwrap_or_default().into(),
+        files_paused: shown.is_some_and(|w| w.files_paused),
+        velocity_line: page.watcher_velocity().into(),
+        checker_line: shown
+            .map(|w| w.checker_line(now))
+            .unwrap_or_default()
+            .into(),
+        checking_paused: shown.is_some_and(|w| w.state.checking_paused),
+        can_pause_checking: shown.is_some_and(|w| !w.dead()),
+        can_check_now: shown.is_some_and(|w| !w.state.check_now),
+    });
+}
+
 /// A download's line for the window.
 fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine {
     DownloadLine {
@@ -3183,6 +3396,8 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     }
     window.set_gallery_page(page.gallery().is_some());
     show_gallery(window, page);
+    window.set_watcher_page(page.watchers().is_some());
+    show_watchers(window, page);
     // (only a page with a search can load one)
     window.set_favourites(if page.note().is_none() {
         favourites.clone()

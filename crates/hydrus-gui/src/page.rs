@@ -22,6 +22,7 @@ use crate::autocomplete::Autocomplete;
 use crate::gallery::{Column, GalleryView};
 use crate::selection::{Move, Selection};
 use crate::status::Facts;
+use crate::watcher::WatcherView;
 
 pub struct SearchPage {
     store: Arc<Store>,
@@ -75,6 +76,8 @@ pub struct SearchPage {
     presented: std::collections::HashSet<HashId>,
     /// A gallery page's searches (the importer is the one it shows).
     gallery: Option<GalleryView>,
+    /// A watcher page's watchers (the importer is the one it shows).
+    watchers: Option<WatcherView>,
 }
 
 /// What reading a downloader page's importer again changed.
@@ -214,6 +217,7 @@ impl SearchPage {
             importer: None,
             presented: std::collections::HashSet::new(),
             gallery: None,
+            watchers: None,
         }
     }
 
@@ -422,14 +426,215 @@ impl SearchPage {
         self.gallery.as_ref()
     }
 
+    /// A watcher downloader page over `queues` (its watchers), with its own
+    /// checker and import options and the watcher it shows: the files it
+    /// showed (as a session kept them), and those the shown watcher brings
+    /// from now on.
+    #[allow(clippy::too_many_arguments)]
+    pub fn watcher_downloader(
+        store: Arc<Store>,
+        page_key: hydrus_core::pages::PageKey,
+        page_name: &str,
+        queues: Vec<i64>,
+        state: Option<hydrus_core::pages::DownloaderPageState>,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::fixed(store, "A watcher downloader page.", sort, files);
+        page.empty_status.set(Some("no highlighted watcher"));
+        let state = state.unwrap_or_else(|| new_watcher_state(&page.store));
+        if let Some(queue) = state.highlighted {
+            page.importer = Some(Importer {
+                queue,
+                ..Importer::default()
+            });
+        }
+        let (settings, naming) = page
+            .store
+            .read(|c| {
+                Ok((
+                    hydrus_store::settings::get::<hydrus_core::pages::DownloaderPageSettings>(c)?,
+                    hydrus_store::settings::get::<hydrus_core::pages::PageNameSettings>(c)?,
+                ))
+            })
+            .unwrap_or_default();
+        page.watchers = Some(WatcherView {
+            page_key,
+            page_name: page_name.to_owned(),
+            queues,
+            watchers: Vec::new(),
+            state,
+            // (the reference's default: by status)
+            sort: (crate::watcher::Column::Status, true),
+            selected: None,
+            added: Vec::new(),
+            already: Vec::new(),
+            settings,
+            short_summary: (naming.short_summary_new, naming.short_summary_deleted),
+        });
+        page.refresh_import();
+        page.read_import(true);
+        page
+    }
+
+    /// A watcher page's watchers, as last read.
+    pub fn watchers(&self) -> Option<&WatcherView> {
+        self.watchers.as_ref()
+    }
+
+    /// A gallery or watcher page's own state.
+    fn multi_state(&mut self) -> Option<&mut hydrus_core::pages::DownloaderPageState> {
+        match (&mut self.gallery, &mut self.watchers) {
+            (Some(gallery), _) => Some(&mut gallery.state),
+            (None, Some(watchers)) => Some(&mut watchers.state),
+            (None, None) => None,
+        }
+    }
+
+    /// Sort the watchers' list by a column.
+    pub fn sort_watchers(&mut self, column: crate::watcher::Column, ascending: bool) {
+        if let Some(view) = &mut self.watchers {
+            view.sort = (column, ascending);
+            let now = now();
+            let mut watchers = std::mem::take(&mut view.watchers);
+            crate::watcher::sort(&mut watchers, column, ascending, now, &|w| {
+                Some(view.simple_status(w, now).0)
+            });
+            view.watchers = watchers;
+        }
+    }
+
+    /// Watch the threads typed or pasted into the page (`_AddURLs`), one a
+    /// line, with the page's checker and import options: a thread it
+    /// watches already says so, and the first new watcher is shown if
+    /// none is and the options say so.
+    pub fn pend_watchers(&mut self, text: &str) {
+        let Some(view) = &self.watchers else {
+            return;
+        };
+        let checker = view.state.checker.clone().unwrap_or_else(|| {
+            self.store
+                .read(hydrus_store::settings::get::<hydrus_core::subscriptions::CheckerDefaults>)
+                .unwrap_or_default()
+                .watchers
+        });
+        let (options, name, key) = (
+            view.state.options.clone(),
+            view.page_name.clone(),
+            view.page_key.0,
+        );
+        let mut queues = view.queues.clone();
+        let now = now();
+        let (mut added, mut already) = (Vec::new(), Vec::new());
+        for url in text
+            .lines()
+            .map(|line| line.trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}'))
+            .filter(|line| !line.is_empty())
+        {
+            let page = hydrus_store::watchers::WatcherPage {
+                name: &name,
+                key: Some(&key),
+                queues: &queues,
+                checker: &checker,
+                options: &options,
+            };
+            match hydrus_store::watchers::add_watcher(&self.store, &page, url, now) {
+                Ok(hydrus_store::watchers::Watched::New(queue)) => {
+                    queues.push(queue.id);
+                    added.push((queue.id, now));
+                }
+                Ok(hydrus_store::watchers::Watched::Already(queue)) => already.push((queue, now)),
+                Ok(hydrus_store::watchers::Watched::NotAUrl) => {}
+                Err(e) => eprintln!("could not watch {url}: {e}"),
+            }
+        }
+        let first = added.first().map(|&(queue, _)| queue);
+        let view = self.watchers.as_mut().expect("a watcher page");
+        view.queues = queues;
+        view.added.extend(added);
+        view.already.extend(already);
+        let show = view.state.highlighted.is_none() && view.settings.highlight_new_watcher;
+        self.refresh_import();
+        if show && first.is_some() {
+            self.highlight_query(first);
+        }
+    }
+
+    /// Pause or resume a watcher's files, or its checking (which a dead
+    /// watcher only resumes when checked now), nudging the daemon.
+    pub fn pause_play_watcher(&mut self, queue: i64, checking: bool) {
+        let Some(watcher) = self.watchers.as_ref().and_then(|v| v.watcher(queue)) else {
+            return;
+        };
+        let done = if checking {
+            hydrus_store::watchers::pause_play_checking(&self.store, queue)
+        } else {
+            let files = !watcher.files_paused;
+            self.store.write(move |ctx| {
+                queues::set_paused(ctx.conn(), queue, Some(files), None)?;
+                queues::nudge(ctx.conn(), queue)
+            })
+        };
+        if let Err(e) = done {
+            eprintln!("could not pause or resume the watcher: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// Check a watcher's thread again now (`CheckNow`).
+    pub fn check_watcher_now(&mut self, queue: i64) {
+        if let Err(e) = hydrus_store::watchers::check_now(&self.store, queue, now()) {
+            eprintln!("could not check the watcher now: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// What removing a watcher asks first (`_RemoveWatchers`).
+    pub fn remove_watcher_question(&self, queue: i64) -> Option<String> {
+        let view = self.watchers.as_ref()?;
+        let watcher = view.watcher(queue)?;
+        let mut message = "Remove the 1 selected watchers?".to_owned();
+        if watcher.importing() {
+            message.push_str("\n\n1 are still working.");
+        }
+        if !watcher.dead() {
+            message.push_str("\n\n1 are not yet DEAD.");
+        }
+        if view.state.highlighted == Some(queue) {
+            message.push_str(
+                "\n\nThe currently highlighted watcher will be removed, and the media panel cleared.",
+            );
+        }
+        Some(message)
+    }
+
+    /// How fast the shown watcher's thread was getting files at its last
+    /// check, as its box says.
+    pub fn watcher_velocity(&self) -> String {
+        let Some(view) = &self.watchers else {
+            return String::new();
+        };
+        let Some(watcher) = view.state.highlighted.and_then(|h| view.watcher(h)) else {
+            return String::new();
+        };
+        self.store
+            .read(|c| crate::watcher::velocity(c, watcher))
+            .unwrap_or_default()
+    }
+
     /// Show a search's files in the page, as the reference's highlight
     /// does (none, or highlighting the one shown again, clears it).
     pub fn highlight_query(&mut self, queue: Option<i64>) {
-        let Some(gallery) = &mut self.gallery else {
+        let empty = if self.watchers.is_some() {
+            "no highlighted watcher"
+        } else {
+            "no highlighted query"
+        };
+        let Some(state) = self.multi_state() else {
             return;
         };
-        let queue = queue.filter(|q| gallery.state.highlighted != Some(*q));
-        gallery.state.highlighted = queue;
+        let queue = queue.filter(|q| state.highlighted != Some(*q));
+        state.highlighted = queue;
         self.presented.clear();
         self.selection.clear();
         self.collections.clear();
@@ -447,7 +652,7 @@ impl SearchPage {
         self.came.clone_from(&files);
         self.results = files;
         if queue.is_none() {
-            self.empty_status.set(Some("no highlighted query"));
+            self.empty_status.set(Some(empty));
         }
         self.read_import(true);
         self.resort();
@@ -455,10 +660,13 @@ impl SearchPage {
         self.count_tags();
     }
 
-    /// Select a search in the list.
+    /// Select a search, or a watcher, in the list.
     pub fn select_query(&mut self, queue: Option<i64>) {
         if let Some(gallery) = &mut self.gallery {
             gallery.selected = queue;
+        }
+        if let Some(watchers) = &mut self.watchers {
+            watchers.selected = queue;
         }
     }
 
@@ -599,15 +807,25 @@ impl SearchPage {
     /// Remove a search, and its queue (the page shows nothing if it showed
     /// it).
     pub fn remove_query(&mut self, queue: i64) {
-        let Some(gallery) = &mut self.gallery else {
-            return;
+        let shown = match (&mut self.gallery, &mut self.watchers) {
+            (Some(gallery), _) => {
+                gallery.queues.retain(|q| *q != queue);
+                gallery.queries.retain(|q| q.queue != queue);
+                if gallery.selected == Some(queue) {
+                    gallery.selected = None;
+                }
+                gallery.state.highlighted == Some(queue)
+            }
+            (None, Some(watchers)) => {
+                watchers.queues.retain(|q| *q != queue);
+                watchers.watchers.retain(|w| w.queue != queue);
+                if watchers.selected == Some(queue) {
+                    watchers.selected = None;
+                }
+                watchers.state.highlighted == Some(queue)
+            }
+            (None, None) => return,
         };
-        gallery.queues.retain(|q| *q != queue);
-        gallery.queries.retain(|q| q.queue != queue);
-        if gallery.selected == Some(queue) {
-            gallery.selected = None;
-        }
-        let shown = gallery.state.highlighted == Some(queue);
         if let Err(e) = self
             .store
             .write(move |ctx| queues::delete_queue(ctx.conn(), queue))
@@ -649,6 +867,22 @@ impl SearchPage {
             }),
             None => false,
         };
+        let gallery_changed = gallery_changed
+            || match &mut self.watchers {
+                Some(watchers) => {
+                    let now = now();
+                    let said = |&(_, at): &(i64, i64)| now <= at + crate::watcher::SAID_FOR;
+                    watchers.added.retain(said);
+                    watchers.already.retain(said);
+                    self.store
+                        .read(|c| watchers.refresh(c))
+                        .unwrap_or_else(|e| {
+                            eprintln!("could not read the watcher page's watchers: {e}");
+                            false
+                        })
+                }
+                None => false,
+            };
         match self.read_import(false) {
             ImportRefresh::Nothing if gallery_changed => ImportRefresh::Status,
             refreshed => refreshed,
@@ -787,14 +1021,20 @@ impl SearchPage {
             },
             PageContent::Downloader {
                 kind, queues, page, ..
-            } => match &self.gallery {
-                Some(gallery) => PageContent::Downloader {
+            } => match (&self.gallery, &self.watchers) {
+                (Some(gallery), _) => PageContent::Downloader {
                     kind: *kind,
                     queues: gallery.queues.clone(),
                     sort,
                     page: Some(Box::new(gallery.state.clone())),
                 },
-                None => PageContent::Downloader {
+                (None, Some(watchers)) => PageContent::Downloader {
+                    kind: *kind,
+                    queues: watchers.queues.clone(),
+                    sort,
+                    page: Some(Box::new(watchers.state.clone())),
+                },
+                (None, None) => PageContent::Downloader {
                     kind: *kind,
                     queues: queues.clone(),
                     sort,
@@ -1016,6 +1256,9 @@ impl SearchPage {
         if let Some(gallery) = &self.gallery {
             return crate::gallery::value_range(&gallery.queries);
         }
+        if let Some(watchers) = &self.watchers {
+            return crate::watcher::value_range(&watchers.watchers);
+        }
         self.importer.as_ref().map_or((0, 0), Importer::progress)
     }
 
@@ -1023,6 +1266,9 @@ impl SearchPage {
     pub fn close_veto(&self, confirm_non_empty: bool) -> Option<String> {
         if let Some(gallery) = &self.gallery {
             return crate::gallery::close_veto(&gallery.queries, confirm_non_empty);
+        }
+        if let Some(watchers) = &self.watchers {
+            return crate::watcher::close_veto(&watchers.watchers, confirm_non_empty);
         }
         self.importer.as_ref()?.close_veto(confirm_non_empty)
     }
@@ -1717,7 +1963,7 @@ fn system_sort(sort: &PageSort) -> Option<FileSort> {
 }
 
 /// Seconds since the epoch.
-fn now() -> i64 {
+pub(crate) fn now() -> i64 {
     std::time::SystemTime::now()
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX))
@@ -1742,6 +1988,17 @@ pub fn new_gallery_state(store: &Store) -> hydrus_core::pages::DownloaderPageSta
             merge_pends: false,
         }),
         checker: None,
+    }
+}
+
+/// A new watcher page's own state, as the reference makes one: the
+/// client's default checker options for watchers.
+pub fn new_watcher_state(store: &Store) -> hydrus_core::pages::DownloaderPageState {
+    let defaults: hydrus_core::subscriptions::CheckerDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    hydrus_core::pages::DownloaderPageState {
+        checker: Some(defaults.watchers),
+        ..hydrus_core::pages::DownloaderPageState::default()
     }
 }
 
