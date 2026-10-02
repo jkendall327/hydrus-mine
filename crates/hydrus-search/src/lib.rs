@@ -47,6 +47,7 @@
 //! and sorts the results; see the [`exec`] module for how.
 
 pub mod api;
+pub mod entry;
 pub use hydrus_core::search::context;
 pub mod error;
 pub mod exec;
@@ -62,6 +63,7 @@ pub use hydrus_core::search::time;
 
 pub use api::parse_api_search;
 pub use context::{FileSearchContext, LocationContext, TagContext};
+pub use entry::enter_predicates;
 pub use error::{ApiSearchError, ParseError, ParseErrorKind};
 pub use exec::{
     Clock, FileSort, SearchError, SortBy, SortOrder, collect_page_files, search_files, sort_files,

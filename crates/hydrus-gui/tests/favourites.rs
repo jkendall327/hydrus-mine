@@ -384,15 +384,29 @@ fn searches_are_saved_and_added_as_the_reference_saves_and_adds_them() {
     let recorded = recorded();
     let words = Words::new(&store);
 
-    // "save this search": the page's search, sort and collect (a page on
-    // "my files", as the recording's)
-    let mut page = SearchPage::new(store.clone());
-    page.choose_location(hydrus_search::LocationContext::single(ServiceKey::new(
-        hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
-    )));
-    for predicate in strings(&recorded["page_predicates"]) {
-        page.add_predicate(&predicate);
-    }
+    // "save this search": the page's search, sort and collect (a page
+    // opened on "my files" with the predicates, as the recording's)
+    let predicates = strings(&recorded["page_predicates"])
+        .iter()
+        .map(|p| {
+            hydrus_search::parse_api_search(&json!([p]))
+                .unwrap()
+                .remove(0)
+        })
+        .collect();
+    let page = SearchPage::restored(
+        store.clone(),
+        hydrus_search::FileSearchContext {
+            location: hydrus_search::LocationContext::single(ServiceKey::new(
+                hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
+            )),
+            tags: hydrus_search::TagContext::default(),
+            predicates,
+        },
+        true,
+        None,
+        Vec::new(),
+    );
     assert_eq!(page.predicates(), strings(&recorded["page_predicates"]));
     let saved = page.favourite_to_save().unwrap();
     assert_eq!(words.describe(&saved), recorded["saved"]);

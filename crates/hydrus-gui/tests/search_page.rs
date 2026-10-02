@@ -66,11 +66,13 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     let selected: Vec<String> = page.tag_rows().iter().map(|r| (*r).to_owned()).collect();
     assert!(!selected.is_empty() && selected.len() < rows.len());
     assert!(selected.iter().all(|r| r.ends_with(" (1)")), "{selected:?}");
-    // double-clicking a tag searches for it too
+    // double-clicking a tag searches for it, in place of system:everything
+    // (which goes as anything else comes, as the reference's does)
     assert!(page.activate_tag(0));
-    assert_eq!(page.predicates().len(), 2);
+    assert_eq!(page.predicates().len(), 1);
     assert!(page.results().len() < everything);
-    page.remove_predicate(1);
+    page.remove_predicate(0);
+    page.add_predicate("system:everything");
     assert_eq!(page.tag_rows().len(), rows.len());
 
     page.add_predicate("system:nonsense");
@@ -84,20 +86,20 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
 
     page.add_predicate("system:inbox");
     assert!(page.error().is_none());
+    // in place of system:everything, which goes as anything else comes
+    assert_eq!(page.predicates(), ["system:inbox"]);
     let inbox = page.results().len();
     assert!(inbox <= everything);
-    page.remove_predicate(1);
+    page.remove_predicate(0);
+    page.add_predicate("system:everything");
     assert_eq!(page.results().len(), everything);
     // listed as the reference writes them
     page.add_predicate("system:width>1920");
-    assert_eq!(page.predicates()[1], "system:width > 1,920");
+    assert_eq!(page.predicates(), ["system:width > 1,920"]);
+    // the same predicate, typed differently, entered again is taken out
     page.add_predicate("system:width > 1920");
-    assert_eq!(
-        page.predicates().len(),
-        2,
-        "the same predicate, typed differently"
-    );
-    page.remove_predicate(1);
+    assert!(page.predicates().is_empty());
+    page.add_predicate("system:everything");
 
     // autocomplete: tags matching what's typed, with counts; enter adds the
     // highlighted one and empties the box
@@ -113,10 +115,14 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     assert_eq!(highlighted, 1.min(suggestions.len() - 1));
     page.enter();
     assert!(page.error().is_none(), "{:?}", page.error());
-    assert_eq!(page.predicates()[1], suggestions[highlighted].predicate);
+    assert_eq!(
+        page.predicates(),
+        [suggestions[highlighted].predicate.clone()]
+    );
     assert_eq!(page.autocomplete().text(), "");
     assert!(page.results().len() <= everything);
-    page.remove_predicate(1);
+    page.remove_predicate(0);
+    page.add_predicate("system:everything");
     // a leading hyphen excludes
     page.type_text("-samus");
     assert!(
@@ -545,8 +551,56 @@ fn tags_are_shown_as_the_user_has_them_shown() {
     let index = hidden.iter().position(|r| r == series).unwrap();
     assert!(page.activate_tag(index));
     assert_eq!(
-        page.predicates()[1],
-        series.rsplit_once(" (").unwrap().0,
+        page.predicates(),
+        [series.rsplit_once(" (").unwrap().0],
         "shown without its namespace"
+    );
+}
+
+#[test]
+fn predicates_are_entered_as_the_reference_s_list_takes_them() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(native.path()).unwrap();
+    let mut page = SearchPage::new(store);
+    page.add_predicate("system:everything");
+    assert_eq!(page.predicates(), ["system:everything"]);
+    // anything else takes system:everything's place
+    page.add_predicate("system:inbox");
+    assert_eq!(page.predicates(), ["system:inbox"]);
+    // an inverse takes a predicate's place
+    page.add_predicate("system:archive");
+    assert_eq!(page.predicates(), ["system:archive"]);
+    // others join, sorted as the reference's list sorts them
+    page.add_predicate("blue eyes");
+    page.add_predicate("-character:link");
+    assert_eq!(
+        page.predicates(),
+        ["-character:link", "blue eyes", "system:archive"]
+    );
+    page.add_predicate("character:link");
+    assert_eq!(
+        page.predicates(),
+        ["blue eyes", "character:link", "system:archive"]
+    );
+    // entered again, one goes
+    page.add_predicate("blue eyes");
+    assert_eq!(page.predicates(), ["character:link", "system:archive"]);
+    // and so from an editor: one system:limit takes another's place
+    let limit = |n: u64| {
+        vec![hydrus_search::Predicate::System(
+            hydrus_search::SystemPredicate::Limit(n),
+        )]
+    };
+    page.add_predicates(&limit(64));
+    page.add_predicates(&limit(256));
+    assert_eq!(
+        page.predicates(),
+        ["character:link", "system:archive", "system:limit is 256"]
     );
 }

@@ -1,0 +1,999 @@
+{
+ "inverses": [
+  {
+   "inverse": null,
+   "text": "system:everything",
+   "typed": "system:everything"
+  },
+  {
+   "inverse": "system:archive",
+   "text": "system:inbox",
+   "typed": "system:inbox"
+  },
+  {
+   "inverse": "system:inbox",
+   "text": "system:archive",
+   "typed": "system:archive"
+  },
+  {
+   "inverse": null,
+   "text": "system:limit is 64",
+   "typed": "system:limit is 64"
+  },
+  {
+   "inverse": "system:not local",
+   "text": "system:local",
+   "typed": "system:local"
+  },
+  {
+   "inverse": "system:local",
+   "text": "system:not local",
+   "typed": "system:not local"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for stars more than 2/5",
+   "typed": "system:rating for stars > 2"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for stars less than 2/5",
+   "typed": "system:rating for stars < 2"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for stars is 3/5",
+   "typed": "system:rating for stars = 3"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for favourites more than dislike",
+   "typed": "system:rating for favourites > 0"
+  },
+  {
+   "inverse": "-blue eyes",
+   "text": "blue eyes",
+   "typed": "blue eyes"
+  },
+  {
+   "inverse": "blue eyes",
+   "text": "-blue eyes",
+   "typed": "-blue eyes"
+  },
+  {
+   "inverse": "-series:*anything*",
+   "text": "series:*anything*",
+   "typed": "series:*anything*"
+  },
+  {
+   "inverse": "series:*anything*",
+   "text": "-series:*anything*",
+   "typed": "-series:*anything*"
+  },
+  {
+   "inverse": "-sam* (wildcard search)",
+   "text": "sam* (wildcard search)",
+   "typed": "sam*"
+  },
+  {
+   "inverse": "sam* (wildcard search)",
+   "text": "-sam* (wildcard search)",
+   "typed": "-sam*"
+  },
+  {
+   "inverse": "system:no audio",
+   "text": "system:has audio",
+   "typed": "system:has audio"
+  },
+  {
+   "inverse": "system:has audio",
+   "text": "system:no audio",
+   "typed": "system:no audio"
+  },
+  {
+   "inverse": "system:no transparency",
+   "text": "system:has transparency",
+   "typed": "system:has transparency"
+  },
+  {
+   "inverse": "system:has transparency",
+   "text": "system:no transparency",
+   "typed": "system:no transparency"
+  },
+  {
+   "inverse": "system:no exif",
+   "text": "system:has exif",
+   "typed": "system:has exif"
+  },
+  {
+   "inverse": "system:has exif",
+   "text": "system:no exif",
+   "typed": "system:no exif"
+  },
+  {
+   "inverse": "system:no human-readable metadata",
+   "text": "system:has human-readable metadata",
+   "typed": "system:has embedded metadata"
+  },
+  {
+   "inverse": "system:has human-readable metadata",
+   "text": "system:no human-readable metadata",
+   "typed": "system:no embedded metadata"
+  },
+  {
+   "inverse": "system:no icc profile",
+   "text": "system:has icc profile",
+   "typed": "system:has icc profile"
+  },
+  {
+   "inverse": "system:has icc profile",
+   "text": "system:no icc profile",
+   "typed": "system:no icc profile"
+  },
+  {
+   "inverse": "system:no forced filetype",
+   "text": "system:has forced filetype",
+   "typed": "system:has forced filetype"
+  },
+  {
+   "inverse": "system:has forced filetype",
+   "text": "system:no forced filetype",
+   "typed": "system:no forced filetype"
+  },
+  {
+   "inverse": "system:no xmp",
+   "text": "system:has xmp",
+   "typed": "system:has xmp"
+  },
+  {
+   "inverse": "system:no iptc",
+   "text": "system:has iptc",
+   "typed": "system:has iptc"
+  },
+  {
+   "inverse": "system:is not the best quality file of its duplicate group",
+   "text": "system:is the best quality file of its duplicate group",
+   "typed": "system:is the best quality file of its duplicate group"
+  },
+  {
+   "inverse": "system:is the best quality file of its duplicate group",
+   "text": "system:is not the best quality file of its duplicate group",
+   "typed": "system:is not the best quality file of its duplicate group"
+  },
+  {
+   "inverse": "system:no notes",
+   "text": "system:has notes",
+   "typed": "system:has notes"
+  },
+  {
+   "inverse": "system:has notes",
+   "text": "system:no notes",
+   "typed": "system:no notes"
+  },
+  {
+   "inverse": null,
+   "text": "system:number of notes > 2",
+   "typed": "system:number of notes > 2"
+  },
+  {
+   "error": "Could not parse system predicate \"system:number of notes ≠ 0\"!",
+   "text": "system:number of notes ≠ 0"
+  },
+  {
+   "inverse": "system:no urls",
+   "text": "system:has urls",
+   "typed": "system:has urls"
+  },
+  {
+   "inverse": "system:has urls",
+   "text": "system:no urls",
+   "typed": "system:no urls"
+  },
+  {
+   "inverse": null,
+   "text": "system:number of urls < 3",
+   "typed": "system:number of urls < 3"
+  },
+  {
+   "inverse": "system:has words",
+   "text": "system:no words",
+   "typed": "system:number of words = 0"
+  },
+  {
+   "inverse": "system:no words",
+   "text": "system:has words",
+   "typed": "system:number of words > 0"
+  },
+  {
+   "inverse": null,
+   "text": "system:number of words > 10",
+   "typed": "system:number of words > 10"
+  },
+  {
+   "inverse": "system:no duration",
+   "text": "system:has duration",
+   "typed": "system:has duration"
+  },
+  {
+   "inverse": "system:has duration",
+   "text": "system:no duration",
+   "typed": "system:no duration"
+  },
+  {
+   "inverse": null,
+   "text": "system:duration > 5 seconds",
+   "typed": "system:duration > 5 seconds"
+  },
+  {
+   "inverse": "system:has frames",
+   "text": "system:no frames",
+   "typed": "system:number of frames = 0"
+  },
+  {
+   "inverse": "system:no frames",
+   "text": "system:has frames",
+   "typed": "system:number of frames > 0"
+  },
+  {
+   "inverse": null,
+   "text": "system:no width",
+   "typed": "system:width = 0"
+  },
+  {
+   "inverse": null,
+   "text": "system:has height",
+   "typed": "system:height > 0"
+  },
+  {
+   "inverse": null,
+   "text": "system:filesize < 1MB",
+   "typed": "system:filesize < 1MB"
+  },
+  {
+   "inverse": null,
+   "text": "system:has tags",
+   "typed": "system:num tags > 0"
+  },
+  {
+   "inverse": "system:ratio ≠ 16:9",
+   "text": "system:ratio = 16:9",
+   "typed": "system:ratio = 16:9"
+  },
+  {
+   "error": "Could not parse system predicate \"system:ratio ≠ 16:9\"!",
+   "text": "system:ratio ≠ 16:9"
+  },
+  {
+   "inverse": "system:ratio is landscape",
+   "text": "system:ratio is portrait",
+   "typed": "system:ratio taller than 1:1"
+  },
+  {
+   "inverse": "system:ratio taller than 16:9",
+   "text": "system:ratio wider than 16:9",
+   "typed": "system:ratio wider than 16:9"
+  },
+  {
+   "inverse": "system:ratio ≠ 1:1",
+   "text": "system:ratio is square",
+   "typed": "system:ratio is square"
+  },
+  {
+   "inverse": null,
+   "text": "system:ratio ≈ 16:9",
+   "typed": "system:ratio ≈ 16:9"
+  },
+  {
+   "inverse": "system:no rating for favourites",
+   "text": "system:has rating for favourites",
+   "typed": "system:has rating for favourites"
+  },
+  {
+   "inverse": "system:has rating for favourites",
+   "text": "system:no rating for favourites",
+   "typed": "system:no rating for favourites"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for favourites is like",
+   "typed": "system:rating for favourites = like"
+  },
+  {
+   "inverse": null,
+   "text": "system:rating for stars more than 2/5",
+   "typed": "system:rating for stars > 2/5"
+  },
+  {
+   "inverse": "system:no rating for stars",
+   "text": "system:has rating for stars",
+   "typed": "system:has rating for stars"
+  },
+  {
+   "inverse": "system:count for counter less than 4",
+   "text": "system:count for counter more than 3",
+   "typed": "system:rating for counter > 3"
+  },
+  {
+   "inverse": "system:count for counter more than 2",
+   "text": "system:count for counter less than 3",
+   "typed": "system:rating for counter < 3"
+  },
+  {
+   "inverse": "system:has count for counter",
+   "text": "system:count for counter less than 0",
+   "typed": "system:rating for counter < 0"
+  },
+  {
+   "inverse": null,
+   "text": "system:count for counter is 2",
+   "typed": "system:rating for counter = 2"
+  },
+  {
+   "inverse": "system:no count for counter",
+   "text": "system:has count for counter",
+   "typed": "system:has count for counter"
+  },
+  {
+   "inverse": "system:any like/dislike ratings not rated",
+   "text": "system:all like/dislike ratings rated",
+   "typed": "system:all like/dislike ratings rated"
+  },
+  {
+   "inverse": "system:all numerical ratings rated",
+   "text": "system:any numerical ratings not rated",
+   "typed": "system:any numerical ratings not rated"
+  },
+  {
+   "inverse": null,
+   "text": "system:only favourites rated",
+   "typed": "system:only favourites rated"
+  }
+ ],
+ "scenarios": [
+  {
+   "enter": [
+    "system:inbox"
+   ],
+   "shown": [
+    [
+     "system:inbox"
+    ]
+   ],
+   "start": [
+    "system:everything"
+   ],
+   "started": [
+    "system:everything"
+   ]
+  },
+  {
+   "enter": [
+    "blue eyes"
+   ],
+   "shown": [
+    [
+     "blue eyes"
+    ]
+   ],
+   "start": [
+    "system:everything"
+   ],
+   "started": [
+    "system:everything"
+   ]
+  },
+  {
+   "enter": [
+    "system:archive"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "system:archive"
+    ]
+   ],
+   "start": [
+    "system:everything",
+    "blue eyes"
+   ],
+   "started": [
+    "system:everything",
+    "blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "system:everything"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "system:everything",
+     "system:inbox"
+    ]
+   ],
+   "start": [
+    "blue eyes",
+    "system:inbox"
+   ],
+   "started": [
+    "blue eyes",
+    "system:inbox"
+   ]
+  },
+  {
+   "enter": [
+    "system:everything"
+   ],
+   "shown": [
+    [
+     "system:everything"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "system:inbox"
+   ],
+   "shown": [
+    []
+   ],
+   "start": [
+    "system:inbox"
+   ],
+   "started": [
+    "system:inbox"
+   ]
+  },
+  {
+   "enter": [
+    "blue eyes"
+   ],
+   "shown": [
+    [
+     "series:metroid"
+    ]
+   ],
+   "start": [
+    "blue eyes",
+    "series:metroid"
+   ],
+   "started": [
+    "blue eyes",
+    "series:metroid"
+   ]
+  },
+  {
+   "enter": [
+    "system:filesize < 1MB"
+   ],
+   "shown": [
+    []
+   ],
+   "start": [
+    "system:filesize < 1MB"
+   ],
+   "started": [
+    "system:filesize < 1MB"
+   ]
+  },
+  {
+   "enter": [
+    "system:everything"
+   ],
+   "shown": [
+    []
+   ],
+   "start": [
+    "system:everything"
+   ],
+   "started": [
+    "system:everything"
+   ]
+  },
+  {
+   "enter": [
+    "system:archive"
+   ],
+   "shown": [
+    [
+     "system:archive"
+    ]
+   ],
+   "start": [
+    "system:inbox"
+   ],
+   "started": [
+    "system:inbox"
+   ]
+  },
+  {
+   "enter": [
+    "system:inbox"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "system:inbox"
+    ]
+   ],
+   "start": [
+    "system:archive",
+    "blue eyes"
+   ],
+   "started": [
+    "system:archive",
+    "blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "-blue eyes"
+   ],
+   "shown": [
+    [
+     "-blue eyes"
+    ]
+   ],
+   "start": [
+    "blue eyes"
+   ],
+   "started": [
+    "blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "blue eyes"
+   ],
+   "shown": [
+    [
+     "blue eyes"
+    ]
+   ],
+   "start": [
+    "-blue eyes"
+   ],
+   "started": [
+    "-blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "-series:*anything*"
+   ],
+   "shown": [
+    [
+     "-series:*anything*"
+    ]
+   ],
+   "start": [
+    "series:*anything*"
+   ],
+   "started": [
+    "series:*anything*"
+   ]
+  },
+  {
+   "enter": [
+    "system:no audio"
+   ],
+   "shown": [
+    [
+     "system:no audio"
+    ]
+   ],
+   "start": [
+    "system:has audio"
+   ],
+   "started": [
+    "system:has audio"
+   ]
+  },
+  {
+   "enter": [
+    "system:no exif"
+   ],
+   "shown": [
+    [
+     "system:no exif"
+    ]
+   ],
+   "start": [
+    "system:has exif"
+   ],
+   "started": [
+    "system:has exif"
+   ]
+  },
+  {
+   "enter": [
+    "system:no icc profile"
+   ],
+   "shown": [
+    [
+     "system:no icc profile"
+    ]
+   ],
+   "start": [
+    "system:has icc profile"
+   ],
+   "started": [
+    "system:has icc profile"
+   ]
+  },
+  {
+   "enter": [
+    "system:is not the best quality file of its duplicate group"
+   ],
+   "shown": [
+    [
+     "system:is not the best quality file of its duplicate group"
+    ]
+   ],
+   "start": [
+    "system:is the best quality file of its duplicate group"
+   ],
+   "started": [
+    "system:is the best quality file of its duplicate group"
+   ]
+  },
+  {
+   "enter": [
+    "system:limit is 256"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "system:limit is 256"
+    ]
+   ],
+   "start": [
+    "system:limit is 64",
+    "blue eyes"
+   ],
+   "started": [
+    "system:limit is 64",
+    "blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "system:width = 1080"
+   ],
+   "shown": [
+    [
+     "system:width = 1,080",
+     "system:width = 1,920"
+    ]
+   ],
+   "start": [
+    "system:width = 1920"
+   ],
+   "started": [
+    "system:width = 1,920"
+   ]
+  },
+  {
+   "enter": [
+    "system:filesize > 10KB"
+   ],
+   "shown": [
+    [
+     "system:filesize < 1MB",
+     "system:filesize > 10KB"
+    ]
+   ],
+   "start": [
+    "system:filesize < 1MB"
+   ],
+   "started": [
+    "system:filesize < 1MB"
+   ]
+  },
+  {
+   "enter": [
+    "series:metroid"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "series:metroid"
+    ]
+   ],
+   "start": [
+    "blue eyes"
+   ],
+   "started": [
+    "blue eyes"
+   ]
+  },
+  {
+   "enter": [
+    "system:has audio"
+   ],
+   "shown": [
+    [
+     "system:has audio",
+     "system:inbox"
+    ]
+   ],
+   "start": [
+    "system:inbox"
+   ],
+   "started": [
+    "system:inbox"
+   ]
+  },
+  {
+   "enter": [
+    "system:width = 1080",
+    "system:width = 950",
+    "system:width = 12000"
+   ],
+   "shown": [
+    [
+     "system:width = 1,080"
+    ],
+    [
+     "system:width = 1,080",
+     "system:width = 950"
+    ],
+    [
+     "system:width = 1,080",
+     "system:width = 12,000",
+     "system:width = 950"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "-series:*anything*",
+    "series:metroid",
+    "sam*",
+    "-blue*",
+    "blue eyes",
+    "-creator:*anything*"
+   ],
+   "shown": [
+    [
+     "-series:*anything*"
+    ],
+    [
+     "-series:*anything*",
+     "series:metroid"
+    ],
+    [
+     "sam* (wildcard search)",
+     "-series:*anything*",
+     "series:metroid"
+    ],
+    [
+     "-blue* (wildcard search)",
+     "sam* (wildcard search)",
+     "-series:*anything*",
+     "series:metroid"
+    ],
+    [
+     "blue eyes",
+     "-blue* (wildcard search)",
+     "sam* (wildcard search)",
+     "-series:*anything*",
+     "series:metroid"
+    ],
+    [
+     "blue eyes",
+     "-blue* (wildcard search)",
+     "-creator:*anything*",
+     "sam* (wildcard search)",
+     "-series:*anything*",
+     "series:metroid"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "system:filesize < 2MB",
+    "system:filesize < 10KB",
+    "system:filesize < 300B"
+   ],
+   "shown": [
+    [
+     "system:filesize < 2MB"
+    ],
+    [
+     "system:filesize < 2MB",
+     "system:filesize < 10KB"
+    ],
+    [
+     "system:filesize < 2MB",
+     "system:filesize < 10KB",
+     "system:filesize < 300B"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "series:metroid",
+    "OR:samus|blue eyes",
+    "character:link",
+    "OR:system:inbox|creator:someone"
+   ],
+   "shown": [
+    [
+     "series:metroid"
+    ],
+    [
+     "blue eyes OR samus",
+     "series:metroid"
+    ],
+    [
+     "blue eyes OR samus",
+     "character:link",
+     "series:metroid"
+    ],
+    [
+     "blue eyes OR samus",
+     "character:link",
+     "creator:someone OR system:inbox",
+     "series:metroid"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "OR:samus|blue eyes"
+   ],
+   "shown": [
+    []
+   ],
+   "start": [
+    "OR:samus|blue eyes"
+   ],
+   "started": [
+    "blue eyes OR samus"
+   ]
+  },
+  {
+   "enter": [
+    "blue eyes long",
+    "OR:samus|blue eyes"
+   ],
+   "shown": [
+    [
+     "blue eyes long"
+    ],
+    [
+     "blue eyes OR samus",
+     "blue eyes long"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "OR:blue eyes|samus"
+   ],
+   "shown": [
+    []
+   ],
+   "start": [
+    "OR:samus|blue eyes"
+   ],
+   "started": [
+    "blue eyes OR samus"
+   ]
+  },
+  {
+   "enter": [
+    "system:not local"
+   ],
+   "shown": [
+    [
+     "system:not local"
+    ]
+   ],
+   "start": [
+    "system:local"
+   ],
+   "started": [
+    "system:local"
+   ]
+  },
+  {
+   "enter": [
+    "series:metroid",
+    "blue eyes",
+    "system:inbox",
+    "system:limit is 64",
+    "-character:link",
+    "creator:*anything*",
+    "system:filesize < 1MB"
+   ],
+   "shown": [
+    [
+     "series:metroid"
+    ],
+    [
+     "blue eyes",
+     "series:metroid"
+    ],
+    [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox"
+    ],
+    [
+     "blue eyes",
+     "series:metroid",
+     "system:inbox",
+     "system:limit is 64"
+    ],
+    [
+     "-character:link",
+     "blue eyes",
+     "series:metroid",
+     "system:inbox",
+     "system:limit is 64"
+    ],
+    [
+     "-character:link",
+     "blue eyes",
+     "creator:*anything*",
+     "series:metroid",
+     "system:inbox",
+     "system:limit is 64"
+    ],
+    [
+     "-character:link",
+     "blue eyes",
+     "creator:*anything*",
+     "series:metroid",
+     "system:filesize < 1MB",
+     "system:inbox",
+     "system:limit is 64"
+    ]
+   ],
+   "start": [],
+   "started": []
+  },
+  {
+   "enter": [
+    "system:archive",
+    "blue eyes",
+    "system:inbox"
+   ],
+   "shown": [
+    [
+     "blue eyes",
+     "system:archive"
+    ],
+    [
+     "system:archive"
+    ],
+    [
+     "system:inbox"
+    ]
+   ],
+   "start": [
+    "system:inbox",
+    "blue eyes"
+   ],
+   "started": [
+    "system:inbox",
+    "blue eyes"
+   ]
+  }
+ ]
+}

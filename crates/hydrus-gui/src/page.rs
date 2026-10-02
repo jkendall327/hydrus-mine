@@ -1110,6 +1110,16 @@ impl SearchPage {
 
     /// The predicates, written as the reference writes them.
     pub fn predicates(&self) -> Vec<String> {
+        let context = self.text_context();
+        self.predicates
+            .iter()
+            .map(|p| predicate_text(p, &context))
+            .collect()
+    }
+
+    /// How the page writes predicates: with the store's services, viewing
+    /// options and tag presentation.
+    fn text_context(&self) -> TextContext {
         let snapshot = self.store.snapshot();
         let viewing = self
             .store
@@ -1117,10 +1127,16 @@ impl SearchPage {
             .unwrap_or_default();
         let mut context = TextContext::from_store(&snapshot.services, &viewing);
         context.presentation = self.store.read(hydrus_store::settings::get).ok();
-        self.predicates
-            .iter()
-            .map(|p| predicate_text(p, &context))
-            .collect()
+        context
+    }
+
+    /// Enter predicates into the search as the reference's list of them
+    /// takes them ([`hydrus_search::enter_predicates`]): one already there
+    /// goes, one that isn't comes in and those it excludes go, then they
+    /// sort.
+    fn enter_predicates(&mut self, predicates: &[Predicate]) {
+        let context = self.text_context();
+        hydrus_search::enter_predicates(&mut self.predicates, predicates, &context);
     }
 
     /// Count the tag list's tags again (after they were changed).
@@ -1647,15 +1663,11 @@ impl SearchPage {
 
     /// Add predicates an editor made, empty the search box and search again;
     /// whether they were taken (not on a page without a search, or locked).
-    pub fn add_predicates(&mut self, predicates: Vec<Predicate>) -> bool {
+    pub fn add_predicates(&mut self, predicates: &[Predicate]) -> bool {
         if self.note.is_some() || self.locked {
             return false;
         }
-        for predicate in predicates {
-            if !self.predicates.contains(&predicate) {
-                self.predicates.push(predicate);
-            }
-        }
+        self.enter_predicates(predicates);
         self.error = None;
         self.autocomplete.clear();
         if self.synchronised {
@@ -1664,10 +1676,10 @@ impl SearchPage {
         true
     }
 
-    /// Add a predicate as typed (a tag, or a system predicate such as
+    /// Enter a predicate as typed (a tag, or a system predicate such as
     /// `system:inbox`) and search again; whether it was taken. One that
-    /// doesn't parse is refused with the reason; one already there is not
-    /// added twice.
+    /// doesn't parse is refused with the reason; one already there is
+    /// taken out, as the reference's list takes it.
     pub fn add_predicate(&mut self, text: &str) -> bool {
         let text = text.trim();
         if text.is_empty() {
@@ -1687,11 +1699,7 @@ impl SearchPage {
                 return false;
             }
         };
-        for predicate in parsed {
-            if !self.predicates.contains(&predicate) {
-                self.predicates.push(predicate);
-            }
-        }
+        self.enter_predicates(&parsed);
         self.error = None;
         if self.synchronised {
             self.search();

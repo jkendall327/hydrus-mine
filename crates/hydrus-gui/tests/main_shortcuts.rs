@@ -116,7 +116,8 @@ fn f5_and_ctrl_i() {
     assert!(!page.borrow().synchronised());
     ui.invoke_search_edited("system:archive".into());
     ui.invoke_search_accepted();
-    assert_eq!(page.borrow().predicates().len(), 2);
+    // (in place of system:everything, as the reference's list takes it)
+    assert_eq!(page.borrow().predicates(), ["system:archive"]);
     assert_eq!(page.borrow().results(), everything);
     // f5 resumes searching, and searches
     ui.invoke_refresh_page();
@@ -126,7 +127,8 @@ fn f5_and_ctrl_i() {
 
     // ctrl+i back on searches at once
     ui.invoke_flip_synchronised();
-    page.borrow_mut().remove_predicate(1);
+    page.borrow_mut().remove_predicate(0);
+    page.borrow_mut().add_predicate("system:everything");
     assert_eq!(page.borrow().results(), archived);
     ui.invoke_flip_synchronised();
     assert_eq!(page.borrow().results(), everything);

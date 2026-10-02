@@ -340,7 +340,16 @@ Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a
-system predicate; a leading hyphen excludes. Predicates are listed as the
+system predicate; a leading hyphen excludes. Predicates are entered as the
+reference's list takes them (`hydrus_search::enter_predicates`, checked
+against `oracle/record_predicate_entry.py`): one already in the search is
+taken out again; one that isn't comes in and takes out what it excludes
+(system:everything goes as anything else comes, a predicate's inverse
+goes, inbox for archive, a tag for its exclusion, "has audio" for "no
+audio", one system:limit for another); and the list sorts itself as the
+reference's does, by the text the reference would copy, in human order. So
+it is from the search box, a tag double-clicked in the tag list, an
+editor, and the favourite search dialog. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
 and double-clicking one removes it. Under the search box, as the
 reference's autocomplete has them (`src/domains.rs`, checked against the

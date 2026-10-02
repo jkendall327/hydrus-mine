@@ -442,6 +442,7 @@ fn open_edit(
     window.on_typed_accepted({
         let weak = window.as_weak();
         let edit = edit.clone();
+        let words = words.clone();
         let show = show.clone();
         move || {
             let Some(window) = weak.upgrade() else { return };
@@ -452,11 +453,11 @@ fn open_edit(
             match parse_api_search(&serde_json::json!([typed])) {
                 Ok(parsed) => {
                     let mut edit = edit.borrow_mut();
-                    for predicate in parsed {
-                        if !edit.search.predicates.contains(&predicate) {
-                            edit.search.predicates.push(predicate);
-                        }
-                    }
+                    hydrus_search::enter_predicates(
+                        &mut edit.search.predicates,
+                        &parsed,
+                        &words.text,
+                    );
                     window.set_typed(SharedString::new());
                     window.set_error(SharedString::new());
                 }

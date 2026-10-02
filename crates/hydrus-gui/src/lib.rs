@@ -562,7 +562,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
                 let shown = shown.clone();
                 move |predicates| {
-                    page.borrow_mut().add_predicates(predicates);
+                    page.borrow_mut().add_predicates(&predicates);
                     shown(true);
                 }
             });

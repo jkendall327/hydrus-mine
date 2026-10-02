@@ -182,7 +182,8 @@ fn the_last_session_opens_as_it_was_left() {
     {
         let opened = again.current();
         let opened = opened.borrow();
-        assert_eq!(opened.predicates(), ["system:everything", "system:inbox"]);
+        // (system:inbox entered in place of system:everything)
+        assert_eq!(opened.predicates(), ["system:inbox"]);
         assert_eq!(opened.file_sort().unwrap().by, SortBy::FileSize);
         assert_eq!(opened.file_sort().unwrap().order, SortOrder::Ascending);
         assert_eq!(opened.results(), inbox);

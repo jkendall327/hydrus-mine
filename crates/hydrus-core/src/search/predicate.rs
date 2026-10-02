@@ -517,3 +517,153 @@ pub enum TagDisplayType {
     /// Tags with siblings and parents applied.
     Display,
 }
+
+impl Predicate {
+    /// The predicate searching for the opposite, for those that have one
+    /// (the reference's `GetInverseCopy`): the inbox and the archive, local
+    /// and not, a tag, namespace or wildcard included and excluded, a file
+    /// property had and not, the best of a duplicate group and not; a count
+    /// of notes, words, URLs or frames, or a duration, of none and of some;
+    /// a ratio equal and not, wider and taller; a rating had and not, an
+    /// inc/dec count more than one number and less than the next (`is_incdec`
+    /// says which services count); and all and any of some ratings, rated
+    /// and not.
+    pub fn inverse(&self, is_incdec: &dyn Fn(&ServiceRef) -> bool) -> Option<Predicate> {
+        use crate::search::number::NumberOp;
+
+        let system = |p: SystemPredicate| Some(Predicate::System(p));
+        match self {
+            Predicate::Tag { tag, inclusive } => Some(Predicate::Tag {
+                tag: tag.clone(),
+                inclusive: !inclusive,
+            }),
+            Predicate::Namespace {
+                namespace,
+                inclusive,
+            } => Some(Predicate::Namespace {
+                namespace: namespace.clone(),
+                inclusive: !inclusive,
+            }),
+            Predicate::Wildcard { pattern, inclusive } => Some(Predicate::Wildcard {
+                pattern: pattern.clone(),
+                inclusive: !inclusive,
+            }),
+            Predicate::Or(_) => None,
+            Predicate::System(p) => match p {
+                SystemPredicate::Inbox => system(SystemPredicate::Archive),
+                SystemPredicate::Archive => system(SystemPredicate::Inbox),
+                SystemPredicate::Local => system(SystemPredicate::NotLocal),
+                SystemPredicate::NotLocal => system(SystemPredicate::Local),
+                SystemPredicate::FileProperty { property, has } => {
+                    system(SystemPredicate::FileProperty {
+                        property: *property,
+                        has: !has,
+                    })
+                }
+                SystemPredicate::BestQualityOfGroup { is_best } => {
+                    system(SystemPredicate::BestQualityOfGroup { is_best: !is_best })
+                }
+                SystemPredicate::Number { property, test }
+                    if matches!(
+                        property,
+                        NumericProperty::NumNotes
+                            | NumericProperty::NumWords
+                            | NumericProperty::NumUrls
+                            | NumericProperty::NumFrames
+                            | NumericProperty::Duration
+                    ) =>
+                {
+                    let zero = matches!(
+                        (test.op, test.value),
+                        (NumberOp::Equal | NumberOp::LessOrEqual, 0) | (NumberOp::Less, 1)
+                    );
+                    let some = matches!(
+                        (test.op, test.value),
+                        (NumberOp::NotEqual | NumberOp::Greater, 0)
+                    );
+                    let op = match (zero, some) {
+                        (true, _) => NumberOp::Greater,
+                        (_, true) => NumberOp::Equal,
+                        _ => return None,
+                    };
+                    system(SystemPredicate::Number {
+                        property: *property,
+                        test: NumberTest { op, value: 0 },
+                    })
+                }
+                SystemPredicate::Ratio { op, width, height } => {
+                    let op = match op {
+                        RatioOp::TallerThan => RatioOp::WiderThan,
+                        RatioOp::WiderThan => RatioOp::TallerThan,
+                        RatioOp::Equal => RatioOp::NotEqual,
+                        RatioOp::NotEqual => RatioOp::Equal,
+                        RatioOp::Approx => return None,
+                    };
+                    system(SystemPredicate::Ratio {
+                        op,
+                        width: *width,
+                        height: *height,
+                    })
+                }
+                SystemPredicate::Rating { service, test } => {
+                    let test = match test {
+                        RatingTest::Rated => RatingTest::NotRated,
+                        RatingTest::NotRated => RatingTest::Rated,
+                        RatingTest::Count { op, value } if is_incdec(service) => match op {
+                            RatingOp::Greater => RatingTest::Count {
+                                op: RatingOp::Less,
+                                value: value + 1,
+                            },
+                            RatingOp::Less => RatingTest::Count {
+                                op: RatingOp::Greater,
+                                value: value.saturating_sub(1),
+                            },
+                            _ => return None,
+                        },
+                        _ => return None,
+                    };
+                    system(SystemPredicate::Rating {
+                        service: service.clone(),
+                        test,
+                    })
+                }
+                SystemPredicate::RatingAdvanced {
+                    logic,
+                    services,
+                    rated,
+                } => {
+                    let logic = match logic {
+                        RatingLogic::All => RatingLogic::Any,
+                        RatingLogic::Any => RatingLogic::All,
+                        RatingLogic::Only { .. } => return None,
+                    };
+                    system(SystemPredicate::RatingAdvanced {
+                        logic,
+                        services: services.clone(),
+                        rated: !rated,
+                    })
+                }
+                _ => None,
+            },
+        }
+    }
+
+    /// Whether entering `other` into a search with this in it removes this
+    /// (the reference's `IsMutuallyExclusive`): system:everything goes for
+    /// anything, a predicate for its inverse, and a system:limit for
+    /// another.
+    pub fn is_mutually_exclusive(
+        &self,
+        other: &Predicate,
+        is_incdec: &dyn Fn(&ServiceRef) -> bool,
+    ) -> bool {
+        match (self, other) {
+            (Predicate::System(SystemPredicate::Everything), _)
+            | (
+                Predicate::System(SystemPredicate::Limit(_)),
+                Predicate::System(SystemPredicate::Limit(_)),
+            ) => true,
+            _ => self.inverse(is_incdec).as_ref() == Some(other),
+        }
+    }
+}
