@@ -312,9 +312,30 @@ and tag service; the exact match first, then the most used), up and down move th
 highlight, and enter adds the highlighted tag, or the text as typed for a
 system predicate; a leading hyphen excludes. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
-and double-clicking one removes it. Under the search box, the reference's
-pause/play button ("searching immediately", or "search paused", when a
-changed search waits to be searched; ctrl+i in the search box switches it). Below them, as the reference's
+and double-clicking one removes it. Under the search box, as the
+reference's autocomplete has them (`src/domains.rs`, checked against the
+reference's buttons and menus, `oracle/record_search_domains.py`):
+"include current tags" and "include pending tags", each switching to
+exclude them from the search; the pause/play button ("searching
+immediately", or "search paused", when a changed search waits to be
+searched; ctrl+i in the search box switches it); and the file and tag
+domain buttons. The file domain button says what the page searches ("my
+files", "trash", "my files, trash", "3 services", "deleted files of my
+files", "all known files with tags") and opens a menu of the domains to
+search, the one searched ticked: each local file domain, all of them
+together when there are several, the trash, "all files ever imported or
+deleted", in advanced mode the repository updates, hydrus local file
+storage, everything deleted and all known files (with tags), the file
+repositories, and "multiple/deleted locations", ticked for any other mix,
+which opens a list of tick boxes (in advanced mode, each domain's deleted
+files too), ticking a domain that covers others unticking them, as the
+reference's does. The tag domain button names the tag service searched
+and opens a menu of the local tag services, the tag repositories and all
+known tags. Choosing all known files while searching all known tags
+moves the tags to the first local tag service, and choosing all known
+tags while searching all known files moves the files to the options'
+default local domain, as the reference's do; the page searches again (if
+it searches as its search changes) and keeps its domains in the session. Below them, as the reference's
 "selection tags" box, the tags of the selected files (or with nothing
 selected, of every file on the page) with how many have each (`tag (3)
 (+1)` for pending, `(-1)` petitioned), display tags in the page's tag

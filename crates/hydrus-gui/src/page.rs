@@ -1109,6 +1109,72 @@ impl SearchPage {
         &self.context.location
     }
 
+    /// The tag domain the page searches.
+    pub fn tag_context(&self) -> &hydrus_search::TagContext {
+        &self.context.tags
+    }
+
+    /// Search other file domains (the file domain button), as the
+    /// reference's autocomplete changes them: with all known files, every
+    /// tag service gives way to the first local one.
+    pub fn choose_location(&mut self, location: hydrus_search::LocationContext) {
+        let mut domains = self.domains();
+        domains.choose_location(&self.store.snapshot().services, location);
+        self.set_domains(domains);
+    }
+
+    /// Search another tag service (the tag domain button): every tag
+    /// service doesn't search all known files, but the options' default
+    /// local file domain.
+    pub fn choose_tag_service(&mut self, service: hydrus_core::ServiceKey) {
+        let defaults: hydrus_store::settings::SearchDefaults = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
+        let mut domains = self.domains();
+        domains.choose_tags(service, &defaults.local_location);
+        self.set_domains(domains);
+    }
+
+    /// Search current tags, or pending ones, or not (the "include current
+    /// tags" and "include pending tags" buttons).
+    pub fn flip_include(&mut self, pending: bool) {
+        let mut domains = self.domains();
+        let include = if pending {
+            &mut domains.tags.include_pending
+        } else {
+            &mut domains.tags.include_current
+        };
+        *include = !*include;
+        self.set_domains(domains);
+    }
+
+    fn domains(&self) -> crate::domains::Domains {
+        crate::domains::Domains {
+            location: self.context.location.clone(),
+            tags: self.context.tags.clone(),
+        }
+    }
+
+    /// The page's domains changed: its suggestions are counted in them, and
+    /// it searches them if it searches as its search changes. A page
+    /// without a search, or locked to its files, keeps its own.
+    fn set_domains(&mut self, domains: crate::domains::Domains) {
+        if self.note.is_some() || self.locked {
+            return;
+        }
+        if domains.location == self.context.location && domains.tags == self.context.tags {
+            return;
+        }
+        self.context.location = domains.location;
+        self.context.tags = domains.tags;
+        self.autocomplete
+            .set_context(&self.context.location, &self.context.tags);
+        if self.synchronised {
+            self.search();
+        }
+    }
+
     /// Add files at the page's end, those it doesn't have, in the order
     /// given, as files of their own, as the reference's pages take them
     /// (the Client API's `/manage_pages/add_files`: `AddMediaResults`);

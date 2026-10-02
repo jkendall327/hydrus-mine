@@ -27,6 +27,7 @@ pub mod audio;
 pub mod autocomplete;
 pub mod collect;
 pub mod daemon;
+pub mod domains;
 mod drops;
 pub mod duplicate_filter;
 pub mod favourites;
@@ -37,6 +38,7 @@ pub mod headless;
 mod import_window;
 pub mod info_lines;
 pub mod local_import;
+mod locations_window;
 pub mod main_menu;
 pub mod manage_tags;
 pub(crate) mod manage_tags_window;
@@ -160,6 +162,8 @@ pub struct Bound {
     pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
     /// The "review files to import" window while it is open, and its list.
     pub review_imports: ReviewSlot,
+    /// The "multiple/deleted locations" list while it is open.
+    pub locations: Rc<RefCell<Option<LocationsWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -378,6 +382,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the "review files to import" window, with paths (from file > import
     // files, or dropped on the window); "import now" opens an import page
     let review_imports: ReviewSlot = Rc::default();
+    // the "multiple/deleted locations" list, from the file domain button
+    let locations: Rc<RefCell<Option<LocationsWindow>>> = Rc::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
         let open_page = open_page.clone();
@@ -586,6 +592,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     // ctrl+i, or the button: searching as the search changes, or waiting
+    window.on_include_flipped({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |which| {
+            page().borrow_mut().flip_include(which == 1);
+            shown(true);
+        }
+    });
     window.on_flip_synchronised({
         let page = page.clone();
         let shown = shown.clone();
@@ -939,6 +953,63 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             import_files: {
                 let review_files = review_files.clone();
                 Rc::new(move || review_files(Vec::new()))
+            },
+            domain_menu: {
+                let page = page.clone();
+                Rc::new(move |which| {
+                    let page = page();
+                    let page = page.borrow();
+                    if page.note().is_some() || page.lock().is_some() {
+                        return Vec::new();
+                    }
+                    let store = page.store();
+                    let snapshot = store.snapshot();
+                    let rows = if which == 0 {
+                        let hydrus_store::settings::AdvancedMode(advanced) =
+                            store.read(hydrus_store::settings::get).unwrap_or_default();
+                        domains::location_menu(&snapshot.services, advanced, page.location())
+                    } else {
+                        domains::tag_menu(&snapshot.services, page.tag_context())
+                    };
+                    domains::entries(rows)
+                })
+            },
+            search_domain: {
+                let page = page.clone();
+                let shown = shown.clone();
+                let locations = locations.clone();
+                Rc::new(move |choice| {
+                    let page = page();
+                    match choice {
+                        domains::Choice::Location(location) => {
+                            page.borrow_mut().choose_location(location);
+                        }
+                        domains::Choice::Tags(service) => {
+                            page.borrow_mut().choose_tag_service(service);
+                        }
+                        domains::Choice::Multiple => {
+                            let (store, current) = {
+                                let page = page.borrow();
+                                (page.store().clone(), page.location().clone())
+                            };
+                            let chosen: Rc<dyn Fn(hydrus_search::LocationContext)> = Rc::new({
+                                let page = page.clone();
+                                let shown = shown.clone();
+                                move |location| {
+                                    page.borrow_mut().choose_location(location);
+                                    shown(true);
+                                }
+                            });
+                            if let Err(e) =
+                                locations_window::open(&locations, store, &current, chosen)
+                            {
+                                eprintln!("could not open the locations list: {e}");
+                            }
+                            return;
+                        }
+                    }
+                    shown(true);
+                })
             },
         },
     );
@@ -1874,6 +1945,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         filter,
         open_page,
         review_imports,
+        locations,
         drop_files: review_files,
         sync,
         _thumbnails: thumbnails,
@@ -3679,6 +3751,12 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
     window.set_synchronised(page.synchronised());
+    let snapshot = page.store().snapshot();
+    window.set_location_label(domains::location_label(&snapshot.services, page.location()).into());
+    let tags = page.tag_context();
+    window.set_tags_label(domains::tag_label(&snapshot.services, tags).into());
+    window.set_include_current(tags.include_current);
+    window.set_include_pending(tags.include_pending);
     let lock = page.lock();
     window.set_search_locked(lock.is_some());
     if let Some(lock) = lock {

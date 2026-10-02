@@ -1,0 +1,61 @@
+// The "multiple/deleted locations" list (the reference's
+// `EditMultipleLocationContextPanel`, in its "edit multiple location"
+// dialog), from a search page's file domain button: a tick box for each
+// file domain's current files, and in advanced mode for each's deleted
+// ones; ticking one that covers others unticks those.
+
+import { Button, CheckBox, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct LocationTick {
+    label: string,
+    checked: bool,
+}
+
+export component LocationsWindow inherits Window {
+    title: "edit multiple location";
+    preferred-width: 320px;
+    background: Theme.window;
+    in property <[LocationTick]> ticks;
+    callback toggled(int, bool);
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            ScrollView {
+                min-height: min(root.ticks.length, 14) * 26px;
+                VerticalLayout {
+                    alignment: start;
+                    for tick[i] in root.ticks: CheckBox {
+                        text: tick.label;
+                        checked: tick.checked;
+                        toggled => { root.toggled(i, self.checked); }
+                    }
+                }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

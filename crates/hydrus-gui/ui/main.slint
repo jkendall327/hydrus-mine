@@ -20,6 +20,7 @@ export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint
 export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { DurationField, OptionRow, OptionsWindow } from "options.slint";
+export { LocationTick, LocationsWindow } from "domains.slint";
 export { ImportRow, ReviewImportsWindow } from "import_files.slint";
 export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
@@ -455,6 +456,16 @@ export component MainWindow inherits Window {
     // button under the search box) switching it
     in property <bool> synchronised: true;
     callback flip-synchronised();
+    // the search's domains (`src/domains.rs`): the file and tag domain
+    // buttons' labels, each opening its menu below it (0 files, 1 tags),
+    // and whether current and pending tags are searched (each button
+    // switching one: 0 current, 1 pending)
+    in property <string> location-label;
+    in property <string> tags-label;
+    in property <bool> include-current: true;
+    in property <bool> include-pending: true;
+    callback domain-menu-requested(int, length, length);
+    callback include-flipped(int);
     // ctrl+s: the search box takes the keyboard (counted, for the box to
     // see each ask)
     in-out property <int> search-focus-requests;
@@ -930,11 +941,43 @@ export component MainWindow inherits Window {
                             }
                         }
                     }
-                    // the reference's pause/play button: searching as the
-                    // search changes, or waiting
+                    // the reference's buttons under the search box: which
+                    // tags to search, its pause/play button (searching as
+                    // the search changes, or waiting), and the file and tag
+                    // domains
+                    if !root.search-locked && root.note == "": HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.include-current ? "include current tags" : "exclude current tags";
+                            clicked => { root.include-flipped(0); }
+                        }
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.include-pending ? "include pending tags" : "exclude pending tags";
+                            clicked => { root.include-flipped(1); }
+                        }
+                    }
                     if !root.search-locked && root.note == "": Button {
                         text: root.synchronised ? "searching immediately" : "search paused";
                         clicked => { root.flip-synchronised(); }
+                    }
+                    if !root.search-locked && root.note == "": HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.location-label;
+                            clicked => { root.domain-menu-requested(0, self.absolute-position.x, self.absolute-position.y + self.height); }
+                        }
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.tags-label;
+                            clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
+                        }
                     }
                     if root.favourites-open && !root.search-locked: Rectangle {
                         border-width: 1px;

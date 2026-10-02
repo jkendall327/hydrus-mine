@@ -29,6 +29,11 @@ pub(crate) struct Hooks {
     pub options: Rc<dyn Fn()>,
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
+    /// The page shown's file (0) or tag (1) domain button's menu: none
+    /// for a page without a search.
+    pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
+    /// Search the domain chosen from one.
+    pub search_domain: Rc<dyn Fn(crate::domains::Choice)>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -70,7 +75,12 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
         move || {
             let Some(window) = weak.upgrade() else { return };
             let open = open.borrow();
-            window.set_menu_open(open.top().and_then(|t| i32::try_from(t).ok()).unwrap_or(-1));
+            // (-2: a menu opened from a button)
+            window.set_menu_open(match open.top() {
+                Some(top) => i32::try_from(top).unwrap_or(-1),
+                None if open.is_open() => -2,
+                None => -1,
+            });
             let view = open.view();
             let mut shown_lines = shown_lines.borrow_mut();
             shown_lines.truncate(view.len());
@@ -189,6 +199,19 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
                 open_menu(top, x, y);
             }
             show();
+        }
+    });
+    // a search page's domain buttons: their menus, below them
+    window.on_domain_menu_requested({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |which, x, y| {
+            let entries = (hooks.domain_menu)(which);
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
         }
     });
     window.on_menu_title_hovered({
@@ -453,5 +476,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::Options => (hooks.options)(),
         Command::ImportFiles => (hooks.import_files)(),
+        Command::SearchDomain(choice) => (hooks.search_domain)(choice),
     }
 }

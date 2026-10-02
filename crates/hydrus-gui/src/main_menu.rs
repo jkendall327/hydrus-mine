@@ -155,6 +155,8 @@ pub enum Command {
     Options,
     /// Open the "review files to import" window.
     ImportFiles,
+    /// Search a file or tag domain (a search page's domain buttons).
+    SearchDomain(crate::domains::Choice),
 }
 
 /// A repository with content to upload (the pending menu).
@@ -1046,11 +1048,16 @@ pub enum MenuKey {
 pub struct OpenMenus {
     menus: Vec<Entry>,
     panes: Vec<Pane>,
+    /// Whether the menu open was opened from a button, not the bar.
+    popup: bool,
 }
 
 impl OpenMenus {
     /// The bar's menu open, if one is.
     pub fn top(&self) -> Option<usize> {
+        if self.popup {
+            return None;
+        }
         self.panes.first().map(|p| p.path[0])
     }
 
@@ -1062,10 +1069,25 @@ impl OpenMenus {
     /// `x`, `y`; a disabled one doesn't open.
     pub fn open(&mut self, menus: Vec<Entry>, top: usize, x: f32, y: f32) {
         self.menus = menus;
+        self.popup = false;
         self.panes.clear();
         if self.menus.get(top).is_some_and(Entry::usable) {
             self.push(vec![top], x, y, x);
         }
+    }
+
+    /// Open a menu of `entries` from a button, at `x`, `y` (a Qt menu
+    /// popped up: no title of the bar is open, and left and right don't
+    /// move along the bar).
+    pub fn open_popup(&mut self, entries: Vec<Entry>, x: f32, y: f32) {
+        self.menus = vec![Entry::Menu {
+            label: String::new(),
+            entries,
+            enabled: true,
+        }];
+        self.popup = true;
+        self.panes.clear();
+        self.push(vec![0], x, y, x);
     }
 
     pub fn close(&mut self) {

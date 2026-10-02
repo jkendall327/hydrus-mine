@@ -1,0 +1,474 @@
+{
+ "advanced": {
+  "all_known_files_then_all_known_tags": {
+   "after_files": {
+    "location": "all known files with tags",
+    "tags": "downloader tags"
+   },
+   "after_tags": {
+    "location": "my files",
+    "tags": "all known tags"
+   }
+  },
+  "location_choices": [
+   {
+    "chosen": "art",
+    "location": "art",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "my files",
+    "location": "my files",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "combined local file domains",
+    "location": "combined local file domains",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "trash",
+    "location": "trash",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "all files ever imported or deleted",
+    "location": "current and deleted files of combined local file domains",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "repository updates",
+    "location": "repository updates",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "hydrus local file storage",
+    "location": "hydrus local file storage",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "deleted from anywhere",
+    "location": "deleted from anywhere",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "all known files with tags",
+    "location": "all known files with tags",
+    "tags": "downloader tags"
+   }
+  ],
+  "location_menu": [
+   {
+    "checked": false,
+    "text": "art"
+   },
+   {
+    "checked": true,
+    "text": "my files"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "combined local file domains"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "trash"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "all files ever imported or deleted"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "repository updates"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "hydrus local file storage"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "deleted from anywhere"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "all known files with tags"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "multiple/deleted locations"
+   }
+  ],
+  "multiple": [
+   {
+    "checked": false,
+    "text": "art"
+   },
+   {
+    "checked": true,
+    "text": "my files"
+   },
+   {
+    "checked": false,
+    "text": "combined local file domains"
+   },
+   {
+    "checked": false,
+    "text": "trash"
+   },
+   {
+    "checked": false,
+    "text": "repository updates"
+   },
+   {
+    "checked": false,
+    "text": "hydrus local file storage"
+   },
+   {
+    "checked": false,
+    "text": "deleted from anywhere"
+   },
+   {
+    "checked": false,
+    "text": "all known files"
+   },
+   {
+    "checked": false,
+    "text": "deleted from art"
+   },
+   {
+    "checked": false,
+    "text": "deleted from my files"
+   },
+   {
+    "checked": false,
+    "text": "deleted from combined local file domains"
+   },
+   {
+    "checked": false,
+    "text": "deleted from repository updates"
+   },
+   {
+    "checked": false,
+    "text": "deleted from hydrus local file storage"
+   }
+  ],
+  "start": {
+   "location": "my files",
+   "tags": "all known tags"
+  },
+  "tag_choices": [
+   {
+    "chosen": "downloader tags",
+    "location": "my files",
+    "tags": "downloader tags"
+   },
+   {
+    "chosen": "my tags",
+    "location": "my files",
+    "tags": "my tags"
+   },
+   {
+    "chosen": "second tags",
+    "location": "my files",
+    "tags": "second tags"
+   },
+   {
+    "chosen": "all known tags",
+    "location": "my files",
+    "tags": "all known tags"
+   }
+  ],
+  "tag_menu": [
+   {
+    "checked": false,
+    "text": "downloader tags"
+   },
+   {
+    "checked": false,
+    "text": "my tags"
+   },
+   {
+    "checked": false,
+    "text": "second tags"
+   },
+   "---",
+   {
+    "checked": true,
+    "text": "all known tags"
+   }
+  ]
+ },
+ "include_buttons": {
+  "flipped": [
+   "exclude current tags",
+   "exclude pending tags"
+  ],
+  "include_current": false,
+  "include_pending": false,
+  "start": [
+   "include current tags",
+   "include pending tags"
+  ],
+  "tag_label_flipped": "all known tags"
+ },
+ "labels": [
+  {
+   "current": [
+    "my files",
+    "trash"
+   ],
+   "deleted": [],
+   "label": "my files, trash"
+  },
+  {
+   "current": [
+    "my files",
+    "art",
+    "trash"
+   ],
+   "deleted": [],
+   "label": "3 services"
+  },
+  {
+   "current": [],
+   "deleted": [
+    "my files"
+   ],
+   "label": "deleted files of my files"
+  },
+  {
+   "current": [
+    "my files"
+   ],
+   "deleted": [
+    "my files"
+   ],
+   "label": "current and deleted files of my files"
+  },
+  {
+   "current": [
+    "my files"
+   ],
+   "deleted": [
+    "trash"
+   ],
+   "label": "a mix of current and deleted files of my files, trash"
+  },
+  {
+   "current": [
+    "all my files"
+   ],
+   "deleted": [
+    "all my files"
+   ],
+   "label": "current and deleted files of combined local file domains"
+  },
+  {
+   "current": [],
+   "deleted": [],
+   "label": "nothing"
+  }
+ ],
+ "normal": {
+  "location_choices": [
+   {
+    "chosen": "art",
+    "location": "art",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "my files",
+    "location": "my files",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "combined local file domains",
+    "location": "combined local file domains",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "trash",
+    "location": "trash",
+    "tags": "all known tags"
+   },
+   {
+    "chosen": "all files ever imported or deleted",
+    "location": "current and deleted files of combined local file domains",
+    "tags": "all known tags"
+   }
+  ],
+  "location_menu": [
+   {
+    "checked": false,
+    "text": "art"
+   },
+   {
+    "checked": true,
+    "text": "my files"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "combined local file domains"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "trash"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "all files ever imported or deleted"
+   },
+   "---",
+   {
+    "checked": false,
+    "text": "multiple/deleted locations"
+   }
+  ],
+  "multiple": [
+   {
+    "checked": false,
+    "text": "art"
+   },
+   {
+    "checked": true,
+    "text": "my files"
+   },
+   {
+    "checked": false,
+    "text": "combined local file domains"
+   },
+   {
+    "checked": false,
+    "text": "trash"
+   }
+  ],
+  "start": {
+   "location": "my files",
+   "tags": "all known tags"
+  },
+  "tag_choices": [
+   {
+    "chosen": "downloader tags",
+    "location": "my files",
+    "tags": "downloader tags"
+   },
+   {
+    "chosen": "my tags",
+    "location": "my files",
+    "tags": "my tags"
+   },
+   {
+    "chosen": "second tags",
+    "location": "my files",
+    "tags": "second tags"
+   },
+   {
+    "chosen": "all known tags",
+    "location": "my files",
+    "tags": "all known tags"
+   }
+  ],
+  "tag_menu": [
+   {
+    "checked": false,
+    "text": "downloader tags"
+   },
+   {
+    "checked": false,
+    "text": "my tags"
+   },
+   {
+    "checked": false,
+    "text": "second tags"
+   },
+   "---",
+   {
+    "checked": true,
+    "text": "all known tags"
+   }
+  ]
+ },
+ "surplus": [
+  {
+   "checked": [
+    "my files",
+    "all known files"
+   ],
+   "deleted": [],
+   "kept": {
+    "current": [
+     "all known files"
+    ],
+    "deleted": []
+   }
+  },
+  {
+   "checked": [
+    "my files",
+    "art",
+    "all my files"
+   ],
+   "deleted": [],
+   "kept": {
+    "current": [
+     "combined local file domains"
+    ],
+    "deleted": []
+   }
+  },
+  {
+   "checked": [
+    "my files",
+    "trash",
+    "all local files"
+   ],
+   "deleted": [],
+   "kept": {
+    "current": [
+     "hydrus local file storage"
+    ],
+    "deleted": []
+   }
+  },
+  {
+   "checked": [
+    "my files",
+    "trash"
+   ],
+   "deleted": [],
+   "kept": {
+    "current": [
+     "my files",
+     "trash"
+    ],
+    "deleted": []
+   }
+  },
+  {
+   "checked": [
+    "all my files",
+    "trash"
+   ],
+   "deleted": [],
+   "kept": {
+    "current": [
+     "combined local file domains",
+     "trash"
+    ],
+    "deleted": []
+   }
+  }
+ ]
+}
