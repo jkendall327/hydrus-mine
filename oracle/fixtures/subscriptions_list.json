@@ -1,0 +1,2084 @@
+{
+ "now": 1700000000,
+ "subscriptions": [
+  {
+   "subscription": {
+    "name": "artist one",
+    "gug": "example tag search",
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "paused": false,
+    "delay": null,
+    "queries": [
+     {
+      "text": "blue_eyes",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        3600,
+        7200
+       ],
+       [
+        1,
+        176400,
+        180000
+       ],
+       [
+        1,
+        349200,
+        352800
+       ],
+       [
+        1,
+        522000,
+        525600
+       ],
+       [
+        1,
+        694800,
+        698400
+       ],
+       [
+        1,
+        867600,
+        871200
+       ],
+       [
+        1,
+        1040400,
+        1044000
+       ],
+       [
+        1,
+        1213200,
+        1216800
+       ],
+       [
+        1,
+        1386000,
+        1389600
+       ],
+       [
+        1,
+        1558800,
+        1562400
+       ],
+       [
+        2,
+        259200,
+        262800
+       ],
+       [
+        2,
+        345600,
+        349200
+       ],
+       [
+        7,
+        432000,
+        435600
+       ],
+       [
+        4,
+        518400,
+        522000
+       ]
+      ],
+      "last_check": 3600,
+      "check_now": false,
+      "paused": false
+     },
+     {
+      "text": "red_hair",
+      "display": "reds",
+      "seeds": [
+       [
+        1,
+        172800,
+        176400
+       ],
+       [
+        1,
+        1036800,
+        1040400
+       ],
+       [
+        1,
+        1900800,
+        1904400
+       ],
+       [
+        0,
+        172800,
+        176400
+       ],
+       [
+        0,
+        259200,
+        262800
+       ]
+      ],
+      "last_check": 172800,
+      "check_now": false,
+      "paused": true
+     },
+     {
+      "text": "quiet artist",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        34560000,
+        34563600
+       ],
+       [
+        1,
+        37152000,
+        37155600
+       ]
+      ],
+      "last_check": 259200,
+      "check_now": false,
+      "paused": false
+     },
+     {
+      "text": "brand new",
+      "display": null,
+      "seeds": [],
+      "last_check": null,
+      "check_now": false,
+      "paused": false
+     }
+    ]
+   },
+   "row": [
+    "artist one",
+    "example tag search",
+    "2 working, 1 paused, 1 dead",
+    "1 hour ago",
+    "1 hour ago",
+    "",
+    "19/21 - 1Ign1F",
+    "",
+    ""
+   ],
+   "queries": [
+    {
+     "query": {
+      "text": "blue_eyes",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        3600,
+        7200
+       ],
+       [
+        1,
+        176400,
+        180000
+       ],
+       [
+        1,
+        349200,
+        352800
+       ],
+       [
+        1,
+        522000,
+        525600
+       ],
+       [
+        1,
+        694800,
+        698400
+       ],
+       [
+        1,
+        867600,
+        871200
+       ],
+       [
+        1,
+        1040400,
+        1044000
+       ],
+       [
+        1,
+        1213200,
+        1216800
+       ],
+       [
+        1,
+        1386000,
+        1389600
+       ],
+       [
+        1,
+        1558800,
+        1562400
+       ],
+       [
+        2,
+        259200,
+        262800
+       ],
+       [
+        2,
+        345600,
+        349200
+       ],
+       [
+        7,
+        432000,
+        435600
+       ],
+       [
+        4,
+        518400,
+        522000
+       ]
+      ],
+      "last_check": 3600,
+      "check_now": false,
+      "paused": false
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": false,
+      "next_check_time": 1700441768
+     },
+     "row": [
+      "blue_eyes",
+      "",
+      "ok",
+      "1 hour ago",
+      "1 hour ago",
+      "in 5 days 2 hours",
+      "14 files in previous 18 days 1 hour",
+      "",
+      "14 - 1Ign1F",
+      ""
+     ]
+    },
+    {
+     "query": {
+      "text": "red_hair",
+      "display": "reds",
+      "seeds": [
+       [
+        1,
+        172800,
+        176400
+       ],
+       [
+        1,
+        1036800,
+        1040400
+       ],
+       [
+        1,
+        1900800,
+        1904400
+       ],
+       [
+        0,
+        172800,
+        176400
+       ],
+       [
+        0,
+        259200,
+        262800
+       ]
+      ],
+      "last_check": 172800,
+      "check_now": false,
+      "paused": true
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": true,
+      "next_check_time": 1701212480
+     },
+     "row": [
+      "reds (red_hair)",
+      "yes",
+      "ok",
+      "2 days ago",
+      "2 days ago",
+      "paused, but would be in 14 days",
+      "5 files in previous 20 days 1 hour",
+      "",
+      "3/5",
+      ""
+     ]
+    },
+    {
+     "query": {
+      "text": "quiet artist",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        34560000,
+        34563600
+       ],
+       [
+        1,
+        37152000,
+        37155600
+       ]
+      ],
+      "last_check": 259200,
+      "check_now": false,
+      "paused": false
+     },
+     "after_sync": {
+      "dead": true,
+      "paused": true,
+      "next_check_time": 1707516800
+     },
+     "row": [
+      "quiet artist",
+      "yes",
+      "dead",
+      "1 year 1 month ago",
+      "3 days ago",
+      "dead, so not checking",
+      "0 files in previous 5 months 27 days",
+      "",
+      "2",
+      ""
+     ]
+    },
+    {
+     "query": {
+      "text": "brand new",
+      "display": null,
+      "seeds": [],
+      "last_check": null,
+      "check_now": false,
+      "paused": false
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": false,
+      "next_check_time": 0
+     },
+     "row": [
+      "brand new",
+      "",
+      "ok",
+      "n/a",
+      "(initial check has not yet occurred)",
+      "imminent",
+      "no files yet",
+      "",
+      "",
+      ""
+     ]
+    }
+   ]
+  },
+  {
+   "subscription": {
+    "name": "Empty sub",
+    "gug": "example tag search",
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "paused": false,
+    "delay": null,
+    "queries": []
+   },
+   "row": [
+    "Empty sub",
+    "example tag search",
+    "no queries",
+    "n/a",
+    "n/a",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "queries": []
+  },
+  {
+   "subscription": {
+    "name": "paused and delayed",
+    "gug": "other search",
+    "checker": [
+     4,
+     43200,
+     604800,
+     [
+      1,
+      7776000
+     ]
+    ],
+    "paused": true,
+    "delay": [
+     7200,
+     "network error: could not connect"
+    ],
+    "queries": [
+     {
+      "text": "green",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        72000,
+        null
+       ],
+       [
+        1,
+        75600,
+        null
+       ],
+       [
+        1,
+        79200,
+        null
+       ],
+       [
+        1,
+        82800,
+        null
+       ],
+       [
+        8,
+        75600,
+        79200
+       ],
+       [
+        8,
+        79200,
+        82800
+       ],
+       [
+        8,
+        82800,
+        86400
+       ]
+      ],
+      "last_check": 72000,
+      "check_now": true,
+      "paused": false
+     },
+     {
+      "text": "yellow",
+      "display": null,
+      "seeds": [
+       [
+        3,
+        172800,
+        176400
+       ]
+      ],
+      "last_check": 172800,
+      "check_now": false,
+      "paused": false
+     }
+    ]
+   },
+   "row": [
+    "paused and delayed",
+    "other search",
+    "2 working",
+    "20 hours ago",
+    "20 hours ago",
+    "delayed--retrying in 2 hours - because: network error: could not connect",
+    "8 - 3S",
+    "yes",
+    ""
+   ],
+   "queries": [
+    {
+     "query": {
+      "text": "green",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        72000,
+        null
+       ],
+       [
+        1,
+        75600,
+        null
+       ],
+       [
+        1,
+        79200,
+        null
+       ],
+       [
+        1,
+        82800,
+        null
+       ],
+       [
+        8,
+        75600,
+        79200
+       ],
+       [
+        8,
+        79200,
+        82800
+       ],
+       [
+        8,
+        82800,
+        86400
+       ]
+      ],
+      "last_check": 72000,
+      "check_now": true,
+      "paused": false
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": false,
+      "next_check_time": 0
+     },
+     "row": [
+      "green",
+      "",
+      "ok",
+      "20 hours ago",
+      "20 hours ago",
+      "checking on dialog ok",
+      "7 files in previous 4 hours",
+      "",
+      "7 - 3S",
+      ""
+     ]
+    },
+    {
+     "query": {
+      "text": "yellow",
+      "display": null,
+      "seeds": [
+       [
+        3,
+        172800,
+        176400
+       ]
+      ],
+      "last_check": 172800,
+      "check_now": false,
+      "paused": false
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": false,
+      "next_check_time": 1699870400
+     },
+     "row": [
+      "yellow",
+      "",
+      "ok",
+      "2 days ago",
+      "2 days ago",
+      "imminent",
+      "1 files in previous 1 hour",
+      "",
+      "1",
+      ""
+     ]
+    }
+   ]
+  },
+  {
+   "subscription": {
+    "name": "no downloader",
+    "gug": "",
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "paused": false,
+    "delay": [
+     -3600,
+     "old delay"
+    ],
+    "queries": [
+     {
+      "text": "lonely",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        864000,
+        867600
+       ]
+      ],
+      "last_check": 864000,
+      "check_now": false,
+      "paused": true
+     }
+    ]
+   },
+   "row": [
+    "no downloader",
+    "no downloader set!",
+    "0 working, 1 paused",
+    "10 days ago",
+    "10 days ago",
+    "",
+    "1",
+    "",
+    ""
+   ],
+   "queries": [
+    {
+     "query": {
+      "text": "lonely",
+      "display": null,
+      "seeds": [
+       [
+        1,
+        864000,
+        867600
+       ]
+      ],
+      "last_check": 864000,
+      "check_now": false,
+      "paused": true
+     },
+     "after_sync": {
+      "dead": false,
+      "paused": true,
+      "next_check_time": 1699222400
+     },
+     "row": [
+      "lonely",
+      "yes",
+      "ok",
+      "10 days ago",
+      "10 days ago",
+      "paused, but would be imminent",
+      "1 files in previous 1 hour",
+      "",
+      "1",
+      ""
+     ]
+    }
+   ]
+  }
+ ],
+ "actions": [
+  {
+   "do": "select",
+   "rows": [
+    "artist one"
+   ],
+   "asked": [],
+   "selected": [
+    "artist one"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 1700441768
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 1700007200,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 1699870400
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 1699996400,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1699222400
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "check queries now",
+   "rows": [
+    "artist one"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 4 selected queries, 1 are DEAD. Do you want to check these?",
+     "choices": [
+      "yes, check all of them",
+      "check the 3 ALIVE",
+      "resurrect and check the 1 DEAD"
+     ],
+     "answer": 1
+    },
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 3 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes check paused queries",
+      "no just what is currently unpaused"
+     ],
+     "answer": 1
+    }
+   ],
+   "selected": [
+    "artist one"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 1700007200,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 1699870400
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 1699996400,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1699222400
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "select",
+   "rows": [
+    "paused and delayed"
+   ],
+   "asked": [],
+   "selected": [
+    "paused and delayed"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": true,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 1700007200,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 1699870400
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 1699996400,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1699222400
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "scrub delays",
+   "rows": [
+    "paused and delayed"
+   ],
+   "asked": [],
+   "selected": [
+    "paused and delayed"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": false,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 1699870400
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 1699996400,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1699222400
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "check queries now",
+   "rows": [
+    "paused and delayed",
+    "no downloader"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 2 selected subscriptions, 1 are paused. Do you want to unpause these paused subs and check their queries?",
+     "choices": [
+      "yes, check queries within paused subs",
+      "no, just check within unpaused subs"
+     ],
+     "answer": 0
+    },
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 3 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes check paused queries",
+      "no just what is currently unpaused"
+     ],
+     "answer": 0
+    }
+   ],
+   "selected": [
+    "no downloader",
+    "paused and delayed"
+   ],
+   "can_check_now": false,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "pause/resume",
+   "rows": [
+    "artist one",
+    "Empty sub",
+    "paused and delayed"
+   ],
+   "asked": [],
+   "selected": [
+    "Empty sub",
+    "artist one",
+    "paused and delayed"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "check queries now",
+   "rows": [
+    "paused and delayed",
+    "Empty sub"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 2 selected subscriptions, 2 are paused. Do you want to unpause these paused subs and check their queries?",
+     "choices": [
+      "yes, unpause them and check their queries",
+      "no, leave them alone"
+     ],
+     "answer": 1
+    }
+   ],
+   "selected": [
+    "Empty sub",
+    "paused and delayed"
+   ],
+   "can_check_now": false,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "check queries now",
+   "rows": [
+    "paused and delayed"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 1 selected subscriptions, 1 are paused. Do you want to unpause these paused subs and check their queries?",
+     "choices": [
+      "yes, unpause them and check their queries",
+      "no, leave them alone"
+     ],
+     "answer": null
+    }
+   ],
+   "selected": [
+    "paused and delayed"
+   ],
+   "can_check_now": false,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": false,
+       "paused": true,
+       "dead": true,
+       "next_check_time": 1707516800
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "check queries now",
+   "rows": [
+    "artist one"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 1 selected subscriptions, 1 are paused. Do you want to unpause these paused subs and check their queries?",
+     "choices": [
+      "yes, unpause them and check their queries",
+      "no, leave them alone"
+     ],
+     "answer": 0
+    },
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 4 selected queries, 1 are DEAD. Do you want to check these?",
+     "choices": [
+      "yes, check all of them",
+      "check the 3 ALIVE",
+      "resurrect and check the 1 DEAD"
+     ],
+     "answer": 2
+    },
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 1 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes, check them",
+      "no, leave them alone"
+     ],
+     "answer": 0
+    }
+   ],
+   "selected": [
+    "artist one"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "select subscriptions",
+   "rows": [
+    "Empty sub"
+   ],
+   "asked": [
+    {
+     "kind": "text",
+     "message": "This selects subscriptions based on query text. Please enter some search text, and any subscription that has a query that includes that text will be selected.",
+     "answer": "ell"
+    }
+   ],
+   "selected": [
+    "paused and delayed"
+   ],
+   "can_check_now": false,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "select subscriptions",
+   "rows": [],
+   "asked": [
+    {
+     "kind": "text",
+     "message": "This selects subscriptions based on query text. Please enter some search text, and any subscription that has a query that includes that text will be selected.",
+     "answer": "E"
+    }
+   ],
+   "selected": [],
+   "can_check_now": false,
+   "can_reset": false,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "select subscriptions",
+   "rows": [],
+   "asked": [
+    {
+     "kind": "text",
+     "message": "This selects subscriptions based on query text. Please enter some search text, and any subscription that has a query that includes that text will be selected.",
+     "answer": "e"
+    }
+   ],
+   "selected": [
+    "artist one",
+    "no downloader",
+    "paused and delayed"
+   ],
+   "can_check_now": true,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "delete",
+   "rows": [
+    "Empty sub",
+    "no downloader"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Remove all selected?",
+     "answer": false
+    }
+   ],
+   "selected": [
+    "Empty sub",
+    "no downloader"
+   ],
+   "can_check_now": false,
+   "can_reset": true,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "Empty sub",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": []
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "lonely",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "delete",
+   "rows": [
+    "Empty sub",
+    "no downloader"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Remove all selected?",
+     "answer": true
+    }
+   ],
+   "selected": [],
+   "can_check_now": false,
+   "can_reset": false,
+   "can_scrub_delays": false,
+   "subscriptions": [
+    {
+     "name": "artist one",
+     "paused": false,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "red_hair",
+       "check_now": false,
+       "paused": true,
+       "dead": false,
+       "next_check_time": 1701212480
+      },
+      {
+       "text": "quiet artist",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "brand new",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "paused": true,
+     "no_work_until": 0,
+     "queries": [
+      {
+       "text": "green",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      },
+      {
+       "text": "yellow",
+       "check_now": true,
+       "paused": false,
+       "dead": false,
+       "next_check_time": 0
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

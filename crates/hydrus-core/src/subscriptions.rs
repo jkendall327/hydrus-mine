@@ -119,6 +119,18 @@ impl CheckerOptions {
     /// box words it (`GetPrettyCurrentVelocity`): "at last check, found 5
     /// files in previous 1 day".
     pub fn pretty_current_velocity(&self, seeds: &[SeedTime], last_check_time: i64) -> String {
+        self.pretty_velocity(seeds, last_check_time, true)
+    }
+
+    /// [`Self::pretty_current_velocity`], with or without its "at last
+    /// check, found " (`no_prefix`, as a subscription's queries list has
+    /// it: "5 files in previous 1 day").
+    pub fn pretty_velocity(
+        &self,
+        seeds: &[SeedTime],
+        last_check_time: i64,
+        prefix: bool,
+    ) -> String {
         if seeds.is_empty() {
             return if last_check_time == 0 {
                 "no files yet".into()
@@ -128,7 +140,8 @@ impl CheckerOptions {
         }
         let (found, delta) = self.current_velocity(seeds, last_check_time);
         format!(
-            "at last check, found {} files in previous {}",
+            "{}{} files in previous {}",
+            if prefix { "at last check, found " } else { "" },
             crate::numbers::human_int(found.max(0) as u64),
             crate::time::pretty_time_delta(delta, false)
         )

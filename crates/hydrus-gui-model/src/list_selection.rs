@@ -58,6 +58,12 @@ impl<T: Copy + PartialEq> ListSelection<T> {
         }
     }
 
+    /// Select just these (as a list's `SelectDatas`), with no anchor.
+    pub fn select_many(&mut self, items: &[T]) {
+        self.selected = items.to_vec();
+        self.anchor = None;
+    }
+
     /// Select only `item` (or nothing).
     pub fn select_only(&mut self, item: Option<T>) {
         self.selected = item.into_iter().collect();
@@ -158,5 +164,10 @@ mod tests {
         assert_eq!(s.in_order(&ORDER), [10]);
         s.select_only(None);
         assert!(s.is_empty());
+        s.select_many(&[40, 20]);
+        assert_eq!(s.in_order(&ORDER), [20, 40]);
+        // (no anchor: shift is a plain click)
+        s.click(&ORDER, 0, false, true);
+        assert_eq!(s.in_order(&ORDER), [10]);
     }
 }
