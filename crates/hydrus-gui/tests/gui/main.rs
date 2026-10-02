@@ -41,4 +41,5 @@ mod viewer_menu;
 mod viewer_top_frame;
 mod viewer_window;
 mod volume;
+mod watcher_checker;
 mod zoom;

@@ -1,0 +1,668 @@
+{
+ "now": 1700000000,
+ "watchers": [
+  {
+   "name": "busy, to slow thread",
+   "seeds": [
+    [
+     3600,
+     3600
+    ],
+    [
+     7200,
+     7200
+    ],
+    [
+     10800,
+     10800
+    ],
+    [
+     14400,
+     14400
+    ],
+    [
+     18000,
+     18000
+    ],
+    [
+     21600,
+     21600
+    ],
+    [
+     25200,
+     25200
+    ],
+    [
+     28800,
+     28800
+    ],
+    [
+     32400,
+     32400
+    ],
+    [
+     36000,
+     36000
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700014316,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1700014340,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   }
+  },
+  {
+   "name": "busy, to static",
+   "seeds": [
+    [
+     3600,
+     3600
+    ],
+    [
+     7200,
+     7200
+    ],
+    [
+     10800,
+     10800
+    ],
+    [
+     14400,
+     14400
+    ],
+    [
+     18000,
+     18000
+    ],
+    [
+     21600,
+     21600
+    ],
+    [
+     25200,
+     25200
+    ],
+    [
+     28800,
+     28800
+    ],
+    [
+     32400,
+     32400
+    ],
+    [
+     36000,
+     36000
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700014316,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   },
+   "set": [
+    4,
+    7200,
+    7200,
+    [
+     1,
+     259200
+    ]
+   ],
+   "after": {
+    "checker": [
+     4,
+     7200,
+     7200,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700007140,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   }
+  },
+  {
+   "name": "the same again",
+   "seeds": [
+    [
+     3600,
+     3600
+    ],
+    [
+     7200,
+     7200
+    ],
+    [
+     10800,
+     10800
+    ],
+    [
+     14400,
+     14400
+    ],
+    [
+     18000,
+     18000
+    ],
+    [
+     21600,
+     21600
+    ],
+    [
+     25200,
+     25200
+    ],
+    [
+     28800,
+     28800
+    ],
+    [
+     32400,
+     32400
+    ],
+    [
+     36000,
+     36000
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700014316,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   },
+   "set": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "after": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700014316,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 10 files in previous 9 hours 59 minutes"
+   }
+  },
+  {
+   "name": "quiet, now dies",
+   "seeds": [
+    [
+     864000,
+     864000
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      0,
+      259200
+     ]
+    ],
+    "next_check_time": 1700086340,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 0 files in previous 3 days"
+   },
+   "set": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "after": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700086340,
+    "status": 1,
+    "checking_paused": true,
+    "file_velocity_status": "at last check, found 0 files in previous 3 days"
+   }
+  },
+  {
+   "name": "quiet, slow thread lives",
+   "seeds": [
+    [
+     864000,
+     864000
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      0,
+      259200
+     ]
+    ],
+    "next_check_time": 1700086340,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 0 files in previous 3 days"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1700604740,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 1 files in previous 9 days 23 hours"
+   }
+  },
+  {
+   "name": "no source times",
+   "seeds": [
+    [
+     null,
+     3600
+    ],
+    [
+     null,
+     7200
+    ],
+    [
+     null,
+     10800
+    ],
+    [
+     null,
+     14400
+    ],
+    [
+     null,
+     18000
+    ]
+   ],
+   "last_check_time": 1699999400,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700013344,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 5 files in previous 4 hours 50 minutes"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1700013800,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 5 files in previous 4 hours 50 minutes"
+   }
+  },
+  {
+   "name": "checking now",
+   "seeds": [
+    [
+     3600,
+     3600
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {
+    "check_now": true
+   },
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1699999970,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1699999970,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   }
+  },
+  {
+   "name": "waiting on an error",
+   "seeds": [
+    [
+     3600,
+     3600
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {
+    "no_work_until": 1800
+   },
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700001801,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1700001801,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   }
+  },
+  {
+   "name": "dead already",
+   "seeds": [
+    [
+     3600,
+     3600
+    ]
+   ],
+   "last_check_time": 1699999940,
+   "extra": {
+    "status": 1
+   },
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 1700014100,
+    "status": 1,
+    "checking_paused": true,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 1700014340,
+    "status": 1,
+    "checking_paused": true,
+    "file_velocity_status": "at last check, found 1 files in previous 59 minutes"
+   }
+  },
+  {
+   "name": "never checked",
+   "seeds": [],
+   "last_check_time": 0,
+   "extra": {},
+   "before": {
+    "checker": [
+     4,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "next_check_time": 0,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "no files yet"
+   },
+   "set": [
+    1,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ],
+   "after": {
+    "checker": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "next_check_time": 0,
+    "status": 0,
+    "checking_paused": false,
+    "file_velocity_status": "no files yet"
+   }
+  }
+ ],
+ "page": {
+  "default": [
+   4,
+   300,
+   86400,
+   [
+    1,
+    259200
+   ]
+  ],
+  "set": [
+   1,
+   14400,
+   604800,
+   [
+    1,
+    2592000
+   ]
+  ],
+  "first": [
+   4,
+   300,
+   86400,
+   [
+    1,
+    259200
+   ]
+  ],
+  "second": [
+   1,
+   14400,
+   604800,
+   [
+    1,
+    2592000
+   ]
+  ]
+ }
+}

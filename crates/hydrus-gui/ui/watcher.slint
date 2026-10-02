@@ -56,6 +56,10 @@ export component WatcherSidebar inherits VerticalLayout {
     callback urls-entered(string);
     callback paste();
     callback cancel-download(bool);
+    // the checker options the page gives new watchers, or (the highlighted
+    // box's) the shown watcher's
+    callback page-checker();
+    callback watcher-checker();
     spacing: 6px;
     Text {
         text: "watchers";
@@ -159,6 +163,10 @@ export component WatcherSidebar inherits VerticalLayout {
                     icon: @image-url("../../../static/paste.png");
                     clicked => { root.paste(); }
                 }
+            }
+            Button {
+                text: "checker options";
+                clicked => { root.page-checker(); }
             }
         }
     }
@@ -264,6 +272,10 @@ export component WatcherSidebar inherits VerticalLayout {
                     DownloadControl {
                         line: root.search-download;
                         cancel => { root.cancel-download(true); }
+                    }
+                    Button {
+                        text: "checker options";
+                        clicked => { root.watcher-checker(); }
                     }
                 }
             }

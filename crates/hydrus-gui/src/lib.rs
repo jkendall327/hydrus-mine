@@ -1469,6 +1469,66 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // the checker options editor, for the page's new watchers or the
+    // shown watcher (advanced mode's tiny least times if the options have
+    // it on)
+    let edit_checker = {
+        let slot = checker_options.clone();
+        move |store: &hydrus_store::Store,
+              current: hydrus_core::subscriptions::CheckerOptions,
+              done: &Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)>| {
+            if slot.borrow().is_some() {
+                return;
+            }
+            let advanced = store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                .is_ok_and(|a| a.0);
+            match checker_options_window::open(&current, advanced, &slot, done) {
+                Ok(window) => *slot.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the checker options: {e}"),
+            }
+        }
+    };
+    window.on_watcher_page_checker({
+        let page = page.clone();
+        let edit_checker = edit_checker.clone();
+        move || {
+            let page = page();
+            let Some(current) = page.borrow().watcher_page_checker() else {
+                return;
+            };
+            let store = page.borrow().store().clone();
+            edit_checker(
+                &store,
+                current,
+                &(Rc::new(move |checker| page.borrow_mut().set_watcher_page_checker(checker))
+                    as Rc<dyn Fn(_)>),
+            );
+        }
+    });
+    window.on_watcher_checker({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let Some(queue) = watcher_of(&page, true) else {
+                return;
+            };
+            let Some(current) = page.borrow().watcher_checker(queue) else {
+                return;
+            };
+            let shown = shown.clone();
+            let store = page.borrow().store().clone();
+            edit_checker(
+                &store,
+                current,
+                &(Rc::new(move |checker| {
+                    page.borrow_mut().set_watcher_checker(queue, checker);
+                    shown(false);
+                }) as Rc<dyn Fn(_)>),
+            );
+        }
+    });
     let pend_watchers = {
         let page = page.clone();
         let shown = shown.clone();

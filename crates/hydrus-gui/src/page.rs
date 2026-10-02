@@ -555,15 +555,10 @@ impl SearchPage {
     /// watches already says so, and the first new watcher is shown if
     /// none is and the options say so.
     pub fn pend_watchers(&mut self, text: &str) {
-        let Some(view) = &self.watchers else {
+        let Some(checker) = self.watcher_page_checker() else {
             return;
         };
-        let checker = view.state.checker.clone().unwrap_or_else(|| {
-            self.store
-                .read(hydrus_store::settings::get::<hydrus_core::subscriptions::CheckerDefaults>)
-                .unwrap_or_default()
-                .watchers
-        });
+        let view = self.watchers.as_ref().expect("a watcher page");
         let (options, name, key) = (
             view.state.options.clone(),
             view.page_name.clone(),
@@ -628,6 +623,60 @@ impl SearchPage {
     }
 
     /// Check a watcher's thread again now (`CheckNow`).
+    /// The checker options a watcher page gives its new watchers: its own,
+    /// or else the options' default (as the reference's page starts with).
+    pub fn watcher_page_checker(&self) -> Option<hydrus_core::subscriptions::CheckerOptions> {
+        let view = self.watchers.as_ref()?;
+        Some(view.state.checker.clone().unwrap_or_else(|| {
+            self.store
+                .read(hydrus_store::settings::get::<hydrus_core::subscriptions::CheckerDefaults>)
+                .unwrap_or_default()
+                .watchers
+        }))
+    }
+
+    /// Set the checker options the page gives new watchers
+    /// (`MultipleWatcherImport.SetCheckerOptions`); those it has keep
+    /// theirs.
+    pub fn set_watcher_page_checker(
+        &mut self,
+        checker: hydrus_core::subscriptions::CheckerOptions,
+    ) {
+        if let Some(view) = &mut self.watchers {
+            view.state.checker = Some(checker);
+        }
+    }
+
+    /// A watcher's checker options.
+    pub fn watcher_checker(
+        &self,
+        queue: i64,
+    ) -> Option<hydrus_core::subscriptions::CheckerOptions> {
+        Some(
+            self.watchers
+                .as_ref()?
+                .watcher(queue)?
+                .state
+                .checker
+                .clone(),
+        )
+    }
+
+    /// Set a watcher's checker options (`WatcherImport.SetCheckerOptions`):
+    /// other ones time its next check again.
+    pub fn set_watcher_checker(
+        &mut self,
+        queue: i64,
+        checker: hydrus_core::subscriptions::CheckerOptions,
+    ) {
+        if let Err(e) =
+            hydrus_store::watchers::set_checker_options(&self.store, queue, checker, now())
+        {
+            eprintln!("could not set the watcher's checker options: {e}");
+        }
+        self.refresh_import();
+    }
+
     pub fn check_watcher_now(&mut self, queue: i64) {
         if let Err(e) = hydrus_store::watchers::check_now(&self.store, queue, now()) {
             eprintln!("could not check the watcher now: {e}");

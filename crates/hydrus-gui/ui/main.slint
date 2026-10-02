@@ -568,6 +568,8 @@ export component MainWindow inherits Window {
     callback watcher-remove();
     callback watcher-urls(string);
     callback watcher-paste();
+    callback watcher-page-checker();
+    callback watcher-checker();
     callback pause-play-files();
     callback url-entered(string);
     callback paste-urls();
@@ -869,6 +871,8 @@ export component MainWindow inherits Window {
                         remove => { root.watcher-remove(); }
                         urls-entered(text) => { root.watcher-urls(text); }
                         paste => { root.watcher-paste(); }
+                        page-checker => { root.watcher-page-checker(); }
+                        watcher-checker => { root.watcher-checker(); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
                     }
                     TagList {

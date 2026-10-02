@@ -110,6 +110,19 @@ pub fn check_now(store: &Store, queue: i64, now: i64) -> Result<()> {
     })
 }
 
+/// Set a watcher's checker options (`SetCheckerOptions`): other ones time
+/// its next check again.
+pub fn set_checker_options(
+    store: &Store,
+    queue: i64,
+    checker: CheckerOptions,
+    now: i64,
+) -> Result<()> {
+    change(store, queue, move |state, seeds| {
+        state.set_checker_options(checker, &seed_times(seeds), now);
+    })
+}
+
 /// Pause or resume a watcher's checking (`PausePlayChecking`): a dead or
 /// 404 watcher stays paused until checked again.
 pub fn pause_play_checking(store: &Store, queue: i64) -> Result<()> {
@@ -245,5 +258,46 @@ mod tests {
         let checked = state(&store, queue);
         assert!(checked.check_now && !checked.checking_paused);
         assert_eq!(checked.status, CheckerStatus::Ok);
+    }
+
+    /// A watcher's checker options set: other ones time its next check
+    /// again (with no files yet, never slower than from now), the same
+    /// leave it be; and the daemon is told.
+    #[test]
+    fn setting_a_watchers_checker_options() {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let (checker, options) = (CheckerOptions::default(), ImportOptionsSlice::default());
+        let Watched::New(made) = add_watcher(
+            &store,
+            &page(&[], &checker, &options),
+            "https://boards.example/thread/1",
+            1000,
+        )
+        .unwrap() else {
+            panic!("a new watcher");
+        };
+        let queue = made.id;
+        let mut checked = state(&store, queue);
+        checked.last_check_time = 1000;
+        checked.next_check_time = 5;
+        let extra = serde_json::to_value(&checked).unwrap();
+        store
+            .write(move |ctx| {
+                queues::set_queue_extra(ctx.conn(), queue, &extra)?;
+                queues::take_nudges(ctx.conn()).map(|_| ())
+            })
+            .unwrap();
+        set_checker_options(&store, queue, checker.clone(), 2000).unwrap();
+        assert_eq!(state(&store, queue).next_check_time, 5, "the same");
+        let slower = CheckerOptions {
+            never_slower_than: 7 * 86400,
+            ..checker
+        };
+        set_checker_options(&store, queue, slower.clone(), 2000).unwrap();
+        let set = state(&store, queue);
+        assert_eq!(set.checker, slower);
+        assert_eq!(set.next_check_time, 2000 + 7 * 86400);
+        assert!(store.read(queues::any_nudged).unwrap());
     }
 }

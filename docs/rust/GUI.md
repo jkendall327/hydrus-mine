@@ -271,13 +271,20 @@ how many still work or aren't yet DEAD). Thread URLs typed into its
 "watcher url" box, or pasted, one a line, become watchers with the page's
 checker and import options; one the page watches already isn't watched
 twice, and the first new one is shown if hydrus's option to highlight new
-watchers is on. The "highlighted watcher" box has its thread's subject
+watchers is on. Its "checker options" button, under the box, opens the
+checker options editor on the page's (the default watcher checker
+options until changed), and what it applies the page's new watchers get;
+those it has keep theirs, as the reference's do. The "highlighted watcher" box has its thread's subject
 and URL, its "imports" (files line and pause, file log status and
 progress, download in progress) and its "checker": how fast the thread
 was getting files ("at last check, found 5 files in previous 1 day"),
 checking's pause, when it checks next ("next check in 4 minutes",
 "checking imminently") or what it is doing, a "check now" button, its
-check log's status and its check in progress.
+check log's status and its check in progress, and its own "checker
+options" button: other checker options time its next check again (and
+may find the thread dead, pausing its checking), the same change nothing
+(`WatcherImport.SetCheckerOptions`, checked against the reference's,
+recorded by `oracle/record_watcher_checker.py`).
 
 On a search page, at the top of its sidebar, the
 sort control offers every system sort type named and ordered as in the

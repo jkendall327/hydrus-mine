@@ -326,9 +326,9 @@ search.
   the queue's order.
 - **A gallery or watcher downloader page's list selects one search or
   watcher at a time**, and its buttons act on that one; the reference's
-  lists select several. A watcher page has no checker or import options
-  buttons yet (the page's options, from hydrus, are given to new
-  watchers), nor "update selected with current options". Its
+  lists select several. A watcher page has no import options buttons yet
+  (the page's options, from hydrus, are given to new watchers), nor
+  "update selected with current options". Its
   downloader list is flat (the reference nests a site's downloaders and
   greys out ones that can't work), and its searches' import options and
   file limits can't be edited from the page yet. Its columns are as
