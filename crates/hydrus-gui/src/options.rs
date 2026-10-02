@@ -24,7 +24,7 @@ use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
 use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
-    PageSettings,
+    PageSettings, ThumbnailLayout,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
@@ -80,6 +80,7 @@ settings! {
     slideshow: SlideshowSettings,
     tag_presentation: TagPresentation,
     thumbnails: ThumbnailSettings,
+    thumbnail_layout: ThumbnailLayout,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
@@ -1466,6 +1467,18 @@ pub fn pages() -> Vec<Page> {
                             (20, 2048),
                             |s| i64::from(s.thumbnails.bounding_height),
                             |s, v| s.thumbnails.bounding_height = v as u32,
+                        ),
+                        int(
+                            "Thumbnail border: ",
+                            (0, 20),
+                            |s| i64::from(s.thumbnail_layout.border),
+                            |s, v| s.thumbnail_layout.border = v as u32,
+                        ),
+                        int(
+                            "Thumbnail margin: ",
+                            (0, 20),
+                            |s| i64::from(s.thumbnail_layout.margin),
+                            |s, v| s.thumbnail_layout.margin = v as u32,
                         ),
                         choice(
                             "Thumbnail scaling: ",

@@ -344,3 +344,58 @@ fn thumbnails_take_the_size_the_options_give_them() {
     }
     assert_eq!(stored(), expected);
 }
+
+/// The thumbnails' border and margin, as the thumbnails page sets them:
+/// the cells take the border at once, and the margins how many fit across
+/// (as the reference's, the width over a cell and two margins); the
+/// thumbnails, of the same size, aren't decoded again.
+#[test]
+#[allow(clippy::float_cmp)] // (sizes set, not computed)
+fn the_thumbnails_border_and_margin_lay_out_the_grid() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let main_window = windows.get(0).unwrap();
+    headless::render(&main_window, 1100, 700);
+    // (150 by 125 and a pixel's border, two pixels' margin: five across)
+    assert_eq!(ui.get_thumbnail_width(), 152.0);
+    assert_eq!(ui.get_grid_columns(), 5);
+    bound.rows.wait();
+    let decoded = bound.rows.cached();
+    assert!(decoded > 0);
+
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "thumbnails");
+    let (i, border) = row(&window, "Thumbnail border: ");
+    assert_eq!(
+        (border.kind, border.number, border.minimum, border.maximum),
+        (2, 1, 0, 20)
+    );
+    window.invoke_number_edited(i, 3);
+    let (i, margin) = row(&window, "Thumbnail margin: ");
+    assert_eq!((margin.kind, margin.number, margin.maximum), (2, 2, 20));
+    window.invoke_number_edited(i, 20);
+    window.invoke_apply();
+    let layout = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::ThumbnailLayout>)
+        .unwrap();
+    assert_eq!((layout.border, layout.margin), (3, 20));
+    assert_eq!(ui.get_thumbnail_width(), 156.0);
+    assert_eq!(ui.get_thumbnail_height(), 131.0);
+    assert_eq!(ui.get_thumbnail_border(), 3.0);
+    assert_eq!(ui.get_thumbnail_margin(), 20.0);
+    // (at 1100 wide, four spans of 196; narrower, 700 or so across, three,
+    // where the cells alone and a gap of 4 would fit four)
+    headless::render(&main_window, 1100, 700);
+    assert_eq!(ui.get_grid_columns(), 4);
+    headless::render(&main_window, 1000, 700);
+    assert_eq!(ui.get_grid_columns(), 3);
+    assert_eq!(bound.rows.cached(), decoded, "not decoded again");
+}

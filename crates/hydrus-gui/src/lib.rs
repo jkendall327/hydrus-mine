@@ -185,6 +185,20 @@ pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     thumbnails::Pixels::new(raster).image()
 }
 
+/// The grid's cells as the reference's: the bounding box and its border,
+/// with the margin round each.
+fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store) {
+    let settings = store.snapshot().thumbnails;
+    let layout = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::ThumbnailLayout>)
+        .unwrap_or_default();
+    let border = layout.border as f32;
+    window.set_thumbnail_width(settings.bounding_width as f32 + 2.0 * border);
+    window.set_thumbnail_height(settings.bounding_height as f32 + 2.0 * border);
+    window.set_thumbnail_border(border);
+    window.set_thumbnail_margin(layout.margin as f32);
+}
+
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let pages = Rc::new(RefCell::new(pages));
@@ -194,10 +208,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
     rows.set_scale(window.window().scale_factor());
-    // the cells as the reference's: the bounding box, and its border
-    let settings = current.borrow().borrow().store().snapshot().thumbnails;
-    window.set_thumbnail_width(settings.bounding_width as f32 + 2.0);
-    window.set_thumbnail_height(settings.bounding_height as f32 + 2.0);
+    lay_out_thumbnails(window, current.borrow().borrow().store());
     let thumbnails = Rc::new(slint::Timer::default());
     thumbnails.start(
         slint::TimerMode::Repeated,
@@ -839,18 +850,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let store = store.clone();
                         move || {
                             pages.borrow_mut().reload_settings();
-                            // (thumbnails of another size: the cells as
-                            // their new box, and every thumbnail again)
-                            let thumbnails = store.snapshot().thumbnails;
-                            if thumbnails != thumbnails_before {
-                                if let Some(window) = weak.upgrade() {
-                                    window.set_thumbnail_width(
-                                        thumbnails.bounding_width as f32 + 2.0,
-                                    );
-                                    window.set_thumbnail_height(
-                                        thumbnails.bounding_height as f32 + 2.0,
-                                    );
-                                }
+                            // (the cells as the options now have them; and
+                            // thumbnails of another size, every one again)
+                            if let Some(window) = weak.upgrade() {
+                                lay_out_thumbnails(&window, &store);
+                            }
+                            if store.snapshot().thumbnails != thumbnails_before {
                                 rows.thumbnails_changed();
                             }
                             change_pages(&|_| Ok(()));

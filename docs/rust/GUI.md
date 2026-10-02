@@ -146,9 +146,11 @@ and rest), media playback (the zoom centre, the zoom steps, the media
 viewer's default zoom, and what counts as transparency), media viewer
 (slideshows), media viewer hovers (the top hover's
 file summary), ratings, tag presentation, thumbnails (their size and how
-they fit it, the UI-scale supersampling, how far into a video its
-thumbnail is taken, and the single file's text in the status bar) and
-advanced. Thumbnails given a new size show it at once: the grid's cells
+they fit it, their border and margin, the UI-scale supersampling, how far
+into a video its thumbnail is taken, and the single file's text in the
+status bar) and advanced. The grid is laid out as the reference's: each
+cell is the thumbnail box and its border, with the margin all round, as
+many across as fit (a click in a margin is on no file). Thumbnails given a new size show it at once: the grid's cells
 take it, and a thumbnail made at the old size is shown scaled to the new
 one and made again from its file, as the reference does. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a

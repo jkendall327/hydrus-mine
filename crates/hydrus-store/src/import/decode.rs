@@ -370,6 +370,20 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(&dpr) = options.integers.get("thumbnail_dpr_percent") {
             thumbnails.dpr_percent = positive(dpr, "thumbnail dpr percent")?;
         }
+        let mut layout = crate::settings::ThumbnailLayout::default();
+        let pixels = |key: &str| {
+            options
+                .integers
+                .get(key)
+                .and_then(|&n| u32::try_from(n).ok())
+        };
+        if let Some(border) = pixels("thumbnail_border") {
+            layout.border = border;
+        }
+        if let Some(margin) = pixels("thumbnail_margin") {
+            layout.margin = margin;
+        }
+        insert_setting(&mut input, &layout)?;
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
         }
@@ -2078,6 +2092,58 @@ mod tests {
             Some("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7")
         );
         assert!(lock.accepts("hunter2") && !lock.accepts("hunter"));
+    }
+
+    /// The thumbnail grid's border and margin come across.
+    #[test]
+    fn the_thumbnail_border_and_margin_convert() {
+        use crate::settings::ThumbnailLayout;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<ThumbnailLayout>(input.settings["thumbnail_layout"].clone())
+                .unwrap()
+        };
+        // the fixture's are hydrus's defaults
+        assert_eq!(
+            decoded(source.path()),
+            ThumbnailLayout {
+                border: 1,
+                margin: 2
+            }
+        );
+        // and the user's
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let dump: Vec<u8> = conn
+            .query_row(
+                "SELECT dump FROM json_dumps WHERE dump_type = 22",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let dump = String::from_utf8(dump)
+            .unwrap()
+            .replace(
+                r#"[[0, "thumbnail_border"], [0, 1]]"#,
+                r#"[[0, "thumbnail_border"], [0, 0]]"#,
+            )
+            .replace(
+                r#"[[0, "thumbnail_margin"], [0, 2]]"#,
+                r#"[[0, "thumbnail_margin"], [0, 7]]"#,
+            );
+        conn.execute(
+            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+            [dump.into_bytes()],
+        )
+        .unwrap();
+        drop(conn);
+        assert_eq!(
+            decoded(source.path()),
+            ThumbnailLayout {
+                border: 0,
+                margin: 7
+            }
+        );
     }
 
     /// The tag lists' colours come across: hydrus's defaults, the user's,

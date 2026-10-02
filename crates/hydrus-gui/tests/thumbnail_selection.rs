@@ -214,3 +214,135 @@ fn several_thumbnails_are_selected_and_acted_on() {
         .expect("the filter opened");
     assert_eq!(filter.get_caption(), format!("1/{}", after.len() - 1));
 }
+
+/// The grid as the reference lays it out from the thumbnail border and
+/// margin options: a cell is the bounding box and its border, with the
+/// margin all round it, so neighbours are two margins apart; a click in a
+/// margin is on no file (the reference's `_GetThumbnailUnderMouse`, its
+/// last pixel before a thumbnail counting as the margin).
+#[test]
+#[allow(clippy::float_cmp)] // (sizes set, not computed)
+fn borders_and_margins_lay_the_grid_out() {
+    let legacy = hydrus_testkit::legacy_fixture("basic");
+    let native = tempfile::tempdir().unwrap();
+    import_legacy(
+        legacy.path(),
+        &native.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store: Arc<Store> = Store::open(native.path()).unwrap();
+    let layout = hydrus_store::settings::ThumbnailLayout {
+        border: 3,
+        margin: 10,
+    };
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &layout))
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    ui.invoke_search_edited("system:inbox".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let main_window = windows.get(0).unwrap();
+    headless::render(&main_window, 1100, 700);
+    // (the default box, 150 by 125, and its border)
+    let (cell_width, cell_height) = (150 + 2 * 3, 125 + 2 * 3);
+    assert_eq!(ui.get_thumbnail_width(), cell_width as f32);
+    assert_eq!(ui.get_thumbnail_height(), cell_height as f32);
+
+    // which file a click at (x, y) selects, if any
+    let at = |x: f32, y: f32| {
+        let position = slint::LogicalPosition::new(x, y);
+        for event in [
+            WindowEvent::PointerPressed {
+                position,
+                button: PointerEventButton::Left,
+            },
+            WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            },
+        ] {
+            main_window.dispatch_event(event);
+        }
+        let selected = page.borrow().selected_indices();
+        assert!(selected.len() <= 1);
+        selected.into_iter().next()
+    };
+    // the runs of pixels on one file (or none) along a line
+    let runs = |along: &dyn Fn(f32) -> Option<usize>, from: i32, to: i32| {
+        let mut runs: Vec<(Option<usize>, i32)> = Vec::new();
+        for p in from..to {
+            let file = along(p as f32);
+            match runs.last_mut() {
+                Some((last, length)) if *last == file => *length += 1,
+                _ => runs.push((file, 1)),
+            }
+        }
+        runs
+    };
+    // across the first row (the grid starts at 300; 74 is in its first
+    // row whatever is above it)
+    let across = runs(&|x| at(x, 74.0), 300, 1100);
+    let columns = usize::try_from(ui.get_grid_columns()).unwrap();
+    // (the window's 800 or so across fit four spans of 176, not five)
+    assert_eq!(columns, 4);
+    let files: Vec<(Option<usize>, i32)> = across
+        .iter()
+        .copied()
+        .skip_while(|(file, _)| file.is_none())
+        .collect();
+    assert_eq!(
+        &files[..2 * columns - 1],
+        &[
+            (Some(0), cell_width),
+            (None, 2 * 10),
+            (Some(1), cell_width),
+            (None, 2 * 10),
+            (Some(2), cell_width),
+            (None, 2 * 10),
+            (Some(3), cell_width),
+        ],
+        "{across:?}"
+    );
+    // the first file's left edge: its margin, then the file from the
+    // margin's next pixel
+    let (none, before) = across[0];
+    assert_eq!(none, None);
+    assert_eq!(before, 10 + 1, "{across:?}");
+    // and down the first column
+    let middle = 300.0 + 10.0 + cell_width as f32 / 2.0;
+    let down = runs(&|y| at(middle, y), 0, 700);
+    let files: Vec<(Option<usize>, i32)> = down
+        .iter()
+        .copied()
+        .skip_while(|(file, _)| file.is_none())
+        .collect();
+    assert_eq!(
+        &files[..3],
+        &[
+            (Some(0), cell_height),
+            (None, 2 * 10),
+            (Some(columns), cell_height)
+        ],
+        "{down:?}"
+    );
+
+    // drawn so: each cell's border 3 pixels wide, from its margin on
+    // (nothing selected, so every border is the same)
+    assert_eq!(at(305.0, 74.0), None);
+    let pixels = headless::render(&main_window, 1100, 700);
+    let pixel = |x: usize| &pixels[(74 * 1100 + x) * 4..][..4];
+    let border = pixel(310);
+    for column in 0..columns {
+        let left = 300 + 176 * column + 10;
+        assert_ne!(pixel(left - 1), border, "column {column}'s margin");
+        for x in left..left + 3 {
+            assert_eq!(pixel(x), border, "column {column}'s border at {x}");
+        }
+        assert_ne!(pixel(left + 3), border, "column {column}'s inside");
+        let right = left + usize::try_from(cell_width).unwrap() - 1;
+        assert_eq!(pixel(right), border, "column {column}'s right");
+    }
+}

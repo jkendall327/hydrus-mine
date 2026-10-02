@@ -204,9 +204,10 @@ search.
   when shrinking, Lanczos when growing, as the reference resizes
   thumbnails), where the reference has Qt scale them as it draws. Slint's
   software renderer scales images by picking the nearest pixels, which
-  made them blocky, so we never let it scale one. The thumbnail border
-  and margin are hydrus's defaults (1 and 2 pixels); yours aren't carried
-  over yet.
+  made them blocky, so we never let it scale one. A selected thumbnail's
+  border is at least 2 pixels wide (in the accent colour), so a selection
+  shows with a thin or no border; the reference's is the border's width,
+  with the cell in its selected colour.
 
 - **The status bar has the page's and the network's parts only**: the
   reference's idle, busy-threads, CPU-busy and database parts aren't
@@ -242,8 +243,7 @@ search.
   stats; most of the gui page; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
-  system settings; and on the thumbnails page, the border and margin,
-  fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  system settings; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
   key navigation's scrolling, the scroll rate, the background image and
   the rendering tech). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;

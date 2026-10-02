@@ -208,6 +208,29 @@ impl Setting for PageSettings {
     const KEY: &'static str = "pages";
 }
 
+/// How the thumbnail grid spaces its thumbnails: each is drawn with a
+/// border this many pixels wide, and this many pixels of margin around it
+/// (`thumbnail_border`, `thumbnail_margin`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailLayout {
+    pub border: u32,
+    pub margin: u32,
+}
+
+impl Default for ThumbnailLayout {
+    fn default() -> Self {
+        Self {
+            border: 1,
+            margin: 2,
+        }
+    }
+}
+
+impl Setting for ThumbnailLayout {
+    const KEY: &'static str = "thumbnail_layout";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);
