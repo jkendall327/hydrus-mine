@@ -5765,28 +5765,46 @@
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
+       "tag_sort": [
+        "sort by tag",
+        "a-z",
+        "namespace (user)"
+       ]
       },
       {
        "label": "Default tag sort in search page manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
+       "tag_sort": [
+        "sort by tag",
+        "a-z",
+        "siblings",
+        "namespace (user)"
+       ]
       },
       {
        "label": "Default tag sort in the media viewer: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
+       "tag_sort": [
+        "sort by tag",
+        "a-z",
+        "namespace (user)"
+       ]
       },
       {
        "label": "Default tag sort in media viewer manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
+       "tag_sort": [
+        "sort by tag",
+        "a-z",
+        "siblings",
+        "namespace (user)"
+       ]
       },
       {
        "box": "namespace grouping sort",

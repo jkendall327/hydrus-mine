@@ -26,6 +26,8 @@ it opens on, and each page's controls in the order they are laid out:
   (`VelocityCtrl`), `"per"` the text between them;
 - `{"widget": "MediaCollectControl", "collect": its text, "choices":
   [[text, checked]], "collect_unmatched": bool}` for a collect control;
+- `{"widget": "TagSortControl", "tag_sort": [texts]}` for a tag sort
+  control: the choice buttons it shows for its sort type, each its choice;
 - `{"tabs": [{"tab": name, "items": [...]}]}` for tabs;
 - `{"widget": class name}`, with its `"value"` if it has one (`GetValue`)
   or the `"items"` laid out in it, for anything else.
@@ -140,6 +142,13 @@ def describe( w ):
     elif isinstance( w, ClientGUITime.TimeDeltaButton ):
 
         out = { 'duration' : w.GetValue(), 'units' : units( w ), 'min' : w._min, 'button_text' : w.text() }
+
+    elif type( w ).__name__ == 'TagSortControl':
+
+        # (its choice buttons shown for its sort type, each its choice)
+        buttons = [ w._sort_type, w._sort_order_text, w._sort_order_count, w._use_siblings, w._group_by ]
+
+        out = { 'widget' : 'TagSortControl', 'tag_sort' : [ b.text() for b in buttons if not b.isHidden() ] }
 
     elif type( w ).__name__ == 'MediaCollectControl':
 

@@ -14,7 +14,8 @@ use slint::{
 use hydrus_store::Store;
 
 use crate::options::{
-    Editor, Kind, Row, SEARCH_PLACEHOLDER, SEARCH_SHOWN, Settings, Unit, Value, duration_fields,
+    Editor, Kind, Row, SEARCH_PLACEHOLDER, SEARCH_SHOWN, Settings, TAG_SORT_GROUPS, TAG_SORT_TYPES,
+    Unit, Value, duration_fields, tag_sort_orders,
 };
 use crate::{DurationField, OptionRow, OptionsWindow};
 
@@ -139,6 +140,34 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                         out.orders = ModelRc::new(VecModel::from(orders));
                         out.order_index = i32::from(!sort.ascending);
                     }
+                }
+                (Kind::TagSort, Value::TagSort(sort)) => {
+                    out.kind = 12;
+                    let strings = |items: &[&str]| {
+                        ModelRc::new(VecModel::from(
+                            items
+                                .iter()
+                                .map(|&s| s.into())
+                                .collect::<Vec<SharedString>>(),
+                        ))
+                    };
+                    let types: Vec<&str> = TAG_SORT_TYPES.iter().map(|(name, _)| *name).collect();
+                    out.items = strings(&types);
+                    out.index = int(TAG_SORT_TYPES
+                        .iter()
+                        .position(|(_, t)| *t == sort.sort_type)
+                        .unwrap_or(0) as i64);
+                    let (orders, order) = tag_sort_orders(sort);
+                    out.orders = strings(&orders);
+                    out.order_index = int(order as i64);
+                    let groups: Vec<&str> = TAG_SORT_GROUPS.iter().map(|(name, _)| *name).collect();
+                    out.groups = strings(&groups);
+                    out.group_index = int(TAG_SORT_GROUPS
+                        .iter()
+                        .position(|(_, g)| *g == sort.group_by)
+                        .unwrap_or(0) as i64);
+                    // (as the reference's, a subtag sort doesn't group)
+                    out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
                 }
                 (Kind::Collect, Value::Collect(collect)) => {
                     out.kind = 11;
@@ -350,6 +379,27 @@ pub(crate) fn open(
     });
     window.on_order_chosen(move |i, index| {
         sort_edited(i, &|sort, _| sort.ascending = index == 0);
+    });
+    // a tag sort's type, order or grouping; the row shows the type's
+    // orders, and grouping only where the type groups
+    window.on_tag_sort_chosen({
+        let editor = editor.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        move |i, part, index| {
+            let Some(window) = weak.upgrade() else { return };
+            let mut editor = editor.borrow_mut();
+            editor.tag_sort(at(i), at(part), at(index));
+            if let Some(row) = editor.rows().get(at(i)) {
+                window.get_rows().set_row_data(
+                    at(i),
+                    OptionRow {
+                        found: editor.found(at(i)),
+                        ..option_row(row, &store)
+                    },
+                );
+            }
+        }
     });
     // a collect's choice checked or not, or its unmatched files' choice
     let collect_edited = {

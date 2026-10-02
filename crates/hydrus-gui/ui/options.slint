@@ -18,7 +18,8 @@ export struct OptionRow {
     // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
     // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
     // text that may be none, 8 a time (its fields), 9 a number per a time,
-    // 10 a file sort (its type and order), 11 a collect (its choices)
+    // 10 a file sort (its type and order), 11 a collect (its choices), 12
+    // a tag sort (its type, order and grouping)
     kind: int,
     label: string,
     // how many boxes it is in
@@ -45,6 +46,11 @@ export struct OptionRow {
     orders: [string],
     order-index: int,
     checks: [bool],
+    // (12, a tag sort: its types, orders as a sort's; then its groupings,
+    // the one chosen, and whether its type groups)
+    groups: [string],
+    group-index: int,
+    grouped: bool,
 }
 
 // a whole number typed in a small box
@@ -110,6 +116,8 @@ export component OptionsWindow inherits Window {
     callback order-chosen(int, int);
     // (a collect's choice checked or not; its unmatched files' choice)
     callback collect-toggled(int, int, bool);
+    // (a tag sort's type, order or grouping: the row, which, the choice)
+    callback tag-sort-chosen(int, int, int);
     callback unmatched-chosen(int, int);
     // (a time's field: the row, the field, its value)
     callback field-edited(int, int, int);
@@ -285,6 +293,25 @@ export component OptionsWindow inherits Window {
                                     model: row.orders;
                                     current-index: row.order-index;
                                     selected => { root.order-chosen(i, self.current-index); }
+                                }
+                            }
+                            if row.kind == 12: VerticalLayout {
+                                width: 260px;
+                                spacing: 2px;
+                                ComboBox {
+                                    model: row.items;
+                                    current-index: row.index;
+                                    selected => { root.tag-sort-chosen(i, 0, self.current-index); }
+                                }
+                                ComboBox {
+                                    model: row.orders;
+                                    current-index: row.order-index;
+                                    selected => { root.tag-sort-chosen(i, 1, self.current-index); }
+                                }
+                                if row.grouped: ComboBox {
+                                    model: row.groups;
+                                    current-index: row.group-index;
+                                    selected => { root.tag-sort-chosen(i, 2, self.current-index); }
                                 }
                             }
                             if row.kind == 11: VerticalLayout {

@@ -94,6 +94,7 @@ fn the_options_window_applies_its_changes() {
             "media viewer hovers",
             "ratings",
             "tag presentation",
+            "tag sort",
             "thumbnails",
             "advanced"
         ]
@@ -607,4 +608,96 @@ fn the_default_collect_is_chosen_as_a_pages_collect() {
         &collect,
         "a new page's"
     );
+}
+
+/// The tag sort page: a tag list's default sort as the reference's tag
+/// sort control has it (a type, then its orders, then its grouping, which
+/// a subtag sort hasn't); applied, a new page's tags sort so.
+#[test]
+fn the_default_tag_sorts_are_chosen() {
+    use hydrus_core::tag_presentation::TagPresentation;
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    let strings = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        (0..model.row_count())
+            .map(|i| model.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    let shown = |row: &hydrus_gui::OptionRow| {
+        let mut out = vec![
+            strings(row.items.clone())[usize::try_from(row.index).unwrap()].clone(),
+            strings(row.orders.clone())[usize::try_from(row.order_index).unwrap()].clone(),
+        ];
+        if row.grouped {
+            out.push(
+                strings(row.groups.clone())[usize::try_from(row.group_index).unwrap()].clone(),
+            );
+        }
+        out
+    };
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "tag sort");
+    let label = "Default tag sort in search pages: ";
+    let (i, sort) = row(&window, label);
+    assert_eq!(sort.kind, 12);
+    assert_eq!(shown(&sort), ["sort by tag", "a-z", "namespace (user)"]);
+    // by count: its own orders, most first
+    window.invoke_tag_sort_chosen(i, 0, 2);
+    let (_, sort) = row(&window, label);
+    assert_eq!(strings(sort.orders.clone()), ["most first", "fewest first"]);
+    assert_eq!(
+        shown(&sort),
+        ["sort by count", "most first", "namespace (user)"]
+    );
+    // by subtag: a-z, and no grouping to choose
+    window.invoke_tag_sort_chosen(i, 0, 1);
+    assert_eq!(shown(&row(&window, label).1), ["sort by subtag", "a-z"]);
+    // by count again, fewest first, not grouped
+    window.invoke_tag_sort_chosen(i, 0, 2);
+    window.invoke_tag_sort_chosen(i, 1, 1);
+    window.invoke_tag_sort_chosen(i, 2, 0);
+    assert_eq!(
+        shown(&row(&window, label).1),
+        ["sort by count", "fewest first", "no grouping"]
+    );
+    let (j, _) = row(&window, "Default tag sort in the media viewer: ");
+    window.invoke_tag_sort_chosen(j, 1, 1);
+    window.invoke_apply();
+    let presentation: TagPresentation = store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(
+        presentation.search_page_sort,
+        TagSort {
+            sort_type: TagSortType::Count,
+            ascending: true,
+            group_by: TagGroupBy::Nothing
+        }
+    );
+    assert_eq!(
+        presentation.media_viewer_sort,
+        TagSort {
+            ascending: false,
+            ..TagSort::DEFAULT
+        }
+    );
+    // a new page's tags: fewest first
+    let mut page = hydrus_gui::SearchPage::new(store.clone());
+    page.add_predicate("system:everything");
+    let counts: Vec<u64> = page
+        .tag_rows()
+        .iter()
+        .map(|row| {
+            let n = row.rsplit_once(" (").unwrap().1.trim_end_matches(')');
+            n.replace(',', "").parse().unwrap()
+        })
+        .collect();
+    assert!(counts.len() > 3, "{counts:?}");
+    assert!(counts.windows(2).all(|w| w[0] <= w[1]), "{counts:?}");
 }

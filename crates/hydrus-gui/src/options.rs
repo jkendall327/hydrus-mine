@@ -15,6 +15,7 @@ use hydrus_core::pages::{
 };
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
+use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
 use hydrus_core::url::UrlClassSettings;
 use hydrus_core::windows::WindowSettings;
@@ -116,6 +117,8 @@ pub enum Value {
     Sort(PageSort),
     /// How files collect (the reference's `MediaCollectControl`).
     Collect(PageCollect),
+    /// A tag list's sort (the reference's `TagSortControl`).
+    TagSort(TagSort),
 }
 
 /// What kind of control an option has.
@@ -160,6 +163,66 @@ pub enum Kind {
     Sort,
     /// A collect, of the choices a page's collect control offers.
     Collect,
+    /// A tag list's sort: its type, its order and its grouping.
+    TagSort,
+}
+
+/// A tag sort's types, as the reference's control names them
+/// (`sort_type_str_lookup`), in its order.
+pub const TAG_SORT_TYPES: [(&str, TagSortType); 3] = [
+    ("sort by tag", TagSortType::Tag),
+    ("sort by subtag", TagSortType::Subtag),
+    ("sort by count", TagSortType::Count),
+];
+
+/// A tag sort's orders for text (ascending first) and for counts (most
+/// first), as the reference's control names them.
+pub const TAG_SORT_TEXT_ORDERS: [&str; 2] = ["a-z", "z-a"];
+pub const TAG_SORT_COUNT_ORDERS: [&str; 2] = ["most first", "fewest first"];
+
+/// A tag sort's groupings (`group_by_str_lookup`), in its order.
+pub const TAG_SORT_GROUPS: [(&str, TagGroupBy); 3] = [
+    ("no grouping", TagGroupBy::Nothing),
+    ("namespace (a-z)", TagGroupBy::NamespaceAz),
+    ("namespace (user)", TagGroupBy::NamespaceUser),
+];
+
+/// The order choices for a tag sort's type, and which is chosen.
+pub fn tag_sort_orders(sort: &TagSort) -> ([&'static str; 2], usize) {
+    if sort.sort_type == TagSortType::Count {
+        (TAG_SORT_COUNT_ORDERS, usize::from(sort.ascending))
+    } else {
+        (TAG_SORT_TEXT_ORDERS, usize::from(!sort.ascending))
+    }
+}
+
+/// A tag sort with its type, order or grouping chosen (each by its place
+/// among the control's choices): a type takes its order button's first
+/// choice ("a-z", "most first"), as the reference's separate buttons
+/// start.
+pub fn tag_sort_chosen(sort: &TagSort, part: usize, index: usize) -> TagSort {
+    let mut out = *sort;
+    match part {
+        0 => {
+            if let Some((_, sort_type)) = TAG_SORT_TYPES.get(index) {
+                out.sort_type = *sort_type;
+                out.ascending = *sort_type != TagSortType::Count;
+            }
+        }
+        1 => {
+            out.ascending = if sort.sort_type == TagSortType::Count {
+                index == 1
+            } else {
+                index == 0
+            };
+        }
+        _ => {
+            if let Some((_, group_by)) = TAG_SORT_GROUPS.get(index) {
+                out.group_by = *group_by;
+            }
+        }
+    }
+    out
 }
 
 /// A field of a time's control, as the reference's `TimeDeltaWidget`
@@ -479,6 +542,25 @@ fn collect(
         Rc::new(move |s, v| match v {
             Value::Collect(collect) => {
                 set(s, collect.clone());
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn tag_sort(
+    label: &'static str,
+    get: fn(&Settings) -> TagSort,
+    set: fn(&mut Settings, TagSort),
+) -> Item {
+    opt(
+        label,
+        Kind::TagSort,
+        Rc::new(move |s| Value::TagSort(get(s))),
+        Rc::new(move |s, v| match v {
+            Value::TagSort(sort) => {
+                set(s, *sort);
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -1529,6 +1611,24 @@ pub fn pages() -> Vec<Page> {
             ],
         ),
         page(
+            "tag sort",
+            vec![boxed(
+                "tag sort",
+                vec![
+                    tag_sort(
+                        "Default tag sort in search pages: ",
+                        |s| s.tag_presentation.search_page_sort,
+                        |s, v| s.tag_presentation.search_page_sort = v,
+                    ),
+                    tag_sort(
+                        "Default tag sort in the media viewer: ",
+                        |s| s.tag_presentation.media_viewer_sort,
+                        |s, v| s.tag_presentation.media_viewer_sort = v,
+                    ),
+                ],
+            )],
+        ),
+        page(
             "thumbnails",
             vec![
                 boxed(
@@ -1928,6 +2028,16 @@ impl Editor {
             && matches!(self.values[self.page][i], Value::Sort(_))
         {
             self.values[self.page][i] = Value::Sort(sort);
+        }
+    }
+
+    /// A tag sort's type, order or grouping chosen (`part` 0, 1 or 2; each
+    /// by its place among its choices).
+    pub fn tag_sort(&mut self, row: usize, part: usize, index: usize) {
+        if let Some(i) = self.option_at(row)
+            && let Value::TagSort(sort) = &self.values[self.page][i]
+        {
+            self.values[self.page][i] = Value::TagSort(tag_sort_chosen(sort, part, index));
         }
     }
 

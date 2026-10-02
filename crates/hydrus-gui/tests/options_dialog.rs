@@ -50,7 +50,7 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
 }
 
 /// The reference's widgets that are a control of ours.
-const WIDGETS: &[&str] = &["MediaSortControl", "MediaCollectControl"];
+const WIDGETS: &[&str] = &["MediaSortControl", "MediaCollectControl", "TagSortControl"];
 
 fn is_control(item: &Json) -> bool {
     CONTROLS.iter().any(|k| item.get(*k).is_some())
@@ -229,6 +229,31 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             let ours = shown.as_ref().map(|(by, order)| vec![by.as_str(), *order]);
             (theirs["widget"] != "MediaSortControl" || ours.is_none() || buttons != ours)
                 .then(|| format!("sort {shown:?}"))
+        }
+        (Kind::TagSort, Value::TagSort(sort)) => {
+            // (the choices it shows: its type, its order, and its grouping
+            // where the type groups)
+            use hydrus_gui::options::{TAG_SORT_GROUPS, TAG_SORT_TYPES, tag_sort_orders};
+            let mut ours: Vec<&str> = TAG_SORT_TYPES
+                .iter()
+                .filter(|(_, t)| *t == sort.sort_type)
+                .map(|(name, _)| *name)
+                .collect();
+            let (orders, order) = tag_sort_orders(sort);
+            ours.push(orders[order]);
+            if sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag {
+                ours.extend(
+                    TAG_SORT_GROUPS
+                        .iter()
+                        .filter(|(_, g)| *g == sort.group_by)
+                        .map(|(name, _)| *name),
+                );
+            }
+            let theirs_shown: Option<Vec<&str>> = theirs["tag_sort"]
+                .as_array()
+                .map(|v| v.iter().filter_map(Json::as_str).collect());
+            (theirs["widget"] != "TagSortControl" || theirs_shown.as_ref() != Some(&ours))
+                .then(|| format!("tag sort {ours:?}"))
         }
         (Kind::Collect, Value::Collect(collect)) => {
             // (its text, its choices each checked or not, and whether
