@@ -450,7 +450,7 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
 }
 
 #[test]
-fn changed_network_options_apply_without_a_restart() {
+fn changed_options_apply_without_a_restart() {
     use hydrus_store::queues::{self, QueueKind};
 
     let (_parent, dir) = store();
@@ -530,6 +530,24 @@ fn changed_network_options_apply_without_a_restart() {
         .recv_timeout(Duration::from_secs(30))
         .expect("the proxy is asked");
     assert_eq!(first, "GET http://hydrus-test.invalid/file.png HTTP/1.1");
+    // the thumbnail options, which imports make thumbnails by: noticed
+    // once, as the daemon reads them again
+    store
+        .write(|ctx| {
+            let mut thumbnails: hydrus_core::thumbnail::ThumbnailSettings =
+                settings::get(ctx.conn())?;
+            thumbnails.bounding_width = 300;
+            settings::set(ctx.conn(), &thumbnails)
+        })
+        .unwrap();
+    wait_for("the thumbnail options changed");
+    std::thread::sleep(Duration::from_millis(2500));
+    assert!(
+        lines
+            .try_iter()
+            .all(|line| !line.contains("the thumbnail options changed")),
+        "said again: its snapshot was not read again"
+    );
     drop(serving.0.stdin.take());
     exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
 }

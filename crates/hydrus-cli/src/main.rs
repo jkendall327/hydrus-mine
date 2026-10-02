@@ -885,6 +885,20 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                             tracing::error!(error = %e, "reading the network options failed");
                         }
                     }
+                    // (and the thumbnail options, which imports make
+                    // thumbnails by, from the in-memory snapshot)
+                    let store = downloads.downloader().store();
+                    let changed = store
+                        .read(hydrus_store::settings::get::<hydrus_core::thumbnail::ThumbnailSettings>)
+                        .map(|stored| stored != store.snapshot().thumbnails);
+                    match changed {
+                        Ok(true) => match store.refresh() {
+                            Ok(()) => tracing::info!("the thumbnail options changed"),
+                            Err(e) => tracing::error!(error = %e, "refreshing the snapshot failed"),
+                        },
+                        Ok(false) => {}
+                        Err(e) => tracing::error!(error = %e, "reading the thumbnail options failed"),
+                    }
                 }
             });
         }

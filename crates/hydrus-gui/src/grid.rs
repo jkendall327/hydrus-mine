@@ -25,6 +25,9 @@ pub struct ThumbnailRows {
     loader: ThumbnailLoader,
     /// The window's scale factor, which thumbnails are decoded for.
     scale: Cell<f32>,
+    /// How many times the thumbnail settings have changed: thumbnails
+    /// decoded under earlier ones are let go.
+    generation: Cell<u64>,
     /// Thumbnails asked for and not yet decoded, with where the grid last
     /// showed each file.
     pending: RefCell<HashMap<HashId, usize>>,
@@ -51,6 +54,7 @@ impl ThumbnailRows {
             cache: RefCell::default(),
             loader,
             scale: Cell::new(1.0),
+            generation: Cell::new(0),
             pending: RefCell::default(),
             notify: ModelNotify::default(),
         }
@@ -82,9 +86,12 @@ impl ThumbnailRows {
         {
             let mut cache = self.cache.borrow_mut();
             let mut pending = self.pending.borrow_mut();
-            for (id, scale, pixels) in received {
-                // (decoded for a scale the window has since left)
-                if scale.to_bits() != self.scale.get().to_bits() {
+            for (id, scale, generation, pixels) in received {
+                // (decoded for a scale the window has since left, or under
+                // thumbnail settings since changed)
+                if scale.to_bits() != self.scale.get().to_bits()
+                    || generation != self.generation.get()
+                {
                     continue;
                 }
                 if cache.len() >= CACHED {
@@ -128,6 +135,15 @@ impl ThumbnailRows {
         }
     }
 
+    /// The thumbnail settings changed (their size, say): every thumbnail is
+    /// decoded again.
+    pub fn thumbnails_changed(&self) {
+        self.generation.set(self.generation.get() + 1);
+        self.cache.borrow_mut().clear();
+        self.pending.borrow_mut().clear();
+        self.notify.reset();
+    }
+
     /// How many thumbnails have been decoded (and are kept).
     pub fn cached(&self) -> usize {
         self.cache.borrow().len()
@@ -168,7 +184,8 @@ impl ThumbnailRows {
             return image.clone();
         }
         if self.pending.borrow_mut().insert(id, index).is_none() {
-            self.loader.request(id, self.scale.get());
+            self.loader
+                .request(id, self.scale.get(), self.generation.get());
         }
         slint::Image::default()
     }

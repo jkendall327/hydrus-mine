@@ -145,7 +145,12 @@ potential duplicates search, auto-resolution in normal time and its work
 and rest), media playback (the zoom centre, the zoom steps, the media
 viewer's default zoom, and what counts as transparency), media viewer
 (slideshows), media viewer hovers (the top hover's
-file summary), ratings, tag presentation, thumbnails and advanced. Times
+file summary), ratings, tag presentation, thumbnails (their size and how
+they fit it, the UI-scale supersampling, how far into a video its
+thumbnail is taken, and the single file's text in the status bar) and
+advanced. Thumbnails given a new size show it at once: the grid's cells
+take it, and a thumbnail made at the old size is shown scaled to the new
+one and made again from its file, as the reference does. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a
 rate as its number, the reference's words ("errors within") and a time;
 text that may be none has the reference's "none" box. Above the pages is
@@ -153,9 +158,9 @@ the reference's search box ("Search options... (Experimental!)"): as it
 is typed in, it suggests the box titles and options whose text has what
 was typed in it (ignoring case), as "text (page)", ten at a time; the
 arrows, enter or a click choose one, which shows its page with that row
-highlighted, as the reference's does. The daemon picks up
-the connection, downloading and maintenance options within a second of
-"apply". Changes wait for "apply", which writes them
+highlighted, as the reference's does (and the page list brought round to
+it). The daemon picks up the connection, downloading, maintenance and
+thumbnail options within a second of "apply". Changes wait for "apply", which writes them
 together (and shows again what they change, such as the tab names);
 "cancel" or escape forgets them. A value that can't be had (slideshow
 durations that aren't numbers) is left as it was and said in a popup, as

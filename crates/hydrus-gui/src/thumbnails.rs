@@ -108,25 +108,77 @@ pub fn for_display(
 }
 
 fn regenerate(store: &Arc<Store>, id: HashId) -> Option<std::path::PathBuf> {
-    let snapshot = store.snapshot();
-    let media = store
-        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
-        .ok()?
-        .results
-        .pop()?;
-    let importer =
-        hydrus_import::FileImporter::new(Arc::clone(store), hydrus_media::MediaTools::new());
-    importer
-        .regenerate_thumbnail(&media)
+    make_again(store, id)
         .map_err(|e| eprintln!("regenerating a thumbnail failed: {e}"))
         .ok()?
 }
 
-/// A thumbnail decoded for a screen scaled by `.1`.
-pub type Loaded = (HashId, f32, Option<Pixels>);
+/// A file's thumbnail made again from it, where it is (none for a file
+/// without one, or one the store doesn't have).
+fn make_again(store: &Arc<Store>, id: HashId) -> Result<Option<std::path::PathBuf>, String> {
+    let snapshot = store.snapshot();
+    let Some(media) = store
+        .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
+        .map_err(|e| e.to_string())?
+        .results
+        .pop()
+    else {
+        return Ok(None);
+    };
+    let importer =
+        hydrus_import::FileImporter::new(Arc::clone(store), hydrus_media::MediaTools::new());
+    importer
+        .regenerate_thumbnail(&media)
+        .map_err(|e| e.to_string())
+}
+
+/// A stored thumbnail at the size the settings make thumbnails (the
+/// reference's `_GetThumbnailHydrusBitmap`), and whether it was the wrong
+/// size, as one made under other settings is: one turned sideways counts
+/// as the right size.
+pub fn fitted(
+    store: &Arc<Store>,
+    id: HashId,
+    raster: hydrus_media::Raster,
+    settings: &ThumbnailSettings,
+) -> (hydrus_media::Raster, bool) {
+    let Ok(Some((width, height))) = store.read(|conn| hydrus_store::media::resolution(conn, id))
+    else {
+        return (raster, false);
+    };
+    let expected = settings.resolution(width, height);
+    let current = (raster.width(), raster.height());
+    if right_size(current, expected) {
+        return (raster, false);
+    }
+    let interpolation = if expected.0 < current.0 || expected.1 < current.1 {
+        Interpolation::Area
+    } else {
+        Interpolation::Lanczos4
+    };
+    (resize(&raster, expected.0, expected.1, interpolation), true)
+}
+
+/// Whether a stored thumbnail of `current` pixels is the `expected` size:
+/// exactly, or turned sideways (the reference's rotation exception).
+fn right_size(current: (u32, u32), expected: (u32, u32)) -> bool {
+    current == expected || current == (expected.1, expected.0)
+}
+
+/// Make a thumbnail again from its file at the settings' size (the
+/// reference's delayed regeneration of a wrong-sized thumbnail); a file the
+/// store doesn't have stays as it is, as the reference only scales it.
+fn refit(store: &Arc<Store>, id: HashId) {
+    let _ = make_again(store, id);
+}
+
+/// A thumbnail decoded for a screen scaled by `.1`, asked for as `.2` (the
+/// grid's count of thumbnail settings changes, so one decoded under earlier
+/// settings is let go).
+pub type Loaded = (HashId, f32, u64, Option<Pixels>);
 
 pub struct ThumbnailLoader {
-    requests: Sender<(HashId, f32)>,
+    requests: Sender<(HashId, f32, u64)>,
     results: Receiver<Loaded>,
 }
 
@@ -142,19 +194,26 @@ impl std::fmt::Debug for ThumbnailLoader {
 impl ThumbnailLoader {
     /// Workers for `store`'s thumbnails; they end when the loader does.
     pub fn new(store: &Arc<Store>, workers: usize) -> Self {
-        let (requests, jobs) = crossbeam_channel::unbounded::<(HashId, f32)>();
+        let (requests, jobs) = crossbeam_channel::unbounded::<(HashId, f32, u64)>();
         let (done, results) = crossbeam_channel::unbounded();
         for _ in 0..workers.max(1) {
             let (store, jobs, done) = (store.clone(), jobs.clone(), done.clone());
             thread::Builder::new()
                 .name("thumbnails".into())
                 .spawn(move || {
-                    for (id, scale) in jobs {
+                    for (id, scale, generation) in jobs {
                         let settings = store.snapshot().thumbnails;
-                        let pixels = thumbnail(&store, id)
-                            .map(|raster| Pixels::new(&for_display(raster, &settings, scale)));
-                        if done.send((id, scale, pixels)).is_err() {
+                        let mut wrong_size = false;
+                        let pixels = thumbnail(&store, id).map(|raster| {
+                            let (raster, wrong) = fitted(&store, id, raster, &settings);
+                            wrong_size = wrong;
+                            Pixels::new(&for_display(raster, &settings, scale))
+                        });
+                        if done.send((id, scale, generation, pixels)).is_err() {
                             break;
+                        }
+                        if wrong_size {
+                            refit(&store, id);
                         }
                     }
                 })
@@ -163,10 +222,11 @@ impl ThumbnailLoader {
         Self { requests, results }
     }
 
-    /// Decode `id`'s thumbnail for a screen scaled by `scale`.
-    pub fn request(&self, id: HashId, scale: f32) {
+    /// Decode `id`'s thumbnail for a screen scaled by `scale`, under the
+    /// grid's `generation` of thumbnail settings.
+    pub fn request(&self, id: HashId, scale: f32, generation: u64) {
         // (the workers outlive every sender, so this can't fail)
-        let _ = self.requests.send((id, scale));
+        let _ = self.requests.send((id, scale, generation));
     }
 
     /// A thumbnail that is ready, if any.
@@ -183,6 +243,14 @@ impl ThumbnailLoader {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn a_thumbnail_turned_sideways_is_the_right_size() {
+        assert!(right_size((150, 100), (150, 100)));
+        assert!(right_size((100, 150), (150, 100)));
+        assert!(!right_size((150, 99), (150, 100)));
+        assert!(!right_size((300, 200), (150, 100)));
+    }
 
     #[test]
     fn thumbnails_show_at_their_own_size_in_the_screens_pixels() {

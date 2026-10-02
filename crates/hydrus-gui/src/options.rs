@@ -13,7 +13,7 @@ use hydrus_core::media_viewer::{
 use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
-use hydrus_core::thumbnail::ThumbnailSettings;
+use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
 use hydrus_core::url::UrlClassSettings;
 use hydrus_core::windows::WindowSettings;
 use hydrus_store::bandwidth::BandwidthSettings;
@@ -646,6 +646,15 @@ const ZOOM_TYPE_ORDER: [ZoomType; 6] = [
     ZoomType::FillX,
     ZoomType::FillY,
     ZoomType::FillAuto,
+];
+
+/// `HydrusImageHandling.thumbnail_scale_str_lookup`, as the reference lists
+/// them.
+const THUMBNAIL_SCALES: &[&str] = &["scale down only", "scale to fit", "scale to fill"];
+const THUMBNAIL_SCALE_ORDER: [ThumbnailScale; 3] = [
+    ThumbnailScale::DownOnly,
+    ThumbnailScale::ToFit,
+    ThumbnailScale::ToFill,
 ];
 
 /// `has_transparency_strictness_string_lookup`, as the reference lists
@@ -1445,12 +1454,43 @@ pub fn pages() -> Vec<Page> {
             vec![
                 boxed(
                     "appearance",
-                    vec![int(
-                        "Generate video thumbnails this % in: ",
-                        (0, 100),
-                        |s| i64::from(s.thumbnails.video_percentage_in),
-                        |s, v| s.thumbnails.video_percentage_in = v as u32,
-                    )],
+                    vec![
+                        int(
+                            "Thumbnail width: ",
+                            (20, 2048),
+                            |s| i64::from(s.thumbnails.bounding_width),
+                            |s, v| s.thumbnails.bounding_width = v as u32,
+                        ),
+                        int(
+                            "Thumbnail height: ",
+                            (20, 2048),
+                            |s| i64::from(s.thumbnails.bounding_height),
+                            |s, v| s.thumbnails.bounding_height = v as u32,
+                        ),
+                        choice(
+                            "Thumbnail scaling: ",
+                            THUMBNAIL_SCALES,
+                            |s| {
+                                THUMBNAIL_SCALE_ORDER
+                                    .iter()
+                                    .position(|t| *t == s.thumbnails.scale)
+                                    .unwrap_or(0)
+                            },
+                            |s, i| s.thumbnails.scale = THUMBNAIL_SCALE_ORDER[i],
+                        ),
+                        int(
+                            "Thumbnail UI-scale supersampling %: ",
+                            (100, 800),
+                            |s| i64::from(s.thumbnails.dpr_percent),
+                            |s, v| s.thumbnails.dpr_percent = v as u32,
+                        ),
+                        int(
+                            "Generate video thumbnails this % in: ",
+                            (0, 100),
+                            |s| i64::from(s.thumbnails.video_percentage_in),
+                            |s, v| s.thumbnails.video_percentage_in = v as u32,
+                        ),
+                    ],
                 ),
                 boxed(
                     "interaction",

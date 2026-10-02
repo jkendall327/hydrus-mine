@@ -6,7 +6,7 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet};
 
-use rusqlite::Connection;
+use rusqlite::{Connection, OptionalExtension as _};
 
 use hydrus_core::{CanvasType, ContentStatus, HashId, Mime, ServiceId, Sha256, TagId, TimestampMs};
 
@@ -600,6 +600,16 @@ pub fn tag_counts(
         }
     }
     Ok(counts)
+}
+
+/// A file's width and height as stored (either may be unknown), or `None`
+/// for a file the store doesn't have.
+pub fn resolution(conn: &Connection, id: HashId) -> Result<Option<(Option<u32>, Option<u32>)>> {
+    let size = |v: Option<i64>| v.and_then(|v| u32::try_from(v).ok());
+    Ok(conn
+        .prepare_cached("SELECT width, height FROM files WHERE hash_id = ?")?
+        .query_row([id], |r| Ok((size(r.get(0)?), size(r.get(1)?))))
+        .optional()?)
 }
 
 #[cfg(test)]

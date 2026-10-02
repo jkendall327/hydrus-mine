@@ -147,11 +147,22 @@ export component OptionsWindow inherits Window {
                 spacing: 8px;
                 vertical-stretch: 1;
                 // (as the reference's 28 characters)
-                StandardListView {
+                page-list := StandardListView {
                     width: 200px;
                     model: root.pages;
                     current-item <=> root.page;
                     current-item-changed(i) => { root.page-chosen(i); }
+                    // (a page gone to from the search brought into view)
+                    property <int> shown-page: root.page;
+                    changed shown-page => {
+                        let height = self.content-height / max(1, root.pages.length);
+                        let top = self.shown-page * height;
+                        if (top < -self.content-y) {
+                            self.content-y = -top;
+                        } else if (top + height > -self.content-y + self.visible-height) {
+                            self.content-y = -(top + height - self.visible-height);
+                        }
+                    }
                 }
                 ScrollView {
                     horizontal-stretch: 1;
@@ -310,10 +321,10 @@ export component OptionsWindow inherits Window {
                 changed picked => {
                     if (self.picked >= 0) {
                         let top = self.picked * 24px;
-                        if (top < -self.viewport-y) {
-                            self.viewport-y = -top;
-                        } else if (top + 24px > -self.viewport-y + self.visible-height) {
-                            self.viewport-y = -(top + 24px - self.visible-height);
+                        if (top < -self.content-y) {
+                            self.content-y = -top;
+                        } else if (top + 24px > -self.content-y + self.visible-height) {
+                            self.content-y = -(top + 24px - self.visible-height);
                         }
                     }
                 }

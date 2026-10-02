@@ -231,7 +231,7 @@ search.
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on thirteen pages; the others, and pages with none, aren't there:
+  those on eighteen pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
   downloading page, the default download source, the checker options, the
   number of subscriptions syncing at once and the failed-imports limit; on
@@ -242,7 +242,10 @@ search.
   stats; most of the gui page; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
-  system settings). It opens on its first page,
+  system settings; and on the thumbnails page, the border and margin,
+  fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  key navigation's scrolling, the scroll rate, the background image and
+  the rendering tech). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; and a time behind a button in the reference (the downloaders'

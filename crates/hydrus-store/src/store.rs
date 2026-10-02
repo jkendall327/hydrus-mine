@@ -217,6 +217,12 @@ impl Store {
         self.db.write(f)
     }
 
+    /// Load the in-memory snapshot again (another process changed what it
+    /// holds: the thumbnail settings, say).
+    pub fn refresh(&self) -> Result<()> {
+        self.write_and_refresh(|_| Ok(()))
+    }
+
     /// Run a write that changes services or tag relations, republishing the
     /// in-memory snapshot once it commits. It commits alone, so every write
     /// queued after it sees the new snapshot.

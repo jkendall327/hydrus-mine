@@ -251,3 +251,96 @@ fn the_options_window_applies_its_changes() {
         2 * 86400 + before.network.downloader_network_error_delay % 86400
     );
 }
+
+/// The thumbnails' size, as the thumbnails page sets it: the grid's cells
+/// take the new box at once, the thumbnails shown are at the size the new
+/// settings make them (one stored at the old size scaled to it, as the
+/// reference's `_GetThumbnailHydrusBitmap` does), and the stored one is
+/// made again from its file at that size.
+#[test]
+#[allow(clippy::float_cmp, clippy::cast_precision_loss)] // (sizes set, not computed)
+fn thumbnails_take_the_size_the_options_give_them() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let before = store.snapshot().thumbnails;
+    assert_eq!(ui.get_thumbnail_width(), before.bounding_width as f32 + 2.0);
+    // a big picture, its thumbnail as stored (made under the old settings)
+    let results = bound.current.borrow().borrow().results().to_vec();
+    let size = |id| {
+        store
+            .read(|conn| hydrus_store::media::resolution(conn, id))
+            .unwrap()
+            .unwrap()
+    };
+    let big = results
+        .iter()
+        .copied()
+        .find(|&id| matches!(size(id), (Some(w), Some(h)) if w > 1000 && h > 1000))
+        .expect("a big picture");
+    let (w, h) = size(big);
+    let hash = store
+        .read(|conn| hydrus_store::master::hash(conn, big))
+        .unwrap()
+        .unwrap();
+    let path = store.snapshot().storage.thumbnail_path(&hash).unwrap();
+    let stored = || {
+        let raster = hydrus_media::decode_image(&std::fs::read(&path).unwrap()).unwrap();
+        (raster.width(), raster.height())
+    };
+    assert_eq!(stored(), before.resolution(w, h));
+    // (and shown at it)
+    let index = results.iter().position(|&id| id == big).unwrap();
+    let shown = || {
+        let images: Vec<slint::Image> = (0..bound.rows.row_count())
+            .flat_map(|r| {
+                let row = bound.rows.row_data(r).unwrap().thumbnails;
+                (0..row.row_count())
+                    .map(|t| row.row_data(t).unwrap().image)
+                    .collect::<Vec<_>>()
+            })
+            .collect();
+        let size = images[index].size();
+        (size.width, size.height)
+    };
+    shown();
+    bound.rows.wait();
+    assert_eq!(shown(), before.resolution(w, h));
+
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "thumbnails");
+    let (i, width) = row(&window, "Thumbnail width: ");
+    assert_eq!(
+        (width.kind, width.number, width.minimum, width.maximum),
+        (2, 150, 20, 2048)
+    );
+    window.invoke_number_edited(i, 300);
+    let (i, height) = row(&window, "Thumbnail height: ");
+    assert_eq!((height.kind, height.number), (2, 125));
+    window.invoke_number_edited(i, 250);
+    window.invoke_apply();
+    let after = store.snapshot().thumbnails;
+    assert_eq!((after.bounding_width, after.bounding_height), (300, 250));
+    assert_eq!(ui.get_thumbnail_width(), 302.0);
+    assert_eq!(ui.get_thumbnail_height(), 252.0);
+    let expected = after.resolution(w, h);
+    assert_ne!(expected, before.resolution(w, h));
+
+    // shown at the new size
+    shown();
+    bound.rows.wait();
+    assert_eq!(shown(), expected);
+    // and made again at it
+    let deadline = std::time::Instant::now() + std::time::Duration::from_secs(30);
+    while stored() != expected && std::time::Instant::now() < deadline {
+        std::thread::sleep(std::time::Duration::from_millis(50));
+    }
+    assert_eq!(stored(), expected);
+}

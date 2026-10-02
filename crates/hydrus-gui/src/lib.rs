@@ -823,16 +823,36 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let pages = pages.clone();
                 let slot = options.clone();
                 let change_pages = change_pages.clone();
+                let rows = rows.clone();
+                let weak = window.as_weak();
                 Rc::new(move || {
                     if slot.borrow().is_some() {
                         return;
                     }
                     let store = pages.borrow().store().clone();
+                    let thumbnails_before = store.snapshot().thumbnails;
                     let applied: Rc<dyn Fn()> = Rc::new({
                         let pages = pages.clone();
                         let change_pages = change_pages.clone();
+                        let rows = rows.clone();
+                        let weak = weak.clone();
+                        let store = store.clone();
                         move || {
                             pages.borrow_mut().reload_settings();
+                            // (thumbnails of another size: the cells as
+                            // their new box, and every thumbnail again)
+                            let thumbnails = store.snapshot().thumbnails;
+                            if thumbnails != thumbnails_before {
+                                if let Some(window) = weak.upgrade() {
+                                    window.set_thumbnail_width(
+                                        thumbnails.bounding_width as f32 + 2.0,
+                                    );
+                                    window.set_thumbnail_height(
+                                        thumbnails.bounding_height as f32 + 2.0,
+                                    );
+                                }
+                                rows.thumbnails_changed();
+                            }
                             change_pages(&|_| Ok(()));
                         }
                     });
