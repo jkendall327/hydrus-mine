@@ -830,8 +830,8 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             });
         }
         // what the queues are doing, for their pages: what changed, four
-        // times a second
-        if let Some(downloads) = state.downloads.clone() {
+        // times a second (until the daemon stops, when it is cleared)
+        let publisher = state.downloads.clone().map(|downloads| {
             let store = store.clone();
             tokio::spawn(async move {
                 let mut last = std::collections::HashMap::new();
@@ -869,8 +869,8 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                         tracing::error!(error = %e, "keeping the queues' live state failed");
                     }
                 }
-            });
-        }
+            })
+        });
         // queues made by other processes that don't nudge (older ones)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {
@@ -936,6 +936,12 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             },
         };
+        // (the queues' live state stops being kept before it is cleared,
+        // so it isn't kept again after)
+        if let Some(publisher) = publisher {
+            publisher.abort();
+            let _ = publisher.await;
+        }
         if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
             tracing::error!(error = %e, "clearing the queues' live state failed");
         }
