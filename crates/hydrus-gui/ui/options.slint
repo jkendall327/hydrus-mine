@@ -204,7 +204,8 @@ export component OptionsWindow inherits Window {
                                 width: 260px;
                                 spacing: 4px;
                                 SpinBox {
-                                    width: 120px;
+                                    // (room for the longest none phrase)
+                                    width: 100px;
                                     minimum: row.minimum;
                                     maximum: row.maximum;
                                     value: row.number;

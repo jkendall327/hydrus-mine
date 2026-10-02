@@ -13,12 +13,17 @@ use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::thumbnail::ThumbnailSettings;
 use hydrus_core::url::UrlClassSettings;
+use hydrus_core::windows::WindowSettings;
 use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::delete_lock::DeleteLock;
+use hydrus_store::duplicates::DuplicateFilterSettings;
 use hydrus_store::duplicates::auto::AutoResolutionSettings;
 use hydrus_store::file_maintenance::FileMaintenanceSettings;
 use hydrus_store::network::NetworkSettings;
-use hydrus_store::settings::{AdvancedMode, ExportSettings, FileHandlingSettings, FolderSettings};
+use hydrus_store::settings::{
+    AdvancedMode, ExportSettings, FileHandlingSettings, FileViewingStatistics, FolderSettings,
+    PageSettings,
+};
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
@@ -57,21 +62,25 @@ settings! {
     bandwidth: BandwidthSettings,
     delete_lock: DeleteLock,
     downloader_pages: DownloaderPageSettings,
+    duplicate_filter: DuplicateFilterSettings,
     export: ExportSettings,
     file_handling: FileHandlingSettings,
     file_maintenance: FileMaintenanceSettings,
+    file_viewing: FileViewingStatistics,
     folders: FolderSettings,
     gallery: GalleryDefaults,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     page_names: PageNameSettings,
+    page_settings: PageSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     tag_presentation: TagPresentation,
     thumbnails: ThumbnailSettings,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
+    windows: WindowSettings,
 }
 
 /// An option's value as its control holds it.
@@ -522,6 +531,25 @@ fn velocity(
     )
 }
 
+/// A duplicate comparison's score weight (-100 to 100).
+fn score(label: &'static str, get: fn(&Settings) -> i32, set: fn(&mut Settings, i32)) -> Item {
+    opt(
+        label,
+        Kind::Int {
+            min: -100,
+            max: 100,
+        },
+        Rc::new(move |s| Value::Int(i64::from(get(s)))),
+        Rc::new(move |s, v| match v {
+            Value::Int(n) => {
+                set(s, (*n).clamp(-100, 100) as i32);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
 /// Whole seconds (as the store keeps them) from a time.
 #[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)] // (a time, rounded)
 fn whole(seconds: f64) -> u64 {
@@ -826,6 +854,91 @@ pub fn pages() -> Vec<Page> {
             ],
         ),
         page(
+            "duplicates",
+            vec![
+                boxed(
+                    "open in a new duplicates filter page",
+                    vec![check(
+                        "Set to \"combined local file domains\" when hitting \"Open files in a new duplicates filter page\":",
+                        |s| s.page_settings.duplicate_filter_uses_all_my_files,
+                        |s, v| s.page_settings.duplicate_filter_uses_all_my_files = v,
+                    )],
+                ),
+                boxed(
+                    "duplicate filter batches",
+                    vec![
+                        int(
+                            "Max size of duplicate filter pair batches (in mixed mode):",
+                            (5, 1024),
+                            |s| i64::from(s.duplicate_filter.max_batch_size),
+                            |s, v| s.duplicate_filter.max_batch_size = v as u32,
+                        ),
+                        noneable(
+                            "Auto-commit completed batches of this size or smaller:",
+                            none("no, always confirm", 1, (1, 50), None),
+                            |s| s.duplicate_filter.auto_commit_batch_size.map(i64::from),
+                            |s, v| s.duplicate_filter.auto_commit_batch_size = v.map(|n| n as u32),
+                        ),
+                    ],
+                ),
+                boxed(
+                    "duplicate filter comparison score weights",
+                    vec![
+                        score(
+                            "Score for jpeg with non-trivially higher jpeg quality:",
+                            |s| s.duplicate_filter.scores.higher_jpeg_quality,
+                            |s, v| s.duplicate_filter.scores.higher_jpeg_quality = v,
+                        ),
+                        score(
+                            "Score for jpeg with significantly higher jpeg quality:",
+                            |s| s.duplicate_filter.scores.much_higher_jpeg_quality,
+                            |s, v| s.duplicate_filter.scores.much_higher_jpeg_quality = v,
+                        ),
+                        score(
+                            "Score for file with non-trivially higher filesize:",
+                            |s| s.duplicate_filter.scores.higher_filesize,
+                            |s, v| s.duplicate_filter.scores.higher_filesize = v,
+                        ),
+                        score(
+                            "Score for file with significantly higher filesize:",
+                            |s| s.duplicate_filter.scores.much_higher_filesize,
+                            |s, v| s.duplicate_filter.scores.much_higher_filesize = v,
+                        ),
+                        score(
+                            "Score for file with higher resolution (as num pixels):",
+                            |s| s.duplicate_filter.scores.higher_resolution,
+                            |s, v| s.duplicate_filter.scores.higher_resolution = v,
+                        ),
+                        score(
+                            "Score for file with significantly higher resolution (as num pixels):",
+                            |s| s.duplicate_filter.scores.much_higher_resolution,
+                            |s, v| s.duplicate_filter.scores.much_higher_resolution = v,
+                        ),
+                        score(
+                            "Score for file with more tags:",
+                            |s| s.duplicate_filter.scores.more_tags,
+                            |s, v| s.duplicate_filter.scores.more_tags = v,
+                        ),
+                        score(
+                            "Score for file with non-trivially earlier import time:",
+                            |s| s.duplicate_filter.scores.older,
+                            |s, v| s.duplicate_filter.scores.older = v,
+                        ),
+                        score(
+                            "Score for file with 'nicer' resolution ratio:",
+                            |s| s.duplicate_filter.scores.nicer_ratio,
+                            |s, v| s.duplicate_filter.scores.nicer_ratio = v,
+                        ),
+                        score(
+                            "Score for file with audio:",
+                            |s| s.duplicate_filter.scores.has_audio,
+                            |s, v| s.duplicate_filter.scores.has_audio = v,
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        page(
             "exporting",
             vec![boxed(
                 "all exports",
@@ -854,6 +967,14 @@ pub fn pages() -> Vec<Page> {
                         |s, v| s.export.filename_character_limit = v,
                     ),
                 ],
+            )],
+        ),
+        page(
+            "file viewing statistics",
+            vec![check(
+                "Enable file viewing statistics tracking?:",
+                |s| s.file_viewing.active,
+                |s, v| s.file_viewing.active = v,
             )],
         ),
         page(
@@ -914,6 +1035,17 @@ pub fn pages() -> Vec<Page> {
             ],
         ),
         page(
+            "gui",
+            vec![boxed(
+                "frame locations",
+                vec![check(
+                    "Save media viewer window size and position on close: ",
+                    |s| s.windows.save_media_viewer_on_close,
+                    |s, v| s.windows.save_media_viewer_on_close = v,
+                )],
+            )],
+        ),
+        page(
             "gui pages",
             vec![
                 boxed(
@@ -960,6 +1092,17 @@ pub fn pages() -> Vec<Page> {
                     ],
                 ),
             ],
+        ),
+        page(
+            "importing",
+            vec![boxed(
+                "filetypes",
+                vec![check(
+                    "Inspect for .cbz properties when importing/rescanning .zip files:",
+                    |s| s.file_handling.comic_book_detection,
+                    |s, v| s.file_handling.comic_book_detection = v,
+                )],
+            )],
         ),
         page(
             "maintenance and processing",

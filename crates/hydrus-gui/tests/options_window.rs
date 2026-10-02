@@ -80,9 +80,13 @@ fn the_options_window_applies_its_changes() {
             "audio",
             "connection",
             "downloading",
+            "duplicates",
             "exporting",
+            "file viewing statistics",
             "files and trash",
+            "gui",
             "gui pages",
+            "importing",
             "maintenance and processing",
             "media viewer",
             "media viewer hovers",
@@ -220,7 +224,14 @@ fn the_options_window_applies_its_changes() {
     let (i, wait) = row(&window, "Delay time on a gallery/watcher network error:");
     assert_eq!(wait.kind, 8);
     window.invoke_field_edited(i, 0, 2);
+    show_page(&window, "duplicates");
+    let (i, audio) = row(&window, "Score for file with audio:");
+    assert_eq!((audio.kind, audio.minimum, audio.maximum), (2, -100, 100));
+    window.invoke_number_edited(i, -30);
     window.invoke_apply();
+    let scores = settings().duplicate_filter.scores;
+    assert_eq!(scores.has_audio, -30);
+    assert_eq!(scores.more_tags, before.duplicate_filter.scores.more_tags);
     let network = settings().network;
     assert_eq!(network.http_proxy.as_deref(), Some("http://127.0.0.1:8080"));
     assert_eq!(network.domain_error_number, 9);

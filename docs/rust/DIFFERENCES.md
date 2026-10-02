@@ -236,7 +236,11 @@ search.
   downloading page, the default download source, the checker options, the
   number of subscriptions syncing at once and the failed-imports limit; on
   the maintenance page, idle time and shutdown, repository, sibling,
-  deferred delete and idle work settings). It opens on its first page,
+  deferred delete and idle work settings; on the duplicates page, the
+  preparation tab's notification and the filter's colours; on the file
+  viewing statistics page, the filters' own switches and the menus'
+  stats; most of the gui page; and on the importing page, dropped URLs
+  and the work slots). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; and a time behind a button in the reference (the downloaders'
