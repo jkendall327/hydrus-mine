@@ -486,6 +486,21 @@ impl ClientOptions {
         out
     }
 
+    /// The system predicates last added from the system predicate editors,
+    /// by the reference's number for their type, newest first
+    /// (`predicate_types_to_recent_predicates`), numerical ratings read
+    /// with their services' `scales`. One this can't read is left out.
+    pub fn recent_predicates(
+        &self,
+        scales: &dyn Fn(&ServiceKey) -> Option<super::predicates::StarScale>,
+    ) -> DecodeResult<hydrus_core::search::recent::RecentPredicates> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        match settings.get("predicate_types_to_recent_predicates") {
+            Some(meta) => recent_predicates(expect_object(meta, "recent predicates")?, scales),
+            None => Ok(hydrus_core::search::recent::RecentPredicates::default()),
+        }
+    }
+
     /// How ratings are drawn over thumbnails.
     pub fn thumbnail_rating_settings(&self) -> hydrus_core::thumbnail::ThumbnailRatingSettings {
         let mut out = hydrus_core::thumbnail::ThumbnailRatingSettings::default();
@@ -582,6 +597,39 @@ fn named_group(settings: &Settings<'_>, group: &str) -> DecodeResult<NamedGroup>
         })
         .collect::<DecodeResult<_>>()?;
     Ok(NamedGroup { entries })
+}
+
+/// The recent predicates stored as `predicate_types_to_recent_predicates`
+/// (a dictionary of type numbers to lists of predicates), numerical
+/// ratings read with their services' `scales`. One this can't read is left
+/// out.
+pub fn recent_predicates(
+    object: &SerialisableObject,
+    scales: &dyn Fn(&ServiceKey) -> Option<super::predicates::StarScale>,
+) -> DecodeResult<hydrus_core::search::recent::RecentPredicates> {
+    use hydrus_core::search::predicate::Predicate;
+    let mut out = hydrus_core::search::recent::RecentPredicates::default();
+    for (kind, kept) in dictionary_pairs(object)?.iter() {
+        let kind = kind
+            .as_json()
+            .and_then(PyJson::as_i64)
+            .and_then(|k| u8::try_from(k).ok())
+            .ok_or_else(|| malformed(KIND, "a recent predicate type is not a number"))?;
+        let predicates: Vec<_> = list_items(expect_object(kept, "recent predicates")?)?
+            .iter()
+            .filter_map(Meta::as_object)
+            .filter_map(
+                |object| match super::predicates::predicate_with_scales(object, scales) {
+                    Ok(Predicate::System(p)) => Some(p),
+                    _ => None,
+                },
+            )
+            .collect();
+        if !predicates.is_empty() {
+            out.by_type.insert(kind, predicates);
+        }
+    }
+    Ok(out)
 }
 
 fn expect_object<'a>(meta: &'a Meta, what: &str) -> DecodeResult<&'a SerialisableObject> {
@@ -892,6 +940,7 @@ fn media_view(settings: &Settings<'_>) -> DecodeResult<Option<BTreeMap<i64, Medi
 #[cfg(test)]
 mod tests {
     use super::ClientOptions;
+    use crate::serialisable::SerialisableObject;
 
     #[test]
     fn the_volumes_and_mutes_come_across() {
@@ -916,6 +965,52 @@ mod tests {
                 viewer_mute: false,
                 viewer_uses_its_own_volume: true,
             }
+        );
+    }
+
+    /// The reference's recent predicates (`oracle/record_recent_predicates.py`
+    /// stores some) come across: as many of each type as it keeps, each
+    /// under its own type.
+    #[test]
+    fn the_recent_predicates_come_across() {
+        let recorded = hydrus_testkit::fixture_json("recent_predicates.json");
+        let object = SerialisableObject::from_tuple_str(&recorded["stored"].to_string()).unwrap();
+        let migrated = super::recent_predicates(&object, &|_| None).unwrap();
+        let kept = recorded["steps"].as_array().unwrap().last().unwrap()["recent"]
+            .as_object()
+            .unwrap();
+        let counts: std::collections::BTreeMap<u8, usize> = kept
+            .iter()
+            .map(|(kind, texts)| (kind.parse().unwrap(), texts.as_array().unwrap().len()))
+            .collect();
+        let ours: std::collections::BTreeMap<u8, usize> = migrated
+            .by_type
+            .iter()
+            .map(|(kind, kept)| (*kind, kept.len()))
+            .collect();
+        assert_eq!(ours, counts);
+        for (kind, kept) in &migrated.by_type {
+            for predicate in kept {
+                assert_eq!(predicate.reference_type(), *kind, "{predicate:?}");
+            }
+        }
+        // and from the options, where the reference keeps them
+        let options = include_str!("client_options_defaults.json").replace(
+            r#"[[0, "predicate_types_to_recent_predicates"], [2, [21, 2, []]]]"#,
+            &format!(
+                r#"[[0, "predicate_types_to_recent_predicates"], [2, {}]]"#,
+                recorded["stored"]
+            ),
+        );
+        let options =
+            ClientOptions::from_object(&SerialisableObject::from_tuple_str(&options).unwrap())
+                .unwrap();
+        assert_eq!(options.recent_predicates(&|_| None).unwrap(), migrated);
+        // a type that isn't a number is refused
+        let bad = r#"[21, 2, [[[0, "thirteen"], [2, [26, 3, []]]]]]"#;
+        assert!(
+            super::recent_predicates(&SerialisableObject::from_tuple_str(bad).unwrap(), &|_| None)
+                .is_err()
         );
     }
 
@@ -1071,6 +1166,11 @@ mod tests {
         assert_eq!(
             defaults.thumbnail_rating_settings(),
             hydrus_core::thumbnail::ThumbnailRatingSettings::default()
+        );
+        // (and no recent predicates)
+        assert_eq!(
+            defaults.recent_predicates(&|_| None).unwrap(),
+            hydrus_core::search::recent::RecentPredicates::default()
         );
         assert_eq!(
             defaults.slideshow_settings(),

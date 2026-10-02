@@ -225,6 +225,8 @@ search.
   "system:hash"'s forced clean-up doesn't ask "You sure?" first, and what
   the reference warns of in a dialog is said under the panels.
   "Paste image!" takes a file's path from the clipboard, not image data.
+  A recent predicate is forgotten with a "forget" button where the
+  reference has a trash icon.
 
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes

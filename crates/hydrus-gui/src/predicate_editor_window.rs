@@ -5,10 +5,13 @@
 
 use std::cell::{Cell, RefCell};
 use std::rc::Rc;
+use std::sync::Arc;
 
 use slint::{ComponentHandle as _, Model as _, ModelRc, SharedString, VecModel};
 
-use hydrus_search::{Predicate, TextContext, predicate_text};
+use hydrus_core::search::recent::RecentPredicates;
+use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
+use hydrus_store::Store;
 
 use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed};
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
@@ -135,6 +138,8 @@ struct State {
     page: usize,
     panels: Rc<VecModel<EditorPanel>>,
     fields: Vec<Rc<VecModel<EditorField>>>,
+    /// The recent predicates the page shown shows.
+    recent: Vec<SystemPredicate>,
 }
 
 impl State {
@@ -198,10 +203,27 @@ fn pasted_hashes() -> Result<(hydrus_core::Sha256, Vec<hydrus_core::PerceptualHa
     hydrus_media::MediaTools::new().similar_search_hashes(&path)
 }
 
-/// Open the editor; a button or "ok" hands its predicates to `chosen` and
-/// closes it. One already open is replaced.
+/// The recent predicates kept in `store`.
+fn recent_of(store: &Store) -> RecentPredicates {
+    store.read(hydrus_store::settings::get).unwrap_or_default()
+}
+
+/// Change the recent predicates kept in `store`.
+fn change_recent(store: &Store, change: impl FnOnce(&mut RecentPredicates)) {
+    let mut recent = recent_of(store);
+    change(&mut recent);
+    if let Err(e) = store.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &recent)) {
+        eprintln!("could not keep the recent predicates: {e}");
+    }
+}
+
+/// Open the editor; a button, a recent predicate or "ok" hands its
+/// predicates to `chosen`, keeps them as recent predicates in `store` (as
+/// the reference's `FleshOutPredicates` does), and closes it. One already
+/// open is replaced.
 pub(crate) fn open(
     slot: &Rc<RefCell<Option<PredicateEditorWindow>>>,
+    store: Arc<Store>,
     editor: Editor,
     context: Context,
     text: TextContext,
@@ -229,6 +251,7 @@ pub(crate) fn open(
         page: 0,
         panels: Rc::new(VecModel::default()),
         fields: Vec::new(),
+        recent: Vec::new(),
     }));
     let text = Rc::new(text);
     // show page `page`
@@ -236,6 +259,7 @@ pub(crate) fn open(
         let weak = window.as_weak();
         let state = state.clone();
         let text = text.clone();
+        let store = store.clone();
         move |page: usize| {
             let Some(window) = weak.upgrade() else { return };
             let mut state = state.borrow_mut();
@@ -263,6 +287,13 @@ pub(crate) fn open(
             ));
             state.fields = fields;
             state.panels = panels.clone();
+            state.recent = state.editor.pages[page].recent(&recent_of(&store));
+            let recent: Vec<SharedString> = state
+                .recent
+                .iter()
+                .map(|p| predicate_text(&Predicate::System(p.clone()), &text).into())
+                .collect();
+            window.set_recent(ModelRc::new(VecModel::from(recent)));
             window.set_page(i32::try_from(page).unwrap_or(0));
             window.set_buttons(ModelRc::new(VecModel::from(labels)));
             window.set_panels(ModelRc::from(panels));
@@ -284,14 +315,49 @@ pub(crate) fn open(
     let finish = {
         let close = close.clone();
         let done = done.clone();
+        let store = store.clone();
         move |predicates: Vec<Predicate>| {
             if done.replace(true) {
                 return;
             }
             close();
+            let system: Vec<SystemPredicate> = predicates
+                .iter()
+                .filter_map(|p| match p {
+                    Predicate::System(s) => Some(s.clone()),
+                    _ => None,
+                })
+                .collect();
+            change_recent(&store, |recent| recent.push(&system));
             chosen(predicates);
         }
     };
+    window.on_recent_clicked({
+        let state = state.clone();
+        let finish = finish.clone();
+        move |i| {
+            let chosen = usize::try_from(i)
+                .ok()
+                .and_then(|i| state.borrow().recent.get(i).cloned());
+            if let Some(predicate) = chosen {
+                finish(vec![Predicate::System(predicate)]);
+            }
+        }
+    });
+    window.on_recent_forgotten({
+        let state = state.clone();
+        let show_page = show_page.clone();
+        move |i| {
+            let forgotten = usize::try_from(i)
+                .ok()
+                .and_then(|i| state.borrow().recent.get(i).cloned());
+            if let Some(predicate) = forgotten {
+                change_recent(&store, |recent| recent.remove(&predicate));
+                let page = state.borrow().page;
+                show_page(page);
+            }
+        }
+    });
     window.on_page_chosen(move |page| show_page(usize::try_from(page).unwrap_or(0)));
     window.on_button_clicked({
         let state = state.clone();

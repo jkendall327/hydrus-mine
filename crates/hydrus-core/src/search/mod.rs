@@ -6,4 +6,5 @@ pub mod context;
 pub mod filetype;
 pub mod number;
 pub mod predicate;
+pub mod recent;
 pub mod time;

@@ -55,7 +55,7 @@ pub mod tag_summary;
 pub(crate) mod util;
 
 pub use client_api::{ApiPermission, ApiPermissions, ClientApiManager};
-pub use client_options::ClientOptions;
+pub use client_options::{ClientOptions, recent_predicates};
 pub use duplicates::{ArchiveSync, DuplicateMergeOptions, MergeAction, NoteImportOptions};
 pub use favourites::{FavouriteSearch, FavouriteSearchManager, FileSearchContext, SearchType};
 pub use legacy_options::{LegacyOptions, YamlValue};

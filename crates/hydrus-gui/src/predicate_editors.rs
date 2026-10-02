@@ -17,6 +17,7 @@ use hydrus_core::search::predicate::{
     FileProperty, NamespaceFilter, NumericProperty, PixelUnit, Predicate, Relationship, ServiceRef,
     SizeUnit, SystemPredicate, TagDisplayType, UrlRule, ViewCanvas, ViewCanvases, ViewingStat,
 };
+use hydrus_core::search::recent::RecentPredicates;
 use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 
@@ -1067,12 +1068,58 @@ fn regex_check(text: &str) -> Result<(), String> {
 }
 
 /// A page of an editor: its name (empty with only one page), its
-/// ready-made buttons and its panels.
+/// ready-made buttons and its panels; and the types (the reference's
+/// numbers, [`SystemPredicate::reference_type`]) whose recent predicates
+/// it shows.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Page {
     pub name: String,
     pub buttons: Vec<Button>,
     pub panels: Vec<Panel>,
+    pub recent_types: Vec<u8>,
+}
+
+impl Page {
+    /// The recent predicates it shows, from `recent`: those of its types,
+    /// type by type, less any its buttons add (`GetRecentPredicates`, as
+    /// `FleshOutPredicatePanel` filters them).
+    pub fn recent(&self, recent: &RecentPredicates) -> Vec<SystemPredicate> {
+        recent
+            .of_types(&self.recent_types)
+            .into_iter()
+            .filter(|p| !self.buttons.iter().any(|b| b.predicates.contains(p)))
+            .collect()
+    }
+}
+
+/// The types of recent predicates `blank`'s editor shows on its page
+/// `page`, as the reference's `FleshOutPredicatePanel` sets them: its own
+/// type unless it says otherwise.
+fn recent_types(blank: Blank, page: &str) -> Vec<u8> {
+    match (blank, page) {
+        (Blank::Dimensions, _) => vec![14, 13, 15, 24],
+        (Blank::Duration, _) => vec![16, 36, 37],
+        (Blank::FileProperties | Blank::SimilarFiles, _) => Vec::new(),
+        (Blank::FileRelationships, _) => vec![33],
+        (Blank::FileService, _) => vec![23],
+        (Blank::FileViewingStats, _) => vec![29],
+        (Blank::Filesize, _) => vec![10],
+        (Blank::Filetype, _) => vec![17],
+        (Blank::Hash, _) => vec![12],
+        (Blank::Limit, _) => vec![9],
+        (Blank::Notes, _) => vec![38, 40],
+        (Blank::NumTags, _) => vec![8],
+        (Blank::NumWords, _) => vec![22],
+        (Blank::Rating, _) => vec![18],
+        (Blank::TagAdvanced, _) => vec![54],
+        (Blank::TagAsNumber, _) => vec![27],
+        (Blank::Time, "import") => vec![11],
+        (Blank::Time, "modified") => vec![35],
+        (Blank::Time, "last viewed") => vec![43],
+        (Blank::Time, _) => vec![47],
+        (Blank::Urls, "known urls") => vec![28],
+        (Blank::Urls, _) => vec![52],
+    }
 }
 
 /// A ready-made button: the predicates it adds, under its own label or
@@ -1098,6 +1145,7 @@ impl Editor {
             name: String::new(),
             buttons,
             panels,
+            recent_types: Vec::new(),
         };
         let (note, pages) = match blank {
             Blank::Dimensions => (
@@ -1228,6 +1276,7 @@ impl Editor {
                         Vec::new()
                     },
                     panels: vec![time_delta_panel(kind), time_date_panel(kind, context.today)],
+                    recent_types: Vec::new(),
                 })
                 .collect(),
             ),
@@ -1246,6 +1295,7 @@ impl Editor {
                             url_panel(Kind::UrlRegex, " url that matches regex "),
                             url_class_panel(context),
                         ],
+                        recent_types: Vec::new(),
                     },
                     Page {
                         name: "number of urls".into(),
@@ -1254,6 +1304,7 @@ impl Editor {
                             one(number(NumericProperty::NumUrls, NumberTest::zero())),
                         ],
                         panels: vec![urls_panel()],
+                        recent_types: Vec::new(),
                     },
                 ],
             ),
@@ -1295,15 +1346,24 @@ impl Editor {
                         name: "data".into(),
                         buttons: Vec::new(),
                         panels: vec![special::similar_to_data_panel()],
+                        recent_types: Vec::new(),
                     },
                     Page {
                         name: "files".into(),
                         buttons: Vec::new(),
                         panels: vec![special::similar_to_files_panel()],
+                        recent_types: Vec::new(),
                     },
                 ],
             ),
         };
+        let pages = pages
+            .into_iter()
+            .map(|page| Page {
+                recent_types: recent_types(blank, &page.name),
+                ..page
+            })
+            .collect();
         Editor { blank, note, pages }
     }
 }

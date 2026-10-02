@@ -339,6 +339,11 @@ impl Setting for hydrus_core::media_viewer::MediaViewerSettings {
     const KEY: &'static str = "media_viewer";
 }
 
+/// The system predicates last added from the system predicate editors.
+impl Setting for hydrus_core::search::recent::RecentPredicates {
+    const KEY: &'static str = "recent_predicates";
+}
+
 /// How ratings are drawn over thumbnails.
 impl Setting for hydrus_core::thumbnail::ThumbnailRatingSettings {
     const KEY: &'static str = "thumbnail_ratings";

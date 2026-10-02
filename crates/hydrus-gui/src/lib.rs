@@ -568,7 +568,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     shown(true);
                 }
             });
-            if let Err(e) = predicate_editor_window::open(&slot, editor, context, text, chosen) {
+            if let Err(e) =
+                predicate_editor_window::open(&slot, store, editor, context, text, chosen)
+            {
                 eprintln!("could not open the predicate editor: {e}");
             }
         }

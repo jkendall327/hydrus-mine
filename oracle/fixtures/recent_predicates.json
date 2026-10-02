@@ -1,0 +1,2375 @@
+{
+ "editors": [
+  {
+   "editor": "system:dimensions",
+   "forgot": {
+    "page": "",
+    "predicate": "system:number of pixels ≈ 2 megapixels",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB",
+      "system:filesize < 200KB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "37": [
+      "system:number of frames > 100"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ],
+     "40": [
+      "system:has note with name \"comment\""
+     ],
+     "8": [
+      "system:number of tags > 4"
+     ],
+     "9": [
+      "system:limit is 100"
+     ]
+    },
+    "shown": [
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:ratio wider than 16:9"
+    ]
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400",
+      "system:ratio wider than 16:9",
+      "system:number of pixels ≈ 2 megapixels"
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:duration",
+   "forgot": {
+    "page": "",
+    "predicate": "system:number of frames > 100",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB",
+      "system:filesize < 200KB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ],
+     "40": [
+      "system:has note with name \"comment\""
+     ],
+     "8": [
+      "system:number of tags > 4"
+     ],
+     "9": [
+      "system:limit is 100"
+     ]
+    },
+    "shown": [
+     "system:framerate = 30fps"
+    ]
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:framerate = 30fps",
+      "system:number of frames > 100"
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:file properties",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:file relationships",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:file service",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:file viewing statistics",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:filesize",
+   "forgot": {
+    "page": "",
+    "predicate": "system:filesize < 200KB",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ],
+     "40": [
+      "system:has note with name \"comment\""
+     ],
+     "8": [
+      "system:number of tags > 4"
+     ],
+     "9": [
+      "system:limit is 100"
+     ]
+    },
+    "shown": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB"
+    ]
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB",
+      "system:filesize < 200KB"
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:filetype",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:hash",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:limit",
+   "forgot": {
+    "page": "",
+    "predicate": "system:limit is 100",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ],
+     "40": [
+      "system:has note with name \"comment\""
+     ],
+     "8": [
+      "system:number of tags > 4"
+     ]
+    },
+    "shown": []
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:limit is 100"
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:notes",
+   "forgot": {
+    "page": "",
+    "predicate": "system:has note with name \"comment\"",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ],
+     "8": [
+      "system:number of tags > 4"
+     ]
+    },
+    "shown": [
+     "system:number of notes > 1"
+    ]
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:number of notes > 1",
+      "system:has note with name \"comment\""
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:number of tags",
+   "forgot": {
+    "page": "",
+    "predicate": "system:number of tags > 4",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "35": [
+      "system:modified time: since 7 days ago"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ]
+    },
+    "shown": []
+   },
+   "pages": [
+    {
+     "name": "",
+     "recent": [
+      "system:number of tags > 4"
+     ]
+    }
+   ]
+  },
+  {
+   "editor": "system:number of words",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:rating",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:similar files",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "data",
+     "recent": []
+    },
+    {
+     "name": "files",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:tag (advanced)",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:tag as number",
+   "forgot": null,
+   "pages": [
+    {
+     "name": "",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:time",
+   "forgot": {
+    "page": "modified",
+    "predicate": "system:modified time: since 7 days ago",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "28": [
+      "system:has url "
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ]
+    },
+    "shown": []
+   },
+   "pages": [
+    {
+     "name": "import",
+     "recent": []
+    },
+    {
+     "name": "modified",
+     "recent": [
+      "system:modified time: since 7 days ago"
+     ]
+    },
+    {
+     "name": "last viewed",
+     "recent": []
+    },
+    {
+     "name": "archived",
+     "recent": []
+    }
+   ]
+  },
+  {
+   "editor": "system:urls",
+   "forgot": {
+    "page": "known urls",
+    "predicate": "system:has url ",
+    "recent": {
+     "10": [
+      "system:filesize ≈ 5MB",
+      "system:filesize > 1KB",
+      "system:filesize < 10MB"
+     ],
+     "11": [
+      "system:import time: since 7 days ago"
+     ],
+     "13": [
+      "system:width = 1,280",
+      "system:width = 300",
+      "system:width = 500",
+      "system:width = 400"
+     ],
+     "14": [
+      "system:height = 720",
+      "system:height = 1,080"
+     ],
+     "15": [
+      "system:ratio wider than 16:9",
+      "system:ratio = 16:9"
+     ],
+     "16": [
+      "system:has duration"
+     ],
+     "36": [
+      "system:framerate = 30fps"
+     ],
+     "38": [
+      "system:number of notes > 1"
+     ]
+    },
+    "shown": []
+   },
+   "pages": [
+    {
+     "name": "known urls",
+     "recent": [
+      "system:has url "
+     ]
+    },
+    {
+     "name": "number of urls",
+     "recent": []
+    }
+   ]
+  }
+ ],
+ "new_client": {},
+ "steps": [
+  {
+   "added": [
+    "system:width = 1,920"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:dimensions",
+    "",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:height = 1,080"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:dimensions",
+    "",
+    1
+   ]
+  },
+  {
+   "added": [
+    "system:width = 1,920",
+    "system:height = 1,080"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ]
+   },
+   "step": [
+    "button",
+    "system:dimensions",
+    "1080p"
+   ]
+  },
+  {
+   "added": [
+    "system:ratio = 16:9"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio = 16:9"
+    ]
+   },
+   "step": [
+    "button",
+    "system:dimensions",
+    "system:ratio = 16:9"
+   ]
+  },
+  {
+   "added": [
+    "system:ratio wider than 16:9"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:dimensions",
+    "",
+    2
+   ]
+  },
+  {
+   "added": [
+    "system:number of pixels ≈ 2 megapixels"
+   ],
+   "recent": {
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:dimensions",
+    "",
+    3
+   ]
+  },
+  {
+   "added": [
+    "system:filesize < 200KB"
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:filesize",
+    "",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:import time: since 7 days ago"
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:time",
+    "import",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:modified time: since 7 days ago"
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:time",
+    "modified",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:has duration"
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:duration",
+    "",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:number of tags > 4"
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:number of tags",
+    "",
+    0
+   ]
+  },
+  {
+   "added": [
+    "system:has url "
+   ],
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "ok",
+    "system:urls",
+    "known urls",
+    0
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 100",
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 100"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 200",
+     "system:width = 100",
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 200"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 300",
+     "system:width = 200",
+     "system:width = 100",
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 300"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 400",
+     "system:width = 300",
+     "system:width = 200",
+     "system:width = 100",
+     "system:width = 1,920"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 400"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 300",
+     "system:width = 200",
+     "system:width = 100"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 500"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200",
+     "system:width = 100"
+    ],
+    "14": [
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:width = 300"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:height = 720",
+     "system:width = 1280"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:filesize < 10MB",
+     "system:filesize > 1KB",
+     "system:filesize ~= 5MB"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 64",
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:limit is 100",
+     "system:limit is 64"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "38": [
+     "system:number of notes > 1"
+    ],
+    "40": [
+     "system:has note with name \"comment\""
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 64",
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:number of notes > 1",
+     "system:has note with name \"comment\""
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400",
+     "system:width = 200"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "36": [
+     "system:framerate = 30fps"
+    ],
+    "37": [
+     "system:number of frames > 100"
+    ],
+    "38": [
+     "system:number of notes > 1"
+    ],
+    "40": [
+     "system:has note with name \"comment\""
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 64",
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "push",
+    [
+     "system:num frames > 100",
+     "system:framerate = 30fps"
+    ]
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "36": [
+     "system:framerate = 30fps"
+    ],
+    "37": [
+     "system:number of frames > 100"
+    ],
+    "38": [
+     "system:number of notes > 1"
+    ],
+    "40": [
+     "system:has note with name \"comment\""
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 64",
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "forget",
+    "system:width = 200"
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "36": [
+     "system:framerate = 30fps"
+    ],
+    "37": [
+     "system:number of frames > 100"
+    ],
+    "38": [
+     "system:number of notes > 1"
+    ],
+    "40": [
+     "system:has note with name \"comment\""
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "forget",
+    "system:limit is 64"
+   ]
+  },
+  {
+   "recent": {
+    "10": [
+     "system:filesize ≈ 5MB",
+     "system:filesize > 1KB",
+     "system:filesize < 10MB",
+     "system:filesize < 200KB"
+    ],
+    "11": [
+     "system:import time: since 7 days ago"
+    ],
+    "13": [
+     "system:width = 1,280",
+     "system:width = 300",
+     "system:width = 500",
+     "system:width = 400"
+    ],
+    "14": [
+     "system:height = 720",
+     "system:height = 1,080"
+    ],
+    "15": [
+     "system:ratio wider than 16:9",
+     "system:ratio = 16:9"
+    ],
+    "16": [
+     "system:has duration"
+    ],
+    "24": [
+     "system:number of pixels ≈ 2 megapixels"
+    ],
+    "28": [
+     "system:has url "
+    ],
+    "35": [
+     "system:modified time: since 7 days ago"
+    ],
+    "36": [
+     "system:framerate = 30fps"
+    ],
+    "37": [
+     "system:number of frames > 100"
+    ],
+    "38": [
+     "system:number of notes > 1"
+    ],
+    "40": [
+     "system:has note with name \"comment\""
+    ],
+    "8": [
+     "system:number of tags > 4"
+    ],
+    "9": [
+     "system:limit is 100"
+    ]
+   },
+   "step": [
+    "forget",
+    "system:width = 9999"
+   ]
+  }
+ ],
+ "stored": [
+  21,
+  2,
+  [
+   [
+    [
+     0,
+     13
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          13,
+          [
+           93,
+           2,
+           [
+            2,
+            1280,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          13,
+          [
+           93,
+           2,
+           [
+            2,
+            300,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          13,
+          [
+           93,
+           2,
+           [
+            2,
+            500,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          13,
+          [
+           93,
+           2,
+           [
+            2,
+            400,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     14
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          14,
+          [
+           93,
+           2,
+           [
+            2,
+            720,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          14,
+          [
+           93,
+           2,
+           [
+            2,
+            1080,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     15
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          15,
+          [
+           "wider than",
+           16,
+           9
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          15,
+          [
+           "=",
+           16,
+           9
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     24
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          24,
+          [
+           "≈",
+           2,
+           1000000
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     10
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          10,
+          [
+           "≈",
+           5,
+           1048576
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          10,
+          [
+           ">",
+           1,
+           1024
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          10,
+          [
+           "<",
+           10,
+           1048576
+          ],
+          true
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          10,
+          [
+           "<",
+           200,
+           1024
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     11
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          11,
+          [
+           "<",
+           "delta",
+           [
+            0,
+            0,
+            7,
+            0
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     35
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          35,
+          [
+           "<",
+           "delta",
+           [
+            0,
+            0,
+            7,
+            0
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     16
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          16,
+          [
+           93,
+           2,
+           [
+            1,
+            0,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     8
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          8,
+          [
+           "*",
+           ">",
+           4
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     28
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          28,
+          [
+           true,
+           "exact_match",
+           "",
+           "has url "
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     9
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          9,
+          100,
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     38
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          38,
+          [
+           93,
+           2,
+           [
+            1,
+            1,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     40
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          40,
+          [
+           true,
+           "comment"
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     37
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          37,
+          [
+           93,
+           2,
+           [
+            1,
+            100,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   [
+    [
+     0,
+     36
+    ],
+    [
+     2,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         14,
+         8,
+         [
+          36,
+          [
+           93,
+           2,
+           [
+            2,
+            30,
+            null
+           ]
+          ],
+          true
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "types": {
+  "system:filesize < 10MB": 10,
+  "system:filesize < 200KB": 10,
+  "system:filesize > 1KB": 10,
+  "system:filesize ≈ 5MB": 10,
+  "system:framerate = 30fps": 36,
+  "system:has duration": 16,
+  "system:has note with name \"comment\"": 40,
+  "system:has url ": 28,
+  "system:height = 1,080": 14,
+  "system:height = 720": 14,
+  "system:import time: since 7 days ago": 11,
+  "system:limit is 100": 9,
+  "system:limit is 64": 9,
+  "system:modified time: since 7 days ago": 35,
+  "system:number of frames > 100": 37,
+  "system:number of notes > 1": 38,
+  "system:number of pixels ≈ 2 megapixels": 24,
+  "system:number of tags > 4": 8,
+  "system:ratio = 16:9": 15,
+  "system:ratio wider than 16:9": 15,
+  "system:width = 1,280": 13,
+  "system:width = 1,920": 13,
+  "system:width = 100": 13,
+  "system:width = 200": 13,
+  "system:width = 300": 13,
+  "system:width = 400": 13,
+  "system:width = 500": 13,
+  "system:width = 9,999": 13
+ }
+}

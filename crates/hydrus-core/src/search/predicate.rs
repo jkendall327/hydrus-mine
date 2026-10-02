@@ -518,6 +518,68 @@ pub enum TagDisplayType {
     Display,
 }
 
+impl SystemPredicate {
+    /// The reference's number for this kind of predicate (its
+    /// `PREDICATE_TYPE_SYSTEM_*`, as it stores predicates), by which it
+    /// keeps recent predicates.
+    pub fn reference_type(&self) -> u8 {
+        use SystemPredicate as S;
+        match self {
+            S::Everything => 4,
+            S::Inbox => 5,
+            S::Archive => 6,
+            S::NumTags { .. } => 8,
+            S::Limit(_) => 9,
+            S::FileSize { .. } => 10,
+            S::Time { kind, .. } => match kind {
+                TimeKind::Imported => 11,
+                TimeKind::Modified => 35,
+                TimeKind::LastViewed => 43,
+                TimeKind::Archived => 47,
+            },
+            S::Hash { .. } => 12,
+            S::Number { property, .. } => match property {
+                NumericProperty::Width => 13,
+                NumericProperty::Height => 14,
+                NumericProperty::Duration => 16,
+                NumericProperty::NumWords => 22,
+                NumericProperty::Framerate => 36,
+                NumericProperty::NumFrames => 37,
+                NumericProperty::NumNotes => 38,
+                NumericProperty::NumUrls => 52,
+            },
+            S::Ratio { .. } => 15,
+            S::Filetype { .. } => 17,
+            S::Rating { .. } => 18,
+            S::SimilarToFiles { .. } => 19,
+            S::Local => 20,
+            S::NotLocal => 21,
+            S::FileService { .. } => 23,
+            S::NumPixels { .. } => 24,
+            S::FileRelationshipCount { .. } => 26,
+            S::TagAsNumber { .. } => 27,
+            S::KnownUrl { .. } => 28,
+            S::FileViewingStats { .. } => 29,
+            S::BestQualityOfGroup { .. } => 32,
+            S::FileProperty { property, .. } => match property {
+                FileProperty::Audio => 34,
+                FileProperty::IccProfile => 41,
+                FileProperty::HumanReadableEmbeddedMetadata => 44,
+                FileProperty::Exif => 46,
+                FileProperty::Transparency => 50,
+                FileProperty::ForcedFiletype => 51,
+                FileProperty::Xmp => 67,
+                FileProperty::Iptc => 68,
+                FileProperty::SoftwareSourceMetadata => 69,
+            },
+            S::NoteName { .. } => 40,
+            S::SimilarToData { .. } => 48,
+            S::TagAdvanced { .. } => 54,
+            S::RatingAdvanced { .. } => 66,
+        }
+    }
+}
+
 impl Predicate {
     /// The predicate searching for the opposite, for those that have one
     /// (the reference's `GetInverseCopy`): the inbox and the archive, local

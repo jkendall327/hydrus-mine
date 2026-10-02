@@ -333,8 +333,16 @@ buttons; "system:rating" has a panel for each rating service (like or
 dislike, stars, counts) under the all/any/only panel, whose services are
 chosen in place (the reference's specifier button opens a dialog);
 "system:similar files" takes file hashes, or pixel and perceptual hashes
-with "Paste image!" taking a file's from a path on the clipboard. Not
-yet: the reference's recently used predicates over each panel, and
+with "Paste image!" taking a file's from a path on the clipboard. What an
+editor adds, from a button, a panel or a recent one, is kept as a recent
+predicate of its type, as the reference keeps them
+(`hydrus_core::search::recent`, checked against
+`oracle/record_recent_predicates.py`): the newest first, five of a type,
+one added again moved to the front. Each page shows its types' recent
+predicates over its buttons (the dimensions page its heights, widths,
+ratios and numbers of pixels; "system:time"'s import page its import
+times...), less any a button of the page adds, each adding itself again
+or, with "forget", forgotten. Yours come across from hydrus. Not yet:
 setting a panel's values as its default (the star).
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains

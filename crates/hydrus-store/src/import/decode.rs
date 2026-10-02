@@ -199,6 +199,15 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &mut input,
         &options
             .as_ref()
+            .map(|o| o.recent_predicates(&|key| scales.get(key).copied()))
+            .transpose()
+            .map_err(|e| StoreError::Invalid(format!("recent predicates: {e}")))?
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
             .map(legacy::ClientOptions::audio_settings)
             .unwrap_or_default(),
     )?;
@@ -2201,6 +2210,14 @@ mod tests {
             )
             .unwrap(),
             hydrus_core::thumbnail::ThumbnailRatingSettings::default()
+        );
+        // and its recent predicates (none)
+        assert_eq!(
+            serde_json::from_value::<hydrus_core::search::recent::RecentPredicates>(
+                input.settings["recent_predicates"].clone()
+            )
+            .unwrap(),
+            hydrus_core::search::recent::RecentPredicates::default()
         );
         // and the user's
         edit_client_options(
