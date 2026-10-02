@@ -270,6 +270,8 @@ export struct FavouriteRow {
 }
 
 export component MainWindow inherits Window {
+    // how far the thumbnails are scrolled (each page keeps its own)
+    in-out property <length> grid-scroll <=> grid.content-y;
     title: "hydrus-rs";
     preferred-width: 1100px;
     preferred-height: 700px;

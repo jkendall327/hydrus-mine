@@ -261,6 +261,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // (the menu bar's titles, shown again after a change)
     let after_change: AfterChange = Rc::default();
     pages.borrow_mut().note_shown();
+    // how far each page's thumbnails were scrolled when another page was
+    // shown, as each of the reference's pages keeps its own (kept apart from
+    // the pages: a page switch can come from a page's own action, while it
+    // is in use)
+    let scrolls: Rc<RefCell<std::collections::HashMap<hydrus_core::pages::PageKey, f32>>> =
+        Rc::default();
     let change_pages = {
         let pages = pages.clone();
         let current = current.clone();
@@ -269,6 +275,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let after_change = after_change.clone();
         move |change: &dyn Fn(&mut Pages) -> Result<(), String>| {
+            if let Some(window) = weak.upgrade() {
+                let key = pages.borrow().shown().key;
+                scrolls.borrow_mut().insert(key, window.get_grid_scroll());
+            }
             let (result, opened) = {
                 let mut pages = pages.borrow_mut();
                 let result = change(&mut pages);
@@ -280,9 +290,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 after();
             }
             *current.borrow_mut() = opened.clone();
+            let key = pages.borrow().shown().key;
+            let scroll = scrolls.borrow().get(&key).copied().unwrap_or(0.0);
             rows.set_page(opened);
             if let Some(window) = weak.upgrade() {
                 show_tabs(&window, &pages.borrow());
+                window.set_grid_scroll(scroll);
             }
             shown(false);
             if let (Err(e), Some(window)) = (result, weak.upgrade()) {
