@@ -15,6 +15,7 @@ use hydrus_search::{
     collect_page_files, parse_api_search, predicate_text, search_files, sort_page_files,
 };
 use hydrus_store::Store;
+use hydrus_store::live::{self, JobKind, JobLine, JobLive, QueueLive};
 use hydrus_store::queues::{self, StatusCounts};
 
 use crate::autocomplete::Autocomplete;
@@ -73,6 +74,16 @@ pub struct SearchPage {
     presented: std::collections::HashSet<HashId>,
 }
 
+/// What reading a downloader page's importer again changed.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ImportRefresh {
+    Nothing,
+    /// Its counts, pause or live state, not its files.
+    Status,
+    /// Files came (and maybe more).
+    Files,
+}
+
 /// A downloader page's importer: the queue it shows (which the daemon
 /// works), as last read from the store.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -83,6 +94,8 @@ pub struct Importer {
     /// Its search log's.
     pub searches: StatusCounts,
     pub paused: bool,
+    /// What the daemon is doing with it now (nothing, if it isn't running).
+    pub live: QueueLive,
 }
 
 impl Importer {
@@ -110,6 +123,25 @@ impl Importer {
         queues::search_log_status(&self.searches).0
     }
 
+    /// The line for the file it is downloading, under its file log.
+    pub fn file_job_line(&self) -> JobLine {
+        self.live
+            .file_job
+            .as_ref()
+            .map(JobLive::line)
+            .unwrap_or_default()
+    }
+
+    /// The line for the gallery page it is downloading, under its search
+    /// log.
+    pub fn gallery_job_line(&self) -> JobLine {
+        self.live
+            .gallery_job
+            .as_ref()
+            .map(JobLive::line)
+            .unwrap_or_default()
+    }
+
     /// Whether it has file work left and isn't paused (`CurrentlyWorking`).
     pub fn working(&self) -> bool {
         !self.paused
@@ -120,13 +152,14 @@ impl Importer {
     }
 
     /// Why closing its page needs asking about, as the reference says it
-    /// (`CheckAbleToClose`): still importing, or holding imports.
-    pub fn close_veto(&self) -> Option<String> {
+    /// (`CheckAbleToClose`): still importing, or (if `confirm_non_empty`,
+    /// the option) holding imports.
+    pub fn close_veto(&self, confirm_non_empty: bool) -> Option<String> {
         if self.working() {
             return Some("This page is still importing.".into());
         }
         let held: usize = self.files.values().sum();
-        (held > 0).then(|| {
+        (confirm_non_empty && held > 0).then(|| {
             format!(
                 "This is a urls import page holding {} import objects.",
                 hydrus_core::numbers::human_int(held as u64)
@@ -331,16 +364,16 @@ impl SearchPage {
         self.importer.as_ref()
     }
 
-    /// Read the importer's queue again: its counts and pause, and the files
-    /// it brought since, added at the page's end (as the reference presents
-    /// them to its page). Whether anything changed.
-    pub fn refresh_import(&mut self) -> bool {
+    /// Read the importer's queue again: its counts, pause and live state,
+    /// and the files it brought since, added at the page's end (as the
+    /// reference presents them to its page). What changed.
+    pub fn refresh_import(&mut self) -> ImportRefresh {
         self.read_import(false)
     }
 
-    fn read_import(&mut self, first: bool) -> bool {
+    fn read_import(&mut self, first: bool) -> ImportRefresh {
         let Some(queue) = self.importer.as_ref().map(|i| i.queue) else {
-            return false;
+            return ImportRefresh::Nothing;
         };
         let read = self.store.read(|c| {
             Ok((
@@ -348,27 +381,32 @@ impl SearchPage {
                 queues::file_seed_counts(c, queue)?,
                 queues::gallery_seed_counts(c, queue)?,
                 queues::presented_files(c, queue)?,
+                live::live(c, &[queue])?.remove(&queue),
             ))
         });
-        let Ok((row, files, searches, presented)) = read else {
-            return false;
+        let Ok((row, files, searches, presented, live)) = read else {
+            return ImportRefresh::Nothing;
         };
         let now = Importer {
             queue,
             files,
             searches,
             paused: row.is_some_and(|q| q.files_paused),
+            live: live.unwrap_or_default(),
         };
-        let mut changed = self.importer.as_ref() != Some(&now);
+        let status_changed = self.importer.as_ref() != Some(&now);
         self.importer = Some(now);
         let arrived: Vec<HashId> = presented
             .into_iter()
             .filter(|f| self.presented.insert(*f))
             .collect();
-        if !first && !arrived.is_empty() {
-            changed |= self.add_files(&arrived);
+        if !first && !arrived.is_empty() && self.add_files(&arrived) {
+            ImportRefresh::Files
+        } else if status_changed {
+            ImportRefresh::Status
+        } else {
+            ImportRefresh::Nothing
         }
-        changed
     }
 
     /// Pause or resume the importer (the reference's one switch pauses its
@@ -387,6 +425,21 @@ impl SearchPage {
                 self.refresh_import();
             }
             Err(e) => eprintln!("could not pause or resume the importer: {e}"),
+        }
+    }
+
+    /// Ask the daemon to stop the importer's current download of this kind
+    /// (the reference's network job control's cancel button).
+    pub fn cancel_download(&self, kind: JobKind) {
+        let Some(importer) = &self.importer else {
+            return;
+        };
+        let queue = importer.queue;
+        if let Err(e) = self
+            .store
+            .write(move |ctx| live::cancel(ctx.conn(), queue, kind))
+        {
+            eprintln!("could not cancel the download: {e}");
         }
     }
 
@@ -1354,5 +1407,38 @@ fn system_sort(sort: &PageSort) -> Option<FileSort> {
             },
         }),
         _ => None,
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn closing_asks_while_importing_and_when_full_if_the_option_says() {
+        let mut importer = Importer {
+            queue: 1,
+            files: [(queues::SeedStatus::SuccessfulAndNew, 3)]
+                .into_iter()
+                .collect(),
+            ..Importer::default()
+        };
+        assert_eq!(
+            importer.close_veto(true).as_deref(),
+            Some("This is a urls import page holding 3 import objects.")
+        );
+        assert_eq!(
+            importer.close_veto(false),
+            None,
+            "full, but not to be asked"
+        );
+        importer.files.insert(queues::SeedStatus::Unknown, 1);
+        assert_eq!(
+            importer.close_veto(false).as_deref(),
+            Some("This page is still importing."),
+            "importing asks regardless"
+        );
+        importer.paused = true;
+        assert_eq!(importer.close_veto(false), None);
     }
 }

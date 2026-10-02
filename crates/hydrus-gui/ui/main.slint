@@ -91,6 +91,52 @@ component ChooserButton inherits Rectangle {
     }
 }
 
+// a download in progress, under an importer's log (the reference's
+// network job control): its status, its size and speed, its gauge, and
+// whether it can be cancelled
+export struct DownloadLine {
+    left: string,
+    right: string,
+    fraction: float,
+    can-cancel: bool,
+}
+
+component DownloadControl inherits Rectangle {
+    in property <DownloadLine> line;
+    callback cancel();
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 4px;
+        spacing: 2px;
+        HorizontalLayout {
+            spacing: 6px;
+            Text {
+                text: root.line.left;
+                overflow: elide;
+                horizontal-stretch: 1;
+            }
+            if root.line.right != "": Text {
+                text: root.line.right;
+                horizontal-alignment: right;
+            }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            ProgressIndicator {
+                horizontal-stretch: 1;
+                progress: root.line.fraction;
+            }
+            // (the reference's stop icon)
+            Button {
+                icon: @image-url("../../../static/stop.png");
+                enabled: root.line.can-cancel;
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
+
 // one notebook's tabs
 export struct TabRow {
     names: [string],
@@ -286,6 +332,11 @@ export component MainWindow inherits Window {
     in property <float> import-fraction;
     in property <bool> import-paused;
     in property <string> search-status;
+    // what it is downloading: a file, and a gallery page; cancelling one
+    // (the gallery page's when true)
+    in property <DownloadLine> file-download: { fraction: 0, can-cancel: false };
+    in property <DownloadLine> search-download: { fraction: 0, can-cancel: false };
+    callback cancel-download(bool);
     callback pause-play-files();
     callback url-entered(string);
     callback paste-urls();
@@ -530,6 +581,10 @@ export component MainWindow inherits Window {
                             ProgressIndicator {
                                 progress: root.import-fraction;
                             }
+                            DownloadControl {
+                                line: root.file-download;
+                                cancel => { root.cancel-download(false); }
+                            }
                         }
                     }
                     Rectangle {
@@ -545,6 +600,10 @@ export component MainWindow inherits Window {
                             if root.search-status != "": Text {
                                 text: root.search-status;
                                 wrap: word-wrap;
+                            }
+                            DownloadControl {
+                                line: root.search-download;
+                                cancel => { root.cancel-download(true); }
                             }
                         }
                     }

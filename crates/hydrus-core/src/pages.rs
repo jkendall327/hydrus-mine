@@ -69,6 +69,24 @@ impl Default for PageNameSettings {
     }
 }
 
+/// Downloader pages' options.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct DownloaderPageSettings {
+    /// Ask before closing one that holds anything, idle or not
+    /// (`confirm_non_empty_downloader_page_close`).
+    pub confirm_non_empty_close: bool,
+}
+
+impl Default for DownloaderPageSettings {
+    /// A new client's.
+    fn default() -> Self {
+        Self {
+            confirm_non_empty_close: true,
+        }
+    }
+}
+
 /// What a tab is for.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TabKind {

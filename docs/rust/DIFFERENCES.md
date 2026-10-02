@@ -210,6 +210,12 @@ search.
   left running without the client doesn't work on a page nobody can see.
   `crates/hydrus-cli/tests/serve.rs` and `crates/hydrus-gui/tests/session.rs`
   check it.
+- **A download's progress reaches its page within about three quarters
+  of a second**: the daemon keeps what its queues are doing in the store
+  four times a second, and the page looks twice a second. The reference's
+  page reads its importer directly. The line itself is the reference's
+  (`NetworkJobControl`, recorded for 337 jobs in
+  `oracle/fixtures/import_status.json`), less its cog and error menus.
 - **A URL downloader page shows every file its queue imported or found
   already in the database**, the reference's default presentation; a
   page's own presentation options (new files only, say) aren't applied

@@ -15,7 +15,7 @@ use hydrus_store::sessions::{self, LAST_SESSION};
 
 use crate::SearchPage;
 use crate::page_chooser::NewPage;
-use hydrus_core::pages::{PageNameSettings, TabKind, tab_name};
+use hydrus_core::pages::{DownloaderPageSettings, PageNameSettings, TabKind, tab_name};
 
 /// The URL downloader queues of a page and the pages in it.
 fn url_queues(page: &Page) -> Vec<i64> {
@@ -71,6 +71,8 @@ pub struct Pages {
     synced: Synced,
     /// How tabs are named.
     naming: PageNameSettings,
+    /// Downloader pages' options (whether closing a full one asks).
+    downloader_options: DownloaderPageSettings,
     /// How many files each page not yet opened shows, as kept.
     kept_counts: HashMap<PageKey, usize>,
 }
@@ -131,6 +133,7 @@ impl Pages {
             last_moved: HashMap::new(),
             synced: Synced::default(),
             naming: PageNameSettings::default(),
+            downloader_options: DownloaderPageSettings::default(),
             kept_counts: HashMap::new(),
         };
         // (pages closed when the client last closed, or crashed, go with
@@ -138,8 +141,9 @@ impl Pages {
         pages
             .store
             .write(|ctx| hydrus_store::queues::delete_closed_queues(ctx.conn()))?;
-        (pages.naming, pages.kept_counts) = pages.store.read(|conn| {
+        (pages.naming, pages.downloader_options, pages.kept_counts) = pages.store.read(|conn| {
             Ok((
+                hydrus_store::settings::get(conn)?,
                 hydrus_store::settings::get(conn)?,
                 sessions::page_file_counts(conn)?,
             ))
@@ -175,6 +179,7 @@ impl Pages {
             last_moved: HashMap::new(),
             synced: Synced::default(),
             naming: PageNameSettings::default(),
+            downloader_options: DownloaderPageSettings::default(),
             kept_counts: HashMap::new(),
         };
         pages.open.insert(tree.key, Rc::new(RefCell::new(page)));
@@ -1055,7 +1060,10 @@ impl Pages {
             return None;
         }
         let opened = self.page(&page.key)?;
-        let veto = opened.borrow().importer()?.close_veto()?;
+        let veto = opened
+            .borrow()
+            .importer()?
+            .close_veto(self.downloader_options.confirm_non_empty_close)?;
         Some(format!("Close \"{}\"?\n\n{veto}", page.name))
     }
 

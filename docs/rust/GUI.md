@@ -76,13 +76,18 @@ A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
 hydrus words it ("2 successful (all already in db)"), its progress ("2/2")
 and bar, and the reference's pause/play button, which pauses or resumes the
-queue's files; the "search" box has its search log's status; and the files
-it imports, or finds already in the database, join the page as they come,
-in the queue's order. URLs typed into its box (enter) or pasted with its
-paste button, one per line, go to the daemon, which adds those it
-recognises (as the reference's page does) and starts on them within a
-second. A closed URL page's downloads wait while Ctrl+U can bring the page
-back, and go after the hour or when the client closes.
+queue's files; the "search" box has its search log's status; under each,
+the download in progress as the reference's network job control shows it
+("downloading…", "472 KB/2 MB 56 KB/s" and a gauge), with a stop button
+that cancels it (the file then ends ignored, "Download cancelled:
+Cancelled by user."); and the files it imports, or finds already in the
+database, join the page as they come, in the queue's order. URLs typed
+into its box (enter) or pasted with its paste button, one per line, go to
+the daemon, which adds those it recognises (as the reference's page does)
+and starts on them within a second. A closed URL page's downloads wait
+while Ctrl+U can bring the page back, and go after the hour or when the
+client closes. Closing a page that holds anything, idle, asks only if
+hydrus's option to do so is on (as it is by default).
 
 On a search page, at the top of its sidebar, the
 sort control offers every system sort type named and ordered as in the
@@ -391,8 +396,8 @@ predicates in the autocomplete, the viewer's other hover frames
 (the top one's buttons; editing, copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, gallery and watcher pages' own panels, a URL
-page's file and search log windows, import options button and network
-job's progress; in
+page's file and search log windows and import options button, and a
+download's cog and error menus (bandwidth rules, the last error); in
 the duplicates page, editing its search and the preparation and
 auto-resolution tabs; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and

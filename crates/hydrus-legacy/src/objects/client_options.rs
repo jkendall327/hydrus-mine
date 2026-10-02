@@ -18,7 +18,7 @@ use hydrus_core::media_viewer::{
     AudioSettings, InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction,
     SlideshowSettings, ZoomCentre, ZoomRules, ZoomType,
 };
-use hydrus_core::pages::{FileCountDisplay, PageNameSettings};
+use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
 use hydrus_core::subscriptions::CheckerOptions;
 use hydrus_core::windows::{FrameLocation, WindowSettings};
 
@@ -359,6 +359,15 @@ impl ClientOptions {
         }
         if let Some(decorator) = self.strings.get("page_of_pages_decorator") {
             out.notebook_decorator.clone_from(decorator);
+        }
+        out
+    }
+
+    /// Downloader pages' options (`confirm_non_empty_downloader_page_close`).
+    pub fn downloader_page_settings(&self) -> DownloaderPageSettings {
+        let mut out = DownloaderPageSettings::default();
+        if let Some(&confirm) = self.booleans.get("confirm_non_empty_downloader_page_close") {
+            out.confirm_non_empty_close = confirm;
         }
         out
     }
@@ -884,6 +893,16 @@ mod tests {
     }
 
     #[test]
+    fn whether_a_full_downloader_page_asks_before_closing_comes_across() {
+        let mut options = ClientOptions::defaults().unwrap();
+        assert!(options.downloader_page_settings().confirm_non_empty_close);
+        options
+            .booleans
+            .insert("confirm_non_empty_downloader_page_close".into(), false);
+        assert!(!options.downloader_page_settings().confirm_non_empty_close);
+    }
+
+    #[test]
     fn the_new_client_defaults_decode() {
         let defaults = ClientOptions::defaults().unwrap();
         assert!(defaults.booleans.len() > 200);
@@ -909,6 +928,10 @@ mod tests {
         assert_eq!(
             defaults.page_name_settings(),
             hydrus_core::pages::PageNameSettings::default()
+        );
+        assert_eq!(
+            defaults.downloader_page_settings(),
+            hydrus_core::pages::DownloaderPageSettings::default()
         );
         // (the main window maximised, the media viewer fullscreen too)
         assert_eq!(

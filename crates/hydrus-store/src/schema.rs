@@ -16,7 +16,7 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13];
+const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -697,6 +697,25 @@ CREATE TABLE queue_url_requests (
     queue_id INTEGER NOT NULL,
     -- the URLs, one a line
     urls TEXT NOT NULL
+) STRICT;
+";
+
+/// What the daemon's queues are doing now, for their pages (`live.rs`):
+/// each one's status and current downloads, which the daemon keeps up to
+/// date and clears as it starts and stops; and downloads another process
+/// asked it to cancel.
+const V14: &str = r"
+CREATE TABLE queue_live (
+    queue_id INTEGER PRIMARY KEY,
+    -- a live::QueueLive, as JSON
+    live TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE queue_job_cancels (
+    queue_id INTEGER NOT NULL,
+    -- 0: its file download, 1: its gallery page's
+    kind INTEGER NOT NULL,
+    PRIMARY KEY (queue_id, kind)
 ) STRICT;
 ";
 

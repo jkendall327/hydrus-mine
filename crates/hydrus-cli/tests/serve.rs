@@ -326,3 +326,109 @@ fn urls_typed_into_a_page_are_added_and_a_closed_pages_queue_waits() {
     drop(serving.0.stdin.take());
     exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
 }
+
+#[test]
+fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
+    use hydrus_store::live::{self, JobKind};
+    use hydrus_store::queues::{self, QueueKind, SeedStatus};
+
+    let (_parent, dir) = store();
+    hydrus_store::Store::open(&dir)
+        .unwrap()
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    let mut serving = serve(&dir, &["--attached"], Stdio::piped());
+    // a file that comes slowly: a kilobyte every 50ms of a megabyte
+    let site = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let url = format!(
+        "http://127.0.0.1:{}/slow.png",
+        site.local_addr().unwrap().port()
+    );
+    std::thread::spawn(move || {
+        use std::io::{Read as _, Write as _};
+        for mut stream in site.incoming().map_while(Result::ok) {
+            std::thread::spawn(move || {
+                let mut request = [0; 4096];
+                let _ = stream.read(&mut request);
+                let _ = stream.write_all(
+                    b"HTTP/1.1 200 OK\r\nContent-Type: image/png\r\nContent-Length: 1048576\r\n\r\n",
+                );
+                while stream.write_all(&[0; 1024]).is_ok() {
+                    std::thread::sleep(Duration::from_millis(50));
+                }
+            });
+        }
+    });
+    let store = hydrus_store::Store::open(&dir).unwrap();
+    let queue = {
+        let url = url.clone();
+        store
+            .write(move |ctx| {
+                let conn = ctx.conn();
+                let options = hydrus_core::import_options::ImportOptionsSlice::default();
+                let queue =
+                    queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+                queues::request_urls(conn, queue, &[url])?;
+                Ok(queue)
+            })
+            .unwrap()
+    };
+    let live_of = |queue: i64| {
+        store
+            .read(move |conn| Ok(live::live(conn, &[queue])?.remove(&queue)))
+            .unwrap()
+    };
+    // the download, as it goes
+    let started = Instant::now();
+    let job = loop {
+        if let Some(job) = live_of(queue).and_then(|l| l.file_job)
+            && job.bytes_read > 0
+        {
+            break job;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(20),
+            "{:?}",
+            live_of(queue)
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    };
+    assert_eq!(job.status, "downloading\u{2026}");
+    assert_eq!(job.bytes_to_read, Some(1_048_576));
+    assert!(!job.done && !job.error);
+    // ("5 KB/1 MB 5 KB/s")
+    let right = job.line().right;
+    assert!(right.contains("/1 MB ") && right.ends_with("/s"), "{right}");
+    assert!(job.line().can_cancel);
+    // cancelled as its page's button asks: the file ends vetoed, as the
+    // reference notes it
+    store
+        .write(move |ctx| live::cancel(ctx.conn(), queue, JobKind::File))
+        .unwrap();
+    let seed = || {
+        store
+            .read(move |conn| Ok(queues::file_seeds(conn, queue)?.remove(0)))
+            .unwrap()
+    };
+    let started = Instant::now();
+    while seed().status == SeedStatus::Unknown {
+        assert!(started.elapsed() < Duration::from_secs(10), "not cancelled");
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    let seed = seed();
+    assert_eq!(seed.status, SeedStatus::Vetoed);
+    assert_eq!(seed.note, "Download cancelled: Cancelled by user.");
+    // nothing downloading, and nothing at all once the daemon stops
+    let started = Instant::now();
+    while live_of(queue).is_some_and(|l| l.file_job.is_some()) {
+        assert!(
+            started.elapsed() < Duration::from_secs(5),
+            "{:?}",
+            live_of(queue)
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    }
+    drop(serving.0.stdin.take());
+    exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
+    assert_eq!(live_of(queue), None);
+}

@@ -589,6 +589,10 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 tokio::time::sleep(Duration::from_secs(3600)).await;
             }
         });
+        // (what an earlier daemon's queues were doing is over)
+        if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
+            tracing::error!(error = %e, "clearing the queues' live state failed");
+        }
         if let Some(downloads) = &state.downloads
             && let Err(e) = downloads.start_all()
         {
@@ -803,6 +807,15 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     if !matches!(nudged, Ok(true)) {
                         continue;
                     }
+                    // downloads a page's cancel button stopped, then the queues
+                    match store.write(|ctx| hydrus_store::live::take_cancels(ctx.conn())) {
+                        Ok(cancels) => {
+                            for (queue, kind) in cancels {
+                                downloads.cancel(queue, kind);
+                            }
+                        }
+                        Err(e) => tracing::error!(error = %e, "reading cancelled downloads failed"),
+                    }
                     match store.write(|ctx| hydrus_store::queues::take_nudges(ctx.conn())) {
                         Ok(queues) => {
                             for queue in queues {
@@ -810,6 +823,26 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                             }
                         }
                         Err(e) => tracing::error!(error = %e, "reading nudged queues failed"),
+                    }
+                }
+            });
+        }
+        // what the queues are doing, for their pages: what changed, four
+        // times a second
+        if let Some(downloads) = state.downloads.clone() {
+            let store = store.clone();
+            tokio::spawn(async move {
+                let mut last = std::collections::HashMap::new();
+                loop {
+                    tokio::time::sleep(Duration::from_millis(250)).await;
+                    let changes = hydrus_store::live::changes(&mut last, downloads.live());
+                    if changes.is_empty() {
+                        continue;
+                    }
+                    if let Err(e) =
+                        store.write(move |ctx| hydrus_store::live::publish(ctx.conn(), &changes))
+                    {
+                        tracing::error!(error = %e, "keeping the queues' live state failed");
                     }
                 }
             });
@@ -879,6 +912,9 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             },
         };
+        if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
+            tracing::error!(error = %e, "clearing the queues' live state failed");
+        }
         // (the bandwidth used since the last minute's save)
         if let Some(net) = net
             && let Err(e) = net.save_bandwidth()

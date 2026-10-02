@@ -21,6 +21,7 @@ use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
 use hydrus_net::{BandwidthScope, Job};
 use hydrus_store::StoreError;
+use hydrus_store::live::{JobKind, JobLive, QueueLive};
 use hydrus_store::queues::{
     self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
 };
@@ -46,8 +47,20 @@ pub struct UrlQueueStatus {
 struct Handle {
     wake: Notify,
     status: Mutex<UrlQueueStatus>,
-    job: Mutex<Option<Arc<Job>>>,
+    /// The file it is downloading.
+    file_job: Mutex<Option<Arc<Job>>>,
+    /// The gallery page (or watcher check) it is downloading.
+    gallery_job: Mutex<Option<Arc<Job>>>,
     running: Mutex<bool>,
+}
+
+impl Handle {
+    fn job(&self, kind: JobKind) -> &Mutex<Option<Arc<Job>>> {
+        match kind {
+            JobKind::File => &self.file_job,
+            JobKind::Gallery => &self.gallery_job,
+        }
+    }
 }
 
 /// Runs the store's URL queues.
@@ -171,13 +184,51 @@ impl QueueRunner {
             .unwrap_or_default()
     }
 
-    /// Stop what a queue is downloading now.
-    pub fn cancel_current(&self, queue: i64) {
+    /// Stop a queue's current download of this kind, as its page's cancel
+    /// button does.
+    pub fn cancel(&self, queue: i64, kind: JobKind) {
         if let Some(handle) = self.handles.lock().get(&queue)
-            && let Some(job) = handle.job.lock().as_ref()
+            && let Some(job) = handle.job(kind).lock().as_ref()
         {
-            job.cancel();
+            job.cancel_because("Cancelled by user.");
         }
+    }
+
+    /// What each running queue is doing now, for its page.
+    pub fn live(&self) -> Vec<(i64, QueueLive)> {
+        let job_live = |job: &Mutex<Option<Arc<Job>>>| {
+            job.lock().as_ref().map(|job| {
+                let state = job.state();
+                JobLive {
+                    status: state.status,
+                    speed: state.speed,
+                    bytes_read: state.bytes_read,
+                    bytes_to_read: state.bytes_total,
+                    done: state.done,
+                    error: state.error,
+                }
+            })
+        };
+        let mut out: Vec<(i64, QueueLive)> = self
+            .handles
+            .lock()
+            .iter()
+            .filter(|(_, handle)| *handle.running.lock())
+            .map(|(&queue, handle)| {
+                let status = handle.status.lock().clone();
+                (
+                    queue,
+                    QueueLive {
+                        files_status: status.files_status,
+                        gallery_status: String::new(),
+                        file_job: job_live(&handle.file_job),
+                        gallery_job: job_live(&handle.gallery_job),
+                    },
+                )
+            })
+            .collect();
+        out.sort_by_key(|(queue, _)| *queue);
+        out
     }
 
     /// The URL queue a URL should go to (`GetOrMakeURLImportPage`): the one
@@ -411,7 +462,7 @@ impl QueueRunner {
     async fn check_watcher(&self, queue: &Queue, mut state: WatcherState, handle: &Handle) {
         let store = &self.downloader.store;
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
-        *handle.job.lock() = Some(Arc::clone(&job));
+        *handle.gallery_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "checking".into();
         let new_seed = NewGallerySeed {
             url: state.url.clone(),
@@ -437,11 +488,11 @@ impl QueueRunner {
         let mut seed = match seed {
             Ok(Some(seed)) => seed,
             Ok(None) => {
-                *handle.job.lock() = None;
+                *handle.gallery_job.lock() = None;
                 return;
             }
             Err(e) => {
-                *handle.job.lock() = None;
+                *handle.gallery_job.lock() = None;
                 tracing::error!(queue_id, "adding a watcher's check: {e}");
                 return;
             }
@@ -455,7 +506,7 @@ impl QueueRunner {
             .downloader
             .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
-        *handle.job.lock() = None;
+        *handle.gallery_job.lock() = None;
         match result {
             Ok(outcome) => {
                 if let Some(title) = outcome.title {
@@ -650,7 +701,7 @@ impl QueueRunner {
     ) {
         // (only URL and gallery queues read gallery pages here)
         let job = Job::scoped(bandwidth_scope(QueueKind::Gallery, seed.queue_id));
-        *handle.job.lock() = Some(Arc::clone(&job));
+        *handle.gallery_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "reading a gallery page".into();
         let queue = seed.queue_id;
         let mut sink = QueueSink {
@@ -665,7 +716,7 @@ impl QueueRunner {
             .downloader
             .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
-        *handle.job.lock() = None;
+        *handle.gallery_job.lock() = None;
         let mut pause_gallery = false;
         match result {
             Ok(outcome) => {
@@ -789,10 +840,10 @@ impl QueueRunner {
             return false;
         }
         let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
-        *handle.job.lock() = Some(Arc::clone(&job));
+        *handle.file_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
         let did_work = self.downloader.work_on_url(&mut seed, &options, &job).await;
-        *handle.job.lock() = None;
+        *handle.file_job.lock() = None;
         if let Err(e) = self
             .downloader
             .store

@@ -36926,5 +36926,6065 @@
    "tab": "résumé — ünïcode (3 - 1,500/20,000)",
    "tooltip": "résumé — ünïcode"
   }
+ ],
+ "network_jobs": [
+  {
+   "job": null,
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 0B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 512B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 0B/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1,023B/2 KB 0B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1,023B/2 KB 512B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1,023B/2 KB 293 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1,023B/2 KB 5 MB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1.5 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1.5 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1.5 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1.5 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1 MB/5 MB 0B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1 MB/5 MB 512B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1 MB/5 MB 293 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "1 MB/5 MB",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "5 MB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "5 MB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "5 MB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "5 MB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "2.79 GB/4.19 GB 0B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "2.79 GB/4.19 GB 512B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "2.79 GB/4.19 GB 293 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "2.79 GB/4.19 GB 5 MB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 0,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "6.84 KB/2.93 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 512,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "6.84 KB/2.93 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 300000,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "6.84 KB/2.93 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "",
+    "speed": 5242880,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "",
+   "right": "6.84 KB/2.93 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 0B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 512B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 0B/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1,023B/2 KB 0B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1,023B/2 KB 512B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1,023B/2 KB 293 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1,023B/2 KB 5 MB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1.5 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1.5 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1.5 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1.5 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1 MB/5 MB 0B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1 MB/5 MB 512B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1 MB/5 MB 293 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "1 MB/5 MB",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "5 MB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "5 MB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "5 MB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "5 MB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "2.79 GB/4.19 GB 0B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "2.79 GB/4.19 GB 512B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "2.79 GB/4.19 GB 293 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "2.79 GB/4.19 GB 5 MB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 0,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "6.84 KB/2.93 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 512,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "6.84 KB/2.93 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 300000,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "6.84 KB/2.93 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "downloading…",
+    "speed": 5242880,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "downloading…",
+   "right": "6.84 KB/2.93 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 0B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 512B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 0B/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1,023B/2 KB 0B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1,023B/2 KB 512B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1,023B/2 KB 293 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1,023B/2 KB 5 MB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1.5 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1.5 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1.5 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1.5 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1 MB/5 MB 0B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1 MB/5 MB 512B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1 MB/5 MB 293 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "1 MB/5 MB",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "5 MB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "5 MB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "5 MB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "5 MB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "2.79 GB/4.19 GB 0B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "2.79 GB/4.19 GB 512B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "2.79 GB/4.19 GB 293 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "2.79 GB/4.19 GB 5 MB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 0,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "6.84 KB/2.93 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 512,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "6.84 KB/2.93 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 300000,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "6.84 KB/2.93 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "waiting for a slot",
+    "speed": 5242880,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "waiting for a slot",
+   "right": "6.84 KB/2.93 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 0B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 512B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 0B/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1,023B/2 KB 0B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1,023B/2 KB 512B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1,023B/2 KB 293 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1,023B/2 KB 5 MB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1.5 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1.5 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1.5 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1.5 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1 MB/5 MB 0B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1 MB/5 MB 512B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1 MB/5 MB 293 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "1 MB/5 MB",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "5 MB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "5 MB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "5 MB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "5 MB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "2.79 GB/4.19 GB 0B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "2.79 GB/4.19 GB 512B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "2.79 GB/4.19 GB 293 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "2.79 GB/4.19 GB 5 MB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 0,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "6.84 KB/2.93 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 512,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "6.84 KB/2.93 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 300000,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "6.84 KB/2.93 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: 404\nthe page was not found",
+    "speed": 5242880,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "Error: 404",
+   "right": "6.84 KB/2.93 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 0B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 512B/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 0B/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 293 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "512B 5 MB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1,023B/2 KB 0B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1,023B/2 KB 512B/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1,023B/2 KB 293 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1,023B/2 KB 5 MB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1.5 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1.5 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1.5 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1.5 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1 MB/5 MB 0B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1 MB/5 MB 512B/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1 MB/5 MB 293 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "1 MB/5 MB",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "5 MB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "5 MB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "5 MB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "5 MB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "2.79 GB/4.19 GB 0B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "2.79 GB/4.19 GB 512B/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "2.79 GB/4.19 GB 293 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "2.79 GB/4.19 GB 5 MB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 0,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "6.84 KB/2.93 KB 0B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 512,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "6.84 KB/2.93 KB 512B/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 300000,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "6.84 KB/2.93 KB 293 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "sending request…",
+    "speed": 5242880,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": false
+   },
+   "left": "sending request…",
+   "right": "6.84 KB/2.93 KB 5 MB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": true
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": true,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "",
+   "gauge": [
+    0,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "512B 1.5 KB/s",
+   "gauge": [
+    512,
+    512
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "1,023B/2 KB 1.5 KB/s",
+   "gauge": [
+    499,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "1.5 KB",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "1 MB/5 MB 1.5 KB/s",
+   "gauge": [
+    200,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "5 MB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "2.79 GB/4.19 GB 1.5 KB/s",
+   "gauge": [
+    666,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": true,
+    "no_engine_yet": false
+   },
+   "left": "Error: connection failed",
+   "right": "6.84 KB/2.93 KB 1.5 KB/s",
+   "gauge": [
+    1000,
+    1000
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": null,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 0,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 0,
+    "bytes_to_read": 5000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": null,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 512,
+    "bytes_to_read": 512,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1023,
+    "bytes_to_read": 2048,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1536,
+    "bytes_to_read": 1536,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 1048576,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 5242880,
+    "bytes_to_read": 5242880,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 3000000000,
+    "bytes_to_read": 4500000000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  },
+  {
+   "job": {
+    "status_text": "Error: connection failed",
+    "speed": 1536,
+    "bytes_read": 7000,
+    "bytes_to_read": 3000,
+    "has_error": false,
+    "is_done": false,
+    "no_engine_yet": true
+   },
+   "left": "",
+   "right": "",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_cancel": false
+  }
  ]
 }

@@ -251,7 +251,7 @@ impl<E: Into<WorkError>> From<E> for GalleryStop {
     }
 }
 
-fn gallery_network(e: NetError) -> GalleryStop {
+fn gallery_network(e: NetError, job: &Job) -> GalleryStop {
     let gone = |note: &str| GalleryStop::Veto(note.to_owned(), true);
     match &e {
         NetError::Status { kind, .. } => match kind {
@@ -264,7 +264,7 @@ fn gallery_network(e: NetError) -> GalleryStop {
             ),
             _ => GalleryStop::Failed(WorkError::Network(e)),
         },
-        NetError::Cancelled => GalleryStop::Veto("Cancelled!".into(), false),
+        NetError::Cancelled => GalleryStop::Veto(job.cancelled_note(), false),
         _ => GalleryStop::Failed(WorkError::Network(e)),
     }
 }
@@ -344,7 +344,7 @@ impl Downloader {
             .net
             .fetch(&request, job)
             .await
-            .map_err(gallery_network)?;
+            .map_err(|e| gallery_network(e, job))?;
         let text = response.text();
         let actual = response.url.clone();
         let url_for_child_referral = actual.clone();

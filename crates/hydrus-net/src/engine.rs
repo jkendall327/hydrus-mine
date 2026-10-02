@@ -10,7 +10,7 @@ use tokio::io::AsyncWriteExt as _;
 use tokio::sync::Semaphore;
 use tokio_util::sync::CancellationToken;
 
-use hydrus_core::bandwidth::{GalleryTokenKind, Manager};
+use hydrus_core::bandwidth::{BandwidthType, GalleryTokenKind, Manager, Tracker};
 use hydrus_core::numbers::human_bytes;
 use hydrus_core::time::timestamp_to_pretty_time_delta;
 use hydrus_core::url::functions::{check_full_url, ensure_url_is_encoded};
@@ -194,6 +194,11 @@ pub struct Job {
     state: Mutex<JobState>,
     cancel: CancellationToken,
     scope: Mutex<BandwidthScope>,
+    /// The data it has read, by second, for its speed (the reference's
+    /// job's own `BandwidthTracker`).
+    tracker: Mutex<Option<Tracker>>,
+    /// Why it was cancelled, if it was.
+    cancel_reason: Mutex<Option<String>>,
 }
 
 /// What a job is doing.
@@ -202,7 +207,12 @@ pub struct JobState {
     pub status: String,
     pub bytes_read: u64,
     pub bytes_total: Option<u64>,
+    /// Bytes read in the last second, as the reference reckons a job's
+    /// speed (filled in by [`Job::state`]).
+    pub speed: u64,
     pub done: bool,
+    /// Its last request failed or was cancelled (`HasError`).
+    pub error: bool,
 }
 
 impl Job {
@@ -229,11 +239,42 @@ impl Job {
     }
 
     pub fn state(&self) -> JobState {
-        self.state.lock().clone()
+        let mut state = self.state.lock().clone();
+        if let Some(tracker) = self.tracker.lock().as_mut() {
+            state.speed = tracker.usage(BandwidthType::Data, Some(1), now());
+        }
+        state
+    }
+
+    /// Count `bytes` read towards the job's speed.
+    fn report_read(&self, bytes: u64) {
+        let now = now();
+        self.tracker
+            .lock()
+            .get_or_insert_with(|| Tracker::new(now))
+            .report_data(bytes, now);
     }
 
     pub fn cancel(&self) {
+        self.cancel_because("cancelled!");
+    }
+
+    /// Cancel it, saying why (the reference's `Cancel(status_text)`): its
+    /// status says so until its request stops ("Cancelled!").
+    pub fn cancel_because(&self, why: &str) {
+        *self.cancel_reason.lock() = Some(why.to_owned());
+        self.set_status(why);
         self.cancel.cancel();
+    }
+
+    /// What a seed whose download was cancelled notes (the reference's
+    /// `CancelledException` from `WaitUntilDone`).
+    pub fn cancelled_note(&self) -> String {
+        let reason = self.cancel_reason.lock();
+        format!(
+            "Download cancelled: {}",
+            reason.as_deref().unwrap_or("cancelled!")
+        )
     }
 
     pub fn is_cancelled(&self) -> bool {
@@ -688,6 +729,11 @@ impl NetEngine {
     /// Make a request, retrying as the reference does, and report progress
     /// on `job`.
     pub async fn fetch(&self, request: &Request, job: &Job) -> Result<Response, NetError> {
+        {
+            let mut state = job.state.lock();
+            state.done = false;
+            state.error = false;
+        }
         let result = self.fetch_inner(request, job).await;
         if let Err(e) = &result
             && e.is_infrastructure()
@@ -696,10 +742,21 @@ impl NetEngine {
         }
         let mut state = job.state.lock();
         state.done = true;
-        match &result {
-            Ok(_) => state.status = "done!".into(),
-            Err(e) => state.status = format!("Error: {e}"),
-        }
+        state.error = result.is_err();
+        // (as the reference's job ends: done, an error status as the server
+        // gave it, cancelled, or the error)
+        state.status = match &result {
+            Ok(_) => "done!".into(),
+            Err(NetError::Status { code, .. }) => {
+                let reason = reqwest::StatusCode::from_u16(*code)
+                    .ok()
+                    .and_then(|s| s.canonical_reason())
+                    .unwrap_or("");
+                format!("{code} - {reason}")
+            }
+            Err(NetError::Cancelled) => "Cancelled!".into(),
+            Err(e) => format!("Error: {e}"),
+        };
         result
     }
 
@@ -1295,6 +1352,7 @@ impl NetEngine {
             progress.read += n;
             read_here += n;
             a.job.state.lock().bytes_read = progress.read;
+            a.job.report_read(n);
             self.report_data(a, n).await?;
             if progress.accurate {
                 if let Some(total) = progress.total

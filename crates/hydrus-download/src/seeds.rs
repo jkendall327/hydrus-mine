@@ -220,7 +220,7 @@ struct FileFetch<'a> {
 
 /// Network failures as `WorkOnURL` treats them: some statuses end the seed
 /// as vetoed, the rest as an error.
-fn network(e: NetError) -> Stop {
+fn network(e: NetError, job: &Job) -> Stop {
     match &e {
         NetError::Status {
             kind: StatusKind::NotFound,
@@ -234,7 +234,7 @@ fn network(e: NetError) -> Stop {
             kind: StatusKind::Censorship,
             ..
         } => Stop::Veto("site reports http status code 451: Unavailable For Legal Reasons".into()),
-        NetError::Cancelled => Stop::Veto("Cancelled!".into()),
+        NetError::Cancelled => Stop::Veto(job.cancelled_note()),
         _ => Stop::Failed(WorkError::Network(e)),
     }
 }
@@ -355,7 +355,11 @@ impl Downloader {
         request
             .additional_headers
             .clone_from(&seed.meta.request_headers);
-        let response = self.net.fetch(&request, job).await.map_err(network)?;
+        let response = self
+            .net
+            .fetch(&request, job)
+            .await
+            .map_err(|e| network(e, job))?;
         let text = response.text();
         let actual = response.url.clone();
         let url_for_child_referral = actual.clone();
@@ -551,7 +555,11 @@ impl Downloader {
             .bandwidth_urls
             .extend(spawning_url.map(str::to_owned));
         request.override_bandwidth_after = override_bandwidth_after;
-        let response = self.net.fetch(&request, job).await.map_err(network)?;
+        let response = self
+            .net
+            .fetch(&request, job)
+            .await
+            .map_err(|e| network(e, job))?;
         if url_to_fetch != file_url {
             seed_mut(seed).add_primary_urls(classes, [url_to_fetch.clone()]);
         }

@@ -13,6 +13,10 @@ In the running client:
   progresses, under each of the options that shape it (the longest name,
   which pages show their file count, whether importers show progress,
   whether notebooks are decorated and with what).
+- a network job's line (`NetworkJobControl`, under an importer's file
+  log and search log), as the widget's own `_Update` sets it for stand-in
+  jobs of many statuses, sizes, speeds and states: the left text, the
+  right text, the gauge and whether cancel is enabled.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_import_status.py
        (writes fixtures/import_status.json)
@@ -340,7 +344,119 @@ def record( session ):
         new_options.SetString( 'page_of_pages_decorator', before[ 4 ] )
 
 
-    return { 'file_logs' : file_logs, 'search_logs' : search_logs, 'tab_names' : tab_names }
+    network_jobs = record_network_job_controls( controller )
+
+    return { 'file_logs' : file_logs, 'search_logs' : search_logs, 'tab_names' : tab_names, 'network_jobs' : network_jobs }
+
+
+def record_network_job_controls( controller ):
+
+    from hydrus.client.gui.networking import ClientGUINetworkJobControl
+
+    class StandInJob( object ):
+
+        def __init__( self, status_text, speed, bytes_read, bytes_to_read, has_error, is_done, no_engine_yet ):
+
+            self._status = ( status_text, speed, bytes_read, bytes_to_read )
+            self._has_error = has_error
+            self._is_done = is_done
+            self._no_engine_yet = no_engine_yet
+
+
+        def GetStatus( self ):
+
+            return self._status
+
+
+        def HasError( self ):
+
+            return self._has_error
+
+
+        def IsDone( self ):
+
+            return self._is_done
+
+
+        def NoEngineYet( self ):
+
+            return self._no_engine_yet
+
+
+
+    texts = ( '', 'downloading\u2026', 'waiting for a slot', 'Error: 404\nthe page was not found', 'sending request\u2026' )
+
+    # ( bytes read, bytes to read )
+    sizes = (
+        ( None, None ),
+        ( 0, None ),
+        ( 0, 0 ),
+        ( 0, 5000 ),
+        ( 512, None ),
+        ( 512, 512 ),
+        ( 1023, 2048 ),
+        ( 1536, 1536 ),
+        ( 1048576, 5242880 ),
+        ( 5242880, 5242880 ),
+        ( 3000000000, 4500000000 ),
+        ( 7000, 3000 ),
+    )
+
+    speeds = ( 0, 512, 1536, 300000, 5242880 )
+
+    cases = [ None ]
+
+    for text in texts:
+
+        for ( bytes_read, bytes_to_read ) in sizes:
+
+            for speed in speeds:
+
+                cases.append( ( text, speed, bytes_read, bytes_to_read, False, False, False ) )
+
+
+
+    for ( has_error, is_done, no_engine_yet ) in ( ( True, True, False ), ( False, True, False ), ( False, False, True ) ):
+
+        for ( bytes_read, bytes_to_read ) in sizes:
+
+            cases.append( ( 'Error: connection failed', 1536, bytes_read, bytes_to_read, has_error, is_done, no_engine_yet ) )
+
+
+
+    def work():
+
+        out = []
+
+        for case in cases:
+
+            # a fresh control each time: the right text is only set when
+            # there is some (it is hidden, keeping the last, when not)
+            control = ClientGUINetworkJobControl.NetworkJobControl( controller.gui )
+
+            control._network_job = None if case is None else StandInJob( *case )
+
+            control._Update()
+
+            gauge = control._gauge
+
+            out.append( {
+                'job' : None if case is None else dict( zip( ( 'status_text', 'speed', 'bytes_read', 'bytes_to_read', 'has_error', 'is_done', 'no_engine_yet' ), case ) ),
+                'left' : control._left_text._last_set_text,
+                'right' : control._right_text._last_set_text,
+                'gauge' : [ gauge.value(), gauge.maximum() ],
+                'can_cancel' : control._cancel_button.isEnabled(),
+            } )
+
+            control._network_job = None
+
+            control.deleteLater()
+
+
+        return out
+
+
+    return controller.CallBlockingToQt( controller.gui, work )
 
 
 def main():
@@ -358,7 +474,7 @@ def main():
         f.write( '\n' )
 
 
-    print( f'{len( result[ "file_logs" ] )} file logs, {len( result[ "search_logs" ] )} search logs, {len( result[ "tab_names" ] )} tab names' )
+    print( f'{len( result[ "file_logs" ] )} file logs, {len( result[ "search_logs" ] )} search logs, {len( result[ "tab_names" ] )} tab names, {len( result[ "network_jobs" ] )} network jobs' )
 
 
 if __name__ == '__main__':

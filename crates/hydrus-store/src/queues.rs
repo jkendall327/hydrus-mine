@@ -412,7 +412,6 @@ fn finish_queue((mut queue, options, extra): (Queue, String, String)) -> Result<
     Ok(queue)
 }
 
-/// Make a queue.
 /// Tell whichever process runs the queues (the daemon) that a queue was
 /// made or changed (seeds added, paused or resumed, deleted), so it looks
 /// at it now rather than when it next would.
@@ -440,6 +439,7 @@ pub fn take_nudges(conn: &Connection) -> Result<Vec<i64>> {
     Ok(nudged)
 }
 
+/// Make a queue.
 pub fn create_queue(
     conn: &Connection,
     kind: QueueKind,

@@ -1,7 +1,8 @@
 //! Importers' status texts against the reference's
 //! (`oracle/record_import_status.py`): a file log's in full and short (with
 //! the short summary's options each way) and its value and range, and a
-//! search log's, for 401 sets of counts by status.
+//! search log's, for 401 sets of counts by status; and a download's line
+//! under them (`NetworkJobControl`) for 337 jobs.
 
 use serde_json::Value as Json;
 
@@ -59,5 +60,37 @@ fn file_and_search_logs_say_what_the_reference_says() {
             case["value_range"],
             "{case}"
         );
+    }
+}
+
+#[test]
+fn downloads_lines_say_what_the_references_network_job_control_says() {
+    use hydrus_store::live::{JobLine, network_job_line};
+    let recorded = hydrus_testkit::fixture_json("import_status.json");
+    let jobs = recorded["network_jobs"].as_array().unwrap();
+    assert!(jobs.len() > 300);
+    for case in jobs {
+        let job = &case["job"];
+        let line = if job.is_null() || job["no_engine_yet"].as_bool().unwrap() {
+            JobLine::default()
+        } else {
+            network_job_line(
+                job["status_text"].as_str().unwrap(),
+                job["speed"].as_u64().unwrap(),
+                job["bytes_read"].as_u64(),
+                job["bytes_to_read"].as_u64(),
+                job["has_error"].as_bool().unwrap(),
+                job["is_done"].as_bool().unwrap(),
+            )
+        };
+        assert_eq!(line.left, case["left"], "{case}");
+        assert_eq!(line.right, case["right"], "{case}");
+        let gauge = &case["gauge"];
+        assert_eq!(
+            line.gauge,
+            (gauge[0].as_u64().unwrap(), gauge[1].as_u64().unwrap()),
+            "{case}"
+        );
+        assert_eq!(line.can_cancel, case["can_cancel"], "{case}");
     }
 }

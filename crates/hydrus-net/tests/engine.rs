@@ -317,6 +317,44 @@ async fn statuses_become_errors_or_retries() {
 }
 
 #[tokio::test]
+async fn a_job_ends_as_the_references_do_and_has_a_speed() {
+    let s = setup(|_| Vec::new()).await;
+    // done, with what it read in the last second as its speed
+    let job = Job::new();
+    let request = Request::get(format!("{}/file.png", s.base));
+    s.engine.fetch(&request, &job).await.unwrap();
+    let state = job.state();
+    assert_eq!(state.status, "done!");
+    assert!(state.done && !state.error);
+    assert_eq!(state.bytes_read, 1000);
+    assert_eq!(state.speed, 1000, "read within the last second");
+    // an error status as the server gave it
+    let failing = Request::get(format!("{}/flaky/404", s.base));
+    assert!(s.engine.fetch(&failing, &job).await.is_err());
+    let state = job.state();
+    assert_eq!(state.status, "404 - Not Found");
+    assert!(state.done && state.error);
+    // the same job working again isn't in error until it fails
+    s.engine.fetch(&request, &job).await.unwrap();
+    assert!(!job.state().error);
+    // cancelled
+    let job = Job::new();
+    let slow = Request::get(format!("{}/slow", s.base));
+    let cancelling = Arc::clone(&job);
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        cancelling.cancel();
+    });
+    assert!(matches!(
+        s.engine.fetch(&slow, &job).await,
+        Err(NetError::Cancelled)
+    ));
+    let state = job.state();
+    assert_eq!(state.status, "Cancelled!");
+    assert!(state.done && state.error);
+}
+
+#[tokio::test]
 async fn resumes_files_with_ranged_requests() {
     let s = setup(|_| Vec::new()).await;
     let dir = tempfile::tempdir().unwrap();

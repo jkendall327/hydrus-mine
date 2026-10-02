@@ -613,6 +613,7 @@ fn the_pages_are_kept_for_the_client_api_and_do_what_it_asks() {
 /// brings as they come, pausing, and closing as the reference asks.
 #[test]
 fn a_url_downloader_page_shows_and_controls_its_queue() {
+    use hydrus_store::live::{self, JobKind, JobLive, QueueLive};
     use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 
     let (_dirs, store) = store();
@@ -707,6 +708,42 @@ fn a_url_downloader_page_shows_and_controls_its_queue() {
         row.names.row_data(shown).unwrap().to_string()
     };
     assert_eq!(tab(&ui), "url import (2 - 3/4)");
+
+    // what the daemon is downloading: its line under the file log, which
+    // the cancel button asks the daemon to stop
+    assert_eq!(ui.get_file_download().left, "");
+    assert!(!ui.get_file_download().can_cancel);
+    let downloading = QueueLive {
+        file_job: Some(JobLive {
+            status: "downloading\u{2026}".into(),
+            speed: 1536,
+            bytes_read: 1_048_576,
+            bytes_to_read: Some(5_242_880),
+            done: false,
+            error: false,
+        }),
+        ..QueueLive::default()
+    };
+    store
+        .write(move |ctx| live::publish(ctx.conn(), &[(queue, Some(downloading))]))
+        .unwrap();
+    (bound.sync)();
+    let line = ui.get_file_download();
+    assert_eq!(line.left, "downloading\u{2026}");
+    assert_eq!(line.right, "1 MB/5 MB 1.5 KB/s");
+    assert!((line.fraction - 0.2).abs() < 1e-6);
+    assert!(line.can_cancel);
+    assert_eq!(ui.get_search_download().left, "", "no gallery page");
+    ui.invoke_cancel_download(false);
+    assert_eq!(
+        store.write(|ctx| live::take_cancels(ctx.conn())).unwrap(),
+        [(queue, JobKind::File)]
+    );
+    // (the daemon stopping: nothing downloading)
+    store.write(|ctx| live::clear(ctx.conn())).unwrap();
+    (bound.sync)();
+    assert_eq!(ui.get_file_download().right, "");
+    assert!(!ui.get_file_download().can_cancel);
 
     // pausing pauses its files and search, nudging the daemon
     store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();

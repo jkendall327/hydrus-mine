@@ -204,6 +204,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &mut input,
         &options
             .as_ref()
+            .map(legacy::ClientOptions::downloader_page_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
             .map(legacy::ClientOptions::window_settings)
             .unwrap_or_default(),
     )?;

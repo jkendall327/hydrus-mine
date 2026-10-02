@@ -725,6 +725,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(false);
         }
     });
+    window.on_cancel_download({
+        let page = page.clone();
+        move |gallery| {
+            let kind = if gallery {
+                hydrus_store::live::JobKind::Gallery
+            } else {
+                hydrus_store::live::JobKind::File
+            };
+            page().borrow().cancel_download(kind);
+        }
+    });
     window.on_url_entered({
         let page = page.clone();
         move |text| page().borrow().pend_urls(&text)
@@ -1216,14 +1227,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     }
                 }
             }
-            // downloader pages' importers, as the daemon works them
+            // downloader pages' importers, as the daemon works them: the
+            // page shown again when files came, else just its importer
             let open = pages.borrow().open_pages();
             for page in open {
-                if page.borrow().importer().is_some()
-                    && page.borrow_mut().refresh_import()
-                    && Rc::ptr_eq(&page, &current.borrow())
-                {
-                    shown(true);
+                if page.borrow().importer().is_none() {
+                    continue;
+                }
+                let refreshed = page.borrow_mut().refresh_import();
+                if !Rc::ptr_eq(&page, &current.borrow()) {
+                    continue;
+                }
+                match refreshed {
+                    page::ImportRefresh::Files => shown(true),
+                    page::ImportRefresh::Status => {
+                        if let (Some(window), Some(importer)) =
+                            (weak.upgrade(), page.borrow().importer())
+                        {
+                            show_importer(&window, importer);
+                        }
+                    }
+                    page::ImportRefresh::Nothing => {}
                 }
             }
             let now = std::time::SystemTime::now()
@@ -2766,21 +2790,39 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
 
 /// Show the page's search: the box's text and suggestions, the predicates,
 /// any error, and the status bar; or, for a page without a search, why.
+/// A downloader page's importer: its logs' statuses and progress, its
+/// pause, and its downloads.
+fn show_importer(window: &MainWindow, importer: &page::Importer) {
+    window.set_import_status(importer.files_status().into());
+    window.set_import_progress(importer.progress_text().into());
+    #[allow(clippy::cast_precision_loss)] // (a progress bar)
+    let fraction = match importer.progress() {
+        (_, 0) => 0.0,
+        (done, total) => done as f32 / total as f32,
+    };
+    window.set_import_fraction(fraction);
+    window.set_import_paused(importer.paused);
+    window.set_search_status(importer.search_status().into());
+    window.set_file_download(download_line(&importer.file_job_line()));
+    window.set_search_download(download_line(&importer.gallery_job_line()));
+}
+
+/// A download's line for the window.
+fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine {
+    DownloadLine {
+        left: line.left.as_str().into(),
+        right: line.right.as_str().into(),
+        fraction: line.fraction(),
+        can_cancel: line.can_cancel,
+    }
+}
+
 fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<FavouriteRow>) {
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());
     if let Some(importer) = importer {
-        window.set_import_status(importer.files_status().into());
-        window.set_import_progress(importer.progress_text().into());
-        #[allow(clippy::cast_precision_loss)] // (a progress bar)
-        let fraction = match importer.progress() {
-            (_, 0) => 0.0,
-            (done, total) => done as f32 / total as f32,
-        };
-        window.set_import_fraction(fraction);
-        window.set_import_paused(importer.paused);
-        window.set_search_status(importer.search_status().into());
+        show_importer(window, importer);
     }
     // (only a page with a search can load one)
     window.set_favourites(if page.note().is_none() {
