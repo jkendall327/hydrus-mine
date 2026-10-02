@@ -489,3 +489,68 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
         "system:width \u{2248} 1,920 \u{b1}50"
     );
 }
+
+#[test]
+fn more_suggestions_than_fit_scroll_rather_than_spill_over() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let _bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let main_window = windows.get(0).unwrap();
+    let (width, height) = (1100_usize, 900_usize);
+    // (twice: the first frame lays the window out)
+    let draw = || {
+        headless::render(&main_window, width as u32, height as u32);
+        headless::render(&main_window, width as u32, height as u32)
+    };
+    // the sidebar's rows of pixels that differ (the grid's thumbnails load
+    // as they will)
+    let sidebar = 290;
+    let differing = |a: &[u8], b: &[u8]| -> Vec<usize> {
+        (0..height)
+            .filter(|y| {
+                a[y * width * 4..(y * width + sidebar) * 4]
+                    != b[y * width * 4..(y * width + sidebar) * 4]
+            })
+            .collect()
+    };
+    ui.invoke_search_edited("".into());
+    let all: Vec<_> = ui.get_suggestions().iter().collect();
+    assert!(all.len() > 14, "{} suggestions", all.len());
+
+    // the first row, where highlighting it changes the window
+    ui.set_highlighted(-1);
+    let plain = draw();
+    ui.set_highlighted(0);
+    let first = differing(&plain, &draw());
+    let top = *first.first().expect("the highlight drawn");
+    // twelve rows of 22 pixels show, under which the window is as it is
+    // with no more than twelve suggestions
+    let bottom = top + 12 * 22 + 2;
+    ui.set_highlighted(-1);
+    let everything = draw();
+    ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(
+        all[..12].to_vec(),
+    )));
+    let twelve = draw();
+    let below: Vec<usize> = differing(&everything, &twelve)
+        .into_iter()
+        .filter(|y| *y >= bottom)
+        .collect();
+    assert_eq!(
+        below,
+        Vec::<usize>::new(),
+        "suggestions drawn under the dropdown"
+    );
+
+    // the last highlighted is scrolled into view
+    ui.set_suggestions(slint::ModelRc::new(slint::VecModel::from(all.clone())));
+    draw();
+    ui.set_highlighted(i32::try_from(all.len() - 1).unwrap());
+    let scrolled = differing(&everything, &draw());
+    assert!(!scrolled.is_empty(), "the last suggestion not shown");
+    assert!(
+        scrolled.iter().all(|y| (top - 2..bottom).contains(y)),
+        "{scrolled:?} outside {top}..{bottom}"
+    );
+}

@@ -1,7 +1,7 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, VerticalBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
@@ -1097,8 +1097,24 @@ export component MainWindow inherits Window {
                         border-color: Theme.border;
                         background: Theme.panel;
                         height: min(root.suggestions.length, 12) * 22px + 4px;
-                        VerticalLayout {
-                            padding: 2px;
+                        // (more than twelve scroll, as the reference's
+                        // dropdown does, the highlighted one kept in view)
+                        property <int> kept-in-view: root.highlighted;
+                        changed kept-in-view => {
+                            if (self.kept-in-view >= 0) {
+                                if (self.kept-in-view * 22px < -suggestion-scroll.viewport-y) {
+                                    suggestion-scroll.viewport-y = -self.kept-in-view * 22px;
+                                } else if ((self.kept-in-view + 1) * 22px > suggestion-scroll.visible-height - suggestion-scroll.viewport-y) {
+                                    suggestion-scroll.viewport-y = suggestion-scroll.visible-height - (self.kept-in-view + 1) * 22px;
+                                }
+                            }
+                        }
+                        suggestion-scroll := ScrollView {
+                            x: 2px;
+                            y: 2px;
+                            width: parent.width - 4px;
+                            height: parent.height - 4px;
+                            VerticalLayout {
                             alignment: start;
                             for suggestion[i] in root.suggestions: Rectangle {
                                 height: 22px;
@@ -1115,6 +1131,7 @@ export component MainWindow inherits Window {
                                     clicked => { root.suggestion-chosen(i); }
                                 }
                             }
+                            }
                         }
                     }
                     if root.error != "": Text {
@@ -1127,13 +1144,19 @@ export component MainWindow inherits Window {
                         border-color: Theme.border;
                         background: Theme.panel;
                         height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
-                        VerticalLayout {
-                            padding: 2px;
-                            alignment: start;
-                            for predicate[i] in root.predicates: Predicate {
-                                text: predicate.text;
-                                colour: predicate.colour;
-                                remove => { root.remove-predicate(i); }
+                        // (more than seven scroll)
+                        ScrollView {
+                            x: 3px;
+                            y: 3px;
+                            width: parent.width - 6px;
+                            height: parent.height - 6px;
+                            VerticalLayout {
+                                alignment: start;
+                                for predicate[i] in root.predicates: Predicate {
+                                    text: predicate.text;
+                                    colour: predicate.colour;
+                                    remove => { root.remove-predicate(i); }
+                                }
                             }
                         }
                     }
