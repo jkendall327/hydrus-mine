@@ -194,6 +194,11 @@ lines; and an empty page why ("no search", "no files found for this
 search", a downloader page's "no highlighted query"). The grid is a list of rows, so only
 the rows in view exist, and a thumbnail is read and decoded off the UI
 thread when its row first comes into view (a blank frame until then).
+Thumbnails are drawn as the reference draws them: each cell is your
+thumbnail bounding box and its border (152x127 by default), and the
+thumbnail sits in it at its own size (over your thumbnail DPR), centred,
+never stretched. On a scaled screen it is resampled to the screen's
+pixels first, so it is drawn pixel for pixel.
 Thumbnails are selected as in the reference's grid (v688's default one;
 `src/selection.rs`, checked step by step against that grid driven in the
 running reference, `oracle/record_thumbnail_selection.py`): a click
@@ -254,8 +259,8 @@ hydrus's option for that on), at its default zoom (fitted to the window, unless 
 per-filetype zoom rules or your default zoom say otherwise): right and left
 (or down and up, page down and up, or the mouse wheel) move through the
 page's files, round from the last to the first as in the reference, home
-and end go to the first and the last, and escape, enter or a middle click
-closes it; ctrl+r takes the file shown off the viewer and its page,
+and end go to the first and the last, and escape, enter, a middle click
+or a double-click closes it; ctrl+r takes the file shown off the viewer and its page,
 showing the next (closing with none left), and ctrl+e opens it as the OS
 opens it, pausing one that plays; ctrl+c copies it, as a file. A
 right-click opens the reference's viewer menu (checked against it,

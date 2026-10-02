@@ -23,6 +23,8 @@ pub struct ThumbnailRows {
     columns: Cell<usize>,
     cache: RefCell<HashMap<HashId, slint::Image>>,
     loader: ThumbnailLoader,
+    /// The window's scale factor, which thumbnails are decoded for.
+    scale: Cell<f32>,
     /// Thumbnails asked for and not yet decoded, with where the grid last
     /// showed each file.
     pending: RefCell<HashMap<HashId, usize>>,
@@ -48,6 +50,7 @@ impl ThumbnailRows {
             columns: Cell::new(1),
             cache: RefCell::default(),
             loader,
+            scale: Cell::new(1.0),
             pending: RefCell::default(),
             notify: ModelNotify::default(),
         }
@@ -73,13 +76,17 @@ impl ThumbnailRows {
         }
     }
 
-    fn show(&self, received: Vec<(HashId, Option<crate::thumbnails::Pixels>)>) -> usize {
+    fn show(&self, received: Vec<crate::thumbnails::Loaded>) -> usize {
         let count = received.len();
         let mut rows = BTreeSet::new();
         {
             let mut cache = self.cache.borrow_mut();
             let mut pending = self.pending.borrow_mut();
-            for (id, pixels) in received {
+            for (id, scale, pixels) in received {
+                // (decoded for a scale the window has since left)
+                if scale.to_bits() != self.scale.get().to_bits() {
+                    continue;
+                }
                 if cache.len() >= CACHED {
                     cache.clear();
                 }
@@ -106,6 +113,17 @@ impl ThumbnailRows {
         let columns = columns.max(1);
         if columns != self.columns.get() {
             self.columns.set(columns);
+            self.notify.reset();
+        }
+    }
+
+    /// The window's scale factor: thumbnails are decoded to show pixel for
+    /// pixel at it, so a new one decodes them again.
+    pub fn set_scale(&self, scale: f32) {
+        if scale > 0.0 && scale.to_bits() != self.scale.get().to_bits() {
+            self.scale.set(scale);
+            self.cache.borrow_mut().clear();
+            self.pending.borrow_mut().clear();
             self.notify.reset();
         }
     }
@@ -150,7 +168,7 @@ impl ThumbnailRows {
             return image.clone();
         }
         if self.pending.borrow_mut().insert(id, index).is_none() {
-            self.loader.request(id);
+            self.loader.request(id, self.scale.get());
         }
         slint::Image::default()
     }

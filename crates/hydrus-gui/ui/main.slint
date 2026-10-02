@@ -140,14 +140,17 @@ export struct ThumbnailRow {
     thumbnails: [Thumbnail],
 }
 
-// A list of rows of thumbnails, so only the rows in view are made.
+// A list of rows of thumbnails, so only the rows in view are made. As the
+// reference's, a thumbnail's cell is the thumbnail bounding box and its
+// border, and the thumbnail is drawn in it at its own size, centred.
 component ThumbnailGrid inherits ListView {
     in property <[ThumbnailRow]> rows;
-    in property <length> thumbnail-size: 150px;
+    in property <length> thumbnail-width: 152px;
+    in property <length> thumbnail-height: 127px;
     in property <length> gap: 4px;
-    out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
+    out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-width + self.gap)));
     // how many rows a page up or down moves
-    out property <int> page-rows: max(1, floor(self.visible-height / (self.thumbnail-size + self.gap)));
+    out property <int> page-rows: max(1, floor(self.visible-height / (self.thumbnail-height + self.gap)));
     // a click on a file (-1 for none), with ctrl or shift held
     callback clicked(int, bool, bool);
     callback activated(int);
@@ -158,7 +161,7 @@ component ThumbnailGrid inherits ListView {
 
     // scroll so the file at `index` shows
     public function scroll-to(index: int) {
-        let span = root.thumbnail-size + root.gap;
+        let span = root.thumbnail-height + root.gap;
         let top = floor(index / root.columns) * span;
         if (top < -root.content-y) {
             root.content-y = -top;
@@ -169,35 +172,39 @@ component ThumbnailGrid inherits ListView {
 
     // which of a row's `count` thumbnails is at (x, y), or -1 for a gap
     pure function thumbnail-at(count: int, x: length, y: length) -> int {
-        let step = root.thumbnail-size + root.gap;
+        let step = root.thumbnail-width + root.gap;
         let column = floor((x - root.gap) / step);
         if (x < root.gap || y < root.gap || column >= count
-            || x - root.gap - column * step >= root.thumbnail-size) {
+            || x - root.gap - column * step >= root.thumbnail-width) {
             return -1;
         }
         return column;
     }
 
     for row in root.rows: Rectangle {
-        height: root.thumbnail-size + root.gap;
+        height: root.thumbnail-height + root.gap;
         HorizontalLayout {
             padding-left: root.gap;
             padding-top: root.gap;
             spacing: root.gap;
             alignment: start;
             for thumbnail in row.thumbnails: Rectangle {
-                width: root.thumbnail-size;
-                height: root.thumbnail-size;
-                border-width: thumbnail.selected ? 2px : 1px;
-                border-color: thumbnail.selected ? Theme.accent : Theme.border;
+                width: root.thumbnail-width;
+                height: root.thumbnail-height;
                 background: Theme.panel;
+                // pixel for pixel (it is decoded at the screen's scale): the
+                // renderer would scale it by picking the nearest pixels
                 Image {
-                    x: 2px;
-                    y: 2px;
-                    width: parent.width - 4px;
-                    height: parent.height - 4px;
+                    width: self.source.width * 1phx;
+                    height: self.source.height * 1phx;
+                    x: round((parent.width - self.width) / 2 / 1phx) * 1phx;
+                    y: round((parent.height - self.height) / 2 / 1phx) * 1phx;
                     source: thumbnail.image;
-                    image-fit: contain;
+                }
+                // (over the thumbnail, which may fill the cell)
+                Rectangle {
+                    border-width: thumbnail.selected ? 2px : 1px;
+                    border-color: thumbnail.selected ? Theme.accent : Theme.border;
                 }
                 // a collection: its number of files, in a box at the
                 // bottom left
@@ -278,6 +285,9 @@ export component MainWindow inherits Window {
     in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
+    // a thumbnail's cell: the thumbnail bounding box and its border
+    in property <length> thumbnail-width: 152px;
+    in property <length> thumbnail-height: 127px;
     in property <string> status;
     in property <string> error;
     // a downloader page's importer (the reference's "url downloader" box):
@@ -1222,6 +1232,8 @@ export component MainWindow inherits Window {
                             width: 100%;
                             height: 100%;
                             rows: root.thumbnail-rows;
+                            thumbnail-width: root.thumbnail-width;
+                            thumbnail-height: root.thumbnail-height;
                             clicked(i, ctrl, shift) => {
                                 grid-keys.focus();
                                 root.thumbnail-clicked(i, ctrl, shift);

@@ -200,6 +200,14 @@ search.
 
 ## Pages (`hydrus-gui`)
 
+- **Thumbnails on a scaled screen are resampled to its pixels** (area
+  when shrinking, Lanczos when growing, as the reference resizes
+  thumbnails), where the reference has Qt scale them as it draws. Slint's
+  software renderer scales images by picking the nearest pixels, which
+  made them blocky, so we never let it scale one. The thumbnail border
+  and margin are hydrus's defaults (1 and 2 pixels); yours aren't carried
+  over yet.
+
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
 - **A closed URL downloader page's downloads wait** until it is reopened

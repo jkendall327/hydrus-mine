@@ -148,4 +148,35 @@ fn the_viewer_s_browsing_shortcuts() {
         button: PointerEventButton::Middle,
     });
     assert!(bound.viewer.borrow().is_none());
+
+    // and so does a double-click (one click doesn't; nor do two apart)
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .unwrap();
+    let click = |x: f32| {
+        let position = slint::LogicalPosition::new(x, 300.0);
+        for event in [
+            WindowEvent::PointerMoved { position },
+            WindowEvent::PointerPressed {
+                position,
+                button: PointerEventButton::Left,
+            },
+            WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            },
+        ] {
+            viewer.window().dispatch_event(event);
+        }
+    };
+    click(300.0);
+    assert!(bound.viewer.borrow().is_some(), "one click leaves it open");
+    click(400.0);
+    assert!(bound.viewer.borrow().is_some(), "two clicks apart too");
+    click(400.0);
+    assert!(bound.viewer.borrow().is_none(), "a double-click closes it");
 }

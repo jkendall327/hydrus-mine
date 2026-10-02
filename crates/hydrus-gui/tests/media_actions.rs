@@ -170,7 +170,7 @@ fn the_viewer_s_shortcuts_archive_inbox_and_delete() {
     // the thumbnails' shortcuts, once a click gives them the keyboard
     let main_window = windows.get(0).unwrap();
     headless::render(&main_window, 1100, 700);
-    let first = slint::LogicalPosition::new(300.0 + 4.0 + 75.0, 4.0 + 75.0);
+    let first = slint::LogicalPosition::new(300.0 + 4.0 + 76.0, 4.0 + 63.0);
     for event in [
         slint::platform::WindowEvent::PointerPressed {
             position: first,

@@ -64,8 +64,8 @@ fn several_thumbnails_are_selected_and_acted_on() {
     let click = |index: usize, modifier: Option<Key>| {
         let (row, column) = (index / columns, index % columns);
         let position = slint::LogicalPosition::new(
-            300.0 + 4.0 + 154.0 * column as f32 + 75.0,
-            4.0 + 154.0 * row as f32 + 75.0,
+            300.0 + 4.0 + 156.0 * column as f32 + 76.0,
+            4.0 + 131.0 * row as f32 + 63.0,
         );
         with(modifier, &|| {
             for event in [

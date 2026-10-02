@@ -146,7 +146,7 @@ fn a_right_click_shows_the_menu_and_its_entries_act() {
     headless::render(&main_window, 1100, 700);
 
     // a right-click on the second thumbnail selects it, and shows the menu
-    let at = slint::LogicalPosition::new(300.0 + 4.0 + 154.0 + 75.0, 4.0 + 75.0);
+    let at = slint::LogicalPosition::new(300.0 + 4.0 + 156.0 + 76.0, 4.0 + 63.0);
     main_window.dispatch_event(WindowEvent::PointerPressed {
         position: at,
         button: PointerEventButton::Right,

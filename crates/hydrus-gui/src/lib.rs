@@ -176,13 +176,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let rows = Rc::new(ThumbnailRows::new(first));
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
+    rows.set_scale(window.window().scale_factor());
+    // the cells as the reference's: the bounding box, and its border
+    let settings = current.borrow().borrow().store().snapshot().thumbnails;
+    window.set_thumbnail_width(settings.bounding_width as f32 + 2.0);
+    window.set_thumbnail_height(settings.bounding_height as f32 + 2.0);
     let thumbnails = Rc::new(slint::Timer::default());
     thumbnails.start(
         slint::TimerMode::Repeated,
         std::time::Duration::from_millis(25),
         {
             let rows = rows.clone();
+            let window = window.as_weak();
             move || {
+                if let Some(window) = window.upgrade() {
+                    rows.set_scale(window.window().scale_factor());
+                }
                 rows.receive();
             }
         },

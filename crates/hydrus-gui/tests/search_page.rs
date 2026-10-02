@@ -337,7 +337,7 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
     // a click on a thumbnail selects it; a double-click opens the viewer on
     // its file (the first click redraws the row, which mustn't lose it)
     let grid_left = 300.0;
-    let third = slint::LogicalPosition::new(grid_left + 4.0 + 2.0 * 154.0 + 75.0, 4.0 + 75.0);
+    let third = slint::LogicalPosition::new(grid_left + 4.0 + 2.0 * 156.0 + 76.0, 4.0 + 63.0);
     let click = |at: slint::LogicalPosition| {
         use slint::platform::{PointerEventButton, WindowEvent};
         let window = ui.window();

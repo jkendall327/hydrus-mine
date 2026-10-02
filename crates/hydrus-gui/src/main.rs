@@ -16,8 +16,10 @@ use hydrus_store::Store;
 use hydrus_store::settings::ClientApiStatus;
 
 fn main() -> Result<()> {
+    // (an option, such as --help, is not a store to make)
     let dir: PathBuf = std::env::args_os()
         .nth(1)
+        .filter(|arg| !arg.to_string_lossy().starts_with('-'))
         .ok_or_else(|| anyhow!("usage: hydrus-gui <store directory>"))?
         .into();
     let store =

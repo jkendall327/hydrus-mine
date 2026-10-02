@@ -729,6 +729,8 @@ export component MediaViewerWindow inherits Window {
                     viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
                 }
             }
+            // as is a (left) double-click, as the reference's default
+            double-clicked => { root.close-requested(); }
             moved => {
                 root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
                 root.drag-x = self.mouse-x;
