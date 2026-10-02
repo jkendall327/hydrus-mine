@@ -182,7 +182,7 @@ search.
   again. The recorded `pages` scenario (`oracle/recordings/pages.json`)
   replays in `crates/hydrus-api/tests/conformance.rs` (with the client
   closed), and `crates/hydrus-api/tests/pages.rs` and the session test in
-  `crates/hydrus-gui/tests/session.rs` cover the rest.
+  `crates/hydrus-gui/tests/gui/session.rs` cover the rest.
 - **Page keys last.** The reference makes new keys for its pages (and its
   top notebook) each time it starts; ours are kept with the session, so a
   tool can keep one.
@@ -306,7 +306,7 @@ search.
   page imports on out of sight until it is destroyed; ours stops, as the
   close question's "This page is still importing." suggests, and a daemon
   left running without the client doesn't work on a page nobody can see.
-  `crates/hydrus-cli/tests/serve.rs` and `crates/hydrus-gui/tests/session.rs`
+  `crates/hydrus-cli/tests/serve.rs` and `crates/hydrus-gui/tests/gui/session.rs`
   check it.
 - **A download's progress reaches its page within about three quarters
   of a second**: the daemon keeps what its queues are doing in the store
@@ -467,9 +467,9 @@ Checked by `crates/hydrus-download/tests/local_import.rs`.
   import options button; the tags to add to each file (from an "import"
   page carried over from hydrus) are added as a downloader's are.
 
-Checked by `crates/hydrus-gui/tests/local_import_dialog.rs` (against
+Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
 `oracle/fixtures/local_import_dialog.json`) and
-`crates/hydrus-gui/tests/import_files.rs`.
+`crates/hydrus-gui/tests/gui/import_files.rs`.
 
 - **The "review files to import" window parses its paths as the
   reference's does** (the same rows, order, filetypes, sizes, progress

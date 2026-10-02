@@ -689,9 +689,9 @@ decisions wait for the batch's end, which asks to commit them (unless
 they are few, as `duplicate_filter_auto_commit_batch_size` has it), and
 closing with decisions pending asks too. Merges use your duplicate merge
 options. The model is `src/duplicate_filter.rs`, tested in
-`tests/duplicate_filter.rs` with the window drawn headless.
-`crates/hydrus-gui/tests/search_page.rs` drives the page and
-`tests/session.rs` a saved session, and both draw the window headless (the
+`tests/gui/duplicate_filter.rs` with the window drawn headless.
+`crates/hydrus-gui/tests/gui/search_page.rs` drives the page and
+`tests/gui/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of

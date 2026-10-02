@@ -9,8 +9,7 @@ use hydrus_core::media_viewer::SlideshowSettings;
 use hydrus_gui::slideshow::{Shown, Slideshow, Special, slideshow_menu, special_period};
 use serde_json::{Value, json};
 
-mod common;
-use common::menus::described;
+use crate::common::menus::described;
 
 #[test]
 fn files_with_durations_bend_the_period_as_the_reference_s() {

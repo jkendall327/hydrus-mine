@@ -18,8 +18,7 @@ use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::{Value, json};
 
-mod common;
-use common::menus::{as_recorded, described, pruned, tidy, unescaped};
+use crate::common::menus::{as_recorded, described, pruned, tidy, unescaped};
 
 #[test]
 fn the_menu_is_the_reference_s() {
