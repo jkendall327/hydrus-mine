@@ -237,11 +237,15 @@ search.
   number of subscriptions syncing at once and the failed-imports limit; on
   the maintenance page, idle time and shutdown, repository, sibling,
   deferred delete and idle work settings). It opens on its first page,
-  rather than "gui" or the page last open; it has no search box; options'
-  tooltips aren't shown; a box's title is a heading over its options
-  rather than a frame around them; and a time behind a button in the
-  reference (the downloaders' waits after errors) shows its fields in
-  place.
+  rather than "gui" or the page last open; options' tooltips aren't shown;
+  a box's title is a heading over its options rather than a frame around
+  them; and a time behind a button in the reference (the downloaders'
+  waits after errors) shows its fields in place. Its search suggests only
+  the options it has, and their boxes (the reference's also suggests other
+  text on its pages, such as units and dropdowns' choices), and is always
+  at the top (the reference's "Put the options search bar at the" isn't
+  an option yet); two options with the same label each go to their own
+  row (the reference's both go to the last).
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.

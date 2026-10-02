@@ -4,7 +4,7 @@
 // the page's titled boxes. Changes wait for "apply"; "cancel" (or escape)
 // forgets them.
 
-import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
 // a field of a time: its value, largest value, and the unit after it
@@ -35,6 +35,8 @@ export struct OptionRow {
     fields: [DurationField],
     // (a rate's text between its number and its time)
     per: string,
+    // gone to from the search: highlighted, as the reference's
+    found: bool,
 }
 
 // a whole number typed in a small box
@@ -77,6 +79,16 @@ export component OptionsWindow inherits Window {
     in property <[StandardListViewItem]> pages;
     in-out property <int> page;
     in property <[OptionRow]> rows;
+    // the search box: its placeholder, text, what it suggests (at most
+    // `shown` at once), and the one picked by the arrows (-1 for none)
+    in property <string> search-placeholder;
+    in property <int> shown: 10;
+    in-out property <string> search-text;
+    in property <[string]> matches;
+    in-out property <int> match-highlighted: -1;
+    callback search-edited(string);
+    callback search-chosen(int);
+    callback move-match(int);
 
     callback page-chosen(int);
     // (each by the option's place among the page's rows)
@@ -90,8 +102,32 @@ export component OptionsWindow inherits Window {
     callback apply();
     callback cancel();
 
-    forward-focus: keys;
+    forward-focus: search;
     keys := FocusScope {
+        // (the suggestions take the arrows, enter and escape while shown)
+        capture-key-pressed(event) => {
+            if (root.matches.length == 0) {
+                return reject;
+            }
+            if (event.text == Key.UpArrow) {
+                root.move-match(-1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow) {
+                root.move-match(1);
+                return accept;
+            }
+            if (event.text == Key.Return) {
+                root.search-chosen(max(0, root.match-highlighted));
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                root.search-text = "";
+                root.search-edited("");
+                return accept;
+            }
+            reject
+        }
         key-pressed(event) => {
             if (event.text == Key.Escape) {
                 root.cancel();
@@ -102,6 +138,11 @@ export component OptionsWindow inherits Window {
         VerticalLayout {
             padding: 8px;
             spacing: 6px;
+            search := LineEdit {
+                placeholder-text: root.search-placeholder;
+                text <=> root.search-text;
+                edited(text) => { root.search-edited(text); }
+            }
             HorizontalLayout {
                 spacing: 8px;
                 vertical-stretch: 1;
@@ -131,11 +172,17 @@ export component OptionsWindow inherits Window {
                                 horizontal-alignment: center;
                                 horizontal-stretch: 1;
                             }
-                            if row.kind != 0: Text {
-                                text: row.label;
-                                vertical-alignment: center;
-                                wrap: word-wrap;
+                            if row.kind != 0: Rectangle {
                                 horizontal-stretch: 1;
+                                // (the reference's search highlight)
+                                background: row.found ? #eaea007b : transparent;
+                                VerticalLayout {
+                                    Text {
+                                        text: row.label;
+                                        vertical-alignment: center;
+                                        wrap: word-wrap;
+                                    }
+                                }
                             }
                             if row.kind == 1: HorizontalLayout {
                                 width: 260px;
@@ -241,6 +288,49 @@ export component OptionsWindow inherits Window {
                 Button {
                     text: "cancel";
                     clicked => { root.cancel(); }
+                }
+            }
+        }
+        if root.matches.length > 0: Rectangle {
+            x: search.x;
+            y: search.y + search.height + 2px;
+            width: search.width;
+            height: min(root.matches.length, root.shown) * 24px + 4px;
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            suggestions := ListView {
+                x: 2px;
+                y: 2px;
+                width: parent.width - 4px;
+                height: parent.height - 4px;
+                // (the arrows' pick kept in view)
+                property <int> picked: root.match-highlighted;
+                changed picked => {
+                    if (self.picked >= 0) {
+                        let top = self.picked * 24px;
+                        if (top < -self.viewport-y) {
+                            self.viewport-y = -top;
+                        } else if (top + 24px > -self.viewport-y + self.visible-height) {
+                            self.viewport-y = -(top + 24px - self.visible-height);
+                        }
+                    }
+                }
+                for text[i] in root.matches: Rectangle {
+                    height: 24px;
+                    background: i == root.match-highlighted ? Theme.highlight
+                        : pick.has-hover ? Theme.hover : transparent;
+                    Text {
+                        x: 4px;
+                        width: parent.width - 8px;
+                        text: text;
+                        color: i == root.match-highlighted ? Theme.highlight-text : Theme.text;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    pick := TouchArea {
+                        clicked => { root.search-chosen(i); }
+                    }
                 }
             }
         }

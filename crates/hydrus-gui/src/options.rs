@@ -1259,6 +1259,48 @@ pub fn applied(
     (out, problems)
 }
 
+/// The search box's placeholder, as the reference's.
+pub const SEARCH_PLACEHOLDER: &str = "Search options... (Experimental!)";
+
+/// How many suggestions show at once (more scroll), as the reference's.
+pub const SEARCH_SHOWN: usize = 10;
+
+/// Something the options search offers, as the reference's does: a box's
+/// title or an option's label, then its page ("text (page)"), and the row
+/// it is on that page.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct Suggestion {
+    pub text: String,
+    pub page: usize,
+    pub row: usize,
+}
+
+/// What the options search offers, page by page and row by row.
+pub fn suggestions(pages: &[Page]) -> Vec<Suggestion> {
+    fn walk(items: &[Item], page: usize, name: &str, row: &mut usize, out: &mut Vec<Suggestion>) {
+        for item in items {
+            let text = match item {
+                Item::Box(title, _) => title,
+                Item::Opt(option) => option.label,
+            };
+            out.push(Suggestion {
+                text: format!("{text} ({name})"),
+                page,
+                row: *row,
+            });
+            *row += 1;
+            if let Item::Box(_, items) = item {
+                walk(items, page, name, row, out);
+            }
+        }
+    }
+    let mut out = Vec::new();
+    for (i, page) in pages.iter().enumerate() {
+        walk(&page.items, i, page.name, &mut 0, &mut out);
+    }
+    out
+}
+
 /// A row of the page shown: a box's title, or an option.
 #[derive(Debug)]
 pub enum Row<'a> {
@@ -1285,6 +1327,10 @@ pub struct Editor {
     /// spin box keeps it).
     numbers: Vec<Vec<i64>>,
     page: usize,
+    suggestions: Vec<Suggestion>,
+    /// The rows gone to from the search (page, row): highlighted while the
+    /// window is open, as the reference leaves them.
+    found: std::collections::BTreeSet<(usize, usize)>,
 }
 
 impl Editor {
@@ -1307,13 +1353,40 @@ impl Editor {
                     .collect()
             })
             .collect();
+        let suggestions = suggestions(&pages);
         Self {
             pages,
             before: settings,
             values,
             numbers,
             page: 0,
+            suggestions,
+            found: std::collections::BTreeSet::new(),
         }
+    }
+
+    /// The suggestions whose text has `query` in it, ignoring case (as the
+    /// reference's completer matches); none for no query.
+    pub fn search(&self, query: &str) -> Vec<&Suggestion> {
+        let query = query.to_lowercase();
+        if query.is_empty() {
+            return Vec::new();
+        }
+        self.suggestions
+            .iter()
+            .filter(|s| s.text.to_lowercase().contains(&query))
+            .collect()
+    }
+
+    /// Show the page of a suggestion chosen, its row highlighted.
+    pub fn go_to(&mut self, suggestion: &Suggestion) {
+        self.show_page(suggestion.page);
+        self.found.insert((suggestion.page, suggestion.row));
+    }
+
+    /// Whether the page shown's row was gone to from the search.
+    pub fn found(&self, row: usize) -> bool {
+        self.found.contains(&(self.page, row))
     }
 
     pub fn page_names(&self) -> Vec<&'static str> {
@@ -1633,6 +1706,34 @@ mod tests {
         assert_eq!(n.no_proxy, None);
         editor.none(no_proxy, false);
         assert_eq!(editor.applied().0.network.no_proxy, before.network.no_proxy);
+    }
+
+    #[test]
+    fn the_search_finds_options_by_their_labels_and_boxes() {
+        let mut editor = Editor::new(settings());
+        let texts = |editor: &Editor, query| -> Vec<String> {
+            editor
+                .search(query)
+                .iter()
+                .map(|s| s.text.clone())
+                .collect()
+        };
+        assert!(texts(&editor, "").is_empty());
+        // (any case, anywhere in the text, the page's name too)
+        assert_eq!(
+            texts(&editor, "PROXY"),
+            ["proxy settings (connection)", "no_proxy:  (connection)"]
+        );
+        assert!(texts(&editor, "(media viewer hovers)").len() > 5);
+        // gone to: its page shown, its row highlighted
+        let found = editor.search("Maximum size of trash")[0].clone();
+        editor.go_to(&found);
+        assert_eq!(editor.page_names()[editor.page()], "files and trash");
+        let Row::Opt { option, .. } = &editor.rows()[found.row] else {
+            panic!("an option's row");
+        };
+        assert_eq!(option.label, "Maximum size of trash (MB): ");
+        assert!(editor.found(found.row) && !editor.found(found.row + 1));
     }
 
     #[test]

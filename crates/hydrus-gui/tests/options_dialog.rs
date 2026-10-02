@@ -282,3 +282,29 @@ fn the_options_pages_are_the_references() {
     }
     assert!(problems.is_empty(), "{}", problems.join("\n"));
 }
+
+#[test]
+fn the_options_search_offers_what_the_references_does() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let search = &recorded["search"];
+    assert_eq!(
+        search["placeholder"],
+        hydrus_gui::options::SEARCH_PLACEHOLDER
+    );
+    assert_eq!(search["max_visible"], hydrus_gui::options::SEARCH_SHOWN);
+    // (each of ours is one of the reference's, written as it writes it)
+    let theirs: Vec<&str> = search["suggestions"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter_map(Json::as_str)
+        .collect();
+    let ours = hydrus_gui::options::suggestions(&pages());
+    let missing: Vec<&str> = ours
+        .iter()
+        .map(|s| s.text.as_str())
+        .filter(|text| !theirs.contains(text))
+        .collect();
+    assert!(missing.is_empty(), "not the reference's: {missing:?}");
+    assert!(ours.len() > 100, "{} suggestions", ours.len());
+}

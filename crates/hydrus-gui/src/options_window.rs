@@ -11,7 +11,9 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, StandardListViewItem, V
 
 use hydrus_store::Store;
 
-use crate::options::{Editor, Kind, Row, Settings, Unit, Value, duration_fields};
+use crate::options::{
+    Editor, Kind, Row, SEARCH_PLACEHOLDER, SEARCH_SHOWN, Settings, Unit, Value, duration_fields,
+};
 use crate::{DurationField, OptionRow, OptionsWindow};
 
 /// A time's fields as the window shows them.
@@ -152,7 +154,15 @@ pub(crate) fn open(
         move || {
             let Some(window) = weak.upgrade() else { return };
             let editor = editor.borrow();
-            let rows: Vec<OptionRow> = editor.rows().iter().map(option_row).collect();
+            let rows: Vec<OptionRow> = editor
+                .rows()
+                .iter()
+                .enumerate()
+                .map(|(i, row)| OptionRow {
+                    found: editor.found(i),
+                    ..option_row(row)
+                })
+                .collect();
             window.set_page(int(editor.page() as i64));
             window.set_rows(ModelRc::new(VecModel::from(rows)));
         }
@@ -169,6 +179,60 @@ pub(crate) fn open(
         }
     };
     let at = |i: i32| usize::try_from(i).unwrap_or(usize::MAX);
+    // the search: suggestions as it is typed in; one chosen shows its page,
+    // its row highlighted, and the search is cleared (as the reference's)
+    window.set_search_placeholder(SEARCH_PLACEHOLDER.into());
+    window.set_shown(int(SEARCH_SHOWN as i64));
+    let matches: Rc<RefCell<Vec<crate::options::Suggestion>>> = Rc::default();
+    window.on_search_edited({
+        let editor = editor.clone();
+        let matches = matches.clone();
+        let weak = window.as_weak();
+        move |text| {
+            let Some(window) = weak.upgrade() else { return };
+            let found: Vec<crate::options::Suggestion> =
+                editor.borrow().search(&text).into_iter().cloned().collect();
+            let texts: Vec<SharedString> = found.iter().map(|s| s.text.as_str().into()).collect();
+            *matches.borrow_mut() = found;
+            window.set_matches(ModelRc::new(VecModel::from(texts)));
+            window.set_match_highlighted(-1);
+        }
+    });
+    window.on_move_match({
+        let matches = matches.clone();
+        let weak = window.as_weak();
+        move |by| {
+            let Some(window) = weak.upgrade() else { return };
+            let count = int(matches.borrow().len() as i64);
+            if count == 0 {
+                return;
+            }
+            let at = (window.get_match_highlighted() + by).clamp(0, count - 1);
+            window.set_match_highlighted(at);
+        }
+    });
+    window.on_search_chosen({
+        let editor = editor.clone();
+        let matches = matches.clone();
+        let show_page = show_page.clone();
+        let weak = window.as_weak();
+        move |i| {
+            let chosen = usize::try_from(i)
+                .ok()
+                .and_then(|i| matches.borrow().get(i).cloned());
+            let Some(chosen) = chosen else {
+                return;
+            };
+            editor.borrow_mut().go_to(&chosen);
+            show_page();
+            matches.borrow_mut().clear();
+            if let Some(window) = weak.upgrade() {
+                window.set_search_text(SharedString::new());
+                window.set_matches(ModelRc::default());
+                window.set_match_highlighted(-1);
+            }
+        }
+    });
     window.on_page_chosen({
         let editor = editor.clone();
         let show_page = show_page.clone();

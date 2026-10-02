@@ -29,7 +29,9 @@ it opens on, and each page's controls in the order they are laid out:
   or the `"items"` laid out in it, for anything else.
 
 A control explicitly hidden has `"hidden": true`, and one with a tooltip
-its `"tooltip"`. The recording's `"facts"` are the options the driver sets
+its `"tooltip"`. `"search"` is the options search box's placeholder and
+what it offers (`"suggestions"`, in order: each label, box title and
+dropdown's text as "text (page)"). The recording's `"facts"` are the options the driver sets
 as it boots the client that hydrus-rs can't read from the fixture (the
 similar-files search is switched off, so it can't add pairs mid-recording). hydrus-rs's options window is checked against this: its
 pages, their order and labels, and the values it shows for the fixture's
@@ -262,9 +264,15 @@ def record( session ):
 
         current = book.tabText( book.GetCurrentPageIndex() )
 
+        search = {
+            'placeholder' : panel._options_search.placeholderText(),
+            'max_visible' : panel._completer.maxVisibleItems(),
+            'suggestions' : panel._completer.model().stringList(),
+        }
+
         panel.deleteLater()
 
-        return { 'opens_on' : current, 'pages' : pages }
+        return { 'opens_on' : current, 'search' : search, 'pages' : pages }
 
 
     return controller.CallBlockingToQt( gui, f )

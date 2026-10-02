@@ -95,6 +95,50 @@ fn the_options_window_applies_its_changes() {
     assert_eq!(window.get_page(), 0);
     assert_eq!(row(&window, "Label for files with audio: ").1.kind, 6);
 
+    // the search: suggestions as it is typed; the arrows pick one, enter
+    // goes to it (its page shown, its row highlighted), and it is cleared
+    assert_eq!(
+        window.get_search_placeholder(),
+        "Search options... (Experimental!)"
+    );
+    window.set_search_text("TRASH".into());
+    window.invoke_search_edited("TRASH".into());
+    let matches: Vec<String> = (0..window.get_matches().row_count())
+        .map(|i| window.get_matches().row_data(i).unwrap().to_string())
+        .collect();
+    assert!(
+        matches.contains(&"Maximum size of trash (MB):  (files and trash)".to_owned()),
+        "{matches:?}"
+    );
+    let at = matches
+        .iter()
+        .position(|m| m == "Maximum size of trash (MB):  (files and trash)")
+        .unwrap();
+    for _ in 0..=at {
+        window.invoke_move_match(1);
+    }
+    assert_eq!(window.get_match_highlighted(), i32::try_from(at).unwrap());
+    window.invoke_search_chosen(window.get_match_highlighted());
+    assert_eq!(
+        page_names(&window)[usize::try_from(window.get_page()).unwrap()],
+        "files and trash"
+    );
+    let (_, found) = row(&window, "Maximum size of trash (MB): ");
+    assert!(found.found);
+    assert!(
+        !row(
+            &window,
+            "Number of hours a file will stay in the trash before being deleted: "
+        )
+        .1
+        .found
+    );
+    assert_eq!(window.get_search_text(), "");
+    assert_eq!(window.get_matches().row_count(), 0);
+    // (nothing typed: nothing suggested)
+    window.invoke_search_edited("".into());
+    assert_eq!(window.get_matches().row_count(), 0);
+
     // edits that are cancelled are forgotten
     show_page(&window, "files and trash");
     let (i, trash) = row(&window, "Maximum size of trash (MB): ");
