@@ -57,6 +57,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         // (the reference stores "no limit" as None)
         gallery.file_limit = value.as_i64().and_then(|n| u64::try_from(n).ok());
     }
+    if let Some(options) = &options {
+        gallery.gug = options.default_gug();
+    }
     insert_setting(&mut input, &gallery)?;
 
     // (the reference keeps "no limit" as None; its defaults fill missing keys)

@@ -16,7 +16,7 @@ use tokio::sync::Notify;
 use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
 use hydrus_core::network::NetworkContext;
-use hydrus_core::subscriptions::{CheckerDefaults, GalleryDefaults, SeedTime};
+use hydrus_core::subscriptions::{CheckerDefaults, SeedTime};
 use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
 use hydrus_net::{BandwidthScope, Job};
@@ -747,8 +747,9 @@ impl QueueRunner {
         }
     }
 
-    /// Start gallery searches (see [`create_gallery_searches`]) and set
-    /// them working.
+    /// Start gallery searches (see
+    /// [`hydrus_store::gallery::create_gallery_searches`]) and set them
+    /// working.
     pub fn search_gallery(
         self: &Arc<Self>,
         page_name: Option<&str>,
@@ -757,19 +758,24 @@ impl QueueRunner {
         queries: &[String],
         file_limit: Option<Option<u64>>,
     ) -> Result<Vec<Queue>, GallerySearchError> {
-        let made = create_gallery_searches(
-            &self.downloader.store,
-            &self.downloader.definitions(),
+        let how = hydrus_store::gallery::NewSearches {
             page_name,
             gug_key,
             gug_name,
-            queries,
             file_limit,
+            ..Default::default()
+        };
+        let made = hydrus_store::gallery::create_gallery_searches(
+            &self.downloader.store,
+            &self.downloader.definitions(),
+            &how,
+            queries,
+            now(),
         )?;
-        for queue in &made {
+        for queue in &made.queues {
             self.wake(queue.id);
         }
-        Ok(made)
+        Ok(made.queues)
     }
 
     /// Start working on queues made elsewhere (say, by the command line)
@@ -889,8 +895,7 @@ fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
         .collect()
 }
 
-/// The name of a new gallery downloader page.
-pub const DEFAULT_GALLERY_PAGE_NAME: &str = "gallery";
+pub use hydrus_store::gallery::{DEFAULT_GALLERY_PAGE_NAME, GallerySearchError};
 
 pub use hydrus_core::gallery::GallerySearch;
 
@@ -899,99 +904,6 @@ pub fn gallery_search(queue: &Queue) -> Option<GallerySearch> {
     (queue.kind == QueueKind::Gallery)
         .then(|| serde_json::from_value(queue.extra.clone()).ok())
         .flatten()
-}
-
-/// Why gallery searches could not start.
-#[derive(Debug, thiserror::Error)]
-pub enum GallerySearchError {
-    #[error("Could not find a Gallery URL Generator (Downloader) for \"{0}\"!")]
-    NoDownloader(String),
-    #[error("{0}")]
-    Gug(String),
-    #[error(transparent)]
-    Store(#[from] StoreError),
-}
-
-/// Make gallery searches (`MultipleGalleryImport.PendQueries`): one queue
-/// per query on the named gallery page, reading the GUG's result pages until
-/// the file limit (`None`: the client's default).
-pub fn create_gallery_searches(
-    store: &hydrus_store::Store,
-    definitions: &hydrus_parse::Downloaders,
-    page_name: Option<&str>,
-    gug_key: &str,
-    gug_name: &str,
-    queries: &[String],
-    file_limit: Option<Option<u64>>,
-) -> Result<Vec<Queue>, GallerySearchError> {
-    let gug = definitions
-        .gugs
-        .get(gug_key, gug_name)
-        .ok_or_else(|| GallerySearchError::NoDownloader(gug_name.to_owned()))?;
-    let snapshot = store.snapshot();
-    let classes = &snapshot.url_classes;
-    let network: hydrus_store::network::NetworkSettings =
-        store.read(hydrus_store::settings::get)?;
-    let options = hydrus_core::url::GugOptions {
-        percent_twenty_is_space: network.gug_percent_twenty_is_space,
-        collapse_leading_slashes: classes.settings().collapse_leading_slashes,
-    };
-    let defaults: GalleryDefaults = store.read(hydrus_store::settings::get)?;
-    let file_limit = file_limit.unwrap_or(defaults.file_limit);
-    let page_name = page_name.unwrap_or(DEFAULT_GALLERY_PAGE_NAME).to_owned();
-    let mut made = Vec::new();
-    for query in queries {
-        let urls = definitions
-            .gugs
-            .gallery_urls(gug, query, options)
-            .map_err(|e| GallerySearchError::Gug(e.to_string()))?;
-        if urls.is_empty() {
-            return Err(GallerySearchError::Gug(format!(
-                "The Gallery URL Generator \"{}\" did not produce any URLs!",
-                gug.name()
-            )));
-        }
-        let run_token = hex::encode(rand_token());
-        let mut seen = BTreeSet::new();
-        let seeds: Vec<NewGallerySeed> = urls
-            .into_iter()
-            .map(|url| classes.normalise(&url, true).unwrap_or(url))
-            .filter(|url| seen.insert(url.clone()))
-            .map(|url| NewGallerySeed {
-                url,
-                can_generate_more_pages: true,
-                referral_url: None,
-                meta: GallerySeedMeta {
-                    run_token: run_token.clone(),
-                    ..GallerySeedMeta::default()
-                },
-            })
-            .collect();
-        let search = GallerySearch {
-            query: query.clone(),
-            source_name: gug.name().to_owned(),
-            file_limit,
-            num_new_urls_found: 0,
-            num_urls_found: 0,
-        };
-        let extra = serde_json::to_value(&search).expect("plain data serialises");
-        let name = page_name.clone();
-        let queue = store.write(move |ctx| {
-            let id = queues::create_queue(
-                ctx.conn(),
-                QueueKind::Gallery,
-                &name,
-                None,
-                &ImportOptionsSlice::default(),
-                now(),
-            )?;
-            queues::set_queue_extra(ctx.conn(), id, &extra)?;
-            queues::add_gallery_seeds(ctx.conn(), id, &seeds, None, now())?;
-            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
-        })?;
-        made.push(queue);
-    }
-    Ok(made)
 }
 
 /// What a queue's requests count against, as the reference's importers make

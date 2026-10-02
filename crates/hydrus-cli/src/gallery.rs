@@ -49,16 +49,20 @@ pub fn run(dir: &Path, search: Search) -> Result<()> {
         bail!("no downloader is called \"{}\"", search.downloader);
     };
     let limit = search.limit.map(|n| (n > 0).then_some(n));
-    let made = hydrus_download::queue::create_gallery_searches(
-        &store,
-        &definitions,
-        search.page.as_deref(),
-        gug.key(),
-        gug.name(),
-        &queries,
-        limit,
-    )
-    .context("starting the searches")?;
+    let how = hydrus_store::gallery::NewSearches {
+        page_name: search.page.as_deref(),
+        gug_key: gug.key(),
+        gug_name: gug.name(),
+        file_limit: limit,
+        ..Default::default()
+    };
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+    let made =
+        hydrus_store::gallery::create_gallery_searches(&store, &definitions, &how, &queries, now)
+            .context("starting the searches")?
+            .queues;
     println!(
         "started {} search{} on \"{}\"",
         made.len(),

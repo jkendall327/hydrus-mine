@@ -13,6 +13,7 @@ pub mod domains;
 pub mod duplicates;
 pub mod error;
 pub mod file_maintenance;
+pub mod gallery;
 pub mod import;
 pub mod import_folders;
 pub mod legacy;

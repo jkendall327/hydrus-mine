@@ -70,12 +70,17 @@ pub struct GalleryDefaults {
     /// Stop a search after this many new files (`gallery_file_limit`;
     /// `None`: no limit).
     pub file_limit: Option<u64>,
+    /// The downloader a new gallery page uses: its key (hex) and name
+    /// (`default_gug_key`, `default_gug_name`; `None` while unset).
+    #[serde(default)]
+    pub gug: Option<(String, String)>,
 }
 
 impl Default for GalleryDefaults {
     fn default() -> Self {
         Self {
             file_limit: Some(2000),
+            gug: None,
         }
     }
 }

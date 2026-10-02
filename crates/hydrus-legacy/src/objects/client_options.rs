@@ -363,6 +363,21 @@ impl ClientOptions {
         out
     }
 
+    /// The downloader a new gallery page uses, key (hex) and name
+    /// (`GetDefaultGUGKeyAndName`: none while the name is empty).
+    pub fn default_gug(&self) -> Option<(String, String)> {
+        let name = self.strings.get("default_gug_name")?;
+        if name.is_empty() {
+            return None;
+        }
+        let key = self
+            .keys
+            .get("default_gug_key")
+            .map(hex::encode)
+            .unwrap_or_default();
+        Some((key, name.clone()))
+    }
+
     /// Downloader pages' options (`confirm_non_empty_downloader_page_close`).
     pub fn downloader_page_settings(&self) -> DownloaderPageSettings {
         let mut out = DownloaderPageSettings::default();
@@ -889,6 +904,23 @@ mod tests {
                 short_summary_new: false,
                 short_summary_deleted: true,
             }
+        );
+    }
+
+    #[test]
+    fn the_default_downloader_comes_across() {
+        let mut options = ClientOptions::defaults().unwrap();
+        // (a new client's has no name, so none)
+        assert_eq!(options.default_gug(), None);
+        options
+            .strings
+            .insert("default_gug_name".into(), "safebooru tag search".into());
+        options
+            .keys
+            .insert("default_gug_key".into(), vec![0xab, 0x01]);
+        assert_eq!(
+            options.default_gug(),
+            Some(("ab01".into(), "safebooru tag search".into()))
         );
     }
 
