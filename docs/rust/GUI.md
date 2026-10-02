@@ -130,7 +130,7 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on seventeen pages: audio,
+It has the options hydrus-rs honours, so far on eighteen pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
@@ -142,7 +142,9 @@ trash, gui (keeping the media viewer's size and place), gui pages,
 importing (looking inside .zip files for comics), maintenance and
 processing (file maintenance in normal time and its throttle, the
 potential duplicates search, auto-resolution in normal time and its work
-and rest), media viewer (slideshows), media viewer hovers (the top hover's
+and rest), media playback (the zoom centre, the zoom steps, the media
+viewer's default zoom, and what counts as transparency), media viewer
+(slideshows), media viewer hovers (the top hover's
 file summary), ratings, tag presentation, thumbnails and advanced. Times
 show as the reference's fields (days, hours, minutes, seconds, ms), and a
 rate as its number, the reference's words ("errors within") and a time;

@@ -88,6 +88,7 @@ fn the_options_window_applies_its_changes() {
             "gui pages",
             "importing",
             "maintenance and processing",
+            "media playback",
             "media viewer",
             "media viewer hovers",
             "ratings",
@@ -224,11 +225,20 @@ fn the_options_window_applies_its_changes() {
     let (i, wait) = row(&window, "Delay time on a gallery/watcher network error:");
     assert_eq!(wait.kind, 8);
     window.invoke_field_edited(i, 0, 2);
+    show_page(&window, "media playback");
+    let (i, zoom) = row(&window, "Media Viewer default zoom:");
+    assert_eq!(zoom.kind, 5);
+    window.invoke_choice_chosen(i, 2);
     show_page(&window, "duplicates");
     let (i, audio) = row(&window, "Score for file with audio:");
     assert_eq!((audio.kind, audio.minimum, audio.maximum), (2, -100, 100));
     window.invoke_number_edited(i, -30);
     window.invoke_apply();
+    assert_eq!(
+        settings().media_viewer.default_zoom_type,
+        hydrus_core::media_viewer::ZoomType::Canvas,
+        "canvas fit"
+    );
     let scores = settings().duplicate_filter.scores;
     assert_eq!(scores.has_audio, -30);
     assert_eq!(scores.more_tags, before.duplicate_filter.scores.more_tags);

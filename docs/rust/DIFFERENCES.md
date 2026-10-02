@@ -239,8 +239,10 @@ search.
   deferred delete and idle work settings; on the duplicates page, the
   preparation tab's notification and the filter's colours; on the file
   viewing statistics page, the filters' own switches and the menus'
-  stats; most of the gui page; and on the importing page, dropped URLs
-  and the work slots). It opens on its first page,
+  stats; most of the gui page; on the importing page, dropped URLs and
+  the work slots; and on the media playback page, the preview's zoom,
+  re-centring, the checkerboard, animations, mpv, Qt's player and the
+  system settings). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; and a time behind a button in the reference (the downloaders'

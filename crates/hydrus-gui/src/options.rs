@@ -7,7 +7,9 @@
 
 use std::rc::Rc;
 
-use hydrus_core::media_viewer::{InfoLineSettings, MediaViewerSettings, SlideshowSettings};
+use hydrus_core::media_viewer::{
+    InfoLineSettings, MediaViewerSettings, SlideshowSettings, ZoomCentre, ZoomType,
+};
 use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
@@ -591,25 +593,68 @@ fn file_count_display(index: usize) -> FileCountDisplay {
     }
 }
 
-/// Slideshow durations as the reference writes them ("1.0,5.0,10.0").
-fn durations_text(durations: &[f64]) -> String {
-    durations
+/// Numbers (slideshow durations, media zooms) as the reference writes them
+/// ("1.0,5.0,10.0").
+fn numbers_text(numbers: &[f64]) -> String {
+    numbers
         .iter()
         .map(|d| float_text(*d))
         .collect::<Vec<_>>()
         .join(",")
 }
 
-/// The reference's parse of them (`MediaViewerPanel.UpdateOptions`): each
-/// a number, those above zero kept.
-fn parse_durations(text: &str) -> Result<Vec<f64>, String> {
-    let durations: Vec<f64> = text
+/// The reference's parse of comma-separated numbers (slideshow durations,
+/// media zooms: `UpdateOptions`): each a number, those above zero kept;
+/// `what` says what couldn't be read.
+fn parse_numbers(text: &str, what: &str) -> Result<Vec<f64>, String> {
+    let numbers: Vec<f64> = text
         .split(',')
         .map(|part| part.trim().parse::<f64>())
         .collect::<Result<_, _>>()
-        .map_err(|_| "Could not parse those slideshow durations, so they were not saved!")?;
-    Ok(durations.into_iter().filter(|d| *d > 0.0).collect())
+        .map_err(|_| format!("Could not parse those {what}, so they were not saved!"))?;
+    Ok(numbers.into_iter().filter(|d| *d > 0.0).collect())
 }
+
+/// `ClientGUICanvasMedia.ZOOM_CENTERPOINT_TYPES`, as the reference lists
+/// them.
+const ZOOM_CENTRES: &[&str] = &[
+    "viewer center",
+    "mouse (or viewer center if mouse outside)",
+    "media center",
+    "media top-left",
+];
+const ZOOM_CENTRE_ORDER: [ZoomCentre; 4] = [
+    ZoomCentre::ViewerCentre,
+    ZoomCentre::Mouse,
+    ZoomCentre::MediaCentre,
+    ZoomCentre::MediaTopLeft,
+];
+
+/// `MEDIA_VIEWER_ZOOM_TYPES`, as the reference lists them.
+const ZOOM_TYPES: &[&str] = &[
+    "default for filetype",
+    "100% zoom",
+    "canvas fit",
+    "fill horizontally",
+    "fill vertically",
+    "canvas fill",
+];
+const ZOOM_TYPE_ORDER: [ZoomType; 6] = [
+    ZoomType::DefaultForFiletype,
+    ZoomType::Full,
+    ZoomType::Canvas,
+    ZoomType::FillX,
+    ZoomType::FillY,
+    ZoomType::FillAuto,
+];
+
+/// `has_transparency_strictness_string_lookup`, as the reference lists
+/// them: the strictest (2) first.
+const TRANSPARENCY: &[&str] = &[
+    "it has a transparency channel that a human might recognise",
+    "it has a transparency channel that is not completely transparent or opaque",
+    "it has a transparency channel",
+];
 
 fn signed(n: Option<u64>) -> Option<i64> {
     n.map(|n| i64::try_from(n).unwrap_or(i64::MAX))
@@ -1174,16 +1219,73 @@ pub fn pages() -> Vec<Page> {
             ],
         ),
         page(
+            "media playback",
+            vec![
+                boxed(
+                    "zoom and position",
+                    vec![
+                        choice(
+                            "Centerpoint for media zooming:",
+                            ZOOM_CENTRES,
+                            |s| {
+                                ZOOM_CENTRE_ORDER
+                                    .iter()
+                                    .position(|c| *c == s.media_viewer.zoom_centre)
+                                    .unwrap_or(0)
+                            },
+                            |s, i| s.media_viewer.zoom_centre = ZOOM_CENTRE_ORDER[i],
+                        ),
+                        text(
+                            "Media zooms:",
+                            |s| numbers_text(&s.media_viewer.media_zooms),
+                            |s, t| {
+                                // (none above zero: left as they were)
+                                let zooms = parse_numbers(t, "zooms")?;
+                                if !zooms.is_empty() {
+                                    s.media_viewer.media_zooms = zooms;
+                                }
+                                Ok(())
+                            },
+                        ),
+                        choice(
+                            "Media Viewer default zoom:",
+                            ZOOM_TYPES,
+                            |s| {
+                                ZOOM_TYPE_ORDER
+                                    .iter()
+                                    .position(|t| *t == s.media_viewer.default_zoom_type)
+                                    .unwrap_or(0)
+                            },
+                            |s, i| s.media_viewer.default_zoom_type = ZOOM_TYPE_ORDER[i],
+                        ),
+                    ],
+                ),
+                boxed(
+                    "transparency",
+                    vec![choice(
+                        "Consider a file as \"having transparency\" when:",
+                        TRANSPARENCY,
+                        |s| {
+                            2_usize.saturating_sub(usize::from(
+                                s.file_handling.transparency_strictness,
+                            ))
+                        },
+                        |s, i| s.file_handling.transparency_strictness = 2 - i.min(2) as u8,
+                    )],
+                ),
+            ],
+        ),
+        page(
             "media viewer",
             vec![boxed(
                 "slideshows",
                 vec![
                     text(
                         "Slideshow durations:",
-                        |s| durations_text(&s.slideshow.durations),
+                        |s| numbers_text(&s.slideshow.durations),
                         |s, t| {
                             // (none above zero: left as they were)
-                            let durations = parse_durations(t)?;
+                            let durations = parse_numbers(t, "slideshow durations")?;
                             if !durations.is_empty() {
                                 s.slideshow.durations = durations;
                             }
@@ -1756,6 +1858,21 @@ mod tests {
         assert_eq!(
             applied(&pages, &before, &values).0.slideshow.durations,
             before.slideshow.durations
+        );
+        // (media zooms are read as the reference reads them)
+        let playback = pages
+            .iter()
+            .position(|p| p.name == "media playback")
+            .unwrap();
+        values[playback][1] = Value::Text("0.5,big".into());
+        assert_eq!(
+            applied(&pages, &before, &values).1,
+            ["Could not parse those zooms, so they were not saved!"]
+        );
+        values[playback][1] = Value::Text("0.5, 2".into());
+        assert_eq!(
+            applied(&pages, &before, &values).0.media_viewer.media_zooms,
+            [0.5, 2.0]
         );
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
         for bad in ["big", "300"] {
