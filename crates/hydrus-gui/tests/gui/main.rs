@@ -7,6 +7,7 @@ mod common;
 mod animation;
 mod archive_delete;
 mod collect;
+mod downloader_lists;
 mod duplicate_filter;
 mod favourites;
 mod import_files;

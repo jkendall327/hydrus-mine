@@ -904,9 +904,9 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
     assert!(data.highlighted);
     assert_eq!(data.highlighted_query, "red eyes");
     let row = |ui: &MainWindow, row: usize| -> Vec<String> {
-        let cells = ui.get_gallery_rows().row_data(row).unwrap();
+        let cells = ui.get_gallery_rows().row_data(row).unwrap().cells;
         (0..cells.row_count())
-            .map(|i| cells.row_data(i).unwrap().text.to_string())
+            .map(|i| cells.row_data(i).unwrap().to_string())
             .collect()
     };
     // (sorted by query, the shown one starred)
@@ -963,11 +963,19 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
     // (its files done, its search's first page not yet read)
     assert_eq!(row(&ui, 0)[2..6], ["\u{23F9}", "", "pending", "2 - 1Ign"]);
 
-    // a double click shows another search, its files replacing the page's
-    ui.invoke_gallery_row_pressed(0);
+    // highlighting another search shows it, its files replacing the page's
+    // (the list sorted by query, as the reference's at first)
+    assert_eq!(
+        (ui.get_gallery_sort_column(), ui.get_gallery_ascending()),
+        (0, true)
+    );
+    assert!(!ui.get_gallery_data().has_selection);
+    ui.invoke_gallery_row_clicked(0, false, false);
+    assert!(ui.get_gallery_rows().row_data(0).unwrap().selected);
+    assert!(ui.get_gallery_data().has_selection);
     assert!(ui.get_gallery_data().can_highlight);
     assert!(ui.get_gallery_data().can_retry_ignored);
-    ui.invoke_gallery_row_pressed(0);
+    ui.invoke_gallery_highlight();
     let data = ui.get_gallery_data();
     assert_eq!(data.highlighted_query, "blue");
     assert_eq!(row(&ui, 0)[0], "* blue");
@@ -1085,7 +1093,7 @@ fn a_gallery_downloader_page_shows_and_controls_its_searches() {
         "Close \"gallery\"?\n\n1 queries are still importing."
     );
     ui.invoke_answer(false);
-    ui.invoke_gallery_row_pressed(1);
+    ui.invoke_gallery_row_clicked(1, false, false);
     ui.invoke_gallery_pause_play(false, false);
     ui.invoke_close_page();
     assert_eq!(
@@ -1160,9 +1168,9 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
     let (first, second) = (made[0].id, made[1].id);
     assert_eq!(watcher_state(&made[0]).unwrap().url, one);
     let row = |ui: &MainWindow, row: usize| -> Vec<String> {
-        let cells = ui.get_watcher_rows().row_data(row).unwrap();
+        let cells = ui.get_watcher_rows().row_data(row).unwrap().cells;
         (0..cells.row_count())
-            .map(|i| cells.row_data(i).unwrap().text.to_string())
+            .map(|i| cells.row_data(i).unwrap().to_string())
             .collect()
     };
     let data = ui.get_watcher_data();
@@ -1249,7 +1257,7 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
 
     // the other's files paused, from the list
     let other = (0..2).find(|&r| !row(&ui, r)[0].starts_with('*')).unwrap();
-    ui.invoke_watcher_row_pressed(i32::try_from(other).unwrap());
+    ui.invoke_watcher_row_clicked(i32::try_from(other).unwrap(), false, false);
     ui.invoke_watcher_pause_play(false, false);
     assert!(
         store
@@ -1259,6 +1267,41 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
             .files_paused
     );
     assert_eq!(row(&ui, other)[1], "\u{23F8}");
+    // a failed file on it: it can be retried, and highlighted
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let seed = NewFileSeed {
+                seed_type: SeedType::Url,
+                data: "https://boards.example/file/2".into(),
+                data_for_comparison: "https://boards.example/file/2".into(),
+                source_time: None,
+                referral_url: None,
+                meta: FileSeedMeta::default(),
+            };
+            queues::add_file_seeds(conn, second, &[seed], false, 0)?;
+            let mut seeds = queues::file_seeds(conn, second)?;
+            let seed = seeds.last_mut().unwrap();
+            seed.status = SeedStatus::Error;
+            queues::update_file_seed(conn, seed)
+        })
+        .unwrap();
+    (bound.sync)();
+    let data = ui.get_watcher_data();
+    assert!(data.can_retry_failed && !data.can_retry_ignored);
+    assert!(data.can_highlight);
+    // (sorted by status at first, then as clicked)
+    assert_eq!(
+        (ui.get_watcher_sort_column(), ui.get_watcher_ascending()),
+        (3, true)
+    );
+    ui.invoke_watcher_sort(0, false);
+    assert_eq!(
+        (ui.get_watcher_sort_column(), ui.get_watcher_ascending()),
+        (0, false)
+    );
+    let other = (0..2).find(|&r| !row(&ui, r)[0].starts_with('*')).unwrap();
+    let other_row = i32::try_from(other).unwrap();
 
     // kept with the page: its watchers, the one shown, its checker
     bound.pages.borrow_mut().sync(5).unwrap();
@@ -1283,6 +1326,30 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
     assert_eq!(kept_queues, [first, second]);
     assert_eq!(kept_state.highlighted, Some(first));
     assert_eq!(kept_state.checker, Some(checkers.watchers.clone()));
+
+    // the shown one selected too (ctrl+click): the list's buttons act on
+    // both, neither can be highlighted, and removing asks of both
+    ui.invoke_watcher_row_clicked(1 - other_row, true, false);
+    let data = ui.get_watcher_data();
+    assert!(data.has_selection && !data.can_highlight);
+    assert!((0..2).all(|r| ui.get_watcher_rows().row_data(r).unwrap().selected));
+    let checking = |queue| state(queue).checking_paused;
+    let before = (checking(first), checking(second));
+    ui.invoke_watcher_pause_play(true, false);
+    assert_eq!((checking(first), checking(second)), (!before.0, !before.1));
+    ui.invoke_watcher_pause_play(true, false);
+    assert_eq!((checking(first), checking(second)), before);
+    ui.invoke_watcher_remove();
+    assert_eq!(
+        ui.get_question(),
+        "Remove the 2 selected watchers?\n\n2 are not yet DEAD.\n\nThe currently highlighted \
+         watcher will be removed, and the media panel cleared."
+    );
+    ui.invoke_answer(false);
+    // (ctrl+click again takes it away)
+    ui.invoke_watcher_row_clicked(1 - other_row, true, false);
+    let usize_row = usize::try_from(1 - other_row).unwrap();
+    assert!(!ui.get_watcher_rows().row_data(usize_row).unwrap().selected);
 
     // removing the selected (not shown) watcher asks, as the reference does
     ui.invoke_watcher_remove();

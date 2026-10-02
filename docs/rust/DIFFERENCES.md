@@ -327,16 +327,21 @@ search.
   page's own presentation options (new files only, say) aren't applied
   yet, and the page has no sort or collect controls yet: its files are in
   the queue's order.
-- **A gallery or watcher downloader page's list selects one search or
-  watcher at a time**, and its buttons act on that one; the reference's
-  lists select several. A watcher page has no import options buttons yet
-  (the page's options, from hydrus, are given to new watchers), nor
-  "update selected with current options". Its
+- **A gallery or watcher downloader page's list has no right-click
+  menu** (copy queries, file and search logs, presentation), and
+  dragging across rows doesn't select them: click, ctrl+click and
+  shift+click do. A watcher page has no import options buttons yet
+  (the page's options, from hydrus, are given to new watchers), so
+  "update selected with current options" only differs on a watcher's
+  checker options there, and on a gallery page's search's file limit.
+  The "highlighted" boxes don't show a search's or watcher's own file
+  limit or import options. Its
   downloader list is flat (the reference nests a site's downloaders and
   greys out ones that can't work), and its searches' import options and
   file limits can't be edited from the page yet. Its columns are as
   narrow as the reference's, which shows the status columns as single
-  characters; with Slint's table they take what room the sidebar has.
+  characters; their widths are fixed, but for the first, which takes
+  the room left.
 
 ## The media viewer (`hydrus-gui`)
 

@@ -26,6 +26,9 @@ pub struct WatcherRow {
     pub checks: StatusCounts,
     pub files_paused: bool,
     pub live: QueueLive,
+    /// Its own import options, given it by the page when made (or by
+    /// "update selected with current options").
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
 }
 
 /// A watcher page's own part: its watchers, as its list shows them, and
@@ -43,8 +46,8 @@ pub struct WatcherView {
     pub state: hydrus_core::pages::DownloaderPageState,
     /// The list's sort.
     pub sort: (Column, bool),
-    /// The watcher selected in the list.
-    pub selected: Option<i64>,
+    /// The watchers selected in the list.
+    pub selection: crate::list_selection::ListSelection<i64>,
     /// Watchers just added, and those a URL entered again was already
     /// watched by, and when (for "just added", "already watching").
     pub added: Vec<(i64, i64)>,
@@ -82,6 +85,30 @@ impl WatcherView {
 
     pub fn watcher(&self, queue: i64) -> Option<&WatcherRow> {
         self.watchers.iter().find(|w| w.queue == queue)
+    }
+
+    /// The watchers' queues, in the list's order.
+    pub fn order(&self) -> Vec<i64> {
+        self.watchers.iter().map(|w| w.queue).collect()
+    }
+
+    /// The watchers selected, in the list's order.
+    pub fn selected(&self) -> Vec<i64> {
+        self.selection.in_order(&self.order())
+    }
+
+    /// Whether a selected watcher's checker or import options aren't the
+    /// page's (`checker`, its checker options for new watchers), for
+    /// "update selected with current options"
+    /// (`_UpdateImportOptionsSetButtonVisibility`).
+    pub fn selected_options_differ(
+        &self,
+        checker: &hydrus_core::subscriptions::CheckerOptions,
+    ) -> bool {
+        self.selected()
+            .into_iter()
+            .filter_map(|q| self.watcher(q))
+            .any(|w| &w.state.checker != checker || w.options != self.state.options)
     }
 
     /// What the list says of a watcher just added or entered again, for a
@@ -152,6 +179,11 @@ impl Column {
     pub fn from_index(index: usize) -> Option<Self> {
         Self::ALL.get(index).copied()
     }
+
+    /// Its place among the list's columns.
+    pub fn index(self) -> usize {
+        Self::ALL.iter().position(|&c| c == self).unwrap_or(0)
+    }
 }
 
 /// `TimestampToPrettyTimeDelta` with its `no_prefix` (no "in " before a
@@ -179,6 +211,7 @@ impl WatcherRow {
             live: live::live(conn, &[queue])?
                 .remove(&queue)
                 .unwrap_or_default(),
+            options: row.options,
         }))
     }
 
@@ -473,6 +506,7 @@ mod tests {
             checks: StatusCounts::new(),
             files_paused: false,
             live: QueueLive::default(),
+            options: hydrus_core::import_options::ImportOptionsSlice::default(),
         }
     }
 
@@ -611,7 +645,7 @@ mod tests {
             watchers: vec![w.clone()],
             state: hydrus_core::pages::DownloaderPageState::default(),
             sort: (Column::Status, true),
-            selected: None,
+            selection: crate::list_selection::ListSelection::default(),
             added: vec![(1, NOW)],
             already: Vec::new(),
             settings: DownloaderPageSettings::default(),

@@ -247,16 +247,24 @@ downloader" box says how its searches stand ("2 queries - 4/6", and
 "waiting for new queries" with none) and lists them as the reference's
 list does: query, source, files and search status (the reference's pause
 and stop characters), status ("DONE", "working", "pending"), items ("2 -
-1Ign") and added ("5 minutes ago"), sortable by any column. A double-click
-on a search, or its highlight button, shows it: the page then holds that
+1Ign") and added ("5 minutes ago"), sortable by any column (clicked
+again, the other way). Its rows are selected as the reference's lists
+select them: a click selects one, ctrl+click adds or takes one away,
+shift+click selects from the last clicked; the delete key removes them.
+A double-click on a search, or its highlight button with one selected,
+shows it (a double-click on the one shown stops showing it): the page then holds that
 search's files, and the "highlighted query" box under the list has its
 "imports" and "search" boxes, each with its live status line, its pause
 button and its download in progress, as a URL page's do; the
 clear-highlight button empties the page again. The list's buttons pause
-or resume the selected search's files or its search, retry its ignored or
-failed files, and remove it, asking first as the reference does ("Remove
-the 1 selected queries?", saying how many are still working and that
-the page will be cleared if it was shown). Queries typed into its box
+or resume each selected search's files or its search, retry their ignored
+or failed files, and remove them, asking first as the reference does
+("Remove the 2 selected queries?", saying how many are still working and
+that the page will be cleared if the one shown is among them). Each
+search keeps the file limit and import options it was made with; while a
+selected one's differ from the page's, "update selected with current
+options" shows under the file limit, and gives them the page's, asking
+first as the reference does. Queries typed into its box
 (enter) or pasted with its paste button, one a line, become searches with
 the downloader and file limit chosen under it; queries already on the
 page are refused with the reference's message, and the first new one is
@@ -271,11 +279,17 @@ watchers") and lists them as the reference does: subject, files and
 checking status (the stop character for a watcher whose thread died or
 404'd), status ("pending", "working", when it next checks, "DEAD",
 "404", and for fifteen seconds "just added"), items and added; by status
-at first, and by any column. Its buttons highlight a watcher (or a
-double-click does), clear the highlight, pause or resume its files or its
-checking, check it now, retry its ignored or failed files, and remove it,
-asking as the reference does ("Remove the 1 selected watchers?", saying
-how many still work or aren't yet DEAD). Thread URLs typed into its
+at first, and by any column. Its rows select as a gallery page's. Its
+buttons highlight the one watcher selected (or a double-click does),
+clear the highlight, pause or resume each selected watcher's files or
+checking, check them now, retry their ignored or failed files, and remove
+them, asking as the reference does ("Remove the 3 selected watchers?",
+saying how many still work or aren't yet DEAD, and that the media panel
+is cleared if the highlighted one is among them). While a selected
+watcher's checker or import options differ from the page's, "update
+selected with current options" shows under the page's "checker options"
+button, and gives them the page's. All of this is as
+`oracle/record_downloader_lists.py` recorded the reference's lists. Thread URLs typed into its
 "watcher url" box, or pasted, one a line, become watchers with the page's
 checker and import options; one the page watches already isn't watched
 twice, and the first new one is shown if hydrus's option to highlight new

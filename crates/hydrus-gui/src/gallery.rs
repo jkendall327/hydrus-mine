@@ -21,6 +21,10 @@ pub struct GalleryQuery {
     pub gallery_paused: bool,
     pub created: i64,
     pub live: QueueLive,
+    /// Its own file limit and import options, given it by the page when
+    /// made (or by "update selected with current options").
+    pub file_limit: Option<u64>,
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
 }
 
 /// A gallery page's own part: its searches, as its list shows them, and
@@ -38,8 +42,8 @@ pub struct GalleryView {
     pub state: hydrus_core::pages::DownloaderPageState,
     /// The list's sort.
     pub sort: (Column, bool),
-    /// The search selected in the list.
-    pub selected: Option<i64>,
+    /// The searches selected in the list.
+    pub selection: crate::list_selection::ListSelection<i64>,
     /// The downloaders offered for new queries (key, name, initial search
     /// text): those the client displays, by name, then the others.
     pub gugs: Vec<(String, String, String)>,
@@ -91,6 +95,27 @@ impl GalleryView {
 
     pub fn query(&self, queue: i64) -> Option<&GalleryQuery> {
         self.queries.iter().find(|q| q.queue == queue)
+    }
+
+    /// The searches' queues, in the list's order.
+    pub fn order(&self) -> Vec<i64> {
+        self.queries.iter().map(|q| q.queue).collect()
+    }
+
+    /// The searches selected, in the list's order.
+    pub fn selected(&self) -> Vec<i64> {
+        self.selection.in_order(&self.order())
+    }
+
+    /// Whether a selected search's file limit or import options aren't
+    /// the page's, for "update selected with current options"
+    /// (`_UpdateImportOptionsSetButtonVisibility`).
+    pub fn selected_options_differ(&self) -> bool {
+        let file_limit = self.gallery().file_limit;
+        self.selected()
+            .into_iter()
+            .filter_map(|q| self.query(q))
+            .any(|q| q.file_limit != file_limit || q.options != self.state.options)
     }
 }
 
@@ -195,6 +220,11 @@ impl Column {
     pub fn from_index(index: usize) -> Option<Self> {
         Self::ALL.get(index).copied()
     }
+
+    /// Its place among the list's columns.
+    pub fn index(self) -> usize {
+        Self::ALL.iter().position(|&c| c == self).unwrap_or(0)
+    }
 }
 
 /// A finished, paused or going log, as the list sorts and shows it.
@@ -226,6 +256,8 @@ impl GalleryQuery {
             live: live::live(conn, &[queue])?
                 .remove(&queue)
                 .unwrap_or_default(),
+            file_limit: search.file_limit,
+            options: row.options,
         }))
     }
 

@@ -3,7 +3,8 @@
 // searches' list, their buttons, the query box, the downloader and file
 // limit for new queries; and the "highlighted query" box.
 
-import { Button, CheckBox, ComboBox, LineEdit, SpinBox, StandardTableView } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 import { DownloadLine, ImporterBoxes } from "importing.slint";
 
@@ -17,6 +18,9 @@ export struct GalleryData {
     can-clear-highlight: bool,
     can-retry-ignored: bool,
     can-retry-failed: bool,
+    // a selected one's options aren't the page's: "update selected with
+    // current options" shows
+    can-set-options: bool,
     // the downloader for new queries, among those offered
     gug-names: [string],
     gug-index: int,
@@ -34,8 +38,9 @@ export struct GalleryData {
 
 export component GallerySidebar inherits VerticalLayout {
     in property <GalleryData> data;
-    in property <[[StandardListViewItem]]> rows;
-    in-out property <int> current-row;
+    in property <[TableRow]> rows;
+    in property <int> sort-column: -1;
+    in property <bool> ascending: true;
     // the highlighted search's importer, as a URL page's
     in property <string> import-status;
     in property <string> import-progress;
@@ -44,7 +49,8 @@ export component GallerySidebar inherits VerticalLayout {
     in property <DownloadLine> file-download;
     in property <string> search-status;
     in property <DownloadLine> search-download;
-    callback row-pressed(int);
+    // (the row shown, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -53,6 +59,7 @@ export component GallerySidebar inherits VerticalLayout {
     callback pause-play(bool, bool);
     callback retry(bool);
     callback remove();
+    callback set-options();
     callback queries-entered(string);
     callback paste();
     callback gug-chosen(int);
@@ -77,28 +84,25 @@ export component GallerySidebar inherits VerticalLayout {
                 text: root.data.bottom-status;
                 overflow: elide;
             }
-            table := StandardTableView {
+            table := ListTable {
                 height: 180px;
-                // (narrow, as the reference's: its columns are a few
-                // characters wide but for the query)
                 columns: [
-                    { title: "query", min-width: 70px, width: 90px, horizontal-stretch: 1 },
-                    { title: "source", min-width: 40px, width: 50px },
-                    { title: "files status", min-width: 18px, width: 18px },
-                    { title: "search status", min-width: 18px, width: 18px },
-                    { title: "status", min-width: 46px, width: 52px },
-                    { title: "items", min-width: 40px, width: 54px },
-                    { title: "added", min-width: 50px, width: 64px },
+                    { title: "query", width: 90px, stretch: true },
+                    { title: "source", width: 50px },
+                    { title: "files status", width: 18px },
+                    { title: "search status", width: 18px },
+                    { title: "status", width: 52px },
+                    { title: "items", width: 54px },
+                    { title: "added", width: 64px },
                 ];
                 rows: root.rows;
-                current-row <=> root.current-row;
-                row-pointer-event(row, event, position) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
-                        root.row-pressed(row);
-                    }
-                }
-                sort-ascending(column) => { root.sort(column, true); }
-                sort-descending(column) => { root.sort(column, false); }
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                sort(column, ascending) => { root.sort(column, ascending); }
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                // (a double click: highlight it, as the button does)
+                row-activated(row) => { root.highlight(); }
+                delete-pressed => { if root.data.has-selection { root.remove(); } }
             }
             // the reference's buttons: highlight, clear highlight, pause/play
             // files, pause/play search, retry, remove
@@ -184,6 +188,10 @@ export component GallerySidebar inherits VerticalLayout {
                 text: "no limit";
                 checked: root.data.no-limit;
                 toggled => { root.limit-changed(self.checked, limit.value); }
+            }
+            if root.data.can-set-options: Button {
+                text: "update selected with current options";
+                clicked => { root.set-options(); }
             }
         }
     }

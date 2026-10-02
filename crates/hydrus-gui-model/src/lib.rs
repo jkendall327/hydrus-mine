@@ -14,6 +14,7 @@ pub mod domains;
 pub mod duplicate_filter;
 pub mod favourites;
 pub mod info_lines;
+pub mod list_selection;
 pub mod local_import;
 pub mod main_menu;
 pub mod manage_tags;

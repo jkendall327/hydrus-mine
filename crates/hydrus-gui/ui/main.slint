@@ -7,6 +7,7 @@ import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
+import { TableColumn, TableRow } from "list_table.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
 import { PopupData, PopupStack } from "popups.slint";
 import { RatingShape } from "viewer.slint";
@@ -23,6 +24,7 @@ export { ManageTagsWindow } from "manage_tags.slint";
 export { DurationField, OptionRow, OptionsWindow } from "options.slint";
 export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
 export { SessionDialog } from "session_dialog.slint";
+export { TableColumn, TableRow }
 export { LocationTick, LocationsWindow } from "domains.slint";
 export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
 export { EditorField, EditorPanel, PredicateEditorWindow } from "predicate_editor.slint";
@@ -541,15 +543,18 @@ export component MainWindow inherits Window {
     // a gallery page's sidebar (gallery.slint)
     in property <bool> gallery-page;
     in property <GalleryData> gallery-data;
-    in property <[[StandardListViewItem]]> gallery-rows;
-    in-out property <int> gallery-current-row: -1;
-    callback gallery-row-pressed(int);
+    in property <[TableRow]> gallery-rows;
+    in property <int> gallery-sort-column: -1;
+    in property <bool> gallery-ascending: true;
+    // (the row shown, ctrl held, shift held)
+    callback gallery-row-clicked(int, bool, bool);
     callback gallery-sort(int, bool);
     callback gallery-highlight();
     callback gallery-clear-highlight();
     callback gallery-pause-play(bool, bool);
     callback gallery-retry(bool);
     callback gallery-remove();
+    callback gallery-set-options();
     callback gallery-queries(string);
     callback gallery-paste();
     callback gallery-gug(int);
@@ -557,9 +562,11 @@ export component MainWindow inherits Window {
     // a watcher page's sidebar (watcher.slint)
     in property <bool> watcher-page;
     in property <WatcherData> watcher-data;
-    in property <[[StandardListViewItem]]> watcher-rows;
-    in-out property <int> watcher-current-row: -1;
-    callback watcher-row-pressed(int);
+    in property <[TableRow]> watcher-rows;
+    in property <int> watcher-sort-column: -1;
+    in property <bool> watcher-ascending: true;
+    // (the row shown, ctrl held, shift held)
+    callback watcher-row-clicked(int, bool, bool);
     callback watcher-sort(int, bool);
     callback watcher-highlight();
     callback watcher-clear-highlight();
@@ -567,6 +574,7 @@ export component MainWindow inherits Window {
     callback watcher-check-now(bool);
     callback watcher-retry(bool);
     callback watcher-remove();
+    callback watcher-set-options();
     callback watcher-urls(string);
     callback watcher-paste();
     callback watcher-page-checker();
@@ -823,7 +831,8 @@ export component MainWindow inherits Window {
                     GallerySidebar {
                         data: root.gallery-data;
                         rows: root.gallery-rows;
-                        current-row <=> root.gallery-current-row;
+                        sort-column: root.gallery-sort-column;
+                        ascending: root.gallery-ascending;
                         import-status: root.import-status;
                         import-progress: root.import-progress;
                         import-fraction: root.import-fraction;
@@ -831,13 +840,14 @@ export component MainWindow inherits Window {
                         file-download: root.file-download;
                         search-status: root.search-status;
                         search-download: root.search-download;
-                        row-pressed(row) => { root.gallery-row-pressed(row); }
+                        row-clicked(row, ctrl, shift) => { root.gallery-row-clicked(row, ctrl, shift); }
                         sort(column, ascending) => { root.gallery-sort(column, ascending); }
                         highlight => { root.gallery-highlight(); }
                         clear-highlight => { root.gallery-clear-highlight(); }
                         pause-play(search, shown) => { root.gallery-pause-play(search, shown); }
                         retry(ignored) => { root.gallery-retry(ignored); }
                         remove => { root.gallery-remove(); }
+                        set-options => { root.gallery-set-options(); }
                         queries-entered(text) => { root.gallery-queries(text); }
                         paste => { root.gallery-paste(); }
                         gug-chosen(index) => { root.gallery-gug(index); }
@@ -855,14 +865,15 @@ export component MainWindow inherits Window {
                     WatcherSidebar {
                         data: root.watcher-data;
                         rows: root.watcher-rows;
-                        current-row <=> root.watcher-current-row;
+                        sort-column: root.watcher-sort-column;
+                        ascending: root.watcher-ascending;
                         import-status: root.import-status;
                         import-progress: root.import-progress;
                         import-fraction: root.import-fraction;
                         file-download: root.file-download;
                         search-status: root.search-status;
                         search-download: root.search-download;
-                        row-pressed(row) => { root.watcher-row-pressed(row); }
+                        row-clicked(row, ctrl, shift) => { root.watcher-row-clicked(row, ctrl, shift); }
                         sort(column, ascending) => { root.watcher-sort(column, ascending); }
                         highlight => { root.watcher-highlight(); }
                         clear-highlight => { root.watcher-clear-highlight(); }
@@ -870,6 +881,7 @@ export component MainWindow inherits Window {
                         check-now(shown) => { root.watcher-check-now(shown); }
                         retry(ignored) => { root.watcher-retry(ignored); }
                         remove => { root.watcher-remove(); }
+                        set-options => { root.watcher-set-options(); }
                         urls-entered(text) => { root.watcher-urls(text); }
                         paste => { root.watcher-paste(); }
                         page-checker => { root.watcher-page-checker(); }

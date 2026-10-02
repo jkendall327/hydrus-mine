@@ -126,9 +126,9 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    favourites, info_lines, local_import, main_menu, manage_tags, media_actions, options,
-    page_chooser, predicate_editors, ratings, scanbar, selection, session_saving, sort, status,
-    thumbnail_icons, thumbnail_ratings,
+    favourites, info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
+    options, page_chooser, predicate_editors, ratings, scanbar, selection, session_saving, sort,
+    status, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -901,8 +901,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     change_pages(&|pages| pages.close(depth, index));
                     return;
                 }
-                if let Asked::RemoveQuery(queue, _) = asked {
-                    page().borrow_mut().remove_query(queue);
+                if let Asked::RemoveQueries(queues, _) = asked {
+                    let page = page();
+                    for queue in queues {
+                        page.borrow_mut().remove_query(queue);
+                    }
                     shown(true);
                     return;
                 }
@@ -1208,31 +1211,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
-    // a gallery page's sidebar: a row pressed selects its search, twice
-    // (a double click) shows it
-    window.on_gallery_row_pressed({
+    // a gallery page's sidebar: a row clicked selects its search (with
+    // ctrl or shift, as a list selects); a double click highlights it, as
+    // the highlight button does
+    window.on_gallery_row_clicked({
         let page = page.clone();
         let shown = shown.clone();
-        let last: Rc<Cell<Option<(i32, std::time::Instant)>>> = Rc::default();
-        move |row| {
-            let page = page();
-            let queue = usize::try_from(row)
-                .ok()
-                .and_then(|row| page.borrow().gallery()?.queries.get(row).map(|q| q.queue));
-            let Some(queue) = queue else {
-                return;
-            };
-            let now = std::time::Instant::now();
-            let double = last
-                .get()
-                .is_some_and(|(r, at)| r == row && now.duration_since(at) < DOUBLE_CLICK);
-            page.borrow_mut().select_query(Some(queue));
-            if double {
-                last.set(None);
-                page.borrow_mut().highlight_query(Some(queue));
-                shown(true);
-            } else {
-                last.set(Some((row, now)));
+        move |row, ctrl, shift| {
+            if let Ok(row) = usize::try_from(row) {
+                page().borrow_mut().click_query(row, ctrl, shift);
                 shown(false);
             }
         }
@@ -1255,7 +1242,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move || {
             let page = page();
-            let selected = page.borrow().gallery().and_then(|g| g.selected);
+            // (the one shown again: shown no longer, as the reference's
+            // `_HighlightGalleryImport`, as `highlight_query` has it)
+            let selected = page.borrow().gallery().and_then(|g| g.selection.one());
             if selected.is_some() {
                 page.borrow_mut().highlight_query(selected);
                 shown(true);
@@ -1270,22 +1259,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
+    // (the list's selected searches, or the one shown)
+    let queries_of = |page: &Rc<RefCell<SearchPage>>, of_shown: bool| -> Vec<i64> {
+        page.borrow().gallery().map_or_else(Vec::new, |g| {
+            if of_shown {
+                g.state.highlighted.into_iter().collect()
+            } else {
+                g.selected()
+            }
+        })
+    };
     window.on_gallery_pause_play({
         let page = page.clone();
         let shown = shown.clone();
         move |search, of_shown| {
             let page = page();
-            let queue = page.borrow().gallery().and_then(|g| {
-                if of_shown {
-                    g.state.highlighted
-                } else {
-                    g.selected
-                }
-            });
-            if let Some(queue) = queue {
+            for queue in queries_of(&page, of_shown) {
                 page.borrow_mut().pause_play_query(queue, search);
-                shown(false);
             }
+            shown(false);
         }
     });
     window.on_gallery_retry({
@@ -1293,11 +1285,30 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |ignored| {
             let page = page();
-            let selected = page.borrow().gallery().and_then(|g| g.selected);
-            if let Some(queue) = selected {
+            for queue in queries_of(&page, false) {
                 page.borrow_mut().retry_query(queue, ignored);
-                shown(false);
             }
+            shown(false);
+        }
+    });
+    // "update selected with current options", asking first
+    window.on_gallery_set_options({
+        let page = page.clone();
+        let shown = shown.clone();
+        let ask = ask.clone();
+        move || {
+            let page = page();
+            let Some(question) = page.borrow().set_options_question() else {
+                return;
+            };
+            let shown = shown.clone();
+            ask(Asked::Then(
+                question.to_owned(),
+                Rc::new(move || {
+                    page.borrow_mut().set_options_to_selected();
+                    shown(false);
+                }),
+            ));
         }
     });
     window.on_gallery_remove({
@@ -1306,11 +1317,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             let page = page();
             let page = page.borrow();
-            let Some(queue) = page.gallery().and_then(|g| g.selected) else {
-                return;
-            };
-            if let Some(question) = page.remove_query_question(queue) {
-                ask(Asked::RemoveQuery(queue, question));
+            let queues = page.gallery().map(gallery::GalleryView::selected);
+            let queues = queues.unwrap_or_default();
+            if let Some(question) = page.remove_queries_question(&queues) {
+                ask(Asked::RemoveQueries(queues, question));
             }
         }
     });
@@ -1368,31 +1378,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(false);
         }
     });
-    // a watcher page's sidebar, as a gallery page's: a row pressed selects
-    // its watcher, twice (a double click) shows it
-    window.on_watcher_row_pressed({
+    // a watcher page's sidebar, as a gallery page's
+    window.on_watcher_row_clicked({
         let page = page.clone();
         let shown = shown.clone();
-        let last: Rc<Cell<Option<(i32, std::time::Instant)>>> = Rc::default();
-        move |row| {
-            let page = page();
-            let queue = usize::try_from(row)
-                .ok()
-                .and_then(|row| page.borrow().watchers()?.watchers.get(row).map(|w| w.queue));
-            let Some(queue) = queue else {
-                return;
-            };
-            let now = std::time::Instant::now();
-            let double = last
-                .get()
-                .is_some_and(|(r, at)| r == row && now.duration_since(at) < DOUBLE_CLICK);
-            page.borrow_mut().select_query(Some(queue));
-            if double {
-                last.set(None);
-                page.borrow_mut().highlight_query(Some(queue));
-                shown(true);
-            } else {
-                last.set(Some((row, now)));
+        move |row, ctrl, shift| {
+            if let Ok(row) = usize::try_from(row) {
+                page().borrow_mut().click_query(row, ctrl, shift);
                 shown(false);
             }
         }
@@ -1415,7 +1407,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move || {
             let page = page();
-            let selected = page.borrow().watchers().and_then(|w| w.selected);
+            let selected = page.borrow().watchers().and_then(|w| w.selection.one());
             if selected.is_some() {
                 page.borrow_mut().highlight_query(selected);
                 shown(true);
@@ -1430,13 +1422,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(true);
         }
     });
-    // (the list's selected watcher, or the one shown)
-    let watcher_of = |page: &Rc<RefCell<SearchPage>>, of_shown: bool| {
-        page.borrow().watchers().and_then(|w| {
+    // (the list's selected watchers, or the one shown)
+    let watchers_of = |page: &Rc<RefCell<SearchPage>>, of_shown: bool| -> Vec<i64> {
+        page.borrow().watchers().map_or_else(Vec::new, |w| {
             if of_shown {
-                w.state.highlighted
+                w.state.highlighted.into_iter().collect()
             } else {
-                w.selected
+                w.selected()
             }
         })
     };
@@ -1445,10 +1437,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |checking, of_shown| {
             let page = page();
-            if let Some(queue) = watcher_of(&page, of_shown) {
+            for queue in watchers_of(&page, of_shown) {
                 page.borrow_mut().pause_play_watcher(queue, checking);
-                shown(false);
             }
+            shown(false);
         }
     });
     window.on_watcher_check_now({
@@ -1456,10 +1448,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |of_shown| {
             let page = page();
-            if let Some(queue) = watcher_of(&page, of_shown) {
+            for queue in watchers_of(&page, of_shown) {
                 page.borrow_mut().check_watcher_now(queue);
-                shown(false);
             }
+            shown(false);
         }
     });
     window.on_watcher_retry({
@@ -1467,10 +1459,30 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move |ignored| {
             let page = page();
-            if let Some(queue) = watcher_of(&page, false) {
+            for queue in watchers_of(&page, false) {
                 page.borrow_mut().retry_query(queue, ignored);
-                shown(false);
             }
+            shown(false);
+        }
+    });
+    // "update selected with current options", asking first
+    window.on_watcher_set_options({
+        let page = page.clone();
+        let shown = shown.clone();
+        let ask = ask.clone();
+        move || {
+            let page = page();
+            let Some(question) = page.borrow().set_options_question() else {
+                return;
+            };
+            let shown = shown.clone();
+            ask(Asked::Then(
+                question.to_owned(),
+                Rc::new(move || {
+                    page.borrow_mut().set_options_to_selected();
+                    shown(false);
+                }),
+            ));
         }
     });
     window.on_watcher_remove({
@@ -1479,11 +1491,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move || {
             let page = page();
             let page = page.borrow();
-            let Some(queue) = page.watchers().and_then(|w| w.selected) else {
-                return;
-            };
-            if let Some(question) = page.remove_watcher_question(queue) {
-                ask(Asked::RemoveQuery(queue, question));
+            let queues = page.watchers().map(watcher::WatcherView::selected);
+            let queues = queues.unwrap_or_default();
+            if let Some(question) = page.remove_watchers_question(&queues) {
+                ask(Asked::RemoveQueries(queues, question));
             }
         }
     });
@@ -1509,6 +1520,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     window.on_watcher_page_checker({
         let page = page.clone();
+        let shown = shown.clone();
         let edit_checker = edit_checker.clone();
         move || {
             let page = page();
@@ -1516,11 +1528,15 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let store = page.borrow().store().clone();
+            // (shown again: the selected may differ from the page now)
+            let shown = shown.clone();
             edit_checker(
                 &store,
                 current,
-                &(Rc::new(move |checker| page.borrow_mut().set_watcher_page_checker(checker))
-                    as Rc<dyn Fn(_)>),
+                &(Rc::new(move |checker| {
+                    page.borrow_mut().set_watcher_page_checker(checker);
+                    shown(false);
+                }) as Rc<dyn Fn(_)>),
             );
         }
     });
@@ -1529,7 +1545,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move || {
             let page = page();
-            let Some(queue) = watcher_of(&page, true) else {
+            let shown_queue = page.borrow().watchers().and_then(|w| w.state.highlighted);
+            let Some(queue) = shown_queue else {
                 return;
             };
             let Some(current) = page.borrow().watcher_checker(queue) else {
@@ -2651,8 +2668,8 @@ enum Asked {
     OpenUrls(Vec<String>),
     /// Closing the page at this depth and index, asking this.
     ClosePage(usize, usize, String),
-    /// Removing a gallery page's search, asking this.
-    RemoveQuery(i64, String),
+    /// Removing a downloader page's searches or watchers, asking this.
+    RemoveQueries(Vec<i64>, String),
     /// Asking this, then doing that (the menu bar's questions).
     Then(String, Rc<dyn Fn()>),
 }
@@ -2675,7 +2692,7 @@ impl Asked {
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
             Self::ClosePage(_, _, question)
-            | Self::RemoveQuery(_, question)
+            | Self::RemoveQueries(_, question)
             | Self::Then(question, _) => question.clone(),
             Self::OpenUrls(urls) => {
                 let mut question = format!("Open the {} URLs in your web browser?", urls.len());
@@ -2706,7 +2723,7 @@ impl Asked {
                 })
             }
             // (the page locks itself; the pages close it)
-            Self::LockSearch(_) | Self::ClosePage(..) | Self::RemoveQuery(..) => Ok(()),
+            Self::LockSearch(_) | Self::ClosePage(..) | Self::RemoveQueries(..) => Ok(()),
             Self::Then(_, then) => {
                 then();
                 Ok(())
@@ -3758,6 +3775,15 @@ fn show_importer(window: &MainWindow, importer: &page::Importer) {
     window.set_search_download(download_line(&importer.gallery_job_line()));
 }
 
+/// A list's row, its cells and whether it is selected.
+fn table_row(cells: &[String], selected: bool) -> TableRow {
+    let cells: Vec<SharedString> = cells.iter().map(|c| c.as_str().into()).collect();
+    TableRow {
+        cells: ModelRc::new(VecModel::from(cells)),
+        selected,
+    }
+}
+
 /// A gallery page's sidebar: its searches' list, its totals, what its
 /// buttons can do, its downloader and file limit, and the search it shows.
 fn show_gallery(window: &MainWindow, page: &SearchPage) {
@@ -3769,7 +3795,7 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         .duration_since(std::time::UNIX_EPOCH)
         .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
     let highlighted = gallery.state.highlighted;
-    let rows: Vec<ModelRc<slint::StandardListViewItem>> = gallery
+    let rows: Vec<TableRow> = gallery
         .queries
         .iter()
         .map(|q| {
@@ -3779,23 +3805,24 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
                 gallery.short_summary,
                 now,
             );
-            let cells: Vec<slint::StandardListViewItem> = cells
-                .iter()
-                .map(|c| slint::StandardListViewItem::from(c.as_str()))
-                .collect();
-            ModelRc::new(VecModel::from(cells))
+            table_row(&cells, gallery.selection.is_selected(q.queue))
         })
         .collect();
     window.set_gallery_rows(ModelRc::new(VecModel::from(rows)));
-    let current = gallery
-        .selected
-        .and_then(|s| gallery.queries.iter().position(|q| q.queue == s));
-    window.set_gallery_current_row(current.map_or(-1, |i| i32::try_from(i).unwrap_or(-1)));
+    window.set_gallery_sort_column(i32::try_from(gallery.sort.0.index()).unwrap_or(-1));
+    window.set_gallery_ascending(gallery.sort.1);
     let (top_status, bottom_status) = gallery::totals(&gallery.queries);
-    let selected = gallery.selected.and_then(|s| gallery.query(s));
-    let has = |q: Option<&gallery::GalleryQuery>, status| {
-        q.is_some_and(|q| q.files.get(&status).is_some_and(|&n| n > 0))
+    let selected: Vec<&gallery::GalleryQuery> = gallery
+        .selected()
+        .into_iter()
+        .filter_map(|s| gallery.query(s))
+        .collect();
+    let has = |status| {
+        selected
+            .iter()
+            .any(|q| q.files.get(&status).is_some_and(|&n| n > 0))
     };
+    let one = gallery.selection.one();
     let own = gallery.gallery();
     // (the downloader among those offered; one not found, or none, after
     // them, as the reference's selector labels it)
@@ -3819,11 +3846,12 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
     window.set_gallery_data(GalleryData {
         top_status: top_status.into(),
         bottom_status: bottom_status.into(),
-        has_selection: selected.is_some(),
-        can_highlight: selected.is_some_and(|q| Some(q.queue) != highlighted),
+        has_selection: !selected.is_empty(),
+        can_highlight: one.is_some() && one != highlighted,
         can_clear_highlight: highlighted.is_some(),
-        can_retry_ignored: has(selected, SeedStatus::Vetoed),
-        can_retry_failed: has(selected, SeedStatus::Error),
+        can_retry_ignored: has(SeedStatus::Vetoed),
+        can_retry_failed: has(SeedStatus::Error),
+        can_set_options: page.selected_options_differ(),
         gug_names: ModelRc::new(VecModel::from(gug_names)),
         gug_index: i32::try_from(gug_index).unwrap_or(0),
         initial_search_text: found
@@ -3854,37 +3882,38 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
         return;
     };
     let now = page::now();
-    let rows: Vec<ModelRc<slint::StandardListViewItem>> = view
+    let rows: Vec<TableRow> = view
         .rows(now)
         .iter()
-        .map(|cells| {
-            let cells: Vec<slint::StandardListViewItem> = cells
-                .iter()
-                .map(|c| slint::StandardListViewItem::from(c.as_str()))
-                .collect();
-            ModelRc::new(VecModel::from(cells))
-        })
+        .zip(&view.watchers)
+        .map(|(cells, w)| table_row(cells, view.selection.is_selected(w.queue)))
         .collect();
     window.set_watcher_rows(ModelRc::new(VecModel::from(rows)));
-    let current = view
-        .selected
-        .and_then(|s| view.watchers.iter().position(|w| w.queue == s));
-    window.set_watcher_current_row(current.map_or(-1, |i| i32::try_from(i).unwrap_or(-1)));
+    window.set_watcher_sort_column(i32::try_from(view.sort.0.index()).unwrap_or(-1));
+    window.set_watcher_ascending(view.sort.1);
     let (top_status, bottom_status) = watcher::totals(&view.watchers);
     let highlighted = view.state.highlighted;
-    let selected = view.selected.and_then(|s| view.watcher(s));
-    let has = |w: Option<&watcher::WatcherRow>, status| {
-        w.is_some_and(|w| w.files.get(&status).is_some_and(|&n| n > 0))
+    let selected: Vec<&watcher::WatcherRow> = view
+        .selected()
+        .into_iter()
+        .filter_map(|s| view.watcher(s))
+        .collect();
+    let has = |status| {
+        selected
+            .iter()
+            .any(|w| w.files.get(&status).is_some_and(|&n| n > 0))
     };
+    let one = view.selection.one();
     let shown = highlighted.and_then(|h| view.watcher(h));
     window.set_watcher_data(WatcherData {
         top_status: top_status.into(),
         bottom_status: bottom_status.into(),
-        has_selection: selected.is_some(),
-        can_highlight: selected.is_some_and(|w| Some(w.queue) != highlighted),
+        has_selection: !selected.is_empty(),
+        can_highlight: one.is_some() && one != highlighted,
         can_clear_highlight: highlighted.is_some(),
-        can_retry_ignored: has(selected, SeedStatus::Vetoed),
-        can_retry_failed: has(selected, SeedStatus::Error),
+        can_retry_ignored: has(SeedStatus::Vetoed),
+        can_retry_failed: has(SeedStatus::Error),
+        can_set_options: page.selected_options_differ(),
         highlighted: shown.is_some(),
         // (`WatcherReviewPanel`: "no subject" for one with none yet)
         subject: shown

@@ -457,7 +457,7 @@ impl SearchPage {
             queries: Vec::new(),
             state,
             sort: (Column::Query, true),
-            selected: None,
+            selection: crate::list_selection::ListSelection::default(),
             gugs: crate::gallery::offered_gugs(&definitions.gugs),
             settings,
             short_summary: (naming.short_summary_new, naming.short_summary_deleted),
@@ -512,7 +512,7 @@ impl SearchPage {
             state,
             // (the reference's default: by status)
             sort: (crate::watcher::Column::Status, true),
-            selected: None,
+            selection: crate::list_selection::ListSelection::default(),
             added: Vec::new(),
             already: Vec::new(),
             settings,
@@ -685,17 +685,24 @@ impl SearchPage {
     }
 
     /// What removing a watcher asks first (`_RemoveWatchers`).
-    pub fn remove_watcher_question(&self, queue: i64) -> Option<String> {
+    pub fn remove_watchers_question(&self, queues: &[i64]) -> Option<String> {
         let view = self.watchers.as_ref()?;
-        let watcher = view.watcher(queue)?;
-        let mut message = "Remove the 1 selected watchers?".to_owned();
-        if watcher.importing() {
-            message.push_str("\n\n1 are still working.");
+        let removees: Vec<&crate::watcher::WatcherRow> =
+            queues.iter().filter_map(|&q| view.watcher(q)).collect();
+        if removees.is_empty() {
+            return None;
         }
-        if !watcher.dead() {
-            message.push_str("\n\n1 are not yet DEAD.");
+        let count = |n: usize| hydrus_core::numbers::human_int(n as u64);
+        let mut message = format!("Remove the {} selected watchers?", count(removees.len()));
+        let working = removees.iter().filter(|w| w.importing()).count();
+        if working > 0 {
+            message.push_str(&format!("\n\n{} are still working.", count(working)));
         }
-        if view.state.highlighted == Some(queue) {
+        let alive = removees.iter().filter(|w| !w.dead()).count();
+        if alive > 0 {
+            message.push_str(&format!("\n\n{} are not yet DEAD.", count(alive)));
+        }
+        if view.state.highlighted.is_some_and(|h| queues.contains(&h)) {
             message.push_str(
                 "\n\nThe currently highlighted watcher will be removed, and the media panel cleared.",
             );
@@ -755,13 +762,26 @@ impl SearchPage {
         self.count_tags();
     }
 
-    /// Select a search, or a watcher, in the list.
+    /// Select only this search, or watcher, in the list (or none).
     pub fn select_query(&mut self, queue: Option<i64>) {
         if let Some(gallery) = &mut self.gallery {
-            gallery.selected = queue;
+            gallery.selection.select_only(queue);
         }
         if let Some(watchers) = &mut self.watchers {
-            watchers.selected = queue;
+            watchers.selection.select_only(queue);
+        }
+    }
+
+    /// The list's row `row` clicked (with ctrl or shift, as a list's
+    /// selection takes them).
+    pub fn click_query(&mut self, row: usize, ctrl: bool, shift: bool) {
+        if let Some(gallery) = &mut self.gallery {
+            let order = gallery.order();
+            gallery.selection.click(&order, row, ctrl, shift);
+        }
+        if let Some(watchers) = &mut self.watchers {
+            let order = watchers.order();
+            watchers.selection.click(&order, row, ctrl, shift);
         }
     }
 
@@ -883,15 +903,107 @@ impl SearchPage {
         self.refresh_import();
     }
 
-    /// What removing a search asks first (`_RemoveGalleryImports`).
-    pub fn remove_query_question(&self, queue: i64) -> Option<String> {
-        let gallery = self.gallery.as_ref()?;
-        let query = gallery.query(queue)?;
-        let mut message = "Remove the 1 selected queries?".to_owned();
-        if query.importing() {
-            message.push_str("\n\n1 are still working.");
+    /// Whether "update selected with current options" shows: a selected
+    /// search's file limit or import options, or a selected watcher's
+    /// checker or import options, aren't the page's.
+    pub fn selected_options_differ(&self) -> bool {
+        if let Some(gallery) = &self.gallery {
+            return gallery.selected_options_differ();
         }
-        if gallery.state.highlighted == Some(queue) {
+        match (&self.watchers, self.watcher_page_checker()) {
+            (Some(watchers), Some(checker)) => watchers.selected_options_differ(&checker),
+            _ => false,
+        }
+    }
+
+    /// What "update selected with current options" asks first
+    /// (`_SetOptionsToGalleryImports`, `_SetOptionsToWatchers`), if
+    /// anything is selected.
+    pub fn set_options_question(&self) -> Option<&'static str> {
+        if let Some(gallery) = &self.gallery {
+            return (!gallery.selection.is_empty()).then_some(
+                "Set the page's current file limit and import options to all the selected queries?",
+            );
+        }
+        let watchers = self.watchers.as_ref()?;
+        (!watchers.selection.is_empty())
+            .then_some("Set the current checker and import options to all the selected watchers?")
+    }
+
+    /// Give the selected searches the page's file limit and import
+    /// options, or the selected watchers its checker and import options.
+    pub fn set_options_to_selected(&mut self) {
+        let result = if let Some(gallery) = &self.gallery {
+            let (queues, file_limit, options) = (
+                gallery.selected(),
+                gallery.gallery().file_limit,
+                gallery.state.options.clone(),
+            );
+            self.store.write(move |ctx| {
+                let conn = ctx.conn();
+                for queue in queues {
+                    let Some(row) = hydrus_store::queues::queue(conn, queue)? else {
+                        continue;
+                    };
+                    let mut search: hydrus_core::gallery::GallerySearch =
+                        serde_json::from_value(row.extra).unwrap_or_default();
+                    search.file_limit = file_limit;
+                    let extra = serde_json::to_value(&search).expect("plain data serialises");
+                    hydrus_store::queues::set_queue_extra(conn, queue, &extra)?;
+                    hydrus_store::queues::set_queue_options(conn, queue, &options)?;
+                }
+                Ok(())
+            })
+        } else if let (Some(watchers), Some(checker)) =
+            (&self.watchers, self.watcher_page_checker())
+        {
+            let (queues, options) = (watchers.selected(), watchers.state.options.clone());
+            queues
+                .iter()
+                .try_for_each(|&queue| {
+                    hydrus_store::watchers::set_checker_options(
+                        &self.store,
+                        queue,
+                        checker.clone(),
+                        now(),
+                    )
+                })
+                .and_then(|()| {
+                    self.store.write(move |ctx| {
+                        for queue in queues {
+                            hydrus_store::queues::set_queue_options(ctx.conn(), queue, &options)?;
+                        }
+                        Ok(())
+                    })
+                })
+        } else {
+            return;
+        };
+        if let Err(e) = result {
+            eprintln!("could not update the selected with the page's options: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// What removing a search asks first (`_RemoveGalleryImports`).
+    pub fn remove_queries_question(&self, queues: &[i64]) -> Option<String> {
+        let gallery = self.gallery.as_ref()?;
+        let removees: Vec<&crate::gallery::GalleryQuery> =
+            queues.iter().filter_map(|&q| gallery.query(q)).collect();
+        if removees.is_empty() {
+            return None;
+        }
+        let count = |n: usize| hydrus_core::numbers::human_int(n as u64);
+        let mut message = format!("Remove the {} selected queries?", count(removees.len()));
+        let working = removees.iter().filter(|q| q.importing()).count();
+        if working > 0 {
+            message.push_str(&format!("\n\n{} are still working.", count(working)));
+        }
+        if gallery
+            .state
+            .highlighted
+            .is_some_and(|h| queues.contains(&h))
+        {
             message.push_str(
                 "\n\nThe currently highlighted query will be removed, and the media panel cleared.",
             );
@@ -906,17 +1018,13 @@ impl SearchPage {
             (Some(gallery), _) => {
                 gallery.queues.retain(|q| *q != queue);
                 gallery.queries.retain(|q| q.queue != queue);
-                if gallery.selected == Some(queue) {
-                    gallery.selected = None;
-                }
+                gallery.selection.forget(queue);
                 gallery.state.highlighted == Some(queue)
             }
             (None, Some(watchers)) => {
                 watchers.queues.retain(|q| *q != queue);
                 watchers.watchers.retain(|w| w.queue != queue);
-                if watchers.selected == Some(queue) {
-                    watchers.selected = None;
-                }
+                watchers.selection.forget(queue);
                 watchers.state.highlighted == Some(queue)
             }
             (None, None) => return,

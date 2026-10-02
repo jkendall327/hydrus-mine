@@ -3,7 +3,8 @@
 // list, their buttons and the watcher url box; and the "highlighted
 // watcher" box (the reference's WatcherReviewPanel).
 
-import { Button, LineEdit, ProgressIndicator, StandardTableView } from "std-widgets.slint";
+import { Button, LineEdit, ProgressIndicator } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
 import { Theme } from "theme.slint";
 import { DownloadLine, DownloadControl } from "importing.slint";
 
@@ -18,6 +19,9 @@ export struct WatcherData {
     can-clear-highlight: bool,
     can-retry-ignored: bool,
     can-retry-failed: bool,
+    // a selected one's options aren't the page's: "update selected with
+    // current options" shows
+    can-set-options: bool,
     // the watcher shown: its thread, and its boxes' lines and buttons
     highlighted: bool,
     subject: string,
@@ -34,8 +38,9 @@ export struct WatcherData {
 
 export component WatcherSidebar inherits VerticalLayout {
     in property <WatcherData> data;
-    in property <[[StandardListViewItem]]> rows;
-    in-out property <int> current-row;
+    in property <[TableRow]> rows;
+    in property <int> sort-column: -1;
+    in property <bool> ascending: true;
     // the highlighted watcher's file log and check log, as an importer's
     in property <string> import-status;
     in property <string> import-progress;
@@ -43,7 +48,8 @@ export component WatcherSidebar inherits VerticalLayout {
     in property <DownloadLine> file-download;
     in property <string> search-status;
     in property <DownloadLine> search-download;
-    callback row-pressed(int);
+    // (the row shown, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -53,6 +59,7 @@ export component WatcherSidebar inherits VerticalLayout {
     callback check-now(bool);
     callback retry(bool);
     callback remove();
+    callback set-options();
     callback urls-entered(string);
     callback paste();
     callback cancel-download(bool);
@@ -79,25 +86,24 @@ export component WatcherSidebar inherits VerticalLayout {
                 text: root.data.bottom-status;
                 overflow: elide;
             }
-            StandardTableView {
+            ListTable {
                 height: 180px;
                 columns: [
-                    { title: "subject", min-width: 80px, width: 110px, horizontal-stretch: 1 },
-                    { title: "files status", min-width: 18px, width: 18px },
-                    { title: "checking status", min-width: 18px, width: 18px },
-                    { title: "status", min-width: 46px, width: 70px },
-                    { title: "items", min-width: 40px, width: 54px },
-                    { title: "added", min-width: 50px, width: 64px },
+                    { title: "subject", width: 110px, stretch: true },
+                    { title: "files status", width: 18px },
+                    { title: "checking status", width: 18px },
+                    { title: "status", width: 70px },
+                    { title: "items", width: 54px },
+                    { title: "added", width: 64px },
                 ];
                 rows: root.rows;
-                current-row <=> root.current-row;
-                row-pointer-event(row, event, position) => {
-                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
-                        root.row-pressed(row);
-                    }
-                }
-                sort-ascending(column) => { root.sort(column, true); }
-                sort-descending(column) => { root.sort(column, false); }
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                sort(column, ascending) => { root.sort(column, ascending); }
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                // (a double click: highlight it, as the button does)
+                row-activated(row) => { root.highlight(); }
+                delete-pressed => { if root.data.has-selection { root.remove(); } }
             }
             // the reference's buttons: highlight, clear highlight, pause/play
             // files, pause/play checking, check now, retry, remove
@@ -167,6 +173,10 @@ export component WatcherSidebar inherits VerticalLayout {
             Button {
                 text: "checker options";
                 clicked => { root.page-checker(); }
+            }
+            if root.data.can-set-options: Button {
+                text: "update selected with current options";
+                clicked => { root.set-options(); }
             }
         }
     }
