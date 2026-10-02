@@ -8,8 +8,9 @@ import { DownloadLine, DownloadControl, ImporterBoxes } from "importing.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
+import { PopupData, PopupStack } from "popups.slint";
 export { DownloadLine, GalleryData, WatcherData }
-export { MenuLine, MenuPane, MenuTitle }
+export { MenuLine, MenuPane, MenuTitle, PopupData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText }
 
@@ -301,6 +302,17 @@ export component MainWindow inherits Window {
             }
         }
     }
+
+    // popup messages (`src/popups.rs`): those shown, and the line under
+    // them
+    in property <[PopupData]> popups;
+    in property <string> popup-summary;
+    callback popup-dismiss(int);
+    callback popup-pause-play(int);
+    callback popup-cancel(int);
+    callback popup-show-files(int);
+    callback popup-copy-traceback(int);
+    callback popups-dismiss-all();
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
@@ -1412,6 +1424,20 @@ export component MainWindow inherits Window {
             }
         }
 
+        // (at the bottom right, over the status bar's corner, as the
+        // reference's)
+        if root.popup-summary != "": PopupStack {
+            x: parent.width - self.width - 20px;
+            y: parent.height - self.height - 25px;
+            popups: root.popups;
+            summary: root.popup-summary;
+            dismiss(i) => { root.popup-dismiss(i); }
+            pause-play(i) => { root.popup-pause-play(i); }
+            cancel(i) => { root.popup-cancel(i); }
+            show-files(i) => { root.popup-show-files(i); }
+            copy-traceback(i) => { root.popup-copy-traceback(i); }
+            dismiss-all => { root.popups-dismiss-all(); }
+        }
         if root.question != "": Rectangle {
             background: Theme.shade;
             TouchArea {}

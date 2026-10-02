@@ -43,8 +43,6 @@ pub struct AppState {
     pub locked: std::sync::atomic::AtomicBool,
     /// Holds the database paused while it is locked.
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
-    /// Popup messages (`/manage_popups/*`).
-    pub popups: popups::Popups,
     /// When the access keys were last read from the database.
     pub keys_read: parking_lot::Mutex<std::time::Instant>,
     /// Identifies this run of the client (`/client_info`).
@@ -86,7 +84,6 @@ impl AppState {
             subscriptions,
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
-            popups: popups::Popups::default(),
             keys_read: parking_lot::Mutex::new(std::time::Instant::now()),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),

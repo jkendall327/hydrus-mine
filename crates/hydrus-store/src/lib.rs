@@ -24,6 +24,7 @@ pub mod media;
 pub mod network;
 pub mod paths;
 pub mod pending;
+pub mod popups;
 pub mod queues;
 pub mod schema;
 pub mod services;

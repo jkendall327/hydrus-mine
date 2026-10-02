@@ -16,7 +16,9 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14];
+const MIGRATIONS: &[&str] = &[
+    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,
+];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -716,6 +718,17 @@ CREATE TABLE queue_job_cancels (
     -- 0: its file download, 1: its gallery page's
     kind INTEGER NOT NULL,
     PRIMARY KEY (queue_id, kind)
+) STRICT;
+";
+
+/// Popup messages (`popups.rs`): jobs the daemon and the Client API show
+/// the user, oldest first, until the user dismisses them.
+const V15: &str = r"
+CREATE TABLE popups (
+    seq INTEGER PRIMARY KEY,
+    key BLOB NOT NULL UNIQUE,
+    -- a popups::Job, as JSON
+    job TEXT NOT NULL
 ) STRICT;
 ";
 

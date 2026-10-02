@@ -44,6 +44,7 @@ mod page;
 pub mod page_chooser;
 mod pages;
 mod playback;
+mod popups;
 pub mod ratings;
 pub mod scanbar;
 pub mod selection;
@@ -157,6 +158,8 @@ pub struct Bound {
     /// Shows the menu bar's titles and the status bar's network part as
     /// they change (held likewise).
     _menu_titles: Rc<slint::Timer>,
+    /// Shows the popup messages (held likewise).
+    _popups: Rc<slint::Timer>,
 }
 
 impl std::fmt::Debug for Bound {
@@ -831,6 +834,14 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if ticks.get().is_multiple_of(2) {
                 menu_titles_shown();
             }
+        },
+    );
+    // popup messages, the daemon's and the Client API's
+    let popup_timer = popups::bind(
+        window,
+        popups::Hooks {
+            pages: pages.clone(),
+            change_pages: Rc::new(change_pages.clone()),
         },
     );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
@@ -1722,6 +1733,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         sync,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
+        _popups: popup_timer,
     }
 }
 

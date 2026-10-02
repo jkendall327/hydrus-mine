@@ -491,9 +491,11 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
 
 Checked by the `popups` conformance scenario.
 
-- **Every popup is in view**, and a dismissed one leaves the list at once
-  (the reference's GUI shows a limited number, and clears dismissed popups
-  on its next refresh, within a second or so).
+- **The popups are the store's**, so the daemon's Client API and the
+  client share them: the client shows the oldest ten ("in view", as
+  `only_in_view` lists them), whether or not it is open, and a dismissed
+  popup leaves the list at once (the reference's GUI clears dismissed
+  popups on its next refresh, within a second or so).
 - **Only popups made through the API are listed.** The reference also lists
   its own jobs (downloads, maintenance, errors) as popups; hydrus-rs logs
   those instead, so far.

@@ -1238,6 +1238,15 @@ impl Pages {
 
 /// The menu bar's facts about the pages.
 impl Pages {
+    /// Rename the page shown.
+    pub fn rename_shown(&mut self, name: &str) {
+        let depth = self.path.len() - 1;
+        let index = self.path[depth];
+        if let Some(page) = self.notebook_mut(depth).get_mut(index) {
+            name.clone_into(&mut page.name);
+        }
+    }
+
     /// The pages open, notebooks and all (`GetNumPagesHeld`).
     pub fn page_count(&self) -> usize {
         fn count(pages: &[Page]) -> usize {

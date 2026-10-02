@@ -74,6 +74,15 @@ pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
 
+Popup messages show at the bottom right, as the reference's popup
+message manager shows them (`src/popups.rs`): the oldest ten in the
+queue the daemon and the Client API add to (in the store), each with its
+title, texts, progress gauges, a button to show its files in a new page
+(named for them), its error's traceback, and buttons to pause or cancel
+it while it runs; a right click dismisses one that is done, and the line
+under them counts them, with "dismiss all" (those done) and an arrow to
+hide or show them. They update four times a second.
+
 The status bar at the bottom says, as the reference's does, the page's
 status (its files, or the selection's) and, on the right, the network's:
 what the daemon has read since the client opened, what it is reading a

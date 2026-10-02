@@ -1,0 +1,148 @@
+// Popup messages (`src/popups.rs`), as the reference's popup message
+// manager shows them at the main window's bottom right: each popup's
+// title, texts, gauges and buttons, and under them how many there are,
+// "dismiss all", and an arrow to hide or show them.
+
+import { Button, ProgressIndicator } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct PopupData {
+    title: string,
+    text-1: string,
+    // a gauge: shown, how far, or going with no end known
+    has-gauge-1: bool,
+    gauge-1: float,
+    gauge-1-going: bool,
+    text-2: string,
+    has-gauge-2: bool,
+    gauge-2: float,
+    gauge-2-going: bool,
+    // "{label} - show 3 files", if it has files
+    files: string,
+    traceback: string,
+    pausable: bool,
+    paused: bool,
+    cancellable: bool,
+}
+
+component Gauge inherits ProgressIndicator {
+    in property <bool> going;
+    indeterminate: self.going;
+}
+
+export component PopupStack inherits Rectangle {
+    in property <[PopupData]> popups;
+    in property <string> summary;
+    in-out property <bool> expanded: true;
+    // (each by its place among those shown)
+    callback dismiss(int);
+    callback pause-play(int);
+    callback cancel(int);
+    callback show-files(int);
+    callback copy-traceback(int);
+    callback dismiss-all();
+    // (as the reference's 56 characters)
+    width: 400px;
+    height: layout.preferred-height;
+    background: Theme.window;
+    border-width: 1px;
+    border-color: Theme.border;
+    drop-shadow-blur: 6px;
+    drop-shadow-color: #00000040;
+    layout := VerticalLayout {
+        padding: 4px;
+        spacing: 4px;
+        if root.expanded: VerticalLayout {
+            spacing: 4px;
+            for popup[i] in root.popups: card := Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                property <bool> traceback-shown: false;
+                // a right click dismisses it, if it is done
+                TouchArea {
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
+                            root.dismiss(i);
+                        }
+                    }
+                }
+                VerticalLayout {
+                    padding: 2px;
+                    spacing: 2px;
+                    if popup.title != "": Text {
+                        text: popup.title;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                        wrap: word-wrap;
+                    }
+                    if popup.text-1 != "": Text {
+                        text: popup.text-1;
+                        wrap: word-wrap;
+                    }
+                    if popup.has-gauge-1: Gauge {
+                        progress: popup.gauge-1;
+                        going: popup.gauge-1-going;
+                    }
+                    if popup.text-2 != "": Text {
+                        text: popup.text-2;
+                        wrap: word-wrap;
+                    }
+                    if popup.has-gauge-2: Gauge {
+                        progress: popup.gauge-2;
+                        going: popup.gauge-2-going;
+                    }
+                    if popup.files != "": Button {
+                        text: popup.files;
+                        clicked => { root.show-files(i); }
+                    }
+                    if popup.traceback != "": Button {
+                        text: card.traceback-shown ? "hide traceback" : "show traceback";
+                        clicked => { card.traceback-shown = !card.traceback-shown; }
+                    }
+                    if popup.traceback != "" && card.traceback-shown: Text {
+                        text: popup.traceback;
+                        wrap: word-wrap;
+                    }
+                    if popup.traceback != "": Button {
+                        text: "copy traceback information";
+                        clicked => { root.copy-traceback(i); }
+                    }
+                    if popup.pausable || popup.cancellable: HorizontalLayout {
+                        alignment: end;
+                        spacing: 2px;
+                        if popup.pausable: Button {
+                            icon: popup.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
+                            clicked => { root.pause-play(i); }
+                        }
+                        if popup.cancellable: Button {
+                            icon: @image-url("../../../static/stop.png");
+                            clicked => { root.cancel(i); }
+                        }
+                    }
+                }
+            }
+        }
+        // the summary bar
+        Rectangle {
+            border-width: 1px;
+            border-color: Theme.border;
+            HorizontalLayout {
+                padding: 2px;
+                spacing: 4px;
+                Text {
+                    text: root.summary;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Button {
+                    text: "dismiss all";
+                    clicked => { root.dismiss-all(); }
+                }
+                Button {
+                    text: root.expanded ? "▾" : "▴";
+                    clicked => { root.expanded = !root.expanded; }
+                }
+            }
+        }
+    }
+}
