@@ -316,9 +316,9 @@ mod tests {
         dismiss_all_done(&conn, 102).unwrap();
         assert_eq!(all(&conn, 102).unwrap().len(), 1);
         // (and is forgotten when the daemon starts again, unlike a message)
-        let message = Job::text("read me", 102.0);
-        add(&conn, &message, 102).unwrap();
         let unfinished = conn.unchecked_transaction().unwrap();
+        let message = Job::text("read me", 102.0);
+        add(&unfinished, &message, 102).unwrap();
         forget_unfinished(&unfinished, 102).unwrap();
         let keys: Vec<[u8; 32]> = all(&unfinished, 102)
             .unwrap()
