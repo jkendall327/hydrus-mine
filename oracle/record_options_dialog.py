@@ -32,6 +32,10 @@ it opens on, and each page's controls in the order they are laid out:
 - `{"widget": class name}`, with its `"value"` if it has one (`GetValue`)
   or the `"items"` laid out in it, for anything else.
 
+`"wider_thumbnails"` is the "ratings" page again, made with the thumbnails
+200x180 (`"thumbnail_dimensions"`), as its thumbnail rating sizes go up to
+the thumbnails' width.
+
 A control explicitly hidden has `"hidden": true`, and one with a tooltip
 its `"tooltip"`. `"search"` is the options search box's placeholder and
 what it offers (`"suggestions"`, in order: each label, box title and
@@ -304,7 +308,32 @@ def record( session ):
 
         panel.deleteLater()
 
-        return { 'opens_on' : current, 'search' : search, 'pages' : pages }
+        # the ratings page again, with the thumbnails wider (its thumbnail
+        # rating sizes go up to their width as the dialog opens)
+        from hydrus.core import HydrusConstants as HC
+
+        dimensions = HC.options[ 'thumbnail_dimensions' ]
+
+        HC.options[ 'thumbnail_dimensions' ] = [ 200, 180 ]
+
+        try:
+
+            panel = ClientGUIManageOptionsPanel.ManageOptionsPanel( gui )
+
+            book = panel._listbook
+
+            ratings = next( walk( book.widget( i ).layout() ) for i in range( book.count() ) if book.tabText( i ) == 'ratings' )
+
+            panel.deleteLater()
+
+        finally:
+
+            HC.options[ 'thumbnail_dimensions' ] = dimensions
+
+
+        wider = { 'thumbnail_dimensions' : [ 200, 180 ], 'ratings' : ratings }
+
+        return { 'opens_on' : current, 'search' : search, 'pages' : pages, 'wider_thumbnails' : wider }
 
 
     return controller.CallBlockingToQt( gui, f )

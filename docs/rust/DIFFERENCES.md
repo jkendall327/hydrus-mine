@@ -282,7 +282,9 @@ search.
   system settings; on the file sort/collect page, the namespace sorts'
   list and the default collect's tag service; on the tag sort page, the
   manage tags dialogs' sorts (ours sort as the media viewer's list) and
-  the namespace grouping list; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  the namespace grouping list; on the ratings page, the example
+  rating service's dropdown, the clickable examples, and the preview
+  window's and dialogs' sizes; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
   key navigation's scrolling, the scroll rate, the background image and
   the rendering tech). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;

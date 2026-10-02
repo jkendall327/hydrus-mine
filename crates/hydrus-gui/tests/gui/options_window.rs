@@ -701,3 +701,65 @@ fn the_default_tag_sorts_are_chosen() {
     assert!(counts.len() > 3, "{counts:?}");
     assert!(counts.windows(2).all(|w| w[0] <= w[1]), "{counts:?}");
 }
+
+/// The ratings page's thumbnail options: on "apply", the grid draws its
+/// ratings by them at once.
+#[test]
+#[allow(clippy::float_cmp)] // (sizes set, not computed)
+fn the_thumbnail_rating_options_redraw_the_grid() {
+    use hydrus_store::services::{self, ServiceKind, ServiceRegistry};
+    let (_dirs, store) = store();
+    // (the like service shown on every thumbnail, rated or not)
+    store
+        .write_and_refresh(|ctx| {
+            let registry = ServiceRegistry::load(ctx.conn())?;
+            let service = registry.by_name("favourites").unwrap();
+            let mut kind = service.kind.clone();
+            let ServiceKind::RatingLike(like) = &mut kind else {
+                panic!("{kind:?}")
+            };
+            like.display.show_in_thumbnail = true;
+            like.display.show_in_thumbnail_even_when_null = true;
+            services::update_config(ctx.conn(), service.id, &kind)
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    // the first thumbnail's like: its size, and the boxes under it
+    let like = || {
+        let drawn = bound
+            .rows
+            .row_data(0)
+            .unwrap()
+            .thumbnails
+            .row_data(0)
+            .unwrap();
+        let like = drawn.ratings.row_data(0).unwrap();
+        (like.size, drawn.rating_boxes.row_count())
+    };
+    assert_eq!(like(), (12.0, 1));
+
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "ratings");
+    let (i, size) = row(
+        &window,
+        "Thumbnail like/dislike and numerical rating icon size: ",
+    );
+    assert_eq!((size.kind, size.text.as_str()), (4, "12.0"));
+    window.invoke_text_edited(i, "20".into());
+    let (i, background) = row(&window, "Give thumbnail ratings a flat background: ");
+    assert!(background.checked);
+    window.invoke_check_toggled(i, false);
+    window.invoke_apply();
+    let stored: hydrus_core::thumbnail::ThumbnailRatingSettings =
+        store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!((stored.icon_size, stored.background), (20.0, false));
+    assert_eq!(like(), (20.0, 0));
+}

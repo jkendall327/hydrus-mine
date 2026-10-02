@@ -16,7 +16,7 @@ use hydrus_core::pages::{
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
-use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
+use hydrus_core::thumbnail::{ThumbnailRatingSettings, ThumbnailScale, ThumbnailSettings};
 use hydrus_core::url::UrlClassSettings;
 use hydrus_core::windows::WindowSettings;
 use hydrus_store::bandwidth::BandwidthSettings;
@@ -85,6 +85,7 @@ settings! {
     tag_presentation: TagPresentation,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
+    thumbnail_ratings: ThumbnailRatingSettings,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
@@ -476,12 +477,13 @@ fn float(
         Rc::new(move |s| Value::Float(float_text(get(s)))),
         Rc::new(move |s, v| match v {
             Value::Float(text) => {
+                let name = label.trim_end();
                 let f: f64 = text
                     .trim()
                     .parse()
-                    .map_err(|_| format!("{label} \"{text}\" is not a number"))?;
+                    .map_err(|_| format!("{name} \"{text}\" is not a number"))?;
                 if !(min..=max).contains(&f) {
-                    return Err(format!("{label} must be from {min} to {max}"));
+                    return Err(format!("{name} must be from {min} to {max}"));
                 }
                 set(s, f);
                 Ok(())
@@ -807,8 +809,12 @@ fn unsigned(n: Option<i64>) -> Option<u64> {
 }
 
 /// The pages, in the reference's order: sorted by name, then "advanced".
+/// Some ranges are `settings`' (as the reference's are the options' when
+/// its dialog opens).
 #[allow(clippy::too_many_lines)] // (a table)
-pub fn pages() -> Vec<Page> {
+pub fn pages(settings: &Settings) -> Vec<Page> {
+    // (the thumbnails' rating sizes go up to their width)
+    let thumbnail_width = f64::from(settings.thumbnails.bounding_width);
     let page = |name, items| Page { name, items };
     vec![
         page(
@@ -1544,23 +1550,52 @@ pub fn pages() -> Vec<Page> {
         ),
         page(
             "ratings",
-            vec![boxed(
-                "media viewer",
-                vec![
-                    float(
-                        "Media viewer like/dislike and numerical rating icon size:",
-                        (1.0, 255.0),
-                        |s| s.media_viewer.rating_icon_size,
-                        |s, v| s.media_viewer.rating_icon_size = v,
-                    ),
-                    float(
-                        "Media viewer inc/dec rating icon height:",
-                        (2.0, 255.0),
-                        |s| s.media_viewer.rating_incdec_height,
-                        |s, v| s.media_viewer.rating_incdec_height = v,
-                    ),
-                ],
-            )],
+            vec![
+                boxed(
+                    "media viewer",
+                    vec![
+                        float(
+                            "Media viewer like/dislike and numerical rating icon size:",
+                            (1.0, 255.0),
+                            |s| s.media_viewer.rating_icon_size,
+                            |s, v| s.media_viewer.rating_icon_size = v,
+                        ),
+                        float(
+                            "Media viewer inc/dec rating icon height:",
+                            (2.0, 255.0),
+                            |s| s.media_viewer.rating_incdec_height,
+                            |s, v| s.media_viewer.rating_incdec_height = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "thumbnails",
+                    vec![
+                        float(
+                            "Thumbnail like/dislike and numerical rating icon size: ",
+                            (1.0, thumbnail_width),
+                            |s| s.thumbnail_ratings.icon_size,
+                            |s, v| s.thumbnail_ratings.icon_size = v,
+                        ),
+                        float(
+                            "Thumbnail inc/dec rating height: ",
+                            (2.0, thumbnail_width),
+                            |s| s.thumbnail_ratings.incdec_height,
+                            |s, v| s.thumbnail_ratings.incdec_height = v,
+                        ),
+                        check(
+                            "Give thumbnail ratings a flat background: ",
+                            |s| s.thumbnail_ratings.background,
+                            |s, v| s.thumbnail_ratings.background = v,
+                        ),
+                        check(
+                            "Always draw thumbnail numerical ratings collapsed: ",
+                            |s| s.thumbnail_ratings.numerical_collapsed,
+                            |s, v| s.thumbnail_ratings.numerical_collapsed = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "tag presentation",
@@ -1811,7 +1846,7 @@ pub struct Editor {
 
 impl Editor {
     pub fn new(settings: Settings) -> Self {
-        let pages = pages();
+        let pages = pages(&settings);
         let values = values(&pages, &settings);
         let numbers = pages
             .iter()
@@ -2070,8 +2105,8 @@ mod tests {
 
     #[test]
     fn only_the_options_changed_are_set() {
-        let pages = pages();
         let before = settings();
+        let pages = pages(&before);
         let mut values = values(&pages, &before);
         assert_eq!(applied(&pages, &before, &values), (before.clone(), vec![]));
         let trash = pages
@@ -2093,8 +2128,8 @@ mod tests {
     #[test]
     #[allow(clippy::float_cmp)] // (values set, not computed)
     fn values_that_cant_be_had_are_left_saying_why() {
-        let pages = pages();
         let before = settings();
+        let pages = pages(&before);
         let mut values = values(&pages, &before);
         let viewer = pages.iter().position(|p| p.name == "media viewer").unwrap();
         // (the rest is set regardless)
@@ -2150,6 +2185,51 @@ mod tests {
                 .media_viewer
                 .rating_icon_size,
             16.5
+        );
+    }
+
+    #[test]
+    #[allow(clippy::float_cmp)] // (values set, not computed)
+    fn thumbnail_rating_sizes_go_up_to_the_thumbnails_width() {
+        let mut before = settings();
+        before.thumbnails.bounding_width = 200;
+        let pages = pages(&before);
+        let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
+        let mut values = values(&pages, &before);
+        // (the media viewer's two, then the thumbnails')
+        values[ratings][2] = Value::Float("200".into());
+        values[ratings][3] = Value::Float("201".into());
+        values[ratings][4] = Value::Check(false);
+        values[ratings][5] = Value::Check(true);
+        let (after, problems) = applied(&pages, &before, &values);
+        assert_eq!(
+            problems,
+            ["Thumbnail inc/dec rating height: must be from 2 to 200"]
+        );
+        let ratings_after = after.thumbnail_ratings;
+        assert_eq!(ratings_after.icon_size, 200.0);
+        assert_eq!(
+            ratings_after.incdec_height,
+            before.thumbnail_ratings.incdec_height
+        );
+        assert!(!ratings_after.background);
+        assert!(ratings_after.numerical_collapsed);
+        values[ratings][3] = Value::Float("1.5".into());
+        assert_eq!(applied(&pages, &before, &values).1.len(), 1, "below 2");
+        values[ratings][3] = Value::Float("2".into());
+        let (after, problems) = applied(&pages, &before, &values);
+        assert!(problems.is_empty());
+        assert_eq!(after.thumbnail_ratings.incdec_height, 2.0);
+        // (and they show as they are)
+        let shown = super::values(&pages, &after);
+        assert_eq!(
+            shown[ratings][2..],
+            [
+                Value::Float("200.0".into()),
+                Value::Float("2.0".into()),
+                Value::Check(false),
+                Value::Check(true),
+            ]
         );
     }
 

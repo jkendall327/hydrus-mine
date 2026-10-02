@@ -6272,5 +6272,182 @@
     }
    ]
   }
- ]
+ ],
+ "wider_thumbnails": {
+  "thumbnail_dimensions": [
+   200,
+   180
+  ],
+  "ratings": [
+   {
+    "box": "choose rating service style to display for examples",
+    "items": [
+     {
+      "label": "Select rating service for styling numerical stars:"
+     },
+     {
+      "choice": "favourites",
+      "items": [
+       "favourites",
+       "stars"
+      ]
+     }
+    ]
+   },
+   {
+    "box": "media viewer",
+    "items": [
+     {
+      "label": "Media viewer like/dislike and numerical rating icon size:",
+      "tooltip": "Set size in pixels for like, numerical, and inc/dec rating icons for clicking\non. This will be used for both width and height of the square icons."
+     },
+     {
+      "float": 12.0,
+      "min": 1.0,
+      "max": 255.0,
+      "tooltip": "Set size in pixels for like, numerical, and inc/dec rating icons for clicking\non. This will be used for both width and height of the square icons."
+     },
+     {
+      "label": "Media viewer inc/dec rating icon height:",
+      "tooltip": "Set height in pixels for inc/dec rectangles in the media viewer. Width will be\ndynamic based on the rating. It is limited to be between twice and half of the\nnormal ratings icons sizes."
+     },
+     {
+      "float": 12.0,
+      "min": 2.0,
+      "max": 255.0,
+      "tooltip": "Set height in pixels for inc/dec rectangles in the media viewer. Width will be\ndynamic based on the rating. It is limited to be between twice and half of the\nnormal ratings icons sizes."
+     },
+     {
+      "label": "Media viewer size examples (click to test):"
+     },
+     {
+      "widget": "RatingNumericalExample"
+     },
+     {
+      "widget": "RatingIncDecExample"
+     }
+    ]
+   },
+   {
+    "box": "preview window",
+    "items": [
+     {
+      "label": "Preview window like/dislike and numerical rating icon size:",
+      "tooltip": "Set size in pixels for like and numerical rating icons for clicking on in the\npreview window."
+     },
+     {
+      "float": 12.0,
+      "min": 1.0,
+      "max": 255.0,
+      "tooltip": "Set size in pixels for like and numerical rating icons for clicking on in the\npreview window."
+     },
+     {
+      "label": "Preview window inc/dec rating icon height:",
+      "tooltip": "Set height in pixels for inc/dec rectangles in the preview window. Width will be\ndynamic based on the rating. It is limited to be between twice and half of the\nnormal ratings icons sizes."
+     },
+     {
+      "float": 12.0,
+      "min": 2.0,
+      "max": 255.0,
+      "tooltip": "Set height in pixels for inc/dec rectangles in the preview window. Width will be\ndynamic based on the rating. It is limited to be between twice and half of the\nnormal ratings icons sizes."
+     },
+     {
+      "label": "Preview window size examples (click to test):"
+     },
+     {
+      "widget": "RatingNumericalExample"
+     },
+     {
+      "widget": "RatingIncDecExample"
+     }
+    ]
+   },
+   {
+    "box": "thumbnails",
+    "items": [
+     {
+      "label": "Thumbnail like/dislike and numerical rating icon size: ",
+      "tooltip": "This is the size of any rating icons shown in pixels. It will be square, so this\nis both the width and height."
+     },
+     {
+      "float": 12.0,
+      "min": 1.0,
+      "max": 200.0,
+      "tooltip": "This is the size of any rating icons shown in pixels. It will be square, so this\nis both the width and height."
+     },
+     {
+      "label": "Thumbnail inc/dec rating height: ",
+      "tooltip": "This is the width of the inc/dec rating buttons in pixels. Height is 1/2 this.\nLimited to a range around the rating icon sizes."
+     },
+     {
+      "float": 12.0,
+      "min": 2.0,
+      "max": 200.0,
+      "tooltip": "This is the width of the inc/dec rating buttons in pixels. Height is 1/2 this.\nLimited to a range around the rating icon sizes."
+     },
+     {
+      "label": "Give thumbnail ratings a flat background: ",
+      "tooltip": "If you show any ratings on your thumbnails (you can set this under\n_services->edit_), they can get lost in the noise of the underlying thumb. This\ndraws a plain flat rectangle around them in the normal window panel colour. If\nyou think it is ugly, turn it off here!"
+     },
+     {
+      "check": "",
+      "value": true,
+      "tooltip": "If you show any ratings on your thumbnails (you can set this under\n_services->edit_), they can get lost in the noise of the underlying thumb. This\ndraws a plain flat rectangle around them in the normal window panel colour. If\nyou think it is ugly, turn it off here!"
+     },
+     {
+      "label": "Always draw thumbnail numerical ratings collapsed: ",
+      "tooltip": "If this is checked, all numerical ratings will show collapsed in thumbnails\n('2/10 ▲' instead of '▲▲▼▼▼▼▼▼▼▼') regardless of the per-service setting."
+     },
+     {
+      "check": "",
+      "value": false,
+      "tooltip": "If this is checked, all numerical ratings will show collapsed in thumbnails\n('2/10 ▲' instead of '▲▲▼▼▼▼▼▼▼▼') regardless of the per-service setting."
+     },
+     {
+      "label": "Thumbnail size examples (click to test):"
+     },
+     {
+      "widget": "RatingNumericalExample"
+     },
+     {
+      "widget": "RatingIncDecExample"
+     }
+    ]
+   },
+   {
+    "box": "dialogs",
+    "items": [
+     {
+      "label": "Dialogs like/dislike and numerical rating icon size:",
+      "tooltip": "Set size in pixels for like and numerical rating icons for clicking on in the\n'manage ratings' dialog."
+     },
+     {
+      "float": 12.0,
+      "min": 6.0,
+      "max": 128.0,
+      "tooltip": "Set size in pixels for like and numerical rating icons for clicking on in the\n'manage ratings' dialog."
+     },
+     {
+      "label": "Dialogs inc/dec rating height:",
+      "tooltip": "Set height in pixels for inc/dec rectangles in the 'manage ratings' dialog. \nWidth will be dynamic based on the rating. It is limited to be between twice and\nhalf of the normal ratings icons sizes."
+     },
+     {
+      "float": 12.0,
+      "min": 12.0,
+      "max": 128.0,
+      "tooltip": "Set height in pixels for inc/dec rectangles in the 'manage ratings' dialog. \nWidth will be dynamic based on the rating. It is limited to be between twice and\nhalf of the normal ratings icons sizes."
+     },
+     {
+      "label": "Dialog size examples (click to test):"
+     },
+     {
+      "widget": "RatingNumericalExample"
+     },
+     {
+      "widget": "RatingIncDecExample"
+     }
+    ]
+   }
+  ]
+ }
 }

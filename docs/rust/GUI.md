@@ -152,7 +152,9 @@ potential duplicates search, auto-resolution in normal time and its work
 and rest), media playback (the zoom centre, the zoom steps, the media
 viewer's default zoom, and what counts as transparency), media viewer
 (slideshows), media viewer hovers (the top hover's
-file summary), ratings, tag presentation, tag sort (the search pages' and
+file summary), ratings (the media viewer's rating sizes, and the
+thumbnails': their sizes, which go up to the thumbnails' width as the
+dialog opens, their box, and numerical ratings always collapsed), tag presentation, tag sort (the search pages' and
 the media viewer's default tag sorts: a type, its orders, and its
 grouping where the type groups), thumbnails (their size and how
 they fit it, their border and margin, the UI-scale supersampling, how far
@@ -461,7 +463,8 @@ top right go under them. They are drawn as your options say
 `draw_thumbnail_rating_background` and
 `draw_thumbnail_numerical_ratings_collapsed_always`, which draws a
 numerical rating as its "3/5" and one shape), with a numerical rating's
-"3/5" on the left or right of its stars if its service says so; a
+"3/5" on the left or right of its stars if its service says so, and
+redrawn as soon as the options window's "apply" changes them; a
 collection's are its first file's, as the reference's are. A rating set
 in the media viewer, or a file archived there, shows on its thumbnail
 at once.

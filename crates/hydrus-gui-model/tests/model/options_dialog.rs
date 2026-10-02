@@ -275,9 +275,8 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
     problem.map(|ours| format!("ours {ours}, theirs {theirs}"))
 }
 
-#[test]
-fn the_options_pages_are_the_references() {
-    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+/// The fixture's store, as the driver booted the reference on it.
+fn fixture_store(recorded: &Json) -> (tempfile::TempDir, std::sync::Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -286,7 +285,7 @@ fn the_options_pages_are_the_references() {
     )
     .unwrap();
     let store = Store::open(native.path()).unwrap();
-    // (as the driver booted the reference: the similar-files search off)
+    // (the similar-files search off)
     let fact = |name: &str| recorded["facts"][name] == true;
     let active = fact("maintain_similar_files_duplicate_pairs_during_active");
     let idle = fact("maintain_similar_files_duplicate_pairs_during_idle");
@@ -299,6 +298,46 @@ fn the_options_pages_are_the_references() {
             hydrus_store::settings::set(ctx.conn(), &similar)
         })
         .unwrap();
+    (native, store)
+}
+
+/// How `page`'s options differ from the reference's recorded `items`: each
+/// of ours is one of the reference's rows, in order, its control and value
+/// (from `settings`) as the reference's.
+fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) -> Vec<String> {
+    let mut problems = Vec::new();
+    let mut rows = Vec::new();
+    recorded_rows(items.as_array().unwrap(), &[], &mut rows);
+    let mut mine = Vec::new();
+    our_rows(&page.items, &[], &mut mine);
+    let mut after = 0;
+    for (boxes, item) in mine {
+        let Item::Opt(option) = item else { continue };
+        let found = rows
+            .iter()
+            .enumerate()
+            .skip(after)
+            .find(|(_, r)| r.label == option.label && r.boxes == boxes);
+        let Some((at, row)) = found else {
+            problems.push(format!(
+                "{}: {boxes:?} {:?} isn't the reference's (or is out of order)",
+                page.name, option.label
+            ));
+            continue;
+        };
+        after = at + 1;
+        let value = (option.get)(settings);
+        if let Some(why) = compare(&option.kind, &value, &row.control, store) {
+            problems.push(format!("{}: {:?}: {why}", page.name, option.label));
+        }
+    }
+    problems
+}
+
+#[test]
+fn the_options_pages_are_the_references() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let (_dir, store) = fixture_store(&recorded);
     let settings = store.read(Settings::load).unwrap();
 
     let theirs: Vec<(&str, &Json)> = recorded["pages"]
@@ -307,7 +346,7 @@ fn the_options_pages_are_the_references() {
         .iter()
         .map(|p| (p["page"].as_str().unwrap(), &p["items"]))
         .collect();
-    let ours: Vec<Page> = pages();
+    let ours: Vec<Page> = pages(&settings);
 
     // the pages, in the reference's order
     let names: Vec<&str> = ours.iter().map(|p| p.name).collect();
@@ -324,33 +363,32 @@ fn the_options_pages_are_the_references() {
     let mut problems = Vec::new();
     for page in &ours {
         let items = theirs.iter().find(|(n, _)| *n == page.name).unwrap().1;
-        let mut rows = Vec::new();
-        recorded_rows(items.as_array().unwrap(), &[], &mut rows);
-        let mut mine = Vec::new();
-        our_rows(&page.items, &[], &mut mine);
-        let mut after = 0;
-        for (boxes, item) in mine {
-            let Item::Opt(option) = item else { continue };
-            let found = rows
-                .iter()
-                .enumerate()
-                .skip(after)
-                .find(|(_, r)| r.label == option.label && r.boxes == boxes);
-            let Some((at, row)) = found else {
-                problems.push(format!(
-                    "{}: {boxes:?} {:?} isn't the reference's (or is out of order)",
-                    page.name, option.label
-                ));
-                continue;
-            };
-            after = at + 1;
-            let value = (option.get)(&settings);
-            if let Some(why) = compare(&option.kind, &value, &row.control, &store) {
-                problems.push(format!("{}: {:?}: {why}", page.name, option.label));
-            }
-        }
+        problems.extend(page_problems(page, items, &settings, &store));
     }
     assert!(problems.is_empty(), "{}", problems.join("\n"));
+}
+
+#[test]
+fn the_thumbnail_rating_sizes_go_up_to_the_thumbnails_width() {
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let wider = &recorded["wider_thumbnails"];
+    let (_dir, store) = fixture_store(&recorded);
+    let mut settings = store.read(Settings::load).unwrap();
+    let dimensions = &wider["thumbnail_dimensions"];
+    settings.thumbnails.bounding_width = dimensions[0].as_u64().unwrap() as u32;
+    settings.thumbnails.bounding_height = dimensions[1].as_u64().unwrap() as u32;
+    let ours = pages(&settings);
+    let ratings = ours.iter().find(|p| p.name == "ratings").unwrap();
+    let problems = page_problems(ratings, &wider["ratings"], &settings, &store);
+    assert!(problems.is_empty(), "{}", problems.join("\n"));
+    // (and so not the reference's with its thumbnails as wide as before)
+    let before = recorded["pages"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|p| p["page"] == "ratings")
+        .unwrap();
+    assert!(!page_problems(ratings, &before["items"], &settings, &store).is_empty());
 }
 
 #[test]
@@ -372,7 +410,12 @@ fn the_options_search_offers_what_the_references_does() {
         .iter()
         .filter_map(Json::as_str)
         .collect();
-    let ours = hydrus_gui_model::options::suggestions(&pages());
+    let dir = tempfile::tempdir().unwrap();
+    let settings = Store::open(dir.path())
+        .unwrap()
+        .read(Settings::load)
+        .unwrap();
+    let ours = hydrus_gui_model::options::suggestions(&pages(&settings));
     let missing: Vec<&str> = ours
         .iter()
         .map(|s| s.text.as_str())
