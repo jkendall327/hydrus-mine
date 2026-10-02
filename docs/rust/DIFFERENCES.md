@@ -221,6 +221,13 @@ search.
   page's own presentation options (new files only, say) aren't applied
   yet, and the page has no sort or collect controls yet: its files are in
   the queue's order.
+- **A gallery downloader page's list selects one search at a time**, and
+  its buttons act on that one; the reference's list selects several. Its
+  downloader list is flat (the reference nests a site's downloaders and
+  greys out ones that can't work), and its searches' import options and
+  file limits can't be edited from the page yet. Its columns are as
+  narrow as the reference's, which shows the status columns as single
+  characters; with Slint's table they take what room the sidebar has.
 
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 

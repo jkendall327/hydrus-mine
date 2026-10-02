@@ -820,3 +820,280 @@ fn queues_of_pages_left_closed_go_when_the_client_opens() {
             .is_none()
     );
 }
+
+#[test]
+fn a_gallery_downloader_page_shows_and_controls_its_searches() {
+    use hydrus_core::url::{AnyGug, Gug, Gugs};
+    use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
+
+    let (_dirs, store) = store();
+    // one downloader, the client's default, and another
+    let gug = |name: &str, key: &str| {
+        AnyGug::Single(Gug {
+            name: name.into(),
+            key: key.into(),
+            url_template: format!("https://{key}.example/search?tags=%tags%"),
+            replacement_phrase: "%tags%".into(),
+            separator: "+".into(),
+            initial_search_text: "enter tags".into(),
+            example_search_text: String::new(),
+        })
+    };
+    let downloaders = hydrus_parse::Downloaders {
+        gugs: Gugs {
+            gugs: vec![gug("site tag search", "aa"), gug("other search", "bb")],
+            keys_to_display: vec!["aa".into(), "bb".into()],
+        },
+        ..hydrus_parse::Downloaders::default()
+    };
+    let defaults = hydrus_core::subscriptions::GalleryDefaults {
+        file_limit: Some(100),
+        gug: Some(("aa".into(), "site tag search".into())),
+    };
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::settings::set(ctx.conn(), &downloaders)?;
+            hydrus_store::settings::set(ctx.conn(), &defaults)
+        })
+        .unwrap();
+    let files: Vec<(HashId, hydrus_core::Sha256)> = store
+        .read(|conn| {
+            let ids: Vec<HashId> = conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 3")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            let hashes = hydrus_store::master::hashes(conn, &ids)?;
+            Ok(ids.iter().map(|id| (*id, hashes[id])).collect())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    // download, then gallery: a page with the client's default downloader
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    assert_eq!(ui.get_chooser_labels().row_data(5).unwrap(), "gallery");
+    ui.invoke_chooser_pressed(6);
+    assert_eq!(bound.pages.borrow().shown().name, "gallery");
+    assert!(ui.get_gallery_page());
+    let data = ui.get_gallery_data();
+    assert_eq!(data.top_status, "waiting for new queries");
+    assert_eq!(
+        data.gug_names
+            .row_data(usize::try_from(data.gug_index).unwrap())
+            .unwrap(),
+        "site tag search"
+    );
+    assert_eq!(data.initial_search_text, "enter tags");
+    assert_eq!(data.file_limit, 100);
+    assert!(!data.no_limit && !data.highlighted);
+    assert_eq!(bound.current.borrow().borrow().files(), []);
+
+    // queries entered become searches, the first shown
+    ui.invoke_gallery_queries("red eyes\n blue \n\n".into());
+    let data = ui.get_gallery_data();
+    assert_eq!(data.top_status, "2 queries - 0/0");
+    assert!(data.highlighted);
+    assert_eq!(data.highlighted_query, "red eyes");
+    let row = |ui: &MainWindow, row: usize| -> Vec<String> {
+        let cells = ui.get_gallery_rows().row_data(row).unwrap();
+        (0..cells.row_count())
+            .map(|i| cells.row_data(i).unwrap().text.to_string())
+            .collect()
+    };
+    // (sorted by query, the shown one starred)
+    assert_eq!(row(&ui, 0)[..2], ["blue", "site tag search"]);
+    assert_eq!(row(&ui, 1)[0], "* red eyes");
+    assert_eq!(row(&ui, 1)[4], "pending");
+    let key = bound.pages.borrow().shown().key;
+    let made = store
+        .read(move |c| queues::queues_with_page_key(c, &key.0))
+        .unwrap();
+    assert_eq!(made.len(), 2);
+    for queue in &made {
+        let search: hydrus_core::gallery::GallerySearch =
+            serde_json::from_value(queue.extra.clone()).unwrap();
+        assert_eq!(search.file_limit, Some(100));
+        assert_eq!(queue.name, "gallery");
+    }
+    let (red, blue) = (made[0].id, made[1].id);
+
+    // the daemon at work: the shown search's files join the page, the
+    // other's don't
+    let seed = |n: usize| NewFileSeed {
+        seed_type: SeedType::Url,
+        data: format!("https://aa.example/post/{n}"),
+        data_for_comparison: format!("https://aa.example/post/{n}"),
+        source_time: None,
+        referral_url: None,
+        meta: FileSeedMeta::default(),
+    };
+    let (first, second) = (files[0].1, files[1].1);
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            for (queue, n, hash, status) in [
+                (red, 1, Some(first), SeedStatus::SuccessfulAndNew),
+                (blue, 2, Some(second), SeedStatus::SuccessfulAndNew),
+                (blue, 3, None, SeedStatus::Vetoed),
+            ] {
+                queues::add_file_seeds(conn, queue, &[seed(n)], false, 0)?;
+                let mut seeds = queues::file_seeds(conn, queue)?;
+                let seed = seeds.last_mut().unwrap();
+                seed.status = status;
+                if let Some(hash) = hash {
+                    seed.meta.set_hash("sha256", hash.to_hex());
+                }
+                queues::update_file_seed(conn, seed)?;
+            }
+            Ok(())
+        })
+        .unwrap();
+    (bound.sync)();
+    assert_eq!(bound.current.borrow().borrow().files(), [files[0].0]);
+    assert_eq!(ui.get_gallery_data().top_status, "2 queries - 3/3");
+    // (its files done, its search's first page not yet read)
+    assert_eq!(row(&ui, 0)[2..6], ["\u{23F9}", "", "pending", "2 - 1Ign"]);
+
+    // a double click shows another search, its files replacing the page's
+    ui.invoke_gallery_row_pressed(0);
+    assert!(ui.get_gallery_data().can_highlight);
+    assert!(ui.get_gallery_data().can_retry_ignored);
+    ui.invoke_gallery_row_pressed(0);
+    let data = ui.get_gallery_data();
+    assert_eq!(data.highlighted_query, "blue");
+    assert_eq!(row(&ui, 0)[0], "* blue");
+    assert_eq!(bound.current.borrow().borrow().files(), [files[1].0]);
+
+    // retrying its ignored file, and pausing its files, from the list
+    store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();
+    ui.invoke_gallery_retry(true);
+    let counts = store
+        .read(move |c| queues::file_seed_counts(c, blue))
+        .unwrap();
+    assert_eq!(counts.get(&SeedStatus::Unknown), Some(&1));
+    ui.invoke_gallery_pause_play(false, false);
+    assert_eq!(row(&ui, 0)[2], "\u{23F8}");
+    assert!(
+        store
+            .read(move |c| queues::queue(c, blue))
+            .unwrap()
+            .unwrap()
+            .files_paused
+    );
+    assert_eq!(ui.get_gallery_data().files_line, "paused");
+    assert_eq!(
+        store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap(),
+        [blue]
+    );
+
+    // another downloader and no file limit for new queries; kept with the
+    // page, as is the search shown
+    // (offered by name)
+    assert_eq!(
+        ui.get_gallery_data().gug_names.row_data(0).unwrap(),
+        "other search"
+    );
+    ui.invoke_gallery_gug(0);
+    ui.invoke_gallery_limit(true, 0);
+    let data = ui.get_gallery_data();
+    assert_eq!(
+        data.gug_names
+            .row_data(usize::try_from(data.gug_index).unwrap())
+            .unwrap(),
+        "other search"
+    );
+    assert!(data.no_limit);
+    ui.invoke_gallery_queries("green".into());
+    let green = store
+        .read(move |c| queues::queues_with_page_key(c, &key.0))
+        .unwrap()
+        .into_iter()
+        .find(|q| q.id != red && q.id != blue)
+        .unwrap();
+    let search: hydrus_core::gallery::GallerySearch =
+        serde_json::from_value(green.extra.clone()).unwrap();
+    assert_eq!(
+        (search.source_name.as_str(), search.file_limit),
+        ("other search", None)
+    );
+    bound.pages.borrow_mut().sync(5).unwrap();
+    let saved = store
+        .read(|c| sessions::load(c, LAST_SESSION))
+        .unwrap()
+        .unwrap();
+    let kept = saved
+        .all_pages()
+        .into_iter()
+        .find(|p| p.key == key)
+        .unwrap()
+        .clone();
+    let PageContent::Downloader {
+        queues: kept_queues,
+        page: Some(state),
+        ..
+    } = kept.content
+    else {
+        panic!("{kept:?}");
+    };
+    assert_eq!(kept_queues, [red, blue, green.id]);
+    assert_eq!(state.highlighted, Some(blue));
+    let own = state.gallery.unwrap();
+    assert_eq!(
+        (own.gug_name.as_str(), own.file_limit),
+        ("other search", None)
+    );
+
+    // removing the shown search asks, then clears the page
+    ui.invoke_gallery_remove();
+    assert_eq!(
+        ui.get_question(),
+        "Remove the 1 selected queries?\n\nThe currently highlighted query will be removed, \
+         and the media panel cleared."
+    );
+    ui.invoke_answer(true);
+    assert_eq!(ui.get_gallery_data().top_status, "2 queries - 1/1");
+    assert!(!ui.get_gallery_data().highlighted);
+    assert_eq!(bound.current.borrow().borrow().files(), []);
+    assert!(
+        store
+            .read(move |c| queues::queue(c, blue))
+            .unwrap()
+            .is_none()
+    );
+
+    // closing asks while a search still has files to get, else when it
+    // holds any; closed, its searches wait
+    store
+        .write(move |ctx| {
+            queues::add_file_seeds(ctx.conn(), red, &[seed(4)], false, 0)?;
+            Ok(())
+        })
+        .unwrap();
+    (bound.sync)();
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"gallery\"?\n\n1 queries are still importing."
+    );
+    ui.invoke_answer(false);
+    ui.invoke_gallery_row_pressed(1);
+    ui.invoke_gallery_pause_play(false, false);
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"gallery\"?\n\nThis is a gallery downloader page holding 2 import objects."
+    );
+    ui.invoke_answer(true);
+    assert_ne!(bound.pages.borrow().shown().key, key);
+    for queue in [red, green.id] {
+        assert!(
+            store
+                .read(move |c| queues::queue(c, queue))
+                .unwrap()
+                .unwrap()
+                .page_closed
+        );
+    }
+}

@@ -77,6 +77,16 @@ impl rusqlite::types::FromSql for TimestampMs {
 /// (`HydrusTime.TimeDeltaToPrettyTimeDelta`), e.g. `2 days 1 hour`: the two
 /// largest units, without months and years if `no_bigger_than_days`.
 pub fn pretty_time_delta(seconds: i64, no_bigger_than_days: bool) -> String {
+    span(seconds, no_bigger_than_days, true)
+}
+
+/// [`pretty_time_delta`] in whole minutes (`show_seconds=False`): `1 hour
+/// 1 minute`, not `1 hour 1 minute 5 seconds`.
+pub fn pretty_time_delta_minutes(seconds: i64, no_bigger_than_days: bool) -> String {
+    span(seconds, no_bigger_than_days, false)
+}
+
+fn span(seconds: i64, no_bigger_than_days: bool, show_seconds: bool) -> String {
     if seconds == 0 {
         return "0 seconds".into();
     }
@@ -98,6 +108,9 @@ pub fn pretty_time_delta(seconds: i64, no_bigger_than_days: bool) -> String {
         ] {
             if no_bigger_than_days && (name == "year" || name == "month") {
                 continue;
+            }
+            if !show_seconds && name == "second" {
+                break;
             }
             let mut quantity = (rest / unit).floor();
             rest %= unit;
@@ -176,6 +189,25 @@ pub fn timestamp_to_pretty_time_delta(timestamp: i64, now: i64, history_suffix: 
         return "now".into();
     }
     let span = pretty_time_delta(delta, false);
+    if now > timestamp {
+        format!("{span}{history_suffix}")
+    } else {
+        format!("in {span}")
+    }
+}
+
+/// [`timestamp_to_pretty_time_delta`] in whole minutes (`show_seconds=
+/// False`): `now` within a minute.
+pub fn timestamp_to_pretty_time_delta_minutes(
+    timestamp: i64,
+    now: i64,
+    history_suffix: &str,
+) -> String {
+    let delta = (timestamp - now).abs();
+    if delta <= 60 {
+        return "now".into();
+    }
+    let span = pretty_time_delta_minutes(delta, false);
     if now > timestamp {
         format!("{span}{history_suffix}")
     } else {
@@ -324,6 +356,28 @@ mod tests {
             "1 month 9 days old"
         );
         assert_eq!(timestamp_to_pretty_time_delta(1000, 1002, " old"), "now");
+        // (show_seconds=False, checked against TimeDeltaToPrettyTimeDelta)
+        for (seconds, text) in [
+            (61, "1 minute"),
+            (90, "1 minute"),
+            (3599, "59 minutes"),
+            (3600, "1 hour"),
+            (3661, "1 hour 1 minute"),
+            (86_459, "1 day"),
+            (277_259, "3 days 5 hours"),
+            (3_456_000, "1 month 9 days"),
+            (34_560_000, "1 year 1 month"),
+        ] {
+            assert_eq!(pretty_time_delta_minutes(seconds, false), text, "{seconds}");
+        }
+        assert_eq!(
+            timestamp_to_pretty_time_delta_minutes(1000, 1060, " ago"),
+            "now"
+        );
+        assert_eq!(
+            timestamp_to_pretty_time_delta_minutes(1000, 1000 + 3661, " ago"),
+            "1 hour 1 minute ago"
+        );
         assert_eq!(
             timestamp_to_pretty_time_delta(1000, 900, " ago"),
             "in 1 minute 40 seconds"

@@ -1,0 +1,222 @@
+// A gallery downloader page's sidebar (the reference's
+// SidebarImporterMultipleGallery): the "gallery downloader" box with its
+// searches' list, their buttons, the query box, the downloader and file
+// limit for new queries; and the "highlighted query" box.
+
+import { Button, CheckBox, ComboBox, LineEdit, SpinBox, StandardTableView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { DownloadLine, ImporterBoxes } from "importing.slint";
+
+export struct GalleryData {
+    // "3 queries - 12/40" and the total status, or "waiting for new queries"
+    top-status: string,
+    bottom-status: string,
+    // what the list's buttons can do for the selected search
+    has-selection: bool,
+    can-highlight: bool,
+    can-clear-highlight: bool,
+    can-retry-ignored: bool,
+    can-retry-failed: bool,
+    // the downloader for new queries, among those offered
+    gug-names: [string],
+    gug-index: int,
+    initial-search-text: string,
+    // the file limit for new queries
+    no-limit: bool,
+    file-limit: int,
+    // the search shown, and its status lines
+    highlighted: bool,
+    highlighted-query: string,
+    files-line: string,
+    search-line: string,
+    search-paused: bool,
+}
+
+export component GallerySidebar inherits VerticalLayout {
+    in property <GalleryData> data;
+    in property <[[StandardListViewItem]]> rows;
+    in-out property <int> current-row;
+    // the highlighted search's importer, as a URL page's
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <bool> import-paused;
+    in property <DownloadLine> file-download;
+    in property <string> search-status;
+    in property <DownloadLine> search-download;
+    callback row-pressed(int);
+    callback sort(int, bool);
+    callback highlight();
+    callback clear-highlight();
+    // a search's files or (true) its search, from the list or the
+    // highlighted box (which, -1 for the list's selection, else the shown)
+    callback pause-play(bool, bool);
+    callback retry(bool);
+    callback remove();
+    callback queries-entered(string);
+    callback paste();
+    callback gug-chosen(int);
+    callback limit-changed(bool, int);
+    callback cancel-download(bool);
+    spacing: 6px;
+    Text {
+        text: "gallery downloader";
+        font-weight: 700;
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            Text {
+                text: root.data.top-status;
+                overflow: elide;
+            }
+            if root.data.bottom-status != "": Text {
+                text: root.data.bottom-status;
+                overflow: elide;
+            }
+            table := StandardTableView {
+                height: 180px;
+                // (narrow, as the reference's: its columns are a few
+                // characters wide but for the query)
+                columns: [
+                    { title: "query", min-width: 70px, width: 90px, horizontal-stretch: 1 },
+                    { title: "source", min-width: 40px, width: 50px },
+                    { title: "files status", min-width: 18px, width: 18px },
+                    { title: "search status", min-width: 18px, width: 18px },
+                    { title: "status", min-width: 46px, width: 52px },
+                    { title: "items", min-width: 40px, width: 54px },
+                    { title: "added", min-width: 50px, width: 64px },
+                ];
+                rows: root.rows;
+                current-row <=> root.current-row;
+                row-pointer-event(row, event, position) => {
+                    if event.kind == PointerEventKind.down && event.button == PointerEventButton.left {
+                        root.row-pressed(row);
+                    }
+                }
+                sort-ascending(column) => { root.sort(column, true); }
+                sort-descending(column) => { root.sort(column, false); }
+            }
+            // the reference's buttons: highlight, clear highlight, pause/play
+            // files, pause/play search, retry, remove
+            HorizontalLayout {
+                spacing: 4px;
+                Button {
+                    icon: @image-url("../../../static/highlight.png");
+                    enabled: root.data.can-highlight;
+                    clicked => { root.highlight(); }
+                }
+                Button {
+                    icon: @image-url("../../../static/clear_highlight.png");
+                    enabled: root.data.can-clear-highlight;
+                    clicked => { root.clear-highlight(); }
+                }
+                Button {
+                    icon: @image-url("../../../static/file_pause.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.pause-play(false, false); }
+                }
+                Button {
+                    icon: @image-url("../../../static/gallery_pause.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.pause-play(true, false); }
+                }
+                Button {
+                    icon: @image-url("../../../static/trash.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.remove(); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+            }
+            if root.data.can-retry-ignored || root.data.can-retry-failed: HorizontalLayout {
+                spacing: 4px;
+                if root.data.can-retry-ignored: Button {
+                    text: "retry ignored";
+                    clicked => { root.retry(true); }
+                }
+                if root.data.can-retry-failed: Button {
+                    text: "retry failed";
+                    clicked => { root.retry(false); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                LineEdit {
+                    horizontal-stretch: 1;
+                    placeholder-text: root.data.initial-search-text;
+                    accepted(text) => {
+                        root.queries-entered(text);
+                        self.text = "";
+                    }
+                }
+                // (the reference's paste button: newline-separated queries
+                // from the clipboard)
+                Button {
+                    icon: @image-url("../../../static/paste.png");
+                    clicked => { root.paste(); }
+                }
+            }
+            ComboBox {
+                model: root.data.gug-names;
+                current-index: root.data.gug-index;
+                selected => { root.gug-chosen(self.current-index); }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: "stop after this many files";
+                    vertical-alignment: center;
+                }
+                limit := SpinBox {
+                    horizontal-stretch: 1;
+                    minimum: 1;
+                    maximum: 1000000;
+                    value: root.data.file-limit;
+                    enabled: !root.data.no-limit;
+                    edited(value) => { root.limit-changed(false, value); }
+                }
+            }
+            CheckBox {
+                text: "no limit";
+                checked: root.data.no-limit;
+                toggled => { root.limit-changed(self.checked, limit.value); }
+            }
+        }
+    }
+    if root.data.highlighted: Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            Text {
+                text: "highlighted query";
+                font-weight: 700;
+            }
+            LineEdit {
+                text: root.data.highlighted-query;
+                read-only: true;
+            }
+            ImporterBoxes {
+                status-lines: true;
+                files-line: root.data.files-line;
+                import-status: root.import-status;
+                import-progress: root.import-progress;
+                import-fraction: root.import-fraction;
+                import-paused: root.import-paused;
+                file-download: root.file-download;
+                search-line: root.data.search-line;
+                search-paused: root.data.search-paused;
+                search-status: root.search-status;
+                search-download: root.search-download;
+                pause-play-files => { root.pause-play(false, true); }
+                pause-play-search => { root.pause-play(true, true); }
+                cancel-download(gallery) => { root.cancel-download(gallery); }
+            }
+        }
+    }
+}

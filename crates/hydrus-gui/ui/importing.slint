@@ -1,0 +1,151 @@
+// Importers' boxes, as the reference's downloader pages show them: a
+// download in progress (its network job control), and an importer's
+// "imports" and "search" boxes (a URL page's, a gallery page's highlighted
+// query's).
+
+import { Button, ProgressIndicator } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// a download in progress, under an importer's log (the reference's
+// network job control): its status, its size and speed, its gauge, and
+// whether it can be cancelled
+export struct DownloadLine {
+    left: string,
+    right: string,
+    fraction: float,
+    can-cancel: bool,
+}
+
+export component DownloadControl inherits Rectangle {
+    in property <DownloadLine> line;
+    callback cancel();
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 4px;
+        spacing: 2px;
+        HorizontalLayout {
+            spacing: 6px;
+            Text {
+                text: root.line.left;
+                overflow: elide;
+                horizontal-stretch: 1;
+            }
+            if root.line.right != "": Text {
+                text: root.line.right;
+                horizontal-alignment: right;
+            }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            ProgressIndicator {
+                horizontal-stretch: 1;
+                progress: root.line.fraction;
+            }
+            // (the reference's stop icon)
+            Button {
+                icon: @image-url("../../../static/stop.png");
+                enabled: root.line.can-cancel;
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
+
+// an importer's "imports" box and "search" box: the file log's status and
+// progress, the search log's, their downloads, and pausing; a gallery
+// query's (`status-lines`) also have their live status lines, beside their
+// pause buttons, and a search pause
+export component ImporterBoxes inherits VerticalLayout {
+    in property <bool> status-lines;
+    in property <string> files-line;
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <bool> import-paused;
+    in property <DownloadLine> file-download;
+    in property <string> search-line;
+    in property <bool> search-paused;
+    in property <string> search-status;
+    in property <DownloadLine> search-download;
+    callback pause-play-files();
+    callback pause-play-search();
+    callback cancel-download(bool);
+    spacing: 6px;
+    Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            if root.status-lines: Text {
+                text: "imports";
+                font-weight: 600;
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: root.status-lines ? root.files-line : "imports";
+                    font-weight: root.status-lines ? 400 : 600;
+                    overflow: elide;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                // the reference's own file_pause/file_play icons: play while
+                // paused
+                Button {
+                    icon: root.import-paused ? @image-url("../../../static/file_play.png") : @image-url("../../../static/file_pause.png");
+                    clicked => { root.pause-play-files(); }
+                }
+            }
+            if root.import-status != "": Text {
+                text: root.import-status;
+                wrap: word-wrap;
+            }
+            if root.import-progress != "": Text {
+                text: root.import-progress;
+            }
+            ProgressIndicator {
+                progress: root.import-fraction;
+            }
+            DownloadControl {
+                line: root.file-download;
+                cancel => { root.cancel-download(false); }
+            }
+        }
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            Text {
+                text: "search";
+                font-weight: 600;
+            }
+            // (gallery_pause/gallery_play)
+            if root.status-lines: HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: root.search-line;
+                    overflow: elide;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Button {
+                    icon: root.search-paused ? @image-url("../../../static/gallery_play.png") : @image-url("../../../static/gallery_pause.png");
+                    clicked => { root.pause-play-search(); }
+                }
+            }
+            if root.search-status != "": Text {
+                text: root.search-status;
+                wrap: word-wrap;
+            }
+            DownloadControl {
+                line: root.search-download;
+                cancel => { root.cancel-download(true); }
+            }
+        }
+    }
+}

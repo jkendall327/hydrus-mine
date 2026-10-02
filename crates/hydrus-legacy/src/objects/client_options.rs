@@ -378,11 +378,30 @@ impl ClientOptions {
         Some((key, name.clone()))
     }
 
-    /// Downloader pages' options (`confirm_non_empty_downloader_page_close`).
+    /// Downloader pages' options (`confirm_non_empty_downloader_page_close`,
+    /// `highlight_new_query`, `highlight_new_watcher`, `pause_character`,
+    /// `stop_character`).
     pub fn downloader_page_settings(&self) -> DownloaderPageSettings {
         let mut out = DownloaderPageSettings::default();
-        if let Some(&confirm) = self.booleans.get("confirm_non_empty_downloader_page_close") {
-            out.confirm_non_empty_close = confirm;
+        for (key, field) in [
+            (
+                "confirm_non_empty_downloader_page_close",
+                &mut out.confirm_non_empty_close,
+            ),
+            ("highlight_new_query", &mut out.highlight_new_query),
+            ("highlight_new_watcher", &mut out.highlight_new_watcher),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("pause_character", &mut out.pause_character),
+            ("stop_character", &mut out.stop_character),
+        ] {
+            if let Some(value) = self.strings.get(key) {
+                field.clone_from(value);
+            }
         }
         out
     }
@@ -931,7 +950,15 @@ mod tests {
         options
             .booleans
             .insert("confirm_non_empty_downloader_page_close".into(), false);
-        assert!(!options.downloader_page_settings().confirm_non_empty_close);
+        options.booleans.insert("highlight_new_query".into(), false);
+        options
+            .strings
+            .insert("pause_character".into(), "||".into());
+        let settings = options.downloader_page_settings();
+        assert!(!settings.confirm_non_empty_close);
+        assert!(!settings.highlight_new_query && settings.highlight_new_watcher);
+        assert_eq!(settings.pause_character, "||");
+        assert_eq!(settings.stop_character, "\u{23F9}");
     }
 
     #[test]

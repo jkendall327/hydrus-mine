@@ -476,6 +476,17 @@ pub fn queues(conn: &Connection, kind: Option<QueueKind>) -> Result<Vec<Queue>> 
     rows.into_iter().map(finish_queue).collect()
 }
 
+/// The queues a page made (those with its key), oldest first.
+pub fn queues_with_page_key(conn: &Connection, page_key: &[u8]) -> Result<Vec<Queue>> {
+    let mut stmt = conn.prepare_cached(&format!(
+        "SELECT {QUEUE_COLUMNS} FROM import_queues WHERE page_key = ? ORDER BY queue_id"
+    ))?;
+    let rows = stmt
+        .query_map([page_key], queue_from_row)?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
+    rows.into_iter().map(finish_queue).collect()
+}
+
 /// A queue by its page key, else the first of its kind with this name.
 pub fn find_queue(
     conn: &Connection,

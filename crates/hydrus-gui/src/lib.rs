@@ -3,7 +3,7 @@
 //! Behaviour lives in plain Rust types ([`SearchPage`]) that tests drive
 //! directly; the Slint files in `ui/` only lay out and bind (GUI.md).
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 use std::time::Duration;
@@ -30,6 +30,7 @@ pub mod daemon;
 pub mod duplicate_filter;
 pub mod favourites;
 mod filter_window;
+mod gallery;
 mod grid;
 pub mod headless;
 pub mod info_lines;
@@ -680,6 +681,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     change_pages(&|pages| pages.close(depth, index));
                     return;
                 }
+                if let Asked::RemoveQuery(queue, _) = asked {
+                    page().borrow_mut().remove_query(queue);
+                    shown(true);
+                    return;
+                }
                 let store = page().borrow().store().clone();
                 asked.act(&store, &*removed);
                 shown(false);
@@ -750,6 +756,166 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     window.set_error(format!("Problem pasting! {e}").into());
                 }
             }
+        }
+    });
+    // a gallery page's sidebar: a row pressed selects its search, twice
+    // (a double click) shows it
+    window.on_gallery_row_pressed({
+        let page = page.clone();
+        let shown = shown.clone();
+        let last: Rc<Cell<Option<(i32, std::time::Instant)>>> = Rc::default();
+        move |row| {
+            let page = page();
+            let queue = usize::try_from(row)
+                .ok()
+                .and_then(|row| page.borrow().gallery()?.queries.get(row).map(|q| q.queue));
+            let Some(queue) = queue else {
+                return;
+            };
+            let now = std::time::Instant::now();
+            let double = last.get().is_some_and(|(r, at)| {
+                r == row && now.duration_since(at) < std::time::Duration::from_millis(400)
+            });
+            page.borrow_mut().select_query(Some(queue));
+            if double {
+                last.set(None);
+                page.borrow_mut().highlight_query(Some(queue));
+                shown(true);
+            } else {
+                last.set(Some((row, now)));
+                shown(false);
+            }
+        }
+    });
+    window.on_gallery_sort({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |column, ascending| {
+            if let Some(column) = usize::try_from(column)
+                .ok()
+                .and_then(gallery::Column::from_index)
+            {
+                page().borrow_mut().sort_queries(column, ascending);
+                shown(false);
+            }
+        }
+    });
+    window.on_gallery_highlight({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            let page = page();
+            let selected = page.borrow().gallery().and_then(|g| g.selected);
+            if selected.is_some() {
+                page.borrow_mut().highlight_query(selected);
+                shown(true);
+            }
+        }
+    });
+    window.on_gallery_clear_highlight({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().highlight_query(None);
+            shown(true);
+        }
+    });
+    window.on_gallery_pause_play({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |search, of_shown| {
+            let page = page();
+            let queue = page.borrow().gallery().and_then(|g| {
+                if of_shown {
+                    g.state.highlighted
+                } else {
+                    g.selected
+                }
+            });
+            if let Some(queue) = queue {
+                page.borrow_mut().pause_play_query(queue, search);
+                shown(false);
+            }
+        }
+    });
+    window.on_gallery_retry({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |ignored| {
+            let page = page();
+            let selected = page.borrow().gallery().and_then(|g| g.selected);
+            if let Some(queue) = selected {
+                page.borrow_mut().retry_query(queue, ignored);
+                shown(false);
+            }
+        }
+    });
+    window.on_gallery_remove({
+        let page = page.clone();
+        let ask = ask.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let Some(queue) = page.gallery().and_then(|g| g.selected) else {
+                return;
+            };
+            if let Some(question) = page.remove_query_question(queue) {
+                ask(Asked::RemoveQuery(queue, question));
+            }
+        }
+    });
+    let pend_queries = {
+        let page = page.clone();
+        let shown = shown.clone();
+        let weak = window.as_weak();
+        move |text: &str| {
+            let result = page().borrow_mut().pend_queries(text);
+            if let (Err(e), Some(window)) = (result, weak.upgrade()) {
+                window.set_error(e.into());
+            }
+            shown(true);
+        }
+    };
+    window.on_gallery_queries({
+        let pend_queries = pend_queries.clone();
+        move |text| pend_queries(&text)
+    });
+    window.on_gallery_paste({
+        let weak = window.as_weak();
+        move || match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
+            Ok(text) => pend_queries(&text),
+            Err(e) => {
+                if let Some(window) = weak.upgrade() {
+                    window.set_error(format!("Problem pasting! {e}").into());
+                }
+            }
+        }
+    });
+    window.on_gallery_gug({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |index| {
+            let page = page();
+            let chosen = usize::try_from(index)
+                .ok()
+                .and_then(|i| page.borrow().gallery()?.gugs.get(i).cloned());
+            if let Some((key, name, _)) = chosen {
+                page.borrow_mut().set_gug(&key, &name);
+                shown(false);
+            }
+        }
+    });
+    window.on_gallery_limit({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |none, value| {
+            let limit = if none {
+                None
+            } else {
+                u64::try_from(value).ok()
+            };
+            page().borrow_mut().set_file_limit(limit);
+            shown(false);
         }
     });
     // the search's lock (the reference's lock button, and the lock box's
@@ -1231,7 +1397,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             // page shown again when files came, else just its importer
             let open = pages.borrow().open_pages();
             for page in open {
-                if page.borrow().importer().is_none() {
+                if page.borrow().importer().is_none() && page.borrow().gallery().is_none() {
                     continue;
                 }
                 let refreshed = page.borrow_mut().refresh_import();
@@ -1241,10 +1407,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 match refreshed {
                     page::ImportRefresh::Files => shown(true),
                     page::ImportRefresh::Status => {
-                        if let (Some(window), Some(importer)) =
-                            (weak.upgrade(), page.borrow().importer())
-                        {
-                            show_importer(&window, importer);
+                        if let Some(window) = weak.upgrade() {
+                            let page = page.borrow();
+                            if let Some(importer) = page.importer() {
+                                show_importer(&window, importer);
+                            }
+                            show_gallery(&window, &page);
                         }
                     }
                     page::ImportRefresh::Nothing => {}
@@ -1752,6 +1920,8 @@ enum Asked {
     OpenUrls(Vec<String>),
     /// Closing the page at this depth and index, asking this.
     ClosePage(usize, usize, String),
+    /// Removing a gallery page's search, asking this.
+    RemoveQuery(i64, String),
 }
 
 impl Asked {
@@ -1771,7 +1941,7 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
-            Self::ClosePage(_, _, question) => question.clone(),
+            Self::ClosePage(_, _, question) | Self::RemoveQuery(_, question) => question.clone(),
             Self::OpenUrls(urls) => {
                 let mut question = format!("Open the {} URLs in your web browser?", urls.len());
                 if urls.len() > 10 {
@@ -1801,7 +1971,7 @@ impl Asked {
                 })
             }
             // (the page locks itself; the pages close it)
-            Self::LockSearch(_) | Self::ClosePage(..) => Ok(()),
+            Self::LockSearch(_) | Self::ClosePage(..) | Self::RemoveQuery(..) => Ok(()),
             Self::OpenUrls(urls) => {
                 for url in urls {
                     launch(url);
@@ -2807,6 +2977,96 @@ fn show_importer(window: &MainWindow, importer: &page::Importer) {
     window.set_search_download(download_line(&importer.gallery_job_line()));
 }
 
+/// A gallery page's sidebar: its searches' list, its totals, what its
+/// buttons can do, its downloader and file limit, and the search it shows.
+fn show_gallery(window: &MainWindow, page: &SearchPage) {
+    use hydrus_store::queues::SeedStatus;
+    let Some(gallery) = page.gallery() else {
+        return;
+    };
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+    let highlighted = gallery.state.highlighted;
+    let rows: Vec<ModelRc<slint::StandardListViewItem>> = gallery
+        .queries
+        .iter()
+        .map(|q| {
+            let cells = q.row(
+                highlighted == Some(q.queue),
+                &gallery.settings,
+                gallery.short_summary,
+                now,
+            );
+            let cells: Vec<slint::StandardListViewItem> = cells
+                .iter()
+                .map(|c| slint::StandardListViewItem::from(c.as_str()))
+                .collect();
+            ModelRc::new(VecModel::from(cells))
+        })
+        .collect();
+    window.set_gallery_rows(ModelRc::new(VecModel::from(rows)));
+    let current = gallery
+        .selected
+        .and_then(|s| gallery.queries.iter().position(|q| q.queue == s));
+    window.set_gallery_current_row(current.map_or(-1, |i| i32::try_from(i).unwrap_or(-1)));
+    let (top_status, bottom_status) = gallery::totals(&gallery.queries);
+    let selected = gallery.selected.and_then(|s| gallery.query(s));
+    let has = |q: Option<&gallery::GalleryQuery>, status| {
+        q.is_some_and(|q| q.files.get(&status).is_some_and(|&n| n > 0))
+    };
+    let own = gallery.gallery();
+    // (the downloader among those offered; one not found, or none, after
+    // them, as the reference's selector labels it)
+    let found = gallery
+        .gugs
+        .iter()
+        .position(|g| g.0 == own.gug_key)
+        .or_else(|| gallery.gugs.iter().position(|g| g.1 == own.gug_name))
+        .filter(|_| !own.gug_name.is_empty());
+    let mut gug_names: Vec<SharedString> =
+        gallery.gugs.iter().map(|g| g.1.as_str().into()).collect();
+    let gug_index = found.unwrap_or_else(|| {
+        gug_names.push(if own.gug_name.is_empty() {
+            "no downloader set".into()
+        } else {
+            format!("not found: {}", own.gug_name).into()
+        });
+        gug_names.len() - 1
+    });
+    let shown = highlighted.and_then(|h| gallery.query(h));
+    window.set_gallery_data(GalleryData {
+        top_status: top_status.into(),
+        bottom_status: bottom_status.into(),
+        has_selection: selected.is_some(),
+        can_highlight: selected.is_some_and(|q| Some(q.queue) != highlighted),
+        can_clear_highlight: highlighted.is_some(),
+        can_retry_ignored: has(selected, SeedStatus::Vetoed),
+        can_retry_failed: has(selected, SeedStatus::Error),
+        gug_names: ModelRc::new(VecModel::from(gug_names)),
+        gug_index: i32::try_from(gug_index).unwrap_or(0),
+        initial_search_text: found
+            .map(|i| gallery.gugs[i].2.as_str())
+            .unwrap_or_default()
+            .into(),
+        no_limit: own.file_limit.is_none(),
+        file_limit: own
+            .file_limit
+            .map_or(2000, |n| i32::try_from(n).unwrap_or(i32::MAX)),
+        highlighted: shown.is_some(),
+        highlighted_query: shown.map(|q| q.query.as_str()).unwrap_or_default().into(),
+        files_line: shown
+            .map(|q| gallery::live_line(&q.live.files_status, q.files_paused, q.working()))
+            .unwrap_or_default()
+            .into(),
+        search_line: shown
+            .map(|q| gallery::live_line(&q.live.gallery_status, q.gallery_paused, q.working()))
+            .unwrap_or_default()
+            .into(),
+        search_paused: shown.is_some_and(|q| q.gallery_paused),
+    });
+}
+
 /// A download's line for the window.
 fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine {
     DownloadLine {
@@ -2824,6 +3084,8 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     if let Some(importer) = importer {
         show_importer(window, importer);
     }
+    window.set_gallery_page(page.gallery().is_some());
+    show_gallery(window, page);
     // (only a page with a search can load one)
     window.set_favourites(if page.note().is_none() {
         favourites.clone()

@@ -4,6 +4,9 @@
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+import { DownloadLine, DownloadControl, ImporterBoxes } from "importing.slint";
+import { GalleryData, GallerySidebar } from "gallery.slint";
+export { DownloadLine, GalleryData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 export { ListText }
 
@@ -88,52 +91,6 @@ component ChooserButton inherits Rectangle {
     }
     touch := TouchArea {
         clicked => { root.pressed(); }
-    }
-}
-
-// a download in progress, under an importer's log (the reference's
-// network job control): its status, its size and speed, its gauge, and
-// whether it can be cancelled
-export struct DownloadLine {
-    left: string,
-    right: string,
-    fraction: float,
-    can-cancel: bool,
-}
-
-component DownloadControl inherits Rectangle {
-    in property <DownloadLine> line;
-    callback cancel();
-    border-width: 1px;
-    border-color: Theme.border;
-    VerticalLayout {
-        padding: 4px;
-        spacing: 2px;
-        HorizontalLayout {
-            spacing: 6px;
-            Text {
-                text: root.line.left;
-                overflow: elide;
-                horizontal-stretch: 1;
-            }
-            if root.line.right != "": Text {
-                text: root.line.right;
-                horizontal-alignment: right;
-            }
-        }
-        HorizontalLayout {
-            spacing: 4px;
-            ProgressIndicator {
-                horizontal-stretch: 1;
-                progress: root.line.fraction;
-            }
-            // (the reference's stop icon)
-            Button {
-                icon: @image-url("../../../static/stop.png");
-                enabled: root.line.can-cancel;
-                clicked => { root.cancel(); }
-            }
-        }
     }
 }
 
@@ -337,6 +294,22 @@ export component MainWindow inherits Window {
     in property <DownloadLine> file-download: { fraction: 0, can-cancel: false };
     in property <DownloadLine> search-download: { fraction: 0, can-cancel: false };
     callback cancel-download(bool);
+    // a gallery page's sidebar (gallery.slint)
+    in property <bool> gallery-page;
+    in property <GalleryData> gallery-data;
+    in property <[[StandardListViewItem]]> gallery-rows;
+    in-out property <int> gallery-current-row: -1;
+    callback gallery-row-pressed(int);
+    callback gallery-sort(int, bool);
+    callback gallery-highlight();
+    callback gallery-clear-highlight();
+    callback gallery-pause-play(bool, bool);
+    callback gallery-retry(bool);
+    callback gallery-remove();
+    callback gallery-queries(string);
+    callback gallery-paste();
+    callback gallery-gug(int);
+    callback gallery-limit(bool, int);
     callback pause-play-files();
     callback url-entered(string);
     callback paste-urls();
@@ -544,68 +517,56 @@ export component MainWindow inherits Window {
                 }
             }
             HorizontalLayout {
-                if root.importing: VerticalBox {
+                if root.gallery-page: VerticalBox {
+                    width: 400px;
+                    alignment: start;
+                    GallerySidebar {
+                        data: root.gallery-data;
+                        rows: root.gallery-rows;
+                        current-row <=> root.gallery-current-row;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        row-pressed(row) => { root.gallery-row-pressed(row); }
+                        sort(column, ascending) => { root.gallery-sort(column, ascending); }
+                        highlight => { root.gallery-highlight(); }
+                        clear-highlight => { root.gallery-clear-highlight(); }
+                        pause-play(search, shown) => { root.gallery-pause-play(search, shown); }
+                        retry(ignored) => { root.gallery-retry(ignored); }
+                        remove => { root.gallery-remove(); }
+                        queries-entered(text) => { root.gallery-queries(text); }
+                        paste => { root.gallery-paste(); }
+                        gug-chosen(index) => { root.gallery-gug(index); }
+                        limit-changed(none, value) => { root.gallery-limit(none, value); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && !root.gallery-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {
                         text: "url downloader";
                         font-weight: 700;
                     }
-                    Rectangle {
-                        border-width: 1px;
-                        border-color: Theme.border;
-                        VerticalLayout {
-                            padding: 6px;
-                            spacing: 4px;
-                            HorizontalLayout {
-                                Text {
-                                    text: "imports";
-                                    font-weight: 600;
-                                    vertical-alignment: center;
-                                    horizontal-stretch: 1;
-                                }
-                                // the reference's own file_pause/file_play
-                                // icons: play while paused
-                                Button {
-                                    icon: root.import-paused ? @image-url("../../../static/file_play.png") : @image-url("../../../static/file_pause.png");
-                                    clicked => { root.pause-play-files(); }
-                                }
-                            }
-                            if root.import-status != "": Text {
-                                text: root.import-status;
-                                wrap: word-wrap;
-                            }
-                            if root.import-progress != "": Text {
-                                text: root.import-progress;
-                            }
-                            ProgressIndicator {
-                                progress: root.import-fraction;
-                            }
-                            DownloadControl {
-                                line: root.file-download;
-                                cancel => { root.cancel-download(false); }
-                            }
-                        }
-                    }
-                    Rectangle {
-                        border-width: 1px;
-                        border-color: Theme.border;
-                        VerticalLayout {
-                            padding: 6px;
-                            spacing: 4px;
-                            Text {
-                                text: "search";
-                                font-weight: 600;
-                            }
-                            if root.search-status != "": Text {
-                                text: root.search-status;
-                                wrap: word-wrap;
-                            }
-                            DownloadControl {
-                                line: root.search-download;
-                                cancel => { root.cancel-download(true); }
-                            }
-                        }
+                    ImporterBoxes {
+                        status-lines: false;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        pause-play-files => { root.pause-play-files(); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
                     }
                     HorizontalLayout {
                         spacing: 4px;
@@ -629,7 +590,7 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.note != "" && !root.importing: VerticalBox {
+                if root.note != "" && !root.importing && !root.gallery-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {
@@ -645,7 +606,7 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.note == "" && !root.importing: VerticalBox {
+                if root.note == "" && !root.importing && !root.gallery-page: VerticalBox {
                     width: 300px;
                     // the sort control, as at the top of the reference's sidebar
                     HorizontalLayout {

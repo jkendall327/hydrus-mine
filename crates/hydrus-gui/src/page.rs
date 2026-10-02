@@ -19,6 +19,7 @@ use hydrus_store::live::{self, JobKind, JobLine, JobLive, QueueLive};
 use hydrus_store::queues::{self, StatusCounts};
 
 use crate::autocomplete::Autocomplete;
+use crate::gallery::{Column, GalleryView};
 use crate::selection::{Move, Selection};
 use crate::status::Facts;
 
@@ -72,6 +73,8 @@ pub struct SearchPage {
     /// The files its importer has brought so far (shown, or taken off the
     /// page since), so each is added once.
     presented: std::collections::HashSet<HashId>,
+    /// A gallery page's searches (the importer is the one it shows).
+    gallery: Option<GalleryView>,
 }
 
 /// What reading a downloader page's importer again changed.
@@ -210,6 +213,7 @@ impl SearchPage {
             facts: HashMap::new(),
             importer: None,
             presented: std::collections::HashSet::new(),
+            gallery: None,
         }
     }
 
@@ -364,11 +368,291 @@ impl SearchPage {
         self.importer.as_ref()
     }
 
+    /// A gallery downloader page over `queues` (its searches), with its own
+    /// settings and the search it shows: the files it showed (as a session
+    /// kept them), and those the shown search brings from now on.
+    #[allow(clippy::too_many_arguments)]
+    pub fn gallery_downloader(
+        store: Arc<Store>,
+        page_key: hydrus_core::pages::PageKey,
+        page_name: &str,
+        queues: Vec<i64>,
+        state: Option<hydrus_core::pages::DownloaderPageState>,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::fixed(store, "A gallery downloader page.", sort, files);
+        page.empty_status.set(Some("no highlighted query"));
+        let state = state.unwrap_or_else(|| new_gallery_state(&page.store));
+        if let Some(queue) = state.highlighted {
+            page.importer = Some(Importer {
+                queue,
+                ..Importer::default()
+            });
+        }
+        let (definitions, settings, naming) = page
+            .store
+            .read(|c| {
+                Ok((
+                    hydrus_store::settings::get::<hydrus_parse::Downloaders>(c)?,
+                    hydrus_store::settings::get::<hydrus_core::pages::DownloaderPageSettings>(c)?,
+                    hydrus_store::settings::get::<hydrus_core::pages::PageNameSettings>(c)?,
+                ))
+            })
+            .unwrap_or_default();
+        page.gallery = Some(GalleryView {
+            page_key,
+            page_name: page_name.to_owned(),
+            queues,
+            queries: Vec::new(),
+            state,
+            sort: (Column::Query, true),
+            selected: None,
+            gugs: crate::gallery::offered_gugs(&definitions.gugs),
+            settings,
+            short_summary: (naming.short_summary_new, naming.short_summary_deleted),
+        });
+        page.refresh_import();
+        page.read_import(true);
+        page
+    }
+
+    /// A gallery page's searches, as last read.
+    pub fn gallery(&self) -> Option<&GalleryView> {
+        self.gallery.as_ref()
+    }
+
+    /// Show a search's files in the page, as the reference's highlight
+    /// does (none, or highlighting the one shown again, clears it).
+    pub fn highlight_query(&mut self, queue: Option<i64>) {
+        let Some(gallery) = &mut self.gallery else {
+            return;
+        };
+        let queue = queue.filter(|q| gallery.state.highlighted != Some(*q));
+        gallery.state.highlighted = queue;
+        self.presented.clear();
+        self.selection.clear();
+        self.collections.clear();
+        self.importer = queue.map(|queue| Importer {
+            queue,
+            ..Importer::default()
+        });
+        let files = match queue {
+            Some(queue) => self
+                .store
+                .read(|c| queues::presented_files(c, queue))
+                .unwrap_or_default(),
+            None => Vec::new(),
+        };
+        self.came.clone_from(&files);
+        self.results = files;
+        if queue.is_none() {
+            self.empty_status.set(Some("no highlighted query"));
+        }
+        self.read_import(true);
+        self.resort();
+        self.learn_facts();
+        self.count_tags();
+    }
+
+    /// Select a search in the list.
+    pub fn select_query(&mut self, queue: Option<i64>) {
+        if let Some(gallery) = &mut self.gallery {
+            gallery.selected = queue;
+        }
+    }
+
+    /// Sort the list by a column.
+    pub fn sort_queries(&mut self, column: Column, ascending: bool) {
+        if let Some(gallery) = &mut self.gallery {
+            gallery.sort = (column, ascending);
+            crate::gallery::sort(&mut gallery.queries, column, ascending);
+        }
+    }
+
+    /// Make searches for the queries typed or pasted into the page (one a
+    /// line), with the page's downloader and settings, and show the first
+    /// if none is shown and the options say so; why not, if they can't be.
+    pub fn pend_queries(&mut self, text: &str) -> Result<(), String> {
+        let Some(gallery) = &self.gallery else {
+            return Ok(());
+        };
+        let queries: Vec<String> = text
+            .lines()
+            .map(|line| line.trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}'))
+            .filter(|line| !line.is_empty())
+            .map(str::to_owned)
+            .collect();
+        if queries.is_empty() {
+            return Ok(());
+        }
+        let definitions: hydrus_parse::Downloaders = self
+            .store
+            .read(hydrus_store::settings::get)
+            .map_err(|e| e.to_string())?;
+        let page = gallery.gallery();
+        // (as the reference's page says, before trying)
+        if page.gug_name.is_empty() {
+            return Err(if definitions.gugs.gugs.is_empty() {
+                "Hey, you do not have any downloaders in this client! Check out the \
+                 _network->downloaders_ menu to find downloaders made by users."
+            } else {
+                "Hey, you do not have a downloader set here! Click the downloader selector \
+                 and choose somewhere to download from."
+            }
+            .into());
+        }
+        let existing: Vec<(String, String)> = gallery
+            .queries
+            .iter()
+            .map(|q| (q.query.clone(), q.source.clone()))
+            .collect();
+        let how = hydrus_store::gallery::NewSearches {
+            page_name: Some(&gallery.page_name),
+            page_key: Some(&gallery.page_key.0),
+            gug_key: &page.gug_key,
+            gug_name: &page.gug_name,
+            file_limit: Some(page.file_limit),
+            options: gallery.state.options.clone(),
+            start_files_paused: page.start_files_paused,
+            start_gallery_paused: page.start_gallery_paused,
+            merge: page.merge_pends,
+            no_new_dupes: page.no_new_dupes,
+            existing: &existing,
+        };
+        let made = hydrus_store::gallery::create_gallery_searches(
+            &self.store,
+            &definitions,
+            &how,
+            &queries,
+            now(),
+        )
+        .map_err(|e| e.to_string())?;
+        let gallery = self.gallery.as_mut().expect("a gallery page");
+        // (the downloader as it is now called)
+        if let Some(own) = &mut gallery.state.gallery {
+            own.gug_key.clone_from(&made.gug_key);
+            own.gug_name.clone_from(&made.gug_name);
+        }
+        gallery.queues.extend(made.queues.iter().map(|q| q.id));
+        let first = made.queues.first().map(|q| q.id);
+        let show = gallery.state.highlighted.is_none() && gallery.settings.highlight_new_query;
+        self.refresh_import();
+        if show && first.is_some() {
+            self.highlight_query(first);
+        }
+        Ok(())
+    }
+
+    /// Pause or resume a search's files, or its search, nudging the daemon.
+    pub fn pause_play_query(&mut self, queue: i64, search: bool) {
+        let Some(query) = self.gallery.as_ref().and_then(|g| g.query(queue)) else {
+            return;
+        };
+        let (files, gallery) = if search {
+            (None, Some(!query.gallery_paused))
+        } else {
+            (Some(!query.files_paused), None)
+        };
+        if let Err(e) = self.store.write(move |ctx| {
+            queues::set_paused(ctx.conn(), queue, files, gallery)?;
+            queues::nudge(ctx.conn(), queue)
+        }) {
+            eprintln!("could not pause or resume the search: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// Try a search's ignored files, or its failed ones, again.
+    pub fn retry_query(&mut self, queue: i64, ignored: bool) {
+        let status = if ignored {
+            queues::SeedStatus::Vetoed
+        } else {
+            queues::SeedStatus::Error
+        };
+        let now = now();
+        if let Err(e) = self.store.write(move |ctx| {
+            queues::retry_file_seeds(ctx.conn(), queue, &[status], now)?;
+            queues::nudge(ctx.conn(), queue)
+        }) {
+            eprintln!("could not retry the search's files: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// What removing a search asks first (`_RemoveGalleryImports`).
+    pub fn remove_query_question(&self, queue: i64) -> Option<String> {
+        let gallery = self.gallery.as_ref()?;
+        let query = gallery.query(queue)?;
+        let mut message = "Remove the 1 selected queries?".to_owned();
+        if query.importing() {
+            message.push_str("\n\n1 are still working.");
+        }
+        if gallery.state.highlighted == Some(queue) {
+            message.push_str(
+                "\n\nThe currently highlighted query will be removed, and the media panel cleared.",
+            );
+        }
+        Some(message)
+    }
+
+    /// Remove a search, and its queue (the page shows nothing if it showed
+    /// it).
+    pub fn remove_query(&mut self, queue: i64) {
+        let Some(gallery) = &mut self.gallery else {
+            return;
+        };
+        gallery.queues.retain(|q| *q != queue);
+        gallery.queries.retain(|q| q.queue != queue);
+        if gallery.selected == Some(queue) {
+            gallery.selected = None;
+        }
+        let shown = gallery.state.highlighted == Some(queue);
+        if let Err(e) = self
+            .store
+            .write(move |ctx| queues::delete_queue(ctx.conn(), queue))
+        {
+            eprintln!("could not remove the search: {e}");
+        }
+        if shown {
+            self.highlight_query(None);
+        }
+    }
+
+    /// Set the page's downloader for new searches.
+    pub fn set_gug(&mut self, key: &str, name: &str) {
+        if let Some(gallery) = &mut self.gallery {
+            let mut own = gallery.gallery();
+            key.clone_into(&mut own.gug_key);
+            name.clone_into(&mut own.gug_name);
+            gallery.state.gallery = Some(own);
+        }
+    }
+
+    /// Set the page's file limit for new searches (`None`: no limit).
+    pub fn set_file_limit(&mut self, limit: Option<u64>) {
+        if let Some(gallery) = &mut self.gallery {
+            let mut own = gallery.gallery();
+            own.file_limit = limit;
+            gallery.state.gallery = Some(own);
+        }
+    }
+
     /// Read the importer's queue again: its counts, pause and live state,
     /// and the files it brought since, added at the page's end (as the
     /// reference presents them to its page). What changed.
     pub fn refresh_import(&mut self) -> ImportRefresh {
-        self.read_import(false)
+        let gallery_changed = match &mut self.gallery {
+            Some(gallery) => self.store.read(|c| gallery.refresh(c)).unwrap_or_else(|e| {
+                eprintln!("could not read the gallery page's searches: {e}");
+                false
+            }),
+            None => false,
+        };
+        match self.read_import(false) {
+            ImportRefresh::Nothing if gallery_changed => ImportRefresh::Status,
+            refreshed => refreshed,
+        }
     }
 
     fn read_import(&mut self, first: bool) -> ImportRefresh {
@@ -503,11 +787,19 @@ impl SearchPage {
             },
             PageContent::Downloader {
                 kind, queues, page, ..
-            } => PageContent::Downloader {
-                kind: *kind,
-                queues: queues.clone(),
-                sort,
-                page: page.clone(),
+            } => match &self.gallery {
+                Some(gallery) => PageContent::Downloader {
+                    kind: *kind,
+                    queues: gallery.queues.clone(),
+                    sort,
+                    page: Some(Box::new(gallery.state.clone())),
+                },
+                None => PageContent::Downloader {
+                    kind: *kind,
+                    queues: queues.clone(),
+                    sort,
+                    page: page.clone(),
+                },
             },
             PageContent::Other {
                 page_type, stored, ..
@@ -721,7 +1013,18 @@ impl SearchPage {
     /// How far the page's importing has got: its done and total imports
     /// (none for a page that doesn't import).
     pub fn import_progress(&self) -> (usize, usize) {
+        if let Some(gallery) = &self.gallery {
+            return crate::gallery::value_range(&gallery.queries);
+        }
         self.importer.as_ref().map_or((0, 0), Importer::progress)
+    }
+
+    /// Why closing the page needs asking about, for a downloader page.
+    pub fn close_veto(&self, confirm_non_empty: bool) -> Option<String> {
+        if let Some(gallery) = &self.gallery {
+            return crate::gallery::close_veto(&gallery.queries, confirm_non_empty);
+        }
+        self.importer.as_ref()?.close_veto(confirm_non_empty)
     }
 
     /// The page's files, in order, its collections' in theirs.
@@ -1410,6 +1713,35 @@ fn system_sort(sort: &PageSort) -> Option<FileSort> {
             },
         }),
         _ => None,
+    }
+}
+
+/// Seconds since the epoch.
+fn now() -> i64 {
+    std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX))
+}
+
+/// A new gallery page's own state, as the reference makes one: the
+/// client's default downloader and file limit, nothing paused or merged.
+pub fn new_gallery_state(store: &Store) -> hydrus_core::pages::DownloaderPageState {
+    let defaults: hydrus_core::subscriptions::GalleryDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let (gug_key, gug_name) = defaults.gug.unwrap_or_default();
+    hydrus_core::pages::DownloaderPageState {
+        highlighted: None,
+        options: hydrus_core::import_options::ImportOptionsSlice::default(),
+        gallery: Some(hydrus_core::pages::GalleryPageState {
+            gug_key,
+            gug_name,
+            file_limit: defaults.file_limit,
+            start_files_paused: false,
+            start_gallery_paused: false,
+            no_new_dupes: false,
+            merge_pends: false,
+        }),
+        checker: None,
     }
 }
 

@@ -2484,6 +2484,7 @@ dependencies = [
  "hydrus-duplicates",
  "hydrus-import",
  "hydrus-media",
+ "hydrus-parse",
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",

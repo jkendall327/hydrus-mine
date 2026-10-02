@@ -76,6 +76,15 @@ pub struct DownloaderPageSettings {
     /// Ask before closing one that holds anything, idle or not
     /// (`confirm_non_empty_downloader_page_close`).
     pub confirm_non_empty_close: bool,
+    /// Show a gallery page's first new query when it shows none
+    /// (`highlight_new_query`), and a watcher page's first new watcher
+    /// (`highlight_new_watcher`).
+    pub highlight_new_query: bool,
+    pub highlight_new_watcher: bool,
+    /// What a list shows for paused work, and for finished work
+    /// (`pause_character`, `stop_character`).
+    pub pause_character: String,
+    pub stop_character: String,
 }
 
 impl Default for DownloaderPageSettings {
@@ -83,6 +92,10 @@ impl Default for DownloaderPageSettings {
     fn default() -> Self {
         Self {
             confirm_non_empty_close: true,
+            highlight_new_query: true,
+            highlight_new_watcher: true,
+            pause_character: "\u{23F8}".into(),
+            stop_character: "\u{23F9}".into(),
         }
     }
 }
