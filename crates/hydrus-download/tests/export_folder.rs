@@ -4,6 +4,8 @@
 //! folder's contents afterwards, the files the client still has and each
 //! folder's saved state must be the reference's.
 
+mod common;
+
 use std::collections::BTreeMap;
 use std::path::Path;
 
@@ -218,4 +220,24 @@ fn export_folders_do_what_the_reference_did() {
         .map(|n| listing(&work.path().join(n)))
         .collect();
     assert_eq!(before, after);
+
+    // its folder gone, run now: it stops running regularly, and says why
+    let mut folders: ExportFolders = store.read(hydrus_store::settings::get).unwrap();
+    let regular = folders.0.iter_mut().find(|f| f.name == "regular").unwrap();
+    regular.path.push_str(" (gone)");
+    regular.run_now = true;
+    store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &folders))
+        .unwrap();
+    let broken = hydrus_download::export::work_on_export_folder(&store, "regular").unwrap();
+    assert!(broken.error.is_some(), "{broken:?}");
+    let ours = work.path().join("regular").to_string_lossy().into_owned();
+    assert_eq!(
+        common::popups_shown(&store),
+        common::recorded_shown(
+            &recorded["broken_popups"],
+            &format!("{recorded_work}/regular"),
+            &ours
+        )
+    );
 }

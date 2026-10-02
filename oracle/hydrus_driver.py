@@ -387,6 +387,57 @@ def run_client( db_dir, hook, port = None, network = False ):
     return outcome.get( 'result' )
 
 
+def describe_popup( job_status ):
+    """A popup (a JobStatus sent to the popup manager) as the tests compare it."""
+
+    files = job_status.GetFiles()
+
+    return {
+        'title' : job_status.GetStatusTitle(),
+        'text_1' : job_status.GetStatusText( 1 ),
+        'text_2' : job_status.GetStatusText( 2 ),
+        'files' : None if files is None else [ sorted( h.hex() for h in files[0] ), files[1] ],
+        'traceback' : job_status.GetTraceback() is not None,
+        'had_error' : job_status.HadError(),
+        'done' : job_status.IsDone(),
+        'dismissed' : job_status.IsDismissed(),
+    }
+
+
+def popups_sent( work ):
+    """Do `work` (in a running client), noting the popups it sends the popup
+    manager; their state afterwards, in the order sent."""
+
+    from hydrus.client import ClientGlobals as CG
+
+    controller = CG.client_controller
+    sent = []
+    pub = controller.pub
+
+    def noting_pub( topic, *args, **kwargs ):
+
+        if topic == 'message':
+
+            sent.append( args[0] )
+
+
+        return pub( topic, *args, **kwargs )
+
+
+    controller.pub = noting_pub
+
+    try:
+
+        work()
+
+    finally:
+
+        controller.pub = pub
+
+
+    return [ describe_popup( j ) for j in sent ]
+
+
 def run_in_subprocess( script_path, *args ):
     """Run an oracle script in a fresh interpreter (one client per process)."""
 

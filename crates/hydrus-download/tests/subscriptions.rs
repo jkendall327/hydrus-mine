@@ -284,6 +284,24 @@ async fn setup() -> Setup {
     }
 }
 
+/// A popup showing: its text, and its files' label and number.
+type Shown = (Option<String>, Option<(String, usize)>);
+
+fn popups_shown(store: &Store) -> Vec<Shown> {
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    store
+        .read(|conn| hydrus_store::popups::all(conn, now))
+        .unwrap()
+        .into_iter()
+        .map(|job| {
+            let files = job
+                .files
+                .map(|(hashes, label)| (label.unwrap_or_default(), hashes.len()));
+            (job.status_text_1, files)
+        })
+        .collect()
+}
+
 fn post_ids(store: &Store, queue: i64) -> Vec<(usize, SeedStatus)> {
     store
         .read(|conn| queues::file_seeds(conn, queue))
@@ -379,6 +397,12 @@ async fn a_subscription_syncs_catches_up_and_downloads() {
             "{hash}"
         );
     }
+    // and its new files are offered in a popup, labelled with the
+    // subscription's name (its queries publish together by default)
+    assert_eq!(
+        popups_shown(&s.store),
+        [(None, Some(("blue eyes".to_owned(), 4)))]
+    );
 
     // new uploads: the next check gets just those, and stops once it has
     // seen most of what it found before
@@ -399,6 +423,11 @@ async fn a_subscription_syncs_catches_up_and_downloads() {
     assert_eq!(
         post_ids(&s.store, queue),
         [(4, ok), (5, ok), (6, ok), (7, ok), (8, ok), (9, ok)]
+    );
+    // (the next files join the popup with the same label)
+    assert_eq!(
+        popups_shown(&s.store),
+        [(None, Some(("blue eyes".to_owned(), 6)))]
     );
     let second = pages(&s.store);
     assert_eq!(second.len(), 4, "{second:?}");
@@ -482,6 +511,11 @@ async fn a_subscription_without_its_downloader_pauses() {
         [
             "The subscription \"orphan\" could not find a Gallery URL Generator for \"gone\"! The sub has paused!"
         ]
+    );
+    // which the user is shown
+    assert_eq!(
+        popups_shown(&s.store),
+        [(Some(report.notices[0].clone()), None)]
     );
     let sub = s
         .store

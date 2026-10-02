@@ -31,6 +31,7 @@ mod content;
 pub mod export;
 pub mod folders;
 mod gallery;
+pub mod popups;
 mod predict;
 pub mod queue;
 mod seeds;

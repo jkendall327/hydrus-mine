@@ -472,6 +472,19 @@ pub fn work_on_export_folder(store: &Store, name: &str) -> Result<ExportRun, Sto
         Ok(()) => folder.last_error.clear(),
         Err(e) => {
             tracing::warn!("export folder {name:?}: {e}");
+            // (the reference's words, run together as it runs them)
+            let pause = if folder.run_regularly {
+                "It has been set to not run regularly."
+            } else {
+                ""
+            };
+            crate::popups::show_error(
+                store,
+                format!(
+                    "The export folder \"{name}\" encountered an error! {pause}Please check the folder's settings and maybe report to hydrus dev if the error is complicated! The error follows:"
+                ),
+                e.clone(),
+            );
             folder.run_regularly = false;
             folder.last_error.clone_from(&e);
             run.error = Some(e);

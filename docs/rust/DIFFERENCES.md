@@ -355,9 +355,10 @@ deleted), migrated from the reference's database before its run; by
   (they are reported). The reference saves a folder each time it checks it,
   so a folder in use is at the current version.
 - **Progress is saved after every file**, rather than every ten minutes.
-- **No popups or pages.** Without a GUI, "show a popup while working" and
-  "publish files to a page or popup button" do nothing; what a check found
-  and imported is logged.
+- **No popup while working, and nothing published to a page.** The files a
+  check imports are offered in a popup ("publish files to a popup button")
+  and its errors are shown as popups, as the reference's are; "show a popup
+  while working" and "publish files to a page" do nothing yet.
 - **Changes from the command line are noticed within a minute** (the
   reference is told of changes by its dialogs).
 - **Among tags whose human-sort keys are equal** (e.g. `straße` and
@@ -377,7 +378,9 @@ deletes its files from the client, migrated from the reference's database.
   option, applies those rules), as when psutil can't tell.
 - **Searches with "OR" as the search type** run as "AND" (every predicate
   must match); the reference's export folder dialog doesn't offer "OR".
-- **No popups.** What a run exported and removed is logged.
+- **No popup while working.** An error is shown as the reference shows it
+  (two popups: what happened, then the error); "show a popup while
+  working" does nothing yet. What a run exported and removed is logged.
 
 - **Where the filesystem ignores case, a moved sidecar keeps the
   lower-case spelling** (`a.png.txt`): both spellings seem to exist there,
@@ -422,9 +425,9 @@ deletes its files from the client, migrated from the reference's database.
 - **A pause switched from the command line takes up to half a minute** to
   reach a running `hydrus serve` (it looks again that often while paused);
   the reference's menu switches act at once.
-- **Subscription messages go to the log** (and the subscription runner's
-  status) rather than popups, until there is a GUI; so do new files a
-  subscription would publish to a popup button or page.
+- **No popup while a subscription works, and nothing published to a
+  page.** Subscriptions' messages, and the new files they publish to a
+  popup button, are shown as popups, as the reference's are (and logged).
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
 - **Subscriptions run one at a time**, as with the reference's default
@@ -496,9 +499,13 @@ Checked by the `popups` conformance scenario.
   `only_in_view` lists them), whether or not it is open, and a dismissed
   popup leaves the list at once (the reference's GUI clears dismissed
   popups on its next refresh, within a second or so).
-- **Only popups made through the API are listed.** The reference also lists
-  its own jobs (downloads, maintenance, errors) as popups; hydrus-rs logs
-  those instead, so far.
+- **The daemon's own popups are, so far, subscriptions', import folders'
+  and export folders' messages, errors and new files.** The reference also
+  shows its jobs at work as popups (a subscription's or folder's progress,
+  downloads, maintenance); hydrus-rs doesn't yet.
+- **An error's "traceback" is its text**, and its title is "Exception", as
+  the reference titles the errors it raises itself: hydrus-rs has no
+  Python traceback to show.
 
 ## Repositories (`/manage_services/*`)
 

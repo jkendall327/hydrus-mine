@@ -15,12 +15,14 @@ use std::time::Duration;
 
 use rand::seq::{IndexedRandom as _, SliceRandom as _};
 
+use hydrus_core::Sha256;
 use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::CallerType;
 use hydrus_core::network::NetworkContext;
 use hydrus_core::numbers::human_int;
 use hydrus_core::subscriptions::{
-    FileLogEntry, SeedTime, compact_file_log, compact_gallery_log, num_master_file_seeds,
+    FileLogEntry, SeedTime, SubscriptionSettings, compact_file_log, compact_gallery_log,
+    num_master_file_seeds,
 };
 use hydrus_core::url::{AnyGug, GugOptions, UrlClasses};
 use hydrus_net::{BandwidthScope, Job, NetError};
@@ -31,7 +33,7 @@ use hydrus_store::settings::Pauses;
 use hydrus_store::subscriptions::{self as store_subs, Subscription, SubscriptionQuery};
 
 use crate::gallery::{KnownSeeds, PageSink, PageTaken, set_gallery_status};
-use crate::{Downloader, WorkError, now};
+use crate::{Downloader, WorkError, now, popups};
 
 /// `WE_HIT_OLD_GROUND_THRESHOLD`.
 const CAUGHT_UP_RUN: u64 = 5;
@@ -226,6 +228,18 @@ fn human_name(sub: &Subscription, query: &SubscriptionQuery) -> String {
     }
 }
 
+/// What the files a query presents are published as (`_GetPublishingLabel`):
+/// the subscription's name, or the label it is given instead, and the
+/// query's, unless its queries publish together.
+fn publishing_label(name: &str, settings: &SubscriptionSettings, query: &str) -> String {
+    let label = settings.publish_label_override.as_deref().unwrap_or(name);
+    if settings.merge_query_publish_events {
+        label.to_owned()
+    } else {
+        format!("{label}: {query}")
+    }
+}
+
 /// What a subscription query's requests count against (the reference's
 /// `NetworkJobSubscription`, keyed by subscription and query): they wait at
 /// most half a minute for bandwidth, the subscription itself having asked
@@ -410,6 +424,7 @@ impl Downloader {
         })?;
         for notice in &report.notices {
             tracing::warn!("{notice}");
+            popups::show_text(self.store(), notice.clone());
         }
         Ok(report)
     }
@@ -752,13 +767,33 @@ impl Downloader {
         Ok(())
     }
 
-    /// `_WorkOnQueryFiles`.
+    /// `_WorkOnQueryFiles`: and however it stops, the files it presents
+    /// are published, as the reference does at its end (`finally`).
     async fn work_on_query_files(
         &self,
         sub: &mut Subscription,
         query: &SubscriptionQuery,
         job: &Job,
         report: &mut RunReport,
+    ) -> Result<(), RunStop> {
+        let mut presented = Vec::new();
+        let result = self
+            .query_files(sub, query, job, report, &mut presented)
+            .await;
+        if sub.settings.publish_files_to_popup_button {
+            let label = publishing_label(&sub.name, &sub.settings, query.state.human_name());
+            popups::publish_presented(self.store(), &label, presented);
+        }
+        result
+    }
+
+    async fn query_files(
+        &self,
+        sub: &mut Subscription,
+        query: &SubscriptionQuery,
+        job: &Job,
+        report: &mut RunReport,
+        presented: &mut Vec<Sha256>,
     ) -> Result<(), RunStop> {
         let queue = query.queue_id;
         let name = human_name(sub, query);
@@ -811,6 +846,11 @@ impl Downloader {
             self.work_on_url(&mut seed, &options, job).await;
             if let Err(e) = self.write_query_tags(&seed, &query.state.tag_import_options) {
                 tracing::error!("adding a query's tags: {e}");
+            }
+            if let Some(hash) = popups::presented_file(self.store(), &seed, &options.presentation)
+                && !presented.contains(&hash)
+            {
+                presented.push(hash);
             }
             let saved = seed.clone();
             self.store
@@ -984,5 +1024,22 @@ impl SubscriptionRunner {
             };
             let _ = tokio::time::timeout(wait, self.wake.notified()).await;
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn presented_files_are_labelled_as_the_reference_labels_them() {
+        let mut settings = SubscriptionSettings::default();
+        assert_eq!(publishing_label("sub", &settings, "query"), "sub");
+        settings.merge_query_publish_events = false;
+        assert_eq!(publishing_label("sub", &settings, "query"), "sub: query");
+        settings.publish_label_override = Some("art".into());
+        assert_eq!(publishing_label("sub", &settings, "query"), "art: query");
+        settings.merge_query_publish_events = true;
+        assert_eq!(publishing_label("sub", &settings, "query"), "art");
     }
 }

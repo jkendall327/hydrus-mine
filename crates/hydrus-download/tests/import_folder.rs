@@ -4,6 +4,8 @@
 //! left behind and moved, the seeds kept, and each imported file's tags,
 //! URLs, notes and modified time must be the reference's.
 
+mod common;
+
 use std::collections::BTreeMap;
 use std::path::Path;
 use std::sync::Arc;
@@ -254,6 +256,16 @@ fn an_import_folder_does_what_the_reference_did() {
     let problems = problems.into_inner();
     assert!(problems.is_empty(), "{}", problems.join("\n"));
 
+    // the files it imported are offered in a popup, under its name
+    let (their_folder, our_folder) = (
+        recorded["folder"].as_str().unwrap(),
+        folder_dir.to_string_lossy().into_owned(),
+    );
+    assert_eq!(
+        common::popups_shown(&store),
+        common::recorded_shown(&recorded["popups"], their_folder, &our_folder)
+    );
+
     // nothing more to do: a second check finds nothing new
     let mut folder = store
         .read(|conn| import_folders::import_folder(conn, id))
@@ -266,4 +278,25 @@ fn an_import_folder_does_what_the_reference_did() {
         .unwrap();
     let again = downloader.work_on_import_folder(id).unwrap();
     assert_eq!((again.new_files, again.imported), (0, 0), "{again:?}");
+
+    // its folder gone, checked now: it pauses, and says why
+    store
+        .write(|ctx| hydrus_store::popups::dismiss_all_done(ctx.conn(), i64::MAX / 2))
+        .unwrap();
+    let mut folder = store
+        .read(|conn| import_folders::import_folder(conn, id))
+        .unwrap()
+        .unwrap();
+    folder.settings.path.push_str(" (gone)");
+    folder.settings.check_now = true;
+    let settings = folder.settings.clone();
+    store
+        .write(move |ctx| import_folders::set_settings(ctx.conn(), id, &settings))
+        .unwrap();
+    let broken = downloader.work_on_import_folder(id).unwrap();
+    assert!(broken.error.is_some(), "{broken:?}");
+    assert_eq!(
+        common::popups_shown(&store),
+        common::recorded_shown(&recorded["broken_popups"], their_folder, &our_folder)
+    );
 }

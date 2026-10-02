@@ -21,7 +21,7 @@ use hydrus_store::settings::FolderSettings;
 use hydrus_store::{Store, StoreError, master};
 
 use crate::seeds::{Stop, set_status};
-use crate::{Downloader, WorkError, now};
+use crate::{Downloader, WorkError, now, popups};
 
 /// A file's own metadata in the store, for routers' media ends.
 pub(crate) struct StoreMedia<'a> {
@@ -530,6 +530,14 @@ impl Downloader {
         })();
         if let Err(e) = outcome {
             tracing::warn!("import folder {:?}: {e}; it has been paused", folder.name());
+            popups::show_error(
+                &store,
+                format!(
+                    "The import folder \"{}\" encountered an exception! It has been paused!",
+                    folder.name()
+                ),
+                e.clone(),
+            );
             run.error = Some(e);
             paused = true;
         }
@@ -558,6 +566,7 @@ impl Downloader {
         let store = self.store().clone();
         let id = folder.id();
         let mut previous: Option<i64> = None;
+        let mut presented = Vec::new();
         loop {
             let Some(mut seed) = store
                 .read(|conn| queues::next_file_seed(conn, id))
@@ -598,6 +607,11 @@ impl Downloader {
                     }
                 }
                 run.imported += 1;
+                if let Some(hash) = popups::presented_file(&store, &seed, &options.presentation)
+                    && !presented.contains(&hash)
+                {
+                    presented.push(hash);
+                }
             } else if seed.status == SeedStatus::Error {
                 tracing::info!(
                     "import folder {:?} failed to import {path:?}",
@@ -608,6 +622,14 @@ impl Downloader {
                 Ok(()) => {}
                 Err(e) if matches!(seed_action(folder, &seed), Some(FolderAction::Move(_))) => {
                     // the reference reports a failed move and pauses
+                    popups::show_error(
+                        &store,
+                        format!(
+                            "Import folder tried to move \"{path}\", but it encountered an error:"
+                        ),
+                        e.clone(),
+                    );
+                    popups::show_text(&store, "Import folder has been paused.");
                     run.warnings.push(e);
                     run.error
                         .get_or_insert_with(|| "a file could not be moved".into());
@@ -615,6 +637,9 @@ impl Downloader {
                 }
                 Err(e) => return Err(e),
             }
+        }
+        if folder.settings.publish_files_to_popup_button {
+            popups::publish_presented(&store, folder.name(), presented);
         }
         Ok(())
     }
@@ -633,10 +658,12 @@ impl Downloader {
         };
         for router in &folder.settings.routers {
             if let Err(e) = sidecar::work(router, path, &mut media) {
-                run.warnings.push(format!(
-                    "Trying to run metadata routing in the import folder \"{}\" threw an error: {e}",
+                let text = format!(
+                    "Trying to run metadata routing in the import folder \"{}\" threw an error!",
                     folder.name()
-                ));
+                );
+                popups::show_error(self.store(), text.clone(), e.to_string());
+                run.warnings.push(format!("{text} {e}"));
             }
         }
     }
@@ -683,10 +710,12 @@ impl Downloader {
             Ok(())
         });
         if let Err(e) = result {
-            run.warnings.push(format!(
-                "Trying to parse filename tags in the import folder \"{}\" threw an error: {e}",
+            let text = format!(
+                "Trying to parse filename tags in the import folder \"{}\" threw an error!",
                 folder.name()
-            ));
+            );
+            popups::show_error(self.store(), text.clone(), e.to_string());
+            run.warnings.push(format!("{text} {e}"));
         }
     }
 }

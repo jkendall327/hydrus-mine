@@ -1,4 +1,26 @@
 {
+ "broken_popups": [
+  {
+   "dismissed": false,
+   "done": true,
+   "files": null,
+   "had_error": false,
+   "text_1": "The export folder \"regular\" encountered an error! It has been set to not run regularly.Please check the folder's settings and maybe report to hydrus dev if the error is complicated! The error follows:",
+   "text_2": null,
+   "title": null,
+   "traceback": false
+  },
+  {
+   "dismissed": false,
+   "done": true,
+   "files": null,
+   "had_error": false,
+   "text_1": "The path, \"/tmp/hydrus_export_folder_4_lprr63/regular (gone)\", does not exist!",
+   "text_2": null,
+   "title": "Exception",
+   "traceback": true
+  }
+ ],
  "current": [
   "0321a6c493757ba305ff9c2a941b1908c83234d33610c9f9471d76b66fd1ed53",
   "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
@@ -39,7 +61,7 @@
    "delete after",
    9,
    [
-    "/tmp/hydrus_export_folder_esyymg9c/delete",
+    "/tmp/hydrus_export_folder_4_lprr63/delete",
     0,
     true,
     false,
@@ -90,7 +112,7 @@
     true,
     86400,
     "(blue eyes){hash}",
-    1790756940,
+    1790918484,
     false,
     "",
     true,
@@ -103,7 +125,7 @@
    "regular",
    9,
    [
-    "/tmp/hydrus_export_folder_esyymg9c/regular",
+    "/tmp/hydrus_export_folder_4_lprr63/regular",
     0,
     false,
     false,
@@ -301,7 +323,7 @@
     true,
     86400,
     "[series]/[creator] - {hash}",
-    1790756940,
+    1790918484,
     false,
     "",
     true,
@@ -314,7 +336,7 @@
    "sync",
    9,
    [
-    "/tmp/hydrus_export_folder_esyymg9c/sync",
+    "/tmp/hydrus_export_folder_4_lprr63/sync",
     1,
     false,
     true,
@@ -365,7 +387,7 @@
     true,
     86400,
     "{#} {file_id} {nn tags}",
-    1790756940,
+    1790918484,
     false,
     "",
     true,
@@ -374,5 +396,5 @@
    ]
   ]
  },
- "work": "/tmp/hydrus_export_folder_esyymg9c"
+ "work": "/tmp/hydrus_export_folder_4_lprr63"
 }
