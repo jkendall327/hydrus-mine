@@ -80,6 +80,14 @@ pub use predicate::{
 pub use text::{NamedService, TextContext, predicate_text};
 pub use time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
 
+/// Whether a `system:has url matching regex` pattern compiles as the search
+/// compiles it; why not if it doesn't.
+pub fn check_url_regex(pattern: &str) -> Result<(), String> {
+    fancy_regex::Regex::new(pattern)
+        .map(|_| ())
+        .map_err(|e| e.to_string())
+}
+
 #[cfg(test)]
 pub(crate) mod test_fixtures {
     use std::path::PathBuf;

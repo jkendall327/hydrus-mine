@@ -52,6 +52,8 @@ pub mod page_chooser;
 mod pages;
 mod playback;
 mod popups;
+pub mod predicate_editor_window;
+pub mod predicate_editors;
 pub mod ratings;
 pub mod scanbar;
 pub mod selection;
@@ -165,6 +167,8 @@ pub struct Bound {
     pub review_imports: ReviewSlot,
     /// The "multiple/deleted locations" list while it is open.
     pub locations: Rc<RefCell<Option<LocationsWindow>>>,
+    /// A system predicate's editor while one is open.
+    pub predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>>,
     /// Files dropped on the main window: the "review files to import"
     /// window with them (they join its list if it is open).
     pub drop_files: Rc<dyn Fn(Vec<String>)>,
@@ -400,6 +404,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let review_imports: ReviewSlot = Rc::default();
     // the "multiple/deleted locations" list, from the file domain button
     let locations: Rc<RefCell<Option<LocationsWindow>>> = Rc::default();
+    // a system predicate's editor, from the search box
+    let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
         let open_page = open_page.clone();
@@ -541,12 +547,55 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             shown(false);
         }
     });
+    // a system predicate chosen that needs more: its editor, whose
+    // predicates join the page's search
+    let open_editor = {
+        let slot = predicate_editor.clone();
+        let shown = shown.clone();
+        move |page: Rc<RefCell<SearchPage>>| {
+            let Some(blank) = page.borrow_mut().take_editor_wanted() else {
+                return;
+            };
+            let store = page.borrow().store().clone();
+            let snapshot = store.snapshot();
+            let url_classes = snapshot
+                .url_classes
+                .settings()
+                .url_classes
+                .iter()
+                .filter(|c| c.should_be_associated_with_files)
+                .map(|c| c.name.clone())
+                .collect();
+            let context = predicate_editors::Context::new(
+                &snapshot.services,
+                url_classes,
+                hydrus_search::Clock::system().today(),
+            );
+            let Some(editor) = predicate_editors::Editor::new(blank, &context) else {
+                return;
+            };
+            let viewing = store.read(hydrus_store::settings::get).unwrap_or_default();
+            let text = hydrus_search::TextContext::from_store(&snapshot.services, &viewing);
+            let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
+                let shown = shown.clone();
+                move |predicates| {
+                    page.borrow_mut().add_predicates(predicates);
+                    shown(true);
+                }
+            });
+            if let Err(e) = predicate_editor_window::open(&slot, editor, context, text, chosen) {
+                eprintln!("could not open the predicate editor: {e}");
+            }
+        }
+    };
     window.on_search_accepted({
         let page = page.clone();
         let shown = shown.clone();
+        let open_editor = open_editor.clone();
         move || {
             page().borrow_mut().enter();
             shown(true);
+            open_editor(page());
         }
     });
     window.on_favourite_chosen({
@@ -576,6 +625,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .borrow_mut()
                 .choose(usize::try_from(index).unwrap_or(usize::MAX));
             shown(true);
+            open_editor(page());
         }
     });
     window.on_tag_activated({
@@ -1962,6 +2012,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_page,
         review_imports,
         locations,
+        predicate_editor,
         drop_files: review_files,
         sync,
         _thumbnails: thumbnails,

@@ -305,8 +305,30 @@ the reference's default), and middle-clicking the control to clear it.
 With nothing typed, the search
 box offers `system:everything`, `system:inbox` and `system:archive` with how
 many files each finds in the page's file domains, counted as the reference's
-`_GetFileSystemPredicates` does (the reference also offers the system
-predicates that open an editor; not yet). Typing in the search box lists
+`_GetFileSystemPredicates` does, then the system predicates that open an
+editor ("system:dimensions", "system:time", "system:urls"...; searching all
+known files, only those needing no file's metadata). Choosing one opens the
+reference's "input predicate" dialog (`FleshOutPredicatePanel`;
+`src/predicate_editors.rs` and `src/predicate_editor_window.rs`, checked
+against the reference's own editors, `oracle/record_system_predicate_editors.py`):
+a note over some, tabs for an editor of several pages ("system:time"'s
+import, modified, last viewed and archived), the page's ready-made buttons
+("system:ratio is square", "1080p", "system:limit is 256"...; file
+properties two to a row), each adding its predicates, and its panels, a row
+of fields each with an "ok" button, starting at the reference's defaults:
+operators as drop-downs, numbers (a span of time in its units), "≈"'s amount
+either side and "≈%"'s percentage shown when chosen, tick boxes, text
+(greyed when it doesn't count, as the namespace is until "namespace" is
+chosen), and what a panel can't make (a date that isn't one, a regex that
+doesn't compile) said under them. What a panel makes is the reference's:
+"number of tags" for a namespace with none or any becomes the namespace's
+own predicate (`-character:*anything*`), an empty note name is "notes", an
+invalid advanced tag is "invalid tag", and "≠" ratios are searched though
+the reference's parser has no words for them. Not yet: the editors of
+"system:filetype", "system:hash", "system:rating" and "system:similar files"
+(so those aren't offered), the reference's recently used predicates over
+each panel, and setting a panel's values as its default (the star).
+Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the
 highlight, and enter adds the highlighted tag, or the text as typed for a

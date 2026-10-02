@@ -1,8 +1,9 @@
 //! The search box's autocomplete: the tags matching what has been typed,
 //! with their counts, as the reference's read autocomplete lists them
 //! (display tags, in the page's file domains and tag service); and before
-//! anything is typed, the system predicates that need no more input, with
-//! theirs.
+//! anything is typed, the system predicates: those that need no more input,
+//! with theirs, then those that open an editor
+//! ([`crate::predicate_editors`]).
 
 use std::sync::Arc;
 
@@ -18,6 +19,8 @@ use hydrus_store::autocomplete::{
 };
 use hydrus_store::services::ServiceRegistry;
 
+use crate::predicate_editors::{self, Blank};
+
 /// One suggestion.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Suggestion {
@@ -25,6 +28,8 @@ pub struct Suggestion {
     pub label: String,
     /// What choosing it adds to the search, e.g. `blue eyes` or `-blue eyes`.
     pub predicate: String,
+    /// A system predicate that needs more: the editor choosing it opens.
+    pub editor: Option<Blank>,
 }
 
 pub struct Autocomplete {
@@ -158,6 +163,7 @@ impl Autocomplete {
                 .map(|m| Suggestion {
                     label: format!("{sign}{} {}", presentation.render(&m.tag), m.count.suffix()),
                     predicate: format!("{sign}{}", m.tag),
+                    editor: None,
                 })
                 .collect(),
         )
@@ -166,19 +172,40 @@ impl Autocomplete {
     /// `system:everything`, `system:inbox` and `system:archive`, with how
     /// many files each finds in the page's file domains
     /// (`_GetFileSystemPredicates`): each domain's viewable files and
-    /// inbox, combined as tag counts are. Searching all known files, only
-    /// `system:everything` is offered, without a count.
+    /// inbox, combined as tag counts are; then those that open an editor.
+    /// Searching all known files, only `system:everything` is offered
+    /// (without a count) and the editors needing no file's metadata.
     fn system_predicates(&self) -> Option<Vec<Suggestion>> {
         let (location, _) = &self.context;
         let presentation = self.presentation();
-        if location.is_all_known_files() {
-            return Some(vec![Suggestion {
-                label: presentation.render("system:everything"),
-                predicate: "system:everything".into(),
-            }]);
-        }
         let snapshot = self.store.snapshot();
         let registry = &snapshot.services;
+        let ratings = [
+            ServiceType::LocalRatingLike,
+            ServiceType::LocalRatingNumerical,
+            ServiceType::LocalRatingIncDec,
+            ServiceType::RatingLikeRepository,
+            ServiceType::RatingNumericalRepository,
+        ]
+        .into_iter()
+        .any(|t| registry.of_type(t).next().is_some());
+        let blanks = predicate_editors::offered(location.is_all_known_files(), ratings)
+            .into_iter()
+            .filter(|blank| blank.ported())
+            .map(|blank| Suggestion {
+                label: presentation.render(blank.text()),
+                predicate: blank.text().to_owned(),
+                editor: Some(blank),
+            });
+        if location.is_all_known_files() {
+            let mut out = vec![Suggestion {
+                label: presentation.render("system:everything"),
+                predicate: "system:everything".into(),
+                editor: None,
+            }];
+            out.extend(blanks);
+            return Some(out);
+        }
         let real = |key: &ServiceKey| {
             registry
                 .by_key(key)
@@ -253,8 +280,10 @@ impl Autocomplete {
                         format!("{shown} {suffix}")
                     },
                     predicate: predicate.to_owned(),
+                    editor: None,
                 }
             })
+            .chain(blanks)
             .collect(),
         )
     }

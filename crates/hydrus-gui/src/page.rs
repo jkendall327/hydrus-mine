@@ -62,6 +62,8 @@ pub struct SearchPage {
     /// tag, and its row as the list shows it.
     tags: Vec<(String, String)>,
     error: Option<String>,
+    /// A system predicate chosen that needs more, whose editor is to open.
+    editor_wanted: Option<crate::predicate_editors::Blank>,
     /// A duplicates page's filtering, which the page can launch.
     duplicates: Option<DuplicatesPage>,
     /// What the status bar says while the page is empty (the reference's
@@ -215,6 +217,7 @@ impl SearchPage {
             selection: Selection::default(),
             tags: Vec::new(),
             error: None,
+            editor_wanted: None,
             duplicates: None,
             empty_status: std::cell::Cell::new(Some("no search done yet")),
             facts: HashMap::new(),
@@ -1584,8 +1587,15 @@ impl SearchPage {
     }
 
     /// Enter in the search box: add the highlighted suggestion (or the text
-    /// as typed), and empty the box if that worked.
+    /// as typed), and empty the box if that worked; or, for a system
+    /// predicate that needs more, ask for its editor.
     pub fn enter(&mut self) {
+        if let Some(i) = self.autocomplete.highlighted()
+            && let Some(blank) = self.autocomplete.suggestions()[i].editor
+        {
+            self.editor_wanted = Some(blank);
+            return;
+        }
         if let Some(chosen) = self.autocomplete.chosen()
             && self.add_predicate(&chosen)
         {
@@ -1598,10 +1608,39 @@ impl SearchPage {
         let Some(suggestion) = self.autocomplete.suggestions().get(index) else {
             return;
         };
+        if let Some(blank) = suggestion.editor {
+            self.editor_wanted = Some(blank);
+            return;
+        }
         let predicate = suggestion.predicate.clone();
         if self.add_predicate(&predicate) {
             self.autocomplete.clear();
         }
+    }
+
+    /// The editor a chosen system predicate asked for, if one did (asked
+    /// once).
+    pub fn take_editor_wanted(&mut self) -> Option<crate::predicate_editors::Blank> {
+        self.editor_wanted.take()
+    }
+
+    /// Add predicates an editor made, empty the search box and search again;
+    /// whether they were taken (not on a page without a search, or locked).
+    pub fn add_predicates(&mut self, predicates: Vec<Predicate>) -> bool {
+        if self.note.is_some() || self.locked {
+            return false;
+        }
+        for predicate in predicates {
+            if !self.predicates.contains(&predicate) {
+                self.predicates.push(predicate);
+            }
+        }
+        self.error = None;
+        self.autocomplete.clear();
+        if self.synchronised {
+            self.search();
+        }
+        true
     }
 
     /// Add a predicate as typed (a tag, or a system predicate such as

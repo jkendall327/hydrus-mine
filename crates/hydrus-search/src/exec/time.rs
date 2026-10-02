@@ -44,6 +44,23 @@ impl Clock {
     fn local_now(&self) -> DateTime {
         self.tz.to_datetime(self.now)
     }
+
+    /// Today's date in the clock's time zone, at midnight.
+    pub fn today(&self) -> CivilDateTime {
+        let now = self.local_now();
+        u16::try_from(now.year())
+            .ok()
+            .and_then(|year| {
+                CivilDateTime::new(
+                    year,
+                    u8::try_from(now.month()).ok()?,
+                    u8::try_from(now.day()).ok()?,
+                    0,
+                    0,
+                )
+            })
+            .unwrap_or_else(|| CivilDateTime::new(1970, 1, 1, 0, 0).expect("a real date"))
+    }
 }
 
 /// An inclusive range of timestamps (milliseconds); `None` is unbounded.
@@ -241,5 +258,23 @@ mod tests {
             &clock,
         );
         assert!(r.is_unbounded());
+    }
+
+    #[test]
+    fn today_is_the_local_date() {
+        // 03:00 UTC on 2 October is still 1 October five hours west
+        let clock = Clock::fixed(
+            ms("2026-10-02T03:00:00Z"),
+            TimeZone::fixed(jiff::tz::offset(-5)),
+        );
+        assert_eq!(
+            clock.today(),
+            CivilDateTime::new(2026, 10, 1, 0, 0).unwrap()
+        );
+        let clock = Clock::fixed(ms("2026-10-02T03:00:00Z"), TimeZone::UTC);
+        assert_eq!(
+            clock.today(),
+            CivilDateTime::new(2026, 10, 2, 0, 0).unwrap()
+        );
     }
 }

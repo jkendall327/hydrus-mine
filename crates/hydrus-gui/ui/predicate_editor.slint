@@ -1,0 +1,209 @@
+// The reference's "input predicate" dialog (`FleshOutPredicatePanel`),
+// opened by a system predicate offered without a value
+// (`src/predicate_editors.rs` has what each holds): a note, its pages'
+// tabs when it has several, the page's ready-made buttons, and its panels,
+// each a row of fields with an "ok" button.
+
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
+// number, 4 a line of text.
+export struct EditorField {
+    kind: int,
+    text: string,
+    placeholder: string,
+    options: [string],
+    chosen: int,
+    ticked: [bool],
+    value: int,
+    minimum: int,
+    maximum: int,
+    before: string,
+    after: string,
+    shown: bool,
+    enabled: bool,
+    // a choice's width, to fit its longest option
+    width: length,
+}
+
+export struct EditorPanel {
+    fields: [EditorField],
+}
+
+export component PredicateEditorWindow inherits Window {
+    title: "input predicate";
+    preferred-width: 1020px;
+    background: Theme.window;
+    in property <string> note;
+    // the pages' names (none with one page), and the one shown
+    in property <[string]> pages;
+    in property <int> page;
+    // the shown page's ready-made buttons, two to a row for file
+    // properties
+    in property <[string]> buttons;
+    in property <bool> two-columns;
+    in property <[EditorPanel]> panels;
+    in property <string> error;
+    callback page-chosen(int);
+    callback button-clicked(int);
+    // (panel, field, option)
+    callback chose(int, int, int);
+    // (panel, field, option, ticked)
+    callback ticked(int, int, int, bool);
+    // (panel, field, value)
+    callback number-edited(int, int, int);
+    // (panel, field, text)
+    callback text-edited(int, int, string);
+    callback ok(int);
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.note != "": Text {
+                text: root.note;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            if root.pages.length > 1: HorizontalLayout {
+                spacing: 2px;
+                alignment: start;
+                for name[i] in root.pages: Button {
+                    text: name;
+                    checkable: true;
+                    checked: i == root.page;
+                    clicked => { root.page-chosen(i); }
+                }
+            }
+            ScrollView {
+                min-height: 120px;
+                preferred-height: 420px;
+                VerticalLayout {
+                    alignment: start;
+                    spacing: 4px;
+                    if !root.two-columns: VerticalLayout {
+                        spacing: 2px;
+                        for label[i] in root.buttons: Button {
+                            text: label;
+                            clicked => { root.button-clicked(i); }
+                        }
+                    }
+                    if root.two-columns: VerticalLayout {
+                        spacing: 2px;
+                        for row in (root.buttons.length + 1) / 2: HorizontalLayout {
+                            spacing: 2px;
+                            Button {
+                                horizontal-stretch: 1;
+                                text: root.buttons[row * 2];
+                                clicked => { root.button-clicked(row * 2); }
+                            }
+                            if row * 2 + 1 < root.buttons.length: Button {
+                                horizontal-stretch: 1;
+                                text: root.buttons[row * 2 + 1];
+                                clicked => { root.button-clicked(row * 2 + 1); }
+                            }
+                        }
+                    }
+                    for panel[p] in root.panels: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        HorizontalLayout {
+                            padding: 4px;
+                            spacing: 6px;
+                            for field[f] in panel.fields: VerticalLayout {
+                                alignment: center;
+                                visible: field.shown;
+                                // (a hidden field takes no room)
+                                max-width: field.shown ? 100000px : 0px;
+                                if field.kind == 0: Text {
+                                    vertical-alignment: center;
+                                    text: field.text;
+                                    wrap: word-wrap;
+                                    max-width: 360px;
+                                    color: Theme.text;
+                                }
+                                if field.kind == 1: ComboBox {
+                                    horizontal-stretch: 0;
+                                    width: field.width;
+                                    model: field.options;
+                                    current-index: field.chosen;
+                                    enabled: field.enabled;
+                                    selected => { root.chose(p, f, self.current-index); }
+                                }
+                                if field.kind == 2: VerticalLayout {
+                                    for option[o] in field.options: CheckBox {
+                                        min-height: 24px;
+                                        text: option;
+                                        checked: field.ticked[o];
+                                        enabled: field.enabled;
+                                        toggled => { root.ticked(p, f, o, self.checked); }
+                                    }
+                                }
+                                if field.kind == 3: HorizontalLayout {
+                                    spacing: 2px;
+                                    if field.before != "": Text {
+                                        vertical-alignment: center;
+                                        text: field.before;
+                                        color: Theme.text;
+                                    }
+                                    SpinBox {
+                                        horizontal-stretch: 0;
+                                        width: 84px;
+                                        minimum: field.minimum;
+                                        maximum: field.maximum;
+                                        value: field.value;
+                                        enabled: field.enabled;
+                                        edited(value) => { root.number-edited(p, f, value); }
+                                    }
+                                    if field.after != "": Text {
+                                        vertical-alignment: center;
+                                        text: field.after;
+                                        color: Theme.text;
+                                    }
+                                }
+                                if field.kind == 4: LineEdit {
+                                    min-width: 160px;
+                                    text: field.text;
+                                    placeholder-text: field.placeholder;
+                                    enabled: field.enabled;
+                                    edited(text) => { root.text-edited(p, f, text); }
+                                    accepted => { root.ok(p); }
+                                }
+                            }
+                            Rectangle { horizontal-stretch: 1; }
+                            VerticalLayout {
+                                alignment: center;
+                                Button {
+                                    text: "ok";
+                                    clicked => { root.ok(p); }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if root.error != "": Text {
+                text: root.error;
+                wrap: word-wrap;
+                color: Theme.error;
+            }
+            HorizontalLayout {
+                alignment: end;
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

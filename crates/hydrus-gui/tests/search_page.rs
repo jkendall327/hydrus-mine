@@ -22,17 +22,20 @@ fn a_search_page_finds_files_and_shows_their_thumbnails() {
 
     let mut page = SearchPage::new(store.clone());
     assert!(page.results().is_empty(), "nothing until searched");
-    // before anything is typed, the system predicates that need nothing more
+    // before anything is typed, the system predicates that need nothing
+    // more, then those that open an editor
     let offered: Vec<String> = page
         .autocomplete()
         .suggestions()
         .iter()
+        .filter(|s| s.editor.is_none())
         .map(|s| s.predicate.clone())
         .collect();
     assert_eq!(
         offered,
         ["system:everything", "system:inbox", "system:archive"]
     );
+    assert!(page.autocomplete().suggestions()[3].editor.is_some());
     page.enter();
     let everything = page.results().len();
     assert_eq!(page.predicates(), ["system:everything"]);
@@ -436,6 +439,7 @@ fn system_predicate_counts_are_for_the_page_s_file_domain() {
             .autocomplete()
             .suggestions()
             .iter()
+            .filter(|s| s.editor.is_none())
             .map(|s| s.label.clone())
             .collect();
         let mut count = |predicate: &str| {

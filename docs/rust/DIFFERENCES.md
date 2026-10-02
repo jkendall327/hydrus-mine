@@ -200,6 +200,15 @@ search.
 
 ## Pages (`hydrus-gui`)
 
+- **System predicate editors type dates** ("2011-06-04", and "13:05") where
+  the reference's have a calendar and a time box, and a viewing time is
+  kept to the second (the reference keeps its milliseconds, though it
+  never shows them; one stored by hydrus comes across to the nearest
+  second). A file size in terabytes, which the reference's editor offers
+  but can't write out ("error:cannot render this predicate"), is written
+  "200TB"; neither parser takes "TB". Their radio buttons are drop-downs,
+  and an editor's rows don't wrap: a narrow window scrolls sideways.
+
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes
   thumbnails), where the reference has Qt scale them as it draws. Slint's
