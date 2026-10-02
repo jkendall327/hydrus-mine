@@ -2483,6 +2483,7 @@ dependencies = [
  "hydrus-core",
  "hydrus-duplicates",
  "hydrus-import",
+ "hydrus-legacy",
  "hydrus-media",
  "hydrus-parse",
  "hydrus-search",
