@@ -27,13 +27,16 @@ pub mod audio;
 pub mod autocomplete;
 pub mod collect;
 pub mod daemon;
+mod drops;
 pub mod duplicate_filter;
 pub mod favourites;
 mod filter_window;
 mod gallery;
 mod grid;
 pub mod headless;
+mod import_window;
 pub mod info_lines;
+pub mod local_import;
 pub mod main_menu;
 pub mod manage_tags;
 pub(crate) mod manage_tags_window;
@@ -155,6 +158,11 @@ pub struct Bound {
     pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
     /// Open a new page (as the page chooser does), and show it.
     pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
+    /// The "review files to import" window while it is open, and its list.
+    pub review_imports: ReviewSlot,
+    /// Files dropped on the main window: the "review files to import"
+    /// window with them (they join its list if it is open).
+    pub drop_files: Rc<dyn Fn(Vec<String>)>,
     /// Do what the Client API asked of the pages (`/manage_pages`), and keep
     /// the pages and the media viewer in the store as they are, for it to
     /// answer from: the client runs this every half second.
@@ -177,6 +185,9 @@ impl std::fmt::Debug for Bound {
             .finish_non_exhaustive()
     }
 }
+
+/// The "review files to import" window while it is open, and its list.
+pub type ReviewSlot = Rc<RefCell<Option<(ReviewImportsWindow, Rc<RefCell<local_import::Review>>)>>>;
 
 /// Two presses this close together are a double click (where Slint's own
 /// double click can't be had: list rows, and middle clicks).
@@ -363,6 +374,38 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let open_page: Rc<dyn Fn(&page_chooser::NewPage)> = Rc::new({
         let change_pages = change_pages.clone();
         move |choice: &page_chooser::NewPage| change_pages(&|pages| pages.new_page(choice))
+    });
+    // the "review files to import" window, with paths (from file > import
+    // files, or dropped on the window); "import now" opens an import page
+    let review_imports: ReviewSlot = Rc::default();
+    let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
+        let slot = review_imports.clone();
+        let open_page = open_page.clone();
+        move |paths: Vec<String>| {
+            if let Some((window, review)) = slot.borrow().as_ref() {
+                review.borrow_mut().add_paths(paths);
+                // (parsing again: its pause and stop buttons)
+                window.set_working(review.borrow().working());
+                let _ = window.show();
+                return;
+            }
+            let import_now: import_window::ImportNow = Rc::new({
+                let open_page = open_page.clone();
+                move |paths, delete_after_success| {
+                    open_page(&page_chooser::NewPage::LocalImport {
+                        paths,
+                        delete_after_success,
+                    });
+                }
+            });
+            if let Err(e) = import_window::open(&slot, paths, import_now) {
+                eprintln!("could not open the import window: {e}");
+            }
+        }
+    });
+    drops::on_files_dropped(window.window(), {
+        let review_files = review_files.clone();
+        move |paths| review_files(paths)
     });
     // open the page chosen, if one was
     let chosen = {
@@ -892,6 +935,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         Err(e) => eprintln!("could not open the options: {e}"),
                     }
                 })
+            },
+            import_files: {
+                let review_files = review_files.clone();
+                Rc::new(move || review_files(Vec::new()))
             },
         },
     );
@@ -1826,6 +1873,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         archive_delete,
         filter,
         open_page,
+        review_imports,
+        drop_files: review_files,
         sync,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,

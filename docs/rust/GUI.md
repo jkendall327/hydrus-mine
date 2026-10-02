@@ -199,6 +199,25 @@ bar; its files join the page as they come, in order; and closing it asks
 as the reference's does ("This page is still importing.", "This is a
 local import page holding 3 import objects.").
 
+File > import files… opens the reference's "review files to import"
+window, and files dropped on the main window open it with them (dropped
+while it is open, they join its list). It parses the paths given, folders
+walked (their subfolders too, if "search subdirectories" is ticked) a
+little at a time as the reference does, and lists them as the reference
+does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is
+empty", "file is missing", "sidecar") and size, the problem rows in the
+reference's error colour; under it, "6 files parsed - 4 good | 1 bad: 1
+had unsupported file types - and looks like 1 txt/json/xml sidecars." and
+a gauge, with pause/play and stop while it parses. "remove files" takes
+the selected rows out (asking first), and "delete original files after
+successful import" says, in the reference's red, that they will be
+deleted. "import now" opens an "import" page of the good files, in the
+list's order. Paths go in through the box over the list (enter adds one,
+a file or folder, as typed or pasted with a file manager's quotes) in
+place of the reference's "add files"/"add folder" pickers, and "add
+tags/urls with the import >>" is greyed out until the import's metadata
+options are ported.
+
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
 "waiting for new queries" with none) and lists them as the reference's

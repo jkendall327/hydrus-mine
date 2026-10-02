@@ -45,6 +45,25 @@ fn comparable_sidecar_prefix(path: &str) -> String {
     }
 }
 
+/// `PopulateComparableSidecarPrefixes`: note the prefixes sidecars of
+/// `paths` would have (each that isn't itself sidecar-like's).
+pub fn add_sidecar_prefixes<'a>(
+    paths: impl IntoIterator<Item = &'a str>,
+    prefixes: &mut HashSet<String>,
+) {
+    for path in paths {
+        if !has_sidecar_ext(path) {
+            prefixes.insert(comparable_sidecar_prefix(path));
+        }
+    }
+}
+
+/// `LooksLikeSidecarPath`: a `.txt`, `.json` or `.xml` whose name before
+/// its first dot is one of `prefixes`.
+pub fn looks_like_sidecar(path: &str, prefixes: &HashSet<String>) -> bool {
+    has_sidecar_ext(path) && prefixes.contains(&comparable_sidecar_prefix(path))
+}
+
 /// `GetAllFilePaths`: the files under `root` (or `root` itself if it is a
 /// file), in human order, split into files and the sidecars beside them (a
 /// `.txt`, `.json` or `.xml` whose name before its first dot is also some
@@ -52,6 +71,17 @@ fn comparable_sidecar_prefix(path: &str) -> String {
 pub fn all_file_paths(
     root: &str,
     search_subdirectories: bool,
+) -> io::Result<(Vec<String>, Vec<String>)> {
+    all_file_paths_noting(root, search_subdirectories, &mut HashSet::new())
+}
+
+/// [`all_file_paths`], noting the prefixes its files give sidecars in
+/// `prefixes` and taking those already there into account (as the
+/// reference's import window does across all it is given).
+pub fn all_file_paths_noting(
+    root: &str,
+    search_subdirectories: bool,
+    prefixes: &mut HashSet<String>,
 ) -> io::Result<(Vec<String>, Vec<String>)> {
     let mut all = Vec::new();
     // (path, the directories above it, to stop following links back up)
@@ -88,14 +118,10 @@ pub fn all_file_paths(
         jobs = next;
     }
     human_sort(&mut all);
-    let prefixes: HashSet<String> = all
-        .iter()
-        .filter(|p| !has_sidecar_ext(p))
-        .map(|p| comparable_sidecar_prefix(p))
-        .collect();
+    add_sidecar_prefixes(all.iter().map(String::as_str), prefixes);
     let (sidecars, files) = all
         .into_iter()
-        .partition(|p| has_sidecar_ext(p) && prefixes.contains(&comparable_sidecar_prefix(p)));
+        .partition(|p| looks_like_sidecar(p, prefixes));
     Ok((files, sidecars))
 }
 

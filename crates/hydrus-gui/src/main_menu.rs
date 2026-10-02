@@ -153,6 +153,8 @@ pub enum Command {
     AdvancedMode,
     /// Open the options window.
     Options,
+    /// Open the "review files to import" window.
+    ImportFiles,
 }
 
 /// A repository with content to upload (the pending menu).
@@ -420,7 +422,7 @@ fn file_menu(facts: &Facts) -> Entry {
     menu(
         "&file",
         vec![
-            todo(dots("import files")),
+            item(dots("import files"), Command::ImportFiles),
             SEP,
             menu("import/export folders", folders),
             SEP,
@@ -1534,9 +1536,13 @@ mod tests {
             (
                 "import files\u{2026}".to_owned(),
                 LineKind::Item,
-                false,
+                true,
                 false
             )
+        );
+        assert_eq!(
+            view[0].lines[8],
+            ("restart".to_owned(), LineKind::Item, false, false)
         );
         open.hover(0, 2, 150.0, 40.0, 10.0);
         let view = open.view();
@@ -1571,7 +1577,7 @@ mod tests {
     fn clicking_an_entry_chooses_it_unless_it_cannot_be() {
         let mut open = OpenMenus::default();
         open.open(menubar(&facts()), 0, 0.0, 22.0);
-        assert_eq!(open.click(0, 0, 0.0, 0.0, 0.0), None);
+        assert_eq!(open.click(0, 8, 0.0, 0.0, 0.0), None);
         assert!(open.is_open(), "a greyed out entry does nothing");
         assert_eq!(open.click(0, 4, 100.0, 50.0, 0.0), None);
         assert_eq!(open.view().len(), 2, "a submenu opens");
@@ -1654,9 +1660,9 @@ mod tests {
     #[test]
     fn entries_hydrus_rs_cannot_do_are_not_usable() {
         let menus = menubar(&facts());
-        let import = entry_at(&menus, &[0, 0]).unwrap();
-        assert_eq!(import.label(), "import files\u{2026}");
-        assert!(!import.usable());
+        let restart = entry_at(&menus, &[0, 8]).unwrap();
+        assert_eq!(restart.label(), "restart");
+        assert!(!restart.usable());
         let exit = entry_at(&menus, &[0, 10]).unwrap();
         assert_eq!(exit.label(), "exit");
         assert!(exit.usable());

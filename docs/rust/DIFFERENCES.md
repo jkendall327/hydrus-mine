@@ -430,6 +430,25 @@ Checked by `crates/hydrus-download/tests/local_import.rs`.
   reference's metadata routers) and tags given per path aren't supported
   yet, nor is its page's import options button.
 
+Checked by `crates/hydrus-gui/tests/local_import_dialog.rs` (against
+`oracle/fixtures/local_import_dialog.json`) and
+`crates/hydrus-gui/tests/import_files.rs`.
+
+- **The "review files to import" window parses its paths as the
+  reference's does** (the same rows, order, filetypes, sizes, progress
+  text and files to import, folders with and without their subfolders,
+  sidecars and `Thumbs.db` set aside), but **it has no file or folder
+  picker**: paths are typed or pasted into a box over its list, or dropped
+  on it or the main window. Its "add tags/urls with the import >>" button
+  is greyed out (no filename tagging or sidecar options yet), so "import
+  now" is the only way in, with the default import options.
+- **There is one review window at a time**: files dropped on the main
+  window while it is open join its list, where the reference opens a
+  second window.
+- **Dropping files is not checked by eye**: the test drives the drop
+  handler itself, since the X server the GUI is checked under has no
+  drag source.
+
 ## Network requests (`hydrus-net`)
 
 - **Pages are decoded with the web's own decoders.** A charset the server

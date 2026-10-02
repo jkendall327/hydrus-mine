@@ -27,6 +27,8 @@ pub(crate) struct Hooks {
     pub reshow: Rc<dyn Fn()>,
     /// Open the options window.
     pub options: Rc<dyn Fn()>,
+    /// Open the "review files to import" window.
+    pub import_files: Rc<dyn Fn()>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -450,5 +452,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
         Command::Options => (hooks.options)(),
+        Command::ImportFiles => (hooks.import_files)(),
     }
 }
