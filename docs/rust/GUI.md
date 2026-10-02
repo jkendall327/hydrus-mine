@@ -372,7 +372,18 @@ Thumbnails are drawn as the reference draws them: each cell is your
 thumbnail bounding box and its border (152x127 by default), and the
 thumbnail sits in it at its own size (over your thumbnail DPR), centred,
 never stretched. On a scaled screen it is resampled to the screen's
-pixels first, so it is drawn pixel for pixel.
+pixels first, so it is drawn pixel for pixel. Over it go the reference's
+icons, where it draws them (`src/thumbnail_icons.rs`, checked against
+the reference's grid painting the `basic` fixture's files,
+`oracle/record_thumbnail_icons.py`): at the top right, from the right,
+downloading, notes, the trash (or deleted from hydrus local file
+storage) and the inbox; at the top left, sound (or play, for a file with
+a duration and no audio) and the file repositories and IPFS a file is
+in, pending to or petitioned from; and a collection's icon with its
+number of files in a box at the bottom left (a collection showing what
+any of its files would). Not yet: the ratings the reference can draw on
+thumbnails, and its tag banners (by default the creator, series and title
+across the top, and the volume, chapter and page at the bottom right).
 Thumbnails are selected as in the reference's grid (v688's default one;
 `src/selection.rs`, checked step by step against that grid driven in the
 running reference, `oracle/record_thumbnail_selection.py`): a click

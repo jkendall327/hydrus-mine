@@ -25,11 +25,20 @@ export { ImportRow, ReviewImportsWindow } from "import_files.slint";
 export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 
+// an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
+// its top left corner goes in the thumbnail
+export struct ThumbIcon {
+    kind: int,
+    x: length,
+    y: length,
+}
+
 export struct Thumbnail {
     image: image,
     selected: bool,
     // a collection's number of files, as text; empty for a file
     files: string,
+    icons: [ThumbIcon],
 }
 
 component Predicate inherits Rectangle {
@@ -222,21 +231,43 @@ component ThumbnailGrid inherits ListView {
                     border-width: thumbnail.selected ? max(root.border, 2px) : root.border;
                     border-color: thumbnail.selected ? Theme.accent : Theme.border;
                 }
-                // a collection: its number of files, in a box at the
-                // bottom left
+                // a collection: its icon and number of files, in a box at
+                // the bottom left (the icon drawn with the others)
                 if thumbnail.files != "": Rectangle {
-                    x: 2px;
-                    y: parent.height - 2px - self.height;
-                    width: count.preferred-width + 8px;
-                    height: count.preferred-height + 4px;
+                    x: root.border;
+                    y: parent.height - root.border - self.height;
+                    width: 16px + count.preferred-width + 3px;
+                    height: 18px;
                     background: Theme.window;
-                    border-width: 1px;
-                    border-color: Theme.border;
                     count := Text {
+                        x: 18px;
+                        y: 1px;
                         text: thumbnail.files;
                         color: Theme.text;
                         font-size: 11px;
                     }
+                }
+                // the reference's icons: inbox, trash, notes... at the top
+                // right, sound or play and the file repositories at the top
+                // left
+                for icon in thumbnail.icons: Image {
+                    x: icon.x;
+                    y: icon.y;
+                    width: 16px;
+                    height: 16px;
+                    source: icon.kind == 0 ? @image-url("../../../static/inbox.png")
+                        : icon.kind == 1 ? @image-url("../../../static/trash.png")
+                        : icon.kind == 2 ? @image-url("../../../static/notes.png")
+                        : icon.kind == 3 ? @image-url("../../../static/downloading.png")
+                        : icon.kind == 4 ? @image-url("../../../static/sound.png")
+                        : icon.kind == 5 ? @image-url("../../../static/play.png")
+                        : icon.kind == 6 ? @image-url("../../../static/file_repository_small.png")
+                        : icon.kind == 7 ? @image-url("../../../static/file_repository_pending_small.png")
+                        : icon.kind == 8 ? @image-url("../../../static/file_repository_petitioned_small.png")
+                        : icon.kind == 9 ? @image-url("../../../static/ipfs_small.png")
+                        : icon.kind == 10 ? @image-url("../../../static/ipfs_pending_small.png")
+                        : icon.kind == 11 ? @image-url("../../../static/ipfs_petitioned_small.png")
+                        : @image-url("../../../static/collection.png");
                 }
             }
         }

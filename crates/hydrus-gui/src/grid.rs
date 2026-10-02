@@ -12,8 +12,9 @@ use slint::{Model, ModelNotify, ModelRc, ModelTracker, SharedString, VecModel};
 
 use hydrus_core::HashId;
 
+use crate::thumbnail_icons::{self, IconFacts};
 use crate::thumbnails::ThumbnailLoader;
-use crate::{SearchPage, Thumbnail, ThumbnailRow};
+use crate::{SearchPage, ThumbIcon, Thumbnail, ThumbnailRow};
 
 /// Decoded thumbnails kept; past this, the cache starts afresh.
 const CACHED: usize = 4000;
@@ -31,6 +32,12 @@ pub struct ThumbnailRows {
     /// Thumbnails asked for and not yet decoded, with where the grid last
     /// showed each file.
     pending: RefCell<HashMap<HashId, usize>>,
+    /// A thumbnail's border, width and height (the border included), for
+    /// the icons over it.
+    cell: Cell<(i32, i32, i32)>,
+    /// What the icons over each file's thumbnail say, read as its row is
+    /// first shown (and again after the files change).
+    icon_facts: RefCell<HashMap<HashId, IconFacts>>,
     notify: ModelNotify,
 }
 
@@ -56,6 +63,8 @@ impl ThumbnailRows {
             scale: Cell::new(1.0),
             generation: Cell::new(0),
             pending: RefCell::default(),
+            cell: Cell::new((1, 152, 127)),
+            icon_facts: RefCell::default(),
             notify: ModelNotify::default(),
         }
     }
@@ -152,12 +161,68 @@ impl ThumbnailRows {
     /// Show another page's files.
     pub fn set_page(&self, page: Rc<RefCell<SearchPage>>) {
         *self.page.borrow_mut() = page;
+        self.icon_facts.borrow_mut().clear();
         self.notify.reset();
     }
 
     /// The page's files changed.
     pub fn reset(&self) {
+        self.icon_facts.borrow_mut().clear();
         self.notify.reset();
+    }
+
+    /// A thumbnail's border, and its width and height with it.
+    pub fn set_cell(&self, border: i32, width: i32, height: i32) {
+        if self.cell.get() != (border, width, height) {
+            self.cell.set((border, width, height));
+            self.notify.reset();
+        }
+    }
+
+    /// The icons over each of `items` (files or collections) on `page`, as
+    /// the reference draws them.
+    fn icons(&self, page: &SearchPage, items: &[HashId]) -> Vec<Vec<ThumbIcon>> {
+        let members = |item: HashId| -> Vec<HashId> {
+            page.collection(item)
+                .map_or_else(|| vec![item], <[HashId]>::to_vec)
+        };
+        let missing: Vec<HashId> = {
+            let known = self.icon_facts.borrow();
+            items
+                .iter()
+                .flat_map(|&item| members(item))
+                .filter(|id| !known.contains_key(id))
+                .collect()
+        };
+        if !missing.is_empty() {
+            let read = thumbnail_icons::facts(page.store(), &missing);
+            self.icon_facts.borrow_mut().extend(read);
+        }
+        let known = self.icon_facts.borrow();
+        let (border, width, height) = self.cell.get();
+        items
+            .iter()
+            .map(|&item| {
+                let collection = page.collection(item).is_some();
+                let facts = if collection {
+                    let of: Vec<IconFacts> = members(item)
+                        .iter()
+                        .filter_map(|id| known.get(id).cloned())
+                        .collect();
+                    IconFacts::of_collection(&of)
+                } else {
+                    known.get(&item).cloned().unwrap_or_default()
+                };
+                thumbnail_icons::placed(&facts, collection, border, width, height, border)
+                    .into_iter()
+                    .map(|p| ThumbIcon {
+                        kind: p.icon.code(),
+                        x: p.x as f32,
+                        y: p.y as f32,
+                    })
+                    .collect()
+            })
+            .collect()
     }
 
     /// The file at `index` changed (e.g. its selection).
@@ -213,8 +278,11 @@ impl Model for ThumbnailRows {
             return None;
         }
         let end = (start + columns).min(results.len());
+        let icons = self.icons(&page, &results[start..end]);
         let thumbnails: Vec<Thumbnail> = (start..end)
-            .map(|i| Thumbnail {
+            .zip(icons)
+            .map(|(i, icons)| Thumbnail {
+                icons: ModelRc::new(VecModel::from(icons)),
                 image: self.image(results[i], i),
                 selected: page.is_selected(i),
                 files: page

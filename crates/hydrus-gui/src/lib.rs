@@ -59,6 +59,7 @@ pub mod slideshow;
 pub mod sort;
 pub mod status;
 pub mod still;
+pub mod thumbnail_icons;
 pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
@@ -221,14 +222,20 @@ fn sort_chosen(page: &SearchPage) {
 
 /// The grid's cells as the reference's: the bounding box and its border,
 /// with the margin round each.
-fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store) {
+fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &ThumbnailRows) {
     let settings = store.snapshot().thumbnails;
     let layout = store
         .read(hydrus_store::settings::get::<hydrus_store::settings::ThumbnailLayout>)
         .unwrap_or_default();
     let border = layout.border as f32;
-    window.set_thumbnail_width(settings.bounding_width as f32 + 2.0 * border);
-    window.set_thumbnail_height(settings.bounding_height as f32 + 2.0 * border);
+    let (width, height) = (
+        settings.bounding_width + 2 * layout.border,
+        settings.bounding_height + 2 * layout.border,
+    );
+    let pixels = |n: u32| i32::try_from(n).unwrap_or(i32::MAX);
+    rows.set_cell(pixels(layout.border), pixels(width), pixels(height));
+    window.set_thumbnail_width(width as f32);
+    window.set_thumbnail_height(height as f32);
     window.set_thumbnail_border(border);
     window.set_thumbnail_margin(layout.margin as f32);
 }
@@ -242,7 +249,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     window.set_thumbnail_rows(ModelRc::from(rows.clone()));
     rows.set_columns(usize::try_from(window.get_grid_columns()).unwrap_or(1));
     rows.set_scale(window.window().scale_factor());
-    lay_out_thumbnails(window, current.borrow().borrow().store());
+    lay_out_thumbnails(window, current.borrow().borrow().store(), &rows);
     let thumbnails = Rc::new(slint::Timer::default());
     thumbnails.start(
         slint::TimerMode::Repeated,
@@ -936,7 +943,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             // (the cells as the options now have them; and
                             // thumbnails of another size, every one again)
                             if let Some(window) = weak.upgrade() {
-                                lay_out_thumbnails(&window, &store);
+                                lay_out_thumbnails(&window, &store, &rows);
                             }
                             if store.snapshot().thumbnails != thumbnails_before {
                                 rows.thumbnails_changed();
