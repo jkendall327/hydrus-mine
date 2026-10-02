@@ -27,12 +27,14 @@ use super::location::LocationContext;
 use super::services::Rgb;
 use super::sort::{MediaCollect, MediaSort, TagSort};
 use super::tag_filter::TagFilter;
+use super::tag_summary::tag_summary_generator;
 use super::util::{
     DecodeResult, Settings, boolean, dictionary_pairs, float, hex_bytes, int, list, list_items,
     malformed, opt_int, opt_string, plain, service_key, string, tuple,
 };
 use crate::pyjson::PyJson;
 use crate::serialisable::{Meta, SerialisableObject, SerialisableType};
+use hydrus_core::tag_summary::TagSummaryGenerator;
 
 const KIND: SerialisableType = SerialisableType::CLIENT_OPTIONS;
 
@@ -59,6 +61,10 @@ pub struct ClientOptions {
     /// Favourite tags shown in the "suggested tags" panel, per tag service.
     pub suggested_tags_favourites: BTreeMap<ServiceKey, Vec<String>>,
     pub favourite_tag_filters: BTreeMap<String, TagFilter>,
+    /// The tag summaries drawn over thumbnails and the media viewer, by
+    /// where (`thumbnail_top`, `thumbnail_bottom_right`,
+    /// `media_viewer_top`).
+    pub tag_summary_generators: BTreeMap<String, TagSummaryGenerator>,
     pub default_sort: Option<MediaSort>,
     pub fallback_sort: Option<MediaSort>,
     pub default_namespace_sorts: Vec<MediaSort>,
@@ -137,6 +143,7 @@ impl ClientOptions {
             slideshow_durations: floats(&settings, "slideshow_durations")?,
             suggested_tags_favourites: suggested_tags_favourites(&settings)?,
             favourite_tag_filters: favourite_tag_filters(&settings)?,
+            tag_summary_generators: tag_summary_generators(&settings)?,
             default_sort: optional_object(&settings, "default_sort", MediaSort::from_object)?,
             fallback_sort: optional_object(&settings, "fallback_sort", MediaSort::from_object)?,
             default_namespace_sorts: object_list(
@@ -216,6 +223,10 @@ impl ClientOptions {
         keys(
             &mut self.favourite_tag_filters,
             &defaults.favourite_tag_filters,
+        );
+        keys(
+            &mut self.tag_summary_generators,
+            &defaults.tag_summary_generators,
         );
         for (k, v) in &defaults.default_tag_sorts {
             self.default_tag_sorts
@@ -668,6 +679,26 @@ fn favourite_tag_filters(settings: &Settings<'_>) -> DecodeResult<BTreeMap<Strin
             Ok((
                 name.to_owned(),
                 TagFilter::from_object(expect_object(filter, "tag filter")?)?,
+            ))
+        })
+        .collect()
+}
+
+fn tag_summary_generators(
+    settings: &Settings<'_>,
+) -> DecodeResult<BTreeMap<String, TagSummaryGenerator>> {
+    let Some(meta) = settings.get("tag_summary_generators") else {
+        return Ok(BTreeMap::new());
+    };
+    dictionary_pairs(expect_object(meta, "tag_summary_generators")?)?
+        .iter()
+        .map(|(name, generator)| {
+            let name = name
+                .as_str()
+                .ok_or_else(|| malformed(KIND, "tag summary name is not a string"))?;
+            Ok((
+                name.to_owned(),
+                tag_summary_generator(expect_object(generator, "tag summary generator")?)?,
             ))
         })
         .collect()

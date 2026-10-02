@@ -51,6 +51,7 @@ mod sort;
 pub mod subscriptions;
 mod tag_display;
 mod tag_filter;
+pub mod tag_summary;
 pub(crate) mod util;
 
 pub use client_api::{ApiPermission, ApiPermissions, ClientApiManager};

@@ -62,6 +62,7 @@ access keys and their permissions, and services with their keys (so tools
 that remember service keys keep working). Of the options, those hydrus-rs
 already uses come across as its own settings: thumbnail size, favourite tags,
 the tag service new search pages search and the default local file domain,
+the tag summaries drawn over thumbnails,
 viewing statistics, URL classes, autocomplete rules, and the duplicate
 filter's batch size and metadata merge options (what "this is better" copies
 or moves between files), and the network side: custom HTTP headers (e.g. a

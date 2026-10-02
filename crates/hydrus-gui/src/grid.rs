@@ -38,6 +38,10 @@ pub struct ThumbnailRows {
     /// What the icons over each file's thumbnail say, read as its row is
     /// first shown (and again after the files change).
     icon_facts: RefCell<HashMap<HashId, IconFacts>>,
+    /// The tag summaries drawn over thumbnails, and what each file's (or
+    /// collection's) say, read as its row is first shown.
+    summaries: RefCell<hydrus_core::tag_summary::TagSummaries>,
+    banners: RefCell<HashMap<HashId, (SharedString, SharedString)>>,
     notify: ModelNotify,
 }
 
@@ -65,6 +69,8 @@ impl ThumbnailRows {
             pending: RefCell::default(),
             cell: Cell::new((1, 152, 127)),
             icon_facts: RefCell::default(),
+            summaries: RefCell::default(),
+            banners: RefCell::default(),
             notify: ModelNotify::default(),
         }
     }
@@ -162,12 +168,14 @@ impl ThumbnailRows {
     pub fn set_page(&self, page: Rc<RefCell<SearchPage>>) {
         *self.page.borrow_mut() = page;
         self.icon_facts.borrow_mut().clear();
+        self.banners.borrow_mut().clear();
         self.notify.reset();
     }
 
     /// The page's files changed.
     pub fn reset(&self) {
         self.icon_facts.borrow_mut().clear();
+        self.banners.borrow_mut().clear();
         self.notify.reset();
     }
 
@@ -177,6 +185,31 @@ impl ThumbnailRows {
             self.cell.set((border, width, height));
             self.notify.reset();
         }
+    }
+
+    /// The tag summaries drawn over thumbnails (the options').
+    pub fn set_summaries(&self, summaries: hydrus_core::tag_summary::TagSummaries) {
+        if *self.summaries.borrow() != summaries {
+            *self.summaries.borrow_mut() = summaries;
+            self.banners.borrow_mut().clear();
+            self.notify.reset();
+        }
+    }
+
+    /// What the tag banners over `item` (a file or a collection) on `page`
+    /// say.
+    fn banners(&self, page: &SearchPage, item: HashId) -> (SharedString, SharedString) {
+        if let Some(known) = self.banners.borrow().get(&item) {
+            return known.clone();
+        }
+        let files = page
+            .collection(item)
+            .map_or_else(|| vec![item], <[HashId]>::to_vec);
+        let (top, bottom) =
+            thumbnail_icons::banners(page.store(), &files, &self.summaries.borrow());
+        let made = (SharedString::from(top), SharedString::from(bottom));
+        self.banners.borrow_mut().insert(item, made.clone());
+        made
     }
 
     /// The icons over each of `items` (files or collections) on `page`, as
@@ -281,8 +314,14 @@ impl Model for ThumbnailRows {
         let icons = self.icons(&page, &results[start..end]);
         let thumbnails: Vec<Thumbnail> = (start..end)
             .zip(icons)
-            .map(|(i, icons)| Thumbnail {
+            .map(|(i, icons)| {
+                let (top, bottom) = self.banners(&page, results[i]);
+                (i, icons, top, bottom)
+            })
+            .map(|(i, icons, top, bottom)| Thumbnail {
                 icons: ModelRc::new(VecModel::from(icons)),
+                top,
+                bottom,
                 image: self.image(results[i], i),
                 selected: page.is_selected(i),
                 files: page

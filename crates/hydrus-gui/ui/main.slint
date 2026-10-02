@@ -39,6 +39,10 @@ export struct Thumbnail {
     // a collection's number of files, as text; empty for a file
     files: string,
     icons: [ThumbIcon],
+    // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
+    // the top, and at the bottom right; empty for none
+    top: string,
+    bottom: string,
 }
 
 component Predicate inherits Rectangle {
@@ -166,6 +170,11 @@ component ThumbnailGrid inherits ListView {
     in property <length> thumbnail-height: 127px;
     in property <length> border: 1px;
     in property <length> margin: 2px;
+    // the tag banners' colours
+    in property <color> banner-top-background;
+    in property <color> banner-top-text;
+    in property <color> banner-bottom-background;
+    in property <color> banner-bottom-text;
     property <length> span-width: self.thumbnail-width + 2 * self.margin;
     property <length> span-height: self.thumbnail-height + 2 * self.margin;
     out property <int> columns: max(1, floor(self.visible-width / self.span-width));
@@ -216,6 +225,9 @@ component ThumbnailGrid inherits ListView {
                 width: root.thumbnail-width;
                 height: root.thumbnail-height;
                 background: Theme.panel;
+                // (what is drawn over it stays in it, as the reference
+                // paints each thumbnail on an image of its own)
+                clip: true;
                 // pixel for pixel (it is decoded at the screen's scale): the
                 // renderer would scale it by picking the nearest pixels
                 Image {
@@ -224,6 +236,41 @@ component ThumbnailGrid inherits ListView {
                     x: round((parent.width - self.width) / 2 / 1phx) * 1phx;
                     y: round((parent.height - self.height) / 2 / 1phx) * 1phx;
                     source: thumbnail.image;
+                }
+                // the reference's tag banners: across the top, the text
+                // centred on the thumbnail; and at the bottom right, its
+                // box running two pixels into the border. The reference
+                // paints its border over them, so they are kept inside it.
+                Rectangle {
+                    x: root.border;
+                    y: root.border;
+                    width: parent.width - 2 * root.border;
+                    height: parent.height - 2 * root.border;
+                    clip: true;
+                    if thumbnail.top != "": Rectangle {
+                        y: 0;
+                        height: top-text.preferred-height + 2px;
+                        background: root.banner-top-background;
+                        top-text := Text {
+                            x: (parent.width - self.preferred-width) / 2;
+                            y: 1px;
+                            text: thumbnail.top;
+                            color: root.banner-top-text;
+                        }
+                    }
+                    if thumbnail.bottom != "": Rectangle {
+                        width: bottom-text.preferred-width + 2px;
+                        height: bottom-text.preferred-height + 2px;
+                        x: parent.width - self.width;
+                        y: parent.height - bottom-text.preferred-height;
+                        background: root.banner-bottom-background;
+                        bottom-text := Text {
+                            x: 1px;
+                            y: 1px;
+                            text: thumbnail.bottom;
+                            color: root.banner-bottom-text;
+                        }
+                    }
                 }
                 // (over the thumbnail, which may fill the cell; a
                 // selection shows however thin the border)
@@ -383,6 +430,10 @@ export component MainWindow inherits Window {
     in property <length> thumbnail-height: 127px;
     in property <length> thumbnail-border: 1px;
     in property <length> thumbnail-margin: 2px;
+    in property <color> banner-top-background;
+    in property <color> banner-top-text;
+    in property <color> banner-bottom-background;
+    in property <color> banner-bottom-text;
     in property <string> status;
     in property <string> status-network;
     in property <string> error;
@@ -1478,6 +1529,10 @@ export component MainWindow inherits Window {
                             thumbnail-height: root.thumbnail-height;
                             border: root.thumbnail-border;
                             margin: root.thumbnail-margin;
+                            banner-top-background: root.banner-top-background;
+                            banner-top-text: root.banner-top-text;
+                            banner-bottom-background: root.banner-bottom-background;
+                            banner-bottom-text: root.banner-bottom-text;
                             clicked(i, ctrl, shift) => {
                                 grid-keys.focus();
                                 root.thumbnail-clicked(i, ctrl, shift);

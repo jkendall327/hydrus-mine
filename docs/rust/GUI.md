@@ -381,9 +381,16 @@ storage) and the inbox; at the top left, sound (or play, for a file with
 a duration and no audio) and the file repositories and IPFS a file is
 in, pending to or petitioned from; and a collection's icon with its
 number of files in a box at the bottom left (a collection showing what
-any of its files would). Not yet: the ratings the reference can draw on
-thumbnails, and its tag banners (by default the creator, series and title
-across the top, and the volume, chapter and page at the bottom right).
+any of its files would). The reference's tag banners go over it too
+(`hydrus_core::tag_summary`, checked against the reference's
+`TagSummaryGenerator`, `oracle/dump_tag_summaries.py`, and its grid's):
+by default the creator, series and title across the top ("someone - metroid
+- a test image"), and the volume, chapter and page at the bottom right
+("v3-c10-p330-331", a run of numbers as its first and last), each in your
+colours and namespaces from hydrus's options, from the tags a single file
+shows (current and pending, in all tag services; a collection's from all
+its files), clipped to the thumbnail as the reference's are. Not yet: the
+ratings the reference can draw on thumbnails.
 Thumbnails are selected as in the reference's grid (v688's default one;
 `src/selection.rs`, checked step by step against that grid driven in the
 running reference, `oracle/record_thumbnail_selection.py`): a click

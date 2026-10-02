@@ -398,6 +398,20 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             );
         }
         insert_setting(&mut input, &search_defaults)?;
+        let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
+        for (name, field) in [
+            ("thumbnail_top", &mut summaries.thumbnail_top),
+            (
+                "thumbnail_bottom_right",
+                &mut summaries.thumbnail_bottom_right,
+            ),
+            ("media_viewer_top", &mut summaries.media_viewer_top),
+        ] {
+            if let Some(generator) = options.tag_summary_generators.get(name) {
+                generator.clone_into(field);
+            }
+        }
+        insert_setting(&mut input, &summaries)?;
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
         }
@@ -2193,6 +2207,52 @@ mod tests {
                 margin: 7
             }
         );
+    }
+
+    /// The tag summaries drawn over thumbnails come across.
+    #[test]
+    fn the_tag_summaries_convert() {
+        use hydrus_core::tag_summary::TagSummaries;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<TagSummaries>(input.settings["tag_summaries"].clone()).unwrap()
+        };
+        // the fixture's are hydrus's defaults (their examples in another
+        // order)
+        let sorted = |mut s: TagSummaries| {
+            for g in [
+                &mut s.thumbnail_top,
+                &mut s.thumbnail_bottom_right,
+                &mut s.media_viewer_top,
+            ] {
+                g.example_tags.sort();
+            }
+            s
+        };
+        assert_eq!(
+            sorted(decoded(source.path())),
+            sorted(TagSummaries::default())
+        );
+        // and the user's: the top one hidden, the bottom right one's
+        // separator changed
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"["series:series", "title:title", "creator:creator"], true]]]], [[0, "thumbnail_bottom_right"]"#,
+                    r#"["series:series", "title:title", "creator:creator"], false]]]], [[0, "thumbnail_bottom_right"]"#,
+                ),
+                (
+                    r#"[["volume", "v", "-"], ["chapter", "c", "-"], ["page", "p", "-"]], "-", ["chapter:10""#,
+                    r#"[["volume", "v", "-"], ["chapter", "c", "-"], ["page", "p", "-"]], " ", ["chapter:10""#,
+                ),
+            ],
+        );
+        let after = decoded(source.path());
+        assert!(!after.thumbnail_top.show);
+        assert_eq!(after.thumbnail_bottom_right.separator, " ");
+        assert!(after.media_viewer_top.show);
     }
 
     /// New search pages' tag service, and the default local file domain,

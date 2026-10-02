@@ -231,6 +231,10 @@ impl Setting for ThumbnailLayout {
     const KEY: &'static str = "thumbnail_layout";
 }
 
+impl Setting for hydrus_core::tag_summary::TagSummaries {
+    const KEY: &'static str = "tag_summaries";
+}
+
 /// New search pages' tag domain (`default_tag_service_search_page`), and
 /// the file domain a search moves to when it is set to every tag service
 /// while searching all known files (`default_local_location_context`).

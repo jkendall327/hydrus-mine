@@ -253,3 +253,51 @@ pub fn facts(
         })
         .unwrap_or_default()
 }
+
+/// What a thumbnail's tag banners say (the top one, and the bottom right
+/// one): the summaries of its file's (or a collection's files') current
+/// and pending tags in all known tags, as a single file's are displayed
+/// (less what the single media tag display filter hides), each shown as
+/// the user has tags shown.
+pub fn banners(
+    store: &hydrus_store::Store,
+    files: &[HashId],
+    summaries: &hydrus_core::tag_summary::TagSummaries,
+) -> (String, String) {
+    use hydrus_core::tag_presentation::TagPresentation;
+    use hydrus_store::tag_display::{TagDisplayFilters, TagView};
+    let snapshot = store.snapshot();
+    let read = store.read(|conn| {
+        let presentation: TagPresentation = hydrus_store::settings::get(conn)?;
+        let filters: TagDisplayFilters = hydrus_store::settings::get(conn)?;
+        let hidden = filters.by_service(TagView::SingleMedia, &snapshot.services);
+        let counts = hydrus_store::media::tag_counts(
+            conn,
+            &snapshot.services,
+            &snapshot.display,
+            None,
+            files,
+            &hidden,
+        )?;
+        let ids: Vec<_> = counts
+            .current
+            .keys()
+            .chain(counts.pending.keys())
+            .copied()
+            .collect();
+        Ok((hydrus_store::master::tags(conn, &ids)?, presentation))
+    });
+    let Ok((names, presentation)) = read else {
+        return (String::new(), String::new());
+    };
+    let tags: BTreeSet<&str> = names.values().map(hydrus_core::Tag::as_str).collect();
+    let render = |subtag: &str| presentation.render(subtag);
+    (
+        summaries
+            .thumbnail_top
+            .summary(tags.iter().copied(), render),
+        summaries
+            .thumbnail_bottom_right
+            .summary(tags.iter().copied(), render),
+    )
+}

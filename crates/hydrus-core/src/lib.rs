@@ -30,6 +30,7 @@ pub mod tag;
 pub mod tag_filter;
 pub mod tag_presentation;
 pub mod tag_sort;
+pub mod tag_summary;
 pub mod thumbnail;
 pub mod time;
 pub mod url;

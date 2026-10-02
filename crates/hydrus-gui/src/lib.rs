@@ -234,6 +234,15 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     );
     let pixels = |n: u32| i32::try_from(n).unwrap_or(i32::MAX);
     rows.set_cell(pixels(layout.border), pixels(width), pixels(height));
+    // the tag banners, and their colours
+    let summaries: hydrus_core::tag_summary::TagSummaries =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let colour = |[r, g, b, a]: [u8; 4]| slint::Color::from_argb_u8(a, r, g, b);
+    window.set_banner_top_background(colour(summaries.thumbnail_top.background));
+    window.set_banner_top_text(colour(summaries.thumbnail_top.text));
+    window.set_banner_bottom_background(colour(summaries.thumbnail_bottom_right.background));
+    window.set_banner_bottom_text(colour(summaries.thumbnail_bottom_right.text));
+    rows.set_summaries(summaries);
     window.set_thumbnail_width(width as f32);
     window.set_thumbnail_height(height as f32);
     window.set_thumbnail_border(border);

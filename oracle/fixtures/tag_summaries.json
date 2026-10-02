@@ -1,0 +1,1469 @@
+{
+ "generators": [
+  {
+   "example": "creator - series - title",
+   "facts": {
+    "background": [
+     223,
+     227,
+     230,
+     255
+    ],
+    "example_tags": [
+     "title:title",
+     "creator:creator",
+     "series:series"
+    ],
+    "namespace_info": [
+     [
+      "creator",
+      "",
+      ", "
+     ],
+     [
+      "series",
+      "",
+      ", "
+     ],
+     [
+      "title",
+      "",
+      ", "
+     ]
+    ],
+    "separator": " - ",
+    "show": true,
+    "text": [
+     1,
+     17,
+     26,
+     255
+    ]
+   },
+   "name": "thumbnail_top",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      223,
+      227,
+      230,
+      255
+     ],
+     [
+      1,
+      17,
+      26,
+      255
+     ],
+     [
+      [
+       "creator",
+       "",
+       ", "
+      ],
+      [
+       "series",
+       "",
+       ", "
+      ],
+      [
+       "title",
+       "",
+       ", "
+      ]
+     ],
+     " - ",
+     [
+      "title:title",
+      "creator:creator",
+      "series:series"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "metroid",
+    "",
+    "",
+    "",
+    "another artist, someone, under_score - the legend of zelda",
+    "the legend of zelda - a test image: with colons",
+    "",
+    "",
+    "someone - a test image: with colons",
+    "",
+    "another artist - metroid, the legend of zelda - a test image: with colons",
+    "metroid",
+    "",
+    "",
+    "",
+    "",
+    "another artist, someone, under_score - metroid, the legend of zelda - a test image: with colons"
+   ],
+   "summaries_underscores_replaced": [
+    "metroid",
+    "",
+    "",
+    "",
+    "another artist, someone, under score - the legend of zelda",
+    "the legend of zelda - a test image: with colons",
+    "",
+    "",
+    "someone - a test image: with colons",
+    "",
+    "another artist - metroid, the legend of zelda - a test image: with colons",
+    "metroid",
+    "",
+    "",
+    "",
+    "",
+    "another artist, someone, under score - metroid, the legend of zelda - a test image: with colons"
+   ]
+  },
+  {
+   "example": "v3-c10-p330-331",
+   "facts": {
+    "background": [
+     223,
+     227,
+     230,
+     255
+    ],
+    "example_tags": [
+     "chapter:10",
+     "page:331",
+     "volume:3",
+     "page:330"
+    ],
+    "namespace_info": [
+     [
+      "volume",
+      "v",
+      "-"
+     ],
+     [
+      "chapter",
+      "c",
+      "-"
+     ],
+     [
+      "page",
+      "p",
+      "-"
+     ]
+    ],
+    "separator": "-",
+    "show": true,
+    "text": [
+     1,
+     17,
+     26,
+     255
+    ]
+   },
+   "name": "thumbnail_bottom_right",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      223,
+      227,
+      230,
+      255
+     ],
+     [
+      1,
+      17,
+      26,
+      255
+     ],
+     [
+      [
+       "volume",
+       "v",
+       "-"
+      ],
+      [
+       "chapter",
+       "c",
+       "-"
+      ],
+      [
+       "page",
+       "p",
+       "-"
+      ]
+     ],
+     "-",
+     [
+      "chapter:10",
+      "page:331",
+      "volume:3",
+      "page:330"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "v1-p10-010-cover",
+    "v2-p2a-3",
+    "c12-p1",
+    "p2a",
+    "pcover",
+    "p1-2a",
+    "",
+    "v1-2-p2-010",
+    "p1-10-cover",
+    "c12-p2-2a",
+    "v1-c3-p2",
+    "p3",
+    "p1-10",
+    "p1-3",
+    "p1-2",
+    "p1-2-2a",
+    "v1-2-c3-12-p1-2-2a-3-10-010-11-cover"
+   ],
+   "summaries_underscores_replaced": [
+    "v1-p10-010-cover",
+    "v2-p2a-3",
+    "c12-p1",
+    "p2a",
+    "pcover",
+    "p1-2a",
+    "",
+    "v1-2-p2-010",
+    "p1-10-cover",
+    "c12-p2-2a",
+    "v1-c3-p2",
+    "p3",
+    "p1-10",
+    "p1-3",
+    "p1-2",
+    "p1-2-2a",
+    "v1-2-c3-12-p1-2-2a-3-10-010-11-cover"
+   ]
+  },
+  {
+   "example": "creator - series - title - v1 - c1 - p1",
+   "facts": {
+    "background": [
+     223,
+     227,
+     230,
+     255
+    ],
+    "example_tags": [
+     "title:title",
+     "page:1",
+     "series:series",
+     "chapter:1",
+     "creator:creator",
+     "volume:1"
+    ],
+    "namespace_info": [
+     [
+      "creator",
+      "",
+      ", "
+     ],
+     [
+      "series",
+      "",
+      ", "
+     ],
+     [
+      "title",
+      "",
+      ", "
+     ],
+     [
+      "volume",
+      "v",
+      "-"
+     ],
+     [
+      "chapter",
+      "c",
+      "-"
+     ],
+     [
+      "page",
+      "p",
+      "-"
+     ]
+    ],
+    "separator": " - ",
+    "show": true,
+    "text": [
+     1,
+     17,
+     26,
+     255
+    ]
+   },
+   "name": "media_viewer_top",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      223,
+      227,
+      230,
+      255
+     ],
+     [
+      1,
+      17,
+      26,
+      255
+     ],
+     [
+      [
+       "creator",
+       "",
+       ", "
+      ],
+      [
+       "series",
+       "",
+       ", "
+      ],
+      [
+       "title",
+       "",
+       ", "
+      ],
+      [
+       "volume",
+       "v",
+       "-"
+      ],
+      [
+       "chapter",
+       "c",
+       "-"
+      ],
+      [
+       "page",
+       "p",
+       "-"
+      ]
+     ],
+     " - ",
+     [
+      "title:title",
+      "page:1",
+      "series:series",
+      "chapter:1",
+      "creator:creator",
+      "volume:1"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "metroid - v1 - p10-010-cover",
+    "v2 - p2a-3",
+    "c12 - p1",
+    "p2a",
+    "another artist, someone, under_score - the legend of zelda - pcover",
+    "the legend of zelda - a test image: with colons - p1-2a",
+    "",
+    "v1-2 - p2-010",
+    "someone - a test image: with colons - p1-10-cover",
+    "c12 - p2-2a",
+    "another artist - metroid, the legend of zelda - a test image: with colons - v1 - c3 - p2",
+    "metroid - p3",
+    "p1-10",
+    "p1-3",
+    "p1-2",
+    "p1-2-2a",
+    "another artist, someone, under_score - metroid, the legend of zelda - a test image: with colons - v1-2 - c3-12 - p1-2-2a-3-10-010-11-cover"
+   ],
+   "summaries_underscores_replaced": [
+    "metroid - v1 - p10-010-cover",
+    "v2 - p2a-3",
+    "c12 - p1",
+    "p2a",
+    "another artist, someone, under score - the legend of zelda - pcover",
+    "the legend of zelda - a test image: with colons - p1-2a",
+    "",
+    "v1-2 - p2-010",
+    "someone - a test image: with colons - p1-10-cover",
+    "c12 - p2-2a",
+    "another artist - metroid, the legend of zelda - a test image: with colons - v1 - c3 - p2",
+    "metroid - p3",
+    "p1-10",
+    "p1-3",
+    "p1-2",
+    "p1-2-2a",
+    "another artist, someone, under score - metroid, the legend of zelda - a test image: with colons - v1-2 - c3-12 - p1-2-2a-3-10-010-11-cover"
+   ]
+  },
+  {
+   "example": "not showing",
+   "facts": {
+    "background": [
+     236,
+     168,
+     85,
+     171
+    ],
+    "example_tags": [
+     "creator:someone",
+     "page:11",
+     "series:the legend of zelda"
+    ],
+    "namespace_info": [
+     [
+      "title",
+      "c.",
+      "-"
+     ],
+     [
+      "page",
+      "",
+      "-"
+     ],
+     [
+      "series",
+      "c.",
+      "-"
+     ],
+     [
+      "",
+      "",
+      "-"
+     ]
+    ],
+    "separator": "|",
+    "show": false,
+    "text": [
+     3,
+     46,
+     89,
+     255
+    ]
+   },
+   "name": "random 0",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      236,
+      168,
+      85,
+      171
+     ],
+     [
+      3,
+      46,
+      89,
+      255
+     ],
+     [
+      [
+       "title",
+       "c.",
+       "-"
+      ],
+      [
+       "page",
+       "",
+       "-"
+      ],
+      [
+       "series",
+       "c.",
+       "-"
+      ],
+      [
+       "",
+       "",
+       "-"
+      ]
+     ],
+     "|",
+     [
+      "creator:someone",
+      "page:11",
+      "series:the legend of zelda"
+     ],
+     false
+    ]
+   ],
+   "summaries": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "summaries_underscores_replaced": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
+  {
+   "example": "#10 - p3",
+   "facts": {
+    "background": [
+     208,
+     119,
+     66,
+     92
+    ],
+    "example_tags": [
+     "chapter:3",
+     "page:10",
+     "creator:under_score"
+    ],
+    "namespace_info": [
+     [
+      "page",
+      "#",
+      "-"
+     ],
+     [
+      "title",
+      "c.",
+      "/"
+     ],
+     [
+      "chapter",
+      "p",
+      "/"
+     ],
+     [
+      "volume",
+      "c.",
+      "-"
+     ]
+    ],
+    "separator": " - ",
+    "show": true,
+    "text": [
+     29,
+     188,
+     247,
+     255
+    ]
+   },
+   "name": "random 1",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      208,
+      119,
+      66,
+      92
+     ],
+     [
+      29,
+      188,
+      247,
+      255
+     ],
+     [
+      [
+       "page",
+       "#",
+       "-"
+      ],
+      [
+       "title",
+       "c.",
+       "/"
+      ],
+      [
+       "chapter",
+       "p",
+       "/"
+      ],
+      [
+       "volume",
+       "c.",
+       "-"
+      ]
+     ],
+     " - ",
+     [
+      "chapter:3",
+      "page:10",
+      "creator:under_score"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "#10-010-cover - c.1",
+    "#2a-3 - c.2",
+    "#1 - p12",
+    "#2a",
+    "#cover",
+    "#1-2a - c.a test image: with colons",
+    "",
+    "#2-010 - c.1-2",
+    "#1-10-cover - c.a test image: with colons",
+    "#2-2a - p12",
+    "#2 - c.a test image: with colons - p3 - c.1",
+    "#3",
+    "#1-10",
+    "#1-3",
+    "#1-2",
+    "#1-2-2a",
+    "#1-2-2a-3-10-010-11-cover - c.a test image: with colons - p3/12 - c.1-2"
+   ],
+   "summaries_underscores_replaced": [
+    "#10-010-cover - c.1",
+    "#2a-3 - c.2",
+    "#1 - p12",
+    "#2a",
+    "#cover",
+    "#1-2a - c.a test image: with colons",
+    "",
+    "#2-010 - c.1-2",
+    "#1-10-cover - c.a test image: with colons",
+    "#2-2a - p12",
+    "#2 - c.a test image: with colons - p3 - c.1",
+    "#3",
+    "#1-10",
+    "#1-3",
+    "#1-2",
+    "#1-2-2a",
+    "#1-2-2a-3-10-010-11-cover - c.a test image: with colons - p3/12 - c.1-2"
+   ]
+  },
+  {
+   "example": "",
+   "facts": {
+    "background": [
+     239,
+     177,
+     32,
+     201
+    ],
+    "example_tags": [
+     "page:2",
+     "creator:another artist",
+     "page:010"
+    ],
+    "namespace_info": [
+     [
+      "volume",
+      "p",
+      ", "
+     ]
+    ],
+    "separator": "",
+    "show": true,
+    "text": [
+     111,
+     58,
+     181,
+     255
+    ]
+   },
+   "name": "random 2",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      239,
+      177,
+      32,
+      201
+     ],
+     [
+      111,
+      58,
+      181,
+      255
+     ],
+     [
+      [
+       "volume",
+       "p",
+       ", "
+      ]
+     ],
+     "",
+     [
+      "page:2",
+      "creator:another artist",
+      "page:010"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "p1",
+    "p2",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "p1, 2",
+    "",
+    "",
+    "p1",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "p1, 2"
+   ],
+   "summaries_underscores_replaced": [
+    "p1",
+    "p2",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "p1, 2",
+    "",
+    "",
+    "p1",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "p1, 2"
+   ]
+  },
+  {
+   "example": "#samus aran - c.metroid",
+   "facts": {
+    "background": [
+     188,
+     104,
+     191,
+     80
+    ],
+    "example_tags": [
+     "character:samus aran",
+     "title:a test image: with colons",
+     "series:metroid"
+    ],
+    "namespace_info": [
+     [
+      "character",
+      "#",
+      ", "
+     ],
+     [
+      "series",
+      "c.",
+      "/"
+     ],
+     [
+      "creator",
+      "#",
+      "/"
+     ],
+     [
+      "",
+      "#",
+      ", "
+     ]
+    ],
+    "separator": " - ",
+    "show": true,
+    "text": [
+     238,
+     230,
+     39,
+     255
+    ]
+   },
+   "name": "random 3",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      188,
+      104,
+      191,
+      80
+     ],
+     [
+      238,
+      230,
+      39,
+      255
+     ],
+     [
+      [
+       "character",
+       "#",
+       ", "
+      ],
+      [
+       "series",
+       "c.",
+       "/"
+      ],
+      [
+       "creator",
+       "#",
+       "/"
+      ],
+      [
+       "",
+       "#",
+       ", "
+      ]
+     ],
+     " - ",
+     [
+      "character:samus aran",
+      "title:a test image: with colons",
+      "series:metroid"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "c.metroid",
+    "#samus aran",
+    "",
+    "",
+    "#samus aran - c.the legend of zelda - #another artist/someone/under_score - #solo",
+    "c.the legend of zelda",
+    "",
+    "#samus aran",
+    "#someone",
+    "#solo",
+    "#samus aran - c.metroid/the legend of zelda - #another artist",
+    "c.metroid",
+    "",
+    "",
+    "",
+    "",
+    "#samus aran - c.metroid/the legend of zelda - #another artist/someone/under_score - #blue eyes, solo"
+   ],
+   "summaries_underscores_replaced": [
+    "c.metroid",
+    "#samus aran",
+    "",
+    "",
+    "#samus aran - c.the legend of zelda - #another artist/someone/under score - #solo",
+    "c.the legend of zelda",
+    "",
+    "#samus aran",
+    "#someone",
+    "#solo",
+    "#samus aran - c.metroid/the legend of zelda - #another artist",
+    "c.metroid",
+    "",
+    "",
+    "",
+    "",
+    "#samus aran - c.metroid/the legend of zelda - #another artist/someone/under score - #blue eyes, solo"
+   ]
+  },
+  {
+   "example": "not showing",
+   "facts": {
+    "background": [
+     54,
+     86,
+     205,
+     235
+    ],
+    "example_tags": [
+     "solo",
+     "creator:under_score",
+     "series:the legend of zelda"
+    ],
+    "namespace_info": [
+     [
+      "character",
+      "#",
+      "-"
+     ],
+     [
+      "chapter",
+      "c.",
+      "-"
+     ],
+     [
+      "series",
+      "",
+      "-"
+     ],
+     [
+      "title",
+      "p",
+      ", "
+     ]
+    ],
+    "separator": "",
+    "show": false,
+    "text": [
+     75,
+     162,
+     78,
+     255
+    ]
+   },
+   "name": "random 4",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      54,
+      86,
+      205,
+      235
+     ],
+     [
+      75,
+      162,
+      78,
+      255
+     ],
+     [
+      [
+       "character",
+       "#",
+       "-"
+      ],
+      [
+       "chapter",
+       "c.",
+       "-"
+      ],
+      [
+       "series",
+       "",
+       "-"
+      ],
+      [
+       "title",
+       "p",
+       ", "
+      ]
+     ],
+     "",
+     [
+      "solo",
+      "creator:under_score",
+      "series:the legend of zelda"
+     ],
+     false
+    ]
+   ],
+   "summaries": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ],
+   "summaries_underscores_replaced": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "",
+    ""
+   ]
+  },
+  {
+   "example": "",
+   "facts": {
+    "background": [
+     38,
+     217,
+     143,
+     222
+    ],
+    "example_tags": [
+     "chapter:12",
+     "page:10",
+     "page:cover"
+    ],
+    "namespace_info": [
+     [
+      "title",
+      "p",
+      "-"
+     ]
+    ],
+    "separator": "",
+    "show": true,
+    "text": [
+     119,
+     223,
+     238,
+     255
+    ]
+   },
+   "name": "random 5",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      38,
+      217,
+      143,
+      222
+     ],
+     [
+      119,
+      223,
+      238,
+      255
+     ],
+     [
+      [
+       "title",
+       "p",
+       "-"
+      ]
+     ],
+     "",
+     [
+      "chapter:12",
+      "page:10",
+      "page:cover"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "pa test image: with colons",
+    "",
+    "",
+    "pa test image: with colons",
+    "",
+    "pa test image: with colons",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "pa test image: with colons"
+   ],
+   "summaries_underscores_replaced": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "pa test image: with colons",
+    "",
+    "",
+    "pa test image: with colons",
+    "",
+    "pa test image: with colons",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "pa test image: with colons"
+   ]
+  },
+  {
+   "example": "",
+   "facts": {
+    "background": [
+     102,
+     67,
+     20,
+     27
+    ],
+    "example_tags": [
+     "chapter:3",
+     "solo",
+     "page:010"
+    ],
+    "namespace_info": [
+     [
+      "title",
+      "c.",
+      "-"
+     ]
+    ],
+    "separator": "|",
+    "show": true,
+    "text": [
+     249,
+     176,
+     227,
+     255
+    ]
+   },
+   "name": "random 6",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      102,
+      67,
+      20,
+      27
+     ],
+     [
+      249,
+      176,
+      227,
+      255
+     ],
+     [
+      [
+       "title",
+       "c.",
+       "-"
+      ]
+     ],
+     "|",
+     [
+      "chapter:3",
+      "solo",
+      "page:010"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "c.a test image: with colons",
+    "",
+    "",
+    "c.a test image: with colons",
+    "",
+    "c.a test image: with colons",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "c.a test image: with colons"
+   ],
+   "summaries_underscores_replaced": [
+    "",
+    "",
+    "",
+    "",
+    "",
+    "c.a test image: with colons",
+    "",
+    "",
+    "c.a test image: with colons",
+    "",
+    "c.a test image: with colons",
+    "",
+    "",
+    "",
+    "",
+    "",
+    "c.a test image: with colons"
+   ]
+  },
+  {
+   "example": "p2a",
+   "facts": {
+    "background": [
+     93,
+     91,
+     129,
+     213
+    ],
+    "example_tags": [
+     "solo",
+     "page:2a",
+     "series:metroid"
+    ],
+    "namespace_info": [
+     [
+      "page",
+      "p",
+      "/"
+     ],
+     [
+      "chapter",
+      "c.",
+      "-"
+     ]
+    ],
+    "separator": "|",
+    "show": true,
+    "text": [
+     58,
+     76,
+     73,
+     255
+    ]
+   },
+   "name": "random 7",
+   "stored": [
+    61,
+    2,
+    [
+     [
+      93,
+      91,
+      129,
+      213
+     ],
+     [
+      58,
+      76,
+      73,
+      255
+     ],
+     [
+      [
+       "page",
+       "p",
+       "/"
+      ],
+      [
+       "chapter",
+       "c.",
+       "-"
+      ]
+     ],
+     "|",
+     [
+      "solo",
+      "page:2a",
+      "series:metroid"
+     ],
+     true
+    ]
+   ],
+   "summaries": [
+    "p10/010/cover",
+    "p2a/3",
+    "p1|c.12",
+    "p2a",
+    "pcover",
+    "p1/2a",
+    "",
+    "p2/010",
+    "p1/10/cover",
+    "p2/2a|c.12",
+    "p2|c.3",
+    "p3",
+    "p1/10",
+    "p1/3",
+    "p1/2",
+    "p1/2/2a",
+    "p1/2/2a/3/10/010/11/cover|c.3-12"
+   ],
+   "summaries_underscores_replaced": [
+    "p10/010/cover",
+    "p2a/3",
+    "p1|c.12",
+    "p2a",
+    "pcover",
+    "p1/2a",
+    "",
+    "p2/010",
+    "p1/10/cover",
+    "p2/2a|c.12",
+    "p2|c.3",
+    "p3",
+    "p1/10",
+    "p1/3",
+    "p1/2",
+    "p1/2/2a",
+    "p1/2/2a/3/10/010/11/cover|c.3-12"
+   ]
+  }
+ ],
+ "tag_sets": [
+  [
+   "series:metroid",
+   "volume:1",
+   "page:10",
+   "page:cover",
+   "page:010"
+  ],
+  [
+   "character:samus aran",
+   "volume:2",
+   "page:3",
+   "page:2a"
+  ],
+  [
+   "page:1",
+   "chapter:12"
+  ],
+  [
+   "page:2a"
+  ],
+  [
+   "series:the legend of zelda",
+   "page:cover",
+   "creator:another artist",
+   "character:samus aran",
+   "creator:under_score",
+   "creator:someone",
+   "solo"
+  ],
+  [
+   "series:the legend of zelda",
+   "page:2a",
+   "page:1",
+   "title:a test image: with colons"
+  ],
+  [],
+  [
+   "volume:1",
+   "volume:2",
+   "page:2",
+   "character:samus aran",
+   "page:010"
+  ],
+  [
+   "page:10",
+   "creator:someone",
+   "page:cover",
+   "page:1",
+   "title:a test image: with colons"
+  ],
+  [
+   "solo",
+   "chapter:12",
+   "page:2",
+   "page:2a"
+  ],
+  [
+   "character:samus aran",
+   "page:2",
+   "title:a test image: with colons",
+   "creator:another artist",
+   "chapter:3",
+   "volume:1",
+   "series:the legend of zelda",
+   "series:metroid"
+  ],
+  [
+   "series:metroid",
+   "page:3"
+  ],
+  [
+   "page:1",
+   "page:2",
+   "page:3",
+   "page:10"
+  ],
+  [
+   "page:3",
+   "page:1",
+   "page:2"
+  ],
+  [
+   "page:1",
+   "page:2"
+  ],
+  [
+   "page:1",
+   "page:2",
+   "page:2a"
+  ],
+  [
+   "creator:someone",
+   "creator:another artist",
+   "creator:under_score",
+   "series:metroid",
+   "series:the legend of zelda",
+   "title:a test image: with colons",
+   "character:samus aran",
+   "blue eyes",
+   "solo",
+   "page:1",
+   "page:2",
+   "page:3",
+   "page:10",
+   "page:11",
+   "page:2a",
+   "page:010",
+   "page:cover",
+   "chapter:3",
+   "chapter:12",
+   "volume:1",
+   "volume:2"
+  ]
+ ]
+}
