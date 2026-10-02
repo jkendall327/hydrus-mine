@@ -12,9 +12,12 @@ use slint::{Model, ModelNotify, ModelRc, ModelTracker, SharedString, VecModel};
 
 use hydrus_core::HashId;
 
-use crate::thumbnail_icons::{self, IconFacts};
+use hydrus_core::thumbnail::ThumbnailRatingSettings;
+
+use crate::thumbnail_icons::{self, IconFacts, Ratings};
+use crate::thumbnail_ratings::{self, Look};
 use crate::thumbnails::ThumbnailLoader;
-use crate::{SearchPage, ThumbIcon, Thumbnail, ThumbnailRow};
+use crate::{RatingShape, SearchPage, ThumbBox, ThumbIcon, ThumbRating, Thumbnail, ThumbnailRow};
 
 /// Decoded thumbnails kept; past this, the cache starts afresh.
 const CACHED: usize = 4000;
@@ -35,9 +38,11 @@ pub struct ThumbnailRows {
     /// A thumbnail's border, width and height (the border included), for
     /// the icons over it.
     cell: Cell<(i32, i32, i32)>,
-    /// What the icons over each file's thumbnail say, read as its row is
-    /// first shown (and again after the files change).
-    icon_facts: RefCell<HashMap<HashId, IconFacts>>,
+    /// What the icons over each file's thumbnail say, and its ratings,
+    /// read as its row is first shown (and again after the files change).
+    icon_facts: RefCell<HashMap<HashId, (IconFacts, Ratings)>>,
+    /// How ratings are drawn over thumbnails (the options').
+    rating_settings: Cell<ThumbnailRatingSettings>,
     /// The tag summaries drawn over thumbnails, and what each file's (or
     /// collection's) say, read as its row is first shown.
     summaries: RefCell<hydrus_core::tag_summary::TagSummaries>,
@@ -69,6 +74,7 @@ impl ThumbnailRows {
             pending: RefCell::default(),
             cell: Cell::new((1, 152, 127)),
             icon_facts: RefCell::default(),
+            rating_settings: Cell::new(ThumbnailRatingSettings::default()),
             summaries: RefCell::default(),
             banners: RefCell::default(),
             notify: ModelNotify::default(),
@@ -187,6 +193,23 @@ impl ThumbnailRows {
         }
     }
 
+    /// Some files were changed (archived or rated, say): their icons and
+    /// ratings are read again.
+    pub fn forget_files(&self) {
+        self.icon_facts.borrow_mut().clear();
+        for row in 0..self.row_count() {
+            self.notify.row_changed(row);
+        }
+    }
+
+    /// How ratings are drawn over thumbnails (the options').
+    pub fn set_rating_settings(&self, settings: ThumbnailRatingSettings) {
+        if self.rating_settings.get() != settings {
+            self.rating_settings.set(settings);
+            self.notify.reset();
+        }
+    }
+
     /// The tag summaries drawn over thumbnails (the options').
     pub fn set_summaries(&self, summaries: hydrus_core::tag_summary::TagSummaries) {
         if *self.summaries.borrow() != summaries {
@@ -212,9 +235,9 @@ impl ThumbnailRows {
         made
     }
 
-    /// The icons over each of `items` (files or collections) on `page`, as
-    /// the reference draws them.
-    fn icons(&self, page: &SearchPage, items: &[HashId]) -> Vec<Vec<ThumbIcon>> {
+    /// The icons and ratings over each of `items` (files or collections)
+    /// on `page`, as the reference draws them.
+    fn icons(&self, page: &SearchPage, items: &[HashId]) -> Vec<Overlay> {
         let members = |item: HashId| -> Vec<HashId> {
             page.collection(item)
                 .map_or_else(|| vec![item], <[HashId]>::to_vec)
@@ -228,32 +251,72 @@ impl ThumbnailRows {
                 .collect()
         };
         if !missing.is_empty() {
-            let read = thumbnail_icons::facts(page.store(), &missing);
+            let read = thumbnail_icons::facts_and_ratings(page.store(), &missing);
             self.icon_facts.borrow_mut().extend(read);
         }
         let known = self.icon_facts.borrow();
         let (border, width, height) = self.cell.get();
+        let services = page.store().snapshot().services.clone();
+        let settings = self.rating_settings.get();
         items
             .iter()
             .map(|&item| {
+                let files = members(item);
                 let collection = page.collection(item).is_some();
                 let facts = if collection {
-                    let of: Vec<IconFacts> = members(item)
+                    let of: Vec<IconFacts> = files
                         .iter()
-                        .filter_map(|id| known.get(id).cloned())
+                        .filter_map(|id| known.get(id).map(|(f, _)| f.clone()))
                         .collect();
                     IconFacts::of_collection(&of)
                 } else {
-                    known.get(&item).cloned().unwrap_or_default()
+                    known.get(&item).map(|(f, _)| f.clone()).unwrap_or_default()
                 };
-                thumbnail_icons::placed(&facts, collection, border, width, height, border)
-                    .into_iter()
-                    .map(|p| ThumbIcon {
-                        kind: p.icon.code(),
-                        x: p.x as f32,
-                        y: p.y as f32,
-                    })
-                    .collect()
+                // (a collection's ratings are its first file's, as the
+                // reference's are)
+                let rated = files
+                    .first()
+                    .and_then(|first| known.get(first))
+                    .map(|(_, r)| r.clone())
+                    .unwrap_or_default();
+                let controls = crate::ratings::controls_of(&services, &rated);
+                let layout = thumbnail_ratings::layout(
+                    &services,
+                    &controls,
+                    &settings,
+                    width,
+                    border,
+                    &text_width,
+                );
+                let icons = thumbnail_icons::placed(
+                    &facts,
+                    collection,
+                    border,
+                    width,
+                    height,
+                    layout.top_right_y,
+                )
+                .into_iter()
+                .map(|p| ThumbIcon {
+                    kind: p.icon.code(),
+                    x: p.x as f32,
+                    y: p.y as f32,
+                })
+                .collect();
+                Overlay {
+                    icons,
+                    ratings: layout.drawn.iter().map(thumb_rating).collect(),
+                    boxes: layout
+                        .boxes
+                        .iter()
+                        .map(|b| ThumbBox {
+                            x: b.x as f32,
+                            y: b.y as f32,
+                            width: b.width as f32,
+                            height: b.height as f32,
+                        })
+                        .collect(),
+                }
             })
             .collect()
     }
@@ -311,15 +374,17 @@ impl Model for ThumbnailRows {
             return None;
         }
         let end = (start + columns).min(results.len());
-        let icons = self.icons(&page, &results[start..end]);
+        let overlays = self.icons(&page, &results[start..end]);
         let thumbnails: Vec<Thumbnail> = (start..end)
-            .zip(icons)
-            .map(|(i, icons)| {
+            .zip(overlays)
+            .map(|(i, overlay)| {
                 let (top, bottom) = self.banners(&page, results[i]);
-                (i, icons, top, bottom)
+                (i, overlay, top, bottom)
             })
-            .map(|(i, icons, top, bottom)| Thumbnail {
-                icons: ModelRc::new(VecModel::from(icons)),
+            .map(|(i, overlay, top, bottom)| Thumbnail {
+                icons: ModelRc::new(VecModel::from(overlay.icons)),
+                ratings: ModelRc::new(VecModel::from(overlay.ratings)),
+                rating_boxes: ModelRc::new(VecModel::from(overlay.boxes)),
                 top,
                 bottom,
                 image: self.image(results[i], i),
@@ -340,4 +405,79 @@ impl Model for ThumbnailRows {
     fn model_tracker(&self) -> &dyn ModelTracker {
         &self.notify
     }
+}
+
+/// What is drawn over a thumbnail: its icons, and its ratings over their
+/// boxes.
+struct Overlay {
+    icons: Vec<ThumbIcon>,
+    ratings: Vec<ThumbRating>,
+    boxes: Vec<ThumbBox>,
+}
+
+/// How wide a rating's "stars/of" is at a pixel size: the reference
+/// measures it in its font; this guesses at the grid's (digits and "/"
+/// about six tenths of the size wide).
+fn text_width(text: &str, pixel_size: i32) -> i32 {
+    let chars = i32::try_from(text.chars().count()).unwrap_or(i32::MAX);
+    (chars * pixel_size * 6 + 9) / 10
+}
+
+/// A rating as the grid draws it.
+fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
+    let colour =
+        |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
+    let mut out = ThumbRating {
+        x: drawn.x as f32,
+        y: drawn.y as f32,
+        ..ThumbRating::default()
+    };
+    let text = match &drawn.look {
+        Look::Shapes {
+            path,
+            first,
+            size,
+            step,
+            shapes,
+            text,
+        } => {
+            out.kind = 0;
+            out.path = (*path).into();
+            out.first = *first as f32;
+            out.size = *size as f32;
+            out.step = *step as f32;
+            out.outline = crate::ratings::outline_width(f64::from(*size)) as f32;
+            let shapes: Vec<RatingShape> = shapes
+                .iter()
+                .map(|s| RatingShape {
+                    pen: colour(s.pen),
+                    brush: colour(s.brush),
+                })
+                .collect();
+            out.shapes = ModelRc::new(VecModel::from(shapes));
+            text.as_ref()
+        }
+        Look::Counter {
+            width,
+            height,
+            colours,
+            text,
+        } => {
+            out.kind = 1;
+            out.width = *width as f32;
+            out.height = *height as f32;
+            out.pen = colour(colours.pen);
+            out.brush = colour(colours.brush);
+            out.text_height = (*height - 1) as f32;
+            Some(text)
+        }
+    };
+    if let Some(text) = text {
+        out.text = text.text.as_str().into();
+        out.text_x = text.x as f32;
+        out.text_y = text.y as f32;
+        out.text_width = text.width as f32;
+        out.text_size = text.pixel_size as f32;
+    }
+    out
 }

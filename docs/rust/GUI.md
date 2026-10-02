@@ -439,8 +439,24 @@ by default the creator, series and title across the top ("someone - metroid
 ("v3-c10-p330-331", a run of numbers as its first and last), each in your
 colours and namespaces from hydrus's options, from the tags a single file
 shows (current and pending, in all tag services; a collection's from all
-its files), clipped to the thumbnail as the reference's are. Not yet: the
-ratings the reference can draw on thumbnails.
+its files), clipped to the thumbnail as the reference's are. Over its
+top right go the ratings of each rating service shown in thumbnails
+(`src/thumbnail_ratings.rs`, checked against the reference's grid
+painting the `basic` fixture rated in several ways,
+`oracle/record_thumbnail_ratings.py`): only rated files', or every
+file's if the service shows even unrated ones (an inc/dec count of 0 is
+unrated). The like/dislike ratings share a row, each numerical rating
+has its own, and the inc/dec ratings share the last, each row on a box
+of the window's colour against the right border, and the icons at the
+top right go under them. They are drawn as your options say
+(`draw_thumbnail_rating_icon_size_px`, `thumbnail_rating_incdec_height_px`,
+`draw_thumbnail_rating_background` and
+`draw_thumbnail_numerical_ratings_collapsed_always`, which draws a
+numerical rating as its "3/5" and one shape), with a numerical rating's
+"3/5" on the left or right of its stars if its service says so; a
+collection's are its first file's, as the reference's are. A rating set
+in the media viewer, or a file archived there, shows on its thumbnail
+at once.
 Thumbnails are selected as in the reference's grid (v688's default one;
 `src/selection.rs`, checked step by step against that grid driven in the
 running reference, `oracle/record_thumbnail_selection.py`): a click

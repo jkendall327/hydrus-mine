@@ -192,6 +192,13 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &mut input,
         &options
             .as_ref()
+            .map(legacy::ClientOptions::thumbnail_rating_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
             .map(legacy::ClientOptions::audio_settings)
             .unwrap_or_default(),
     )?;
@@ -2185,6 +2192,15 @@ mod tests {
                 border: 1,
                 margin: 2
             }
+        );
+        // as are its ratings over thumbnails
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            serde_json::from_value::<hydrus_core::thumbnail::ThumbnailRatingSettings>(
+                input.settings["thumbnail_ratings"].clone()
+            )
+            .unwrap(),
+            hydrus_core::thumbnail::ThumbnailRatingSettings::default()
         );
         // and the user's
         edit_client_options(

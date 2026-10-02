@@ -241,14 +241,31 @@ pub fn facts(
     store: &hydrus_store::Store,
     files: &[HashId],
 ) -> std::collections::HashMap<HashId, IconFacts> {
+    facts_and_ratings(store, files)
+        .into_iter()
+        .map(|(id, (facts, _))| (id, facts))
+        .collect()
+}
+
+/// A file's ratings, by service.
+pub type Ratings = std::collections::HashMap<ServiceId, hydrus_store::media::Rating>;
+
+/// Each file's icon facts and ratings, read from the store.
+pub fn facts_and_ratings(
+    store: &hydrus_store::Store,
+    files: &[HashId],
+) -> std::collections::HashMap<HashId, (IconFacts, Ratings)> {
     let snapshot = store.snapshot();
     store
         .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, files))
         .map(|batch| {
             batch
                 .results
-                .iter()
-                .map(|m| (m.hash_id, IconFacts::of(m, &snapshot.services)))
+                .into_iter()
+                .map(|m| {
+                    let facts = IconFacts::of(&m, &snapshot.services);
+                    (m.hash_id, (facts, m.ratings))
+                })
                 .collect()
         })
         .unwrap_or_default()

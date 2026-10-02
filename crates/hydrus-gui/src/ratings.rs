@@ -4,11 +4,13 @@
 //! and set by clicking as the reference's controls are. Plain Rust, tested
 //! directly.
 
+use std::collections::HashMap;
+
 use hydrus_core::{HashId, ServiceId, ServiceType};
 use hydrus_store::Store;
 use hydrus_store::media::Rating;
 use hydrus_store::services::{
-    NumericalRatingConfig, PenBrush, RatingColours, ServiceKind, StarAppearance,
+    NumericalRatingConfig, PenBrush, RatingColours, ServiceKind, ServiceRegistry, StarAppearance,
 };
 
 /// A rating service's control for one file.
@@ -125,13 +127,21 @@ pub fn controls(store: &Store, file: HashId) -> Vec<Control> {
         .and_then(|batch| batch.results.into_iter().next())
         .map(|m| m.ratings)
         .unwrap_or_default();
+    controls_of(&snapshot.services, &ratings)
+}
+
+/// The rating controls for a file rated `ratings`, as [`controls`].
+pub fn controls_of(
+    services: &ServiceRegistry,
+    ratings: &HashMap<ServiceId, Rating>,
+) -> Vec<Control> {
     let mut out = Vec::new();
     for service_type in [
         ServiceType::LocalRatingLike,
         ServiceType::LocalRatingNumerical,
         ServiceType::LocalRatingIncDec,
     ] {
-        for service in snapshot.services.of_type(service_type) {
+        for service in services.of_type(service_type) {
             let rating = ratings.get(&service.id).copied();
             let fraction = match rating {
                 Some(Rating::Fraction(f)) => Some(f),

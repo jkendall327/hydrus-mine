@@ -9,6 +9,7 @@ import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
 import { PopupData, PopupStack } from "popups.slint";
+import { RatingShape } from "viewer.slint";
 export { DownloadLine, GalleryData, WatcherData }
 export { MenuLine, MenuPane, MenuTitle, PopupData }
 export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
@@ -35,12 +36,52 @@ export struct ThumbIcon {
     y: length,
 }
 
+// a rating drawn over a thumbnail (`src/thumbnail_ratings.rs`'s `Drawn`),
+// at (x, y): shapes (kind 0), or a counter (kind 1)
+export struct ThumbRating {
+    kind: int,
+    x: length,
+    y: length,
+    // the shapes: their outline (SVG path commands in a 12x12 box), where
+    // the first goes from x, how big each is and how far apart, how thick
+    // its outline, and each one's colours
+    path: string,
+    first: length,
+    size: length,
+    step: length,
+    outline: length,
+    shapes: [RatingShape],
+    // a counter's box, and its colours
+    width: length,
+    height: length,
+    pen: color,
+    brush: color,
+    // a numerical rating's "stars/of" (from its top left), or a counter's
+    // number (right aligned in its box, which is text-height tall)
+    text: string,
+    text-x: length,
+    text-y: length,
+    text-width: length,
+    text-height: length,
+    text-size: length,
+}
+
+// a box behind a row of ratings
+export struct ThumbBox {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
+
 export struct Thumbnail {
     image: image,
     selected: bool,
     // a collection's number of files, as text; empty for a file
     files: string,
     icons: [ThumbIcon],
+    ratings: [ThumbRating],
+    rating-boxes: [ThumbBox],
     // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
     // the top, and at the bottom right; empty for none
     top: string,
@@ -279,6 +320,52 @@ component ThumbnailGrid inherits ListView {
                 Rectangle {
                     border-width: thumbnail.selected ? max(root.border, 2px) : root.border;
                     border-color: thumbnail.selected ? Theme.accent : Theme.border;
+                }
+                // the ratings at the top right, over their boxes
+                for box in thumbnail.rating-boxes: Rectangle {
+                    x: box.x;
+                    y: box.y;
+                    width: box.width;
+                    height: box.height;
+                    background: Theme.window;
+                }
+                for rating in thumbnail.ratings: Rectangle {
+                    x: 0;
+                    y: 0;
+                    if rating.kind == 0: Rectangle {
+                        for shape[k] in rating.shapes: Path {
+                            x: rating.x + rating.first + k * rating.step;
+                            y: rating.y;
+                            width: rating.size;
+                            height: rating.size;
+                            viewbox-width: 12;
+                            viewbox-height: 12;
+                            commands: rating.path;
+                            fill: shape.brush;
+                            stroke: shape.pen;
+                            stroke-width: rating.outline;
+                        }
+                    }
+                    if rating.kind == 1: Rectangle {
+                        x: rating.x;
+                        y: rating.y;
+                        width: rating.width;
+                        height: rating.height;
+                        border-width: 1px;
+                        border-color: rating.pen;
+                        background: rating.brush;
+                    }
+                    if rating.text != "": Text {
+                        x: rating.text-x;
+                        y: rating.text-y;
+                        width: rating.text-width;
+                        height: rating.kind == 1 ? rating.text-height : self.preferred-height;
+                        horizontal-alignment: rating.kind == 1 ? right : left;
+                        vertical-alignment: rating.kind == 1 ? center : top;
+                        text: rating.text;
+                        color: rating.kind == 1 ? rating.pen : Theme.text;
+                        font-size: rating.text-size;
+                    }
                 }
                 // a collection: its icon and number of files, in a box at
                 // the bottom left (the icon drawn with the others)
@@ -1065,10 +1152,10 @@ export component MainWindow inherits Window {
                         property <int> kept-in-view: root.highlighted;
                         changed kept-in-view => {
                             if (self.kept-in-view >= 0) {
-                                if (self.kept-in-view * 22px < -suggestion-scroll.viewport-y) {
-                                    suggestion-scroll.viewport-y = -self.kept-in-view * 22px;
-                                } else if ((self.kept-in-view + 1) * 22px > suggestion-scroll.visible-height - suggestion-scroll.viewport-y) {
-                                    suggestion-scroll.viewport-y = suggestion-scroll.visible-height - (self.kept-in-view + 1) * 22px;
+                                if (self.kept-in-view * 22px < -suggestion-scroll.content-y) {
+                                    suggestion-scroll.content-y = -self.kept-in-view * 22px;
+                                } else if ((self.kept-in-view + 1) * 22px > suggestion-scroll.visible-height - suggestion-scroll.content-y) {
+                                    suggestion-scroll.content-y = suggestion-scroll.visible-height - (self.kept-in-view + 1) * 22px;
                                 }
                             }
                         }

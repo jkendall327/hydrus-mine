@@ -235,6 +235,14 @@ search.
   shows with a thin or no border; the reference's is the border's width,
   with the cell in its selected colour.
 
+- **A numerical rating's "3/5" over a thumbnail is measured in our font,
+  roughly**: the reference sizes its box and places the stars after it by
+  Qt's measure of the text in its font. We estimate the text's width
+  (each character six tenths of the font's size), so a box with a "3/5"
+  in it may be a pixel or two wider or narrower than the reference's;
+  everything else in the ratings' layout is the reference's to the
+  pixel.
+
 - **The status bar has the page's and the network's parts only**: the
   reference's idle, busy-threads, CPU-busy and database parts aren't
   there (the daemon is never idle, and its threads and database aren't

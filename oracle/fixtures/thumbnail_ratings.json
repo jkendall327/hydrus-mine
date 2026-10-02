@@ -1,0 +1,5947 @@
+{
+ "cases": [
+  {
+   "case": "all shown when rated",
+   "flags": {
+    "counter": [
+     true,
+     false
+    ],
+    "favourites": [
+     true,
+     false
+    ],
+    "stars": [
+     true,
+     false
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 37
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 19
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 33
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 37
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": []
+    }
+   ]
+  },
+  {
+   "case": "all shown always",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 37
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "stars only",
+   "flags": {
+    "counter": [
+     false,
+     false
+    ],
+    "favourites": [
+     false,
+     false
+    ],
+    "stars": [
+     true,
+     false
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": []
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 19
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 19
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 19
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 19
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 82,
+       "x": 69,
+       "y": 1
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 19
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 3
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": []
+    }
+   ]
+  },
+  {
+   "case": "like and counter always",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     false,
+     false
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 33
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 19
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 33
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 33
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 33
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 19
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 33
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 20
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 20
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "no background",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": false,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 71,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "bigger",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 20.0,
+    "incdec_height": 16.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 34,
+       "x": 117,
+       "y": 53
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 118,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "3",
+       "width": 31,
+       "x": 117,
+       "y": 54
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 34,
+       "x": 117,
+       "y": 53
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 71
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 118,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "0",
+       "width": 31,
+       "x": 117,
+       "y": 54
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 54,
+       "x": 97,
+       "y": 53
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 71
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 98,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "12,345",
+       "width": 51,
+       "x": 97,
+       "y": 54
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 34,
+       "x": 117,
+       "y": 53
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 71
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 71
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 118,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "3",
+       "width": 31,
+       "x": 117,
+       "y": 54
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 34,
+       "x": 117,
+       "y": 53
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 118,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "7",
+       "width": 31,
+       "x": 117,
+       "y": 54
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 22,
+       "x": 129,
+       "y": 1
+      },
+      {
+       "height": 26,
+       "width": 122,
+       "x": 29,
+       "y": 27
+      },
+      {
+       "height": 18,
+       "width": 34,
+       "x": 117,
+       "y": 53
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 71
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 131,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 31,
+       "y": 29
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 118,
+       "y": 54
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 15,
+       "pixel_size": 15,
+       "text": "0",
+       "width": 31,
+       "x": 117,
+       "y": 54
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "smaller",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 9.4,
+    "incdec_height": 7.6
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 18,
+       "x": 133,
+       "y": 31
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 134,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "3",
+       "width": 15,
+       "x": 133,
+       "y": 33
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 18,
+       "x": 133,
+       "y": 31
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 41
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 134,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "0",
+       "width": 15,
+       "x": 133,
+       "y": 33
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 27,
+       "x": 124,
+       "y": 31
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 41
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 125,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "12,345",
+       "width": 24,
+       "x": 124,
+       "y": 33
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 18,
+       "x": 133,
+       "y": 31
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 41
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 41
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 134,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "3",
+       "width": 15,
+       "x": 133,
+       "y": 33
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 18,
+       "x": 133,
+       "y": 31
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 134,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "7",
+       "width": 15,
+       "x": 133,
+       "y": 33
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 11,
+       "x": 140,
+       "y": 1
+      },
+      {
+       "height": 15,
+       "width": 67,
+       "x": 84,
+       "y": 16
+      },
+      {
+       "height": 10,
+       "width": 18,
+       "x": 133,
+       "y": 31
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 41
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 142,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 86,
+       "y": 18
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 134,
+       "y": 32
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 7,
+       "pixel_size": 8,
+       "text": "0",
+       "width": 15,
+       "x": 133,
+       "y": 33
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "collapsed",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 0,
+   "options": {
+    "background": true,
+    "collapsed": true,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "3/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 37
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 33,
+       "x": 118,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 120,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "-/5",
+       "width": 15,
+       "x": 118,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "fraction on the left",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 1,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "3/5",
+       "width": 18,
+       "x": 51,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 51,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 37
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 51,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 51,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 97,
+       "x": 54,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 56,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "-/5",
+       "width": 15,
+       "x": 54,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 51,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "fraction on the right",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 2,
+   "options": {
+    "background": true,
+    "collapsed": false,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "3/5",
+       "width": 18,
+       "x": 131,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 131,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 37
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 131,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 131,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 97,
+       "x": 54,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 56,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "-/5",
+       "width": 15,
+       "x": 134,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 100,
+       "x": 51,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 53,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 131,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "case": "collapsed with the fraction on the right",
+   "flags": {
+    "counter": [
+     true,
+     true
+    ],
+    "favourites": [
+     true,
+     true
+    ],
+    "stars": [
+     true,
+     true
+    ]
+   },
+   "fraction_beside": 2,
+   "options": {
+    "background": true,
+    "collapsed": true,
+    "icon_size": 12.0,
+    "incdec_height": 12.0
+   },
+   "thumbnails": [
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+     "icons": [
+      {
+       "name": "play",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.6,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "3/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 18,
+       "x": 133,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 40,
+       "x": 111,
+       "y": 37
+      }
+     ],
+     "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 2,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 12345,
+       "service": "counter",
+       "state": 3,
+       "x": 112,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "anonymous artist",
+       "width": 105,
+       "x": 23,
+       "y": 2
+      },
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "p3",
+       "width": 16,
+       "x": 134,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "12,345",
+       "width": 37,
+       "x": 111,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 44,
+       "x": 107,
+       "y": 112
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+     "icons": [
+      {
+       "name": "notes",
+       "x": 134,
+       "y": 51
+      },
+      {
+       "name": "inbox",
+       "x": 116,
+       "y": 51
+      },
+      {
+       "name": "sound",
+       "x": 2,
+       "y": 2
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 0.2,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 3,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "v3-p10",
+       "width": 42,
+       "x": 108,
+       "y": 113
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "1/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "3",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 16,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 33,
+       "x": 118,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+     "icons": [],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 0,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": null,
+       "service": "stars",
+       "state": 2,
+       "x": 120,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 7,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 14,
+       "pixel_size": -1,
+       "text": "metroid",
+       "width": 47,
+       "x": 52,
+       "y": 2
+      },
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "-/5",
+       "width": 15,
+       "x": 118,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "7",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    },
+    {
+     "boxes": [
+      {
+       "height": 125,
+       "width": 150,
+       "x": 1,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 14,
+       "x": 137,
+       "y": 1
+      },
+      {
+       "height": 18,
+       "width": 36,
+       "x": 115,
+       "y": 19
+      },
+      {
+       "height": 14,
+       "width": 26,
+       "x": 125,
+       "y": 37
+      }
+     ],
+     "file": "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+     "icons": [
+      {
+       "name": "inbox",
+       "x": 134,
+       "y": 51
+      }
+     ],
+     "ratings": [
+      {
+       "draw": "DrawLike",
+       "rating": null,
+       "service": "favourites",
+       "state": 1,
+       "x": 139,
+       "y": 3
+      },
+      {
+       "draw": "DrawNumerical",
+       "rating": 1.0,
+       "service": "stars",
+       "state": 3,
+       "x": 117,
+       "y": 21
+      },
+      {
+       "draw": "DrawIncDec",
+       "rating": 0,
+       "service": "counter",
+       "state": 3,
+       "x": 126,
+       "y": 38
+      }
+     ],
+     "size": [
+      152,
+      127
+     ],
+     "texts": [
+      {
+       "height": 13,
+       "pixel_size": 11,
+       "text": "5/5",
+       "width": 18,
+       "x": 115,
+       "y": 17
+      },
+      {
+       "height": 11,
+       "pixel_size": 11,
+       "text": "0",
+       "width": 23,
+       "x": 125,
+       "y": 38
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "new_client_options": {
+  "background": true,
+  "collapsed": false,
+  "icon_size": 12,
+  "incdec_height": 12
+ },
+ "rated": [
+  {
+   "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+   "rating": 1.0,
+   "service": "favourites"
+  },
+  {
+   "file": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+   "rating": 0.0,
+   "service": "favourites"
+  },
+  {
+   "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+   "rating": 1.0,
+   "service": "favourites"
+  },
+  {
+   "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+   "rating": 0.6,
+   "service": "stars"
+  },
+  {
+   "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+   "rating": 1.0,
+   "service": "stars"
+  },
+  {
+   "file": "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+   "rating": 0.2,
+   "service": "stars"
+  },
+  {
+   "file": "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+   "rating": 3,
+   "service": "counter"
+  },
+  {
+   "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+   "rating": 12345,
+   "service": "counter"
+  },
+  {
+   "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+   "rating": 7,
+   "service": "counter"
+  },
+  {
+   "file": "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+   "rating": null,
+   "service": "favourites"
+  },
+  {
+   "file": "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+   "rating": null,
+   "service": "stars"
+  }
+ ],
+ "services": {
+  "counter": {
+   "custom_pad": null,
+   "num_stars": null
+  },
+  "favourites": {
+   "custom_pad": null,
+   "num_stars": null
+  },
+  "stars": {
+   "custom_pad": 4,
+   "num_stars": 5
+  }
+ },
+ "thumbnail_border": 1
+}

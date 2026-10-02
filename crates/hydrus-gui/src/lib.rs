@@ -64,6 +64,7 @@ pub mod status;
 pub mod still;
 pub mod thumbnail_icons;
 pub mod thumbnail_menu;
+pub mod thumbnail_ratings;
 mod thumbnails;
 mod unlock;
 mod viewer;
@@ -241,6 +242,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
     );
     let pixels = |n: u32| i32::try_from(n).unwrap_or(i32::MAX);
     rows.set_cell(pixels(layout.border), pixels(width), pixels(height));
+    rows.set_rating_settings(store.read(hydrus_store::settings::get).unwrap_or_default());
     // the tag banners, and their colours
     let summaries: hydrus_core::tag_summary::TagSummaries =
         store.read(hydrus_store::settings::get).unwrap_or_default();
@@ -765,6 +767,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         move || {
             page().borrow_mut().refresh_tags();
+            shown(false);
+        }
+    });
+    // a file archived or rated in the viewer, say: its thumbnail's icons
+    // and ratings, and the status bar, are shown again
+    let files_changed: Rc<dyn Fn()> = Rc::new({
+        let rows = rows.clone();
+        let shown = shown.clone();
+        move || {
+            rows.forget_files();
             shown(false);
         }
     });
@@ -1584,6 +1596,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 viewing: viewing.clone(),
                 removed: removed.clone(),
                 tags_changed: tags_changed.clone(),
+                files_changed: files_changed.clone(),
                 manage_tags: Rc::new(open_manage_tags.clone()),
                 change_pages: change_pages.clone(),
             };
@@ -2646,6 +2659,8 @@ struct ViewerHooks {
     viewing: Viewing,
     removed: Removed,
     tags_changed: Rc<dyn Fn()>,
+    /// A file was archived or rated, say: the thumbnails are drawn again.
+    files_changed: Rc<dyn Fn()>,
     manage_tags: OpenManageTags,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
@@ -2682,6 +2697,7 @@ fn open_viewer(
         viewing,
         removed,
         tags_changed,
+        files_changed,
         manage_tags,
         change_pages,
     } = hooks;
@@ -2923,6 +2939,7 @@ fn open_viewer(
     });
     window.on_rating_clicked({
         let model = model.clone();
+        let files_changed = files_changed.clone();
         move |row, left, proportion| {
             let control = usize::try_from(row)
                 .ok()
@@ -2941,6 +2958,7 @@ fn open_viewer(
                 eprintln!("could not set the rating: {e}");
             }
             show_ratings();
+            files_changed();
         }
     });
     // the scanbar follows playing, and seeks
@@ -3250,10 +3268,14 @@ fn open_viewer(
     let change_file: Rc<dyn Fn(FileChange, HashId)> = Rc::new({
         let model = model.clone();
         let show_info = show_info.clone();
+        let files_changed = files_changed.clone();
         move |change, file| {
             let changed = change(model.borrow().store(), &[file]);
             match changed {
-                Ok(()) => show_info(),
+                Ok(()) => {
+                    show_info();
+                    files_changed();
+                }
                 Err(e) => eprintln!("could not change the file: {e}"),
             }
         }

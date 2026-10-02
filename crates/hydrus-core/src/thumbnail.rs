@@ -45,6 +45,33 @@ impl Default for ThumbnailSettings {
     }
 }
 
+/// How ratings are drawn over thumbnails: a like or numerical rating's
+/// shapes this many pixels square (`draw_thumbnail_rating_icon_size_px`),
+/// an inc/dec rating this tall (`thumbnail_rating_incdec_height_px`), each
+/// row of them on a box of the window's colour
+/// (`draw_thumbnail_rating_background`), and each numerical rating as one
+/// shape after its "stars/of" text
+/// (`draw_thumbnail_numerical_ratings_collapsed_always`).
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ThumbnailRatingSettings {
+    pub icon_size: f64,
+    pub incdec_height: f64,
+    pub background: bool,
+    pub numerical_collapsed: bool,
+}
+
+impl Default for ThumbnailRatingSettings {
+    fn default() -> Self {
+        Self {
+            icon_size: 12.0,
+            incdec_height: 12.0,
+            background: true,
+            numerical_collapsed: false,
+        }
+    }
+}
+
 impl ThumbnailSettings {
     /// The size of the thumbnail for an image of `width` x `height`, exactly
     /// as the reference computes it (including its truncating arithmetic).

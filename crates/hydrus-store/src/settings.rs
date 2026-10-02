@@ -339,6 +339,11 @@ impl Setting for hydrus_core::media_viewer::MediaViewerSettings {
     const KEY: &'static str = "media_viewer";
 }
 
+/// How ratings are drawn over thumbnails.
+impl Setting for hydrus_core::thumbnail::ThumbnailRatingSettings {
+    const KEY: &'static str = "thumbnail_ratings";
+}
+
 /// How a file's info lines read.
 impl Setting for hydrus_core::media_viewer::InfoLineSettings {
     const KEY: &'static str = "info_lines";

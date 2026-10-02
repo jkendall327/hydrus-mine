@@ -486,6 +486,28 @@ impl ClientOptions {
         out
     }
 
+    /// How ratings are drawn over thumbnails.
+    pub fn thumbnail_rating_settings(&self) -> hydrus_core::thumbnail::ThumbnailRatingSettings {
+        let mut out = hydrus_core::thumbnail::ThumbnailRatingSettings::default();
+        let float = |key: &str| self.floats.get(key).copied().filter(|v| *v > 0.0);
+        if let Some(size) = float("draw_thumbnail_rating_icon_size_px") {
+            out.icon_size = size;
+        }
+        if let Some(height) = float("thumbnail_rating_incdec_height_px") {
+            out.incdec_height = height;
+        }
+        if let Some(&background) = self.booleans.get("draw_thumbnail_rating_background") {
+            out.background = background;
+        }
+        if let Some(&collapsed) = self
+            .booleans
+            .get("draw_thumbnail_numerical_ratings_collapsed_always")
+        {
+            out.numerical_collapsed = collapsed;
+        }
+        out
+    }
+
     /// The media viewer's options: the zoom steps, where zooming centres,
     /// the default zoom and how each file type is shown.
     pub fn media_viewer_settings(&self) -> MediaViewerSettings {
@@ -898,6 +920,41 @@ mod tests {
     }
 
     #[test]
+    #[allow(clippy::float_cmp)] // (sizes set, not computed)
+    fn the_thumbnail_rating_options_come_across() {
+        use hydrus_core::thumbnail::ThumbnailRatingSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options
+            .floats
+            .insert("draw_thumbnail_rating_icon_size_px".into(), 20.0);
+        options
+            .floats
+            .insert("thumbnail_rating_incdec_height_px".into(), 16.5);
+        options
+            .booleans
+            .insert("draw_thumbnail_rating_background".into(), false);
+        options.booleans.insert(
+            "draw_thumbnail_numerical_ratings_collapsed_always".into(),
+            true,
+        );
+        assert_eq!(
+            options.thumbnail_rating_settings(),
+            ThumbnailRatingSettings {
+                icon_size: 20.0,
+                incdec_height: 16.5,
+                background: false,
+                numerical_collapsed: true,
+            }
+        );
+        // (a size of none is no size)
+        options
+            .floats
+            .insert("draw_thumbnail_rating_icon_size_px".into(), 0.0);
+        assert_eq!(options.thumbnail_rating_settings().icon_size, 12.0);
+    }
+
+    #[test]
     fn the_slideshow_options_come_across() {
         use hydrus_core::media_viewer::SlideshowSettings;
 
@@ -1010,6 +1067,10 @@ mod tests {
         assert_eq!(
             defaults.audio_settings(),
             hydrus_core::media_viewer::AudioSettings::default()
+        );
+        assert_eq!(
+            defaults.thumbnail_rating_settings(),
+            hydrus_core::thumbnail::ThumbnailRatingSettings::default()
         );
         assert_eq!(
             defaults.slideshow_settings(),
