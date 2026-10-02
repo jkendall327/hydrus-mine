@@ -1,4 +1,8 @@
 {
+ "facts": {
+  "maintain_similar_files_duplicate_pairs_during_active": false,
+  "maintain_similar_files_duplicate_pairs_during_idle": false
+ },
  "opens_on": "gui",
  "pages": [
   {
@@ -398,11 +402,19 @@
        "label": "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): "
       },
       {
-       "widget": "VelocityCtrl",
-       "value": [
+       "velocity": [
         3,
         600
-       ]
+       ],
+       "number_min": 0,
+       "number_max": 100,
+       "per": "errors within",
+       "units": [
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 30
       },
       {
        "label": "max number of simultaneous active network jobs: "
@@ -443,8 +455,8 @@
        "tooltip": "This will engage the curl_cffi test globally. Make sure you have the module\ninstalled and that the text here is a valid browser definition for curl_cffi."
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": null,
+       "noneable_text": null,
+       "none_phrase": "do not run the test",
        "tooltip": "This will engage the curl_cffi test globally. Make sure you have the module\ninstalled and that the text here is a valid browser definition for curl_cffi."
       },
       {
@@ -465,22 +477,22 @@
        "label": "http: "
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": null
+       "noneable_text": null,
+       "none_phrase": "none"
       },
       {
        "label": "https: "
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": null
+       "noneable_text": null,
+       "none_phrase": "none"
       },
       {
        "label": "no_proxy: "
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": "127.0.0.1"
+       "noneable_text": "127.0.0.1",
+       "none_phrase": "none"
       }
      ]
     }
@@ -650,19 +662,43 @@
        "label": "Delay time on a gallery/watcher network error:"
       },
       {
-       "button": "1 hour 30 minutes"
+       "duration": 5400,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "button_text": "1 hour 30 minutes"
       },
       {
        "label": "Delay time on a subscription network error:"
       },
       {
-       "button": "12 hours"
+       "duration": 43200,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "button_text": "12 hours"
       },
       {
        "label": "Delay time on a subscription other error:"
       },
       {
-       "button": "1 day 12 hours"
+       "duration": 129600,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "button_text": "1 day 12 hours"
       },
       {
        "label": "DEBUG: remove leading double-slashes from URL paths:",
@@ -1205,7 +1241,7 @@
       },
       {
        "widget": "MediaCollectControl",
-       "value": "<hydrus.client.media.ClientMediaCollect.MediaCollect object at 0x7fde79f329d0>"
+       "value": "<hydrus.client.media.ClientMediaCollect.MediaCollect object at 0x7fe54424f750>"
       },
       {
        "box": "namespace file sorting",
@@ -1387,8 +1423,12 @@
      "tooltip": "Deleting a file from a hard disk can be resource expensive, so when files leave\nthe trash, the actual physical file delete happens later, in the background. The\noperation is spread out so as not to give you lag spikes."
     },
     {
-     "widget": "TimeDeltaWidget",
-     "value": 0.6,
+     "duration": 0.6,
+     "units": [
+      "seconds",
+      "milliseconds"
+     ],
+     "min": 0.02,
      "tooltip": "Deleting a file from a hard disk can be resource expensive, so when files leave\nthe trash, the actual physical file delete happens later, in the background. The\noperation is spread out so as not to give you lag spikes."
     },
     {
@@ -2472,7 +2512,14 @@
          "label": "Only run shutdown jobs once per: "
         },
         {
-         "button": "1 day"
+         "duration": 86400,
+         "units": [
+          "days",
+          "hours",
+          "minutes"
+         ],
+         "min": 60,
+         "button_text": "1 day"
         },
         {
          "label": "Max number of minutes to run shutdown jobs: "
@@ -2504,11 +2551,18 @@
        "tooltip": "Different jobs will count for more or less weight. A file metadata reparse will\ncount as one work unit, but quicker jobs like checking for file presence will\ncount as fractions of one and will will work more frequently.\n\nPlease note that this throttle is not rigorous for long timescales, as file\nprocessing history is not currently saved on client exit. If you restart the\nclient, the file manager thinks it has run 0 jobs and will be happy to run until\nthe throttle kicks in again."
       },
       {
-       "widget": "VelocityCtrl",
-       "value": [
+       "velocity": [
         1,
         2
        ],
+       "number_min": 1,
+       "number_max": 1000,
+       "per": "heavy work units every",
+       "units": [
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
        "tooltip": "Different jobs will count for more or less weight. A file metadata reparse will\ncount as one work unit, but quicker jobs like checking for file presence will\ncount as fractions of one and will will work more frequently.\n\nPlease note that this throttle is not rigorous for long timescales, as file\nprocessing history is not currently saved on client exit. If you restart the\nclient, the file manager thinks it has run 0 jobs and will be happy to run until\nthe throttle kicks in again."
       },
       {
@@ -2523,11 +2577,18 @@
        "tooltip": "Different jobs will count for more or less weight. A file metadata reparse will\ncount as one work unit, but quicker jobs like checking for file presence will\ncount as fractions of one and will will work more frequently.\n\nPlease note that this throttle is not rigorous for long timescales, as file\nprocessing history is not currently saved on client exit. If you restart the\nclient, the file manager thinks it has run 0 jobs and will be happy to run until\nthe throttle kicks in again."
       },
       {
-       "widget": "VelocityCtrl",
-       "value": [
+       "velocity": [
         1,
         20
        ],
+       "number_min": 1,
+       "number_max": 1000,
+       "per": "heavy work units every",
+       "units": [
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
        "tooltip": "Different jobs will count for more or less weight. A file metadata reparse will\ncount as one work unit, but quicker jobs like checking for file presence will\ncount as fractions of one and will will work more frequently.\n\nPlease note that this throttle is not rigorous for long timescales, as file\nprocessing history is not currently saved on client exit. If you restart the\nclient, the file manager thinks it has run 0 jobs and will be happy to run until\nthe throttle kicks in again."
       }
      ]
@@ -2543,8 +2604,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nVery Idle is after an hour of idle mode."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 30.0,
+       "duration": 30.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nVery Idle is after an hour of idle mode."
       },
       {
@@ -2562,8 +2627,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 10.0,
+       "duration": 10.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
@@ -2581,8 +2650,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 0.5,
+       "duration": 0.5,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Repository processing operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
@@ -2615,8 +2688,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 15.0,
+       "duration": 15.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
@@ -2643,8 +2720,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 0.1,
+       "duration": 0.1,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
@@ -2662,8 +2743,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force it to work hard through the dialog."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 5.0,
+       "duration": 5.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Sibling/parent sync operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force it to work hard through the dialog."
       },
       {
@@ -2696,8 +2781,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Potential search operates on a\nwork-rest cycle. This setting determines how long it should work for in each\nwork packet. Actual work time will normally be a little larger than this, and on\nlarge databases the minimum work time may be upwards of several seconds."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 5.0,
+       "duration": 5.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.02,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Potential search operates on a\nwork-rest cycle. This setting determines how long it should work for in each\nwork packet. Actual work time will normally be a little larger than this, and on\nlarge databases the minimum work time may be upwards of several seconds."
       },
       {
@@ -2722,8 +2811,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Potential search operates on a\nwork-rest cycle. This setting determines how long it should work for in each\nwork packet. Actual work time will normally be a little larger than this, and on\nlarge databases the minimum work time may be upwards of several seconds."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 0.1,
+       "duration": 0.1,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.02,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Potential search operates on a\nwork-rest cycle. This setting determines how long it should work for in each\nwork packet. Actual work time will normally be a little larger than this, and on\nlarge databases the minimum work time may be upwards of several seconds."
       },
       {
@@ -2756,8 +2849,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Duplicates auto-resolution\noperates on a work-rest cycle. This setting determines how long it should work\nfor in each work packet. Actual work time will normally be a little larger than\nthis, and when it hits large files it may be upwards of several seconds."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 1.0,
+       "duration": 1.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Duplicates auto-resolution\noperates on a work-rest cycle. This setting determines how long it should work\nfor in each work packet. Actual work time will normally be a little larger than\nthis, and when it hits large files it may be upwards of several seconds."
       },
       {
@@ -2782,8 +2879,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Duplicates auto-resolution\noperates on a work-rest cycle. This setting determines how long it should work\nfor in each work packet. Actual work time will normally be a little larger than\nthis, and when it hits large files it may be upwards of several seconds."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 0.1,
+       "duration": 0.1,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Duplicates auto-resolution\noperates on a work-rest cycle. This setting determines how long it should work\nfor in each work packet. Actual work time will normally be a little larger than\nthis, and when it hits large files it may be upwards of several seconds."
       },
       {
@@ -2809,8 +2910,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 20.0,
+       "duration": 20.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for idle mode."
       },
       {
@@ -2828,8 +2933,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 0.25,
+       "duration": 0.25,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force-start work from _services->review_."
       },
       {
@@ -2847,8 +2956,12 @@
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force it to work hard through the dialog."
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 5.0,
+       "duration": 5.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.1,
        "tooltip": "DO NOT CHANGE UNLESS YOU KNOW WHAT YOU ARE DOING. Deferred table delete operates\non a work-rest cycle. This setting determines how long it should work for in\neach work packet. Actual work time will normally be a little larger than this.\nThis is for when you force it to work hard through the dialog."
       },
       {
@@ -3041,8 +3154,8 @@
        "tooltip": "Write in the audio device id exactly as mpv understands it. Hit the button to\nsee live examples. Use \"null\" for \"no audio device at all\". Will update all new\nexisting mpv players immediately on dialog ok."
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": null,
+       "noneable_text": null,
+       "none_phrase": "use default",
        "tooltip": "Write in the audio device id exactly as mpv understands it. Hit the button to\nsee live examples. Use \"null\" for \"no audio device at all\". Will update all new\nexisting mpv players immediately on dialog ok."
       },
       {
@@ -4109,7 +4222,14 @@
        "tooltip": "The amount of not-accessed time after which a thumbnail will naturally be\nremoved from the cache."
       },
       {
-       "button": "1 day",
+       "duration": 86400,
+       "units": [
+        "days",
+        "hours",
+        "minutes"
+       ],
+       "min": 300,
+       "button_text": "1 day",
        "tooltip": "The amount of not-accessed time after which a thumbnail will naturally be\nremoved from the cache."
       }
      ]
@@ -4137,7 +4257,14 @@
        "tooltip": "The amount of not-accessed time after which a rendered image will naturally be\nremoved from the cache."
       },
       {
-       "button": "10 minutes",
+       "duration": 600,
+       "units": [
+        "days",
+        "hours",
+        "minutes"
+       ],
+       "min": 300,
+       "button_text": "10 minutes",
        "tooltip": "The amount of not-accessed time after which a rendered image will naturally be\nremoved from the cache."
       },
       {
@@ -4231,7 +4358,13 @@
        "tooltip": "The amount of not-accessed time after which a rendered tile will naturally be\nremoved from the cache."
       },
       {
-       "button": "5 minutes",
+       "duration": 300,
+       "units": [
+        "hours",
+        "minutes"
+       ],
+       "min": 300,
+       "button_text": "5 minutes",
        "tooltip": "The amount of not-accessed time after which a rendered tile will naturally be\nremoved from the cache."
       },
       {
@@ -4256,8 +4389,12 @@
        "label": "EXPERIMENTAL: Minimum gallery importer update time:"
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 1.0
+       "duration": 1.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.25
       },
       {
        "label": "EXPERIMENTAL: Gallery importer magic update time denominator:"
@@ -4271,8 +4408,12 @@
        "label": "EXPERIMENTAL: Minimum watcher importer update time:"
       },
       {
-       "widget": "TimeDeltaWidget",
-       "value": 1.0
+       "duration": 1.0,
+       "units": [
+        "seconds",
+        "milliseconds"
+       ],
+       "min": 0.25
       },
       {
        "label": "EXPERIMENTAL: Watcher importer magic update time denominator:"
@@ -4743,8 +4884,8 @@
        "tooltip": "The sibling connector can use a particular namespace's colour."
       },
       {
-       "widget": "NoneableTextCtrl",
-       "value": "system",
+       "noneable_text": "system",
+       "none_phrase": "use ideal tag colour",
        "tooltip": "The sibling connector can use a particular namespace's colour."
       },
       {
@@ -4845,28 +4986,28 @@
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fde1c73a650>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fe4e4306190>"
       },
       {
        "label": "Default tag sort in search page manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fde1c225890>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fe4cdb6e7d0>"
       },
       {
        "label": "Default tag sort in the media viewer: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fde1c225790>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fe4cdb6e710>"
       },
       {
        "label": "Default tag sort in media viewer manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fde1c225990>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7fe4cdb6e910>"
       },
       {
        "box": "namespace grouping sort",

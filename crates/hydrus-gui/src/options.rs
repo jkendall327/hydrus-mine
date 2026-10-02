@@ -9,10 +9,17 @@ use std::rc::Rc;
 
 use hydrus_core::media_viewer::{InfoLineSettings, MediaViewerSettings, SlideshowSettings};
 use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
+use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::thumbnail::ThumbnailSettings;
+use hydrus_core::url::UrlClassSettings;
+use hydrus_store::bandwidth::BandwidthSettings;
 use hydrus_store::delete_lock::DeleteLock;
+use hydrus_store::duplicates::auto::AutoResolutionSettings;
+use hydrus_store::file_maintenance::FileMaintenanceSettings;
+use hydrus_store::network::NetworkSettings;
 use hydrus_store::settings::{AdvancedMode, ExportSettings, FileHandlingSettings, FolderSettings};
+use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
@@ -46,18 +53,25 @@ macro_rules! settings {
 
 settings! {
     advanced: AdvancedMode,
+    auto_resolution: AutoResolutionSettings,
+    bandwidth: BandwidthSettings,
     delete_lock: DeleteLock,
     downloader_pages: DownloaderPageSettings,
     export: ExportSettings,
     file_handling: FileHandlingSettings,
+    file_maintenance: FileMaintenanceSettings,
     folders: FolderSettings,
+    gallery: GalleryDefaults,
     info_line: InfoLineSettings,
     media_viewer: MediaViewerSettings,
+    network: NetworkSettings,
     page_names: PageNameSettings,
+    similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
     tag_presentation: TagPresentation,
     thumbnails: ThumbnailSettings,
     trash: TrashSettings,
+    url_classes: UrlClassSettings,
 }
 
 /// An option's value as its control holds it.
@@ -72,6 +86,16 @@ pub enum Value {
     /// The index of the item chosen.
     Choice(usize),
     Text(String),
+    /// Text, or none (the reference's `NoneableTextCtrl`); the text is
+    /// kept while none, as its text box keeps it.
+    NoneableText {
+        none: bool,
+        text: String,
+    },
+    /// A time, in seconds (the reference's `TimeDeltaWidget`).
+    Duration(f64),
+    /// A number per a time in seconds (the reference's `VelocityCtrl`).
+    Velocity(i64, f64),
 }
 
 /// What kind of control an option has.
@@ -96,6 +120,104 @@ pub enum Kind {
     },
     Choice(&'static [&'static str]),
     Text,
+    NoneableText {
+        none_phrase: &'static str,
+    },
+    /// A time shown as fields of these units, at least `min` seconds.
+    Duration {
+        units: &'static [Unit],
+        min: f64,
+    },
+    /// A number in `number`'s range, `per` (the text between), then a time
+    /// as a duration's.
+    Velocity {
+        number: (i64, i64),
+        per: &'static str,
+        units: &'static [Unit],
+        min: f64,
+    },
+}
+
+/// A field of a time's control, as the reference's `TimeDeltaWidget`
+/// shows them.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Unit {
+    Days,
+    Hours,
+    Minutes,
+    Seconds,
+    Milliseconds,
+}
+
+impl Unit {
+    /// The text after its field.
+    pub fn label(self) -> &'static str {
+        match self {
+            Self::Days => "days",
+            Self::Hours => "hours",
+            Self::Minutes => "minutes",
+            Self::Seconds => "seconds",
+            Self::Milliseconds => "ms",
+        }
+    }
+
+    /// Its name (`_show_<name>` in the reference).
+    pub fn name(self) -> &'static str {
+        match self {
+            Self::Milliseconds => "milliseconds",
+            unit => unit.label(),
+        }
+    }
+
+    fn seconds(self) -> f64 {
+        match self {
+            Self::Days => 86400.0,
+            Self::Hours => 3600.0,
+            Self::Minutes => 60.0,
+            Self::Seconds => 1.0,
+            Self::Milliseconds => 0.001,
+        }
+    }
+
+    /// Its field's largest value.
+    pub fn max(self) -> i64 {
+        match self {
+            Self::Days => 3523,
+            Self::Hours => 23,
+            Self::Minutes | Self::Seconds => 59,
+            Self::Milliseconds => 999,
+        }
+    }
+}
+
+/// A time's fields, as the reference's control sets them (`SetValue`):
+/// each unit takes what it can of what the larger ones leave (held to its
+/// field's largest value).
+#[allow(clippy::cast_possible_truncation)] // (whole numbers, in range)
+pub fn duration_fields(seconds: f64, units: &[Unit]) -> Vec<i64> {
+    let mut left = seconds.max(0.0);
+    units
+        .iter()
+        .map(|&unit| {
+            let n = if unit == Unit::Milliseconds {
+                (left * 1000.0).round()
+            } else {
+                // (a hair over, so 0.3 / 0.1 is 3)
+                ((left + 1e-9) / unit.seconds()).floor()
+            };
+            left = (left - n * unit.seconds()).max(0.0);
+            (n as i64).min(unit.max())
+        })
+        .collect()
+}
+
+/// The time these fields say.
+pub fn duration_seconds(fields: &[i64], units: &[Unit]) -> f64 {
+    units
+        .iter()
+        .zip(fields)
+        .map(|(unit, &n)| n as f64 * unit.seconds())
+        .sum()
 }
 
 type Get = Rc<dyn Fn(&Settings) -> Value>;
@@ -318,9 +440,101 @@ fn text(
     )
 }
 
+fn noneable_text(
+    label: &'static str,
+    none_phrase: &'static str,
+    get: fn(&Settings) -> Option<String>,
+    set: fn(&mut Settings, Option<String>),
+) -> Item {
+    opt(
+        label,
+        Kind::NoneableText { none_phrase },
+        Rc::new(move |s| {
+            let value = get(s);
+            Value::NoneableText {
+                none: value.is_none(),
+                text: value.unwrap_or_default(),
+            }
+        }),
+        Rc::new(move |s, v| match v {
+            Value::NoneableText { none, text } => {
+                set(s, (!none).then(|| text.clone()));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+/// The units a time shows, and its least.
+const fn time(units: &'static [Unit], min: f64) -> (&'static [Unit], f64) {
+    (units, min)
+}
+
+fn duration(
+    label: &'static str,
+    (units, min): (&'static [Unit], f64),
+    get: fn(&Settings) -> f64,
+    set: fn(&mut Settings, f64),
+) -> Item {
+    opt(
+        label,
+        Kind::Duration { units, min },
+        Rc::new(move |s| Value::Duration(get(s))),
+        Rc::new(move |s, v| match v {
+            // (less than its least is its least, as the reference's control
+            // makes it)
+            Value::Duration(d) => {
+                set(s, d.max(min));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn velocity(
+    label: &'static str,
+    (number, per): ((i64, i64), &'static str),
+    (units, min): (&'static [Unit], f64),
+    get: fn(&Settings) -> (i64, f64),
+    set: fn(&mut Settings, i64, f64),
+) -> Item {
+    opt(
+        label,
+        Kind::Velocity {
+            number,
+            per,
+            units,
+            min,
+        },
+        Rc::new(move |s| {
+            let (n, seconds) = get(s);
+            Value::Velocity(n, seconds)
+        }),
+        Rc::new(move |s, v| match v {
+            Value::Velocity(n, seconds) => {
+                set(s, (*n).clamp(number.0, number.1), seconds.max(min));
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+/// Whole seconds (as the store keeps them) from a time.
+#[allow(clippy::cast_possible_truncation, clippy::cast_sign_loss)] // (a time, rounded)
+fn whole(seconds: f64) -> u64 {
+    seconds.round().max(0.0) as u64
+}
+
 fn boxed(title: &'static str, items: Vec<Item>) -> Item {
     Item::Box(title, items)
 }
+
+/// The downloaders' waits after an error (`TimeDeltaButton`s of days to
+/// seconds).
+const ERROR_DELAY: &[Unit] = &[Unit::Days, Unit::Hours, Unit::Minutes, Unit::Seconds];
 
 /// `CC.page_file_count_display_string_lookup`, in the order the reference
 /// lists them.
@@ -392,6 +606,224 @@ pub fn pages() -> Vec<Page> {
                     Ok(())
                 },
             )],
+        ),
+        page(
+            "connection",
+            vec![
+                boxed(
+                    "general",
+                    vec![
+                        int(
+                            "max connection attempts allowed per request: ",
+                            (1, 10),
+                            |s| i64::from(s.network.max_connection_attempts),
+                            |s, v| s.network.max_connection_attempts = v as u32,
+                        ),
+                        int(
+                            "max retries allowed per request: ",
+                            (1, 10),
+                            |s| i64::from(s.network.max_get_attempts),
+                            |s, v| s.network.max_get_attempts = v as u32,
+                        ),
+                        int(
+                            "network timeout (seconds): ",
+                            (3, 600),
+                            |s| s.network.network_timeout as i64,
+                            |s, v| s.network.network_timeout = v as u64,
+                        ),
+                        int(
+                            "connection error retry wait (seconds): ",
+                            (3, 1800),
+                            |s| s.network.connection_error_wait_time as i64,
+                            |s, v| s.network.connection_error_wait_time = v as u64,
+                        ),
+                        int(
+                            "serverside bandwidth retry wait (seconds): ",
+                            (3, 1800),
+                            |s| s.network.serverside_bandwidth_wait_time as i64,
+                            |s, v| s.network.serverside_bandwidth_wait_time = v as u64,
+                        ),
+                        velocity(
+                            "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ",
+                            ((0, 100), "errors within"),
+                            time(&[Unit::Hours, Unit::Minutes, Unit::Seconds], 30.0),
+                            |s| {
+                                (
+                                    s.network.domain_error_number as i64,
+                                    s.network.domain_error_window as f64,
+                                )
+                            },
+                            |s, n, seconds| {
+                                s.network.domain_error_number = n as usize;
+                                s.network.domain_error_window = whole(seconds) as i64;
+                            },
+                        ),
+                        int(
+                            "max number of simultaneous active network jobs: ",
+                            (1, 30),
+                            |s| s.network.max_jobs as i64,
+                            |s, v| s.network.max_jobs = v as usize,
+                        ),
+                        int(
+                            "max number of simultaneous active network jobs per domain: ",
+                            (1, 5),
+                            |s| s.network.max_jobs_per_domain as i64,
+                            |s, v| s.network.max_jobs_per_domain = v as usize,
+                        ),
+                        check(
+                            "DEBUG: do not verify regular https traffic:",
+                            |s| !s.network.verify_https,
+                            |s, v| s.network.verify_https = !v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "proxy settings",
+                    vec![
+                        noneable_text(
+                            "http: ",
+                            "none",
+                            |s| s.network.http_proxy.clone(),
+                            |s, v| s.network.http_proxy = v,
+                        ),
+                        noneable_text(
+                            "https: ",
+                            "none",
+                            |s| s.network.https_proxy.clone(),
+                            |s, v| s.network.https_proxy = v,
+                        ),
+                        noneable_text(
+                            "no_proxy: ",
+                            "none",
+                            |s| s.network.no_proxy.clone(),
+                            |s, v| s.network.no_proxy = v,
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        page(
+            "downloading",
+            vec![
+                boxed(
+                    "gallery downloader",
+                    vec![
+                        int(
+                            "Additional fixed time (in seconds) to wait between gallery page fetches:",
+                            (1, 3600),
+                            |s| s.bandwidth.gallery_page_wait_pages,
+                            |s, v| s.bandwidth.gallery_page_wait_pages = v,
+                        ),
+                        noneable(
+                            "By default, stop searching once this many files are found:",
+                            none("no limit", 2000, (1, 1_000_000), None),
+                            |s| signed(s.gallery.file_limit),
+                            |s, v| s.gallery.file_limit = unsigned(v),
+                        ),
+                        check(
+                            "If new query entered and no current highlight, highlight the new query:",
+                            |s| s.downloader_pages.highlight_new_query,
+                            |s, v| s.downloader_pages.highlight_new_query = v,
+                        ),
+                        check(
+                            "Force file downloads to occur quickly after Post URL fetches:",
+                            |s| s.bandwidth.override_on_file_urls_from_posts,
+                            |s, v| s.bandwidth.override_on_file_urls_from_posts = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "subscriptions",
+                    vec![
+                        int(
+                            "Additional fixed time (in seconds) to wait between gallery page fetches:",
+                            (1, 3600),
+                            |s| s.bandwidth.gallery_page_wait_subscriptions,
+                            |s, v| s.bandwidth.gallery_page_wait_subscriptions = v,
+                        ),
+                        check(
+                            "Sync subscriptions in random order:",
+                            |s| s.network.process_subs_in_random_order,
+                            |s, v| s.network.process_subs_in_random_order = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "watchers",
+                    vec![
+                        int(
+                            "Additional fixed time (in seconds) to wait between watcher checks:",
+                            (1, 3600),
+                            |s| s.bandwidth.watcher_page_wait,
+                            |s, v| s.bandwidth.watcher_page_wait = v,
+                        ),
+                        check(
+                            "If new watcher entered and no current highlight, highlight the new watcher:",
+                            |s| s.downloader_pages.highlight_new_watcher,
+                            |s, v| s.downloader_pages.highlight_new_watcher = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "misc",
+                    vec![
+                        text(
+                            "Pause character:",
+                            |s| s.downloader_pages.pause_character.clone(),
+                            |s, t| {
+                                t.clone_into(&mut s.downloader_pages.pause_character);
+                                Ok(())
+                            },
+                        ),
+                        text(
+                            "Stop character:",
+                            |s| s.downloader_pages.stop_character.clone(),
+                            |s, t| {
+                                t.clone_into(&mut s.downloader_pages.stop_character);
+                                Ok(())
+                            },
+                        ),
+                        check(
+                            "Show a 'N' (for 'new') count on short file import summaries:",
+                            |s| s.page_names.short_summary_new,
+                            |s, v| s.page_names.short_summary_new = v,
+                        ),
+                        check(
+                            "Show a 'D' (for 'deleted') count on short file import summaries:",
+                            |s| s.page_names.short_summary_deleted,
+                            |s, v| s.page_names.short_summary_deleted = v,
+                        ),
+                        duration(
+                            "Delay time on a gallery/watcher network error:",
+                            time(ERROR_DELAY, 600.0),
+                            |s| s.network.downloader_network_error_delay as f64,
+                            |s, v| s.network.downloader_network_error_delay = whole(v),
+                        ),
+                        duration(
+                            "Delay time on a subscription network error:",
+                            time(ERROR_DELAY, 600.0),
+                            |s| s.network.subscription_network_error_delay as f64,
+                            |s, v| s.network.subscription_network_error_delay = whole(v) as i64,
+                        ),
+                        duration(
+                            "Delay time on a subscription other error:",
+                            time(ERROR_DELAY, 600.0),
+                            |s| s.network.subscription_other_error_delay as f64,
+                            |s, v| s.network.subscription_other_error_delay = whole(v) as i64,
+                        ),
+                        check(
+                            "DEBUG: remove leading double-slashes from URL paths:",
+                            |s| s.url_classes.collapse_leading_slashes,
+                            |s, v| s.url_classes.collapse_leading_slashes = v,
+                        ),
+                        check(
+                            "DEBUG: consider %20 the same as space in downloader query text inputs:",
+                            |s| s.network.gug_percent_twenty_is_space,
+                            |s, v| s.network.gug_percent_twenty_is_space = v,
+                        ),
+                    ],
+                ),
+            ],
         ),
         page(
             "exporting",
@@ -524,6 +956,75 @@ pub fn pages() -> Vec<Page> {
                                 t.clone_into(&mut s.page_names.notebook_decorator);
                                 Ok(())
                             },
+                        ),
+                    ],
+                ),
+            ],
+        ),
+        page(
+            "maintenance and processing",
+            vec![
+                boxed(
+                    "file maintenance",
+                    vec![
+                        check(
+                            "Run file maintenance during normal time: ",
+                            |s| s.file_maintenance.during_active,
+                            |s, v| s.file_maintenance.during_active = v,
+                        ),
+                        velocity(
+                            "Normal throttle: ",
+                            ((1, 1000), "heavy work units every"),
+                            time(&[Unit::Minutes, Unit::Seconds], 1.0),
+                            |s| {
+                                (
+                                    s.file_maintenance.active_files as i64,
+                                    s.file_maintenance.active_seconds as f64,
+                                )
+                            },
+                            |s, n, seconds| {
+                                s.file_maintenance.active_files = n as u64;
+                                s.file_maintenance.active_seconds = whole(seconds);
+                            },
+                        ),
+                    ],
+                ),
+                boxed(
+                    "potential duplicates search",
+                    vec![
+                        check(
+                            "Search for potential duplicates in \"idle\" time: ",
+                            |s| s.similar_files.during_idle,
+                            |s, v| s.similar_files.during_idle = v,
+                        ),
+                        check(
+                            "Search for potential duplicates in \"normal\" time: ",
+                            |s| s.similar_files.during_active,
+                            |s, v| s.similar_files.during_active = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "duplicates auto-resolution",
+                    vec![
+                        check(
+                            "Work duplicates auto-resolution in \"normal\" time: ",
+                            |s| s.auto_resolution.during_active,
+                            |s, v| s.auto_resolution.during_active = v,
+                        ),
+                        duration(
+                            "\"Normal\" ideal work packet time: ",
+                            time(&[Unit::Seconds, Unit::Milliseconds], 0.1),
+                            |s| f64::from(s.auto_resolution.work_time_ms_active) / 1000.0,
+                            |s, v| {
+                                s.auto_resolution.work_time_ms_active = whole(v * 1000.0) as u32;
+                            },
+                        ),
+                        int(
+                            "\"Normal\" rest time percentage: ",
+                            (0, 100_000),
+                            |s| i64::from(s.auto_resolution.rest_percentage_active),
+                            |s, v| s.auto_resolution.rest_percentage_active = v as u32,
                         ),
                     ],
                 ),
@@ -899,6 +1400,11 @@ impl Editor {
         };
         match self.kind(i) {
             Kind::Int { .. } => self.values[self.page][i] = Value::Int(number),
+            Kind::Velocity { .. } => {
+                if let Value::Velocity(_, seconds) = self.values[self.page][i] {
+                    self.values[self.page][i] = Value::Velocity(number, seconds);
+                }
+            }
             Kind::Noneable { .. } => {
                 self.numbers[self.page][i] = number;
                 if let Value::Noneable(Some(_)) = self.values[self.page][i] {
@@ -910,9 +1416,15 @@ impl Editor {
     }
 
     pub fn none(&mut self, row: usize, none: bool) {
-        if let Some(i) = self.option_at(row) {
+        let Some(i) = self.option_at(row) else {
+            return;
+        };
+        let value = &mut self.values[self.page][i];
+        if let Value::NoneableText { none: was, .. } = value {
+            *was = none;
+        } else {
             let number = self.numbers[self.page][i];
-            self.values[self.page][i] = Value::Noneable((!none).then_some(number));
+            *value = Value::Noneable((!none).then_some(number));
         }
     }
 
@@ -920,9 +1432,38 @@ impl Editor {
         let Some(i) = self.option_at(row) else {
             return;
         };
-        self.values[self.page][i] = match self.kind(i) {
-            Kind::Float { .. } => Value::Float(text.to_owned()),
+        let value = &mut self.values[self.page][i];
+        *value = match (self.pages[self.page].options()[i].kind.clone(), &*value) {
+            (Kind::Float { .. }, _) => Value::Float(text.to_owned()),
+            (Kind::NoneableText { .. }, Value::NoneableText { none, .. }) => Value::NoneableText {
+                none: *none,
+                text: text.to_owned(),
+            },
             _ => Value::Text(text.to_owned()),
+        };
+    }
+
+    /// A time's field (of a time, or a rate's time) set to `n`.
+    pub fn field(&mut self, row: usize, field: usize, n: i64) {
+        let Some(i) = self.option_at(row) else {
+            return;
+        };
+        let units = match self.kind(i) {
+            Kind::Duration { units, .. } | Kind::Velocity { units, .. } => *units,
+            _ => return,
+        };
+        let set = |seconds: f64| {
+            let mut fields = duration_fields(seconds, units);
+            if let (Some(f), Some(unit)) = (fields.get_mut(field), units.get(field)) {
+                *f = n.clamp(0, unit.max());
+            }
+            duration_seconds(&fields, units)
+        };
+        let value = &mut self.values[self.page][i];
+        *value = match *value {
+            Value::Duration(seconds) => Value::Duration(set(seconds)),
+            Value::Velocity(number, seconds) => Value::Velocity(number, set(seconds)),
+            _ => return,
         };
     }
 
@@ -1018,6 +1559,80 @@ mod tests {
                 .rating_icon_size,
             16.5
         );
+    }
+
+    #[test]
+    #[allow(clippy::float_cmp)] // (whole numbers of ms)
+    fn times_show_as_the_references_fields() {
+        let dhms = [Unit::Days, Unit::Hours, Unit::Minutes, Unit::Seconds];
+        assert_eq!(duration_fields(129_600.0, &dhms), [1, 12, 0, 0]);
+        assert_eq!(duration_fields(5400.0, &dhms), [0, 1, 30, 0]);
+        let sms = [Unit::Seconds, Unit::Milliseconds];
+        assert_eq!(duration_fields(0.1, &sms), [0, 100]);
+        assert_eq!(duration_fields(30.0, &sms), [30, 0]);
+        assert_eq!(duration_fields(2.25, &sms), [2, 250]);
+        // (a unit without the larger ones takes what it can hold)
+        let hms = [Unit::Hours, Unit::Minutes, Unit::Seconds];
+        assert_eq!(duration_fields(600.0, &hms), [0, 10, 0]);
+        assert_eq!(duration_fields(100_000.0, &hms)[0], 23);
+        assert_eq!(duration_seconds(&[1, 12, 0, 0], &dhms), 129_600.0);
+        assert_eq!(duration_seconds(&[2, 250], &sms), 2.25);
+    }
+
+    #[test]
+    fn times_rates_and_text_that_may_be_none_are_edited() {
+        let before = settings();
+        let mut editor = Editor::new(before.clone());
+        let page = |editor: &mut Editor, name: &str| {
+            let at = editor.page_names().iter().position(|n| *n == name).unwrap();
+            editor.show_page(at);
+        };
+        let row = |editor: &Editor, label: &str| {
+            editor
+                .rows()
+                .iter()
+                .position(|r| matches!(r, Row::Opt { option, .. } if option.label == label))
+                .unwrap()
+        };
+        page(&mut editor, "downloading");
+        // a day more on a wait of 1 hour 30 minutes
+        let wait = row(&editor, "Delay time on a gallery/watcher network error:");
+        editor.field(wait, 0, 1);
+        // less than the least is the least
+        let other = row(&editor, "Delay time on a subscription other error:");
+        for field in 0..4 {
+            editor.field(other, field, 0);
+        }
+        page(&mut editor, "connection");
+        let errors = row(
+            &editor,
+            "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ",
+        );
+        editor.number(errors, 7);
+        editor.field(errors, 1, 2);
+        let http = row(&editor, "http: ");
+        editor.text(http, "http://127.0.0.1:8080");
+        editor.none(http, false);
+        // the text is kept while none
+        let no_proxy = row(&editor, "no_proxy: ");
+        editor.none(no_proxy, true);
+        let (after, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        let n = &after.network;
+        assert_eq!(
+            n.downloader_network_error_delay,
+            before.network.downloader_network_error_delay + 86400
+        );
+        assert_eq!(n.subscription_other_error_delay, 600);
+        assert_eq!(n.domain_error_number, 7);
+        assert_eq!(
+            n.domain_error_window,
+            2 * 60 + before.network.domain_error_window % 60
+        );
+        assert_eq!(n.http_proxy.as_deref(), Some("http://127.0.0.1:8080"));
+        assert_eq!(n.no_proxy, None);
+        editor.none(no_proxy, false);
+        assert_eq!(editor.applied().0.network.no_proxy, before.network.no_proxy);
     }
 
     #[test]

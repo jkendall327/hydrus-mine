@@ -29,7 +29,9 @@ it opens on, and each page's controls in the order they are laid out:
   or the `"items"` laid out in it, for anything else.
 
 A control explicitly hidden has `"hidden": true`, and one with a tooltip
-its `"tooltip"`. hydrus-rs's options window is checked against this: its
+its `"tooltip"`. The recording's `"facts"` are the options the driver sets
+as it boots the client that hydrus-rs can't read from the fixture (the
+similar-files search is switched off, so it can't add pairs mid-recording). hydrus-rs's options window is checked against this: its
 pages, their order and labels, and the values it shows for the fixture's
 options.
 
@@ -305,6 +307,14 @@ def main():
             result = json.load( f )
 
 
+
+    result = {
+        'facts' : {
+            'maintain_similar_files_duplicate_pairs_during_active' : False,
+            'maintain_similar_files_duplicate_pairs_during_idle' : False,
+        },
+        **result,
+    }
 
     with open( OUT, 'w' ) as f:
 

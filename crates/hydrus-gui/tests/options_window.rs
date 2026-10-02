@@ -78,9 +78,12 @@ fn the_options_window_applies_its_changes() {
         page_names(&window),
         [
             "audio",
+            "connection",
+            "downloading",
             "exporting",
             "files and trash",
             "gui pages",
+            "maintenance and processing",
             "media viewer",
             "media viewer hovers",
             "ratings",
@@ -141,5 +144,45 @@ fn the_options_window_applies_its_changes() {
             .map(|p| p.status_text_1.clone().unwrap_or_default())
             .collect::<Vec<_>>(),
         ["Could not parse those slideshow durations, so they were not saved!"]
+    );
+
+    // a proxy, a rate and a wait, as their controls set them
+    open(&ui);
+    let window = options();
+    show_page(&window, "connection");
+    let (i, http) = row(&window, "http: ");
+    assert_eq!(
+        (http.kind, http.is_none, http.none_phrase.as_str()),
+        (7, true, "none")
+    );
+    window.invoke_text_edited(i, "http://127.0.0.1:8080".into());
+    window.invoke_none_toggled(i, false);
+    let (i, errors) = row(
+        &window,
+        "Halt new jobs as long as this many network infrastructure errors on their domain (0 for never wait): ",
+    );
+    assert_eq!((errors.kind, errors.per.as_str()), (9, "errors within"));
+    let fields: Vec<(i32, String)> = (0..errors.fields.row_count())
+        .map(|f| {
+            let f = errors.fields.row_data(f).unwrap();
+            (f.value, f.label.to_string())
+        })
+        .collect();
+    let before_window = settings().network.domain_error_window;
+    assert_eq!(fields.len(), 3, "hours, minutes, seconds: {fields:?}");
+    window.invoke_number_edited(i, 9);
+    window.invoke_field_edited(i, 1, 20);
+    show_page(&window, "downloading");
+    let (i, wait) = row(&window, "Delay time on a gallery/watcher network error:");
+    assert_eq!(wait.kind, 8);
+    window.invoke_field_edited(i, 0, 2);
+    window.invoke_apply();
+    let network = settings().network;
+    assert_eq!(network.http_proxy.as_deref(), Some("http://127.0.0.1:8080"));
+    assert_eq!(network.domain_error_number, 9);
+    assert_eq!(network.domain_error_window, 20 * 60 + before_window % 60);
+    assert_eq!(
+        network.downloader_network_error_delay,
+        2 * 86400 + before.network.downloader_network_error_delay % 86400
     );
 }

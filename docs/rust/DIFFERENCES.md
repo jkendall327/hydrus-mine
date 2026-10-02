@@ -231,11 +231,17 @@ search.
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold.
 - **The options window has only the options hydrus-rs honours** (so far
-  those on ten pages; the others, and pages with none, aren't there). It
-  opens on its first page, rather than "gui" or the page last open; it has
-  no search box; options' tooltips aren't shown; and a box's title is a
-  heading over its options rather than a frame around them. The
-  connection, downloading and maintenance pages aren't in it yet.
+  those on thirteen pages; the others, and pages with none, aren't there:
+  on the connection page, the CA bundle and curl_cffi test; on the
+  downloading page, the default download source, the checker options, the
+  number of subscriptions syncing at once and the failed-imports limit; on
+  the maintenance page, idle time and shutdown, repository, sibling,
+  deferred delete and idle work settings). It opens on its first page,
+  rather than "gui" or the page last open; it has no search box; options'
+  tooltips aren't shown; a box's title is a heading over its options
+  rather than a frame around them; and a time behind a button in the
+  reference (the downloaders' waits after errors) shows its fields in
+  place.
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.

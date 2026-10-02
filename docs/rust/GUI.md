@@ -130,10 +130,21 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on ten pages: audio,
-exporting, files and trash, gui pages, media viewer (slideshows), media
-viewer hovers (the top hover's file summary), ratings, tag presentation,
-thumbnails and advanced. Changes wait for "apply", which writes them
+It has the options hydrus-rs honours, so far on thirteen pages: audio,
+connection (retries, timeouts, job limits, the halt on a domain's errors,
+HTTPS checks and proxies), downloading (gallery, subscription and watcher
+waits, the default file limit, highlighting, the pause and stop
+characters, short summaries' counts, the waits after errors, and two
+debug switches), exporting, files and trash, gui pages, maintenance and
+processing (file maintenance in normal time and its throttle, the
+potential duplicates search, auto-resolution in normal time and its work
+and rest), media viewer (slideshows), media viewer hovers (the top hover's
+file summary), ratings, tag presentation, thumbnails and advanced. Times
+show as the reference's fields (days, hours, minutes, seconds, ms), and a
+rate as its number, the reference's words ("errors within") and a time;
+text that may be none has the reference's "none" box. The daemon picks up
+the connection, downloading and maintenance options within a second of
+"apply". Changes wait for "apply", which writes them
 together (and shows again what they change, such as the tab names);
 "cancel" or escape forgets them. A value that can't be had (slideshow
 durations that aren't numbers) is left as it was and said in a popup, as

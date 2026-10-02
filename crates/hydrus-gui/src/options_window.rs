@@ -11,8 +11,22 @@ use slint::{ComponentHandle as _, ModelRc, SharedString, StandardListViewItem, V
 
 use hydrus_store::Store;
 
-use crate::options::{Editor, Kind, Row, Settings, Value};
-use crate::{OptionRow, OptionsWindow};
+use crate::options::{Editor, Kind, Row, Settings, Unit, Value, duration_fields};
+use crate::{DurationField, OptionRow, OptionsWindow};
+
+/// A time's fields as the window shows them.
+fn fields(seconds: f64, units: &[Unit]) -> ModelRc<DurationField> {
+    let fields: Vec<DurationField> = duration_fields(seconds, units)
+        .into_iter()
+        .zip(units)
+        .map(|(value, unit)| DurationField {
+            value: int(value),
+            maximum: int(unit.max()),
+            label: unit.label().into(),
+        })
+        .collect();
+    ModelRc::new(VecModel::from(fields))
+}
 
 fn int(n: i64) -> i32 {
     i32::try_from(n).unwrap_or(if n < 0 { i32::MIN } else { i32::MAX })
@@ -77,6 +91,32 @@ fn option_row(row: &Row<'_>) -> OptionRow {
                 (Kind::Text, Value::Text(text)) => {
                     out.kind = 6;
                     out.text = text.as_str().into();
+                }
+                (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
+                    out.kind = 7;
+                    out.text = text.as_str().into();
+                    out.is_none = *none;
+                    out.none_phrase = (*none_phrase).into();
+                }
+                (Kind::Duration { units, .. }, Value::Duration(seconds)) => {
+                    out.kind = 8;
+                    out.fields = fields(*seconds, units);
+                }
+                (
+                    Kind::Velocity {
+                        number: (min, max),
+                        per,
+                        units,
+                        ..
+                    },
+                    Value::Velocity(n, seconds),
+                ) => {
+                    out.kind = 9;
+                    out.number = int(*n);
+                    out.minimum = int(*min);
+                    out.maximum = int(*max);
+                    out.per = (*per).into();
+                    out.fields = fields(*seconds, units);
                 }
                 _ => {}
             }
@@ -152,6 +192,10 @@ pub(crate) fn open(
     window.on_text_edited({
         let editor = editor.clone();
         move |i, text| editor.borrow_mut().text(at(i), &text)
+    });
+    window.on_field_edited({
+        let editor = editor.clone();
+        move |i, field, n| editor.borrow_mut().field(at(i), at(field), i64::from(n))
     });
     window.on_choice_chosen({
         let editor = editor.clone();

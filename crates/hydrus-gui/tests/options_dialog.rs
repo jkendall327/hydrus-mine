@@ -19,7 +19,35 @@ struct Row {
     control: Json,
 }
 
-const CONTROLS: &[&str] = &["check", "int", "float", "noneable", "choice", "text"];
+const CONTROLS: &[&str] = &[
+    "check",
+    "int",
+    "float",
+    "noneable",
+    "choice",
+    "text",
+    "noneable_text",
+    "duration",
+    "velocity",
+];
+
+/// A time's units as the recording names them.
+fn unit_names(units: &[hydrus_gui::options::Unit]) -> Vec<&'static str> {
+    units.iter().map(|u| u.name()).collect()
+}
+
+fn recorded_units(theirs: &Json) -> Vec<&str> {
+    theirs
+        .get("units")
+        .and_then(Json::as_array)
+        .map(|v| v.iter().filter_map(Json::as_str).collect())
+        .unwrap_or_default()
+}
+
+/// Two times, the same to the millisecond.
+fn same_time(a: f64, b: Option<f64>) -> bool {
+    b.is_some_and(|b| (a - b).abs() < 0.0005)
+}
 
 fn is_control(item: &Json) -> bool {
     CONTROLS.iter().any(|k| item.get(*k).is_some())
@@ -128,6 +156,50 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json) -> Option<String> {
                 .then(|| format!("choice {:?} of {items:?}", items[*i]))
         }
         (Kind::Text, Value::Text(t)) => (theirs["text"] != *t).then(|| format!("text {t:?}")),
+        (Kind::NoneableText { none_phrase }, Value::NoneableText { none, text }) => {
+            let ours = (!none).then_some(text.as_str());
+            (theirs.get("noneable_text").map(Json::as_str) != Some(ours)
+                || theirs["none_phrase"] != *none_phrase)
+                .then(|| format!("noneable text {ours:?} {none_phrase:?}"))
+        }
+        (Kind::Duration { units, min }, Value::Duration(seconds)) => {
+            (!same_time(*seconds, num("duration"))
+                || recorded_units(theirs) != unit_names(units)
+                || !same_time(*min, num("min")))
+            .then(|| {
+                format!(
+                    "duration {seconds} {:?} (at least {min})",
+                    unit_names(units)
+                )
+            })
+        }
+        (
+            Kind::Velocity {
+                number,
+                per,
+                units,
+                min,
+            },
+            Value::Velocity(n, seconds),
+        ) => {
+            let velocity = theirs.get("velocity").and_then(Json::as_array);
+            let at = |i: usize| velocity.and_then(|v| v.get(i)).and_then(Json::as_f64);
+            (at(0) != Some(*n as f64)
+                || !same_time(*seconds, at(1))
+                || num("number_min") != Some(number.0 as f64)
+                || num("number_max") != Some(number.1 as f64)
+                || theirs["per"] != *per
+                || recorded_units(theirs) != unit_names(units)
+                || !same_time(*min, num("min")))
+            .then(|| {
+                format!(
+                    "velocity {n} {per:?} {seconds} {:?} ({}-{}, at least {min})",
+                    unit_names(units),
+                    number.0,
+                    number.1
+                )
+            })
+        }
         _ => Some(format!("{kind:?} holding {value:?}")),
     };
     problem.map(|ours| format!("ours {ours}, theirs {theirs}"))
@@ -144,6 +216,19 @@ fn the_options_pages_are_the_references() {
     )
     .unwrap();
     let store = Store::open(native.path()).unwrap();
+    // (as the driver booted the reference: the similar-files search off)
+    let fact = |name: &str| recorded["facts"][name] == true;
+    let active = fact("maintain_similar_files_duplicate_pairs_during_active");
+    let idle = fact("maintain_similar_files_duplicate_pairs_during_idle");
+    store
+        .write(move |ctx| {
+            let mut similar: hydrus_store::similar::SimilarFilesSettings =
+                hydrus_store::settings::get(ctx.conn())?;
+            similar.during_active = active;
+            similar.during_idle = idle;
+            hydrus_store::settings::set(ctx.conn(), &similar)
+        })
+        .unwrap();
     let settings = store.read(Settings::load).unwrap();
 
     let theirs: Vec<(&str, &Json)> = recorded["pages"]
