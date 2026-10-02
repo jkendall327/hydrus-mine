@@ -112,7 +112,10 @@ as Qt's do; a press anywhere else closes them. What works so far:
   twenty for each download's item or search); the history of pages shown,
   latest first, to show one again; refresh; appending a saved session, and
   deleting one (asking first); the page chooser; a new search page on each
-  local file domain, the trash or a file repository; new URL, watcher and
+  local file domain, the trash or a file repository (searching the tag
+  service hydrus's options give search pages, as each new search page
+  does, and all the files stored here rather than all known files with
+  every tag service); new URL, watcher and
   gallery pages, a page of pages and a duplicates page; and clearing every
   watcher page's highlight;
 - database: whether file maintenance works in idle and normal time;

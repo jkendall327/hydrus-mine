@@ -387,6 +387,17 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             layout.margin = margin;
         }
         insert_setting(&mut input, &layout)?;
+        let mut search_defaults = crate::settings::SearchDefaults::default();
+        if let Some(key) = options.keys.get("default_tag_service_search_page") {
+            search_defaults.tag_service = ServiceKey::new(key.clone());
+        }
+        if let Some(location) = &options.default_local_location_context {
+            search_defaults.local_location = hydrus_core::search::context::LocationContext::new(
+                location.current.iter().cloned(),
+                location.deleted.iter().cloned(),
+            );
+        }
+        insert_setting(&mut input, &search_defaults)?;
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
         }
@@ -2180,6 +2191,48 @@ mod tests {
             ThumbnailLayout {
                 border: 0,
                 margin: 7
+            }
+        );
+    }
+
+    /// New search pages' tag service, and the default local file domain,
+    /// come across.
+    #[test]
+    fn the_search_defaults_convert() {
+        use crate::settings::SearchDefaults;
+        use hydrus_core::search::context::LocationContext;
+        use hydrus_core::service::builtin_keys;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<SearchDefaults>(input.settings["search_defaults"].clone())
+                .unwrap()
+        };
+        // the fixture's are hydrus's defaults
+        assert_eq!(decoded(source.path()), SearchDefaults::default());
+        // and the user's: "my tags", and "my files" with the trash
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_tag_service_search_page"], [0, "616c6c206b6e6f776e2074616773"]]"#,
+                    r#"[[0, "default_tag_service_search_page"], [0, "6c6f63616c2074616773"]]"#,
+                ),
+                (
+                    r#"[[0, "default_local_location_context"], [2, [103, 1, [["6c6f63616c2066696c6573"], []]]]]"#,
+                    r#"[[0, "default_local_location_context"], [2, [103, 1, [["6c6f63616c2066696c6573", "7472617368"], []]]]]"#,
+                ),
+            ],
+        );
+        let key = |k: &[u8]| ServiceKey::new(k.to_vec());
+        assert_eq!(
+            decoded(source.path()),
+            SearchDefaults {
+                tag_service: key(builtin_keys::MY_TAGS),
+                local_location: LocationContext::new(
+                    [key(builtin_keys::MY_FILES), key(builtin_keys::TRASH)],
+                    []
+                ),
             }
         );
     }

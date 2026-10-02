@@ -231,6 +231,33 @@ impl Setting for ThumbnailLayout {
     const KEY: &'static str = "thumbnail_layout";
 }
 
+/// New search pages' tag domain (`default_tag_service_search_page`), and
+/// the file domain a search moves to when it is set to every tag service
+/// while searching all known files (`default_local_location_context`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct SearchDefaults {
+    pub tag_service: hydrus_core::ServiceKey,
+    pub local_location: hydrus_core::search::context::LocationContext,
+}
+
+impl Default for SearchDefaults {
+    /// All known tags, and "my files".
+    fn default() -> Self {
+        use hydrus_core::service::builtin_keys;
+        Self {
+            tag_service: hydrus_core::ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()),
+            local_location: hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            ),
+        }
+    }
+}
+
+impl Setting for SearchDefaults {
+    const KEY: &'static str = "search_defaults";
+}
+
 /// Export folders.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
 pub struct ExportFolders(pub Vec<hydrus_parse::folders::ExportFolder>);

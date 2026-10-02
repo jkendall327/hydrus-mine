@@ -734,7 +734,7 @@ impl Pages {
             .store
             .read(|c| hydrus_store::master::hashes(c, &files))
             .unwrap_or_default();
-        let mut page = new_search_page(&self.store);
+        let mut page = new_search_page_on(&self.store, location);
         let PageContent::Search {
             search,
             synchronised,
@@ -751,7 +751,6 @@ impl Pages {
         if let Some(collect) = collect {
             *page_collect = Some(collect.clone());
         }
-        search.location = location;
         search.predicates = vec![hydrus_search::Predicate::System(
             hydrus_core::search::predicate::SystemPredicate::Hash {
                 hashes: hydrus_core::search::predicate::FileHashes::Sha256(
@@ -783,7 +782,7 @@ impl Pages {
         predicates: Vec<hydrus_search::Predicate>,
         name: &str,
     ) {
-        let mut page = new_search_page(&self.store);
+        let mut page = new_search_page_on(&self.store, location);
         name.clone_into(&mut page.name);
         let PageContent::Search {
             search,
@@ -794,7 +793,6 @@ impl Pages {
         else {
             unreachable!("a search page");
         };
-        search.location = location;
         search.predicates = predicates;
         let mut opened = SearchPage::restored(
             self.store.clone(),
@@ -844,13 +842,10 @@ impl Pages {
     /// notebook (as the reference's page chooser does).
     pub fn new_page(&mut self, chosen: &NewPage) -> Result<(), String> {
         let page = match chosen {
-            NewPage::Search { domain, .. } => {
-                let mut page = new_search_page(&self.store);
-                if let PageContent::Search { search, .. } = &mut page.content {
-                    search.location = hydrus_search::LocationContext::single(domain.clone());
-                }
-                page
-            }
+            NewPage::Search { domain, .. } => new_search_page_on(
+                &self.store,
+                hydrus_search::LocationContext::single(domain.clone()),
+            ),
             NewPage::Duplicates => Page {
                 key: PageKey::random(),
                 name: "duplicates".into(),
@@ -1472,21 +1467,54 @@ fn new_duplicates_page(
     })
 }
 
-/// A new search page, as the reference makes one: "files", searching "my
-/// files" and all known tags.
-/// A new search page, searching "my files", sorting by default and
-/// collecting by the options' default collect (as `CreatePageManager`).
+/// A new search page, "files", searching "my files" (see
+/// [`new_search_page_on`]).
 fn new_search_page(store: &Store) -> Page {
+    new_search_page_on(
+        store,
+        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
+        )),
+    )
+}
+
+/// A new search page, "files", as the reference's `NewPageQuery` makes
+/// one: searching `location` and the options' default tag service for
+/// search pages (every tag service, if it is gone), sorting by default and
+/// collecting by the options' default collect (as `CreatePageManager`); a
+/// search of every tag service doesn't search all known files, but all the
+/// files stored here.
+fn new_search_page_on(store: &Store, location: hydrus_search::LocationContext) -> Page {
+    use hydrus_core::service::builtin_keys;
     let sorts: hydrus_core::pages::SortSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
+    let defaults: hydrus_store::settings::SearchDefaults =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    let tag_service = if store
+        .snapshot()
+        .services
+        .by_key(&defaults.tag_service)
+        .is_ok()
+    {
+        defaults.tag_service
+    } else {
+        hydrus_core::ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec())
+    };
+    let tags = hydrus_search::TagContext::new(tag_service, true, true);
+    let location = if location.is_all_known_files() && tags.is_all_known_tags() {
+        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+            builtin_keys::HYDRUS_LOCAL_FILE_STORAGE.to_vec(),
+        ))
+    } else {
+        location
+    };
     Page {
         key: PageKey::random(),
         name: "files".into(),
         content: PageContent::Search {
             search: FileSearchContext {
-                location: hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                    hydrus_core::service::builtin_keys::MY_FILES.to_vec(),
-                )),
+                location,
+                tags,
                 ..FileSearchContext::default()
             },
             synchronised: true,
