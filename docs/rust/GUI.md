@@ -74,6 +74,38 @@ pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
 
+Above the tabs is the reference's menu bar (`src/main_menu.rs`, checked
+against the bar the running reference shows on the fixtures, recorded by
+`oracle/record_main_menu.py`): file, undo, pages, database, network,
+services, tags, pending (with repositories) and help, every entry hydrus
+has in its place, enabled and ticked as hydrus shows it. What hydrus-rs
+can't do yet is greyed out. A menu opens on a click (or alt and the
+letter hydrus gives its title: alt+f for file), submenus open as the
+pointer reaches them, and the arrows, enter and escape move through them
+as Qt's do; a press anywhere else closes them. What works so far:
+
+- file: pausing import and export folders, checking an import folder or
+  running an export folder now, opening the installation and database
+  directories, and exit;
+- undo: the pages closed in the last hour, latest first, to reopen any of
+  them, or forget them all (asking first); with none, the menu is greyed
+  out, as hydrus's is;
+- pages: how many pages are open and the session's weight (files, and
+  twenty for each download's item or search); the history of pages shown,
+  latest first, to show one again; refresh; appending a saved session, and
+  deleting one (asking first); the page chooser; a new search page on each
+  local file domain, the trash or a file repository; new URL, watcher and
+  gallery pages, a page of pages and a duplicates page; and clearing every
+  watcher page's highlight;
+- database: whether file maintenance works in idle and normal time;
+- network: every pause switch hydrus has (all new network traffic,
+  subscriptions, all paged importer work, file importing, gallery
+  searching, watcher checking), which the daemon obeys;
+- pending: each repository's content to upload, and forgetting it (asking
+  first);
+- help: the help, links and changelog in the browser, and advanced mode
+  (which adds hydrus's advanced entries).
+
 A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
 hydrus words it ("2 successful (all already in db)"), its progress ("2/2")

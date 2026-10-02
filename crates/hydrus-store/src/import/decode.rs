@@ -112,6 +112,12 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &pauses)?;
+    if let Some(&advanced) = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("advanced_mode"))
+    {
+        insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
+    }
     let mut delete_lock = crate::delete_lock::DeleteLock::default();
     if let Some(options) = &options {
         for (key, field) in delete_lock.by_option_name() {

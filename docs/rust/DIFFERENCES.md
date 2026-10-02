@@ -208,6 +208,20 @@ search.
   and margin are hydrus's defaults (1 and 2 pixels); yours aren't carried
   over yet.
 
+- **The menu bar is drawn by hydrus-rs** (Slint's own can't be built from
+  a list of entries), so it is the same on every system: macOS's isn't at
+  the top of the screen, and menus stay inside the window. Hydrus's entries
+  that hydrus-rs can't do yet are greyed out rather than left out, and a
+  greyed tick box shows unticked whatever hydrus had. Left out: help >
+  debug (hydrus's own debugging tools) and "about Qt"; the services menu's
+  "administrate", for repository admins; the database menu's backup
+  entries as hydrus has them for a database across several locations;
+  sessions > "append backup" (hydrus-rs keeps no session backups); and the
+  undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
+  Hydrus's menu entries describe themselves in the status bar as the
+  pointer passes; ours don't yet, and the history's latest page isn't in
+  bold.
+
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
 - **A closed URL downloader page's downloads wait** until it is reopened

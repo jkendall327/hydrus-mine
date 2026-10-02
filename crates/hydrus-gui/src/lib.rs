@@ -34,9 +34,11 @@ mod gallery;
 mod grid;
 pub mod headless;
 pub mod info_lines;
+pub mod main_menu;
 pub mod manage_tags;
 pub(crate) mod manage_tags_window;
 pub mod media_actions;
+mod menu_bar;
 pub mod mpv;
 mod page;
 pub mod page_chooser;
@@ -152,6 +154,8 @@ pub struct Bound {
     pub sync: Rc<dyn Fn()>,
     /// Shows thumbnails as they are decoded (held to keep it running).
     _thumbnails: Rc<slint::Timer>,
+    /// Shows the menu bar's titles as they change (held likewise).
+    _menu_titles: Rc<slint::Timer>,
 }
 
 impl std::fmt::Debug for Bound {
@@ -246,18 +250,27 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     };
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why
+    // (the menu bar's titles, shown again after a change)
+    let after_change: AfterChange = Rc::default();
+    pages.borrow_mut().note_shown();
     let change_pages = {
         let pages = pages.clone();
         let current = current.clone();
         let rows = rows.clone();
         let weak = window.as_weak();
         let shown = shown.clone();
+        let after_change = after_change.clone();
         move |change: &dyn Fn(&mut Pages) -> Result<(), String>| {
             let (result, opened) = {
                 let mut pages = pages.borrow_mut();
                 let result = change(&mut pages);
+                pages.note_shown();
                 (result, pages.current())
             };
+            let after = after_change.borrow().clone();
+            if let Some(after) = after {
+                after();
+            }
             *current.borrow_mut() = opened.clone();
             rows.set_page(opened);
             if let Some(window) = weak.upgrade() {
@@ -768,6 +781,29 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // the menu bar, its titles shown again as what they say changes
+    let menu_titles_shown = menu_bar::bind(
+        window,
+        menu_bar::Hooks {
+            pages: pages.clone(),
+            change_pages: Rc::new(change_pages.clone()),
+            ask: {
+                let ask = ask.clone();
+                Rc::new(move |question, then| ask(Asked::Then(question, then)))
+            },
+            reshow: {
+                let shown = shown.clone();
+                Rc::new(move || shown(true))
+            },
+        },
+    );
+    *after_change.borrow_mut() = Some(menu_titles_shown.clone());
+    let menu_titles = Rc::new(slint::Timer::default());
+    menu_titles.start(
+        slint::TimerMode::Repeated,
+        Duration::from_secs(2),
+        move || menu_titles_shown(),
+    );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
     window.on_pause_play_files({
         let page = page.clone();
@@ -1656,6 +1692,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         filter,
         sync,
         _thumbnails: thumbnails,
+        _menu_titles: menu_titles,
     }
 }
 
@@ -1672,6 +1709,9 @@ struct MenuTarget<'a> {
 
 /// Makes changes to the pages, saying why one can't be made.
 type ChangePages = Rc<dyn Fn(&dyn Fn(&mut Pages) -> Result<(), String>)>;
+
+/// What runs after the pages change, once there is something to.
+type AfterChange = Rc<RefCell<Option<Rc<dyn Fn()>>>>;
 
 /// The viewer's menu shown: each entry's action and label by id, the
 /// file's URLs it was built from, and the file (which its entries act on,
@@ -2174,6 +2214,8 @@ enum Asked {
     ClosePage(usize, usize, String),
     /// Removing a gallery page's search, asking this.
     RemoveQuery(i64, String),
+    /// Asking this, then doing that (the menu bar's questions).
+    Then(String, Rc<dyn Fn()>),
 }
 
 impl Asked {
@@ -2193,7 +2235,9 @@ impl Asked {
             Self::Inbox(files) => format!("Send {} files to inbox?", count(files)),
             Self::Delete(files, deletion, _) => deletion.question(files.len()),
             Self::LockSearch(question) => (*question).to_owned(),
-            Self::ClosePage(_, _, question) | Self::RemoveQuery(_, question) => question.clone(),
+            Self::ClosePage(_, _, question)
+            | Self::RemoveQuery(_, question)
+            | Self::Then(question, _) => question.clone(),
             Self::OpenUrls(urls) => {
                 let mut question = format!("Open the {} URLs in your web browser?", urls.len());
                 if urls.len() > 10 {
@@ -2224,6 +2268,10 @@ impl Asked {
             }
             // (the page locks itself; the pages close it)
             Self::LockSearch(_) | Self::ClosePage(..) | Self::RemoveQuery(..) => Ok(()),
+            Self::Then(_, then) => {
+                then();
+                Ok(())
+            }
             Self::OpenUrls(urls) => {
                 for url in urls {
                     launch(url);

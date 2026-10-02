@@ -140,6 +140,15 @@ impl Pauses {
     }
 }
 
+/// Advanced mode (`advanced_mode`): the reference's menus and dialogs
+/// offer more with it on.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct AdvancedMode(pub bool);
+
+impl Setting for AdvancedMode {
+    const KEY: &'static str = "advanced_mode";
+}
+
 impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }

@@ -1,8 +1,8 @@
 //! The "new page" chooser (the reference's `DialogPageChooser`): a 3×3 grid
 //! of buttons, laid out as a number pad, through a few menus (file search,
 //! download, special) to the kind of page to open. With saved sessions to
-//! load, a "sessions" menu offers them too (the reference's menu bar's
-//! "pages > sessions > append session", which hydrus-gui has no bar for).
+//! load, a "sessions" menu offers them too (as the menu bar's "pages >
+//! sessions > append" does).
 
 use hydrus_core::service::builtin_keys;
 use hydrus_core::{ServiceKey, ServiceType};
@@ -94,6 +94,8 @@ impl PageChooser {
             .filter(|s| s.key != trash)
             .map(|s| (s.key.clone(), s.name.clone()))
             .collect();
+        // (by name, as the reference's services manager sorts them)
+        domains.sort_by_key(|(_, name)| name.to_lowercase());
         for key in [
             builtin_keys::COMBINED_LOCAL_FILE_DOMAINS,
             builtin_keys::TRASH,
@@ -231,5 +233,22 @@ mod tests {
         let mut chooser = PageChooser::new(&store);
         chooser.press(6);
         assert_eq!(chooser.press(4), Some(NewPage::Duplicates));
+    }
+
+    #[test]
+    fn file_domains_are_offered_by_name() {
+        // (the fixture's "art" was made after "my files")
+        let legacy = hydrus_testkit::legacy_fixture("basic");
+        let native = tempfile::tempdir().unwrap();
+        hydrus_store::import::import_legacy(
+            legacy.path(),
+            &native.path().join(hydrus_store::store::DB_FILE_NAME),
+        )
+        .unwrap();
+        let store = Store::open(native.path()).unwrap();
+        let mut chooser = PageChooser::new(&store);
+        chooser.press(8);
+        assert_eq!(chooser.labels()[7], "art");
+        assert_eq!(chooser.labels()[3], "my files");
     }
 }

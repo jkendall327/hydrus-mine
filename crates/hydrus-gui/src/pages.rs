@@ -72,6 +72,9 @@ pub struct Pages {
     open: HashMap<PageKey, Rc<RefCell<SearchPage>>>,
     /// Pages closed in the last hour, oldest first, to reopen.
     closed: Vec<Closed>,
+    /// The pages shown, the latest last, with their names for menus as
+    /// they were then (the reference's `PagesHistory`).
+    history: Vec<(PageKey, String)>,
     /// The page each notebook showed last, to show again (as a tab widget
     /// keeps its tab): by notebook.
     remembered: HashMap<PageKey, usize>,
@@ -151,6 +154,7 @@ impl Pages {
             path: Vec::new(),
             open: HashMap::new(),
             closed: Vec::new(),
+            history: Vec::new(),
             new_page_depth: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
@@ -198,6 +202,7 @@ impl Pages {
             path: vec![0],
             open: HashMap::new(),
             closed: Vec::new(),
+            history: Vec::new(),
             new_page_depth: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
@@ -258,19 +263,34 @@ impl Pages {
     /// A page's number of files and import progress, a notebook's pages'
     /// together (`GetNumFileSummary`): progress that is done counts as none.
     fn file_summary(&self, page: &Page) -> (usize, (usize, usize)) {
+        self.file_summary_with(page, &[])
+    }
+
+    /// As [`Pages::file_summary`], the pages opened being those open or
+    /// among `also` (a closed page's).
+    fn file_summary_with(
+        &self,
+        page: &Page,
+        also: &[(PageKey, Rc<RefCell<SearchPage>>)],
+    ) -> (usize, (usize, usize)) {
         if let PageContent::Pages(children) = &page.content {
             return children
                 .iter()
-                .map(|child| self.file_summary(child))
+                .map(|child| self.file_summary_with(child, also))
                 .fold((0, (0, 0)), |(f, (v, r)), (cf, (cv, cr))| {
                     (f + cf, (v + cv, r + cr))
                 });
         }
-        let files = match self.open.get(&page.key) {
+        let opened = self.open.get(&page.key).or_else(|| {
+            also.iter()
+                .find(|(key, _)| *key == page.key)
+                .map(|(_, opened)| opened)
+        });
+        let files = match opened {
             Some(opened) => opened.borrow().files().len(),
             None => self.kept_counts.get(&page.key).copied().unwrap_or(0),
         };
-        let progress = match self.open.get(&page.key) {
+        let progress = match opened {
             Some(opened) => opened.borrow().import_progress(),
             None => (0, 0),
         };
@@ -1157,6 +1177,17 @@ impl Pages {
     }
 
     pub fn unclose(&mut self) -> bool {
+        self.forget_old_closed();
+        match self.closed.len().checked_sub(1) {
+            Some(last) => self.unclose_at(last),
+            None => false,
+        }
+    }
+
+    /// Reopen the `index`th page closed in the last hour (oldest first),
+    /// as [`Pages::unclose`] does the latest (the reference's undo menu's
+    /// closed pages). Whether there was one.
+    pub fn unclose_at(&mut self, index: usize) -> bool {
         fn path_to(pages: &[Page], key: PageKey) -> Option<Vec<usize>> {
             for (i, page) in pages.iter().enumerate() {
                 if page.key == key {
@@ -1172,9 +1203,10 @@ impl Pages {
             None
         }
         self.forget_old_closed();
-        let Some(closed) = self.closed.pop() else {
+        if index >= self.closed.len() {
             return false;
-        };
+        }
+        let closed = self.closed.remove(index);
         // (its downloads run again)
         let queues = closable_queues(&closed.page);
         self.close_queues(&queues, false);
@@ -1201,6 +1233,142 @@ impl Pages {
         self.path = notebook.unwrap_or_default();
         self.select(depth, index);
         true
+    }
+}
+
+/// The menu bar's facts about the pages.
+impl Pages {
+    /// The pages open, notebooks and all (`GetNumPagesHeld`).
+    pub fn page_count(&self) -> usize {
+        fn count(pages: &[Page]) -> usize {
+            pages
+                .iter()
+                .map(|page| match &page.content {
+                    PageContent::Pages(children) => 1 + count(children),
+                    _ => 1,
+                })
+                .sum()
+        }
+        count(&self.session.pages)
+    }
+
+    /// The session's weight, as the reference weighs it
+    /// (`ConvertNumHashesAndSeedsToWeight`): each page's files, and twenty
+    /// for each item and search of its downloads.
+    pub fn session_weight(&self) -> u64 {
+        fn walk(me: &Pages, pages: &[Page], files: &mut u64, queues: &mut Vec<i64>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => walk(me, children, files, queues),
+                    content => {
+                        *files += me.file_summary(page).0 as u64;
+                        if let PageContent::Downloader { queues: q, .. } = content {
+                            queues.extend(q);
+                        }
+                    }
+                }
+            }
+        }
+        let mut pages = self.session.pages.clone();
+        refresh_contents(&mut pages, &self.open);
+        let (mut files, mut queues) = (0, Vec::new());
+        walk(self, &pages, &mut files, &mut queues);
+        let seeds: u64 = self
+            .store
+            .read(|conn| {
+                let mut seeds = 0;
+                for queue in &queues {
+                    let file_seeds: usize = hydrus_store::queues::file_seed_counts(conn, *queue)?
+                        .values()
+                        .sum();
+                    let gallery_seeds: usize =
+                        hydrus_store::queues::gallery_seed_counts(conn, *queue)?
+                            .values()
+                            .sum();
+                    seeds += (file_seeds + gallery_seeds) as u64;
+                }
+                Ok(seeds)
+            })
+            .unwrap_or(0);
+        files + 20 * seeds
+    }
+
+    /// Note the page shown in the history (the reference's
+    /// `NotifyPageJustChanged`: a notebook shown empty isn't one), and
+    /// forget pages no longer open.
+    pub fn note_shown(&mut self) {
+        fn keys(pages: &[Page], out: &mut std::collections::HashSet<PageKey>) {
+            for page in pages {
+                out.insert(page.key);
+                if let PageContent::Pages(children) = &page.content {
+                    keys(children, out);
+                }
+            }
+        }
+        let mut open = std::collections::HashSet::new();
+        keys(&self.session.pages, &mut open);
+        self.history.retain(|(key, _)| open.contains(key));
+        let shown = self.shown();
+        if matches!(shown.content, PageContent::Pages(_)) {
+            return;
+        }
+        let (files, progress) = self.file_summary(shown);
+        let entry = (
+            shown.key,
+            hydrus_core::pages::name_for_menu(&shown.name, files, progress, false),
+        );
+        self.history.retain(|(key, _)| *key != entry.0);
+        self.history.push(entry);
+    }
+
+    /// The pages shown, the latest last.
+    pub fn history(&self) -> &[(PageKey, String)] {
+        &self.history
+    }
+
+    pub fn clear_history(&mut self) {
+        self.history.clear();
+    }
+
+    /// The pages closed in the last hour, oldest first: their names for
+    /// menus.
+    pub fn closed_names(&mut self) -> Vec<String> {
+        self.forget_old_closed();
+        self.closed
+            .iter()
+            .map(|closed| {
+                let (files, progress) = self.file_summary_with(&closed.page, &closed.open);
+                hydrus_core::pages::name_for_menu(&closed.page.name, files, progress, true)
+            })
+            .collect()
+    }
+
+    /// Clear every watcher page's highlighted watcher (the reference's
+    /// "clear_multiwatcher_highlights").
+    pub fn clear_watcher_highlights(&mut self) {
+        fn clear(pages: &mut [Page]) {
+            for page in pages {
+                match &mut page.content {
+                    PageContent::Pages(children) => clear(children),
+                    PageContent::Downloader {
+                        kind: DownloaderKind::Watchers,
+                        page: Some(state),
+                        ..
+                    } => state.highlighted = None,
+                    _ => {}
+                }
+            }
+        }
+        clear(&mut self.session.pages);
+        for opened in self.open.values() {
+            let highlighted = opened
+                .borrow()
+                .watchers()
+                .is_some_and(|w| w.state.highlighted.is_some());
+            if highlighted {
+                opened.borrow_mut().highlight_query(None);
+            }
+        }
     }
 }
 

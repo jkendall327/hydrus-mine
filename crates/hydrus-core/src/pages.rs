@@ -109,6 +109,42 @@ pub enum TabKind {
     Notebook,
 }
 
+/// A page's name in a menu (the reference's `GetNameForMenu`): its name,
+/// then its number of files and import progress if it has them ("url
+/// import - 5 files - 6/10"); elided in the middle to 32 characters if
+/// `elide` (the closed pages' menu does, the page history doesn't).
+pub fn name_for_menu(name: &str, files: usize, progress: (usize, usize), elide: bool) -> String {
+    const MAX: usize = 32;
+    let mut out = name.to_owned();
+    if files > 0 {
+        out.push_str(&format!(
+            " - {} files",
+            crate::numbers::human_int(files as u64)
+        ));
+    }
+    let (value, range) = progress;
+    if value != range {
+        out.push_str(&format!(
+            " - {}",
+            crate::numbers::value_range(value as u64, range as u64)
+        ));
+    }
+    if !elide {
+        return out;
+    }
+    // (`ElideText`, centred, to 32: the end's last eighth kept)
+    let chars: Vec<char> = out.chars().collect();
+    if chars.len() <= MAX {
+        return out;
+    }
+    let end = (MAX / 8).max(2);
+    chars[..MAX - (1 + end)]
+        .iter()
+        .chain(['\u{2026}'].iter())
+        .chain(chars[chars.len() - end..].iter())
+        .collect()
+}
+
 /// A tab's name, as the reference writes it (`_RefreshPageName`): the
 /// page's name on one line, elided to the longest the settings allow, then
 /// its number of files and import progress as they say ("url import (5 -
@@ -532,6 +568,25 @@ impl<'de> serde::Deserialize<'de> for PageKey {
 
 #[cfg(test)]
 mod tests {
+    /// As the reference's `GetNameForMenu` and `ElideText` write them.
+    #[test]
+    fn names_for_menus_have_their_counts_and_elide_in_the_middle() {
+        assert_eq!(name_for_menu("files", 0, (0, 0), true), "files");
+        assert_eq!(
+            name_for_menu("url import", 1234, (6, 10), false),
+            "url import - 1,234 files - 6/10"
+        );
+        assert_eq!(name_for_menu("done", 3, (10, 10), true), "done - 3 files");
+        let long = "abcdefghijklmnopqrstuvwxyz0123456789ABCD";
+        assert_eq!(
+            name_for_menu(long, 0, (0, 0), true),
+            "abcdefghijklmnopqrstuvwxyz0\u{2026}ABCD"
+        );
+        assert_eq!(name_for_menu(long, 0, (0, 0), false), long);
+        // (32 characters is short enough)
+        assert_eq!(name_for_menu(&long[..32], 0, (0, 0), true), &long[..32]);
+    }
+
     use super::*;
 
     #[test]

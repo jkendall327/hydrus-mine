@@ -346,11 +346,11 @@ fn pages_open_and_close_as_the_reference_does() {
     };
     ui.invoke_tab_chosen(0, 0);
     // ctrl+t opens the page chooser; enter twice is "file search", then the
-    // first file domain, "my files"
+    // first file domain by name, "art"
     ui.invoke_new_page();
     assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "file search");
     ui.invoke_chooser_enter();
-    assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "my files");
+    assert_eq!(ui.get_chooser_labels().row_data(7).unwrap(), "art");
     ui.invoke_chooser_enter();
     assert_eq!(ui.get_chooser_labels().row_count(), 0, "the chooser closed");
     assert_eq!(ui.get_tab_rows().row_data(1).unwrap().selected, 1);
@@ -1404,8 +1404,9 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
             ui.window().dispatch_event(event);
         }
     };
-    press(600.0, 14.0);
-    press(600.0, 14.0);
+    // (under the menu bar)
+    press(600.0, 22.0 + 14.0);
+    press(600.0, 22.0 + 14.0);
     assert!(chooser_open(), "the top row's empty space double-clicked");
     ui.invoke_chooser_cancel();
     ui.invoke_new_page();
