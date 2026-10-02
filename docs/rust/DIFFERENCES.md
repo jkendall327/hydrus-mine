@@ -230,6 +230,13 @@ search.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
   bold.
+- **The options window has only the options hydrus-rs honours** (so far
+  those on ten pages; the others, and pages with none, aren't there). It
+  opens on its first page, rather than "gui" or the page last open; it has
+  no search box; options' tooltips aren't shown; and a box's title is a
+  heading over its options rather than a frame around them. Options the
+  daemon reads only as it starts (connection, downloading, maintenance)
+  aren't in it yet.
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.

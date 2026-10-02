@@ -40,6 +40,8 @@ pub(crate) mod manage_tags_window;
 pub mod media_actions;
 mod menu_bar;
 pub mod mpv;
+pub mod options;
+mod options_window;
 mod page;
 pub mod page_chooser;
 mod pages;
@@ -145,6 +147,8 @@ pub struct Bound {
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// The options window while it is open.
+    pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -786,6 +790,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     // the menu bar, its titles shown again as what they say changes
+    let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -798,6 +803,31 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             reshow: {
                 let shown = shown.clone();
                 Rc::new(move || shown(true))
+            },
+            // file > options; once applied, what the options change is
+            // shown again
+            options: {
+                let pages = pages.clone();
+                let slot = options.clone();
+                let change_pages = change_pages.clone();
+                Rc::new(move || {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let store = pages.borrow().store().clone();
+                    let applied: Rc<dyn Fn()> = Rc::new({
+                        let pages = pages.clone();
+                        let change_pages = change_pages.clone();
+                        move || {
+                            pages.borrow_mut().reload_settings();
+                            change_pages(&|_| Ok(()));
+                        }
+                    });
+                    match options_window::open(&store, &slot, applied) {
+                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
             },
         },
     );
@@ -1728,6 +1758,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         rows,
         viewer,
         manage_tags,
+        options,
         archive_delete,
         filter,
         sync,

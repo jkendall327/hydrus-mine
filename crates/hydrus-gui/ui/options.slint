@@ -1,0 +1,159 @@
+// The options window (file > options, `src/options.rs`), as the
+// reference's "manage options" dialog: its pages listed on the left, the
+// page chosen on the right, each option its label then its control, in
+// the page's titled boxes. Changes wait for "apply"; "cancel" (or escape)
+// forgets them.
+
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct OptionRow {
+    // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
+    // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text
+    kind: int,
+    label: string,
+    // how many boxes it is in
+    depth: int,
+    checked: bool,
+    number: int,
+    minimum: int,
+    maximum: int,
+    is-none: bool,
+    none-phrase: string,
+    unit: string,
+    text: string,
+    items: [string],
+    index: int,
+}
+
+export component OptionsWindow inherits Window {
+    title: "manage options";
+    preferred-width: 900px;
+    preferred-height: 640px;
+    background: Theme.window;
+
+    in property <[StandardListViewItem]> pages;
+    in-out property <int> page;
+    in property <[OptionRow]> rows;
+
+    callback page-chosen(int);
+    // (each by the option's place among the page's rows)
+    callback check-toggled(int, bool);
+    callback number-edited(int, int);
+    callback none-toggled(int, bool);
+    callback text-edited(int, string);
+    callback choice-chosen(int, int);
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            HorizontalLayout {
+                spacing: 8px;
+                vertical-stretch: 1;
+                // (as the reference's 28 characters)
+                StandardListView {
+                    width: 200px;
+                    model: root.pages;
+                    current-item <=> root.page;
+                    current-item-changed(i) => { root.page-chosen(i); }
+                }
+                ScrollView {
+                    horizontal-stretch: 1;
+                    VerticalLayout {
+                        padding: 4px;
+                        spacing: 4px;
+                        alignment: start;
+                        for row[i] in root.rows: HorizontalLayout {
+                            padding-left: row.depth * 16px;
+                            spacing: 8px;
+                            min-height: 26px;
+                            if row.kind == 0: Text {
+                                text: row.label;
+                                font-weight: 700;
+                                vertical-alignment: center;
+                                horizontal-alignment: center;
+                                horizontal-stretch: 1;
+                            }
+                            if row.kind != 0: Text {
+                                text: row.label;
+                                vertical-alignment: center;
+                                wrap: word-wrap;
+                                horizontal-stretch: 1;
+                            }
+                            if row.kind == 1: HorizontalLayout {
+                                width: 260px;
+                                CheckBox {
+                                    checked: row.checked;
+                                    toggled => { root.check-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 2: HorizontalLayout {
+                                width: 260px;
+                                SpinBox {
+                                    minimum: row.minimum;
+                                    maximum: row.maximum;
+                                    value: row.number;
+                                    edited(value) => { root.number-edited(i, value); }
+                                }
+                            }
+                            if row.kind == 3: HorizontalLayout {
+                                width: 260px;
+                                spacing: 4px;
+                                SpinBox {
+                                    minimum: row.minimum;
+                                    maximum: row.maximum;
+                                    value: row.number;
+                                    enabled: !none-box.checked;
+                                    edited(value) => { root.number-edited(i, value); }
+                                }
+                                if row.unit != "": Text {
+                                    text: row.unit;
+                                    vertical-alignment: center;
+                                }
+                                none-box := CheckBox {
+                                    text: row.none-phrase;
+                                    checked: row.is-none;
+                                    toggled => { root.none-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 4 || row.kind == 6: LineEdit {
+                                width: 260px;
+                                text: row.text;
+                                edited(text) => { root.text-edited(i, text); }
+                            }
+                            if row.kind == 5: ComboBox {
+                                width: 260px;
+                                model: row.items;
+                                current-index: row.index;
+                                selected => { root.choice-chosen(i, self.current-index); }
+                            }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

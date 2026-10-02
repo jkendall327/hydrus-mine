@@ -151,6 +151,8 @@ pub enum Command {
     ForgetPending(ServiceKey),
     OpenUrl(&'static str),
     AdvancedMode,
+    /// Open the options window.
+    Options,
 }
 
 /// A repository with content to upload (the pending menu).
@@ -431,7 +433,7 @@ fn file_menu(facts: &Facts) -> Entry {
                 ],
             ),
             SEP,
-            todo(dots("options")),
+            item(dots("options"), Command::Options),
             SEP,
             todo("restart"),
             todo("exit/force maintenance"),

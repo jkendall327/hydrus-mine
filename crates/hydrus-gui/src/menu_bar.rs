@@ -25,6 +25,8 @@ pub(crate) struct Hooks {
     pub ask: Ask,
     /// Show the page shown again, its files changed.
     pub reshow: Rc<dyn Fn()>,
+    /// Open the options window.
+    pub options: Rc<dyn Fn()>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -447,5 +449,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::AdvancedMode => {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
+        Command::Options => (hooks.options)(),
     }
 }

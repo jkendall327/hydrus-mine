@@ -1247,6 +1247,23 @@ impl Pages {
         }
     }
 
+    /// Read the settings the pages keep again (the options were changed).
+    pub fn reload_settings(&mut self) {
+        let read = self.store.read(|conn| {
+            Ok((
+                hydrus_store::settings::get(conn)?,
+                hydrus_store::settings::get(conn)?,
+            ))
+        });
+        match read {
+            Ok((naming, downloader_options)) => {
+                self.naming = naming;
+                self.downloader_options = downloader_options;
+            }
+            Err(e) => eprintln!("could not read the pages' settings: {e}"),
+        }
+    }
+
     /// The pages open, notebooks and all (`GetNumPagesHeld`).
     pub fn page_count(&self) -> usize {
         fn count(pages: &[Page]) -> usize {

@@ -104,7 +104,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
 
 - file: pausing import and export folders, checking an import folder or
   running an export folder now, opening the installation and database
-  directories, and exit;
+  directories, the options, and exit;
 - undo: the pages closed in the last hour, latest first, to reopen any of
   them, or forget them all (asking first); with none, the menu is greyed
   out, as hydrus's is;
@@ -123,6 +123,21 @@ as Qt's do; a press anywhere else closes them. What works so far:
   first);
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
+
+File > options opens the options window (`src/options.rs`), as the
+reference's "manage options" dialog: its pages listed on the left as
+hydrus lists them (by name, "advanced" last), the page chosen on the
+right, each option its label and then its control, in the page's titled
+boxes, as the reference's dialog lays them out (checked against the
+running reference's dialog, recorded by `oracle/record_options_dialog.py`).
+It has the options hydrus-rs honours, so far on ten pages: audio,
+exporting, files and trash, gui pages, media viewer (slideshows), media
+viewer hovers (the top hover's file summary), ratings, tag presentation,
+thumbnails and advanced. Changes wait for "apply", which writes them
+together (and shows again what they change, such as the tab names);
+"cancel" or escape forgets them. A value that can't be had (slideshow
+durations that aren't numbers) is left as it was and said in a popup, as
+the reference says it.
 
 A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
