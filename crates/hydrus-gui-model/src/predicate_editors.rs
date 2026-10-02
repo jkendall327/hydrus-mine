@@ -20,6 +20,7 @@ use hydrus_core::search::predicate::{
 use hydrus_core::search::recent::RecentPredicates;
 use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
+use hydrus_search::{TextContext, predicate_text};
 
 mod special;
 pub use special::Pressed;
@@ -1090,6 +1091,18 @@ impl Page {
             .filter(|p| !self.buttons.iter().any(|b| b.predicates.contains(p)))
             .collect()
     }
+}
+
+/// A ready-made button's label: its own, or its predicates' texts.
+pub fn button_label(button: &Button, text: &TextContext) -> String {
+    button.label.clone().unwrap_or_else(|| {
+        button
+            .predicates
+            .iter()
+            .map(|p| predicate_text(&Predicate::System(p.clone()), text))
+            .collect::<Vec<_>>()
+            .join(", ")
+    })
 }
 
 /// The types of recent predicates `blank`'s editor shows on its page

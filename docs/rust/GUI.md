@@ -92,7 +92,7 @@ second, and whether subscriptions or all new network traffic are paused
 ("12.3 MB (45 KB/s), subs paused"); the daemon says what it has read four
 times a second.
 
-Above the tabs is the reference's menu bar (`src/main_menu.rs`, checked
+Above the tabs is the reference's menu bar (`hydrus-gui-model/src/main_menu.rs`, checked
 against the bar the running reference shows on the fixtures, recorded by
 `oracle/record_main_menu.py`): file, undo, pages, database, network,
 services, tags, pending (with repositories) and help, every entry hydrus
@@ -127,7 +127,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
 
-File > options opens the options window (`src/options.rs`), as the
+File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
@@ -309,7 +309,7 @@ many files each finds in the page's file domains, counted as the reference's
 editor ("system:dimensions", "system:time", "system:urls"...; searching all
 known files, only those needing no file's metadata). Choosing one opens the
 reference's "input predicate" dialog (`FleshOutPredicatePanel`;
-`src/predicate_editors.rs` and `src/predicate_editor_window.rs`, checked
+`hydrus-gui-model/src/predicate_editors.rs` and `src/predicate_editor_window.rs`, checked
 against the reference's own editors, `oracle/record_system_predicate_editors.py`):
 a note over some, tabs for an editor of several pages ("system:time"'s
 import, modified, last viewed and archived), the page's ready-made buttons
@@ -360,7 +360,7 @@ it is from the search box, a tag double-clicked in the tag list, an
 editor, and the favourite search dialog. Predicates are listed as the
 reference writes them (`system:width>1920` shows as `system:width > 1,920`),
 and double-clicking one removes it. Under the search box, as the
-reference's autocomplete has them (`src/domains.rs`, checked against the
+reference's autocomplete has them (`hydrus-gui-model/src/domains.rs`, checked against the
 reference's buttons and menus, `oracle/record_search_domains.py`):
 "include current tags" and "include pending tags", each switching to
 exclude them from the search; the pause/play button ("searching
@@ -417,7 +417,7 @@ unlocks it, in place of the search box and predicates; it doesn't search
 on refresh, and files removed from it leave the hash, unless its cog
 says otherwise. Locks come across from hydrus's sessions and are kept in
 ours. The matching files' thumbnails fill the grid, newest import
-first. The status bar says what the reference's does (`src/status.rs`,
+first. The status bar says what the reference's does (`hydrus-gui-model/src/status.rs`,
 checked against `_GetPrettyStatusForStatusBar`): how many files and of
 what type ("14 jpegs", "27 images", "36 files"), their total size and,
 if they all have one, duration; with files selected, the same of them
@@ -431,7 +431,7 @@ thumbnail bounding box and its border (152x127 by default), and the
 thumbnail sits in it at its own size (over your thumbnail DPR), centred,
 never stretched. On a scaled screen it is resampled to the screen's
 pixels first, so it is drawn pixel for pixel. Over it go the reference's
-icons, where it draws them (`src/thumbnail_icons.rs`, checked against
+icons, where it draws them (`hydrus-gui-model/src/thumbnail_icons.rs`, checked against
 the reference's grid painting the `basic` fixture's files,
 `oracle/record_thumbnail_icons.py`): at the top right, from the right,
 downloading, notes, the trash (or deleted from hydrus local file
@@ -449,7 +449,7 @@ colours and namespaces from hydrus's options, from the tags a single file
 shows (current and pending, in all tag services; a collection's from all
 its files), clipped to the thumbnail as the reference's are. Over its
 top right go the ratings of each rating service shown in thumbnails
-(`src/thumbnail_ratings.rs`, checked against the reference's grid
+(`hydrus-gui-model/src/thumbnail_ratings.rs`, checked against the reference's grid
 painting the `basic` fixture rated in several ways,
 `oracle/record_thumbnail_ratings.py`): only rated files', or every
 file's if the service shows even unrated ones (an inc/dec count of 0 is
@@ -466,7 +466,7 @@ collection's are its first file's, as the reference's are. A rating set
 in the media viewer, or a file archived there, shows on its thumbnail
 at once.
 Thumbnails are selected as in the reference's grid (v688's default one;
-`src/selection.rs`, checked step by step against that grid driven in the
+`hydrus-gui-model/src/selection.rs`, checked step by step against that grid driven in the
 running reference, `oracle/record_thumbnail_selection.py`): a click
 selects just the file (or, on one already selected, leaves the selection
 be), ctrl+click adds or takes one away, shift+click selects from where
@@ -583,7 +583,7 @@ externally, to show it, selected, in your file browser (in the place of
 the reference's button to drag the file out to other programs, which
 Slint can't do), and to close the viewer. Under them, the file's info line,
 as the reference's has it: its "interesting" info lines
-(`src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
+(`hydrus-gui-model/src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
 resolution, duration and frames, audio; imported, deleted or in the trash;
 modified, if far from its import; archived) joined with ` | `, as your
 file info line options say (now migrated); archiving or returning the
@@ -688,7 +688,7 @@ group mode; pairs with a file already merged away or deleted are skipped;
 decisions wait for the batch's end, which asks to commit them (unless
 they are few, as `duplicate_filter_auto_commit_batch_size` has it), and
 closing with decisions pending asks too. Merges use your duplicate merge
-options. The model is `src/duplicate_filter.rs`, tested in
+options. The model is `hydrus-gui-model/src/duplicate_filter.rs`, tested in
 `tests/gui/duplicate_filter.rs` with the window drawn headless.
 `crates/hydrus-gui/tests/gui/search_page.rs` drives the page and
 `tests/gui/session.rs` a saved session, and both draw the window headless (the
@@ -810,7 +810,13 @@ autocomplete options, sessions, shortcut sets, recent tags.
    (what a click or a key does, what is selected, what is fetched) lives in
    a testable Rust type; Slint files only lay out and bind. Behaviour is
    tested without rendering; layout is checked with screenshots from Slint's
-   software renderer, which runs headless.
+   software renderer, which runs headless. What needs no window (and no
+   Slint type) lives in `hydrus-gui-model`, tested in its own
+   `tests/model/`; a change there rebuilds and tests in a couple of
+   seconds, where the windows' crate takes half a minute. The windows'
+   tests are `hydrus-gui`'s `tests/gui/`, one test binary (`cargo test -p
+   hydrus-gui --test gui <part>::`). A test that needs no window goes in
+   the model's.
 3. **Order, by the owner's use**: a search page (autocomplete, thumbnail
    grid, sort and collect) and the media viewer; then downloader pages
    (gallery, URL, watcher); then the duplicate filter, built to commit

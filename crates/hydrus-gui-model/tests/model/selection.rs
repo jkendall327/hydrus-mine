@@ -4,7 +4,7 @@
 //! page, selects and focuses the files ours does after every step.
 
 use hydrus_core::HashId;
-use hydrus_gui::selection::{Move, Selection};
+use hydrus_gui_model::selection::{Move, Selection};
 use serde_json::Value;
 
 fn file(i: &Value) -> HashId {

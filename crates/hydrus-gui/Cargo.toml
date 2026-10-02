@@ -12,6 +12,7 @@ path = "src/main.rs"
 
 [dependencies]
 hydrus-core.workspace = true
+hydrus-gui-model.workspace = true
 hydrus-store.workspace = true
 hydrus-parse.workspace = true
 rusqlite.workspace = true

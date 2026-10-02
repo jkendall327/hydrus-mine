@@ -13,6 +13,7 @@ use hydrus_core::search::recent::RecentPredicates;
 use hydrus_search::{Predicate, SystemPredicate, TextContext, predicate_text};
 use hydrus_store::Store;
 
+pub use crate::predicate_editors::button_label;
 use crate::predicate_editors::{Context, Editor, Field, Panel, Pressed};
 use crate::{EditorField, EditorPanel, EditorTreeRow, PredicateEditorWindow};
 
@@ -116,18 +117,6 @@ fn field_rows(panel: &Panel) -> Rc<VecModel<EditorField>> {
             .map(|i| field_row(panel, i))
             .collect::<Vec<_>>(),
     ))
-}
-
-/// A ready-made button's label: its own, or its predicates' texts.
-pub fn button_label(button: &crate::predicate_editors::Button, text: &TextContext) -> String {
-    button.label.clone().unwrap_or_else(|| {
-        button
-            .predicates
-            .iter()
-            .map(|p| predicate_text(&Predicate::System(p.clone()), text))
-            .collect::<Vec<_>>()
-            .join(", ")
-    })
 }
 
 /// The window's state: the editor, the page shown, and its panels' fields

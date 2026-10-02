@@ -21,50 +21,28 @@ mod ui {
 pub use ui::*;
 
 mod animation;
-pub mod archive_delete;
 mod archive_delete_window;
-pub mod audio;
-pub mod autocomplete;
-pub mod collect;
 pub mod daemon;
-pub mod domains;
 mod drops;
-pub mod duplicate_filter;
-pub mod favourites;
 pub mod favourites_window;
 mod filter_window;
 mod gallery;
 mod grid;
 pub mod headless;
 mod import_window;
-pub mod info_lines;
-pub mod local_import;
 mod locations_window;
-pub mod main_menu;
-pub mod manage_tags;
 pub(crate) mod manage_tags_window;
-pub mod media_actions;
 mod menu_bar;
 pub mod mpv;
-pub mod options;
 mod options_window;
 mod page;
-pub mod page_chooser;
 mod pages;
 mod playback;
 mod popups;
 pub mod predicate_editor_window;
-pub mod predicate_editors;
-pub mod ratings;
-pub mod scanbar;
-pub mod selection;
 pub mod slideshow;
-pub mod sort;
-pub mod status;
 pub mod still;
-pub mod thumbnail_icons;
 pub mod thumbnail_menu;
-pub mod thumbnail_ratings;
 mod thumbnails;
 mod unlock;
 mod viewer;
@@ -141,7 +119,15 @@ macro_rules! bind_zoom {
 }
 pub(crate) use bind_zoom;
 
+// (the workings without the windows, in their own crate, under their
+// names here)
 pub use grid::ThumbnailRows;
+pub use hydrus_gui_model::{
+    archive_delete, audio, autocomplete, collect, domains, duplicate_filter, favourites,
+    info_lines, local_import, main_menu, manage_tags, media_actions, options, page_chooser,
+    predicate_editors, ratings, scanbar, selection, sort, status, thumbnail_icons,
+    thumbnail_ratings,
+};
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
 pub use unlock::unlock_window;

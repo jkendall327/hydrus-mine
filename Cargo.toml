@@ -13,6 +13,7 @@ repository = "https://github.com/jkendall327/hydrus-mine"
 [workspace.dependencies]
 # internal
 hydrus-core = { path = "crates/hydrus-core" }
+hydrus-gui-model = { path = "crates/hydrus-gui-model" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
 hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }

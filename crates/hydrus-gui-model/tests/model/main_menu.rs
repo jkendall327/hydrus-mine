@@ -9,7 +9,7 @@
 use std::sync::Arc;
 
 use hydrus_core::pages::PageKey;
-use hydrus_gui::main_menu::{Entry, Facts, menubar, shown};
+use hydrus_gui_model::main_menu::{Entry, Facts, menubar, shown};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 use serde_json::Value;

@@ -7,7 +7,7 @@
 
 use serde_json::Value as Json;
 
-use hydrus_gui::options::{Item, Kind, Page, Settings, Value, pages};
+use hydrus_gui_model::options::{Item, Kind, Page, Settings, Value, pages};
 use hydrus_store::Store;
 use hydrus_store::import::import_legacy;
 
@@ -32,7 +32,7 @@ const CONTROLS: &[&str] = &[
 ];
 
 /// A time's units as the recording names them.
-fn unit_names(units: &[hydrus_gui::options::Unit]) -> Vec<&'static str> {
+fn unit_names(units: &[hydrus_gui_model::options::Unit]) -> Vec<&'static str> {
     units.iter().map(|u| u.name()).collect()
 }
 
@@ -211,7 +211,7 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
         (Kind::Sort, Value::Sort(sort)) => {
             // (the reference's type button, "sort by" its type, and its
             // order's)
-            let choices = hydrus_gui::sort::page_choices(store, &sort.by);
+            let choices = hydrus_gui_model::sort::page_choices(store, &sort.by);
             let chosen = choices.iter().find(|c| c.by == sort.by);
             let shown = chosen.map(|c| {
                 (
@@ -233,7 +233,7 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
         (Kind::TagSort, Value::TagSort(sort)) => {
             // (the choices it shows: its type, its order, and its grouping
             // where the type groups)
-            use hydrus_gui::options::{TAG_SORT_GROUPS, TAG_SORT_TYPES, tag_sort_orders};
+            use hydrus_gui_model::options::{TAG_SORT_GROUPS, TAG_SORT_TYPES, tag_sort_orders};
             let mut ours: Vec<&str> = TAG_SORT_TYPES
                 .iter()
                 .filter(|(_, t)| *t == sort.sort_type)
@@ -258,8 +258,8 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
         (Kind::Collect, Value::Collect(collect)) => {
             // (its text, its choices each checked or not, and whether
             // unmatched files collect)
-            let choices = hydrus_gui::collect::choices(store);
-            let label = hydrus_gui::collect::label(&choices, collect);
+            let choices = hydrus_gui_model::collect::choices(store);
+            let label = hydrus_gui_model::collect::label(&choices, collect);
             let ours: Vec<Json> = choices
                 .iter()
                 .map(|c| serde_json::json!([c.name, c.checked(collect)]))
@@ -359,9 +359,12 @@ fn the_options_search_offers_what_the_references_does() {
     let search = &recorded["search"];
     assert_eq!(
         search["placeholder"],
-        hydrus_gui::options::SEARCH_PLACEHOLDER
+        hydrus_gui_model::options::SEARCH_PLACEHOLDER
     );
-    assert_eq!(search["max_visible"], hydrus_gui::options::SEARCH_SHOWN);
+    assert_eq!(
+        search["max_visible"],
+        hydrus_gui_model::options::SEARCH_SHOWN
+    );
     // (each of ours is one of the reference's, written as it writes it)
     let theirs: Vec<&str> = search["suggestions"]
         .as_array()
@@ -369,7 +372,7 @@ fn the_options_search_offers_what_the_references_does() {
         .iter()
         .filter_map(Json::as_str)
         .collect();
-    let ours = hydrus_gui::options::suggestions(&pages());
+    let ours = hydrus_gui_model::options::suggestions(&pages());
     let missing: Vec<&str> = ours
         .iter()
         .map(|s| s.text.as_str())

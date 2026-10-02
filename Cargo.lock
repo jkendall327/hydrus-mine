@@ -2482,6 +2482,7 @@ dependencies = [
  "crossbeam-channel",
  "hydrus-core",
  "hydrus-duplicates",
+ "hydrus-gui-model",
  "hydrus-import",
  "hydrus-legacy",
  "hydrus-media",
@@ -2496,6 +2497,24 @@ dependencies = [
  "serde_json",
  "slint",
  "slint-build",
+ "tempfile",
+]
+
+[[package]]
+name = "hydrus-gui-model"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "hydrus-core",
+ "hydrus-duplicates",
+ "hydrus-import",
+ "hydrus-legacy",
+ "hydrus-media",
+ "hydrus-search",
+ "hydrus-store",
+ "hydrus-testkit",
+ "rusqlite",
+ "serde_json",
  "tempfile",
 ]
 

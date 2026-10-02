@@ -11,7 +11,7 @@ use std::time::Duration;
 
 use serde_json::Value as Json;
 
-use hydrus_gui::local_import::{Parsed, Review};
+use hydrus_gui_model::local_import::{Parsed, Review};
 
 fn copy_dir(from: &Path, to: &Path) {
     std::fs::create_dir_all(to).unwrap();
