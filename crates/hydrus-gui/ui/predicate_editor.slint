@@ -2,13 +2,26 @@
 // opened by a system predicate offered without a value
 // (`src/predicate_editors.rs` has what each holds): a note, its pages'
 // tabs when it has several, the page's ready-made buttons, and its panels,
-// each a row of fields with an "ok" button.
+// each a row of fields (some with a second line under it) and an "ok"
+// button.
 
-import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
+// A row of the filetype tree: a group (`option` -1, with its filetypes
+// shown if `expanded`) or one of its filetypes.
+export struct EditorTreeRow {
+    text: string,
+    ticked: bool,
+    group: int,
+    option: int,
+    shown: bool,
+    expanded: bool,
+}
+
 // One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
-// number, 4 a line of text.
+// number, 4 a line of text, 5 several lines, 6 the filetype tree, 7 a
+// button; on the panel's first line (0) or its second (1).
 export struct EditorField {
     kind: int,
     text: string,
@@ -25,10 +38,127 @@ export struct EditorField {
     enabled: bool,
     // a choice's width, to fit its longest option
     width: length,
+    rows: [EditorTreeRow],
+    line: int,
 }
 
 export struct EditorPanel {
     fields: [EditorField],
+    two-lines: bool,
+}
+
+// A field, if it is shown on this line (else nothing, taking no room).
+component FieldView {
+    in property <EditorField> field;
+    in property <bool> here;
+    callback chose(int);
+    callback ticked(int, bool);
+    callback number-edited(int);
+    callback text-edited(string);
+    callback accepted();
+    callback pressed();
+    callback tree-ticked(int, int, bool);
+    callback expanded(int, bool);
+
+    // (hidden, it takes no room, and only what is typed into takes the
+    // room spare)
+    max-width: root.here ? 100000px : 0px;
+    horizontal-stretch: root.field.kind == 4 || root.field.kind == 5 ? 1 : 0;
+
+    // (an `if` straight under a component's root would give it no size)
+    VerticalLayout {
+    if root.here: VerticalLayout {
+        alignment: center;
+        padding-right: 6px;
+        if root.field.kind == 0: Text {
+            vertical-alignment: center;
+            text: root.field.text;
+            wrap: word-wrap;
+            max-width: 900px;
+            color: Theme.text;
+        }
+        if root.field.kind == 1: ComboBox {
+            horizontal-stretch: 0;
+            width: root.field.width;
+            model: root.field.options;
+            current-index: root.field.chosen;
+            enabled: root.field.enabled;
+            selected => { root.chose(self.current-index); }
+        }
+        if root.field.kind == 2: VerticalLayout {
+            for option[o] in root.field.options: CheckBox {
+                min-height: 24px;
+                text: option;
+                checked: root.field.ticked[o];
+                enabled: root.field.enabled;
+                toggled => { root.ticked(o, self.checked); }
+            }
+        }
+        if root.field.kind == 3: HorizontalLayout {
+            spacing: 2px;
+            if root.field.before != "": Text {
+                vertical-alignment: center;
+                text: root.field.before;
+                color: Theme.text;
+            }
+            SpinBox {
+                horizontal-stretch: 0;
+                width: 84px;
+                minimum: root.field.minimum;
+                maximum: root.field.maximum;
+                value: root.field.value;
+                enabled: root.field.enabled;
+                edited(value) => { root.number-edited(value); }
+            }
+            if root.field.after != "": Text {
+                vertical-alignment: center;
+                text: root.field.after;
+                color: Theme.text;
+            }
+        }
+        if root.field.kind == 4: LineEdit {
+            min-width: 160px;
+            text: root.field.text;
+            placeholder-text: root.field.placeholder;
+            enabled: root.field.enabled;
+            edited(text) => { root.text-edited(text); }
+            accepted => { root.accepted(); }
+        }
+        if root.field.kind == 5: TextEdit {
+            min-width: 240px;
+            min-height: 84px;
+            text: root.field.text;
+            placeholder-text: root.field.placeholder;
+            enabled: root.field.enabled;
+            edited(text) => { root.text-edited(text); }
+        }
+        if root.field.kind == 6: VerticalLayout {
+            for row in root.field.rows: VerticalLayout {
+                // (a collapsed group's filetypes take no room)
+                if row.shown: HorizontalLayout {
+                    padding-left: row.option < 0 ? 0px : 32px;
+                    spacing: 2px;
+                    if row.option < 0: Button {
+                        width: 28px;
+                        text: row.expanded ? "▾" : "▸";
+                        clicked => { root.expanded(row.group, !row.expanded); }
+                    }
+                    CheckBox {
+                        min-height: 24px;
+                        text: row.text;
+                        checked: row.ticked;
+                        toggled => { root.tree-ticked(row.group, row.option, self.checked); }
+                    }
+                }
+            }
+        }
+        if root.field.kind == 7: Button {
+            text: root.field.text;
+            enabled: root.field.enabled;
+            clicked => { root.pressed(); }
+        }
+    }
+    }
 }
 
 export component PredicateEditorWindow inherits Window {
@@ -55,6 +185,12 @@ export component PredicateEditorWindow inherits Window {
     callback number-edited(int, int, int);
     // (panel, field, text)
     callback text-edited(int, int, string);
+    // (panel, field)
+    callback pressed(int, int);
+    // (panel, field, group, filetype or -1, ticked)
+    callback tree-ticked(int, int, int, int, bool);
+    // (panel, field, group, expanded)
+    callback expanded(int, int, int, bool);
     callback ok(int);
     callback cancel();
 
@@ -117,75 +253,51 @@ export component PredicateEditorWindow inherits Window {
                     for panel[p] in root.panels: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
-                        HorizontalLayout {
+                        VerticalLayout {
                             padding: 4px;
-                            spacing: 6px;
-                            for field[f] in panel.fields: VerticalLayout {
-                                alignment: center;
-                                visible: field.shown;
-                                // (a hidden field takes no room)
-                                max-width: field.shown ? 100000px : 0px;
-                                if field.kind == 0: Text {
-                                    vertical-alignment: center;
-                                    text: field.text;
-                                    wrap: word-wrap;
-                                    max-width: 360px;
-                                    color: Theme.text;
-                                }
-                                if field.kind == 1: ComboBox {
-                                    horizontal-stretch: 0;
-                                    width: field.width;
-                                    model: field.options;
-                                    current-index: field.chosen;
-                                    enabled: field.enabled;
-                                    selected => { root.chose(p, f, self.current-index); }
-                                }
-                                if field.kind == 2: VerticalLayout {
-                                    for option[o] in field.options: CheckBox {
-                                        min-height: 24px;
-                                        text: option;
-                                        checked: field.ticked[o];
-                                        enabled: field.enabled;
-                                        toggled => { root.ticked(p, f, o, self.checked); }
-                                    }
-                                }
-                                if field.kind == 3: HorizontalLayout {
-                                    spacing: 2px;
-                                    if field.before != "": Text {
-                                        vertical-alignment: center;
-                                        text: field.before;
-                                        color: Theme.text;
-                                    }
-                                    SpinBox {
-                                        horizontal-stretch: 0;
-                                        width: 84px;
-                                        minimum: field.minimum;
-                                        maximum: field.maximum;
-                                        value: field.value;
-                                        enabled: field.enabled;
-                                        edited(value) => { root.number-edited(p, f, value); }
-                                    }
-                                    if field.after != "": Text {
-                                        vertical-alignment: center;
-                                        text: field.after;
-                                        color: Theme.text;
-                                    }
-                                }
-                                if field.kind == 4: LineEdit {
-                                    min-width: 160px;
-                                    text: field.text;
-                                    placeholder-text: field.placeholder;
-                                    enabled: field.enabled;
-                                    edited(text) => { root.text-edited(p, f, text); }
+                            spacing: 4px;
+                            HorizontalLayout {
+                                for field[f] in panel.fields: FieldView {
+                                    field: field;
+                                    here: field.shown && field.line == 0;
+                                    chose(option) => { root.chose(p, f, option); }
+                                    ticked(option, on) => { root.ticked(p, f, option, on); }
+                                    number-edited(value) => { root.number-edited(p, f, value); }
+                                    text-edited(text) => { root.text-edited(p, f, text); }
                                     accepted => { root.ok(p); }
+                                    pressed => { root.pressed(p, f); }
+                                    tree-ticked(group, option, on) => { root.tree-ticked(p, f, group, option, on); }
+                                    expanded(group, on) => { root.expanded(p, f, group, on); }
+                                }
+                                Rectangle { horizontal-stretch: 1; }
+                                if !panel.two-lines: VerticalLayout {
+                                    alignment: center;
+                                    Button {
+                                        text: "ok";
+                                        clicked => { root.ok(p); }
+                                    }
                                 }
                             }
-                            Rectangle { horizontal-stretch: 1; }
-                            VerticalLayout {
-                                alignment: center;
-                                Button {
-                                    text: "ok";
-                                    clicked => { root.ok(p); }
+                            if panel.two-lines: HorizontalLayout {
+                                for field[f] in panel.fields: FieldView {
+                                    field: field;
+                                    here: field.shown && field.line == 1;
+                                    chose(option) => { root.chose(p, f, option); }
+                                    ticked(option, on) => { root.ticked(p, f, option, on); }
+                                    number-edited(value) => { root.number-edited(p, f, value); }
+                                    text-edited(text) => { root.text-edited(p, f, text); }
+                                    accepted => { root.ok(p); }
+                                    pressed => { root.pressed(p, f); }
+                                    tree-ticked(group, option, on) => { root.tree-ticked(p, f, group, option, on); }
+                                    expanded(group, on) => { root.expanded(p, f, group, on); }
+                                }
+                                Rectangle { horizontal-stretch: 1; }
+                                VerticalLayout {
+                                    alignment: center;
+                                    Button {
+                                        text: "ok";
+                                        clicked => { root.ok(p); }
+                                    }
                                 }
                             }
                         }

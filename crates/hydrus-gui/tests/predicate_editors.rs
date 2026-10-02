@@ -10,12 +10,12 @@ use std::sync::Arc;
 use serde_json::Value as Json;
 use slint::Model as _;
 
-use hydrus_core::ServiceKey;
 use hydrus_core::search::context::{LocationContext, TagContext};
 use hydrus_core::service::builtin_keys;
+use hydrus_core::{ServiceKey, ServiceType};
 use hydrus_gui::autocomplete::Autocomplete;
 use hydrus_gui::predicate_editor_window::button_label;
-use hydrus_gui::predicate_editors::{Blank, Context, Editor, Field, Panel};
+use hydrus_gui::predicate_editors::{Blank, Context, Editor, Field, Panel, Pressed};
 use hydrus_gui::{MainWindow, Pages, SearchPage, bind, headless};
 use hydrus_search::{CivilDateTime, Predicate, TextContext, predicate_text};
 use hydrus_store::Store;
@@ -70,14 +70,6 @@ fn strings(json: &Json) -> Vec<String> {
         .collect()
 }
 
-/// The blank predicates hydrus-rs has no editor for yet.
-const UNPORTED: [&str; 4] = [
-    "system:filetype",
-    "system:hash",
-    "system:rating",
-    "system:similar files",
-];
-
 #[test]
 fn the_empty_search_box_offers_the_reference_s_system_predicates() {
     let (_dirs, store) = store();
@@ -103,7 +95,6 @@ fn the_empty_search_box_offers_the_reference_s_system_predicates() {
                 o["opens_editor"].as_bool().unwrap(),
             )
         })
-        .filter(|(text, _)| !UNPORTED.contains(&text.as_str()))
         .collect();
     assert_eq!(ours, theirs);
     // and searching all known files, those needing no file's metadata
@@ -123,8 +114,10 @@ fn the_empty_search_box_offers_the_reference_s_system_predicates() {
             "system:file relationships",
             "system:file service",
             "system:file viewing statistics",
+            "system:hash",
             "system:limit",
             "system:number of tags",
+            "system:rating",
             "system:tag (advanced)",
             "system:tag as number",
         ]
@@ -137,14 +130,10 @@ fn each_editor_is_the_reference_s() {
     let recorded = recorded();
     let context = context(&store, &recorded);
     let text = text_context(&store);
-    let mut skipped = Vec::new();
     for editor in recorded["editors"].as_array().unwrap() {
         let name = editor["text"].as_str().unwrap();
         let blank = Blank::from_text(name).unwrap_or_else(|| panic!("no {name}"));
-        let Some(ours) = Editor::new(blank, &context) else {
-            skipped.push(name);
-            continue;
-        };
+        let ours = Editor::new(blank, &context);
         let pages = editor["pages"].as_array().unwrap();
         assert_eq!(ours.pages.len(), pages.len(), "{name}");
         for (page, theirs) in ours.pages.iter().zip(pages) {
@@ -179,6 +168,35 @@ fn each_editor_is_the_reference_s() {
             for (panel, theirs) in page.panels.iter().zip(panels) {
                 let class = theirs["class"].as_str().unwrap();
                 assert_eq!(panel.kind.class_name(), class, "{name}");
+                // a tree's groups and their filetypes, in order
+                for widget in theirs["widgets"].as_array().unwrap() {
+                    if widget["kind"] != "tree" {
+                        continue;
+                    }
+                    let Some(Field::Tree { groups }) = panel
+                        .fields
+                        .iter()
+                        .find(|f| matches!(f, Field::Tree { .. }))
+                    else {
+                        panic!("{class} has no tree");
+                    };
+                    let ours: Vec<(String, Vec<String>)> = groups
+                        .iter()
+                        .map(|g| (g.name.clone(), g.options.clone()))
+                        .collect();
+                    let theirs: Vec<(String, Vec<String>)> = widget["groups"]
+                        .as_array()
+                        .unwrap()
+                        .iter()
+                        .map(|g| {
+                            (
+                                g["text"].as_str().unwrap().to_owned(),
+                                strings(&g["children"]),
+                            )
+                        })
+                        .collect();
+                    assert_eq!(ours, theirs);
+                }
                 let made = panel.predicates(&context).map(|p| texts(&p, &text));
                 match theirs["predicates"].as_array() {
                     Some(_) => assert_eq!(made, Ok(strings(&theirs["predicates"])), "{class}"),
@@ -188,28 +206,33 @@ fn each_editor_is_the_reference_s() {
             }
         }
     }
-    assert_eq!(skipped, UNPORTED);
 }
 
 /// Change our panel as the recording changed the reference's widget
 /// `widget`: a radio button or drop-down by the choice offering the same
 /// options, a number or text by its place among those shown. `false` if
 /// ours has no such field.
-fn change(panel: &mut Panel, widgets: &[Json], widget: usize, set: &Json) -> bool {
+fn change(
+    panel: &mut Panel,
+    widgets: &[Json],
+    widget: usize,
+    set: &Json,
+    warnings: &mut Vec<String>,
+) -> bool {
     let fact = &widgets[widget];
     let kind = fact["kind"].as_str().unwrap();
-    let choice_with = |panel: &Panel, options: &[String]| {
+    let choice_with = |panel: &Panel, wanted: &dyn Fn(&[String]) -> bool| {
         panel
             .fields
             .iter()
-            .position(|f| matches!(f, Field::Choice { options: o, .. } if o == options))
+            .position(|f| matches!(f, Field::Choice { options, .. } if wanted(options)))
     };
     let nth_shown = |panel: &Panel, k: usize, number: bool| {
         (0..panel.fields.len())
             .filter(|&i| panel.shown(i))
             .filter(|&i| match &panel.fields[i] {
                 Field::Number { .. } => number,
-                Field::Text { .. } => !number,
+                Field::Text { .. } | Field::Lines { .. } => !number,
                 _ => false,
             })
             .nth(k)
@@ -217,7 +240,12 @@ fn change(panel: &mut Panel, widgets: &[Json], widget: usize, set: &Json) -> boo
     let before = |what: &str| {
         widgets[..widget]
             .iter()
-            .filter(|w| w["kind"] == what && (what != "text" || w["class"] == "QLineEdit"))
+            .filter(|w| {
+                w["kind"] == what
+                    && (what != "text"
+                        || w["class"] == "QLineEdit"
+                        || w["class"] == "QPlainTextEdit")
+            })
             .count()
     };
     match kind {
@@ -227,7 +255,7 @@ fn change(panel: &mut Panel, widgets: &[Json], widget: usize, set: &Json) -> boo
             } else {
                 &fact["choices"]
             });
-            let Some(i) = choice_with(panel, &options) else {
+            let Some(i) = choice_with(panel, &|o| o == options.as_slice()) else {
                 return false;
             };
             let wanted = set.as_str().or(fact["text"].as_str()).unwrap();
@@ -255,6 +283,126 @@ fn change(panel: &mut Panel, widgets: &[Json], widget: usize, set: &Json) -> boo
                 return false;
             };
             panel.set_text(i, set.as_str().unwrap());
+            true
+        }
+        "ticks" => {
+            let options = strings(&fact["options"]);
+            let Some(i) = panel
+                .fields
+                .iter()
+                .position(|f| matches!(f, Field::Ticks { options: o, .. } if *o == options))
+            else {
+                return false;
+            };
+            let option = options.iter().position(|o| o == set).unwrap();
+            let on = match &panel.fields[i] {
+                Field::Ticks { ticked, .. } => !ticked[option],
+                _ => unreachable!(),
+            };
+            panel.tick(i, option, on);
+            true
+        }
+        "tree" => {
+            let i = panel
+                .fields
+                .iter()
+                .position(|f| matches!(f, Field::Tree { .. }))
+                .unwrap();
+            let Field::Tree { groups } = &panel.fields[i] else {
+                unreachable!()
+            };
+            let (group, child) = set
+                .as_str()
+                .unwrap()
+                .split_once('/')
+                .map_or((set.as_str().unwrap(), None), |(g, c)| (g, Some(c)));
+            let g = groups.iter().position(|x| x.name == group).unwrap();
+            let option = child.map(|c| groups[g].options.iter().position(|o| o == c).unwrap());
+            let on = match option {
+                Some(o) => !groups[g].ticked[o],
+                None => !groups[g].ticked.iter().all(|t| *t),
+            };
+            panel.tick_tree(i, g, option, on);
+            true
+        }
+        // (the reference's like/dislike and star controls, drop-downs here)
+        "like" => {
+            let i = choice_with(panel, &|o| o.iter().any(|x| x == "like")).unwrap();
+            let wanted = match set.as_str().unwrap() {
+                "none" => "(not set)",
+                other => other,
+            };
+            let option = match &panel.fields[i] {
+                Field::Choice { options, .. } => options.iter().position(|o| o == wanted).unwrap(),
+                _ => unreachable!(),
+            };
+            panel.choose(i, option);
+            true
+        }
+        "stars" => {
+            let stars = fact["num_stars"].as_u64().unwrap();
+            let wanted = format!("{}/{stars}", (set.as_f64().unwrap() * stars as f64).round());
+            let i = choice_with(panel, &|o| {
+                o.iter().any(|x| x.ends_with(&format!("/{stars}")))
+            })
+            .unwrap();
+            let option = match &panel.fields[i] {
+                Field::Choice { options, .. } => options.iter().position(|o| *o == wanted).unwrap(),
+                _ => unreachable!(),
+            };
+            panel.choose(i, option);
+            true
+        }
+        // (the reference's service specifier button, its choices in place)
+        "services" => {
+            let modes: Vec<usize> = (0..panel.fields.len())
+                .filter(|&i| {
+                    matches!(&panel.fields[i], Field::Choice { options, .. }
+                        if options == &["service type", "service"])
+                })
+                .collect();
+            let mode = modes[before("services")];
+            if let Some(types) = set.get("types") {
+                panel.choose(mode, 0);
+                let wanted: Vec<&str> = types
+                    .as_array()
+                    .unwrap()
+                    .iter()
+                    .map(|t| {
+                        ServiceType::from_code(u8::try_from(t.as_u64().unwrap()).unwrap())
+                            .unwrap()
+                            .short_name()
+                    })
+                    .collect();
+                let Field::Ticks { options, .. } = panel.fields[mode + 1].clone() else {
+                    unreachable!()
+                };
+                for (o, option) in options.iter().enumerate() {
+                    panel.tick(mode + 1, o, wanted.contains(&option.as_str()));
+                }
+            } else {
+                panel.choose(mode, 1);
+                let wanted = strings(&set["services"]);
+                let Field::Ticks { options, .. } = panel.fields[mode + 2].clone() else {
+                    unreachable!()
+                };
+                for (o, option) in options.iter().enumerate() {
+                    let name = option.split_once(": ").unwrap().1;
+                    panel.tick(mode + 2, o, wanted.iter().any(|w| w == name));
+                }
+            }
+            true
+        }
+        "button" => {
+            let text = fact["text"].as_str().unwrap();
+            let i = panel
+                .fields
+                .iter()
+                .position(|f| matches!(f, Field::Button(label) if label == text))
+                .unwrap();
+            if let Pressed::Warning(said) = panel.press(i) {
+                warnings.push(said);
+            }
             true
         }
         other => panic!("can't change a {other}"),
@@ -296,9 +444,7 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
     let mut checked = 0;
     for editor in recorded["editors"].as_array().unwrap() {
         let blank = Blank::from_text(editor["text"].as_str().unwrap()).unwrap();
-        let Some(ours) = Editor::new(blank, &context) else {
-            continue;
-        };
+        let ours = Editor::new(blank, &context);
         for (page, theirs) in ours.pages.iter().zip(editor["pages"].as_array().unwrap()) {
             for (panel, theirs) in page.panels.iter().zip(theirs["panels"].as_array().unwrap()) {
                 let class = theirs["class"].as_str().unwrap();
@@ -312,7 +458,7 @@ fn each_change_to_a_panel_makes_what_the_reference_s_makes() {
                         .as_array()
                         .map(|_| strings(&change_made["predicates"]));
                     let mut changed = panel.clone();
-                    if !change(&mut changed, widgets, widget, set) {
+                    if !change(&mut changed, widgets, widget, set, &mut Vec::new()) {
                         // a widget of the reference's we don't have (tag
                         // advanced's autocomplete) changes nothing
                         assert_eq!(expected, at_first.clone().ok(), "{class} {change_made}");
@@ -356,32 +502,38 @@ fn panels_set_in_several_ways_make_what_the_reference_s_make() {
     let text = text_context(&store);
     for scenario in recorded["scenarios"].as_array().unwrap() {
         let blank = Blank::from_text(scenario["editor"].as_str().unwrap()).unwrap();
-        let editor = Editor::new(blank, &context).unwrap();
+        let editor = Editor::new(blank, &context);
         let page = usize::try_from(scenario["page"].as_u64().unwrap()).unwrap();
         let panel = usize::try_from(scenario["panel"].as_u64().unwrap()).unwrap();
         let mut panel = editor.pages[page].panels[panel].clone();
+        let mut warnings = Vec::new();
         for step in scenario["steps"].as_array().unwrap() {
             let widgets = step["widgets"].as_array().unwrap();
             let widget = usize::try_from(step["widget"].as_u64().unwrap()).unwrap();
             numbers_match(&panel, widgets, &scenario.to_string());
             assert!(
-                change(&mut panel, widgets, widget, &step["set"]),
+                change(&mut panel, widgets, widget, &step["set"], &mut warnings),
                 "{scenario}"
             );
         }
+        let steps = scenario["steps"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|s| format!("{} {}", s["widget"], s["set"]))
+            .collect::<Vec<_>>()
+            .join(", ");
         let made = panel.predicates(&context).map(|p| texts(&p, &text));
-        assert_eq!(
-            made,
-            Ok(strings(&scenario["predicates"])),
-            "{}",
-            scenario["steps"]
-                .as_array()
-                .unwrap()
-                .iter()
-                .map(|s| format!("{} {}", s["widget"], s["set"]))
-                .collect::<Vec<_>>()
-                .join(", ")
-        );
+        // what it makes, or why it can't, word for word; and what it warned
+        match scenario["predicates"].as_array() {
+            Some(_) => assert_eq!(made, Ok(strings(&scenario["predicates"])), "{steps}"),
+            None => assert_eq!(
+                made,
+                Err(scenario["error"].as_str().unwrap().to_owned()),
+                "{steps}"
+            ),
+        }
+        assert_eq!(warnings, strings(&scenario["warnings"]), "{steps}");
     }
 }
 
@@ -488,6 +640,110 @@ fn the_editor_window_adds_what_it_makes_to_the_search() {
         shown_predicates(&ui).last().unwrap(),
         "system:width \u{2248} 1,920 \u{b1}50"
     );
+}
+
+#[test]
+fn the_editor_window_shows_what_trees_and_buttons_change() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::single(SearchPage::new(store.clone())));
+    let editor = || {
+        bound
+            .predicate_editor
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+            .expect("an editor")
+    };
+    let field = |window: &hydrus_gui::PredicateEditorWindow, p: usize, f: usize| {
+        window
+            .get_panels()
+            .row_data(p)
+            .unwrap()
+            .fields
+            .row_data(f)
+            .unwrap()
+    };
+    let last = |ui: &MainWindow| shown_predicates(ui).last().cloned().unwrap_or_default();
+    ui.invoke_search_edited("".into());
+
+    // the filetype tree: a group's filetypes show once it is expanded, and
+    // a group ticked ticks them all
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:filetype"));
+    let window = editor();
+    let shown_rows = |window: &hydrus_gui::PredicateEditorWindow| -> Vec<(String, bool)> {
+        field(window, 0, 2)
+            .rows
+            .iter()
+            .filter(|r| r.shown)
+            .map(|r| (r.text.to_string(), r.ticked))
+            .collect()
+    };
+    let groups = shown_rows(&window);
+    assert_eq!(groups.len(), 7);
+    assert_eq!(groups[0], ("image".to_owned(), false));
+    window.invoke_expanded(0, 2, 0, true);
+    let rows = shown_rows(&window);
+    assert_eq!(rows.len(), 7 + 12);
+    assert_eq!(rows[1], ("jpeg".to_owned(), false));
+    assert_eq!(rows[13], ("animation".to_owned(), false));
+    window.invoke_tree_ticked(0, 2, 0, 1, true);
+    window.invoke_tree_ticked(0, 2, 1, -1, true);
+    let rows = shown_rows(&window);
+    assert!(rows[2].1, "png ticked");
+    assert!(rows[13].1, "animation ticked");
+    window.invoke_expanded(0, 2, 0, false);
+    assert_eq!(shown_rows(&window).len(), 7);
+    window.invoke_ok(0);
+    assert_eq!(last(&ui), "system:filetype is animation, png");
+
+    // "system:hash": a hash of another type is said to be; the clean-up
+    // button says which lines aren't hashes, its forced one drops them and
+    // chooses the type the rest are, which then makes them
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:hash"));
+    let window = editor();
+    let md5 = "d41d8cd98f00b204e9800998ecf8427e";
+    window.invoke_text_edited(0, 2, format!("{md5}\nnot a hash").into());
+    window.invoke_pressed(0, 3);
+    assert!(
+        window
+            .get_error()
+            .starts_with("Unfortunately, some hashes did not parse correctly."),
+        "{}",
+        window.get_error()
+    );
+    assert!(window.get_error().contains("\"not a hash\""));
+    window.invoke_pressed(0, 4);
+    assert_eq!(window.get_error(), "");
+    assert_eq!(field(&window, 0, 2).text, md5);
+    let types = field(&window, 0, 5);
+    assert_eq!(
+        types
+            .options
+            .row_data(usize::try_from(types.chosen).unwrap()),
+        Some("md5".into())
+    );
+    window.invoke_ok(0);
+    assert_eq!(last(&ui), format!("system:hash (md5) is {md5}"));
+
+    // "system:rating": a like chosen chooses "is" with it
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:rating"));
+    let window = editor();
+    assert_eq!(field(&window, 1, 0).text, "favourites");
+    window.invoke_chose(1, 2, 1);
+    assert_eq!(field(&window, 1, 1).chosen, 2);
+    window.invoke_ok(1);
+    assert_eq!(last(&ui), "system:rating for favourites is like");
+
+    // "system:similar files": "clear" empties both hashes
+    ui.invoke_suggestion_chosen(suggestion(&ui, "system:similar files"));
+    let window = editor();
+    window.invoke_text_edited(0, 4, "ab".repeat(32).into());
+    window.invoke_text_edited(0, 5, "cd".repeat(8).into());
+    window.invoke_pressed(0, 1);
+    assert_eq!(field(&window, 0, 4).text, "");
+    assert_eq!(field(&window, 0, 5).text, "");
 }
 
 #[test]

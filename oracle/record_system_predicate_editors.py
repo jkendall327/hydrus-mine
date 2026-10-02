@@ -60,7 +60,56 @@ def input_widgets( widget ):
             return
 
 
-        if isinstance( w, QW.QComboBox ):
+        name = type( w ).__name__
+
+        if isinstance( w, QW.QTreeWidget ):
+
+            from qtpy import QtCore as QC
+
+            groups = []
+
+            for i in range( w.topLevelItemCount() ):
+
+                group = w.topLevelItem( i )
+
+                children = [ group.child( j ) for j in range( group.childCount() ) ]
+
+                groups.append( {
+                    'text' : group.text( 0 ),
+                    'children' : [ c.text( 0 ) for c in children ],
+                    'ticked' : [ c.checkState( 0 ) == QC.Qt.CheckState.Checked for c in children ],
+                } )
+
+
+            add( w, { 'kind' : 'tree', 'groups' : groups } )
+
+        elif name == 'RatingLikeDialog':
+
+            from hydrus.client.metadata import ClientRatings
+
+            state = w.GetRatingState()
+
+            add( w, { 'kind' : 'like', 'state' : 'like' if state == ClientRatings.LIKE else 'dislike' if state == ClientRatings.DISLIKE else 'none' } )
+
+        elif name == 'RatingNumericalDialog':
+
+            from hydrus.client.metadata import ClientRatings
+
+            add( w, { 'kind' : 'stars', 'num_stars' : w._num_stars, 'allow_zero' : w._allow_zero, 'rating' : w.GetRating() if w.GetRatingState() == ClientRatings.SET else None } )
+
+        elif name == 'ServiceSpecifierButton':
+
+            add( w, { 'kind' : 'services', 'text' : w.text() } )
+
+        elif isinstance( w, QW.QListWidget ):
+
+            from qtpy import QtCore as QC
+
+            items = [ w.item( i ) for i in range( w.count() ) ]
+
+            add( w, { 'kind' : 'ticks', 'options' : [ item.text() for item in items ], 'ticked' : [ item.checkState() == QC.Qt.CheckState.Checked for item in items ] } )
+
+        elif isinstance( w, QW.QComboBox ):
 
             add( w, { 'kind' : 'choice', 'choices' : [ w.itemText( i ) for i in range( w.count() ) ], 'chosen' : w.currentText() } )
 
@@ -137,6 +186,21 @@ def widget_facts( widget ):
 STORED = {}
 
 
+def error_of( panel ):
+    """Why the panel can't make its predicates, if it can't."""
+
+    try:
+
+        panel.GetPredicates()
+
+        return None
+
+    except Exception as e:
+
+        return str( e )
+
+
+
 def predicates_of( panel ):
 
     try:
@@ -197,6 +261,71 @@ def changed( w, fact ):
 
         yield not fact[ 'checked' ]
 
+    elif fact[ 'kind' ] == 'tree':
+
+        from qtpy import QtCore as QC
+
+        # each group ticked, then each group's first filetype alone
+        for i in range( w.topLevelItemCount() ):
+
+            group = w.topLevelItem( i )
+
+            group.setCheckState( 0, QC.Qt.CheckState.Checked )
+
+            yield group.text( 0 )
+
+            group.setCheckState( 0, QC.Qt.CheckState.Unchecked )
+
+
+        for i in range( w.topLevelItemCount() ):
+
+            child = w.topLevelItem( i ).child( 0 )
+
+            child.setCheckState( 0, QC.Qt.CheckState.Checked )
+
+            yield w.topLevelItem( i ).text( 0 ) + '/' + child.text( 0 )
+
+            child.setCheckState( 0, QC.Qt.CheckState.Unchecked )
+
+
+    elif fact[ 'kind' ] == 'like':
+
+        from hydrus.client.metadata import ClientRatings
+
+        for ( text, state ) in ( ( 'like', ClientRatings.LIKE ), ( 'dislike', ClientRatings.DISLIKE ) ):
+
+            w.SetRatingState( state )
+            w.valueChanged.emit()
+
+            yield text
+
+
+    elif fact[ 'kind' ] == 'stars':
+
+        for i in range( 0 if fact[ 'allow_zero' ] else 1, fact[ 'num_stars' ] + 1 ):
+
+            w.SetRating( i / fact[ 'num_stars' ] )
+            w.valueChanged.emit()
+
+            yield i / fact[ 'num_stars' ]
+
+
+    elif fact[ 'kind' ] == 'ticks':
+
+        from qtpy import QtCore as QC
+
+        # each tick box flipped (one per fresh panel: the caller takes the
+        # nth)
+        state = lambda on: QC.Qt.CheckState.Checked if on else QC.Qt.CheckState.Unchecked
+
+        for ( i, ticked ) in enumerate( fact[ 'ticked' ] ):
+
+            w.item( i ).setCheckState( state( not ticked ) )
+
+            yield fact[ 'options' ][ i ]
+
+            w.item( i ).setCheckState( state( ticked ) )
+
     elif fact[ 'kind' ] == 'text' and fact[ 'class' ] == 'QLineEdit':
 
         w.setText( 'abc' )
@@ -218,6 +347,16 @@ def record( session ):
 
     controller = session.controller
     gui = controller.gui
+
+    # warnings noted rather than shown, and questions answered yes
+    from qtpy import QtWidgets as QW
+    from hydrus.client.gui import ClientGUIDialogsMessage
+    from hydrus.client.gui import ClientGUIDialogsQuick
+
+    warnings = []
+
+    ClientGUIDialogsMessage.ShowWarning = lambda parent, message: warnings.append( message )
+    ClientGUIDialogsQuick.GetYesNo = lambda *args, **kwargs: QW.QDialog.DialogCode.Accepted
 
     def qt( f ):
 
@@ -324,6 +463,22 @@ def record( session ):
 
                 count = len( [ c for c in fact[ 'choices' ] if c != fact[ 'chosen' ] ] )
 
+            elif fact[ 'kind' ] == 'ticks':
+
+                count = len( fact[ 'options' ] )
+
+            elif fact[ 'kind' ] == 'tree':
+
+                count = 2 * len( fact[ 'groups' ] )
+
+            elif fact[ 'kind' ] == 'like':
+
+                count = 2
+
+            elif fact[ 'kind' ] == 'stars':
+
+                count = fact[ 'num_stars' ] + ( 1 if fact[ 'allow_zero' ] else 0 )
+
             elif fact[ 'kind' ] in ( 'number', 'tick' ) or ( fact[ 'kind' ] == 'text' and fact[ 'class' ] == 'QLineEdit' ):
 
                 count = 1
@@ -364,9 +519,49 @@ def record( session ):
 
         from qtpy import QtCore as QC
 
-        if fact[ 'kind' ] in ( 'radio', 'tick' ):
+        if fact[ 'kind' ] in ( 'radio', 'tick', 'button' ):
 
             w.click()
+
+        elif fact[ 'kind' ] == 'tree':
+
+            ( group_text, _, child_text ) = value.partition( '/' )
+
+            group = [ w.topLevelItem( i ) for i in range( w.topLevelItemCount() ) if w.topLevelItem( i ).text( 0 ) == group_text ][0]
+
+            item = group if child_text == '' else [ group.child( j ) for j in range( group.childCount() ) if group.child( j ).text( 0 ) == child_text ][0]
+
+            item.setCheckState( 0, QC.Qt.CheckState.Unchecked if item.checkState( 0 ) == QC.Qt.CheckState.Checked else QC.Qt.CheckState.Checked )
+
+        elif fact[ 'kind' ] == 'like':
+
+            from hydrus.client.metadata import ClientRatings
+
+            w.SetRatingState( { 'like' : ClientRatings.LIKE, 'dislike' : ClientRatings.DISLIKE, 'none' : ClientRatings.NULL }[ value ] )
+            w.valueChanged.emit()
+
+        elif fact[ 'kind' ] == 'stars':
+
+            w.SetRating( value )
+            w.valueChanged.emit()
+
+        elif fact[ 'kind' ] == 'services':
+
+            from hydrus.client import ClientServices
+
+            if 'types' in value:
+
+                specifier = ClientServices.ServiceSpecifier( service_types = value[ 'types' ] )
+
+            else:
+
+                keys = [ s.GetServiceKey() for s in controller.services_manager.GetServices() if s.GetName() in value[ 'services' ] ]
+
+                specifier = ClientServices.ServiceSpecifier( service_keys = keys )
+
+
+            w.SetValue( specifier )
+            w.valueChanged.emit()
 
         elif fact[ 'kind' ] == 'choice':
 
@@ -378,7 +573,20 @@ def record( session ):
 
         elif fact[ 'kind' ] == 'text':
 
-            w.setText( value )
+            if hasattr( w, 'setPlainText' ):
+
+                w.setPlainText( value )
+
+            else:
+
+                w.setText( value )
+
+
+        elif fact[ 'kind' ] == 'ticks':
+
+            item = w.item( fact[ 'options' ].index( value ) )
+
+            item.setCheckState( QC.Qt.CheckState.Unchecked if item.checkState() == QC.Qt.CheckState.Checked else QC.Qt.CheckState.Checked )
 
         elif fact[ 'kind' ] == 'date':
 
@@ -407,6 +615,8 @@ def record( session ):
 
             done = []
 
+            warnings.clear()
+
             for ( widget_i, value ) in steps:
 
                 widgets = input_widgets( inner )
@@ -418,7 +628,16 @@ def record( session ):
                 apply( w, fact, value )
 
 
-            result = { 'editor' : text, 'page' : page_i, 'panel' : panel_i, 'steps' : done, 'predicates' : predicates_of( inner ) }
+            result = {
+                'editor' : text,
+                'page' : page_i,
+                'panel' : panel_i,
+                'steps' : done,
+                'predicates' : predicates_of( inner ),
+                'error' : error_of( inner ),
+                'warnings' : list( warnings ),
+                'widgets' : widget_facts( inner ),
+            }
 
             panel.hide()
             panel.deleteLater()
@@ -440,8 +659,8 @@ def record( session ):
         scenario( 'system:number of tags', 0, 0, [ ( 1, None ), ( 6, None ), ( 8, 0 ) ] ),
         scenario( 'system:time', 0, 1, [ ( 1, None ), ( 4, '2011-06-04' ), ( 5, '13:05' ) ] ),
         scenario( 'system:time', 2, 1, [ ( 3, None ), ( 4, '1999-12-31' ) ] ),
-        scenario( 'system:tag (advanced)', 0, 0, [ ( 2, 'my tags' ), ( 3, None ), ( 5, ' Blue Eyes ' ) ] ),
-        scenario( 'system:tag (advanced)', 0, 0, [ ( 5, 'series:metroid' ) ] ),
+        scenario( 'system:tag (advanced)', 0, 0, [ ( 2, 'my tags' ), ( 3, None ), ( 6, ' Blue Eyes ' ) ] ),
+        scenario( 'system:tag (advanced)', 0, 0, [ ( 6, 'series:metroid' ) ] ),
         scenario( 'system:dimensions', 0, 0, [ ( 2, None ), ( 9, 37 ) ] ),
         scenario( 'system:dimensions', 0, 0, [ ( 3, None ), ( 9, 4 ) ] ),
         scenario( 'system:duration', 0, 0, [ ( 2, None ), ( 8, 1 ), ( 10, 2 ), ( 12, 3 ), ( 14, 4 ), ( 17, 5 ), ( 19, 6 ), ( 21, 7 ) ] ),
@@ -449,7 +668,53 @@ def record( session ):
         scenario( 'system:duration', 0, 1, [ ( 1, None ), ( 5, 10 ) ] ),
         scenario( 'system:notes', 0, 1, [ ( 1, 'comment' ) ] ),
         scenario( 'system:urls', 0, 1, [ ( 0, 'does not have' ), ( 1, 'Example.COM' ) ] ),
-        scenario( 'system:file viewing statistics', 0, 1, [ ( 0, None ), ( 4, 2 ), ( 6, 3 ), ( 8, 4 ), ( 10, 5 ), ( 12, 6 ) ] ),
+        scenario( 'system:file viewing statistics', 0, 0, [ ( 0, 'preview views' ), ( 0, 'client api views' ) ] ),
+        scenario( 'system:file viewing statistics', 0, 0, [ ( 0, 'media views' ) ] ),
+        scenario( 'system:tag (advanced)', 0, 0, [ ( 5, 'current' ), ( 5, 'pending' ), ( 5, 'deleted' ), ( 6, 'blue eyes' ) ] ),
+        scenario( 'system:tag (advanced)', 0, 0, [ ( 5, 'current' ), ( 5, 'pending' ), ( 6, 'blue eyes' ) ] ),
+        # the four editors with their own controls
+        scenario( 'system:filetype', 0, 0, [ ( 0, 'image' ), ( 0, 'video' ) ] ),
+        scenario( 'system:filetype', 0, 0, [ ( 0, 'image' ), ( 0, 'image/png' ) ] ),
+        scenario( 'system:filetype', 0, 0, [ ( 0, 'image/png' ), ( 0, 'image/jpeg' ), ( 0, 'video/webm' ) ] ),
+        scenario( 'system:filetype', 0, 0, [ ( 2, None ), ( 0, 'audio' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 1, None ), ( 6, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b\n5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee\n03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'sha256:03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, ' 0x03D67E1677D7723A590C345FB438C585CC818FFDAD77CD8F2824F8C9E85E276B ' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'd41d8cd98f00b204e9800998ecf8427e' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'd41d8cd98f00b204e9800998ecf8427e' ), ( 7, None ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 3, None ), ( 6, 'md5:d41d8cd98f00b204e9800998ecf8427e' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 4, None ), ( 6, 'da39a3ee5e6b4b0d3255bfef95601890afd80709' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'not a hash' ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'not a hash\nd41d8cd98f00b204e9800998ecf8427e' ), ( 7, None ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'not a hash\nd41d8cd98f00b204e9800998ecf8427e' ), ( 8, None ) ] ),
+        scenario( 'system:hash', 0, 0, [ ( 6, 'md5:03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 2, None ), ( 3, { 'services' : [ 'favourites' ] } ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 0, None ), ( 3, { 'types' : [ 7 ] } ), ( 5, None ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 3, { 'services' : [ 'stars', 'counter' ] } ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 3, { 'types' : [ 7, 6 ] } ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 2, None ), ( 5, { 'services' : [ 'stars' ] } ), ( 3, { 'services' : [ 'favourites' ] } ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 2, None ), ( 5, { 'services' : [ 'stars', 'favourites' ] } ), ( 3, { 'services' : [ 'favourites' ] } ) ] ),
+        scenario( 'system:rating', 0, 0, [ ( 2, None ), ( 5, { 'types' : [ 7 ] } ), ( 3, { 'types' : [ 7 ] } ) ] ),
+        scenario( 'system:rating', 0, 1, [ ( 3, None ), ( 4, 'like' ) ] ),
+        scenario( 'system:rating', 0, 1, [ ( 4, 'dislike' ) ] ),
+        scenario( 'system:rating', 0, 1, [ ( 4, 'like' ), ( 1, None ) ] ),
+        scenario( 'system:rating', 0, 2, [ ( 3, None ), ( 7, 0.6 ) ] ),
+        scenario( 'system:rating', 0, 2, [ ( 6, None ), ( 7, 0.4 ) ] ),
+        scenario( 'system:rating', 0, 2, [ ( 4, None ), ( 7, 0.2 ) ] ),
+        scenario( 'system:rating', 0, 2, [ ( 7, 1.0 ) ] ),
+        scenario( 'system:rating', 0, 2, [ ( 7, 1.0 ), ( 2, None ) ] ),
+        scenario( 'system:rating', 0, 3, [ ( 3, None ), ( 7, 5 ) ] ),
+        scenario( 'system:rating', 0, 3, [ ( 5, None ), ( 7, 3 ) ] ),
+        scenario( 'system:rating', 0, 3, [ ( 6, None ), ( 7, 10 ) ] ),
+        scenario( 'system:rating', 0, 3, [ ( 4, None ), ( 7, 2 ) ] ),
+        scenario( 'system:similar files', 1, 0, [ ( 0, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:similar files', 1, 0, [ ( 0, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b\n5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee5ec0ffee' ), ( 1, 8 ) ] ),
+        scenario( 'system:similar files', 1, 0, [ ( 0, 'd41d8cd98f00b204e9800998ecf8427e' ) ] ),
+        scenario( 'system:similar files', 0, 0, [ ( 2, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ) ] ),
+        scenario( 'system:similar files', 0, 0, [ ( 3, '0f0f0f0f0f0f0f0f' ), ( 4, 6 ) ] ),
+        scenario( 'system:similar files', 0, 0, [ ( 2, '03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b' ), ( 3, '0f0f0f0f0f0f0f0f\nabcdef0123456789' ) ] ),
+        scenario( 'system:file viewing statistics', 0, 1, [ ( 1, None ), ( 5, 2 ), ( 7, 3 ), ( 9, 4 ), ( 11, 5 ), ( 13, 6 ) ] ),
     ]
 
     for p in offered:

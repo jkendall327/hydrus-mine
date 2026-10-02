@@ -324,10 +324,18 @@ doesn't compile) said under them. What a panel makes is the reference's:
 "number of tags" for a namespace with none or any becomes the namespace's
 own predicate (`-character:*anything*`), an empty note name is "notes", an
 invalid advanced tag is "invalid tag", and "≠" ratios are searched though
-the reference's parser has no words for them. Not yet: the editors of
-"system:filetype", "system:hash", "system:rating" and "system:similar files"
-(so those aren't offered), the reference's recently used predicates over
-each panel, and setting a panel's values as its default (the star).
+the reference's parser has no words for them. "system:filetype" has the
+reference's tree of filetypes by group (a group's tick box ticking all of
+it); "system:hash" reads hashes one to a line as the reference does
+(a type and colon, or "0x", before each allowed), saying which lines
+aren't hashes or that the hash type looks wrong, with its two clean-up
+buttons; "system:rating" has a panel for each rating service (like or
+dislike, stars, counts) under the all/any/only panel, whose services are
+chosen in place (the reference's specifier button opens a dialog);
+"system:similar files" takes file hashes, or pixel and perceptual hashes
+with "Paste image!" taking a file's from a path on the clipboard. Not
+yet: the reference's recently used predicates over each panel, and
+setting a panel's values as its default (the star).
 Typing in the search box lists
 the matching tags with their counts (display tags, in the page's file domains
 and tag service; the exact match first, then the most used), up and down move the

@@ -206,8 +206,13 @@ search.
   never shows them; one stored by hydrus comes across to the nearest
   second). A file size in terabytes, which the reference's editor offers
   but can't write out ("error:cannot render this predicate"), is written
-  "200TB"; neither parser takes "TB". Their radio buttons are drop-downs,
-  and an editor's rows don't wrap: a narrow window scrolls sideways.
+  "200TB"; neither parser takes "TB". Their radio buttons are drop-downs
+  (as are the like/dislike and star controls of "system:rating"), and an
+  editor's rows don't wrap: a narrow window scrolls sideways. A filetype
+  group partly ticked shows unticked (Qt's tree shows it part-ticked).
+  "system:hash"'s forced clean-up doesn't ask "You sure?" first, and what
+  the reference warns of in a dialog is said under the panels.
+  "Paste image!" takes a file's path from the clipboard, not image data.
 
 - **Thumbnails on a scaled screen are resampled to its pixels** (area
   when shrinking, Lanczos when growing, as the reference resizes

@@ -482,6 +482,29 @@ impl MediaTools {
             .map(|r| hashes::sha256(r.data()))
     }
 
+    /// What the reference's "system:similar to data" editor pastes for a
+    /// file (`_Paste`): its pixel hash and perceptual hashes; why not, for a
+    /// file whose type has none or that can't be read.
+    pub fn similar_search_hashes(
+        &self,
+        path: &Path,
+    ) -> std::result::Result<(Sha256, Vec<PerceptualHash>), String> {
+        let mime = self.detect_mime(path).map_err(|e| e.to_string())?;
+        if !mimes::has_perceptual_hash(mime) {
+            return Err(format!(
+                "Sorry, \"{}\" files are not compatible with the similar file search system!",
+                mime.human_name()
+            ));
+        }
+        let image = self
+            .load_image(path, mime)
+            .map_err(|e| format!("Sorry, seemed to be a problem: {e}"))?;
+        Ok((
+            hashes::sha256(image.data()),
+            self.perceptual_hashes(path, mime),
+        ))
+    }
+
     /// Perceptual hashes for similar-file search (empty on failure, as in the reference).
     pub fn perceptual_hashes(&self, path: &Path, mime: Mime) -> Vec<PerceptualHash> {
         if !mimes::has_perceptual_hash(mime) {

@@ -191,7 +191,6 @@ impl Autocomplete {
         .any(|t| registry.of_type(t).next().is_some());
         let blanks = predicate_editors::offered(location.is_all_known_files(), ratings)
             .into_iter()
-            .filter(|blank| blank.ported())
             .map(|blank| Suggestion {
                 label: presentation.render(blank.text()),
                 predicate: blank.text().to_owned(),

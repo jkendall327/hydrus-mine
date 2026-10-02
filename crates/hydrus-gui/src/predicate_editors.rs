@@ -20,6 +20,9 @@ use hydrus_core::search::predicate::{
 use hydrus_core::search::time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
 use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 
+mod special;
+pub use special::Pressed;
+
 /// A system predicate offered with no value, which opens an editor.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 pub enum Blank {
@@ -97,14 +100,6 @@ impl Blank {
         Blank::ALL.into_iter().find(|b| b.text() == text)
     }
 
-    /// Whether hydrus-rs has its editor yet.
-    pub fn ported(self) -> bool {
-        !matches!(
-            self,
-            Blank::Filetype | Blank::Hash | Blank::Rating | Blank::SimilarFiles
-        )
-    }
-
     /// Offered whatever the page searches: those that need no file's
     /// metadata (`_GetFileSystemPredicates`'s first set).
     fn offered_everywhere(self) -> bool {
@@ -144,6 +139,8 @@ pub struct Context {
     pub tag_services: Vec<(ServiceKey, String)>,
     /// The URL classes whose URLs are kept with files, by name.
     pub url_classes: Vec<String>,
+    /// The rating services, in the reference's order (`RATINGS_SERVICES`).
+    pub rating_services: Vec<RatingService>,
     /// The local date, which the date panels start at.
     pub today: CivilDateTime,
 }
@@ -177,9 +174,56 @@ impl Context {
                 ServiceType::CombinedTag,
             ]),
             url_classes,
+            rating_services: crate::domains::in_order(
+                services,
+                &[
+                    ServiceType::LocalRatingLike,
+                    ServiceType::LocalRatingNumerical,
+                    ServiceType::LocalRatingIncDec,
+                    ServiceType::RatingLikeRepository,
+                    ServiceType::RatingNumericalRepository,
+                ],
+            )
+            .into_iter()
+            .map(|(key, name, service_type)| {
+                let stars = match services.by_key(&key).map(|s| &s.kind) {
+                    Ok(hydrus_store::services::ServiceKind::RatingNumerical(c)) => {
+                        (u64::from(c.num_stars), c.allow_zero)
+                    }
+                    _ => (5, false),
+                };
+                RatingService {
+                    key,
+                    name,
+                    service_type,
+                    stars,
+                }
+            })
+            .collect(),
             today,
         }
     }
+}
+
+/// A rating service, as its panel needs it.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct RatingService {
+    pub key: ServiceKey,
+    pub name: String,
+    pub service_type: ServiceType,
+    /// A numerical service's number of stars, and whether none is a
+    /// rating.
+    pub stars: (u64, bool),
+}
+
+/// A group of the filetype tree: its filetypes, which are ticked, and
+/// whether they are shown.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct TreeGroup {
+    pub name: String,
+    pub options: Vec<String>,
+    pub ticked: Vec<bool>,
+    pub expanded: bool,
 }
 
 /// One of a panel's fields.
@@ -204,6 +248,13 @@ pub enum Field {
     },
     /// A line of text.
     Text { text: String, placeholder: String },
+    /// Several lines of text.
+    Lines { text: String, placeholder: String },
+    /// Groups of tick boxes, a group's own ticking or unticking all of its
+    /// (the reference's filetype tree).
+    Tree { groups: Vec<TreeGroup> },
+    /// A button that does something to the panel.
+    Button(String),
 }
 
 impl Field {
@@ -253,6 +304,13 @@ impl Field {
             placeholder: placeholder.to_owned(),
         }
     }
+
+    fn lines(text: &str, placeholder: &str) -> Self {
+        Field::Lines {
+            text: text.to_owned(),
+            placeholder: placeholder.to_owned(),
+        }
+    }
 }
 
 /// When a field is shown, or can be set: while a choice is one of some
@@ -295,6 +353,15 @@ pub enum Kind {
     UrlRegex,
     UrlClass,
     NumUrls,
+    Filetype,
+    Hash,
+    RatingAdvanced,
+    /// A rating service's panel, by its place in the context's.
+    RatingLike(usize),
+    RatingNumerical(usize),
+    RatingIncDec(usize),
+    SimilarToData,
+    SimilarToFiles,
 }
 
 impl Kind {
@@ -333,6 +400,14 @@ impl Kind {
             Kind::UrlRegex => "PanelPredicateSystemKnownURLsRegex",
             Kind::UrlClass => "PanelPredicateSystemKnownURLsURLClass",
             Kind::NumUrls => "PanelPredicateSystemNumURLs",
+            Kind::Filetype => "PanelPredicateSystemMime",
+            Kind::Hash => "PanelPredicateSystemHash",
+            Kind::RatingAdvanced => "PredicateSystemRatingAdvanced",
+            Kind::RatingLike(_) => "PredicateSystemRatingLike",
+            Kind::RatingNumerical(_) => "PredicateSystemRatingNumerical",
+            Kind::RatingIncDec(_) => "PredicateSystemRatingIncDec",
+            Kind::SimilarToData => "PanelPredicateSystemSimilarToData",
+            Kind::SimilarToFiles => "PanelPredicateSystemSimilarToFiles",
         }
     }
 }
@@ -364,6 +439,9 @@ pub struct Panel {
     pub kind: Kind,
     pub fields: Vec<Field>,
     pub conditions: Vec<Condition>,
+    /// The fields on a second line, under the rest (as the reference
+    /// stacks a note over its panel, or buttons under a text box).
+    pub second_line: Vec<usize>,
 }
 
 /// The fields of a number test: its operator, the number (as one field, or
@@ -384,6 +462,7 @@ impl Panel {
             kind,
             fields: Vec::new(),
             conditions: Vec::new(),
+            second_line: Vec::new(),
         }
     }
 
@@ -458,6 +537,12 @@ impl Panel {
 
     /// Choose option `option` of field `i`.
     pub fn choose(&mut self, i: usize, option: usize) {
+        self.choose_quietly(i, option);
+        self.settle(i);
+    }
+
+    /// Choose, without what a change would follow it with.
+    fn choose_quietly(&mut self, i: usize, option: usize) {
         if let Some(Field::Choice { options, chosen }) = self.fields.get_mut(i)
             && option < options.len()
         {
@@ -473,12 +558,15 @@ impl Panel {
         {
             *value = to.clamp(*min, *max);
         }
+        self.settle(i);
     }
 
+    /// Set field `i`'s text (a line, or several).
     pub fn set_text(&mut self, i: usize, to: &str) {
-        if let Some(Field::Text { text, .. }) = self.fields.get_mut(i) {
+        if let Some(Field::Text { text, .. } | Field::Lines { text, .. }) = self.fields.get_mut(i) {
             to.clone_into(text);
         }
+        self.settle(i);
     }
 
     pub fn tick(&mut self, i: usize, option: usize, on: bool) {
@@ -487,6 +575,12 @@ impl Panel {
         {
             *t = on;
         }
+        self.settle(i);
+    }
+
+    /// What a change to field `i` brings with it.
+    fn settle(&mut self, i: usize) {
+        self.settle_special(i);
     }
 
     /// A number test's fields: its operators (of those allowed), the value
@@ -614,6 +708,14 @@ impl Panel {
     pub fn predicates(&self, context: &Context) -> Result<Vec<Predicate>, String> {
         let system = |p: SystemPredicate| Ok(vec![Predicate::System(p)]);
         match self.kind {
+            Kind::Filetype
+            | Kind::Hash
+            | Kind::RatingAdvanced
+            | Kind::RatingLike(_)
+            | Kind::RatingNumerical(_)
+            | Kind::RatingIncDec(_)
+            | Kind::SimilarToData
+            | Kind::SimilarToFiles => self.special_predicates(context),
             Kind::Width | Kind::Height | Kind::NumFrames | Kind::NumWords => {
                 let property = match self.kind {
                     Kind::Width => NumericProperty::Width,
@@ -990,9 +1092,8 @@ pub struct Editor {
 }
 
 impl Editor {
-    /// The editor for a blank predicate, its panels at their defaults;
-    /// `None` for those not ported yet.
-    pub fn new(blank: Blank, context: &Context) -> Option<Self> {
+    /// The editor for a blank predicate, its panels at their defaults.
+    pub fn new(blank: Blank, context: &Context) -> Self {
         let page = |buttons: Vec<Button>, panels: Vec<Panel>| Page {
             name: String::new(),
             buttons,
@@ -1156,9 +1257,54 @@ impl Editor {
                     },
                 ],
             ),
-            Blank::Filetype | Blank::Hash | Blank::Rating | Blank::SimilarFiles => return None,
+            Blank::Filetype => (
+                None,
+                vec![page(Vec::new(), vec![special::filetype_panel()])],
+            ),
+            Blank::Hash => (None, vec![page(Vec::new(), vec![special::hash_panel()])]),
+            Blank::Rating => {
+                let services = &context.rating_services;
+                let mut panels = Vec::new();
+                if services.len() > 1 {
+                    panels.push(special::rating_advanced_panel(context));
+                }
+                for wanted in [
+                    ServiceType::LocalRatingLike,
+                    ServiceType::LocalRatingNumerical,
+                    ServiceType::LocalRatingIncDec,
+                ] {
+                    for (i, service) in services.iter().enumerate() {
+                        if service.service_type != wanted {
+                            continue;
+                        }
+                        panels.push(match wanted {
+                            ServiceType::LocalRatingLike => special::rating_like_panel(i, service),
+                            ServiceType::LocalRatingNumerical => {
+                                special::rating_numerical_panel(i, service)
+                            }
+                            _ => special::rating_incdec_panel(i, service),
+                        });
+                    }
+                }
+                (None, vec![page(Vec::new(), panels)])
+            }
+            Blank::SimilarFiles => (
+                None,
+                vec![
+                    Page {
+                        name: "data".into(),
+                        buttons: Vec::new(),
+                        panels: vec![special::similar_to_data_panel()],
+                    },
+                    Page {
+                        name: "files".into(),
+                        buttons: Vec::new(),
+                        panels: vec![special::similar_to_files_panel()],
+                    },
+                ],
+            ),
         };
-        Some(Editor { blank, note, pages })
+        Editor { blank, note, pages }
     }
 }
 
@@ -1347,6 +1493,8 @@ fn framerate_panel() -> Panel {
         1,
         5,
     );
+    // (the note over the rest)
+    panel.second_line = (1..panel.fields.len()).collect();
     panel
 }
 
@@ -1672,6 +1820,7 @@ mod tests {
             file_services: vec![(ServiceKey::new(b"x".to_vec()), "my files".into())],
             tag_services: Vec::new(),
             url_classes: Vec::new(),
+            rating_services: Vec::new(),
             today: CivilDateTime::new(2026, 10, 2, 0, 0).unwrap(),
         }
     }
@@ -1708,7 +1857,7 @@ mod tests {
         );
         assert_eq!(civil("2011-02-30", "00:00"), None);
         assert_eq!(civil("yesterday", "00:00"), None);
-        let editor = Editor::new(Blank::Time, &context()).unwrap();
+        let editor = Editor::new(Blank::Time, &context());
         let mut date = editor.pages[0].panels[1].clone();
         date.set_text(2, "June");
         assert!(date.predicates(&context()).is_err());

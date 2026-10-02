@@ -571,9 +571,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 url_classes,
                 hydrus_search::Clock::system().today(),
             );
-            let Some(editor) = predicate_editors::Editor::new(blank, &context) else {
-                return;
-            };
+            let editor = predicate_editors::Editor::new(blank, &context);
             let viewing = store.read(hydrus_store::settings::get).unwrap_or_default();
             let text = hydrus_search::TextContext::from_store(&snapshot.services, &viewing);
             let chosen: Rc<dyn Fn(Vec<hydrus_search::Predicate>)> = Rc::new({
