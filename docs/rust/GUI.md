@@ -51,7 +51,9 @@ search changes (and then only if it is synchronised). The pages we don't
 open yet show their files, and say what they are; URL, gallery and watcher
 downloader pages are live (below).
 Changing a page's sort sorts the files it shows rather than searching
-again, as the reference does. Ctrl+T or F9 opens the reference's page
+again, as the reference does. Ctrl+T or F9 (or, as in the reference, a double click,
+left or middle, on a tab row's empty space, the new page then going in
+that row's notebook) opens the reference's page
 chooser, nine buttons laid out as a number pad (the digits, arrows and
 enter press them): file search, then a file domain, opens a search page
 on it; special opens a page of pages or a duplicates page; download, then

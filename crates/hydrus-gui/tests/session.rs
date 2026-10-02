@@ -1313,3 +1313,104 @@ fn a_watcher_downloader_page_shows_and_controls_its_watchers() {
             .page_closed
     );
 }
+
+#[test]
+fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
+    let (_dirs, store) = store();
+    let search = |name: &str| {
+        page(
+            name,
+            PageContent::Search {
+                search: FileSearchContext::default(),
+                synchronised: true,
+                sort: None,
+                lock: None,
+                collect: None,
+            },
+        )
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![
+            search("a"),
+            page("pages", PageContent::Pages(vec![search("b")])),
+        ],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store).unwrap());
+    let row = |level: usize| -> Vec<String> {
+        let row = ui.get_tab_rows().row_data(level).unwrap();
+        (0..row.names.row_count())
+            .map(|i| row.names.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    // (a page shown in the "pages" notebook, under the top one)
+    ui.invoke_tab_chosen(0, 1);
+    assert_eq!(ui.get_tab_rows().row_count(), 2);
+    let (top, inner) = (row(0), row(1));
+    let chooser_open = || ui.get_chooser_labels().row_count() > 0;
+
+    // one press is nothing; two on the top row's space: the chooser, and
+    // the page chosen goes in the top notebook
+    ui.invoke_tab_space_pressed(0, false);
+    assert!(!chooser_open());
+    ui.invoke_tab_space_pressed(0, false);
+    assert!(chooser_open());
+    ui.invoke_chooser_enter();
+    ui.invoke_chooser_enter();
+    assert!(!chooser_open());
+    let mut expected = top.clone();
+    expected.push("files".into());
+    assert_eq!(row(0), expected);
+    assert_eq!(bound.pages.borrow().shown().name, "files");
+
+    // a middle double click on the inner row's space: a page in it
+    ui.invoke_tab_chosen(0, 1);
+    ui.invoke_tab_space_pressed(1, true);
+    ui.invoke_tab_space_pressed(1, true);
+    assert!(chooser_open());
+    ui.invoke_chooser_enter();
+    ui.invoke_chooser_enter();
+    let mut expected = inner.clone();
+    expected.push("files".into());
+    assert_eq!(row(1), expected);
+    // (a press of each button doesn't make a double click)
+    ui.invoke_tab_space_pressed(1, false);
+    ui.invoke_tab_space_pressed(1, true);
+    assert!(!chooser_open());
+
+    // a chooser dismissed leaves new pages where they go by default
+    // (the presses made by the pointer, on the top row's empty space)
+    ui.show().unwrap();
+    headless::render(&windows.get(0).unwrap(), 1100, 700);
+    let press = |x: f32, y: f32| {
+        use slint::platform::{PointerEventButton, WindowEvent};
+        let position = slint::LogicalPosition::new(x, y);
+        for event in [
+            WindowEvent::PointerMoved { position },
+            WindowEvent::PointerPressed {
+                position,
+                button: PointerEventButton::Left,
+            },
+            WindowEvent::PointerReleased {
+                position,
+                button: PointerEventButton::Left,
+            },
+        ] {
+            ui.window().dispatch_event(event);
+        }
+    };
+    press(600.0, 14.0);
+    press(600.0, 14.0);
+    assert!(chooser_open(), "the top row's empty space double-clicked");
+    ui.invoke_chooser_cancel();
+    ui.invoke_new_page();
+    ui.invoke_chooser_enter();
+    ui.invoke_chooser_enter();
+    expected.push("files".into());
+    assert_eq!(row(1), expected);
+}

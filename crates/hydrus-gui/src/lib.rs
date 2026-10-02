@@ -164,6 +164,10 @@ impl std::fmt::Debug for Bound {
     }
 }
 
+/// Two presses this close together are a double click (where Slint's own
+/// double click can't be had: list rows, and middle clicks).
+const DOUBLE_CLICK: std::time::Duration = std::time::Duration::from_millis(400);
+
 /// A decoded image as Slint shows it.
 pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     thumbnails::Pixels::new(raster).image()
@@ -310,7 +314,37 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let pages = pages.clone();
         let show_chooser = show_chooser.clone();
         move || {
-            let store = pages.borrow().store().clone();
+            let store = {
+                let mut pages = pages.borrow_mut();
+                pages.new_page_in(None);
+                pages.store().clone()
+            };
+            *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
+            show_chooser();
+        }
+    });
+    // a double click (left or middle) on a tab row's empty space: the
+    // page chooser, for that row's notebook
+    window.on_tab_space_pressed({
+        let chooser = chooser.clone();
+        let pages = pages.clone();
+        let show_chooser = show_chooser.clone();
+        let last: Rc<Cell<Option<(i32, bool, std::time::Instant)>>> = Rc::default();
+        move |level, middle| {
+            let now = std::time::Instant::now();
+            let double = last.get().is_some_and(|(l, m, at)| {
+                l == level && m == middle && now.duration_since(at) < DOUBLE_CLICK
+            });
+            if !double {
+                last.set(Some((level, middle, now)));
+                return;
+            }
+            last.set(None);
+            let store = {
+                let mut pages = pages.borrow_mut();
+                pages.new_page_in(usize::try_from(level).ok());
+                pages.store().clone()
+            };
             *chooser.borrow_mut() = Some(page_chooser::PageChooser::new(&store));
             show_chooser();
         }
@@ -339,9 +373,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     window.on_chooser_cancel({
         let chooser = chooser.clone();
+        let pages = pages.clone();
         let show_chooser = show_chooser.clone();
         move || {
             chooser.borrow_mut().take();
+            pages.borrow_mut().new_page_in(None);
             show_chooser();
         }
     });
@@ -783,9 +819,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let now = std::time::Instant::now();
-            let double = last.get().is_some_and(|(r, at)| {
-                r == row && now.duration_since(at) < std::time::Duration::from_millis(400)
-            });
+            let double = last
+                .get()
+                .is_some_and(|(r, at)| r == row && now.duration_since(at) < DOUBLE_CLICK);
             page.borrow_mut().select_query(Some(queue));
             if double {
                 last.set(None);
@@ -943,9 +979,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 return;
             };
             let now = std::time::Instant::now();
-            let double = last.get().is_some_and(|(r, at)| {
-                r == row && now.duration_since(at) < std::time::Duration::from_millis(400)
-            });
+            let double = last
+                .get()
+                .is_some_and(|(r, at)| r == row && now.duration_since(at) < DOUBLE_CLICK);
             page.borrow_mut().select_query(Some(queue));
             if double {
                 last.set(None);

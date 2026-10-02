@@ -86,6 +86,9 @@ pub struct Pages {
     downloader_options: DownloaderPageSettings,
     /// How many files each page not yet opened shows, as kept.
     kept_counts: HashMap<PageKey, usize>,
+    /// The notebook (by depth) the next new page goes in, when one was
+    /// chosen for it (its tab row's empty space double-clicked).
+    new_page_depth: Option<usize>,
 }
 
 /// What the store was last told of the pages, so only changes are written.
@@ -148,6 +151,7 @@ impl Pages {
             path: Vec::new(),
             open: HashMap::new(),
             closed: Vec::new(),
+            new_page_depth: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -194,6 +198,7 @@ impl Pages {
             path: vec![0],
             open: HashMap::new(),
             closed: Vec::new(),
+            new_page_depth: None,
             remembered: HashMap::new(),
             last_moved: HashMap::new(),
             synced: Synced::default(),
@@ -667,6 +672,14 @@ impl Pages {
         }
     }
 
+    /// Put the next new page in the notebook `depth` levels down the way to
+    /// the page shown, as the reference's notebook does when its tab bar's
+    /// empty space is double-clicked (`ChooseNewPage` on that notebook);
+    /// `None` for the current notebook.
+    pub fn new_page_in(&mut self, depth: Option<usize>) {
+        self.new_page_depth = depth;
+    }
+
     /// Open a new search page (the reference's page chooser's "file search"
     /// on its default domain, "my files"), at the far right of the current
     /// notebook as the reference's default puts it, and show it.
@@ -934,7 +947,11 @@ impl Pages {
     /// Add `page` at the far right of the current notebook, and show it
     /// (a notebook of pages, on its first page).
     fn add(&mut self, page: Page) {
-        let depth = self.current_depth();
+        let depth = self
+            .new_page_depth
+            .take()
+            .filter(|&d| d <= self.current_depth())
+            .unwrap_or_else(|| self.current_depth());
         let pages = self.notebook_mut(depth);
         pages.push(page);
         let index = pages.len() - 1;

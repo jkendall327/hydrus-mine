@@ -273,6 +273,9 @@ export component MainWindow inherits Window {
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
+    // a press on a tab row's empty space (middle or left), twice for the
+    // page chooser
+    callback tab-space-pressed(int, bool);
     // why the page shown has no search, if it hasn't
     in property <string> note;
     // a duplicates page, which can launch the duplicate filter
@@ -534,12 +537,24 @@ export component MainWindow inherits Window {
                 padding-left: 4px;
                 padding-top: 2px;
                 spacing: 2px;
-                alignment: start;
                 for name[index] in row.names: Tab {
                     text: name;
                     selected: index == row.selected;
                     chosen => { root.tab-chosen(level, index); }
                     close => { root.close-tab(level, index); }
+                }
+                // the row's empty space: as the reference's tab bar, a
+                // double click (left or middle) there chooses a new page for
+                // this notebook
+                TouchArea {
+                    horizontal-stretch: 1;
+                    min-width: 24px;
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down
+                            && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle)) {
+                            root.tab-space-pressed(level, event.button == PointerEventButton.middle);
+                        }
+                    }
                 }
             }
             HorizontalLayout {
