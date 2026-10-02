@@ -153,6 +153,8 @@ pub struct Bound {
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
     pub filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
+    /// Open a new page (as the page chooser does), and show it.
+    pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
     /// Do what the Client API asked of the pages (`/manage_pages`), and keep
     /// the pages and the media viewer in the store as they are, for it to
     /// answer from: the client runs this every half second.
@@ -358,6 +360,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             window.set_chooser_labels(ModelRc::new(VecModel::from(labels)));
         }
     };
+    let open_page: Rc<dyn Fn(&page_chooser::NewPage)> = Rc::new({
+        let change_pages = change_pages.clone();
+        move |choice: &page_chooser::NewPage| change_pages(&|pages| pages.new_page(choice))
+    });
     // open the page chosen, if one was
     let chosen = {
         let chooser = chooser.clone();
@@ -1819,6 +1825,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         archive_delete,
         filter,
+        open_page,
         sync,
         _thumbnails: thumbnails,
         _menu_titles: menu_titles,
@@ -3424,6 +3431,8 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
 /// A downloader page's importer: its logs' statuses and progress, its
 /// pause, and its downloads.
 fn show_importer(window: &MainWindow, importer: &page::Importer) {
+    window.set_local_import(importer.local);
+    window.set_import_action(importer.live.files_status.as_str().into());
     window.set_import_status(importer.files_status().into());
     window.set_import_progress(importer.progress_text().into());
     #[allow(clippy::cast_precision_loss)] // (a progress bar)

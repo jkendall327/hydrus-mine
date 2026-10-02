@@ -4,7 +4,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, VerticalBox } from "std-widgets.slint";
 import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
-import { DownloadLine, DownloadControl, ImporterBoxes } from "importing.slint";
+import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
@@ -357,6 +357,10 @@ export component MainWindow inherits Window {
     // its file log's status and progress, whether it is paused, and its
     // search log's status
     in property <bool> importing;
+    // (a local import page's, rather than a URL downloader page's; and
+    // what its importer is doing)
+    in property <bool> local-import;
+    in property <string> import-action;
     in property <string> import-status;
     in property <string> import-progress;
     in property <float> import-fraction;
@@ -696,7 +700,23 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
+                if root.importing && root.local-import: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    LocalImportBox {
+                        current-action: root.import-action;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        pause-play-files => { root.pause-play-files(); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && !root.local-import && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {

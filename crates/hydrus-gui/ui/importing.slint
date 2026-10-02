@@ -149,3 +149,49 @@ export component ImporterBoxes inherits VerticalLayout {
         }
     }
 }
+
+// a local import page's "imports" box (the reference's `SidebarImporterHDD`):
+// what it is doing and its pause button, then its file log's status and
+// progress
+export component LocalImportBox inherits Rectangle {
+    in property <string> current-action;
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <bool> import-paused;
+    callback pause-play-files();
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        Text {
+            text: "imports";
+            font-weight: 600;
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            Text {
+                text: root.current-action;
+                overflow: elide;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            // ("pause/play imports": file_pause, or file_play while paused)
+            Button {
+                icon: root.import-paused ? @image-url("../../../static/file_play.png") : @image-url("../../../static/file_pause.png");
+                clicked => { root.pause-play-files(); }
+            }
+        }
+        if root.import-status != "": Text {
+            text: root.import-status;
+            wrap: word-wrap;
+        }
+        if root.import-progress != "": Text {
+            text: root.import-progress;
+        }
+        ProgressIndicator {
+            progress: root.import-fraction;
+        }
+    }
+}

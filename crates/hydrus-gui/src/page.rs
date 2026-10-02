@@ -102,6 +102,9 @@ pub struct Importer {
     pub paused: bool,
     /// What the daemon is doing with it now (nothing, if it isn't running).
     pub live: QueueLive,
+    /// Whether it is a local import's (the reference's "import" page), not
+    /// a URL list's.
+    pub local: bool,
 }
 
 impl Importer {
@@ -165,9 +168,10 @@ impl Importer {
             return Some("This page is still importing.".into());
         }
         let held: usize = self.files.values().sum();
+        let kind = if self.local { "local" } else { "urls" };
         (confirm_non_empty && held > 0).then(|| {
             format!(
-                "This is a urls import page holding {} import objects.",
+                "This is a {kind} import page holding {} import objects.",
                 hydrus_core::numbers::human_int(held as u64)
             )
         })
@@ -361,6 +365,24 @@ impl SearchPage {
         let mut page = Self::fixed(store, "A URL downloader page.", sort, files);
         page.importer = Some(Importer {
             queue,
+            ..Importer::default()
+        });
+        page.read_import(true);
+        page
+    }
+
+    /// A local import page (the reference's "import" page) over `queue`:
+    /// its files as they are imported, in the queue's order.
+    pub fn local_import(
+        store: Arc<Store>,
+        queue: i64,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::fixed(store, "A local import page.", sort, files);
+        page.importer = Some(Importer {
+            queue,
+            local: true,
             ..Importer::default()
         });
         page.read_import(true);
@@ -909,8 +931,9 @@ impl SearchPage {
             queue,
             files,
             searches,
-            paused: row.is_some_and(|q| q.files_paused),
+            paused: row.as_ref().is_some_and(|q| q.files_paused),
             live: live.unwrap_or_default(),
+            local: row.is_some_and(|q| q.kind == queues::QueueKind::LocalImport),
         };
         let status_changed = self.importer.as_ref() != Some(&now);
         self.importer = Some(now);

@@ -55,6 +55,13 @@ pub enum NewPage {
     Duplicates,
     /// A saved session's pages, in a page of pages named after it.
     Session(String),
+    /// A local import of these files (each with its modified time), and
+    /// whether to delete each once it is in the database (the reference's
+    /// `NewPageImportHDD`).
+    LocalImport {
+        paths: Vec<(String, Option<i64>)>,
+        delete_after_success: bool,
+    },
 }
 
 impl NewPage {
@@ -67,6 +74,7 @@ impl NewPage {
             NewPage::SimpleDownloader => "simple downloader",
             NewPage::Pages => "page of pages",
             NewPage::Duplicates => "duplicates processing",
+            NewPage::LocalImport { .. } => "import",
         }
     }
 }

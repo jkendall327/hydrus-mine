@@ -1416,3 +1416,140 @@ fn a_double_click_on_a_tab_rows_empty_space_chooses_a_page_for_it() {
     expected.push("files".into());
     assert_eq!(row(1), expected);
 }
+
+/// A local import page (the reference's "import" page) over its import,
+/// which the daemon works (played here by writing to the queue as it
+/// would): made with its files, named "import", its "imports" box showing
+/// what the import is doing, its file log's status and progress and the
+/// files it brings as they come, pausing, and closing as the reference
+/// asks.
+#[test]
+fn a_local_import_page_shows_and_controls_its_import() {
+    use hydrus_gui::page_chooser::NewPage;
+    use hydrus_store::live::{self, QueueLive};
+    use hydrus_store::queues::{self, LocalImport, QueueKind, SeedStatus};
+
+    let (_dirs, store) = store();
+    let files: Vec<(HashId, hydrus_core::Sha256)> = store
+        .read(|conn| {
+            let ids: Vec<HashId> = conn
+                .prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            let hashes = hydrus_store::master::hashes(conn, &ids)?;
+            Ok(ids.iter().map(|id| (*id, hashes[id])).collect())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap();
+    let paths = vec![
+        ("/imports/a.png".to_owned(), Some(1_600_000_000)),
+        ("/imports/b.jpg".to_owned(), Some(1_600_000_001)),
+        ("/imports/c.gif".to_owned(), None),
+    ];
+    (bound.open_page)(&NewPage::LocalImport {
+        paths: paths.clone(),
+        delete_after_success: true,
+    });
+    assert_eq!(bound.pages.borrow().shown().name, "import");
+    assert!(ui.get_importing() && ui.get_local_import());
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    let key = bound.pages.borrow().shown().key;
+    // its import, for the daemon: its files in order, and deleting them
+    let made = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    assert_eq!(made.kind, QueueKind::LocalImport);
+    assert_eq!(made.page_key.as_deref(), Some(&key.0[..]));
+    assert_eq!(
+        LocalImport::of(&made),
+        Some(LocalImport {
+            delete_after_success: true
+        })
+    );
+    let seeds: Vec<(String, Option<i64>)> = store
+        .read(move |c| queues::file_seeds(c, queue))
+        .unwrap()
+        .into_iter()
+        .map(|s| (s.data, s.source_time))
+        .collect();
+    assert_eq!(seeds, paths);
+    assert_eq!(
+        store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap(),
+        [queue]
+    );
+    assert_eq!(ui.get_import_status(), "");
+    assert_eq!(ui.get_import_progress(), "0/3");
+
+    // the daemon at work: a new file, one already in the database, one to
+    // go, and what it is doing
+    let (first, second) = (files[0].1, files[1].1);
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let mut seeds = queues::file_seeds(conn, queue)?;
+            for (seed, (status, hash)) in seeds.iter_mut().zip([
+                (SeedStatus::SuccessfulAndNew, second),
+                (SeedStatus::SuccessfulButRedundant, first),
+            ]) {
+                seed.status = status;
+                seed.meta.set_hash("sha256", hash.to_hex());
+                queues::update_file_seed(conn, seed)?;
+            }
+            let importing = QueueLive {
+                files_status: "importing".into(),
+                ..QueueLive::default()
+            };
+            live::publish(conn, &[(queue, Some(importing))])
+        })
+        .unwrap();
+    (bound.sync)();
+    assert_eq!(ui.get_import_action(), "importing");
+    assert_eq!(ui.get_import_status(), "2 successful (1 already in db)");
+    assert_eq!(ui.get_import_progress(), "2/3");
+    assert_eq!(
+        bound.current.borrow().borrow().files(),
+        [files[1].0, files[0].0]
+    );
+    let row = ui.get_tab_rows().row_data(0).unwrap();
+    let shown = usize::try_from(row.selected).unwrap();
+    assert_eq!(row.names.row_data(shown).unwrap(), "import (2 - 2/3)");
+
+    // pausing pauses it, nudging the daemon
+    ui.invoke_pause_play_files();
+    assert!(ui.get_import_paused());
+    let paused = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    assert!(paused.files_paused);
+    assert_eq!(
+        store.write(|ctx| queues::take_nudges(ctx.conn())).unwrap(),
+        [queue]
+    );
+    // closing asks, as it holds imports
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"import\"?\n\nThis is a local import page holding 3 import objects."
+    );
+    ui.invoke_answer(false);
+    // resumed, with work left, it is still importing
+    ui.invoke_pause_play_files();
+    ui.invoke_close_page();
+    assert_eq!(
+        ui.get_question(),
+        "Close \"import\"?\n\nThis page is still importing."
+    );
+    ui.invoke_answer(false);
+    assert_eq!(bound.pages.borrow().shown().key, key);
+}

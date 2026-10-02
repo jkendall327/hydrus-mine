@@ -191,6 +191,14 @@ while Ctrl+U can bring the page back, and go after the hour or when the
 client closes. Closing a page that holds anything, idle, asks only if
 hydrus's option to do so is on (as it is by default).
 
+A local import page (the reference's "import" page) shows the files it
+imports from disk as the daemon works through them: its sidebar's
+"imports" box has what the import is doing ("importing"), the
+reference's pause/play button, and the file log's status, progress and
+bar; its files join the page as they come, in order; and closing it asks
+as the reference's does ("This page is still importing.", "This is a
+local import page holding 3 import objects.").
+
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
 "waiting for new queries" with none) and lists them as the reference's

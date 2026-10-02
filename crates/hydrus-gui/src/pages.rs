@@ -115,6 +115,8 @@ struct Closed {
 
 /// A new URL downloader page's name (the reference's).
 const URL_PAGE_NAME: &str = "url import";
+/// A local import page's name, as the reference names it.
+const LOCAL_IMPORT_PAGE_NAME: &str = "import";
 
 /// How long a closed page can be reopened (the reference's).
 const CLOSED_PAGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60 * 60);
@@ -504,6 +506,14 @@ impl Pages {
                 SearchPage::url_downloader(store, queues[0], sort.as_ref(), files)
             }
             PageContent::Downloader {
+                kind: DownloaderKind::Local,
+                queues,
+                sort,
+                ..
+            } if queues.len() == 1 => {
+                SearchPage::local_import(store, queues[0], sort.as_ref(), files)
+            }
+            PageContent::Downloader {
                 kind: DownloaderKind::Gallery,
                 queues,
                 sort,
@@ -539,6 +549,7 @@ impl Pages {
                     DownloaderKind::Gallery => ("gallery", "no highlighted query"),
                     DownloaderKind::Urls => ("url", "empty page"),
                     DownloaderKind::Watchers => ("watcher", "no highlighted watcher"),
+                    DownloaderKind::Local => ("local import", "empty page"),
                 };
                 let queues = match queues.len() {
                     1 => "its queue".to_owned(),
@@ -862,6 +873,44 @@ impl Pages {
                 content: PageContent::Pages(Vec::new()),
             },
             NewPage::Session(name) => return self.append_session(name),
+            NewPage::LocalImport {
+                paths,
+                delete_after_success,
+            } => {
+                let (paths, delete_after_success) = (paths.clone(), *delete_after_success);
+                let key = PageKey::random();
+                let now = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+                let queue = self
+                    .store
+                    .write(move |ctx| {
+                        let conn = ctx.conn();
+                        let queue = hydrus_store::queues::create_local_import(
+                            conn,
+                            Some(&key.0),
+                            &hydrus_core::import_options::ImportOptionsSlice::default(),
+                            &paths,
+                            hydrus_store::queues::LocalImport {
+                                delete_after_success,
+                            },
+                            now,
+                        )?;
+                        hydrus_store::queues::nudge(conn, queue)?;
+                        Ok(queue)
+                    })
+                    .map_err(|e| format!("could not make the import: {e}"))?;
+                Page {
+                    key,
+                    name: LOCAL_IMPORT_PAGE_NAME.into(),
+                    content: PageContent::Downloader {
+                        kind: DownloaderKind::Local,
+                        queues: vec![queue],
+                        sort: None,
+                        page: None,
+                    },
+                }
+            }
             NewPage::Urls => {
                 let key = PageKey::random();
                 let now = std::time::SystemTime::now()
@@ -1145,7 +1194,10 @@ impl Pages {
         if !matches!(
             page.content,
             PageContent::Downloader {
-                kind: DownloaderKind::Urls | DownloaderKind::Gallery | DownloaderKind::Watchers,
+                kind: DownloaderKind::Urls
+                    | DownloaderKind::Gallery
+                    | DownloaderKind::Watchers
+                    | DownloaderKind::Local,
                 ..
             }
         ) {

@@ -319,6 +319,7 @@ impl PageContent {
                 DownloaderKind::Gallery => 1,
                 DownloaderKind::Urls => 7,
                 DownloaderKind::Watchers => 9,
+                DownloaderKind::Local => 3,
             },
             PageContent::Duplicates { .. } => 8,
             PageContent::Other { page_type, .. } => *page_type,
@@ -407,6 +408,9 @@ pub enum DownloaderKind {
     Gallery,
     Urls,
     Watchers,
+    /// Files imported from disk (the reference's "import" page), over its
+    /// one local import queue.
+    Local,
 }
 
 /// How a page sorts its files (the reference's `MediaSort`).
@@ -592,6 +596,23 @@ mod tests {
     }
 
     use super::*;
+
+    /// Each page as the reference's page types number it
+    /// (`ClientGUIPagesCore.PAGE_TYPE_*`).
+    #[test]
+    fn pages_have_the_references_page_types() {
+        let downloader = |kind| PageContent::Downloader {
+            kind,
+            queues: Vec::new(),
+            sort: None,
+            page: None,
+        };
+        assert_eq!(PageContent::Pages(Vec::new()).page_type(), 10);
+        assert_eq!(downloader(DownloaderKind::Gallery).page_type(), 1);
+        assert_eq!(downloader(DownloaderKind::Local).page_type(), 3);
+        assert_eq!(downloader(DownloaderKind::Urls).page_type(), 7);
+        assert_eq!(downloader(DownloaderKind::Watchers).page_type(), 9);
+    }
 
     #[test]
     fn a_session_round_trips_through_json() {

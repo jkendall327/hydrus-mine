@@ -428,7 +428,7 @@ Checked by `crates/hydrus-download/tests/local_import.rs`.
   exist!"), and, if the import says, each one in the database afterwards
   deleted (to the recycle bin, if the options say). Its sidecars (the
   reference's metadata routers) and tags given per path aren't supported
-  yet.
+  yet, nor is its page's import options button.
 
 ## Network requests (`hydrus-net`)
 

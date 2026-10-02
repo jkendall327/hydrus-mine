@@ -29,17 +29,7 @@ const PAGE_TYPE_PAGE_OF_PAGES: i64 = 10;
 
 /// What a page is, by the reference's page types.
 fn page_type(content: &PageContent) -> i64 {
-    match content {
-        PageContent::Pages(_) => PAGE_TYPE_PAGE_OF_PAGES,
-        PageContent::Search { .. } => 6,
-        PageContent::Downloader { kind, .. } => match kind {
-            DownloaderKind::Gallery => 1,
-            DownloaderKind::Urls => 7,
-            DownloaderKind::Watchers => 9,
-        },
-        PageContent::Duplicates { .. } => 8,
-        PageContent::Other { page_type, .. } => *page_type,
-    }
+    content.page_type()
 }
 
 /// The pages as the client keeps them: the last session, its top notebook's
