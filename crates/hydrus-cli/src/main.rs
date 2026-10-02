@@ -589,10 +589,12 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 tokio::time::sleep(Duration::from_secs(3600)).await;
             }
         });
-        // (what an earlier daemon's queues were doing is over)
+        // (what an earlier daemon's queues were doing is over, and so is the
+        // work its popups showed)
         if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
             tracing::error!(error = %e, "clearing the queues' live state failed");
         }
+        forget_unfinished_popups(&store);
         if let Some(downloads) = &state.downloads
             && let Err(e) = downloads.start_all()
         {
@@ -937,6 +939,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         if let Err(e) = store.write(|ctx| hydrus_store::live::clear(ctx.conn())) {
             tracing::error!(error = %e, "clearing the queues' live state failed");
         }
+        forget_unfinished_popups(&store);
         // (the bandwidth used since the last minute's save)
         if let Some(net) = net
             && let Err(e) = net.save_bandwidth()
@@ -1022,6 +1025,15 @@ pub(crate) fn lock_store(dir: &Path, what: &str) -> Result<std::fs::File> {
             "hydrus serve is running on {}, so {what} can't run alongside it; stop it first",
             dir.display()
         ),
+    }
+}
+
+/// Forget the popups of work that stopped with a daemon.
+fn forget_unfinished_popups(store: &hydrus_store::Store) {
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    if let Err(e) = store.write(move |ctx| hydrus_store::popups::forget_unfinished(ctx.conn(), now))
+    {
+        tracing::error!(error = %e, "forgetting unfinished popups failed");
     }
 }
 

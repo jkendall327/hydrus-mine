@@ -1,8 +1,9 @@
 //! Subscriptions against a local booru with a tag search: the first sync
 //! stops at the initial file limit, a later one catches up on new uploads
 //! and stops once it sees what it found before, the files are downloaded
-//! with the query's own tags added, and a missing downloader pauses the
-//! subscription.
+//! with the query's own tags added, a missing downloader pauses the
+//! subscription, and a subscription shows what it does in a popup, which
+//! can cancel it.
 
 use std::collections::{BTreeSet, HashMap};
 use std::sync::Arc;
@@ -50,6 +51,8 @@ struct Site {
     /// Post ids per tag, oldest first.
     tags: Mutex<HashMap<String, Vec<usize>>>,
     hits: Mutex<HashMap<String, usize>>,
+    /// Searches wait for this, if set.
+    hold: Mutex<Option<Arc<tokio::sync::Notify>>>,
 }
 
 impl Site {
@@ -71,6 +74,10 @@ async fn search(
         .lock()
         .entry(format!("search/{tag}/{page}"))
         .or_default() += 1;
+    let hold = site.hold.lock().clone();
+    if let Some(hold) = hold {
+        hold.notified().await;
+    }
     let mut posts = site.tags.lock().get(&tag).cloned().unwrap_or_default();
     posts.reverse();
     let start = (page - 1) * PER_PAGE;
@@ -702,4 +709,80 @@ async fn a_subscription_with_no_import_destination_waits_out_its_error_delay() {
         sub.settings.no_work_until_reason,
         format!("error: {NO_IMPORT_DESTINATION}")
     );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_shows_what_it_does_in_a_popup_which_can_cancel_it() {
+    use hydrus_store::popups;
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=2);
+    let hold = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&hold));
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        ..SubscriptionSettings::default()
+    };
+    assert!(settings.show_a_popup_while_working, "(by default)");
+    let id = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            subs::add_query(ctx.conn(), id, &QueryState::new("blue_eyes"), 0)?;
+            Ok(id)
+        })
+        .unwrap();
+    let downloader = Arc::clone(&s.downloader);
+    let run = tokio::spawn(async move { downloader.run_subscription(id, &Job::new()).await });
+
+    // while it waits for its first gallery page: what it is doing, and the
+    // page's download (written four times a second)
+    for _ in 0..500 {
+        if s.site.hits.lock().contains_key("search/blue_eyes/1") {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+    }
+    tokio::time::sleep(std::time::Duration::from_millis(700)).await;
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let shown = s.store.read(|conn| popups::all(conn, now())).unwrap();
+    assert_eq!(shown.len(), 1, "{shown:?}");
+    let popup = &shown[0];
+    assert_eq!(
+        popup.status_title.as_deref(),
+        Some("subscriptions - blue eyes")
+    );
+    assert_eq!(
+        popup.status_text_1.as_deref(),
+        Some("synchronising (0/1) \"blue_eyes\": downloading gallery page")
+    );
+    assert_eq!(popup.popup_gauge_1, Some((0, 1)));
+    assert!(popup.cancellable && !popup.done);
+    let download = popup.network_job.as_ref().expect("the page's download");
+    assert!(
+        download.url.ends_with("/search/blue_eyes/1"),
+        "{download:?}"
+    );
+
+    // the client cancels it: it stops once the page is read, for a while
+    let key = popup.key;
+    s.store
+        .write(move |ctx| popups::update(ctx.conn(), &key, now(), popups::Job::cancel))
+        .unwrap();
+    tokio::time::sleep(std::time::Duration::from_millis(700)).await;
+    hold.notify_one();
+    let report = run.await.unwrap().unwrap();
+    assert_eq!((report.new_urls, report.files_worked), (0, 0), "{report:?}");
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        sub.settings.no_work_until_reason,
+        "gallery parsing cancelled, likely by user"
+    );
+    assert!(sub.settings.no_work_until > now());
+    // and its popup goes
+    assert!(popups_shown(&s.store).is_empty());
 }

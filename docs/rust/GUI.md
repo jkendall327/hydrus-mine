@@ -77,7 +77,9 @@ opened with its search, sort and files, the others as they were.
 Popup messages show at the bottom right, as the reference's popup
 message manager shows them (`src/popups.rs`): the oldest ten in the
 queue the daemon and the Client API add to (in the store), each with its
-title, texts, progress gauges, a button to show its files in a new page
+title, texts, progress gauges, the download it is doing (a subscription's
+page or file, as a downloader page shows one), a button to show its files
+in a new page
 (named for them), its error's traceback, and buttons to pause or cancel
 it while it runs; a right click dismisses one that is done, and the line
 under them counts them, with "dismiss all" (those done) and an arrow to

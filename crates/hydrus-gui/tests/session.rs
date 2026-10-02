@@ -722,6 +722,7 @@ fn a_url_downloader_page_shows_and_controls_its_queue() {
     assert!(!ui.get_file_download().can_cancel);
     let downloading = QueueLive {
         file_job: Some(JobLive {
+            url: String::new(),
             status: "downloading\u{2026}".into(),
             speed: 1536,
             bytes_read: 1_048_576,

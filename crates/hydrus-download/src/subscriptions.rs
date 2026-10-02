@@ -19,7 +19,7 @@ use hydrus_core::Sha256;
 use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::CallerType;
 use hydrus_core::network::NetworkContext;
-use hydrus_core::numbers::human_int;
+use hydrus_core::numbers::{human_int, value_range};
 use hydrus_core::subscriptions::{
     FileLogEntry, SeedTime, SubscriptionSettings, compact_file_log, compact_gallery_log,
     num_master_file_seeds,
@@ -351,7 +351,11 @@ impl Downloader {
     /// Run a subscription once (`Subscription.Sync`): sync every query that
     /// is due, then download what the queries have found. Its settings and
     /// queries are saved as it goes.
-    pub async fn run_subscription(&self, id: i64, job: &Job) -> Result<RunReport, WorkError> {
+    pub async fn run_subscription(
+        &self,
+        id: i64,
+        job: &std::sync::Arc<Job>,
+    ) -> Result<RunReport, WorkError> {
         let mut report = RunReport::default();
         let Some(mut sub) = self.store.read(|conn| store_subs::subscription(conn, id))? else {
             return Ok(report);
@@ -361,7 +365,19 @@ impl Downloader {
             return Ok(report);
         }
         let started_with = sub.settings.clone();
+        // what it shows while it works (`Sync`'s job status), with the
+        // download it is doing
+        let popup =
+            popups::Working::new(self.store(), format!("subscriptions - {}", sub.name), true);
+        popup.set_network_job(Some(std::sync::Arc::clone(job)));
+        popup.keep_up();
         let result = async {
+            if self.due_queries(&sub)?.is_empty() && !self.any_file_work(&sub)? {
+                return Ok(());
+            }
+            if sub.settings.show_a_popup_while_working {
+                popup.show();
+            }
             loop {
                 let due = self.due_queries(&sub)?;
                 if due.is_empty()
@@ -371,18 +387,23 @@ impl Downloader {
                 {
                     break;
                 }
-                self.sync_queries(&mut sub, due, job, &mut report).await?;
+                self.sync_queries(&mut sub, due, job, &mut report, &popup)
+                    .await?;
             }
             self.full_options(CallerType::Subscription, &sub.settings.import_options, &[])?
                 .locations
                 .check_ready_to_import()
                 .map_err(|e| RunStop::Failed(e.into()))?;
-            self.work_on_queries_files(&mut sub, job, &mut report).await
+            self.work_on_queries_files(&mut sub, job, &mut report, &popup)
+                .await
         }
         .await;
         match result {
             Ok(()) | Err(RunStop::Stop) => {}
             Err(RunStop::Network(e)) => {
+                popup.set_text(Some(
+                    "Encountered a network error, will retry again later".into(),
+                ));
                 delay(
                     &mut sub,
                     self.network.subscription_network_error_delay,
@@ -422,6 +443,13 @@ impl Downloader {
             }
             store_subs::set_subscription_settings(ctx.conn(), sub_id, s)
         })?;
+        // (a popup with files stays for them)
+        popup.set_network_job(None);
+        if popup.has_files() {
+            popup.finish();
+        } else {
+            popup.finish_and_dismiss();
+        }
         for notice in &report.notices {
             tracing::warn!("{notice}");
             popups::show_text(self.store(), notice.clone());
@@ -451,6 +479,7 @@ impl Downloader {
         queries: Vec<SubscriptionQuery>,
         job: &Job,
         report: &mut RunReport,
+        popup: &popups::Working,
     ) -> Result<(), RunStop> {
         let definitions = self.definitions();
         let Some(gug) = definitions
@@ -476,9 +505,24 @@ impl Downloader {
         // keep up with a renamed or re-keyed GUG
         gug.key().clone_into(&mut sub.settings.gug_key);
         gug.name().clone_into(&mut sub.settings.gug_name);
-        for mut query in queries {
+        let count = queries.len();
+        for (i, mut query) in queries.into_iter().enumerate() {
+            let mut prefix = format!("synchronising ({})", value_range(i as u64, count as u64));
+            let name = query.state.human_name();
+            if name != sub.name {
+                prefix.push_str(&format!(" \"{name}\""));
+            }
+            popup.set_gauge(Some((i as i64, count as i64)));
             let result = self
-                .sync_query(sub, &definitions.gugs, &gug, &mut query, job, report)
+                .sync_query(
+                    sub,
+                    &definitions.gugs,
+                    &gug,
+                    &mut query,
+                    job,
+                    report,
+                    (popup, &prefix),
+                )
                 .await;
             let (queue, state) = (query.queue_id, query.state.clone());
             self.store
@@ -521,7 +565,8 @@ impl Downloader {
         Ok(())
     }
 
-    /// `_SyncQuery`.
+    /// `_SyncQuery`, saying what it does in the popup after the prefix.
+    #[allow(clippy::too_many_arguments)]
     async fn sync_query(
         &self,
         sub: &mut Subscription,
@@ -530,6 +575,7 @@ impl Downloader {
         query: &mut SubscriptionQuery,
         job: &Job,
         report: &mut RunReport,
+        (popup, prefix): (&popups::Working, &str),
     ) -> Result<(), RunStop> {
         if query.state.paused {
             return Ok(());
@@ -565,6 +611,7 @@ impl Downloader {
         };
         drop(history);
 
+        popup.set_text(Some(prefix.to_owned()));
         let urls = gugs
             .gallery_urls(
                 gug,
@@ -602,7 +649,7 @@ impl Downloader {
         let mut stop_reason = "unknown stop reason".to_owned();
         let outcome: Result<(), RunStop> = async {
             loop {
-                if job.is_cancelled() {
+                if job.is_cancelled() || popup.is_cancelled() {
                     stop_reason = "gallery parsing cancelled, likely by user".into();
                     delay(sub, 600, &stop_reason);
                     return Err(RunStop::Stop);
@@ -622,10 +669,13 @@ impl Downloader {
                         .write(move |ctx| queues::update_gallery_seed(ctx.conn(), &seed))?;
                     continue;
                 }
-                job.set_status_text(format!(
+                let checking = format!(
                     "found {} new urls, checking next page",
                     human_int(sink.total_new)
-                ));
+                );
+                popup.set_text(Some(format!("{prefix}: {checking}")));
+                popup.follow_stage(1, format!("{prefix}: "));
+                job.set_status_text(checking);
                 let result = self
                     .work_on_gallery_url(&mut seed, &mut seen, &mut sink, job)
                     .await;
@@ -655,6 +705,7 @@ impl Downloader {
             Ok(())
         }
         .await;
+        popup.stop_following();
         // pages not read this time are vetoed with the reason
         let reason = stop_reason.clone();
         self.store.write(move |ctx| {
@@ -750,21 +801,51 @@ impl Downloader {
         sub: &mut Subscription,
         job: &Job,
         report: &mut RunReport,
+        popup: &popups::Working,
     ) -> Result<(), RunStop> {
-        let mut queries: Vec<SubscriptionQuery> = self
-            .store
-            .read(|conn| store_subs::queries(conn, sub.id))?
-            .into_iter()
-            .filter(|q| !q.state.paused)
-            .collect();
-        self.order_queries(&mut queries);
-        for query in queries {
-            if !self.has_file_work(query.queue_id)? {
-                continue;
+        let mut queries = Vec::new();
+        for query in self.store.read(|conn| store_subs::queries(conn, sub.id))? {
+            if !query.state.paused && self.has_file_work(query.queue_id)? {
+                queries.push(query);
             }
-            self.work_on_query_files(sub, &query, job, report).await?;
         }
-        Ok(())
+        self.order_queries(&mut queries);
+        let count = queries.len();
+        let mut result = Ok(());
+        for (i, query) in queries.iter().enumerate() {
+            let name = query.state.human_name();
+            let mut text = format!("syncing files ({})", value_range(i as u64, count as u64));
+            if name != sub.name {
+                text.push_str(&format!(" \"{name}\""));
+            }
+            popup.set_text(Some(text));
+            popup.set_gauge(Some((i as i64, count as i64)));
+            result = self
+                .work_on_query_files(sub, query, job, report, popup)
+                .await;
+            if result.is_err() {
+                break;
+            }
+        }
+        // (DeleteFiles, DeleteStatusText, DeleteGauge)
+        popup.stop_following();
+        popup.set_files(Vec::new(), "");
+        popup.set_text(None);
+        popup.set_text_2(None);
+        popup.set_gauge(None);
+        popup.set_gauge_2(None);
+        result
+    }
+
+    /// Whether any of its queries has files to work on
+    /// (`_WorkOnQueriesFilesCanDoWork`).
+    fn any_file_work(&self, sub: &Subscription) -> Result<bool, RunStop> {
+        for query in self.store.read(|conn| store_subs::queries(conn, sub.id))? {
+            if !query.state.paused && self.has_file_work(query.queue_id)? {
+                return Ok(true);
+            }
+        }
+        Ok(false)
     }
 
     /// `_WorkOnQueryFiles`: and however it stops, the files it presents
@@ -775,10 +856,11 @@ impl Downloader {
         query: &SubscriptionQuery,
         job: &Job,
         report: &mut RunReport,
+        popup: &popups::Working,
     ) -> Result<(), RunStop> {
         let mut presented = Vec::new();
         let result = self
-            .query_files(sub, query, job, report, &mut presented)
+            .query_files(sub, query, job, report, (popup, &mut presented))
             .await;
         if sub.settings.publish_files_to_popup_button {
             let label = publishing_label(&sub.name, &sub.settings, query.state.human_name());
@@ -793,10 +875,19 @@ impl Downloader {
         query: &SubscriptionQuery,
         job: &Job,
         report: &mut RunReport,
-        presented: &mut Vec<Sha256>,
+        (popup, presented): (&popups::Working, &mut Vec<Sha256>),
     ) -> Result<(), RunStop> {
         let queue = query.queue_id;
         let name = human_name(sub, query);
+        // (the files' count from where this sync starts: 1/3 rather than
+        // 4001/4003)
+        let counts = |conn: &rusqlite::Connection| -> hydrus_store::Result<(u64, u64)> {
+            let counts = queues::file_seed_counts(conn, queue)?;
+            let total: usize = counts.values().sum();
+            let unknown = counts.get(&SeedStatus::Unknown).copied().unwrap_or(0);
+            Ok(((total - unknown) as u64, total as u64))
+        };
+        let (done_before, _) = self.store.read(counts)?;
         job.set_scope(query_scope(sub, query));
         let mut done_work = false;
         loop {
@@ -806,7 +897,7 @@ impl Downloader {
             else {
                 break;
             };
-            if job.is_cancelled() {
+            if job.is_cancelled() || popup.is_cancelled() {
                 delay(sub, 300, "recently cancelled");
                 return Err(RunStop::Stop);
             }
@@ -818,6 +909,7 @@ impl Downloader {
             }
             if !self.net.domain_ok(&seed.data) {
                 if done_work {
+                    popup.set_text_2(Some("domain had errors, will try again later".into()));
                     delay(sub, 3600, "domain errors, will try again later");
                 }
                 return Err(RunStop::Stop);
@@ -826,13 +918,17 @@ impl Downloader {
             // there is some (it is scheduled for then)
             if !self.file_bandwidth_ok(sub, query, Some(&seed.data)) {
                 if done_work {
-                    job.set_status_text(
-                        "no more bandwidth to download files, will do some more later",
-                    );
+                    let text = "no more bandwidth to download files, will do some more later";
+                    popup.set_text_2(Some(text.into()));
+                    job.set_status_text(text);
                 }
                 return Err(RunStop::Stop);
             }
             job.set_status_text(format!("{name}: downloading files"));
+            let (done, total) = self.store.read(counts)?;
+            let (done, total) = (done - done_before, total - done_before);
+            popup.set_gauge_2(Some((done as i64, total as i64)));
+            popup.follow_stage(2, format!("files {}: ", value_range(done, total)));
             let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
                 .chain(seed.referral_url.as_deref())
                 .collect();
@@ -852,6 +948,9 @@ impl Downloader {
             {
                 presented.push(hash);
             }
+            // (and the files so far, under the query's name; none, the
+            // last query's go, having outstayed their welcome)
+            popup.set_files(presented.clone(), &human_name(sub, query));
             let saved = seed.clone();
             self.store
                 .write(move |ctx| queues::update_file_seed(ctx.conn(), &saved))?;

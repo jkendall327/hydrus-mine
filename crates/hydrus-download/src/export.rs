@@ -5,8 +5,10 @@
 
 use std::collections::{BTreeSet, HashSet};
 use std::path::Path;
+use std::sync::Arc;
 
 use hydrus_core::content::ContentStatus;
+use hydrus_core::numbers::value_range;
 use hydrus_core::{HashId, ServiceType};
 use hydrus_import::paths;
 use hydrus_parse::folders::{ExportFolder, ExportType, PhraseTerm, parse_export_phrase};
@@ -18,6 +20,7 @@ use hydrus_store::{Store, StoreError, master};
 
 use crate::folders::StoreMedia;
 use crate::now;
+use crate::popups::Working;
 
 /// What a file's name can draw on.
 struct NameFacts<'a> {
@@ -252,7 +255,12 @@ fn display_tags(store: &Store, media: &MediaResult) -> Result<BTreeSet<String>, 
 }
 
 /// `_DoExport`.
-fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Result<(), String> {
+fn export(
+    store: &Store,
+    folder: &mut ExportFolder,
+    run: &mut ExportRun,
+    popup: &Working,
+) -> Result<(), String> {
     let e = |e: StoreError| e.to_string();
     let snapshot = store.snapshot();
     let global: FolderSettings = store.read(hydrus_store::settings::get).map_err(e)?;
@@ -278,7 +286,14 @@ fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Resu
     let mut old_sidecars: HashSet<String> = HashSet::new();
     let overwrite = folder.overwrite_sidecars_on_next_run || folder.always_overwrite_sidecars;
     let mut exported_media: Vec<MediaResult> = Vec::new();
-    for chunk in ids.chunks(64) {
+    for (n, chunk) in ids.chunks(64).enumerate() {
+        popup.set_text(Some(format!(
+            "searching: {}",
+            value_range((n * 64) as u64, ids.len() as u64)
+        )));
+        if popup.is_cancelled() {
+            return Ok(());
+        }
         if store
             .read(hydrus_store::settings::get::<FolderSettings>)
             .map_err(e)?
@@ -292,7 +307,15 @@ fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Resu
         exported_media.extend(batch.results);
     }
     exported_media.sort_by_key(|m| m.hash_id);
+    let count = exported_media.len() as u64;
     for (i, media) in exported_media.iter().enumerate() {
+        popup.set_text(Some(format!(
+            "exporting: {}",
+            value_range(i as u64 + 1, count)
+        )));
+        if popup.is_cancelled() {
+            return Ok(());
+        }
         let facts = NameFacts {
             media,
             display_tags: display_tags(store, media).map_err(e)?,
@@ -385,7 +408,15 @@ fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Resu
         }
     }
     if folder.export_type == ExportType::Synchronise {
-        for path in previous.difference(&sync_paths) {
+        let deletees: Vec<&String> = previous.difference(&sync_paths).collect();
+        for (i, path) in deletees.iter().enumerate() {
+            if popup.is_cancelled() {
+                return Ok(());
+            }
+            popup.set_text(Some(format!(
+                "delete-synchronising: {}",
+                value_range(i as u64 + 1, deletees.len() as u64)
+            )));
             paths::delete_or_recycle(path, global.delete_to_recycle_bin)
                 .map_err(|e| e.to_string())?;
             run.deleted_paths += 1;
@@ -414,7 +445,14 @@ fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Resu
             .collect();
         let reason = format!("Deleted after export to Export Folder \"{root}\".");
         run.deleted_from_client = mine.len();
-        for chunk in mine.chunks(64) {
+        for (n, chunk) in mine.chunks(64).enumerate() {
+            if popup.is_cancelled() {
+                return Ok(());
+            }
+            popup.set_text(Some(format!(
+                "deleting: {}",
+                value_range((n * 64) as u64, mine.len() as u64)
+            )));
             let chunk = chunk.to_vec();
             let reason = reason.clone();
             store
@@ -422,6 +460,7 @@ fn export(store: &Store, folder: &mut ExportFolder, run: &mut ExportRun) -> Resu
                 .map_err(e)?;
         }
     }
+    popup.set_text(Some("Done!".into()));
     Ok(())
 }
 
@@ -441,7 +480,7 @@ fn make_symlink(source: &str, dest: &str) -> Result<(), String> {
 
 /// `ExportFolder.DoWork` for the folder named `name`: run it if due, and
 /// save what happened.
-pub fn work_on_export_folder(store: &Store, name: &str) -> Result<ExportRun, StoreError> {
+pub fn work_on_export_folder(store: &Arc<Store>, name: &str) -> Result<ExportRun, StoreError> {
     let mut run = ExportRun::default();
     let folders: ExportFolders = store.read(hydrus_store::settings::get)?;
     let Some(mut folder) = folders.0.into_iter().find(|f| f.name == name) else {
@@ -452,6 +491,7 @@ pub fn work_on_export_folder(store: &Store, name: &str) -> Result<ExportRun, Sto
         return Ok(run);
     }
     run.ran = true;
+    let popup = Working::new(store, format!("export folder - {name}"), true);
     let result = (|| -> Result<(), String> {
         let path = Path::new(&folder.path);
         if folder.path.is_empty() {
@@ -466,7 +506,10 @@ pub fn work_on_export_folder(store: &Store, name: &str) -> Result<ExportRun, Sto
                 folder.path
             ));
         }
-        export(store, &mut folder, &mut run)
+        if folder.show_working_popup || folder.run_now {
+            popup.show();
+        }
+        export(store, &mut folder, &mut run, &popup)
     })();
     match result {
         Ok(()) => folder.last_error.clear(),
@@ -501,11 +544,12 @@ pub fn work_on_export_folder(store: &Store, name: &str) -> Result<ExportRun, Sto
         }
         hydrus_store::settings::set(ctx.conn(), &folders)
     })?;
+    popup.finish_and_dismiss();
     Ok(run)
 }
 
 /// `DAEMONCheckExportFolders`: give every export folder the chance to run.
-pub fn work_export_folders(store: &Store) -> Result<Vec<(String, ExportRun)>, StoreError> {
+pub fn work_export_folders(store: &Arc<Store>) -> Result<Vec<(String, ExportRun)>, StoreError> {
     let global: FolderSettings = store.read(hydrus_store::settings::get)?;
     if global.pause_export_folders {
         return Ok(Vec::new());

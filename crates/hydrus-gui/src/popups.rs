@@ -6,6 +6,7 @@
 //! done dismisses with a right click.
 
 use hydrus_core::numbers::human_int;
+use hydrus_store::live::JobLine;
 use hydrus_store::popups::Job;
 
 /// A gauge: how far along, or going with no end known.
@@ -27,6 +28,8 @@ pub struct PopupView {
     pub gauge_1: Option<Gauge>,
     pub text_2: Option<String>,
     pub gauge_2: Option<Gauge>,
+    /// The download it is doing (its network job), if any.
+    pub download: Option<JobLine>,
     /// Its files' button: "{label} - show 3 files".
     pub files: Option<String>,
     /// An error's traceback, behind its button.
@@ -91,6 +94,11 @@ pub fn view(job: &Job) -> PopupView {
         } else {
             gauge(job.popup_gauge_2)
         },
+        // (whose stop button is the popup's own, below)
+        download: job.network_job.as_ref().map(|network| JobLine {
+            can_cancel: false,
+            ..network.line()
+        }),
         files: job.files.as_ref().map(|(hashes, label)| {
             format!(
                 "{} - show {} files",
@@ -150,6 +158,12 @@ fn data(view: &PopupView) -> crate::PopupData {
         has_gauge_2,
         gauge_2,
         gauge_2_going,
+        has_download: view.download.is_some(),
+        download: view
+            .download
+            .as_ref()
+            .map(crate::download_line)
+            .unwrap_or_default(),
         files: text(&view.files),
         traceback: text(&view.traceback),
         pausable: view.pausable,

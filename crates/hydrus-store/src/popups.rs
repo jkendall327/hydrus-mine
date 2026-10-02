@@ -45,6 +45,9 @@ pub struct Job {
     pub traceback: Option<String>,
     #[serde(default)]
     pub had_error: bool,
+    /// The download it is doing, if any (its network job).
+    #[serde(default)]
+    pub network_job: Option<crate::live::JobLive>,
 }
 
 impl Job {
@@ -71,6 +74,7 @@ impl Job {
             files: None,
             traceback: None,
             had_error: false,
+            network_job: None,
         }
     }
 
@@ -199,6 +203,18 @@ pub fn all(conn: &Connection, now: i64) -> Result<Vec<Job>> {
     Ok(out)
 }
 
+/// A popup, unless there is no such popup or it was dismissed by `now`.
+pub fn get(conn: &Connection, key: &[u8], now: i64) -> Result<Option<Job>> {
+    let json: Option<String> = conn
+        .prepare_cached("SELECT job FROM popups WHERE key = ?1")?
+        .query_row([key], |r| r.get(0))
+        .optional()?;
+    Ok(match json {
+        Some(json) => Some(load(&json)?).filter(|job| !job.is_dismissed(now)),
+        None => None,
+    })
+}
+
 /// Change a popup, keeping it as changed (or, dismissed, removing it);
 /// `None` if there is no such popup (or it was dismissed by `now`).
 pub fn update<R>(
@@ -249,6 +265,19 @@ pub fn clear_dismissed(conn: &Connection, now: i64) -> Result<()> {
     Ok(())
 }
 
+/// Forget the popups for work that isn't done: the daemon starting, the
+/// work they were showing has stopped (the reference's popups go with the
+/// client). Messages and finished work stay to be read.
+pub fn forget_unfinished(conn: &Connection, now: i64) -> Result<()> {
+    for job in all(conn, now)? {
+        if !job.done {
+            conn.prepare_cached("DELETE FROM popups WHERE key = ?1")?
+                .execute([job.key.as_slice()])?;
+        }
+    }
+    clear_dismissed(conn, now)
+}
+
 /// Dismiss every popup that is done (the popup manager's "dismiss all",
 /// `DeleteAllPossible`).
 pub fn dismiss_all_done(conn: &Connection, now: i64) -> Result<()> {
@@ -286,6 +315,18 @@ mod tests {
         assert!(all(&conn, 102).unwrap()[1].paused);
         dismiss_all_done(&conn, 102).unwrap();
         assert_eq!(all(&conn, 102).unwrap().len(), 1);
+        // (and is forgotten when the daemon starts again, unlike a message)
+        let message = Job::text("read me", 102.0);
+        add(&conn, &message, 102).unwrap();
+        let unfinished = conn.unchecked_transaction().unwrap();
+        forget_unfinished(&unfinished, 102).unwrap();
+        let keys: Vec<[u8; 32]> = all(&unfinished, 102)
+            .unwrap()
+            .iter()
+            .map(|j| j.key)
+            .collect();
+        assert_eq!(keys, [message.key]);
+        unfinished.rollback().unwrap();
         // finished, it dismisses in two seconds
         update(&conn, &second.key, 102, |j| {
             j.finish_and_dismiss(Some(2), 102);

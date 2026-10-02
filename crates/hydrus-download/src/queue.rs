@@ -196,19 +196,7 @@ impl QueueRunner {
 
     /// What each running queue is doing now, for its page.
     pub fn live(&self) -> Vec<(i64, QueueLive)> {
-        let job_live = |job: &Mutex<Option<Arc<Job>>>| {
-            job.lock().as_ref().map(|job| {
-                let state = job.state();
-                JobLive {
-                    status: state.status,
-                    speed: state.speed,
-                    bytes_read: state.bytes_read,
-                    bytes_to_read: state.bytes_total,
-                    done: state.done,
-                    error: state.error,
-                }
-            })
-        };
+        let job_live = |job: &Mutex<Option<Arc<Job>>>| job.lock().as_ref().map(|job| live(job));
         let mut out: Vec<(i64, QueueLive)> = self
             .handles
             .lock()
@@ -898,5 +886,19 @@ fn bandwidth_scope(kind: QueueKind, queue: i64) -> BandwidthScope {
             override_after: None,
             gallery_token: Some(GalleryTokenKind::DownloadPage),
         },
+    }
+}
+
+/// A download as the client shows it (`NetworkJob.GetStatus`).
+pub(crate) fn live(job: &Job) -> JobLive {
+    let state = job.state();
+    JobLive {
+        url: state.url,
+        status: state.status,
+        speed: state.speed,
+        bytes_read: state.bytes_read,
+        bytes_to_read: state.bytes_total,
+        done: state.done,
+        error: state.error,
     }
 }

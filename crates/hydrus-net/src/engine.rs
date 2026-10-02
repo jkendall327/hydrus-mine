@@ -205,6 +205,15 @@ pub struct Job {
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct JobState {
     pub status: String,
+    /// What its importer last said it is doing ("downloading file"), which
+    /// the reference's importers report apart from the network job's own
+    /// status (their status hooks).
+    pub stage: String,
+    /// How many times the importer has said so (to tell a new "404" from
+    /// the last).
+    pub stages: u64,
+    /// The URL it is fetching, or last fetched.
+    pub url: String,
     pub bytes_read: u64,
     pub bytes_total: Option<u64>,
     /// Bytes read in the last second, as the reference reckons a job's
@@ -281,9 +290,22 @@ impl Job {
         self.cancel.is_cancelled()
     }
 
-    /// Say what the job is doing (the engine and its callers both do).
+    /// Say what the job's importer is doing (it shows as the job's status
+    /// too, until the engine says what the request is doing).
     pub fn set_status_text(&self, status: impl Into<String>) {
-        self.set_status(status);
+        let status = status.into();
+        let mut state = self.state.lock();
+        state.stage.clone_from(&status);
+        state.stages += 1;
+        state.status = status;
+    }
+
+    /// Say what the job's importer is doing, leaving the job's status as
+    /// the engine left it (a request's end: "404", "error!").
+    pub fn set_stage(&self, stage: impl Into<String>) {
+        let mut state = self.state.lock();
+        state.stage = stage.into();
+        state.stages += 1;
     }
 
     fn set_status(&self, status: impl Into<String>) {
@@ -752,6 +774,7 @@ impl NetEngine {
             let mut state = job.state.lock();
             state.done = false;
             state.error = false;
+            state.url.clone_from(&request.url);
         }
         let result = self.fetch_inner(request, job).await;
         if let Err(e) = &result

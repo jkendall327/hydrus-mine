@@ -56,5 +56,26 @@ pub fn to_json(job: &Job) -> Json {
     if let Some(traceback) = &job.traceback {
         put("traceback", json!(traceback));
     }
+    if let Some(network) = &job.network_job {
+        // (what hydrus-rs's network jobs don't say, as a job neither
+        // waiting nor failing says it)
+        put(
+            "network_job",
+            json!({
+                "url": network.url,
+                "waiting_on_connection_error": false,
+                "domain_ok": true,
+                "waiting_on_serverside_bandwidth": false,
+                "no_engine_yet": false,
+                "has_error": network.error,
+                "total_data_used": network.bytes_read,
+                "is_done": network.done,
+                "status_text": network.status,
+                "current_speed": network.speed,
+                "bytes_read": network.bytes_read,
+                "bytes_to_read": network.bytes_to_read,
+            }),
+        );
+    }
     Json::Object(out)
 }

@@ -1,10 +1,12 @@
 // Popup messages (`src/popups.rs`), as the reference's popup message
 // manager shows them at the main window's bottom right: each popup's
-// title, texts, gauges and buttons, and under them how many there are,
+// title, texts, gauges, download and buttons, and under them how many
+// there are,
 // "dismiss all", and an arrow to hide or show them.
 
 import { Button, ProgressIndicator } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { DownloadControl, DownloadLine } from "importing.slint";
 
 export struct PopupData {
     title: string,
@@ -17,6 +19,9 @@ export struct PopupData {
     has-gauge-2: bool,
     gauge-2: float,
     gauge-2-going: bool,
+    // the download it is doing, if any
+    has-download: bool,
+    download: DownloadLine,
     // "{label} - show 3 files", if it has files
     files: string,
     traceback: string,
@@ -90,6 +95,9 @@ export component PopupStack inherits Rectangle {
                     if popup.has-gauge-2: Gauge {
                         progress: popup.gauge-2;
                         going: popup.gauge-2-going;
+                    }
+                    if popup.has-download: DownloadControl {
+                        line: popup.download;
                     }
                     if popup.files != "": Button {
                         text: popup.files;

@@ -6,6 +6,7 @@ use std::collections::{BTreeSet, HashMap};
 
 use hydrus_core::content::{ContentStatus, TimestampType};
 use hydrus_core::import_options::{CallerType, FullImportOptions, NoteImportOptions};
+use hydrus_core::numbers::{human_int, value_range};
 use hydrus_core::{CanvasType, HashId, ServiceKey, ServiceType, Sha256, Tag};
 use hydrus_import::paths;
 use hydrus_parse::folders::FolderAction;
@@ -354,7 +355,12 @@ impl Downloader {
 }
 
 /// `_CheckFolder`: add the folder's new, settled, free files as seeds.
-fn check_folder(store: &Store, folder: &mut ImportFolder, now: i64) -> Result<usize, String> {
+fn check_folder(
+    store: &Store,
+    folder: &mut ImportFolder,
+    now: i64,
+    popup: &popups::Working,
+) -> Result<usize, String> {
     let settings = &folder.settings;
     let (files, _sidecars) = paths::all_file_paths(&settings.path, settings.search_subdirectories)
         .map_err(|e| e.to_string())?;
@@ -365,6 +371,10 @@ fn check_folder(store: &Store, folder: &mut ImportFolder, now: i64) -> Result<us
         .map(|s| s.data_for_comparison)
         .collect();
     let new: Vec<String> = files.into_iter().filter(|p| !known.contains(p)).collect();
+    popup.set_text(Some(format!(
+        "checking: found {} new files",
+        human_int(new.len() as u64)
+    )));
     let settled = paths::filter_older_modified(new, settings.last_modified_time_skip_period, now);
     let free: Vec<String> = settled
         .into_iter()
@@ -383,6 +393,10 @@ fn check_folder(store: &Store, folder: &mut ImportFolder, now: i64) -> Result<us
         .collect();
     let id = folder.id();
     let count = seeds.len();
+    popup.set_text(Some(format!(
+        "checking: found {} new files to import",
+        human_int(count as u64)
+    )));
     store
         .write(move |ctx| queues::add_file_seeds(ctx.conn(), id, &seeds, false, now).map(|_| ()))
         .map_err(|e| e.to_string())?;
@@ -505,6 +519,9 @@ impl Downloader {
         }
         let now = now();
         let mut paused = false;
+        let popup =
+            popups::Working::new(&store, format!("import folder - {}", folder.name()), true);
+        let popup_desired = folder.settings.show_working_popup || folder.settings.check_now;
         let outcome = (|| -> Result<bool, String> {
             let options = self
                 .full_options(CallerType::LocalImportFolder, &folder.queue.options, &[])
@@ -523,9 +540,12 @@ impl Downloader {
                     folder.settings.path
                 ));
             }
-            run.new_files = check_folder(&store, &mut folder, now)?;
+            if popup_desired {
+                popup.show();
+            }
+            run.new_files = check_folder(&store, &mut folder, now, &popup)?;
             run.checked = true;
-            self.import_files(&mut folder, &options, global, &mut run, &mut paused)?;
+            self.import_files(&mut folder, &options, global, &mut run, &mut paused, &popup)?;
             Ok(true)
         })();
         if let Err(e) = outcome {
@@ -551,6 +571,7 @@ impl Downloader {
                 Ok(())
             })?;
         }
+        popup.finish_and_dismiss();
         Ok(run)
     }
 
@@ -562,11 +583,19 @@ impl Downloader {
         global: FolderSettings,
         run: &mut FolderRun,
         paused: &mut bool,
+        popup: &popups::Working,
     ) -> Result<(), String> {
         let store = self.store().clone();
         let id = folder.id();
         let mut previous: Option<i64> = None;
         let mut presented = Vec::new();
+        // (of those to do now, not those carried over)
+        let total = store
+            .read(|conn| queues::file_seed_counts(conn, id))
+            .map_err(|e| e.to_string())?
+            .get(&SeedStatus::Unknown)
+            .copied()
+            .unwrap_or(0) as u64;
         loop {
             let Some(mut seed) = store
                 .read(|conn| queues::next_file_seed(conn, id))
@@ -574,7 +603,7 @@ impl Downloader {
             else {
                 break;
             };
-            if *paused {
+            if *paused || popup.is_cancelled() {
                 break;
             }
             if previous == Some(seed.id) {
@@ -584,6 +613,9 @@ impl Downloader {
                 ));
             }
             previous = Some(seed.id);
+            let imported = run.imported as u64;
+            popup.set_text(Some(format!("importing: {}", value_range(imported, total))));
+            popup.set_gauge(Some((imported as i64, total as i64)));
             let path = seed.data.clone();
             if let Err(e) =
                 self.import_path_seed(&mut seed, options, global.copy_import_files_to_temp_dir)

@@ -252,6 +252,18 @@ impl<E: Into<WorkError>> From<E> for GalleryStop {
 }
 
 fn gallery_network(e: NetError, job: &Job) -> GalleryStop {
+    // (what the reference's status hook says of it)
+    job.set_stage(match &e {
+        NetError::Status { kind, .. } => match kind {
+            StatusKind::NotFound => "404",
+            StatusKind::InsufficientCredentials => "403",
+            StatusKind::BadRequest => "400",
+            StatusKind::Censorship => "451 censorship!",
+            _ => "error!",
+        },
+        NetError::Cancelled => "cancelled!",
+        _ => "error!",
+    });
     let gone = |note: &str| GalleryStop::Veto(note.to_owned(), true);
     match &e {
         NetError::Status { kind, .. } => match kind {

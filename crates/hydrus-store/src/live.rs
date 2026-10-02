@@ -46,6 +46,9 @@ impl crate::settings::Setting for DaemonLive {
 /// A download in progress (the reference's `NetworkJob.GetStatus`).
 #[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct JobLive {
+    /// The URL it is fetching, or last fetched.
+    #[serde(default, skip_serializing_if = "String::is_empty")]
+    pub url: String,
     pub status: String,
     /// Bytes read in the last second.
     pub speed: u64,
@@ -302,6 +305,7 @@ mod tests {
         let working = QueueLive {
             files_status: "working".into(),
             file_job: Some(JobLive {
+                url: String::new(),
                 status: "downloading\u{2026}".into(),
                 speed: 300,
                 bytes_read: 600,

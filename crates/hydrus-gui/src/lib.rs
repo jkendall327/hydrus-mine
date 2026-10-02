@@ -3503,7 +3503,7 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
 }
 
 /// A download's line for the window.
-fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine {
+pub(crate) fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine {
     DownloadLine {
         left: line.left.as_str().into(),
         right: line.right.as_str().into(),

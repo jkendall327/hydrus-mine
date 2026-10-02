@@ -355,10 +355,10 @@ deleted), migrated from the reference's database before its run; by
   (they are reported). The reference saves a folder each time it checks it,
   so a folder in use is at the current version.
 - **Progress is saved after every file**, rather than every ten minutes.
-- **No popup while working, and nothing published to a page.** The files a
-  check imports are offered in a popup ("publish files to a popup button")
-  and its errors are shown as popups, as the reference's are; "show a popup
-  while working" and "publish files to a page" do nothing yet.
+- **Nothing is published to a page.** The files a check imports are
+  offered in a popup ("publish files to a popup button"), and its work and
+  errors are shown in popups, as the reference's are; "publish files to a
+  page" does nothing yet.
 - **Changes from the command line are noticed within a minute** (the
   reference is told of changes by its dialogs).
 - **Among tags whose human-sort keys are equal** (e.g. `straße` and
@@ -378,9 +378,8 @@ deletes its files from the client, migrated from the reference's database.
   option, applies those rules), as when psutil can't tell.
 - **Searches with "OR" as the search type** run as "AND" (every predicate
   must match); the reference's export folder dialog doesn't offer "OR".
-- **No popup while working.** An error is shown as the reference shows it
-  (two popups: what happened, then the error); "show a popup while
-  working" does nothing yet. What a run exported and removed is logged.
+- **What a run exported and removed is logged**, as well as shown in its
+  popup while it works.
 
 - **Where the filesystem ignores case, a moved sidecar keeps the
   lower-case spelling** (`a.png.txt`): both spellings seem to exist there,
@@ -425,9 +424,12 @@ deletes its files from the client, migrated from the reference's database.
 - **A pause switched from the command line takes up to half a minute** to
   reach a running `hydrus serve` (it looks again that often while paused);
   the reference's menu switches act at once.
-- **No popup while a subscription works, and nothing published to a
-  page.** Subscriptions' messages, and the new files they publish to a
-  popup button, are shown as popups, as the reference's are (and logged).
+- **Nothing is published to a page.** A subscription's popup while it
+  works, its messages, and the new files it publishes to a popup button
+  are shown as the reference shows them (and the messages logged). In its
+  popup, the download it is doing has no stop button of its own (the
+  popup's cancel stops the subscription where the reference's would), and
+  goes when the download ends rather than ten seconds later.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
 - **Subscriptions run one at a time**, as with the reference's default
@@ -500,9 +502,19 @@ Checked by the `popups` conformance scenario.
   popup leaves the list at once (the reference's GUI clears dismissed
   popups on its next refresh, within a second or so).
 - **The daemon's own popups are, so far, subscriptions', import folders'
-  and export folders' messages, errors and new files.** The reference also
-  shows its jobs at work as popups (a subscription's or folder's progress,
-  downloads, maintenance); hydrus-rs doesn't yet.
+  and export folders'**: their work as it goes, messages, errors and new
+  files. The reference also shows other jobs at work as popups (downloads
+  from the menu, maintenance, database jobs); hydrus-rs doesn't yet.
+- **Popups outlive the daemon, unless their work does**: those for work
+  going on are forgotten when the daemon stops or starts (as the work has
+  stopped), but messages and finished work stay until dismissed. The
+  reference's popups all go when it closes.
+- **A popup's `network_job`** says its URL, status, speed, bytes read and to
+  read, whether it is done and whether it failed, as the reference's does;
+  hydrus-rs's network jobs don't say whether they are waiting on a
+  connection error, the domain, the server's bandwidth or the engine, so
+  those read `false`, `true`, `false` and `false` (as for a job that
+  isn't), and `total_data_used` is what this request has read.
 - **An error's "traceback" is its text**, and its title is "Exception", as
   the reference titles the errors it raises itself: hydrus-rs has no
   Python traceback to show.

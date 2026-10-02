@@ -55,6 +55,15 @@ fn popups_show_at_the_bottom_right_and_their_buttons_work() {
     working.status_title = Some("subscription".into());
     working.status_text_1 = Some("downloading".into());
     working.popup_gauge_1 = Some((1, 4));
+    working.network_job = Some(hydrus_store::live::JobLive {
+        url: "https://example.com/file.jpg".into(),
+        status: "downloading\u{2026}".into(),
+        speed: 500,
+        bytes_read: 1000,
+        bytes_to_read: Some(4000),
+        done: false,
+        error: false,
+    });
     add(&store, working.clone());
     let hashes: Vec<Sha256> = store
         .read(|conn| {
@@ -88,6 +97,12 @@ fn popups_show_at_the_bottom_right_and_their_buttons_work() {
     assert!(row.has_gauge_1 && !row.gauge_1_going);
     assert!((row.gauge_1 - 0.25).abs() < 1e-6);
     assert!(row.pausable && row.cancellable);
+    // its download, whose stop button is the popup's own
+    assert!(row.has_download);
+    assert_eq!(row.download.left, "downloading\u{2026}");
+    assert!((row.download.fraction - 0.25).abs() < 1e-6);
+    assert!(!row.download.can_cancel);
+    assert!(!ui.get_popups().row_data(0).unwrap().has_download);
     assert_eq!(
         ui.get_popups().row_data(2).unwrap().files,
         "my sub - show 3 files"

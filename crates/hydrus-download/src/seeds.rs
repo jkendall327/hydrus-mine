@@ -221,6 +221,17 @@ struct FileFetch<'a> {
 /// Network failures as `WorkOnURL` treats them: some statuses end the seed
 /// as vetoed, the rest as an error.
 fn network(e: NetError, job: &Job) -> Stop {
+    // (what the reference's status hook says of it)
+    job.set_stage(match &e {
+        NetError::Status { kind, .. } => match kind {
+            StatusKind::NotFound => "404",
+            StatusKind::InsufficientCredentials => "403",
+            StatusKind::Censorship => "451 censorship!",
+            _ => "error!",
+        },
+        NetError::Cancelled => "cancelled!",
+        _ => "error!",
+    });
     match &e {
         NetError::Status {
             kind: StatusKind::NotFound,
