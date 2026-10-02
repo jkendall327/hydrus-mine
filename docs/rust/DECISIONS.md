@@ -39,6 +39,26 @@ record of what was decided, and why the roadmap looks the way it does.
 [#24]: https://github.com/jkendall327/hydrus-mine/issues/24
 [#25]: https://github.com/jkendall327/hydrus-mine/issues/25
 
+## Decided (2026-10-02)
+
+- **GUI order, by the owner's use now that it runs on their library:**
+  1. the main window: its frame (title, size and place kept, the status
+     bar) and the menu bar;
+  2. popup messages;
+  3. settings (the options dialog);
+  4. opening every kind of page, downloaders included, from the menus as
+     well as the page chooser;
+  5. the downloader pages' remaining parts;
+  6. importing files (the import page, files dropped on the window);
+  7. the search page's daily-use gaps (system predicate editors, file
+     domain and tag service buttons, thumbnail overlays, saving
+     favourites).
+
+  Everything else (the duplicates page's other tabs, metadata editors,
+  managing subscriptions and folders in the GUI, shortcuts, downloader
+  editors, the simple downloader, dragging files out) waits until these
+  are done.
+
 ## Roadmap that follows
 
 1. **Client API parity**, with Hydrus Companion's request patterns checked

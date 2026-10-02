@@ -568,11 +568,15 @@ autocomplete options, sessions, shortcut sets, recent tags.
    software renderer, which runs headless.
 3. **Order, by the owner's use**: a search page (autocomplete, thumbnail
    grid, sort and collect) and the media viewer; then downloader pages
-   (gallery, URL, watcher) and popups; then the duplicate filter, built to
-   commit decisions as they are made and to fetch pairs without re-reading
-   the whole search space; then the dialogs for subscriptions, import and
-   export folders, sidecars and manage tags; then options, shortcuts and
-   the downloader editors.
+   (gallery, URL, watcher); then the duplicate filter, built to commit
+   decisions as they are made and to fetch pairs without re-reading the
+   whole search space (all done in a first form). From here (DECISIONS.md,
+   2026-10-02): the main window's frame and menu bar; popup messages; the
+   options dialog; every page openable from the menus; the downloader
+   pages' remaining parts; importing files; the search page's daily-use
+   gaps. Then the rest: the duplicates page's other tabs, metadata
+   editors, the dialogs for subscriptions and folders, shortcuts and the
+   downloader editors.
 4. **Fidelity**: the same page types, menus, shortcuts and dialogs, reading
    the same stored state, so a migrated user finds their session and
    settings as they left them. The one planned redesign, a more ergonomic
