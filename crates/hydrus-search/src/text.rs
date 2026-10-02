@@ -279,6 +279,7 @@ fn system_text(p: &SystemPredicate, c: &TextContext) -> String {
                 SizeUnit::Kilobytes => "KB",
                 SizeUnit::Megabytes => "MB",
                 SizeUnit::Gigabytes => "GB",
+                SizeUnit::Terabytes => "TB",
             };
             format!("filesize {} {}{unit}", op.symbol(), human_int(*size))
         }
@@ -300,7 +301,7 @@ fn system_text(p: &SystemPredicate, c: &TextContext) -> String {
                     RatioOp::WiderThan => return "ratio is landscape".into(),
                     RatioOp::TallerThan => return "ratio is portrait".into(),
                     RatioOp::Equal => return "ratio is square".into(),
-                    RatioOp::Approx => {}
+                    RatioOp::Approx | RatioOp::NotEqual => {}
                 }
             }
             format!(

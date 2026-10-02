@@ -130,6 +130,7 @@ fn decode(
                     1024 => SizeUnit::Kilobytes,
                     1_048_576 => SizeUnit::Megabytes,
                     1_073_741_824 => SizeUnit::Gigabytes,
+                    1_099_511_627_776 => SizeUnit::Terabytes,
                     other => return Err(malformed(KIND, format!("unknown size unit {other}"))),
                 },
             })
@@ -184,6 +185,7 @@ fn decode(
                     "wider than" => RatioOp::WiderThan,
                     "taller than" => RatioOp::TallerThan,
                     "\u{2248}" => RatioOp::Approx,
+                    "\u{2260}" => RatioOp::NotEqual,
                     other => {
                         return Err(malformed(KIND, format!("unknown ratio operator {other:?}")));
                     }
@@ -347,7 +349,12 @@ fn decode(
                 stat,
                 canvases: ViewCanvases::Specific(canvases),
                 op: comparison(op)?,
-                value: count_value(value, "viewing value")?,
+                value: match stat {
+                    ViewingStat::Views => count_value(value, "view count")?,
+                    // (seconds, which the reference's editor stores to the
+                    // millisecond: kept to the nearest second)
+                    ViewingStat::ViewTime => seconds_value(value, "viewing time")?,
+                },
             })
         }
         30 => {
@@ -473,6 +480,21 @@ fn count_value(value: &PyJson, what: &str) -> DecodeResult<u64> {
         ));
     }
     Ok(n as u64)
+}
+
+/// A non-negative number of seconds, to the nearest second.
+fn seconds_value(value: &PyJson, what: &str) -> DecodeResult<u64> {
+    let n = match value {
+        PyJson::Int(n) => *n as f64,
+        other => float(KIND, other, what)?,
+    };
+    if !(0.0..=u64::MAX as f64).contains(&n) {
+        return Err(malformed(
+            KIND,
+            format!("{what} {n} is not a whole number we can hold"),
+        ));
+    }
+    Ok(n.round() as u64)
 }
 
 /// A stored rating test: `"rated"` or `"not rated"`, a count (an int), or

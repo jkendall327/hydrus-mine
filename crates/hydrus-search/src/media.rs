@@ -257,6 +257,7 @@ fn test_system(system: &SystemPredicate, facts: &FileFacts, clock: &Clock) -> bo
                 RatioOp::TallerThan => NumberOp::Less,
                 RatioOp::WiderThan => NumberOp::Greater,
                 RatioOp::Equal => NumberOp::Equal,
+                RatioOp::NotEqual => NumberOp::NotEqual,
                 RatioOp::Approx => NumberOp::ApproxPercent { percent: 15 },
             };
             number_test(

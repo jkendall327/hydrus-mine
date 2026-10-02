@@ -315,6 +315,9 @@ pub enum SizeUnit {
     Kilobytes,
     Megabytes,
     Gigabytes,
+    /// Offered by the reference's editor (which can't write it), not its
+    /// parser.
+    Terabytes,
 }
 
 impl SizeUnit {
@@ -324,6 +327,7 @@ impl SizeUnit {
             SizeUnit::Kilobytes => 1024,
             SizeUnit::Megabytes => 1024 * 1024,
             SizeUnit::Gigabytes => 1024 * 1024 * 1024,
+            SizeUnit::Terabytes => 1024 * 1024 * 1024 * 1024,
         }
     }
 }

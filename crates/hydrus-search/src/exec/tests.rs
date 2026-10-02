@@ -28,7 +28,7 @@ use super::tags::{NamespacePattern, SubtagPattern};
 use super::{Clock, search_with_strategy};
 use crate::context::{FileSearchContext, LocationContext, TagContext};
 use crate::filetype::FiletypeSet;
-use crate::number::{Comparison, NumberOp};
+use crate::number::{Comparison, NumberOp, RatioOp};
 use crate::predicate::{
     FileHashes, FileProperty, NamespaceFilter, NumericProperty, Predicate, SystemPredicate,
     UrlRule, Wildcard,
@@ -325,6 +325,19 @@ impl Model {
             SystemPredicate::NoteName { name, has } => {
                 m.notes.iter().any(|(n, _)| n == name) == *has
             }
+            SystemPredicate::Ratio { op, width, height } => {
+                let Some((w, h)) = info.and_then(|i| Some((i.width?, i.height?))) else {
+                    return false;
+                };
+                if h == 0 || *height == 0 {
+                    return false;
+                }
+                ratio_matches(
+                    *op,
+                    f64::from(w) / f64::from(h),
+                    *width as f64 / *height as f64,
+                )
+            }
             other => panic!("model does not know {other:?}"),
         }
     }
@@ -343,6 +356,19 @@ impl Model {
             })
             .map(|m| m.hash_id)
             .collect()
+    }
+}
+
+/// A file's width:height against a ratio test's, as the reference's SQL
+/// compares them (exactly, for = and ≠).
+#[allow(clippy::float_cmp)]
+fn ratio_matches(op: RatioOp, file: f64, wanted: f64) -> bool {
+    match op {
+        RatioOp::Equal => file == wanted,
+        RatioOp::NotEqual => file != wanted,
+        RatioOp::WiderThan => file > wanted,
+        RatioOp::TallerThan => file < wanted,
+        RatioOp::Approx => file > wanted * 0.85 && file < wanted * 1.15,
     }
 }
 
@@ -849,6 +875,36 @@ fn constructed_predicates_without_text_syntax_work() {
         ],
         ..FileSearchContext::default()
     });
+    // a ratio other than one (which the reference's editor makes, and its
+    // parser can't): what "=" doesn't find, of the files with dimensions
+    let ratio = |op| FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Ratio {
+            op,
+            width: 1,
+            height: 1,
+        })],
+        ..FileSearchContext::default()
+    };
+    check(ratio(RatioOp::NotEqual));
+    check(ratio(RatioOp::Equal));
+    let mut both = run(&SHARED.store, &ratio(RatioOp::Equal), sort, Planner::Auto);
+    let other = run(
+        &SHARED.store,
+        &ratio(RatioOp::NotEqual),
+        sort,
+        Planner::Auto,
+    );
+    assert!(both.iter().all(|f| !other.contains(f)));
+    both.extend(other);
+    both.sort_unstable();
+    let with_dimensions = MODEL.search(&FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Number {
+            property: NumericProperty::Width,
+            test: crate::NumberTest::new(NumberOp::Greater, 0),
+        })],
+        ..FileSearchContext::default()
+    });
+    assert_eq!(both, with_dimensions);
 }
 
 /// Pages collect their files and sort the files and collections as the
