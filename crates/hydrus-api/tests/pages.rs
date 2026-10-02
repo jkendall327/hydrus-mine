@@ -396,6 +396,7 @@ async fn a_url_pages_importer_is_described_as_the_references() {
                         kind: DownloaderKind::Urls,
                         queues: vec![queue],
                         sort: None,
+                        page: None,
                     },
                 }],
             };

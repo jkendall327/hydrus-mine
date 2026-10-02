@@ -142,7 +142,13 @@ search page with its search, sort and the files it showed. Its downloader
 pages' work comes across as queues named after their pages: a URL
 downloader page as one queue, a gallery downloader page as one per search,
 a watcher page as one per watcher, each with every URL, file and gallery
-page it held and whether it was paused; `hydrus serve` carries on with
+page it held and whether it was paused, and the page keeps its own
+settings (a gallery page's downloader, file limit, import options and how
+it adds queries; a watcher page's checker and import options; and which
+search or watcher it shows; a store imported before these were kept gets
+them back from the copy of hydrus's sessions, the first time the client
+opens it, for the pages still named and holding the searches or watchers
+they did); `hydrus serve` carries on with
 them (a URL downloader page shows its queue's progress and files in
 `hydrus-gui` as it goes, as hydrus's does), and `hydrus queues <store>
 list` shows them. A duplicates page

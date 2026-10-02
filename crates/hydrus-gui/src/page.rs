@@ -501,10 +501,13 @@ impl SearchPage {
                 lock: self.lock(),
                 collect: Some(self.collect.clone()),
             },
-            PageContent::Downloader { kind, queues, .. } => PageContent::Downloader {
+            PageContent::Downloader {
+                kind, queues, page, ..
+            } => PageContent::Downloader {
                 kind: *kind,
                 queues: queues.clone(),
                 sort,
+                page: page.clone(),
             },
             PageContent::Other {
                 page_type, stored, ..

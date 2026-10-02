@@ -221,6 +221,9 @@ pub enum PageContent {
         kind: DownloaderKind,
         queues: Vec<i64>,
         sort: Option<PageSort>,
+        /// Its own state (a gallery or watcher page's).
+        #[serde(default, skip_serializing_if = "Option::is_none")]
+        page: Option<Box<DownloaderPageState>>,
     },
     /// A duplicates page: a potential-duplicates search to filter.
     Duplicates {
@@ -311,6 +314,42 @@ impl DuplicatesPage {
             group_mode: false,
         }
     }
+}
+
+/// A downloader page's own state, beyond its queues: the queue it shows,
+/// and what the queues it makes get (the reference's
+/// `MultipleGalleryImport` and `MultipleWatcherImport`).
+#[derive(Debug, Clone, PartialEq, Default, serde::Serialize, serde::Deserialize)]
+pub struct DownloaderPageState {
+    /// The queue it shows ("highlighted"), one of its queues.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub highlighted: Option<i64>,
+    /// The import options its new queues get.
+    #[serde(default)]
+    pub options: crate::import_options::ImportOptionsSlice,
+    /// A gallery page's downloader, file limit and pend options.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub gallery: Option<GalleryPageState>,
+    /// A watcher page's checker options for new watchers.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub checker: Option<crate::subscriptions::CheckerOptions>,
+}
+
+/// What a gallery page gives the queries entered into it.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct GalleryPageState {
+    /// The downloader (gallery URL generator) new queries use: its key
+    /// (hex) and name.
+    pub gug_key: String,
+    pub gug_name: String,
+    /// Stop each new query after this many files (`None`: no limit).
+    pub file_limit: Option<u64>,
+    pub start_files_paused: bool,
+    pub start_gallery_paused: bool,
+    /// Skip a query the page already has from the same downloader.
+    pub no_new_dupes: bool,
+    /// Queries entered together become one ("3 queries").
+    pub merge_pends: bool,
 }
 
 /// The kinds of downloader page.

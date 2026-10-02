@@ -24,8 +24,10 @@ use crate::network::{self, Cookie, CustomHeader, NetworkContext};
 use crate::services::{self, ServiceKind};
 use crate::{queues, schema, subscriptions};
 
+mod backfill;
 mod decode;
 
+pub use backfill::fill_downloader_page_state;
 pub use decode::auto_resolution_rule;
 
 pub use decode::decode_input;
@@ -95,7 +97,17 @@ pub struct SubscriptionInput {
 pub struct DownloaderPageInput {
     pub name: String,
     pub queues: Vec<PageQueueInput>,
+    /// A gallery or watcher page's own state, and the queue it shows (of
+    /// `queues`).
+    pub state: Option<hydrus_core::pages::DownloaderPageState>,
+    pub highlighted: Option<usize>,
 }
+
+/// A downloader page's queues as made, and its own state.
+type MadePage = (
+    Vec<i64>,
+    Option<Box<hydrus_core::pages::DownloaderPageState>>,
+);
 
 /// A session's tree of pages.
 #[derive(Debug, Clone, PartialEq)]
@@ -1049,7 +1061,7 @@ impl Copier<'_> {
 
     /// Downloader pages' queues, with their files and gallery pages; each
     /// page's queue ids.
-    fn downloader_pages(&mut self, input: &ImportInput) -> Result<Vec<Vec<i64>>> {
+    fn downloader_pages(&mut self, input: &ImportInput) -> Result<Vec<MadePage>> {
         let url_classes = input
             .settings
             .get(<hydrus_core::url::UrlClassSettings as crate::settings::Setting>::KEY)
@@ -1114,7 +1126,12 @@ impl Copier<'_> {
                 counts[0] += 1;
                 ids.push(id);
             }
-            page_queues.push(ids);
+            // (the queue it shows, as made)
+            let state = page.state.clone().map(|mut state| {
+                state.highlighted = page.highlighted.and_then(|i| ids.get(i).copied());
+                Box::new(state)
+            });
+            page_queues.push((ids, state));
         }
         for (table, n) in ["import_queues", "file_seeds", "gallery_seeds"]
             .into_iter()
@@ -1127,12 +1144,12 @@ impl Copier<'_> {
 
     /// The session's pages, saved as the one the GUI opens with, and the
     /// files each showed.
-    fn session(&mut self, input: &ImportInput, page_queues: &[Vec<i64>]) -> Result<()> {
+    fn session(&mut self, input: &ImportInput, page_queues: &[MadePage]) -> Result<()> {
         use hydrus_core::pages::{Page, PageContent, PageKey, Session};
 
         fn convert(
             page: &PageInput,
-            page_queues: &[Vec<i64>],
+            page_queues: &[MadePage],
             files: &mut Vec<(PageKey, Vec<hydrus_core::Sha256>)>,
         ) -> Page {
             let key = PageKey::random();
@@ -1159,11 +1176,15 @@ impl Copier<'_> {
                     lock: *lock,
                     collect: collect.clone(),
                 },
-                PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
-                    kind: *kind,
-                    queues: page_queues.get(*index).cloned().unwrap_or_default(),
-                    sort: sort.clone(),
-                },
+                PageInputContent::Downloader { kind, index, sort } => {
+                    let (queues, state) = page_queues.get(*index).cloned().unwrap_or_default();
+                    PageContent::Downloader {
+                        kind: *kind,
+                        queues,
+                        sort: sort.clone(),
+                        page: state,
+                    }
+                }
                 PageInputContent::Duplicates { duplicates, sort } => PageContent::Duplicates {
                     duplicates: duplicates.clone(),
                     sort: sort.clone(),
@@ -2233,6 +2254,146 @@ mod network_tests {
         }
     }
 
+    /// A store imported before gallery and watcher pages kept their own
+    /// state gets it back from the sessions the import kept, page by page
+    /// (by name and searches or threads, wherever the page now is), once.
+    #[test]
+    fn downloader_pages_own_state_comes_back_for_earlier_imports() {
+        use hydrus_core::pages::{Page, PageContent};
+        // (pages as an earlier import left them, moved about since: each
+        // notebook's reversed, without their own state)
+        fn strip(pages: &mut [Page]) {
+            pages.reverse();
+            for page in pages {
+                match &mut page.content {
+                    PageContent::Pages(children) => strip(children),
+                    PageContent::Downloader { page: own, .. } => *own = None,
+                    _ => {}
+                }
+            }
+        }
+        fn rename(pages: &mut [Page], key: hydrus_core::pages::PageKey) {
+            for page in pages {
+                if page.key == key {
+                    page.name.push_str(" (renamed)");
+                }
+                if let PageContent::Pages(children) = &mut page.content {
+                    rename(children, key);
+                }
+            }
+        }
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["sessions"].as_array().unwrap();
+        // (the session with the most watcher pages, one showing a watcher,
+        // over an older save)
+        let watchers = |s: &serde_json::Value| -> Vec<serde_json::Value> {
+            s["facts"]["pages"]
+                .as_object()
+                .unwrap()
+                .values()
+                .filter_map(|p| p["page"]["variables"].get("multiple_watcher_import"))
+                .cloned()
+                .collect()
+        };
+        let chosen = sessions
+            .iter()
+            .filter(|s| {
+                watchers(s)
+                    .iter()
+                    .any(|m| m["highlighted"].as_str().is_some_and(|u| !u.is_empty()))
+            })
+            .max_by_key(|s| watchers(s).len())
+            .unwrap();
+        assert!(watchers(chosen).len() > 1);
+        let older = sessions.iter().find(|s| !std::ptr::eq(*s, chosen)).unwrap();
+        plant_last_session(source.path(), &[older, chosen]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(source.path(), &dest).unwrap();
+        let conn = Connection::open(&dest).unwrap();
+        let load = |conn: &Connection| {
+            crate::sessions::load(conn, crate::sessions::LAST_SESSION)
+                .unwrap()
+                .unwrap()
+        };
+        let states = |session: &hydrus_core::pages::Session| -> Vec<_> {
+            session
+                .all_pages()
+                .into_iter()
+                .filter_map(|p| match &p.content {
+                    PageContent::Downloader { page, .. } => Some((p.name.clone(), page.clone())),
+                    _ => None,
+                })
+                .collect()
+        };
+        let imported = load(&conn);
+        let expected = states(&imported);
+        assert!(
+            expected
+                .iter()
+                .any(|(_, s)| s.as_ref().is_some_and(|s| s.highlighted.is_some()))
+        );
+
+        // as an earlier import left it: no page state, its pages moved
+        // about, and one renamed since
+        let mut earlier = imported.clone();
+        strip(&mut earlier.pages);
+        let renamed = earlier
+            .all_pages()
+            .into_iter()
+            .find(|p| {
+                matches!(
+                    p.content,
+                    PageContent::Downloader {
+                        kind: hydrus_core::pages::DownloaderKind::Watchers,
+                        ..
+                    }
+                )
+            })
+            .unwrap()
+            .key;
+        rename(&mut earlier.pages, renamed);
+        crate::sessions::save(&conn, &earlier, 1).unwrap();
+        // (not filled yet)
+        conn.execute(
+            "DELETE FROM settings WHERE key = 'downloader_page_state_filled'",
+            [],
+        )
+        .unwrap();
+
+        let filled = fill_downloader_page_state(&conn, 2).unwrap();
+        let after = load(&conn);
+        let after_states: std::collections::HashMap<_, _> = after
+            .all_pages()
+            .into_iter()
+            .filter_map(|p| match &p.content {
+                PageContent::Downloader { page, .. } => Some((p.key, page.clone())),
+                _ => None,
+            })
+            .collect();
+        let mut checked = 0;
+        for page in imported.all_pages() {
+            let PageContent::Downloader { page: state, .. } = &page.content else {
+                continue;
+            };
+            if page.key == renamed {
+                assert_eq!(
+                    after_states[&page.key], None,
+                    "renamed: no longer the same page"
+                );
+            } else {
+                assert_eq!(&after_states[&page.key], state, "{}", page.name);
+                checked += usize::from(state.is_some());
+            }
+        }
+        assert_eq!(filled, checked);
+        assert!(filled > 0);
+        // once only
+        crate::sessions::save(&conn, &earlier, 3).unwrap();
+        assert_eq!(fill_downloader_page_state(&conn, 4).unwrap(), 0);
+    }
+
     /// Plant sessions recorded by the reference as a reference database's
     /// "last session", each saved after the one before (so the last one is
     /// the one it opens with), with the files their pages show.
@@ -2395,9 +2556,32 @@ mod network_tests {
                         page.name
                     );
                 }
-                PageContent::Downloader { queues: ids, .. } => {
+                PageContent::Downloader {
+                    queues: ids,
+                    page: state,
+                    ..
+                } => {
                     for id in ids {
                         assert_eq!(Some(*id), queues.next());
+                    }
+                    let variables = &p["variables"];
+                    if let Some(m) = variables.get("multiple_watcher_import") {
+                        // the watcher it showed, by its thread
+                        let state = state.as_ref().expect("a watcher page's own state");
+                        assert!(state.checker.is_some());
+                        let shown = state.highlighted.map(|id| {
+                            assert!(ids.contains(&id));
+                            let queue = crate::queues::queue(conn, id).unwrap().unwrap();
+                            serde_json::from_value::<hydrus_core::watchers::WatcherState>(
+                                queue.extra,
+                            )
+                            .unwrap()
+                            .url
+                        });
+                        let expected = m["highlighted"].as_str().filter(|u| !u.is_empty());
+                        assert_eq!(shown.as_deref(), expected, "{}", page.name);
+                    } else if variables.get("urls_import").is_some() {
+                        assert!(state.is_none());
                     }
                 }
                 other => panic!("{other:?}"),

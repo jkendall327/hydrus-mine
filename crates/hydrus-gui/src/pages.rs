@@ -116,6 +116,14 @@ impl Pages {
     /// The last session, as the reference starts with it; with none (or an
     /// empty one), a single empty search page.
     pub fn open(store: Arc<Store>) -> hydrus_store::Result<Self> {
+        // (gallery and watcher pages an earlier import left without their
+        // own state get it back, once)
+        let now = std::time::SystemTime::now()
+            .duration_since(std::time::UNIX_EPOCH)
+            .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+        store.write(move |ctx| {
+            hydrus_store::import::fill_downloader_page_state(ctx.conn(), now).map(|_| ())
+        })?;
         let session = store
             .read(|conn| sessions::load(conn, LAST_SESSION))?
             .filter(|s| !s.pages.is_empty())
@@ -455,10 +463,13 @@ impl Pages {
                 kind: DownloaderKind::Urls,
                 queues,
                 sort,
+                ..
             } if queues.len() == 1 => {
                 SearchPage::url_downloader(store, queues[0], sort.as_ref(), files)
             }
-            PageContent::Downloader { kind, queues, sort } => {
+            PageContent::Downloader {
+                kind, queues, sort, ..
+            } => {
                 // (and what the reference's says while empty)
                 let (kind, empty) = match kind {
                     DownloaderKind::Gallery => ("gallery", "no highlighted query"),
@@ -807,6 +818,7 @@ impl Pages {
                         kind: DownloaderKind::Urls,
                         queues: vec![queue],
                         sort: None,
+                        page: None,
                     },
                 }
             }

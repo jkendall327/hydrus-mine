@@ -86,6 +86,7 @@ fn the_last_session_opens_as_it_was_left() {
             kind: DownloaderKind::Watchers,
             queues: vec![1, 2],
             sort: None,
+            page: None,
         },
     );
     let session = Session {
@@ -263,6 +264,7 @@ fn pages_open_and_close_as_the_reference_does() {
                             kind: DownloaderKind::Watchers,
                             queues: vec![],
                             sort: None,
+                            page: None,
                         },
                     ),
                 ]),

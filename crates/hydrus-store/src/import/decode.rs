@@ -1765,6 +1765,17 @@ impl SessionContext<'_> {
             stored: serde_json::from_str(&stored.dump).ok(),
             sort,
         };
+        let (state, highlighted) = match &page.content {
+            PageContent::Gallery(m) => {
+                let (state, highlighted) = gallery_page_state(m);
+                (Some(state), highlighted)
+            }
+            PageContent::Watchers(m) => {
+                let (state, highlighted) = watcher_page_state(m);
+                (Some(state), highlighted)
+            }
+            _ => (None, None),
+        };
         let queues = match page.content {
             PageContent::Query(q) => {
                 let content = match file_search(&q.search, self.scales) {
@@ -1919,6 +1930,8 @@ impl SessionContext<'_> {
             .push(super::DownloaderPageInput {
                 name: page.name.clone(),
                 queues,
+                state,
+                highlighted,
             });
         Some(super::PageInput {
             name: page.name,
@@ -1930,6 +1943,57 @@ impl SessionContext<'_> {
             hashes,
         })
     }
+}
+
+/// A gallery page's own state (`MultipleGalleryImport`), and the search it
+/// shows, by its place among the page's searches.
+pub(crate) fn gallery_page_state(
+    m: &hydrus_legacy::objects::gui_sessions::LegacyMultipleGalleryImport,
+) -> (hydrus_core::pages::DownloaderPageState, Option<usize>) {
+    let highlighted = m
+        .highlighted
+        .as_ref()
+        .and_then(|key| m.gallery_imports.iter().position(|g| &g.key == key));
+    let state = hydrus_core::pages::DownloaderPageState {
+        highlighted: None,
+        options: m.import_options.clone(),
+        gallery: Some(hydrus_core::pages::GalleryPageState {
+            gug_key: m.gug_key.clone(),
+            gug_name: m.gug_name.clone(),
+            file_limit: m.file_limit.and_then(|n| u64::try_from(n).ok()),
+            start_files_paused: m.start_file_queues_paused,
+            start_gallery_paused: m.start_gallery_queues_paused,
+            no_new_dupes: m.do_not_allow_new_dupes,
+            merge_pends: m.merge_simultaneous_pends_to_one_importer,
+        }),
+        checker: None,
+    };
+    (state, highlighted)
+}
+
+/// A watcher page's own state (`MultipleWatcherImport`), and the watcher it
+/// shows, by its place among the page's watchers that come across (those
+/// with a thread).
+pub(crate) fn watcher_page_state(
+    m: &hydrus_legacy::objects::gui_sessions::LegacyMultipleWatcherImport,
+) -> (hydrus_core::pages::DownloaderPageState, Option<usize>) {
+    let highlighted = m
+        .highlighted
+        .as_ref()
+        .filter(|url| !url.is_empty())
+        .and_then(|url| {
+            m.watchers
+                .iter()
+                .filter(|w| !w.url.is_empty())
+                .position(|w| &w.url == url)
+        });
+    let state = hydrus_core::pages::DownloaderPageState {
+        highlighted: None,
+        options: m.import_options.clone(),
+        gallery: None,
+        checker: Some(m.checker.clone()),
+    };
+    (state, highlighted)
 }
 
 #[cfg(test)]
@@ -2187,6 +2251,68 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn downloader_pages_own_state_converts() {
+        use hydrus_legacy::objects::gui_sessions::{
+            multiple_gallery_import, multiple_watcher_import,
+        };
+        use hydrus_legacy::serialisable::SerialisableObject;
+
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let object =
+            |v: &serde_json::Value| SerialisableObject::from_tuple_str(&v.to_string()).unwrap();
+        let mut highlighted_any = false;
+        for case in recorded["multiple_gallery_imports"].as_array().unwrap() {
+            let facts = &case["facts"];
+            let m = multiple_gallery_import(&object(&case["stored"])).unwrap();
+            let (state, highlighted) = gallery_page_state(&m);
+            let gallery = state.gallery.as_ref().unwrap();
+            assert_eq!(gallery.gug_key, facts["gug_key"]);
+            assert_eq!(gallery.gug_name, facts["gug_name"]);
+            assert_eq!(gallery.file_limit, facts["file_limit"].as_u64());
+            assert_eq!(
+                gallery.start_files_paused,
+                facts["start_file_queues_paused"]
+            );
+            assert_eq!(
+                gallery.start_gallery_paused,
+                facts["start_gallery_queues_paused"]
+            );
+            assert_eq!(gallery.no_new_dupes, facts["do_not_allow_new_dupes"]);
+            assert_eq!(
+                gallery.merge_pends,
+                facts["merge_simultaneous_pends_to_one_importer"]
+            );
+            assert_eq!(state.options, m.import_options);
+            assert!(state.checker.is_none());
+            // (the highlighted search, by its place among the page's)
+            let expected = facts["gallery_imports"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .position(|g| g["key"] == facts["highlighted"]);
+            assert_eq!(highlighted, expected, "{facts}");
+            highlighted_any |= highlighted.is_some();
+        }
+        for case in recorded["multiple_watcher_imports"].as_array().unwrap() {
+            let facts = &case["facts"];
+            let m = multiple_watcher_import(&object(&case["stored"])).unwrap();
+            let (state, highlighted) = watcher_page_state(&m);
+            assert_eq!(state.checker.as_ref(), Some(&m.checker));
+            assert!(state.gallery.is_none());
+            // (among the watchers that come across: those with a thread)
+            let expected = facts["watchers"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|w| w["url"] != "")
+                .position(|w| !facts["highlighted"].is_null() && w["url"] == facts["highlighted"]);
+            assert_eq!(highlighted, expected, "{facts}");
+            highlighted_any |= highlighted.is_some();
+        }
+        assert!(highlighted_any);
     }
 
     #[test]
