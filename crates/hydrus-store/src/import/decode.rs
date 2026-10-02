@@ -1899,6 +1899,27 @@ impl SessionContext<'_> {
                     }
                 })
                 .collect(),
+            PageContent::LocalImport(h) => {
+                if h.metadata_routers > 0 {
+                    self.input.warnings.push(format!(
+                        "Import page \"{}\" of session \"{name}\" reads sidecars for its files, \
+                         which hydrus-rs's import pages don't yet, so its files left to import \
+                         will be imported without them",
+                        page.name
+                    ));
+                }
+                vec![super::PageQueueInput {
+                    options: h.import_options,
+                    files_paused: h.paused,
+                    gallery_paused: false,
+                    created: None,
+                    state: super::PageQueueState::LocalImport(crate::queues::LocalImport {
+                        delete_after_success: h.delete_after_success,
+                    }),
+                    file_seeds: h.file_seeds,
+                    gallery_seeds: Vec::new(),
+                }]
+            }
             PageContent::Duplicates(d) => {
                 let content = match duplicates_page(&d, self.scales) {
                     Ok(duplicates) => super::PageInputContent::Duplicates { duplicates, sort },
@@ -1921,7 +1942,6 @@ impl SessionContext<'_> {
                 use hydrus_legacy::objects::gui_sessions::page_type;
                 let what = match page.page_type {
                     page_type::SIMPLE_DOWNLOADER => Some("a simple downloader page"),
-                    page_type::IMPORT_FROM_DISK => Some("an import from disk"),
                     _ => None,
                 };
                 if let Some(what) = what {
@@ -1949,6 +1969,9 @@ impl SessionContext<'_> {
         let kind = match page.page_type {
             hydrus_legacy::objects::gui_sessions::page_type::URLS => DownloaderKind::Urls,
             hydrus_legacy::objects::gui_sessions::page_type::GALLERY => DownloaderKind::Gallery,
+            hydrus_legacy::objects::gui_sessions::page_type::IMPORT_FROM_DISK => {
+                DownloaderKind::Local
+            }
             _ => DownloaderKind::Watchers,
         };
         self.input

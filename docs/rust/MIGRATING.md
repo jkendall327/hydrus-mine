@@ -141,8 +141,10 @@ the session `hydrus-gui` opens with: its pages and notebooks in order, each
 search page with its search, sort and the files it showed. Its downloader
 pages' work comes across as queues named after their pages: a URL
 downloader page as one queue, a gallery downloader page as one per search,
-a watcher page as one per watcher, each with every URL, file and gallery
-page it held and whether it was paused, and the page keeps its own
+a watcher page as one per watcher, and an "import" page (files imported
+from disk) as one queue with its files left to import, the tags to add to
+each and whether to delete them afterwards, each with every URL, file and
+gallery page it held and whether it was paused, and the page keeps its own
 settings (a gallery page's downloader, file limit, import options and how
 it adds queries; a watcher page's checker and import options; and which
 search or watcher it shows; a store imported before these were kept gets
@@ -154,8 +156,10 @@ them (a URL downloader page shows its queue's progress and files in
 list` shows them. A duplicates page
 comes across with its search, pair sort and group mode, and launches the
 duplicate filter (a store imported before duplicates pages were read
-opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (import from
-disk, simple downloader...) are kept as they were stored. Your other saved
+opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (a
+simple downloader...) are kept as they were stored. An "import" page that
+reads sidecars for its files is warned of: hydrus-rs's import pages don't
+read them yet, so its files left to import go in without them. Your other saved
 sessions come across under their names (hydrus's own "last session", if
 you opened with another, as "last session (from hydrus)"), for the page
 chooser's "sessions" button: their search and duplicates pages as above,

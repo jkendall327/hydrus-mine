@@ -175,6 +175,8 @@ pub enum PageQueueState {
     /// Its next check is timed when imported, from its files, as the
     /// reference times it when the page starts.
     Watcher(hydrus_core::watchers::WatcherState),
+    /// An "import" page's files, from disk.
+    LocalImport(crate::queues::LocalImport),
 }
 
 /// One Client API access key, as stored natively.
@@ -1079,6 +1081,7 @@ impl Copier<'_> {
                     PageQueueState::Urls => queues::QueueKind::Urls,
                     PageQueueState::Gallery(_) => queues::QueueKind::Gallery,
                     PageQueueState::Watcher(_) => queues::QueueKind::Watcher,
+                    PageQueueState::LocalImport(_) => queues::QueueKind::LocalImport,
                 };
                 let id = queues::create_queue(
                     self.conn,
@@ -1106,6 +1109,7 @@ impl Copier<'_> {
                 let extra = match &q.state {
                     PageQueueState::Urls => None,
                     PageQueueState::Gallery(search) => Some(serde_json::to_value(search)),
+                    PageQueueState::LocalImport(settings) => Some(serde_json::to_value(settings)),
                     PageQueueState::Watcher(state) => {
                         let mut state = state.clone();
                         let times: Vec<_> = files
@@ -2252,6 +2256,115 @@ mod network_tests {
                 "{kind}"
             );
         }
+    }
+
+    /// A session of "import" pages made by the reference planted as its
+    /// last session: each page's local import comes over as a queue the
+    /// daemon works, named after its page, in the session's order, with its
+    /// files (their tags to add among them), whether it is paused, its
+    /// import options and whether to delete the files, on an import page;
+    /// sidecars, which import pages don't read yet, are warned of.
+    #[test]
+    fn imports_local_import_pages_from_the_last_session() {
+        use crate::queues::{LocalImport, QueueKind};
+        use hydrus_core::pages::{DownloaderKind, PageContent};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["hdd_import_sessions"].as_array().unwrap();
+        let chosen = sessions
+            .iter()
+            .max_by_key(|s| s["page_data"].as_object().unwrap().len())
+            .unwrap();
+        plant_last_session(source.path(), &[chosen]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+
+        let mut hashes = Vec::new();
+        page_hashes(&chosen["facts"]["tree"], &mut hashes);
+        let imports: Vec<&serde_json::Value> = hashes
+            .iter()
+            .map(|h| &chosen["facts"]["pages"][h]["page"]["variables"]["hdd_import"])
+            .collect();
+        assert!(imports.len() >= 3);
+        // (one warning for each page with sidecars)
+        let with_sidecars = imports
+            .iter()
+            .filter(|i| i["metadata_routers"] != 0)
+            .count();
+        assert!(with_sidecars > 0);
+        assert_eq!(
+            report.warnings.len(),
+            with_sidecars,
+            "{:?}",
+            report.warnings
+        );
+        assert!(
+            report.warnings.iter().all(|w| w.contains("reads sidecars")),
+            "{:?}",
+            report.warnings
+        );
+
+        let conn = Connection::open(&dest).unwrap();
+        let made: Vec<_> = crate::queues::queues(&conn, None)
+            .unwrap()
+            .into_iter()
+            .filter(|q| q.kind == QueueKind::LocalImport)
+            .collect();
+        assert_eq!(made.len(), imports.len());
+        let options = |value: &serde_json::Value| {
+            hydrus_legacy::objects::import_options::slice(
+                &hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+                    &value.to_string(),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        let mut tagged = 0;
+        for (queue, facts) in made.iter().zip(&imports) {
+            assert_eq!(queue.name, "import");
+            assert_eq!(queue.files_paused, facts["paused"]);
+            assert!(!queue.gallery_paused);
+            assert_eq!(queue.options, options(&facts["import_options"]));
+            assert_eq!(
+                LocalImport::of(queue),
+                Some(LocalImport {
+                    delete_after_success: facts["delete_after_success"].as_bool().unwrap()
+                })
+            );
+            let files: Vec<_> = crate::queues::file_seeds(&conn, queue.id)
+                .unwrap()
+                .iter()
+                .map(file_seed_facts)
+                .collect();
+            assert_eq!(serde_json::json!(files), facts["file_seeds"]);
+            tagged += files
+                .iter()
+                .filter(|f| f["additional"] != serde_json::json!({}))
+                .count();
+        }
+        assert!(tagged > 0, "some files have tags to add");
+
+        // each on an import page, in the session's order
+        let session = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let shown: Vec<Vec<i64>> = session
+            .all_pages()
+            .into_iter()
+            .filter_map(|p| match &p.content {
+                PageContent::Downloader {
+                    kind: DownloaderKind::Local,
+                    queues,
+                    page: None,
+                    ..
+                } => Some(queues.clone()),
+                _ => None,
+            })
+            .collect();
+        let ids: Vec<Vec<i64>> = made.iter().map(|q| vec![q.id]).collect();
+        assert_eq!(shown, ids);
     }
 
     /// A store imported before gallery and watcher pages kept their own

@@ -2,6 +2,7 @@
 //! `oracle/fixtures/gui_sessions.json` (made by
 //! `oracle/dump_gui_sessions.py`): every field lands where the reference
 //! puts it, and a session's tree and pages read as the reference reads them.
+//! (Local imports, the "import" pages' importers, among them.)
 
 use serde_json::{Value as Json, json};
 
@@ -9,10 +10,10 @@ use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::subscriptions::CheckerOptions;
 use hydrus_legacy::objects::auto_resolution::PotentialsSearch;
 use hydrus_legacy::objects::gui_sessions::{
-    LegacyGalleryImport, LegacyMultipleGalleryImport, LegacyMultipleWatcherImport, LegacyPage,
-    LegacyUrlsImport, LegacyWatcherImport, PageContent, SessionNode, gallery_import,
-    multiple_gallery_import, multiple_watcher_import, page, page_data, session, urls_import,
-    watcher_import,
+    LegacyGalleryImport, LegacyHddImport, LegacyMultipleGalleryImport, LegacyMultipleWatcherImport,
+    LegacyPage, LegacyUrlsImport, LegacyWatcherImport, PageContent, SessionNode, gallery_import,
+    hdd_import, multiple_gallery_import, multiple_watcher_import, page, page_data, session,
+    urls_import, watcher_import,
 };
 use hydrus_legacy::objects::import_options::slice;
 use hydrus_legacy::objects::subscriptions::checker_options;
@@ -128,6 +129,17 @@ fn watcher_page_facts(m: &LegacyMultipleWatcherImport, expected: &Json) -> Json 
 
 /// The expected value if ours decodes the same (`decode` reads the
 /// expected, stored form), so facts compare whole.
+fn hdd_facts(h: &LegacyHddImport, expected: &Json) -> Json {
+    let (file_seeds, _) = seeds(&h.file_seeds, &[]);
+    json!({
+        "file_seeds": file_seeds,
+        "import_options": same_options(&h.import_options, &expected["import_options"]),
+        "metadata_routers": h.metadata_routers,
+        "delete_after_success": h.delete_after_success,
+        "paused": h.paused,
+    })
+}
+
 fn same<T: PartialEq + std::fmt::Debug>(
     ours: &T,
     expected: &Json,
@@ -172,6 +184,9 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
             "duplicate_pair_sort_asc": d.sort_ascending,
             "filter_group_mode": d.group_mode,
         }),
+        PageContent::LocalImport(h) => {
+            json!({ "hdd_import": hdd_facts(h, &variables["hdd_import"]) })
+        }
         PageContent::Other => json!({}),
     };
     if let Some(sort) = &p.sort {
@@ -194,6 +209,7 @@ fn expected_page_facts(expected: &Json) -> Json {
         "urls_import",
         "multiple_gallery_import",
         "multiple_watcher_import",
+        "hdd_import",
         "file_search_context",
         "synchronised",
         "system_hash_locked",
@@ -241,6 +257,10 @@ fn downloaders_read_as_the_reference_reads_them() {
         let ours = multiple_watcher_import(&object(&case["stored"])).unwrap();
         assert_eq!(watcher_page_facts(&ours, &case["facts"]), case["facts"]);
     }
+    for case in cases("hdd_imports") {
+        let ours = hdd_import(&object(&case["stored"])).unwrap();
+        assert_eq!(hdd_facts(&ours, &case["facts"]), case["facts"]);
+    }
 }
 
 /// (search pages locked to a `system:hash`, with what the hash follows,
@@ -252,6 +272,7 @@ fn pages_read_as_the_reference_reads_them() {
         .chain(cases("duplicates_pages"))
         .chain(cases("locked_pages"))
         .chain(cases("collected_pages"))
+        .chain(cases("hdd_import_pages"))
     {
         let ours = page(&object(&case["stored"])).unwrap();
         assert_eq!(

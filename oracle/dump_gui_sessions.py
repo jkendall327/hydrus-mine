@@ -2,9 +2,9 @@
 """Record how the reference reads GUI sessions and the pages in them.
 
 Random downloader importers (URL pages, gallery searches and their pages,
-watchers and their pages), page managers of every page type hydrus-rs cares
-about, and session trees, built with the reference's classes. Each case
-keeps:
+watchers and their pages, and the "import" pages' local imports), page
+managers of every page type hydrus-rs cares about, and session trees, built
+with the reference's classes. Each case keeps:
 
 * `stored`: the serialised tuple as a database holds it
 * `facts`: the loaded object's fields, read with the reference's own
@@ -29,11 +29,13 @@ from hydrus.core import HydrusSerialisable
 from hydrus.client import ClientConstants as CC
 from hydrus.client import ClientLocation
 from hydrus.client.importing import ClientImportGallery
+from hydrus.client.importing import ClientImportLocal
 from hydrus.client.importing import ClientImporting
 from hydrus.client.importing import ClientImportSimpleURLs
 from hydrus.client.importing import ClientImportWatchers
 from hydrus.client.importing.options import ImportOptionsContainer
 from hydrus.client.importing.options import NoteImportOptions
+from hydrus.client.metadata import ClientMetadataMigration
 from hydrus.client.media import ClientMediaCollect
 from hydrus.client.media import ClientMediaSort
 from hydrus.client.search import ClientSearchFileSearchContext
@@ -352,6 +354,51 @@ def duplicates_page( i ):
     return page
 
 
+# local imports ("import" pages)
+
+def hdd_import( i ):
+    """A local import as "import now" makes one (made after the others, so
+    their random draws are unchanged): its paths, some with tags to add,
+    sometimes with sidecars to read, deleting the files or not; then its
+    files worked on some way, and paused or not."""
+
+    paths = [ f'/home/someone/import {i}/{k}.png' for k in range( rng.randint( 0, 4 ) ) ]
+    paths_to_tags = { path : S.service_keys_to_tags() for path in paths if rng.random() < 0.5 }
+    routers = [ ClientMetadataMigration.SingleFileMetadataRouter() for _ in range( rng.choice( [ 0, 0, 1 ] ) ) ]
+
+    h = ClientImportLocal.HDDImport( paths = paths, import_options_container = import_options_container(), metadata_routers = routers, paths_to_additional_service_keys_to_tags = paths_to_tags, delete_after_success = rng.random() < 0.5 )
+
+    for f in h._file_seed_cache.GetFileSeeds():
+
+        f.source_time = S.maybe( S.when() )
+        f.status = rng.choice( S.STATUSES )
+        f.note = rng.choice( [ '', 'Source file does not exist!' ] )
+
+
+    h._paused = rng.random() < 0.3
+
+    return h
+
+
+def hdd_import_facts( h ):
+
+    return {
+        'file_seeds' : [ S.file_seed_facts( f ) for f in h._file_seed_cache.GetFileSeeds() ],
+        'import_options' : tuple_of( h._import_options_container ),
+        'metadata_routers' : len( h._metadata_routers ),
+        'delete_after_success' : h._delete_after_success,
+        'paused' : h._paused,
+    }
+
+
+def hdd_import_page( i ):
+
+    page = base_page( 'import', ClientGUIPagesCore.PAGE_TYPE_IMPORT_HDD )
+    page.SetVariable( 'hdd_import', hdd_import( i ) )
+
+    return page
+
+
 def page_manager_facts( page ):
 
     facts = { 'name' : page.GetPageName(), 'type' : page.GetType() }
@@ -360,6 +407,7 @@ def page_manager_facts( page ):
         'urls_import' : urls_import_facts,
         'multiple_gallery_import' : multiple_gallery_import_facts,
         'multiple_watcher_import' : multiple_watcher_import_facts,
+        'hdd_import' : hdd_import_facts,
     }
 
     variables = {}
@@ -427,7 +475,12 @@ def page_manager_query_for_collect():
 
 # sessions
 
-def session( i ):
+def session( i, make_page = None ):
+
+    if make_page is None:
+
+        make_page = page_manager
+
 
     hashes_to_page_data = {}
 
@@ -438,7 +491,7 @@ def session( i ):
             return ClientGUISession.GUISessionContainerPageNotebook( rng.choice( [ 'pages', 'downloaders' ] ), [ page_container( depth + 1 ) for _ in range( rng.randint( 0, 3 ) ) ] )
 
 
-        page = page_manager( i * 100 + len( hashes_to_page_data ) )
+        page = make_page( i * 100 + len( hashes_to_page_data ) )
         hashes = [ bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 0, 3 ) ) ]
 
         page_data = ClientGUISession.GUISessionPageData( page, hashes )
@@ -504,6 +557,9 @@ def main():
     fixture[ 'duplicates_pages' ] = cases( duplicates_page, page_manager_facts, 6 )
     fixture[ 'locked_pages' ] = cases( locked_page, page_manager_facts, 4 )
     fixture[ 'collected_pages' ] = cases( collected_page, page_manager_facts, 4 )
+    fixture[ 'hdd_imports' ] = cases( hdd_import, hdd_import_facts, 8 )
+    fixture[ 'hdd_import_pages' ] = cases( hdd_import_page, page_manager_facts, 3 )
+    fixture[ 'hdd_import_sessions' ] = [ session( i, make_page = hdd_import_page ) for i in range( 3 ) ]
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )

@@ -5,7 +5,7 @@
 //! name, a page type and a dictionary of variables, among them the
 //! downloader a downloader page runs: a URL page's importer (28), a gallery
 //! page's (20) with its gallery searches (68), or a watcher page's (64) with
-//! its watchers (17).
+//! its watchers (17), or an "import" page's local import (9).
 //!
 //! Only the versions a current client writes are read: the session a client
 //! opens with is saved again every few minutes, so it is always current.
@@ -38,6 +38,7 @@ const GALLERY_IMPORT: SerialisableType = SerialisableType(68);
 const MULTIPLE_GALLERY_IMPORT: SerialisableType = SerialisableType(20);
 const WATCHER_IMPORT: SerialisableType = SerialisableType(17);
 const MULTIPLE_WATCHER_IMPORT: SerialisableType = SerialisableType(64);
+const HDD_IMPORT: SerialisableType = SerialisableType(9);
 
 /// `ClientGUIPagesCore.PAGE_TYPE_*`.
 pub mod page_type {
@@ -114,8 +115,9 @@ pub enum PageContent {
     Gallery(LegacyMultipleGalleryImport),
     Watchers(LegacyMultipleWatcherImport),
     Duplicates(LegacyDuplicatesPage),
-    /// A page whose state isn't read here (a simple downloader, an import
-    /// from disk...).
+    LocalImport(LegacyHddImport),
+    /// A page whose state isn't read here (a simple downloader, a
+    /// petitions page...).
     Other,
 }
 
@@ -159,6 +161,19 @@ pub struct LegacyUrlsImport {
     pub file_seeds: Vec<LegacyFileSeed>,
     pub gallery_seeds: Vec<LegacyGallerySeed>,
     pub import_options: ImportOptionsSlice,
+    pub paused: bool,
+}
+
+/// An "import" page's local import (`HDDImport`): its files, by path, each
+/// with the tags to add to it.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacyHddImport {
+    pub file_seeds: Vec<LegacyFileSeed>,
+    pub import_options: ImportOptionsSlice,
+    /// How many sidecar routers it reads its files' metadata with (they
+    /// aren't read here).
+    pub metadata_routers: usize,
+    pub delete_after_success: bool,
     pub paused: bool,
 }
 
@@ -338,6 +353,9 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         page_type::WATCHER => PageContent::Watchers(multiple_watcher_import(object_variable(
             "multiple_watcher_import",
         )?)?),
+        page_type::IMPORT_FROM_DISK => {
+            PageContent::LocalImport(hdd_import(object_variable("hdd_import")?)?)
+        }
         page_type::DUPLICATE_FILTER => {
             PageContent::Duplicates(LegacyDuplicatesPage {
                 search: PotentialsSearch::from_object(object_variable(
@@ -393,6 +411,27 @@ pub fn urls_import(object: &SerialisableObject) -> DecodeResult<LegacyUrlsImport
         gallery_seeds: gallery_seeds(k, gallery_log)?,
         file_seeds: file_seeds(k, file_seed_cache)?,
         import_options: import_options(k, options)?,
+        paused: boolean(k, paused, "paused")?,
+    })
+}
+
+/// Decode an "import" page's local import.
+pub fn hdd_import(object: &SerialisableObject) -> DecodeResult<LegacyHddImport> {
+    let k = HDD_IMPORT;
+    expect(object, k, &[4])?;
+    let info = object.info();
+    let [
+        file_seed_cache,
+        options,
+        routers,
+        delete_after_success,
+        paused,
+    ] = tuple::<5>(k, &info, "local import")?;
+    Ok(LegacyHddImport {
+        file_seeds: file_seeds(k, file_seed_cache)?,
+        import_options: import_options(k, options)?,
+        metadata_routers: objects(k, routers, "metadata routers")?.len(),
+        delete_after_success: boolean(k, delete_after_success, "delete after success")?,
         paused: boolean(k, paused, "paused")?,
     })
 }

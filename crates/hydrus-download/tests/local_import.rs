@@ -3,8 +3,10 @@
 //! modified time as its source time; one already in the database found
 //! so; a missing one vetoed with the reference's note; and, if the import
 //! says, each file that is in the database afterwards deleted from where
-//! it was (only then).
+//! it was (only then). A file's tags to add (an "import" page carried over
+//! from hydrus has them) are added to it.
 
+use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
 use std::sync::Arc;
 use std::time::Duration;
@@ -112,6 +114,19 @@ async fn a_local_import_imports_its_files() {
     let queue = store.read(|c| queues::queue(c, id)).unwrap().unwrap();
     assert_eq!(queue.kind, queues::QueueKind::LocalImport);
     assert_eq!(queue.name, "import");
+    // (the png with a tag to add to "my tags")
+    let my_tags = hex::encode(hydrus_core::service::builtin_keys::MY_TAGS);
+    store
+        .write({
+            let my_tags = my_tags.clone();
+            move |ctx| {
+                let mut seed = queues::file_seeds(ctx.conn(), id)?.remove(1);
+                seed.meta.external_additional_tags =
+                    vec![(my_tags, BTreeSet::from(["series:metroid".to_owned()]))];
+                queues::update_file_seed(ctx.conn(), &seed)
+            }
+        })
+        .unwrap();
     let runner = runner(&store);
     runner.start_all().unwrap();
     wait_until_done(&store, id).await;
@@ -144,6 +159,31 @@ async fn a_local_import_imports_its_files() {
             ),
         ]
     );
+    // the png with its tag, the bmp with none
+    let snapshot = store.snapshot();
+    let my_tags = snapshot
+        .services
+        .builtin(hydrus_core::service::builtin_keys::MY_TAGS)
+        .unwrap()
+        .id;
+    for (seed, expected) in seeds[..2].iter().zip([vec![], vec!["series:metroid"]]) {
+        let hash: hydrus_core::Sha256 = seed.meta.hash("sha256").unwrap().parse().unwrap();
+        let tags: Vec<String> = store
+            .read(|conn| {
+                let id = hydrus_store::master::hash_id(conn, &hash)?.unwrap();
+                let batch = hydrus_store::media::load(conn, &snapshot.services, None, &[id])?;
+                Ok(batch.results[0]
+                    .tags
+                    .get(&my_tags)
+                    .and_then(|t| t.by_status.get(&hydrus_core::ContentStatus::Current))
+                    .into_iter()
+                    .flatten()
+                    .map(|t| batch.tags[t].as_str().to_owned())
+                    .collect())
+            })
+            .unwrap();
+        assert_eq!(tags, expected, "{}", seed.data);
+    }
     // each in the database, and deleted from where it was
     for seed in &seeds[..2] {
         let hash = seed.meta.hash("sha256").expect("a hash");
