@@ -317,6 +317,10 @@ pub struct NetEngine {
     /// When the sleep check last ran, and (after a wake) when requests may
     /// go again, in ms.
     wake: Mutex<(Option<i64>, Option<i64>)>,
+    /// When it started, and what it has read since (the reference's
+    /// session tracker, `GetMySessionTracker`).
+    started: i64,
+    session: Mutex<Tracker>,
 }
 
 /// Why one attempt failed, and so what happens next.
@@ -431,8 +435,23 @@ impl NetEngine {
             bandwidth_settings,
             domain_errors: Mutex::default(),
             wake: Mutex::default(),
+            started: now,
+            session: Mutex::new(Tracker::new(now)),
             options,
         })
+    }
+
+    /// When it started, the data it has read since, and in the last second
+    /// (the main window's status bar's bandwidth, `REPEATINGBandwidth`).
+    pub fn session_usage(&self) -> (i64, u64, u64) {
+        let now = now();
+        let since = u64::try_from(now - self.started).unwrap_or(0).max(1);
+        let mut session = self.session.lock();
+        (
+            self.started,
+            session.usage(BandwidthType::Data, Some(since), now),
+            session.usage(BandwidthType::Data, Some(1), now),
+        )
     }
 
     /// `SleepCheck`, to call every 15 seconds or so: a minute or more since
@@ -1353,6 +1372,7 @@ impl NetEngine {
             read_here += n;
             a.job.state.lock().bytes_read = progress.read;
             a.job.report_read(n);
+            self.session.lock().report_data(n, now());
             self.report_data(a, n).await?;
             if progress.accurate {
                 if let Some(total) = progress.total

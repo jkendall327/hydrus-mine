@@ -74,6 +74,13 @@ pages are saved as the last session
 every five minutes and on exit, as the reference saves them: each page
 opened with its search, sort and files, the others as they were.
 
+The status bar at the bottom says, as the reference's does, the page's
+status (its files, or the selection's) and, on the right, the network's:
+what the daemon has read since the client opened, what it is reading a
+second, and whether subscriptions or all new network traffic are paused
+("12.3 MB (45 KB/s), subs paused"); the daemon says what it has read four
+times a second.
+
 Above the tabs is the reference's menu bar (`src/main_menu.rs`, checked
 against the bar the running reference shows on the fixtures, recorded by
 `oracle/record_main_menu.py`): file, undo, pages, database, network,

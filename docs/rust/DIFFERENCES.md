@@ -208,6 +208,15 @@ search.
   and margin are hydrus's defaults (1 and 2 pixels); yours aren't carried
   over yet.
 
+- **The status bar has the page's and the network's parts only**: the
+  reference's idle, busy-threads, CPU-busy and database parts aren't
+  there (the daemon is never idle, and its threads and database aren't
+  the client's). The network part counts what the daemon reads, which
+  may run without the client; what it read before the client opened
+  isn't counted, as the reference's session starts with it. The main
+  window is titled "hydrus-rs", where the reference's is "main" with Qt's
+  "hydrus client 688" after it.
+
 - **The menu bar is drawn by hydrus-rs** (Slint's own can't be built from
   a list of entries), so it is the same on every system: macOS's isn't at
   the top of the screen, and menus stay inside the window. Hydrus's entries

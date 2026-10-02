@@ -120,3 +120,56 @@ fn a_search_page_says_why_it_is_empty() {
     page.add_predicate("nothing has this tag");
     assert_eq!(page.status(), "no files found for this search");
 }
+
+/// The main window's status bar's network part (`REPEATINGBandwidth`):
+/// what the daemon has read since the client opened, and the pauses, as
+/// they change.
+#[test]
+fn the_main_window_says_what_the_network_has_read_and_what_is_paused() {
+    use hydrus_store::live::DaemonLive;
+    use hydrus_store::settings::{self, Pauses};
+
+    let (_dir, store) = store();
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    // the daemon had read a little before the client opened
+    let said = move |bytes: u64, speed: u64| DaemonLive {
+        started: 10,
+        bytes,
+        speed,
+        at: now(),
+    };
+    let first = said(5000, 0);
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &Pauses {
+                    network_traffic: true,
+                    ..Pauses::default()
+                },
+            )?;
+            settings::set(ctx.conn(), &first)
+        })
+        .unwrap();
+    let _windows = hydrus_gui::headless::init();
+    let ui = hydrus_gui::MainWindow::new().unwrap();
+    let _bound = hydrus_gui::bind(&ui, hydrus_gui::Pages::open(store.clone()).unwrap());
+    assert_eq!(ui.get_status_network(), "0B, network paused");
+    // it reads on, the pauses change: within a second, the bar says so
+    let next = said(5000 + 2 * 1024 * 1024, 46_080);
+    store
+        .write(move |ctx| {
+            settings::set(
+                ctx.conn(),
+                &Pauses {
+                    subscriptions: true,
+                    ..Pauses::default()
+                },
+            )?;
+            settings::set(ctx.conn(), &next)
+        })
+        .unwrap();
+    std::thread::sleep(std::time::Duration::from_millis(1100));
+    slint::platform::update_timers_and_animations();
+    assert_eq!(ui.get_status_network(), "2 MB (45 KB/s), subs paused");
+}

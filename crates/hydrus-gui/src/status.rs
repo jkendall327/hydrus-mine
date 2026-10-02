@@ -189,3 +189,102 @@ pub fn status(
     }
     s
 }
+
+/// The main window's status bar's network part, as the reference's
+/// `REPEATINGBandwidth` writes it: the data read since the client opened,
+/// what it is reading a second if anything, and whether subscriptions or
+/// all new network traffic are paused ("12.3 MB (45 KB/s), subs paused").
+pub fn bandwidth_status(
+    read: u64,
+    per_second: u64,
+    pauses: &hydrus_store::settings::Pauses,
+) -> String {
+    let mut status = human_bytes(read);
+    if per_second > 0 {
+        status.push_str(&format!(" ({}/s)", human_bytes(per_second)));
+    }
+    if pauses.subscriptions {
+        status.push_str(", subs paused");
+    }
+    if pauses.network_traffic {
+        status.push_str(", network paused");
+    }
+    status
+}
+
+/// What the daemon has read since the client opened, from what it says
+/// of its network engine now and then (`DaemonLive`): a daemon started
+/// again counts from nothing.
+#[derive(Debug, Clone, Default)]
+pub struct SessionBytes {
+    last: Option<(i64, u64)>,
+    read: u64,
+}
+
+impl SessionBytes {
+    /// Take what the daemon says (if it has said anything), at `now`:
+    /// what has been read since the client opened, and a second's worth
+    /// now (none if the daemon hasn't said so lately).
+    pub fn read(&mut self, live: Option<hydrus_store::live::DaemonLive>, now: i64) -> (u64, u64) {
+        let Some(live) = live else {
+            return (self.read, 0);
+        };
+        match self.last {
+            Some((started, bytes)) if started == live.started => {
+                self.read += live.bytes.saturating_sub(bytes);
+            }
+            // (a daemon started since: all it has read is new)
+            Some(_) => self.read += live.bytes,
+            // (what was read before the client opened isn't counted)
+            None => {}
+        }
+        self.last = Some((live.started, live.bytes));
+        let per_second = if now - live.at <= 10 { live.speed } else { 0 };
+        (self.read, per_second)
+    }
+}
+
+#[cfg(test)]
+mod bandwidth_tests {
+    use hydrus_store::live::DaemonLive;
+    use hydrus_store::settings::Pauses;
+
+    use super::*;
+
+    #[test]
+    fn the_network_part_reads_as_the_reference_s() {
+        let mut pauses = Pauses::default();
+        assert_eq!(bandwidth_status(0, 0, &pauses), "0B");
+        pauses.network_traffic = true;
+        // (as the reference's own client showed it, booted paused)
+        assert_eq!(bandwidth_status(0, 0, &pauses), "0B, network paused");
+        pauses.subscriptions = true;
+        assert_eq!(
+            bandwidth_status(12_900_000, 46_080, &pauses),
+            "12.3 MB (45 KB/s), subs paused, network paused"
+        );
+    }
+
+    #[test]
+    fn only_what_is_read_while_the_client_is_open_counts() {
+        let live = |started, bytes, speed, at| {
+            Some(DaemonLive {
+                started,
+                bytes,
+                speed,
+                at,
+            })
+        };
+        let mut session = SessionBytes::default();
+        assert_eq!(session.read(None, 100), (0, 0));
+        // the daemon had read 5000 before the client opened
+        assert_eq!(session.read(live(10, 5000, 300, 100), 100), (0, 300));
+        assert_eq!(session.read(live(10, 7000, 0, 101), 101), (2000, 0));
+        // a second's worth said long ago isn't now
+        assert_eq!(session.read(live(10, 7000, 900, 101), 200), (2000, 0));
+        // a daemon started again: all it reads counts
+        assert_eq!(session.read(live(150, 400, 0, 160), 160), (2400, 0));
+        assert_eq!(session.read(live(150, 1000, 0, 161), 161), (3000, 0));
+        assert_eq!(session.read(None, 162), (3000, 0));
+    }
+}

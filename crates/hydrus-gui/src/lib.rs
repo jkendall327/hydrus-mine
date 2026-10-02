@@ -154,7 +154,8 @@ pub struct Bound {
     pub sync: Rc<dyn Fn()>,
     /// Shows thumbnails as they are decoded (held to keep it running).
     _thumbnails: Rc<slint::Timer>,
-    /// Shows the menu bar's titles as they change (held likewise).
+    /// Shows the menu bar's titles and the status bar's network part as
+    /// they change (held likewise).
     _menu_titles: Rc<slint::Timer>,
 }
 
@@ -798,11 +799,39 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         },
     );
     *after_change.borrow_mut() = Some(menu_titles_shown.clone());
+    // (and the status bar's network part, from the daemon's word)
+    let network_shown = {
+        let pages = pages.clone();
+        let weak = window.as_weak();
+        let session = RefCell::new(status::SessionBytes::default());
+        move || {
+            let Some(window) = weak.upgrade() else { return };
+            let store = pages.borrow().store().clone();
+            let read = store.read(|conn| {
+                let pauses: hydrus_store::settings::Pauses = hydrus_store::settings::get(conn)?;
+                // (none said yet: never kept)
+                let live: hydrus_store::live::DaemonLive = hydrus_store::settings::get(conn)?;
+                Ok((pauses, (live.at != 0).then_some(live)))
+            });
+            let Ok((pauses, live)) = read else { return };
+            let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+            let (bytes, per_second) = session.borrow_mut().read(live, now);
+            window.set_status_network(status::bandwidth_status(bytes, per_second, &pauses).into());
+        }
+    };
+    network_shown();
     let menu_titles = Rc::new(slint::Timer::default());
+    let ticks = Cell::new(0u32);
     menu_titles.start(
         slint::TimerMode::Repeated,
-        Duration::from_secs(2),
-        move || menu_titles_shown(),
+        Duration::from_secs(1),
+        move || {
+            network_shown();
+            ticks.set(ticks.get() + 1);
+            if ticks.get().is_multiple_of(2) {
+                menu_titles_shown();
+            }
+        },
     );
     // a URL downloader page's importer: pausing, and URLs typed or pasted
     window.on_pause_play_files({

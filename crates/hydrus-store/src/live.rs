@@ -28,6 +28,21 @@ pub struct QueueLive {
     pub gallery_job: Option<JobLive>,
 }
 
+/// The daemon's network use, for the main window's status bar: when its
+/// network engine started, what it has read since and in the last second,
+/// and when this was said.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct DaemonLive {
+    pub started: i64,
+    pub bytes: u64,
+    pub speed: u64,
+    pub at: i64,
+}
+
+impl crate::settings::Setting for DaemonLive {
+    const KEY: &'static str = "daemon_live";
+}
+
 /// A download in progress (the reference's `NetworkJob.GetStatus`).
 #[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct JobLive {

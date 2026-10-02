@@ -324,6 +324,7 @@ export component MainWindow inherits Window {
     in property <length> thumbnail-width: 152px;
     in property <length> thumbnail-height: 127px;
     in property <string> status;
+    in property <string> status-network;
     in property <string> error;
     // a downloader page's importer (the reference's "url downloader" box):
     // its file log's status and progress, whether it is paused, and its
@@ -1387,13 +1388,26 @@ export component MainWindow inherits Window {
                     }
                 }
             }
+            // the status bar, as the reference's: the page's, then the
+            // network's (what has been read since opening, and pauses)
             Rectangle {
                 height: 24px;
                 background: Theme.panel;
-                Text {
-                    x: 6px;
-                    text: root.status;
-                    vertical-alignment: center;
+                HorizontalLayout {
+                    padding-left: 6px;
+                    padding-right: 8px;
+                    spacing: 12px;
+                    Text {
+                        text: root.status;
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                        overflow: elide;
+                    }
+                    Text {
+                        text: root.status-network;
+                        vertical-alignment: center;
+                        min-width: 120px;
+                    }
                 }
             }
         }

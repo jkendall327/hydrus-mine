@@ -400,6 +400,22 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
     let right = job.line().right;
     assert!(right.contains("/1 MB ") && right.ends_with("/s"), "{right}");
     assert!(job.line().can_cancel);
+    // the daemon says what its network has read, and is reading a second,
+    // for the client's status bar
+    let started = Instant::now();
+    let said = loop {
+        let said: hydrus_store::live::DaemonLive = store.read(settings::get).unwrap();
+        // (at least what the job had read, as the download goes on)
+        if said.bytes >= job.bytes_read && said.speed > 0 {
+            break said;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(10),
+            "{said:?} {job:?}"
+        );
+        std::thread::sleep(Duration::from_millis(100));
+    };
+    assert!(said.started <= said.at);
     // cancelled as its page's button asks: the file ends vetoed, as the
     // reference notes it
     store

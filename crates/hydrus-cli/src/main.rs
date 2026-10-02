@@ -833,8 +833,30 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
             let store = store.clone();
             tokio::spawn(async move {
                 let mut last = std::collections::HashMap::new();
+                // (and the network's use, for the client's status bar: as it
+                // changes, and every few seconds to say it is still so)
+                let mut said: Option<hydrus_store::live::DaemonLive> = None;
                 loop {
                     tokio::time::sleep(Duration::from_millis(250)).await;
+                    let (started, bytes, speed) = downloads.downloader().net().session_usage();
+                    let at = hydrus_core::time::TimestampMs::now().millis() / 1000;
+                    let usage = hydrus_store::live::DaemonLive {
+                        started,
+                        bytes,
+                        speed,
+                        at,
+                    };
+                    let stale = said.is_none_or(|s| {
+                        (s.started, s.bytes, s.speed) != (started, bytes, speed) || at - s.at >= 5
+                    });
+                    if stale {
+                        said = Some(usage);
+                        if let Err(e) =
+                            store.write(move |ctx| hydrus_store::settings::set(ctx.conn(), &usage))
+                        {
+                            tracing::error!(error = %e, "keeping the network's use failed");
+                        }
+                    }
                     let changes = hydrus_store::live::changes(&mut last, downloads.live());
                     if changes.is_empty() {
                         continue;
