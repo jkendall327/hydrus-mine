@@ -1985,7 +1985,42 @@
       },
       {
        "widget": "MediaCollectControl",
-       "value": "<hydrus.client.media.ClientMediaCollect.MediaCollect object at 0x7ff3f983f4d0>"
+       "collect": "no collections",
+       "choices": [
+        [
+         "chapter",
+         false
+        ],
+        [
+         "creator",
+         false
+        ],
+        [
+         "page",
+         false
+        ],
+        [
+         "series",
+         false
+        ],
+        [
+         "title",
+         false
+        ],
+        [
+         "volume",
+         false
+        ],
+        [
+         "favourites",
+         false
+        ],
+        [
+         "stars",
+         false
+        ]
+       ],
+       "collect_unmatched": true
       },
       {
        "box": "namespace file sorting",
@@ -5730,28 +5765,28 @@
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7ff384fa5b10>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
       },
       {
        "label": "Default tag sort in search page manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7ff384fa5cd0>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
       },
       {
        "label": "Default tag sort in the media viewer: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7ff384fa5b50>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
       },
       {
        "label": "Default tag sort in media viewer manage tags dialogs: "
       },
       {
        "widget": "TagSortControl",
-       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort object at 0x7ff384fa5d90>"
+       "value": "<hydrus.client.metadata.ClientTagSorting.TagSort>"
       },
       {
        "box": "namespace grouping sort",

@@ -138,8 +138,9 @@ characters, short summaries' counts, the waits after errors, and two
 debug switches), duplicates (the duplicate filter's batches and its
 comparison score weights, and the duplicates page opened on files),
 exporting, file sort/collect (the default and secondary sorts, each a
-page's sort types and then the type's orders, and whether a sort chosen
-on a page becomes the default), file viewing statistics (whether they
+page's sort types and then the type's orders, whether a sort chosen on
+a page becomes the default, and the default collect, as a page's
+collect control offers it), file viewing statistics (whether they
 are kept), files and
 trash, gui (keeping the media viewer's size and place), gui pages,
 importing (looking inside .zip files for comics), maintenance and

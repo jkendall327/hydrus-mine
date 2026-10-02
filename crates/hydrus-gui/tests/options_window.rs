@@ -530,3 +530,81 @@ fn the_default_sorts_are_chosen_as_a_pages_sort() {
         }
     );
 }
+
+/// The default collect, as a page's collect control offers it: its label,
+/// its choices to check, and what files matching none of it do; applied,
+/// a new page collects so.
+#[test]
+fn the_default_collect_is_chosen_as_a_pages_collect() {
+    use hydrus_core::pages::SortSettings;
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    let strings = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        (0..model.row_count())
+            .map(|i| model.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    let checks = |model: slint::ModelRc<bool>| -> Vec<bool> {
+        (0..model.row_count())
+            .map(|i| model.row_data(i).unwrap())
+            .collect()
+    };
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file sort/collect");
+    let label = "Default collect: ";
+    let (i, collect) = row(&window, label);
+    assert_eq!(collect.kind, 11);
+    assert_eq!(collect.text, "no collections");
+    let names = strings(collect.items.clone());
+    let page_choices: Vec<String> = hydrus_gui::collect::choices(&store)
+        .into_iter()
+        .map(|c| c.name)
+        .collect();
+    assert_eq!(names, page_choices, "a page's choices");
+    assert!(checks(collect.checks.clone()).iter().all(|c| !c));
+    assert_eq!(
+        (strings(collect.orders.clone()), collect.order_index),
+        (
+            vec![
+                "collect into one group".to_owned(),
+                "leave separate".to_owned()
+            ],
+            0
+        )
+    );
+    // two choices checked: the label says them, in the choices' order
+    let creator = names.iter().position(|n| n == "creator").unwrap();
+    let series = names.iter().position(|n| n == "series").unwrap();
+    window.invoke_collect_toggled(i, i32::try_from(series).unwrap(), true);
+    window.invoke_collect_toggled(i, i32::try_from(creator).unwrap(), true);
+    let (_, collect) = row(&window, label);
+    assert_eq!(collect.text, "collect by creator-series");
+    let checked = checks(collect.checks.clone());
+    assert!(checked[creator] && checked[series]);
+    assert_eq!(checked.iter().filter(|c| **c).count(), 2);
+    // and unchecked again
+    window.invoke_collect_toggled(i, i32::try_from(series).unwrap(), false);
+    assert_eq!(row(&window, label).1.text, "collect by creator");
+    window.invoke_unmatched_chosen(i, 1);
+    assert_eq!(row(&window, label).1.order_index, 1);
+    window.invoke_apply();
+    let collect = store
+        .read(hydrus_store::settings::get::<SortSettings>)
+        .unwrap()
+        .default_collect;
+    assert_eq!(collect.namespaces, ["creator"]);
+    assert!(collect.ratings.is_empty());
+    assert!(!collect.collect_unmatched);
+    assert_eq!(
+        hydrus_gui::SearchPage::new(store.clone()).collect(),
+        &collect,
+        "a new page's"
+    );
+}

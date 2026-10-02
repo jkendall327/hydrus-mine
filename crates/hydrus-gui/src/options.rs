@@ -11,7 +11,7 @@ use hydrus_core::media_viewer::{
     InfoLineSettings, MediaViewerSettings, SlideshowSettings, ZoomCentre, ZoomType,
 };
 use hydrus_core::pages::{
-    DownloaderPageSettings, FileCountDisplay, PageNameSettings, PageSort, SortSettings,
+    DownloaderPageSettings, FileCountDisplay, PageCollect, PageNameSettings, PageSort, SortSettings,
 };
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
@@ -114,6 +114,8 @@ pub enum Value {
     /// A file sort: its type and order (the reference's
     /// `MediaSortControl`).
     Sort(PageSort),
+    /// How files collect (the reference's `MediaCollectControl`).
+    Collect(PageCollect),
 }
 
 /// What kind of control an option has.
@@ -156,6 +158,8 @@ pub enum Kind {
     },
     /// A file sort, of the types a page's sort control offers.
     Sort,
+    /// A collect, of the choices a page's collect control offers.
+    Collect,
 }
 
 /// A field of a time's control, as the reference's `TimeDeltaWidget`
@@ -456,6 +460,25 @@ fn sort(
         Rc::new(move |s, v| match v {
             Value::Sort(sort) => {
                 set(s, sort.clone());
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn collect(
+    label: &'static str,
+    get: fn(&Settings) -> PageCollect,
+    set: fn(&mut Settings, PageCollect),
+) -> Item {
+    opt(
+        label,
+        Kind::Collect,
+        Rc::new(move |s| Value::Collect(get(s))),
+        Rc::new(move |s, v| match v {
+            Value::Collect(collect) => {
+                set(s, collect.clone());
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -1070,6 +1093,11 @@ pub fn pages() -> Vec<Page> {
                         "Update default file sort every time a new sort is manually chosen: ",
                         |s| s.sorts.save_page_sort_on_change,
                         |s, v| s.sorts.save_page_sort_on_change = v,
+                    ),
+                    collect(
+                        "Default collect: ",
+                        |s| s.sorts.default_collect.clone(),
+                        |s, v| s.sorts.default_collect = v,
                     ),
                 ],
             )],
@@ -1900,6 +1928,15 @@ impl Editor {
             && matches!(self.values[self.page][i], Value::Sort(_))
         {
             self.values[self.page][i] = Value::Sort(sort);
+        }
+    }
+
+    /// A collect's choice checked or not, or its unmatched files' choice.
+    pub fn collect(&mut self, row: usize, collect: PageCollect) {
+        if let Some(i) = self.option_at(row)
+            && matches!(self.values[self.page][i], Value::Collect(_))
+        {
+            self.values[self.page][i] = Value::Collect(collect);
         }
     }
 

@@ -24,6 +24,8 @@ it opens on, and each page's controls in the order they are laid out:
 - `{"velocity": [number, seconds], "number_min": n, "number_max": n,
   "per": text, "units": [...], "min": seconds}` for a number per time
   (`VelocityCtrl`), `"per"` the text between them;
+- `{"widget": "MediaCollectControl", "collect": its text, "choices":
+  [[text, checked]], "collect_unmatched": bool}` for a collect control;
 - `{"tabs": [{"tab": name, "items": [...]}]}` for tabs;
 - `{"widget": class name}`, with its `"value"` if it has one (`GetValue`)
   or the `"items"` laid out in it, for anything else.
@@ -43,6 +45,7 @@ Usage: QT_QPA_PLATFORM=offscreen python oracle/record_options_dialog.py
 
 import json
 import os
+import re
 import sys
 import tempfile
 
@@ -68,7 +71,8 @@ def jsonable( value ):
             return [ jsonable( v ) for v in value ]
 
 
-        return repr( value )
+        # (without its address, which differs each run)
+        return re.sub( r' object at 0x[0-9a-f]+', '', repr( value ) )
 
 
 
@@ -136,6 +140,25 @@ def describe( w ):
     elif isinstance( w, ClientGUITime.TimeDeltaButton ):
 
         out = { 'duration' : w.GetValue(), 'units' : units( w ), 'min' : w._min, 'button_text' : w.text() }
+
+    elif type( w ).__name__ == 'MediaCollectControl':
+
+        from qtpy import QtCore as QC
+
+        combo = w._collect_comboctrl
+        model = combo.model()
+
+        choices = [
+            [ model.item( i, 0 ).text(), model.item( i, 0 ).checkState() == QC.Qt.CheckState.Checked ]
+            for i in range( combo.count() )
+        ]
+
+        out = {
+            'widget' : 'MediaCollectControl',
+            'collect' : combo._cached_text,
+            'choices' : choices,
+            'collect_unmatched' : w._collect_unmatched,
+        }
 
     elif isinstance( w, ClientGUICommon.NoneableTextCtrl ):
 

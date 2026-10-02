@@ -50,7 +50,7 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
 }
 
 /// The reference's widgets that are a control of ours.
-const WIDGETS: &[&str] = &["MediaSortControl"];
+const WIDGETS: &[&str] = &["MediaSortControl", "MediaCollectControl"];
 
 fn is_control(item: &Json) -> bool {
     CONTROLS.iter().any(|k| item.get(*k).is_some())
@@ -229,6 +229,21 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
             let ours = shown.as_ref().map(|(by, order)| vec![by.as_str(), *order]);
             (theirs["widget"] != "MediaSortControl" || ours.is_none() || buttons != ours)
                 .then(|| format!("sort {shown:?}"))
+        }
+        (Kind::Collect, Value::Collect(collect)) => {
+            // (its text, its choices each checked or not, and whether
+            // unmatched files collect)
+            let choices = hydrus_gui::collect::choices(store);
+            let label = hydrus_gui::collect::label(&choices, collect);
+            let ours: Vec<Json> = choices
+                .iter()
+                .map(|c| serde_json::json!([c.name, c.checked(collect)]))
+                .collect();
+            (theirs["widget"] != "MediaCollectControl"
+                || theirs["collect"] != label.as_str()
+                || theirs["choices"].as_array() != Some(&ours)
+                || theirs["collect_unmatched"] != collect.collect_unmatched)
+                .then(|| format!("collect {label:?} {ours:?} {}", collect.collect_unmatched))
         }
         _ => Some(format!("{kind:?} holding {value:?}")),
     };

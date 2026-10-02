@@ -243,14 +243,17 @@ search.
   stats; most of the gui page; on the importing page, dropped URLs and
   the work slots; and on the media playback page, the preview's zoom,
   re-centring, the checkerboard, animations, mpv, Qt's player and the
-  system settings; on the file sort/collect page, the default collect
-  and the namespace sorts' list; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  system settings; on the file sort/collect page, the namespace sorts'
+  list and the default collect's tag service; and on the thumbnails
+  page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
   key navigation's scrolling, the scroll rate, the background image and
   the rendering tech). It opens on its first page,
   rather than "gui" or the page last open; options' tooltips aren't shown;
   a box's title is a heading over its options rather than a frame around
   them; a sort's type is a dropdown of the types a page's sort control
-  lists, where the reference's is a button opening a menu of them; and a time behind a button in the reference (the downloaders'
+  lists, where the reference's is a button opening a menu of them, and a
+  collect's choices are checkboxes under its label, with its unmatched
+  files' choice, where the reference's are a dropdown and a cog menu; and a time behind a button in the reference (the downloaders'
   waits after errors) shows its fields in place. Its search suggests only
   the options it has, and their boxes (the reference's also suggests other
   text on its pages, such as units and dropdowns' choices), and is always

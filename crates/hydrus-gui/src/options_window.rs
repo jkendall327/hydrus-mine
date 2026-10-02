@@ -36,6 +36,10 @@ fn int(n: i64) -> i32 {
     i32::try_from(n).unwrap_or(if n < 0 { i32::MIN } else { i32::MAX })
 }
 
+/// A collect's choices for the files that match none of it, as the
+/// reference's cog menu has them ("unmatched files").
+const UNMATCHED: [&str; 2] = ["collect into one group", "leave separate"];
+
 /// A row as the window shows it (a sort's types are the store's).
 fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
     let mut out = OptionRow::default();
@@ -135,6 +139,23 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                         out.orders = ModelRc::new(VecModel::from(orders));
                         out.order_index = i32::from(!sort.ascending);
                     }
+                }
+                (Kind::Collect, Value::Collect(collect)) => {
+                    out.kind = 11;
+                    let choices = crate::collect::choices(store);
+                    out.text = crate::collect::label(&choices, collect).into();
+                    let names: Vec<SharedString> =
+                        choices.iter().map(|c| c.name.as_str().into()).collect();
+                    out.items = ModelRc::new(VecModel::from(names));
+                    let checks: Vec<bool> = choices.iter().map(|c| c.checked(collect)).collect();
+                    out.checks = ModelRc::new(VecModel::from(checks));
+                    out.orders = ModelRc::new(VecModel::from(
+                        UNMATCHED
+                            .iter()
+                            .map(|&s| s.into())
+                            .collect::<Vec<SharedString>>(),
+                    ));
+                    out.order_index = i32::from(!collect.collect_unmatched);
                 }
                 _ => {}
             }
@@ -329,6 +350,55 @@ pub(crate) fn open(
     });
     window.on_order_chosen(move |i, index| {
         sort_edited(i, &|sort, _| sort.ascending = index == 0);
+    });
+    // a collect's choice checked or not, or its unmatched files' choice
+    let collect_edited = {
+        let editor = editor.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        move |i: i32,
+              edit: &dyn Fn(
+            &hydrus_core::pages::PageCollect,
+            &[crate::collect::CollectChoice],
+        ) -> hydrus_core::pages::PageCollect| {
+            let Some(window) = weak.upgrade() else { return };
+            let mut editor = editor.borrow_mut();
+            let rows = editor.rows();
+            let Some(Row::Opt {
+                value: Value::Collect(collect),
+                ..
+            }) = rows.get(at(i))
+            else {
+                return;
+            };
+            let collect = collect.clone();
+            drop(rows);
+            let choices = crate::collect::choices(&store);
+            editor.collect(at(i), edit(&collect, &choices));
+            if let Some(row) = editor.rows().get(at(i)) {
+                window.get_rows().set_row_data(
+                    at(i),
+                    OptionRow {
+                        found: editor.found(at(i)),
+                        ..option_row(row, &store)
+                    },
+                );
+            }
+        }
+    };
+    window.on_collect_toggled({
+        let collect_edited = collect_edited.clone();
+        move |i, choice, on| {
+            collect_edited(i, &|collect, choices| {
+                crate::collect::toggled(choices, collect, at(choice), on)
+            });
+        }
+    });
+    window.on_unmatched_chosen(move |i, index| {
+        collect_edited(i, &|collect, _| hydrus_core::pages::PageCollect {
+            collect_unmatched: index == 0,
+            ..collect.clone()
+        });
     });
     window.on_apply({
         let editor = editor.clone();
