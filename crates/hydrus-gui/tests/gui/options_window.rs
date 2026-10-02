@@ -763,3 +763,107 @@ fn the_thumbnail_rating_options_redraw_the_grid() {
     assert_eq!((stored.icon_size, stored.background), (20.0, false));
     assert_eq!(like(), (20.0, 0));
 }
+
+/// The downloading page's "checker options" buttons open the checker
+/// options editor on the default checker options: a reasonable default's
+/// button shows its times; a time typed below never faster than is moved
+/// up to it; the same times ask first on "apply" (no leaves it open); and
+/// what it applies is kept for the options' "apply", which stores it.
+#[test]
+#[allow(clippy::float_cmp)] // (set, not computed)
+fn the_checker_options_buttons_edit_the_default_checker_options() {
+    use hydrus_core::subscriptions::CheckerDefaults;
+    use hydrus_gui::checker_options::{PRESETS, SAME_QUESTION};
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    // (gone to from the search, so highlighted)
+    window.invoke_search_edited("watcher checker".into());
+    window.invoke_search_chosen(0);
+    let (i, button) = row(&window, "Default watcher checker options:");
+    assert_eq!((button.kind, button.text.as_str()), (13, "checker options"));
+    assert!(button.found);
+    window.invoke_checker_clicked(i);
+    let editor = bound
+        .checker_options
+        .borrow()
+        .as_ref()
+        .expect("the editor opens")
+        .clone_strong();
+    let values = |fields: slint::ModelRc<hydrus_gui::DurationField>| -> Vec<i32> {
+        (0..fields.row_count())
+            .map(|f| fields.row_data(f).unwrap().value)
+            .collect()
+    };
+    // (the fixture's: a thread's, 5 minutes to a day, dead below a file in
+    // three days)
+    assert_eq!(values(editor.get_faster_fields()), [0, 0, 5, 0]);
+    assert_eq!(values(editor.get_slower_fields()), [1, 0, 0, 0]);
+    assert_eq!(values(editor.get_velocity_fields()), [3, 0, 0]);
+    assert_eq!(editor.get_velocity_files().as_str(), "1");
+    assert_eq!(editor.get_intended().as_str(), "4.00");
+    assert!(!editor.get_flat());
+    let presets = editor.get_presets();
+    assert_eq!(presets.row_count(), PRESETS.len());
+    assert_eq!(presets.row_data(1).unwrap().as_str(), "slow thread");
+    assert_eq!(
+        editor.get_texts().faster_label.as_str(),
+        "never check faster than once per: "
+    );
+    // slow thread: 4 hours to 7 days, dead below a file in 30 days
+    editor.invoke_preset(1);
+    assert_eq!(values(editor.get_faster_fields()), [0, 4, 0, 0]);
+    assert_eq!(values(editor.get_slower_fields()), [7, 0, 0, 0]);
+    assert_eq!(values(editor.get_velocity_fields()), [30, 0, 0]);
+    assert_eq!(editor.get_intended().as_str(), "1.00");
+    // never slower than typed below never faster than: moved up to it
+    editor.invoke_field_edited(1, 0, 0);
+    assert_eq!(values(editor.get_slower_fields()), [0, 4, 0, 0]);
+    // the same: "apply" asks; no leaves it open
+    editor.invoke_ok();
+    assert_eq!(editor.get_question().as_str(), SAME_QUESTION);
+    editor.invoke_answered(false);
+    assert_eq!(editor.get_question().as_str(), "");
+    assert!(bound.checker_options.borrow().is_some());
+    editor.invoke_field_edited(1, 0, 2);
+    // (past its range, it shows where it was held)
+    editor.invoke_velocity_files_edited(5000);
+    assert_eq!(editor.get_velocity_files().as_str(), "1000");
+    editor.invoke_velocity_files_edited(3);
+    editor.invoke_intended_edited("2.5".into());
+    editor.invoke_ok();
+    assert!(bound.checker_options.borrow().is_none(), "closed");
+    // (its row shown again, still highlighted)
+    assert!(row(&window, "Default watcher checker options:").1.found);
+    // kept for "apply"
+    assert_eq!(
+        store
+            .read(hydrus_store::settings::get::<CheckerDefaults>)
+            .unwrap()
+            .watchers
+            .never_faster_than,
+        300,
+        "not yet stored"
+    );
+    window.invoke_apply();
+    let stored: CheckerDefaults = store.read(hydrus_store::settings::get).unwrap();
+    assert_eq!(stored.watchers.intended_files_per_check, 2.5);
+    assert_eq!(
+        (
+            stored.watchers.never_faster_than,
+            stored.watchers.never_slower_than
+        ),
+        (4 * 3600, 2 * 86400 + 4 * 3600)
+    );
+    assert_eq!(stored.watchers.death_file_velocity, (3, 30 * 86400));
+    assert_eq!(
+        stored.subscriptions,
+        CheckerDefaults::default().subscriptions
+    );
+}

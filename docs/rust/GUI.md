@@ -137,8 +137,9 @@ It has the options hydrus-rs honours, so far on twenty pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
-characters, short summaries' counts, the waits after errors, and two
-debug switches), duplicates (the duplicate filter's batches and its
+characters, short summaries' counts, the waits after errors, two
+debug switches, and the default subscription and watcher checker
+options), duplicates (the duplicate filter's batches and its
 comparison score weights, and the duplicates page opened on files),
 exporting, file sort/collect (the default and secondary sorts, each a
 page's sort types and then the type's orders, whether a sort chosen on
@@ -173,7 +174,17 @@ was typed in it (ignoring case), as "text (page)", ten at a time; the
 arrows, enter or a click choose one, which shows its page with that row
 highlighted, as the reference's does (and the page list brought round to
 it). The daemon picks up the connection, downloading, maintenance and
-thumbnail options within a second of "apply". Changes wait for "apply", which writes them
+thumbnail options within a second of "apply". A "checker options"
+button opens the checker options editor (`hydrus-gui-model/src/checker_options.rs`,
+checked against the reference's `EditCheckerOptions`, recorded by
+`oracle/record_checker_options.py`): its five reasonable defaults, the
+file velocity below which checking stops, and static checking (its
+check period) or reactive checking (intended new files per check, never
+faster and never slower than); in advanced mode its times can go down to
+a second. A time typed below never faster than moves never slower than up
+to it, field by field as the reference's does, and a time below its
+least is raised to it on "apply", which asks first if never faster and
+never slower than are the same. Changes wait for "apply", which writes them
 together (and shows again what they change, such as the tab names);
 "cancel" or escape forgets them. A value that can't be had (slideshow
 durations that aren't numbers) is left as it was and said in a popup, as

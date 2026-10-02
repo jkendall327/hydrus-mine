@@ -13,7 +13,7 @@ use hydrus_core::media_viewer::{
 use hydrus_core::pages::{
     DownloaderPageSettings, FileCountDisplay, PageCollect, PageNameSettings, PageSort, SortSettings,
 };
-use hydrus_core::subscriptions::GalleryDefaults;
+use hydrus_core::subscriptions::{CheckerDefaults, CheckerOptions, GalleryDefaults};
 use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
 use hydrus_core::thumbnail::{ThumbnailRatingSettings, ThumbnailScale, ThumbnailSettings};
@@ -65,6 +65,7 @@ settings! {
     advanced: AdvancedMode,
     auto_resolution: AutoResolutionSettings,
     bandwidth: BandwidthSettings,
+    checker_defaults: CheckerDefaults,
     delete_lock: DeleteLock,
     downloader_pages: DownloaderPageSettings,
     duplicate_filter: DuplicateFilterSettings,
@@ -120,6 +121,8 @@ pub enum Value {
     Collect(PageCollect),
     /// A tag list's sort (the reference's `TagSortControl`).
     TagSort(TagSort),
+    /// Checker options (the reference's `CheckerOptionsButton`).
+    Checker(CheckerOptions),
 }
 
 /// What kind of control an option has.
@@ -166,6 +169,9 @@ pub enum Kind {
     Collect,
     /// A tag list's sort: its type, its order and its grouping.
     TagSort,
+    /// Checker options: a "checker options" button opening their editor
+    /// (`checker_options`).
+    Checker,
 }
 
 /// A tag sort's types, as the reference's control names them
@@ -544,6 +550,25 @@ fn collect(
         Rc::new(move |s, v| match v {
             Value::Collect(collect) => {
                 set(s, collect.clone());
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn checker(
+    label: &'static str,
+    get: fn(&Settings) -> CheckerOptions,
+    set: fn(&mut Settings, CheckerOptions),
+) -> Item {
+    opt(
+        label,
+        Kind::Checker,
+        Rc::new(move |s| Value::Checker(get(s))),
+        Rc::new(move |s, v| match v {
+            Value::Checker(options) => {
+                set(s, options.clone());
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -967,6 +992,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |s| s.network.process_subs_in_random_order,
                             |s, v| s.network.process_subs_in_random_order = v,
                         ),
+                        checker(
+                            "Default subscription checker options:",
+                            |s| s.checker_defaults.subscriptions.clone(),
+                            |s, v| s.checker_defaults.subscriptions = v,
+                        ),
                     ],
                 ),
                 boxed(
@@ -982,6 +1012,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "If new watcher entered and no current highlight, highlight the new watcher:",
                             |s| s.downloader_pages.highlight_new_watcher,
                             |s, v| s.downloader_pages.highlight_new_watcher = v,
+                        ),
+                        checker(
+                            "Default watcher checker options:",
+                            |s| s.checker_defaults.watchers.clone(),
+                            |s, v| s.checker_defaults.watchers = v,
                         ),
                     ],
                 ),
@@ -2082,6 +2117,15 @@ impl Editor {
             && matches!(self.values[self.page][i], Value::Collect(_))
         {
             self.values[self.page][i] = Value::Collect(collect);
+        }
+    }
+
+    /// Checker options edited (their editor's "ok").
+    pub fn checker(&mut self, row: usize, options: CheckerOptions) {
+        if let Some(i) = self.option_at(row)
+            && matches!(self.values[self.page][i], Value::Checker(_))
+        {
+            self.values[self.page][i] = Value::Checker(options);
         }
     }
 

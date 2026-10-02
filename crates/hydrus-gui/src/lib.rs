@@ -22,6 +22,7 @@ pub use ui::*;
 
 mod animation;
 mod archive_delete_window;
+mod checker_options_window;
 pub mod daemon;
 mod drops;
 pub mod favourites_window;
@@ -123,9 +124,9 @@ pub(crate) use bind_zoom;
 // names here)
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
-    archive_delete, audio, autocomplete, collect, domains, duplicate_filter, favourites,
-    info_lines, local_import, main_menu, manage_tags, media_actions, options, page_chooser,
-    predicate_editors, ratings, scanbar, selection, sort, status, thumbnail_icons,
+    archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
+    favourites, info_lines, local_import, main_menu, manage_tags, media_actions, options,
+    page_chooser, predicate_editors, ratings, scanbar, selection, sort, status, thumbnail_icons,
     thumbnail_ratings,
 };
 pub use page::SearchPage;
@@ -145,6 +146,9 @@ pub struct Bound {
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
+    /// The checker options editor while one is open (from the options
+    /// window).
+    pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -936,6 +940,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+    let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -954,6 +959,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             options: {
                 let pages = pages.clone();
                 let slot = options.clone();
+                let checker_slot = checker_options.clone();
                 let change_pages = change_pages.clone();
                 let rows = rows.clone();
                 let weak = window.as_weak();
@@ -982,7 +988,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             change_pages(&|_| Ok(()));
                         }
                     });
-                    match options_window::open(&store, &slot, applied) {
+                    match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
                     }
@@ -2034,6 +2040,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         manage_tags,
         options,
+        checker_options,
         archive_delete,
         filter,
         open_page,

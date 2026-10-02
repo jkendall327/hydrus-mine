@@ -3,6 +3,7 @@
 //! build without the windows, so they (and mutation testing them) run in
 //! seconds; the windows' own tests are hydrus-gui's.
 
+mod checker_options;
 mod local_import_dialog;
 mod main_menu;
 mod options_dialog;

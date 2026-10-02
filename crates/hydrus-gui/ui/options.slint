@@ -19,7 +19,8 @@ export struct OptionRow {
     // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
     // text that may be none, 8 a time (its fields), 9 a number per a time,
     // 10 a file sort (its type and order), 11 a collect (its choices), 12
-    // a tag sort (its type, order and grouping)
+    // a tag sort (its type, order and grouping), 13 checker options (a
+    // button, `text`, opening their editor)
     kind: int,
     label: string,
     // how many boxes it is in
@@ -54,7 +55,7 @@ export struct OptionRow {
 }
 
 // a whole number typed in a small box
-component NumberField inherits LineEdit {
+export component NumberField inherits LineEdit {
     in property <int> number;
     callback number-edited(int);
     width: 64px;
@@ -64,7 +65,7 @@ component NumberField inherits LineEdit {
 }
 
 // a time's fields, each its number then its unit
-component TimeFields {
+export component TimeFields {
     in property <[DurationField]> fields;
     callback edited(int, int);
     HorizontalLayout {
@@ -121,6 +122,8 @@ export component OptionsWindow inherits Window {
     callback unmatched-chosen(int, int);
     // (a time's field: the row, the field, its value)
     callback field-edited(int, int, int);
+    // (checker options' button clicked)
+    callback checker-clicked(int);
     callback apply();
     callback cancel();
 
@@ -273,6 +276,13 @@ export component OptionsWindow inherits Window {
                                     text: row.none-phrase;
                                     checked: row.is-none;
                                     toggled => { root.none-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 13: HorizontalLayout {
+                                width: 260px;
+                                Button {
+                                    text: row.text;
+                                    clicked => { root.checker-clicked(i); }
                                 }
                             }
                             if row.kind == 5: ComboBox {

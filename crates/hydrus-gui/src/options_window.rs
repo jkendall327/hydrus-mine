@@ -17,7 +17,7 @@ use crate::options::{
     Editor, Kind, Row, SEARCH_PLACEHOLDER, SEARCH_SHOWN, Settings, TAG_SORT_GROUPS, TAG_SORT_TYPES,
     Unit, Value, duration_fields, tag_sort_orders,
 };
-use crate::{DurationField, OptionRow, OptionsWindow};
+use crate::{CheckerOptionsWindow, DurationField, OptionRow, OptionsWindow};
 
 /// A time's fields as the window shows them.
 fn fields(seconds: f64, units: &[Unit]) -> ModelRc<DurationField> {
@@ -169,6 +169,10 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
                     // (as the reference's, a subtag sort doesn't group)
                     out.grouped = sort.sort_type != hydrus_core::tag_sort::TagSortType::Subtag;
                 }
+                (Kind::Checker, Value::Checker(_)) => {
+                    out.kind = 13;
+                    out.text = "checker options".into();
+                }
                 (Kind::Collect, Value::Collect(collect)) => {
                     out.kind = 11;
                     let choices = crate::collect::choices(store);
@@ -198,6 +202,7 @@ fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
 pub(crate) fn open(
     store: &Arc<Store>,
     slot: &Rc<RefCell<Option<OptionsWindow>>>,
+    checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -327,6 +332,54 @@ pub(crate) fn open(
     window.on_field_edited({
         let editor = editor.clone();
         move |i, field, n| editor.borrow_mut().field(at(i), at(field), i64::from(n))
+    });
+    // checker options' button: their editor (with advanced mode's tiny
+    // least times if the options have it on, as the reference's reads
+    // them), what it applies kept for "apply"
+    window.on_checker_clicked({
+        let editor = editor.clone();
+        let store = store.clone();
+        let checker_slot = checker_slot.clone();
+        let weak = window.as_weak();
+        move |i| {
+            if checker_slot.borrow().is_some() {
+                return;
+            }
+            let row = at(i);
+            let current = match editor.borrow().rows().get(row) {
+                Some(Row::Opt {
+                    value: Value::Checker(options),
+                    ..
+                }) => options.clone(),
+                _ => return,
+            };
+            let advanced = store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                .is_ok_and(|a| a.0);
+            let done: Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)> = Rc::new({
+                let editor = editor.clone();
+                let store = store.clone();
+                let weak = weak.clone();
+                move |options| {
+                    editor.borrow_mut().checker(row, options);
+                    let Some(window) = weak.upgrade() else { return };
+                    let editor = editor.borrow();
+                    if let Some(shown) = editor.rows().get(row) {
+                        window.get_rows().set_row_data(
+                            row,
+                            OptionRow {
+                                found: editor.found(row),
+                                ..option_row(shown, &store)
+                            },
+                        );
+                    }
+                }
+            });
+            match crate::checker_options_window::open(&current, advanced, &checker_slot, &done) {
+                Ok(window) => *checker_slot.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the checker options: {e}"),
+            }
+        }
     });
     window.on_choice_chosen({
         let editor = editor.clone();

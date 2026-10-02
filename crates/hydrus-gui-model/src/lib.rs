@@ -8,6 +8,7 @@
 pub mod archive_delete;
 pub mod audio;
 pub mod autocomplete;
+pub mod checker_options;
 pub mod collect;
 pub mod domains;
 pub mod duplicate_filter;

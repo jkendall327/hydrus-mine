@@ -29,6 +29,8 @@ const CONTROLS: &[&str] = &[
     "noneable_text",
     "duration",
     "velocity",
+    // (a button opening an editor, as checker options')
+    "button",
 ];
 
 /// A time's units as the recording names them.
@@ -270,13 +272,17 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<S
                 || theirs["collect_unmatched"] != collect.collect_unmatched)
                 .then(|| format!("collect {label:?} {ours:?} {}", collect.collect_unmatched))
         }
+        // (the button; its checker options are checker_options' test's)
+        (Kind::Checker, Value::Checker(_)) => {
+            (theirs["button"] != "checker options").then(|| "checker options".to_owned())
+        }
         _ => Some(format!("{kind:?} holding {value:?}")),
     };
     problem.map(|ours| format!("ours {ours}, theirs {theirs}"))
 }
 
 /// The fixture's store, as the driver booted the reference on it.
-fn fixture_store(recorded: &Json) -> (tempfile::TempDir, std::sync::Arc<Store>) {
+pub fn fixture_store(recorded: &Json) -> (tempfile::TempDir, std::sync::Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(

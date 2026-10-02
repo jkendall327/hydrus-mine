@@ -270,7 +270,7 @@ search.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the
-  downloading page, the default download source, the checker options, the
+  downloading page, the default download source, the
   number of subscriptions syncing at once and the failed-imports limit; on
   the maintenance page, idle time and shutdown, repository, sibling,
   deferred delete and idle work settings; on the duplicates page, the
@@ -298,7 +298,10 @@ search.
   text on its pages, such as units and dropdowns' choices), and is always
   at the top (the reference's "Put the options search bar at the" isn't
   an option yet); two options with the same label each go to their own
-  row (the reference's both go to the last).
+  row (the reference's both go to the last). The checker options editor
+  has no help button, and raises a time below its least value to it when
+  "apply" is pressed, where the reference's does as the focus leaves the
+  time (the same, as pressing "apply" takes the focus).
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.

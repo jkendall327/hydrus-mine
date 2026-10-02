@@ -1,0 +1,3096 @@
+{
+ "presets": [
+  {
+   "label": "thread",
+   "value": [
+    4.0,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ]
+  },
+  {
+   "label": "slow thread",
+   "value": [
+    1.0,
+    14400,
+    604800,
+    [
+     1,
+     2592000
+    ]
+   ]
+  },
+  {
+   "label": "faster tag subscription",
+   "value": [
+    10.0,
+    43200,
+    2592000,
+    [
+     1,
+     7776000
+    ]
+   ]
+  },
+  {
+   "label": "medium tag/artist subscription",
+   "value": [
+    4.0,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ]
+  },
+  {
+   "label": "slower tag subscription",
+   "value": [
+    1.0,
+    604800,
+    15552000,
+    [
+     1,
+     31536000
+    ]
+   ]
+  }
+ ],
+ "panels": [
+  {
+   "advanced": false,
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      1,
+      259200
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": false
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 4.0,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 300,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 30,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 86400,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ]
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 300,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 180,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ],
+     "hidden": true
+    }
+   ],
+   "state": {
+    "value": [
+     4.0,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "flat": false,
+    "reactive_hidden": false,
+    "static_hidden": true,
+    "faster": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 5,
+     "seconds": 0
+    },
+    "slower": {
+     "days": 1,
+     "hours": 0,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 5,
+     "seconds": 0
+    },
+    "intended": 4.0,
+    "velocity": [
+     1,
+     {
+      "days": 3,
+      "hours": 0,
+      "minutes": 0
+     }
+    ]
+   }
+  },
+  {
+   "advanced": false,
+   "given": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      0,
+      604800
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": true
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 2.5,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 30,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ],
+     "hidden": true
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 180,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ]
+    }
+   ],
+   "state": {
+    "value": [
+     2.5,
+     10800,
+     10800,
+     [
+      0,
+      604800
+     ]
+    ],
+    "flat": true,
+    "reactive_hidden": true,
+    "static_hidden": false,
+    "faster": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "slower": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "intended": 2.5,
+    "velocity": [
+     0,
+     {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0
+     }
+    ]
+   }
+  },
+  {
+   "advanced": false,
+   "given": [
+    1.33,
+    59,
+    61,
+    [
+     3,
+     90
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      3,
+      60
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": false
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 1.33,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 59,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 30,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 600,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 600,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ]
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 180,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 180,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ],
+     "hidden": true
+    }
+   ],
+   "state": {
+    "value": [
+     1.33,
+     59,
+     600,
+     [
+      3,
+      60
+     ]
+    ],
+    "flat": false,
+    "reactive_hidden": false,
+    "static_hidden": true,
+    "faster": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 0,
+     "seconds": 59
+    },
+    "slower": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 10,
+     "seconds": 0
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 3,
+     "seconds": 0
+    },
+    "intended": 1.33,
+    "velocity": [
+     3,
+     {
+      "days": 0,
+      "hours": 0,
+      "minutes": 1
+     }
+    ]
+   }
+  },
+  {
+   "advanced": true,
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      1,
+      259200
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": false
+    },
+    {
+     "label": "As you are in advanced mode, these options have extremely low limits. This is intended only for testing and small scale private network tasks. Do not use very fast check times for real world use on public websites, as it is wasteful and rude, hydrus will be overloaded with high-CPU parsing work, and you may get your IP banned."
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 4.0,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 300,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 86400,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ]
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 300,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ],
+     "hidden": true
+    }
+   ],
+   "state": {
+    "value": [
+     4.0,
+     300,
+     86400,
+     [
+      1,
+      259200
+     ]
+    ],
+    "flat": false,
+    "reactive_hidden": false,
+    "static_hidden": true,
+    "faster": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 5,
+     "seconds": 0
+    },
+    "slower": {
+     "days": 1,
+     "hours": 0,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 5,
+     "seconds": 0
+    },
+    "intended": 4.0,
+    "velocity": [
+     1,
+     {
+      "days": 3,
+      "hours": 0,
+      "minutes": 0
+     }
+    ]
+   }
+  },
+  {
+   "advanced": true,
+   "given": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      0,
+      604800
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": true
+    },
+    {
+     "label": "As you are in advanced mode, these options have extremely low limits. This is intended only for testing and small scale private network tasks. Do not use very fast check times for real world use on public websites, as it is wasteful and rude, hydrus will be overloaded with high-CPU parsing work, and you may get your IP banned."
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 2.5,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ],
+     "hidden": true
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 10800,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ]
+    }
+   ],
+   "state": {
+    "value": [
+     2.5,
+     10800,
+     10800,
+     [
+      0,
+      604800
+     ]
+    ],
+    "flat": true,
+    "reactive_hidden": true,
+    "static_hidden": false,
+    "faster": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "slower": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 3,
+     "minutes": 0,
+     "seconds": 0
+    },
+    "intended": 2.5,
+    "velocity": [
+     0,
+     {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0
+     }
+    ]
+   }
+  },
+  {
+   "advanced": true,
+   "given": [
+    1.33,
+    59,
+    61,
+    [
+     3,
+     90
+    ]
+   ],
+   "layout": [
+    {
+     "label": "help for this panel -->",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "button": "",
+     "tooltip": "Show help regarding these checker options."
+    },
+    {
+     "label": "If you do not understand this panel, use the buttons! The defaults are fine for most purposes!"
+    },
+    {
+     "box": "reasonable defaults",
+     "items": [
+      {
+       "button": "thread"
+      },
+      {
+       "button": "slow thread"
+      },
+      {
+       "button": "faster tag subscription"
+      },
+      {
+       "button": "medium tag/artist subscription"
+      },
+      {
+       "button": "slower tag subscription"
+      }
+     ]
+    },
+    {
+     "label": "stop checking if new files found falls below: "
+    },
+    {
+     "velocity": [
+      3,
+      60
+     ],
+     "number_min": 0,
+     "number_max": 1000,
+     "per": "files in",
+     "units": [
+      "days",
+      "hours",
+      "minutes"
+     ],
+     "min": 60
+    },
+    {
+     "label": "just check at a static, regular interval: "
+    },
+    {
+     "check": "",
+     "value": false
+    },
+    {
+     "label": "As you are in advanced mode, these options have extremely low limits. This is intended only for testing and small scale private network tasks. Do not use very fast check times for real world use on public websites, as it is wasteful and rude, hydrus will be overloaded with high-CPU parsing work, and you may get your IP banned."
+    },
+    {
+     "box": "reactive checking",
+     "items": [
+      {
+       "label": "This checks more or less frequently based on how fast the download source is producing new files."
+      },
+      {
+       "label": "intended new files per check: ",
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "float": 1.33,
+       "min": 0.25,
+       "max": 1000.0,
+       "tooltip": "How many new files you want the checker to find on each check. If a source is\nproducing about 2 files a day, and this is set to 6, you will probably get a\ncheck every three days. You probably want this to be a low number, like 1-4."
+      },
+      {
+       "label": "never check faster than once per: ",
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "duration": 59,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source produces many new files, the checker will never ask\nfor a check more often than this. This is a safety measure."
+      },
+      {
+       "label": "never check slower than once per: ",
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      },
+      {
+       "duration": 61,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Even if the download source slows down significantly, the checker will make sure\nit checks at least this often anyway, just to catch a future wave in time."
+      }
+     ]
+    },
+    {
+     "box": "static checking",
+     "items": [
+      {
+       "label": "check period: ",
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      },
+      {
+       "duration": 59,
+       "units": [
+        "days",
+        "hours",
+        "minutes",
+        "seconds"
+       ],
+       "min": 1,
+       "tooltip": "Always use the same check delay. It is based on the time the last check\ncompleted, not the time the last check was due. If you want once a day with no\nskips, try setting this to 23 hours."
+      }
+     ],
+     "hidden": true
+    }
+   ],
+   "state": {
+    "value": [
+     1.33,
+     59,
+     61,
+     [
+      3,
+      60
+     ]
+    ],
+    "flat": false,
+    "reactive_hidden": false,
+    "static_hidden": true,
+    "faster": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 0,
+     "seconds": 59
+    },
+    "slower": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 1,
+     "seconds": 1
+    },
+    "flat_period": {
+     "days": 0,
+     "hours": 0,
+     "minutes": 0,
+     "seconds": 59
+    },
+    "intended": 1.33,
+    "velocity": [
+     3,
+     {
+      "days": 0,
+      "hours": 0,
+      "minutes": 1
+     }
+    ]
+   }
+  }
+ ],
+ "steps": [
+  {
+   "given": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "preset",
+      "thread"
+     ],
+     "value": [
+      4.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "slow thread"
+     ],
+     "value": [
+      1.0,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 4,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 4,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 1.0,
+     "velocity": [
+      1,
+      {
+       "days": 30,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "faster tag subscription"
+     ],
+     "value": [
+      10.0,
+      43200,
+      2592000,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 12,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 30,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 12,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 10.0,
+     "velocity": [
+      1,
+      {
+       "days": 90,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "medium tag/artist subscription"
+     ],
+     "value": [
+      4.0,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 90,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 180,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "slower tag subscription"
+     ],
+     "value": [
+      1.0,
+      604800,
+      15552000,
+      [
+       1,
+       31536000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 180,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 1.0,
+     "velocity": [
+      1,
+      {
+       "days": 365,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "thread"
+     ],
+     "value": [
+      4.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "preset",
+      "slower tag subscription"
+     ],
+     "value": [
+      1.0,
+      604800,
+      15552000,
+      [
+       1,
+       31536000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 180,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 7,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 1.0,
+     "velocity": [
+      1,
+      {
+       "days": 365,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "preset",
+      "thread"
+     ],
+     "value": [
+      4.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "preset",
+      "thread"
+     ],
+     "value": [
+      4.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "field",
+      "faster",
+      "days",
+      2
+     ],
+     "value": [
+      4.0,
+      173100,
+      173100,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 2,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 2,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "faster",
+      "hours",
+      5
+     ],
+     "value": [
+      4.0,
+      191100,
+      191100,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 2,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 2,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "slower",
+      "days",
+      1
+     ],
+     "value": [
+      4.0,
+      191100,
+      191100,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 2,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 2,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "slower",
+      "days",
+      3
+     ],
+     "value": [
+      4.0,
+      191100,
+      277500,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 2,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 3,
+      "hours": 5,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "field",
+      "slower",
+      "days",
+      0
+     ],
+     "value": [
+      4.0,
+      86400,
+      86400,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 180,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "slower",
+      "hours",
+      2
+     ],
+     "value": [
+      4.0,
+      86400,
+      93600,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 2,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 180,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "faster",
+      "days",
+      0
+     ],
+     "value": [
+      4.0,
+      0,
+      93600,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 2,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 180,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "faster",
+      "minutes",
+      30
+     ],
+     "value": [
+      4.0,
+      1800,
+      93600,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 30,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 2,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 180,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "flat"
+     ],
+     "value": [
+      4.0,
+      300,
+      300,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": true,
+     "reactive_hidden": true,
+     "static_hidden": false,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "flat",
+      "hours",
+      6
+     ],
+     "value": [
+      4.0,
+      21900,
+      21900,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": true,
+     "reactive_hidden": true,
+     "static_hidden": false,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 6,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "flat"
+     ],
+     "value": [
+      4.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 6,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "flat"
+     ],
+     "value": [
+      4.0,
+      21900,
+      21900,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": true,
+     "reactive_hidden": true,
+     "static_hidden": false,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 6,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "flat"
+     ],
+     "value": [
+      2.5,
+      10800,
+      10800,
+      [
+       0,
+       604800
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 2.5,
+     "velocity": [
+      0,
+      {
+       "days": 7,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "faster",
+      "hours",
+      1
+     ],
+     "value": [
+      2.5,
+      3600,
+      10800,
+      [
+       0,
+       604800
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 1,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 2.5,
+     "velocity": [
+      0,
+      {
+       "days": 7,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "flat"
+     ],
+     "value": [
+      2.5,
+      10800,
+      10800,
+      [
+       0,
+       604800
+      ]
+     ],
+     "flat": true,
+     "reactive_hidden": true,
+     "static_hidden": false,
+     "faster": {
+      "days": 0,
+      "hours": 1,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 3,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "intended": 2.5,
+     "velocity": [
+      0,
+      {
+       "days": 7,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "intended",
+      2.345
+     ],
+     "value": [
+      2.35,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 2.35,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "intended",
+      0.1
+     ],
+     "value": [
+      0.25,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 0.25,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "intended",
+      5000
+     ],
+     "value": [
+      1000.0,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 1000.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "velocity",
+      0,
+      null,
+      null
+     ],
+     "value": [
+      1000.0,
+      300,
+      86400,
+      [
+       0,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 1000.0,
+     "velocity": [
+      0,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "velocity",
+      7,
+      "hours",
+      5
+     ],
+     "value": [
+      1000.0,
+      300,
+      86400,
+      [
+       7,
+       277200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 1000.0,
+     "velocity": [
+      7,
+      {
+       "days": 3,
+       "hours": 5,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "velocity",
+      5000,
+      "days",
+      0
+     ],
+     "value": [
+      1000.0,
+      300,
+      86400,
+      [
+       1000,
+       18000
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 1000.0,
+     "velocity": [
+      1000,
+      {
+       "days": 0,
+       "hours": 5,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "steps": [
+    {
+     "edit": [
+      "field",
+      "faster",
+      "minutes",
+      0
+     ],
+     "value": [
+      4.0,
+      0,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 1,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    },
+    {
+     "edit": [
+      "field",
+      "slower",
+      "days",
+      0
+     ],
+     "value": [
+      4.0,
+      0,
+      0,
+      [
+       1,
+       259200
+      ]
+     ],
+     "flat": false,
+     "reactive_hidden": false,
+     "static_hidden": true,
+     "faster": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "slower": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 0,
+      "seconds": 0
+     },
+     "flat_period": {
+      "days": 0,
+      "hours": 0,
+      "minutes": 5,
+      "seconds": 0
+     },
+     "intended": 4.0,
+     "velocity": [
+      1,
+      {
+       "days": 3,
+       "hours": 0,
+       "minutes": 0
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "ok": [
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "edits": [],
+   "value": [
+    4.0,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "answer": true,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "edits": [],
+   "value": [
+    4.0,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "answer": false,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "edits": [],
+   "value": [
+    4.0,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "answer": true,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "edits": [],
+   "value": [
+    4.0,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "answer": false,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "edits": [
+    [
+     "field",
+     "slower",
+     "days",
+     0
+    ]
+   ],
+   "value": [
+    4.0,
+    300,
+    600,
+    [
+     1,
+     259200
+    ]
+   ],
+   "answer": true,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "edits": [
+    [
+     "field",
+     "slower",
+     "days",
+     0
+    ]
+   ],
+   "value": [
+    4.0,
+    300,
+    600,
+    [
+     1,
+     259200
+    ]
+   ],
+   "answer": false,
+   "asked": [],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "edits": [
+    [
+     "flat"
+    ]
+   ],
+   "value": [
+    4.0,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "answer": true,
+   "asked": [
+    "The \"never check faster/slower than\" values are the same, which means this checker will always check at a static, regular interval. Is that OK?"
+   ],
+   "ok": true
+  },
+  {
+   "given": [
+    4,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "edits": [
+    [
+     "flat"
+    ]
+   ],
+   "value": [
+    4.0,
+    600,
+    600,
+    [
+     1,
+     86400
+    ]
+   ],
+   "answer": false,
+   "asked": [
+    "The \"never check faster/slower than\" values are the same, which means this checker will always check at a static, regular interval. Is that OK?"
+   ],
+   "ok": false
+  }
+ ],
+ "summaries": [
+  {
+   "given": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "summary": "Trying to get 4 files per check, never faster than 5 minutes and never slower than 1 day.\n\nStopping if file velocity falls below 1 files per 3 days."
+  },
+  {
+   "given": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "summary": "Trying to get 4 files per check, never faster than 1 day and never slower than 2 months 29 days.\n\nStopping if file velocity falls below 1 files per 5 months 27 days."
+  },
+  {
+   "given": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "summary": "Checking every 3 hours.\n\nNever stopping."
+  },
+  {
+   "given": [
+    1.33,
+    59,
+    61,
+    [
+     3,
+     90
+    ]
+   ],
+   "summary": "Trying to get 1.33 files per check, never faster than 59 seconds and never slower than 1 minute 1 second.\n\nStopping if file velocity falls below 3 files per 1 minute 30 seconds."
+  },
+  {
+   "given": [
+    10,
+    43200,
+    2592000,
+    [
+     1,
+     7776000
+    ]
+   ],
+   "summary": "Trying to get 10 files per check, never faster than 12 hours and never slower than 30 days.\n\nStopping if file velocity falls below 1 files per 2 months 29 days."
+  },
+  {
+   "given": [
+    1000,
+    60,
+    183607,
+    [
+     1234,
+     3600
+    ]
+   ],
+   "summary": "Trying to get 1,000 files per check, never faster than 1 minute and never slower than 2 days 3 hours.\n\nStopping if file velocity falls below 1,234 files per 1 hour."
+  }
+ ],
+ "downloading": {
+  "before": {
+   "subscriptions": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "watchers": [
+    4,
+    300,
+    86400,
+    [
+     1,
+     259200
+    ]
+   ],
+   "subscriptions_tooltip": "Trying to get 4 files per check, never faster than 1 day and never slower than 2\nmonths 29 days.\n\nStopping if file velocity falls below 1 files per 5 months 27 days."
+  },
+  "set": {
+   "subscriptions": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "watchers": [
+    1.33,
+    59,
+    61,
+    [
+     3,
+     90
+    ]
+   ]
+  },
+  "applied": {
+   "subscriptions": [
+    2.5,
+    10800,
+    10800,
+    [
+     0,
+     604800
+    ]
+   ],
+   "watchers": [
+    1.33,
+    59,
+    61,
+    [
+     3,
+     90
+    ]
+   ]
+  }
+ }
+}
