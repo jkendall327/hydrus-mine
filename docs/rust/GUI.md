@@ -130,14 +130,17 @@ hydrus lists them (by name, "advanced" last), the page chosen on the
 right, each option its label and then its control, in the page's titled
 boxes, as the reference's dialog lays them out (checked against the
 running reference's dialog, recorded by `oracle/record_options_dialog.py`).
-It has the options hydrus-rs honours, so far on eighteen pages: audio,
+It has the options hydrus-rs honours, so far on nineteen pages: audio,
 connection (retries, timeouts, job limits, the halt on a domain's errors,
 HTTPS checks and proxies), downloading (gallery, subscription and watcher
 waits, the default file limit, highlighting, the pause and stop
 characters, short summaries' counts, the waits after errors, and two
 debug switches), duplicates (the duplicate filter's batches and its
 comparison score weights, and the duplicates page opened on files),
-exporting, file viewing statistics (whether they are kept), files and
+exporting, file sort/collect (the default and secondary sorts, each a
+page's sort types and then the type's orders, and whether a sort chosen
+on a page becomes the default), file viewing statistics (whether they
+are kept), files and
 trash, gui (keeping the media viewer's size and place), gui pages,
 importing (looking inside .zip files for comics), maintenance and
 processing (file maintenance in normal time and its throttle, the

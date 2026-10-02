@@ -7,7 +7,9 @@ use std::cell::RefCell;
 use std::rc::Rc;
 use std::sync::Arc;
 
-use slint::{ComponentHandle as _, ModelRc, SharedString, StandardListViewItem, VecModel};
+use slint::{
+    ComponentHandle as _, Model as _, ModelRc, SharedString, StandardListViewItem, VecModel,
+};
 
 use hydrus_store::Store;
 
@@ -34,8 +36,8 @@ fn int(n: i64) -> i32 {
     i32::try_from(n).unwrap_or(if n < 0 { i32::MIN } else { i32::MAX })
 }
 
-/// A row as the window shows it.
-fn option_row(row: &Row<'_>) -> OptionRow {
+/// A row as the window shows it (a sort's types are the store's).
+fn option_row(row: &Row<'_>, store: &Store) -> OptionRow {
     let mut out = OptionRow::default();
     match row {
         Row::Title { title, depth } => {
@@ -120,6 +122,20 @@ fn option_row(row: &Row<'_>) -> OptionRow {
                     out.per = (*per).into();
                     out.fields = fields(*seconds, units);
                 }
+                (Kind::Sort, Value::Sort(sort)) => {
+                    out.kind = 10;
+                    let choices = crate::sort::page_choices(store, &sort.by);
+                    let names: Vec<SharedString> =
+                        choices.iter().map(|c| c.name.as_str().into()).collect();
+                    out.items = ModelRc::new(VecModel::from(names));
+                    if let Some(i) = choices.iter().position(|c| c.by == sort.by) {
+                        out.index = int(i as i64);
+                        let orders: Vec<SharedString> =
+                            choices[i].orders.iter().map(|&o| o.into()).collect();
+                        out.orders = ModelRc::new(VecModel::from(orders));
+                        out.order_index = i32::from(!sort.ascending);
+                    }
+                }
                 _ => {}
             }
         }
@@ -150,6 +166,7 @@ pub(crate) fn open(
     // control as the user left it)
     let show_page = {
         let editor = editor.clone();
+        let store = store.clone();
         let weak = window.as_weak();
         move || {
             let Some(window) = weak.upgrade() else { return };
@@ -160,7 +177,7 @@ pub(crate) fn open(
                 .enumerate()
                 .map(|(i, row)| OptionRow {
                     found: editor.found(i),
-                    ..option_row(row)
+                    ..option_row(row, &store)
                 })
                 .collect();
             window.set_page(int(editor.page() as i64));
@@ -264,6 +281,54 @@ pub(crate) fn open(
     window.on_choice_chosen({
         let editor = editor.clone();
         move |i, index| editor.borrow_mut().choose(at(i), at(index))
+    });
+    // a sort's type (in its default order, as the reference's control
+    // sets it), or its order; the row shows the type's orders
+    let sort_edited = {
+        let editor = editor.clone();
+        let store = store.clone();
+        let weak = window.as_weak();
+        move |i: i32,
+              edit: &dyn Fn(&mut hydrus_core::pages::PageSort, &[crate::sort::PageChoice])| {
+            let Some(window) = weak.upgrade() else { return };
+            let mut editor = editor.borrow_mut();
+            let rows = editor.rows();
+            let Some(Row::Opt {
+                value: Value::Sort(sort),
+                ..
+            }) = rows.get(at(i))
+            else {
+                return;
+            };
+            let mut sort = sort.clone();
+            drop(rows);
+            let choices = crate::sort::page_choices(&store, &sort.by);
+            edit(&mut sort, &choices);
+            editor.sort(at(i), sort);
+            if let Some(row) = editor.rows().get(at(i)) {
+                window.get_rows().set_row_data(
+                    at(i),
+                    OptionRow {
+                        found: editor.found(at(i)),
+                        ..option_row(row, &store)
+                    },
+                );
+            }
+        }
+    };
+    window.on_sort_chosen({
+        let sort_edited = sort_edited.clone();
+        move |i, index| {
+            sort_edited(i, &|sort, choices| {
+                if let Some(choice) = choices.get(at(index)) {
+                    sort.by = choice.by.clone();
+                    sort.ascending = choice.default_ascending;
+                }
+            });
+        }
+    });
+    window.on_order_chosen(move |i, index| {
+        sort_edited(i, &|sort, _| sort.ascending = index == 0);
     });
     window.on_apply({
         let editor = editor.clone();

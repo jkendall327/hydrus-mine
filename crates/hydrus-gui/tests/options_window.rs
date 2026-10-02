@@ -82,6 +82,7 @@ fn the_options_window_applies_its_changes() {
             "downloading",
             "duplicates",
             "exporting",
+            "file sort/collect",
             "file viewing statistics",
             "files and trash",
             "gui",
@@ -398,4 +399,134 @@ fn the_thumbnails_border_and_margin_lay_out_the_grid() {
     headless::render(&main_window, 1000, 700);
     assert_eq!(ui.get_grid_columns(), 3);
     assert_eq!(bound.rows.cached(), decoded, "not decoded again");
+}
+
+/// The file sort/collect page: the default and secondary sorts, each a
+/// page's sort types and then the type's orders (a type chosen in its own
+/// default order, as the reference's control sets it); and with "Update
+/// default file sort every time a new sort is manually chosen", a sort
+/// chosen on a page becomes the default (only then).
+#[test]
+fn the_default_sorts_are_chosen_as_a_pages_sort() {
+    use hydrus_core::pages::{PageSort, PageSortBy, SortSettings};
+    use hydrus_search::SortBy;
+
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    let sorts = || {
+        store
+            .read(hydrus_store::settings::get::<SortSettings>)
+            .unwrap()
+    };
+    let system = |by: SortBy| PageSortBy::System(i64::from(by.code()));
+    let strings = |model: slint::ModelRc<slint::SharedString>| -> Vec<String> {
+        (0..model.row_count())
+            .map(|i| model.row_data(i).unwrap().to_string())
+            .collect()
+    };
+    let before = sorts();
+    // (a page's sort chosen while the option is off leaves the default)
+    let page_sorts = strings(ui.get_sort_names());
+    let width = page_sorts
+        .iter()
+        .position(|n| n == "dimensions: width")
+        .unwrap();
+    ui.invoke_sort_chosen(i32::try_from(width).unwrap());
+    assert_eq!(sorts(), before);
+
+    open(&ui);
+    let window = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&window, "file sort/collect");
+    let label = "Default file sort: ";
+    let (i, default) = row(&window, label);
+    assert_eq!(default.kind, 10);
+    let types = strings(default.items.clone());
+    assert_eq!(types, page_sorts, "a page's sort types");
+    assert_eq!(
+        types[usize::try_from(default.index).unwrap()],
+        "file: filesize"
+    );
+    assert_eq!(
+        (strings(default.orders.clone()), default.order_index),
+        (
+            vec!["smallest first".to_owned(), "largest first".to_owned()],
+            0
+        )
+    );
+    // a type: its orders shown, in its default order (newest first)
+    let import_time = types.iter().position(|t| t == "time: import time").unwrap();
+    window.invoke_sort_chosen(i, i32::try_from(import_time).unwrap());
+    let (_, default) = row(&window, label);
+    assert_eq!(
+        (
+            usize::try_from(default.index).unwrap(),
+            strings(default.orders.clone()),
+            default.order_index
+        ),
+        (
+            import_time,
+            vec!["oldest first".to_owned(), "newest first".to_owned()],
+            1
+        )
+    );
+    // and an order
+    window.invoke_order_chosen(i, 0);
+    assert_eq!(row(&window, label).1.order_index, 0);
+    let (j, _) = row(
+        &window,
+        "Secondary file sort (when primary gives two equal values): ",
+    );
+    let filesize = types.iter().position(|t| t == "file: filesize").unwrap();
+    window.invoke_sort_chosen(j, i32::try_from(filesize).unwrap());
+    let (k, save) = row(
+        &window,
+        "Update default file sort every time a new sort is manually chosen: ",
+    );
+    assert!(!save.checked);
+    window.invoke_check_toggled(k, true);
+    window.invoke_apply();
+    let after = sorts();
+    assert_eq!(
+        after.default_sort,
+        PageSort {
+            by: system(SortBy::ImportTime),
+            ascending: true
+        }
+    );
+    assert_eq!(
+        after.fallback_sort,
+        PageSort {
+            by: system(SortBy::FileSize),
+            ascending: false
+        }
+    );
+    assert!(after.save_page_sort_on_change);
+    assert_eq!(
+        hydrus_gui::SearchPage::new(store.clone()).sort(),
+        &after.default_sort,
+        "a new page's"
+    );
+
+    // a page's sort chosen is now the default: its type, then its order
+    ui.invoke_sort_chosen(i32::try_from(width).unwrap());
+    assert_eq!(
+        sorts().default_sort,
+        PageSort {
+            by: system(SortBy::Width),
+            ascending: true
+        }
+    );
+    ui.invoke_order_chosen(1);
+    assert_eq!(
+        sorts().default_sort,
+        PageSort {
+            by: system(SortBy::Width),
+            ascending: false
+        }
+    );
 }

@@ -264,6 +264,9 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         if let Some(collect) = &options.default_collect {
             sorts.default_collect = page_collect(collect);
         }
+        if let Some(&save) = options.booleans.get("save_page_sort_on_change") {
+            sorts.save_page_sort_on_change = save;
+        }
     }
     insert_setting(&mut input, &sorts)?;
     let mut network = crate::network::NetworkSettings::default();
@@ -2094,6 +2097,29 @@ mod tests {
         assert!(lock.accepts("hunter2") && !lock.accepts("hunter"));
     }
 
+    /// The fixture's client options (`ClientOptions`), with text in their
+    /// stored form replaced.
+    fn edit_client_options(source: &std::path::Path, edits: &[(&str, &str)]) {
+        let conn = rusqlite::Connection::open(source.join("client.db")).unwrap();
+        let dump: Vec<u8> = conn
+            .query_row(
+                "SELECT dump FROM json_dumps WHERE dump_type = 22",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let mut dump = String::from_utf8(dump).unwrap();
+        for (from, to) in edits {
+            assert!(dump.contains(from), "{from}");
+            dump = dump.replace(from, to);
+        }
+        conn.execute(
+            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+            [dump.into_bytes()],
+        )
+        .unwrap();
+    }
+
     /// The thumbnail grid's border and margin come across.
     #[test]
     fn the_thumbnail_border_and_margin_convert() {
@@ -2113,30 +2139,19 @@ mod tests {
             }
         );
         // and the user's
-        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
-        let dump: Vec<u8> = conn
-            .query_row(
-                "SELECT dump FROM json_dumps WHERE dump_type = 22",
-                [],
-                |r| r.get(0),
-            )
-            .unwrap();
-        let dump = String::from_utf8(dump)
-            .unwrap()
-            .replace(
-                r#"[[0, "thumbnail_border"], [0, 1]]"#,
-                r#"[[0, "thumbnail_border"], [0, 0]]"#,
-            )
-            .replace(
-                r#"[[0, "thumbnail_margin"], [0, 2]]"#,
-                r#"[[0, "thumbnail_margin"], [0, 7]]"#,
-            );
-        conn.execute(
-            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
-            [dump.into_bytes()],
-        )
-        .unwrap();
-        drop(conn);
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "thumbnail_border"], [0, 1]]"#,
+                    r#"[[0, "thumbnail_border"], [0, 0]]"#,
+                ),
+                (
+                    r#"[[0, "thumbnail_margin"], [0, 2]]"#,
+                    r#"[[0, "thumbnail_margin"], [0, 7]]"#,
+                ),
+            ],
+        );
         assert_eq!(
             decoded(source.path()),
             ThumbnailLayout {
@@ -2144,6 +2159,29 @@ mod tests {
                 margin: 7
             }
         );
+    }
+
+    /// Whether a sort chosen on a page becomes the default comes across.
+    #[test]
+    fn saving_the_page_sort_on_change_converts() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<hydrus_core::pages::SortSettings>(
+                input.settings["sorts"].clone(),
+            )
+            .unwrap()
+            .save_page_sort_on_change
+        };
+        assert!(!decoded(source.path()));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "save_page_sort_on_change"], [0, false]]"#,
+                r#"[[0, "save_page_sort_on_change"], [0, true]]"#,
+            )],
+        );
+        assert!(decoded(source.path()));
     }
 
     /// The tag lists' colours come across: hydrus's defaults, the user's,

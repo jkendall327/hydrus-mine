@@ -481,6 +481,9 @@ pub struct SortSettings {
     pub namespace_sorts: Vec<PageSort>,
     /// How a new page collects (`default_collect`).
     pub default_collect: PageCollect,
+    /// A sort chosen on a page becomes the default sort
+    /// (`save_page_sort_on_change`).
+    pub save_page_sort_on_change: bool,
 }
 
 impl Default for SortSettings {
@@ -509,6 +512,7 @@ impl Default for SortSettings {
                 namespaces(["creator", "series", "title", "volume", "chapter", "page"]),
             ],
             default_collect: PageCollect::default(),
+            save_page_sort_on_change: false,
         }
     }
 }

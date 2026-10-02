@@ -10,7 +10,9 @@ use std::rc::Rc;
 use hydrus_core::media_viewer::{
     InfoLineSettings, MediaViewerSettings, SlideshowSettings, ZoomCentre, ZoomType,
 };
-use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
+use hydrus_core::pages::{
+    DownloaderPageSettings, FileCountDisplay, PageNameSettings, PageSort, SortSettings,
+};
 use hydrus_core::subscriptions::GalleryDefaults;
 use hydrus_core::tag_presentation::TagPresentation;
 use hydrus_core::thumbnail::{ThumbnailScale, ThumbnailSettings};
@@ -78,6 +80,7 @@ settings! {
     page_settings: PageSettings,
     similar_files: SimilarFilesSettings,
     slideshow: SlideshowSettings,
+    sorts: SortSettings,
     tag_presentation: TagPresentation,
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
@@ -108,6 +111,9 @@ pub enum Value {
     Duration(f64),
     /// A number per a time in seconds (the reference's `VelocityCtrl`).
     Velocity(i64, f64),
+    /// A file sort: its type and order (the reference's
+    /// `MediaSortControl`).
+    Sort(PageSort),
 }
 
 /// What kind of control an option has.
@@ -148,6 +154,8 @@ pub enum Kind {
         units: &'static [Unit],
         min: f64,
     },
+    /// A file sort, of the types a page's sort control offers.
+    Sort,
 }
 
 /// A field of a time's control, as the reference's `TimeDeltaWidget`
@@ -429,6 +437,25 @@ fn choice(
         Rc::new(move |s, v| match v {
             Value::Choice(i) if *i < items.len() => {
                 set(s, *i);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn sort(
+    label: &'static str,
+    get: fn(&Settings) -> PageSort,
+    set: fn(&mut Settings, PageSort),
+) -> Item {
+    opt(
+        label,
+        Kind::Sort,
+        Rc::new(move |s| Value::Sort(get(s))),
+        Rc::new(move |s, v| match v {
+            Value::Sort(sort) => {
+                set(s, sort.clone());
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -1020,6 +1047,29 @@ pub fn pages() -> Vec<Page> {
                         (16, 8192),
                         |s| s.export.filename_character_limit,
                         |s, v| s.export.filename_character_limit = v,
+                    ),
+                ],
+            )],
+        ),
+        page(
+            "file sort/collect",
+            vec![boxed(
+                "file sort",
+                vec![
+                    sort(
+                        "Default file sort: ",
+                        |s| s.sorts.default_sort.clone(),
+                        |s, v| s.sorts.default_sort = v,
+                    ),
+                    sort(
+                        "Secondary file sort (when primary gives two equal values): ",
+                        |s| s.sorts.fallback_sort.clone(),
+                        |s, v| s.sorts.fallback_sort = v,
+                    ),
+                    check(
+                        "Update default file sort every time a new sort is manually chosen: ",
+                        |s| s.sorts.save_page_sort_on_change,
+                        |s, v| s.sorts.save_page_sort_on_change = v,
                     ),
                 ],
             )],
@@ -1841,6 +1891,15 @@ impl Editor {
     pub fn choose(&mut self, row: usize, index: usize) {
         if let Some(i) = self.option_at(row) {
             self.values[self.page][i] = Value::Choice(index);
+        }
+    }
+
+    /// A sort's type or order chosen.
+    pub fn sort(&mut self, row: usize, sort: PageSort) {
+        if let Some(i) = self.option_at(row)
+            && matches!(self.values[self.page][i], Value::Sort(_))
+        {
+            self.values[self.page][i] = Value::Sort(sort);
         }
     }
 

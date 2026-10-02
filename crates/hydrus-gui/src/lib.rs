@@ -185,6 +185,23 @@ pub fn image(raster: &hydrus_media::Raster) -> slint::Image {
     thumbnails::Pixels::new(raster).image()
 }
 
+/// A sort chosen on `page`: the default sort, if the options say a chosen
+/// sort becomes it (the reference's `_UserChoseASort`).
+fn sort_chosen(page: &SearchPage) {
+    let sort = page.sort().clone();
+    let saved = page.store().write(move |ctx| {
+        let mut sorts: hydrus_core::pages::SortSettings = hydrus_store::settings::get(ctx.conn())?;
+        if sorts.save_page_sort_on_change && sorts.default_sort != sort {
+            sorts.default_sort = sort;
+            hydrus_store::settings::set(ctx.conn(), &sorts)?;
+        }
+        Ok(())
+    });
+    if let Err(e) = saved {
+        eprintln!("could not keep the default sort: {e}");
+    }
+}
+
 /// The grid's cells as the reference's: the bounding box and its border,
 /// with the margin round each.
 fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store) {
@@ -542,6 +559,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             if let Some(choice) = usize::try_from(index).ok().and_then(|i| choices.get(i)) {
                 page.borrow_mut().set_sort_type(choice.by.clone());
+                sort_chosen(&page.borrow());
                 shown(true);
             }
         }
@@ -556,7 +574,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             } else {
                 SortOrder::Descending
             };
-            page().borrow_mut().set_sort_order(order);
+            let page = page();
+            page.borrow_mut().set_sort_order(order);
+            sort_chosen(&page.borrow());
             shown(true);
         }
     });

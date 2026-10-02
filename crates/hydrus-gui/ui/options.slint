@@ -17,7 +17,8 @@ export struct DurationField {
 export struct OptionRow {
     // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
     // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
-    // text that may be none, 8 a time (its fields), 9 a number per a time
+    // text that may be none, 8 a time (its fields), 9 a number per a time,
+    // 10 a file sort (its type and order)
     kind: int,
     label: string,
     // how many boxes it is in
@@ -37,6 +38,10 @@ export struct OptionRow {
     per: string,
     // gone to from the search: highlighted, as the reference's
     found: bool,
+    // (10, a file sort: its types are `items`, the type `index`; then its
+    // orders, and the one chosen)
+    orders: [string],
+    order-index: int,
 }
 
 // a whole number typed in a small box
@@ -97,6 +102,9 @@ export component OptionsWindow inherits Window {
     callback none-toggled(int, bool);
     callback text-edited(int, string);
     callback choice-chosen(int, int);
+    // (a sort's type, or its order, by its place in the row's lists)
+    callback sort-chosen(int, int);
+    callback order-chosen(int, int);
     // (a time's field: the row, the field, its value)
     callback field-edited(int, int, int);
     callback apply();
@@ -258,6 +266,20 @@ export component OptionsWindow inherits Window {
                                 model: row.items;
                                 current-index: row.index;
                                 selected => { root.choice-chosen(i, self.current-index); }
+                            }
+                            if row.kind == 10: VerticalLayout {
+                                width: 260px;
+                                spacing: 2px;
+                                ComboBox {
+                                    model: row.items;
+                                    current-index: row.index;
+                                    selected => { root.sort-chosen(i, self.current-index); }
+                                }
+                                ComboBox {
+                                    model: row.orders;
+                                    current-index: row.order-index;
+                                    selected => { root.order-chosen(i, self.current-index); }
+                                }
                             }
                           }
                             // (a time or a rate: its fields under its label)

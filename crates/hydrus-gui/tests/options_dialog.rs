@@ -49,8 +49,15 @@ fn same_time(a: f64, b: Option<f64>) -> bool {
     b.is_some_and(|b| (a - b).abs() < 0.0005)
 }
 
+/// The reference's widgets that are a control of ours.
+const WIDGETS: &[&str] = &["MediaSortControl"];
+
 fn is_control(item: &Json) -> bool {
     CONTROLS.iter().any(|k| item.get(*k).is_some())
+        || item
+            .get("widget")
+            .and_then(Json::as_str)
+            .is_some_and(|w| WIDGETS.contains(&w))
 }
 
 /// The reference's grid rows: a label, then its control; or a checkbox
@@ -93,6 +100,7 @@ fn recorded_rows(items: &[Json], boxes: &[String], out: &mut Vec<Row>) {
                 control: item.clone(),
             });
         } else if item.get("widget").is_some()
+            && !is_control(item)
             && let Some(inner) = item.get("items").and_then(Json::as_array)
         {
             recorded_rows(inner, boxes, out);
@@ -115,8 +123,8 @@ fn our_rows<'a>(items: &'a [Item], boxes: &[String], out: &mut Vec<(Vec<String>,
 }
 
 /// What is wrong with an option's control and value, against the
-/// reference's.
-fn compare(kind: &Kind, value: &Value, theirs: &Json) -> Option<String> {
+/// reference's (a sort's types are the store's).
+fn compare(kind: &Kind, value: &Value, theirs: &Json, store: &Store) -> Option<String> {
     let num = |key: &str| theirs.get(key).and_then(Json::as_f64);
     let problem = match (kind, value) {
         (Kind::Check, Value::Check(b)) => {
@@ -200,6 +208,28 @@ fn compare(kind: &Kind, value: &Value, theirs: &Json) -> Option<String> {
                 )
             })
         }
+        (Kind::Sort, Value::Sort(sort)) => {
+            // (the reference's type button, "sort by" its type, and its
+            // order's)
+            let choices = hydrus_gui::sort::page_choices(store, &sort.by);
+            let chosen = choices.iter().find(|c| c.by == sort.by);
+            let shown = chosen.map(|c| {
+                (
+                    format!("sort by {}", c.name),
+                    c.orders[usize::from(!sort.ascending)],
+                )
+            });
+            let buttons = theirs["items"].as_array().map(|items| {
+                items
+                    .iter()
+                    .filter(|i| i.get("hidden").is_none())
+                    .filter_map(|i| i["button"].as_str())
+                    .collect::<Vec<_>>()
+            });
+            let ours = shown.as_ref().map(|(by, order)| vec![by.as_str(), *order]);
+            (theirs["widget"] != "MediaSortControl" || ours.is_none() || buttons != ours)
+                .then(|| format!("sort {shown:?}"))
+        }
         _ => Some(format!("{kind:?} holding {value:?}")),
     };
     problem.map(|ours| format!("ours {ours}, theirs {theirs}"))
@@ -275,7 +305,7 @@ fn the_options_pages_are_the_references() {
             };
             after = at + 1;
             let value = (option.get)(&settings);
-            if let Some(why) = compare(&option.kind, &value, &row.control) {
+            if let Some(why) = compare(&option.kind, &value, &row.control, &store) {
                 problems.push(format!("{}: {:?}: {why}", page.name, option.label));
             }
         }
