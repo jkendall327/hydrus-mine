@@ -29,6 +29,8 @@ pub(crate) struct Hooks {
     pub options: Rc<dyn Fn()>,
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
+    /// Save the open pages as this session, or a new one (asking).
+    pub save_session: Rc<dyn Fn(Option<String>)>,
     /// The page shown's file (0) or tag (1) domain button's menu: none
     /// for a page without a search.
     pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
@@ -440,6 +442,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ClearHistory => hooks.pages.borrow_mut().clear_history(),
         Command::Refresh => window.invoke_refresh_page(),
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
+        Command::SaveSession(name) => (hooks.save_session)(name),
         Command::DeleteSession(name) => {
             let store = store.clone();
             let deleted = name.clone();

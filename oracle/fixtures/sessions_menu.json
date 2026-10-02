@@ -1,0 +1,494 @@
+{
+ "steps": [
+  {
+   "do": "start",
+   "sessions": {
+    "exit session": 0,
+    "last session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save new",
+   "name": null,
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "last session"
+    },
+    {
+     "kind": "warning",
+     "message": "Sorry, you cannot have that name! Try another."
+    },
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "just a blank page"
+    },
+    {
+     "kind": "warning",
+     "message": "Sorry, you cannot have that name! Try another."
+    },
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "my session"
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save new",
+   "name": null,
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "my session"
+    },
+    {
+     "kind": "yes/no",
+     "message": "Session \"my session\" already exists! Do you want to overwrite it?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no, choose another name",
+     "answer": false
+    },
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "second session"
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 0,
+    "second session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save new",
+   "name": null,
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "my session"
+    },
+    {
+     "kind": "yes/no",
+     "message": "Session \"my session\" already exists! Do you want to overwrite it?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no, choose another name",
+     "answer": "closed"
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 0,
+    "second session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save new",
+   "name": null,
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": "my session"
+    },
+    {
+     "kind": "yes/no",
+     "message": "Session \"my session\" already exists! Do you want to overwrite it?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no, choose another name",
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save new",
+   "name": null,
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Enter a name for the new session.",
+     "default": "",
+     "answer": null
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save",
+   "name": "second session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Overwrite \"second session\" session?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no",
+     "answer": false
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 0
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "save",
+   "name": "second session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Overwrite \"second session\" session?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no",
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 1
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "new page",
+   "name": null,
+   "asked": [],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 1
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "save",
+   "name": "second session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Overwrite \"second session\" session?",
+     "title": "Overwrite existing session?",
+     "yes": "yes, overwrite",
+     "no": "no",
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "my session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"my session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": false
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "my session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"my session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "second session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"second session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "veto",
+   "name": "This page is still importing.",
+   "asked": [],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "my session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"my session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    },
+    {
+     "kind": "yes/no/no",
+     "message": "Close \"top page notebook\"?\n\npages\n\nfiles\nfiles\n\nsay: This page is still importing.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "nos": [
+      [
+       "no",
+       "no"
+      ],
+      [
+       "no, but show me the pages",
+       "show"
+      ]
+     ],
+     "yes_disabled_at_first": true,
+     "answer": false
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files",
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "my session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"my session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    },
+    {
+     "kind": "yes/no/no",
+     "message": "Close \"top page notebook\"?\n\npages\n\nfiles\nfiles\n\nsay: This page is still importing.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "nos": [
+      [
+       "no",
+       "no"
+      ],
+      [
+       "no, but show me the pages",
+       "show"
+      ]
+     ],
+     "yes_disabled_at_first": true,
+     "answer": true
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "veto",
+   "name": "2 watchers are still importing.",
+   "asked": [],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files"
+   ]
+  },
+  {
+   "do": "clear and load",
+   "name": "second session",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "message": "Close the current pages and load session \"second session\"?",
+     "title": "Clear and load session?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    },
+    {
+     "kind": "yes/no/no",
+     "message": "Close \"top page notebook\"?\n\npage \"files\" says: 2 watchers are still importing.",
+     "title": "Are you sure?",
+     "yes": "yes",
+     "nos": [
+      [
+       "no",
+       "no"
+      ],
+      [
+       "no, but show me the pages",
+       "show"
+      ]
+     ],
+     "yes_disabled_at_first": true,
+     "answer": false
+    }
+   ],
+   "unanswered": [],
+   "sessions": {
+    "exit session": 0,
+    "last session": 0,
+    "my session": 1,
+    "second session": 2
+   },
+   "pages": [
+    "files"
+   ]
+  }
+ ]
+}

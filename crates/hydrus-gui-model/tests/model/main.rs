@@ -9,4 +9,5 @@ mod main_menu;
 mod options_dialog;
 mod recent_predicates;
 mod selection;
+mod session_saving;
 mod thumbnail_ratings;

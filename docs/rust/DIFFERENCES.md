@@ -262,11 +262,14 @@ search.
   debug (hydrus's own debugging tools) and "about Qt"; the services menu's
   "administrate", for repository admins; the database menu's backup
   entries as hydrus has them for a database across several locations;
-  sessions > "append backup" (hydrus-rs keeps no session backups); and the
+  sessions > "append backup" (hydrus-rs keeps no session backups, so
+  saving over one keeps no backup of it either); and the
   undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
   Hydrus's menu entries describe themselves in the status bar as the
   pointer passes; ours don't yet, and the history's latest page isn't in
-  bold.
+  bold. Saving a session asks its name and its questions in one dialog,
+  and says a name can't be had over the name box, where the reference
+  shows a message box first; and "clear and load" isn't there yet.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the

@@ -372,3 +372,129 @@ fn the_pointer_opens_menus_and_chooses_from_them() {
     at(600.0, 400.0, true);
     assert_eq!(ui.get_menu_open(), -1);
 }
+
+/// pages > sessions > save (the reference's flow, model-checked in
+/// hydrus-gui-model's session_saving): "as new session…" asks a name,
+/// refuses a reserved one with a warning, saves a new one (copies of the
+/// pages, with their own keys), asks before overwriting an existing one
+/// ("no, choose another name" asks again); a session's own entry asks
+/// whether to overwrite it, and yes saves the pages as they are now.
+#[test]
+fn sessions_are_saved_from_the_pages_menu() {
+    use hydrus_gui::session_saving::{NAME_MESSAGE, RESERVED_WARNING};
+    use hydrus_store::sessions;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let title =
+        |label: &str| -> i32 { titles(&ui).iter().position(|(t, _)| t == label).unwrap() as i32 };
+    let save = |entry: &str| {
+        ui.invoke_menu_title_pressed(title("pages"), 80.0, 22.0);
+        hover(&ui, "sessions");
+        hover(&ui, "save");
+        choose(&ui, entry);
+    };
+    let dialog = || {
+        bound
+            .session_dialog
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong)
+    };
+    let saved = |name: &str| {
+        let name = name.to_owned();
+        store.read(move |c| sessions::load(c, &name)).unwrap()
+    };
+    // (the page shown with files)
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+
+    save("as new session\u{2026}");
+    let d = dialog().expect("a name is asked");
+    assert!(d.get_asking_name());
+    assert_eq!(
+        (d.get_window_title().as_str(), d.get_message().as_str()),
+        ("Enter Text", NAME_MESSAGE)
+    );
+    d.invoke_name_entered("last session".into());
+    assert!(d.get_asking_name());
+    assert_eq!(d.get_warning().as_str(), RESERVED_WARNING);
+    d.invoke_name_entered("my session".into());
+    assert!(dialog().is_none(), "saved");
+    let live = bound.pages.borrow().session().clone();
+    let mine = saved("my session").expect("saved");
+    // (saved now, in seconds)
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let when = store
+        .read(sessions::names)
+        .unwrap()
+        .into_iter()
+        .find(|(name, _)| name == "my session")
+        .unwrap()
+        .1;
+    assert!((now - 5..=now).contains(&when), "{when} at {now}");
+    let names = |s: &hydrus_core::pages::Session| -> Vec<String> {
+        s.pages.iter().map(|p| p.name.clone()).collect()
+    };
+    assert_eq!(names(&mine), names(&live));
+    assert_ne!(
+        mine.pages[0].key, live.pages[0].key,
+        "copies, not the open pages"
+    );
+    // (with their files)
+    let files = |key: hydrus_core::pages::PageKey| {
+        store.read(move |c| sessions::page_files(c, &key)).unwrap()
+    };
+    let shown = live
+        .pages
+        .iter()
+        .position(|p| p.key == bound.pages.borrow().shown().key)
+        .unwrap();
+    assert!(!files(live.pages[shown].key).is_empty());
+    assert_eq!(files(mine.pages[shown].key), files(live.pages[shown].key));
+
+    // an existing name: asked; no asks another; cancelled, nothing more
+    save("as new session\u{2026}");
+    let d = dialog().unwrap();
+    d.invoke_name_entered("my session".into());
+    assert!(!d.get_asking_name());
+    assert_eq!(
+        (
+            d.get_message().as_str(),
+            d.get_window_title().as_str(),
+            d.get_yes_label().as_str(),
+            d.get_no_label().as_str()
+        ),
+        (
+            "Session \"my session\" already exists! Do you want to overwrite it?",
+            "Overwrite existing session?",
+            "yes, overwrite",
+            "no, choose another name"
+        )
+    );
+    d.invoke_answered(false);
+    assert!(d.get_asking_name());
+    d.invoke_cancelled();
+    assert!(dialog().is_none());
+
+    // a session's own entry: asked; yes saves the pages as they are now
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(4);
+    save("my session");
+    let d = dialog().unwrap();
+    assert_eq!(
+        (d.get_message().as_str(), d.get_no_label().as_str()),
+        ("Overwrite \"my session\" session?", "no")
+    );
+    d.invoke_answered(false);
+    assert!(dialog().is_none());
+    assert_eq!(saved("my session").unwrap().pages.len(), live.pages.len());
+    save("my session");
+    dialog().unwrap().invoke_answered(true);
+    assert_eq!(
+        saved("my session").unwrap().pages.len(),
+        live.pages.len() + 1
+    );
+}

@@ -31,6 +31,33 @@ fn closable_queues(page: &Page) -> Vec<i64> {
 const GALLERY_PAGE_NAME: &str = "gallery";
 
 /// Bring pages' content up to date from those open.
+/// `pages` as copies, each with a new key and its page's files, so the
+/// originals can change or go without them.
+fn copied(store: &hydrus_store::Store, mut pages: Vec<Page>) -> hydrus_store::Result<Vec<Page>> {
+    fn rekey(pages: &mut [Page], copies: &mut Vec<(PageKey, PageKey)>) {
+        for page in pages {
+            let new = PageKey::random();
+            copies.push((page.key, new));
+            page.key = new;
+            if let PageContent::Pages(children) = &mut page.content {
+                rekey(children, copies);
+            }
+        }
+    }
+    let mut copies = Vec::new();
+    rekey(&mut pages, &mut copies);
+    store.write(move |ctx| {
+        for (old, new) in &copies {
+            let files = sessions::page_files(ctx.conn(), old)?;
+            if !files.is_empty() {
+                sessions::set_page_files(ctx.conn(), new, &files)?;
+            }
+        }
+        Ok(())
+    })?;
+    Ok(pages)
+}
+
 fn refresh_contents(pages: &mut [Page], open: &HashMap<PageKey, Rc<RefCell<SearchPage>>>) {
     for page in pages {
         if let PageContent::Pages(children) = &mut page.content {
@@ -971,41 +998,33 @@ impl Pages {
     /// reference's "append session"). Its pages are copies, with their
     /// files, so the saved session stays as it was.
     pub fn append_session(&mut self, name: &str) -> Result<(), String> {
-        fn rekey(pages: &mut [Page], copies: &mut Vec<(PageKey, PageKey)>) {
-            for page in pages {
-                let new = PageKey::random();
-                copies.push((page.key, new));
-                page.key = new;
-                if let PageContent::Pages(children) = &mut page.content {
-                    rekey(children, copies);
-                }
-            }
-        }
         let saved = self
             .store
             .read(|conn| sessions::load(conn, name))
             .map_err(|e| e.to_string())?
             .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
-        let mut pages = saved.pages;
-        let mut copies = Vec::new();
-        rekey(&mut pages, &mut copies);
-        self.store
-            .write(move |ctx| {
-                for (old, new) in &copies {
-                    let files = sessions::page_files(ctx.conn(), old)?;
-                    if !files.is_empty() {
-                        sessions::set_page_files(ctx.conn(), new, &files)?;
-                    }
-                }
-                Ok(())
-            })
-            .map_err(|e| e.to_string())?;
+        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
         self.add(Page {
             key: PageKey::random(),
             name: name.to_owned(),
             content: PageContent::Pages(pages),
         });
         Ok(())
+    }
+
+    /// Save the open pages, as they are now, as the session `name`
+    /// (replacing one of that name): copies, with their files, so the
+    /// saved session stays as it is while the pages change.
+    pub fn save_session(&mut self, name: &str, now: i64) -> Result<(), String> {
+        self.sync(now).map_err(|e| e.to_string())?;
+        let pages = copied(&self.store, self.session.pages.clone()).map_err(|e| e.to_string())?;
+        let session = Session {
+            name: name.to_owned(),
+            pages,
+        };
+        self.store
+            .write(move |ctx| sessions::save(ctx.conn(), &session, now))
+            .map_err(|e| e.to_string())
     }
 
     /// Add `page` at the far right of the current notebook, and show it

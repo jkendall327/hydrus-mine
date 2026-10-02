@@ -110,8 +110,16 @@ as Qt's do; a press anywhere else closes them. What works so far:
   out, as hydrus's is;
 - pages: how many pages are open and the session's weight (files, and
   twenty for each download's item or search); the history of pages shown,
-  latest first, to show one again; refresh; appending a saved session, and
-  deleting one (asking first); the page chooser; a new search page on each
+  latest first, to show one again; refresh; appending a saved session,
+  saving the open pages as one (`hydrus-gui-model/src/session_saving.rs`,
+  checked against the reference, recorded by
+  `oracle/record_sessions_menu.py`: "as new session…" asks a name, refuses
+  "last session", "exit session" or "just a blank page" with a warning
+  and asks again, and asks before overwriting one that exists, "no,
+  choose another name" asking again; a session's own entry asks whether to
+  overwrite it; a session saved is a copy of the pages, with their files,
+  so it stays as saved while the pages change), and deleting one (asking
+  first); the page chooser; a new search page on each
   local file domain, the trash or a file repository (searching the tag
   service hydrus's options give search pages, as each new search page
   does, and all the files stored here rather than all known files with

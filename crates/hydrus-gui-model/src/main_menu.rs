@@ -141,6 +141,9 @@ pub enum Command {
     AppendSession(String),
     /// Delete this saved session, asking first.
     DeleteSession(String),
+    /// Save the open pages as this session (asking first whether to
+    /// overwrite it), or as a new one (asking its name).
+    SaveSession(Option<String>),
     /// Choose a new page.
     ChooseNewPage,
     NewPage(NewPage),
@@ -528,8 +531,7 @@ fn pages_menu(facts: &Facts) -> Entry {
     );
     let mut sessions = Vec::new();
     if !facts.sessions.is_empty() {
-        // (loading a session in place of the pages, and saving one, are
-        // still to come)
+        // (loading a session in place of the pages is still to come)
         sessions.push(menu(
             "clear and load",
             facts
@@ -552,8 +554,11 @@ fn pages_menu(facts: &Facts) -> Entry {
         .iter()
         .filter(|name| !RESERVED_SESSION_NAMES.contains(&name.as_str()))
         .collect();
-    let mut save: Vec<Entry> = savable.iter().map(|name| todo((*name).clone())).collect();
-    save.push(todo(dots("as new session")));
+    let mut save: Vec<Entry> = savable
+        .iter()
+        .map(|name| item((*name).clone(), Command::SaveSession(Some((*name).clone()))))
+        .collect();
+    save.push(item(dots("as new session"), Command::SaveSession(None)));
     sessions.push(menu("save", save));
     if !savable.is_empty() {
         sessions.push(menu(
@@ -1456,7 +1461,14 @@ mod tests {
             panic!()
         };
         assert_eq!(labels(save), ["work", "as new session\u{2026}"]);
-        assert_eq!(save[0], todo("work"));
+        assert_eq!(
+            save[0],
+            item("work", Command::SaveSession(Some("work".into())))
+        );
+        assert_eq!(
+            save[1],
+            item("as new session\u{2026}", Command::SaveSession(None))
+        );
         let Entry::Menu {
             entries: delete, ..
         } = &entries[3]

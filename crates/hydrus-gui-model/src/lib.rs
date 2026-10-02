@@ -24,6 +24,7 @@ pub mod predicate_editors;
 pub mod ratings;
 pub mod scanbar;
 pub mod selection;
+pub mod session_saving;
 pub mod sort;
 pub mod status;
 pub mod thumbnail_icons;

@@ -41,6 +41,7 @@ mod pages;
 mod playback;
 mod popups;
 pub mod predicate_editor_window;
+mod session_dialog;
 pub mod slideshow;
 pub mod still;
 pub mod thumbnail_menu;
@@ -126,8 +127,8 @@ pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
     favourites, info_lines, local_import, main_menu, manage_tags, media_actions, options,
-    page_chooser, predicate_editors, ratings, scanbar, selection, sort, status, thumbnail_icons,
-    thumbnail_ratings,
+    page_chooser, predicate_editors, ratings, scanbar, selection, session_saving, sort, status,
+    thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -149,6 +150,9 @@ pub struct Bound {
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
+    /// The session saving dialog while it is open (pages > sessions >
+    /// save).
+    pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -941,6 +945,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
+    let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -997,6 +1002,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             import_files: {
                 let review_files = review_files.clone();
                 Rc::new(move || review_files(Vec::new()))
+            },
+            save_session: {
+                let pages = pages.clone();
+                let slot = session_dialog.clone();
+                Rc::new(move |name| {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    match session_dialog::open(&pages, name.as_deref(), &slot) {
+                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
             },
             domain_menu: {
                 let page = page.clone();
@@ -2101,6 +2119,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         options,
         checker_options,
+        session_dialog,
         archive_delete,
         filter,
         open_page,
