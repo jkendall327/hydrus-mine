@@ -184,12 +184,35 @@ pub(crate) fn shape(store: &Store, id: HashId) -> Option<(hydrus_core::Mime, Opt
     Some((info.mime, info.width.zip(info.height)))
 }
 
-/// A file's info line as the top hover frame shows it, now, and its
-/// notes, as (name, text), by name.
-pub(crate) fn info_line(store: &Store, id: HashId) -> (String, Vec<(String, String)>) {
+/// What the top hover frame shows of a file: its info line, now, and
+/// which of its buttons apply, as the reference's `_ResetButtons` decides;
+/// and its notes, as (name, text), by name.
+#[derive(Debug, Default, Clone, PartialEq, Eq)]
+pub(crate) struct Shown {
+    pub line: String,
+    pub notes: Vec<(String, String)>,
+    /// In the inbox: its archive button archives (else re-inboxes).
+    pub inbox: bool,
+    /// In the trash: its delete button deletes it completely.
+    pub trashed: bool,
+    /// Here, not in the trash: its delete button sends it to the trash.
+    pub local: bool,
+    /// Deleted from one of your local file domains: it can be undeleted.
+    pub undeletable: bool,
+}
+
+pub(crate) fn shown(store: &Store, id: HashId) -> Shown {
+    use hydrus_core::ServiceType;
     let snapshot = store.snapshot();
     let settings: hydrus_core::media_viewer::InfoLineSettings =
         store.read(hydrus_store::settings::get).unwrap_or_default();
+    let of_type = |kind: ServiceType| {
+        snapshot
+            .services
+            .all()
+            .filter(move |s| s.service_type() == kind)
+            .map(|s| s.id)
+    };
     store
         .read(|conn| hydrus_store::media::load(conn, &snapshot.services, None, &[id]))
         .ok()
@@ -201,7 +224,18 @@ pub(crate) fn info_line(store: &Store, id: HashId) -> (String, Vec<(String, Stri
                 &settings,
                 hydrus_core::TimestampMs::now().0,
             );
-            (line, media.notes)
+            let trashed =
+                of_type(ServiceType::LocalFileTrashDomain).any(|t| media.is_current_in(t));
+            let here = of_type(ServiceType::HydrusLocalFileStorage).any(|l| media.is_current_in(l));
+            Shown {
+                line,
+                inbox: media.inbox,
+                trashed,
+                local: here && !trashed,
+                undeletable: of_type(ServiceType::LocalFileDomain)
+                    .any(|d| media.is_deleted_from(d)),
+                notes: media.notes,
+            }
         })
         .unwrap_or_default()
 }

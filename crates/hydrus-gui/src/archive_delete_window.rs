@@ -74,7 +74,7 @@ pub(crate) fn open(
             let still = playable.is_none() && animation.is_none();
             zoomed.set_still(crate::viewer::still_of(media, shape, still));
             zoomed.show(shape);
-            window.set_info_line(crate::viewer::info_line(store, file).0.into());
+            window.set_info_line(crate::viewer::shown(store, file).line.into());
             let tags: Vec<ListText> = crate::viewer::hover_tags(store, file)
                 .iter()
                 .map(|(row, rgb)| list_text(row, *rgb))

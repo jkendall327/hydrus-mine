@@ -171,3 +171,36 @@ pub fn described(entries: &[Entry]) -> Vec<Value> {
             .collect(),
     )
 }
+
+/// Our menu as the recordings have it: they were made without hydrus's
+/// advanced mode, which its "in file browser" needs, and hydrus-rs offers
+/// that always. Each must follow its "in web browser", as hydrus puts it
+/// (less Windows' "in another program", which hydrus-rs doesn't have).
+pub fn as_recorded(entries: &[Value]) -> Vec<Value> {
+    for pair in entries.windows(2) {
+        if let Some(label) = pair[1].as_str().filter(|l| l.ends_with("in file browser")) {
+            let web = label.replace("in file browser", "in web browser");
+            assert_eq!(pair[0], json!(web), "{label} follows {web}");
+        }
+    }
+    assert!(
+        entries
+            .first()
+            .and_then(Value::as_str)
+            .is_none_or(|l| !l.ends_with("in file browser")),
+        "in file browser first"
+    );
+    tidy(
+        entries
+            .iter()
+            .filter(|e| !e.as_str().is_some_and(|l| l.ends_with("in file browser")))
+            .map(|e| match e.get("entries") {
+                Some(inner) => json!({
+                    "menu": e["menu"],
+                    "entries": as_recorded(inner.as_array().unwrap()),
+                }),
+                None => e.clone(),
+            })
+            .collect(),
+    )
+}

@@ -17,7 +17,7 @@ use hydrus_store::import::import_legacy;
 use serde_json::{Value, json};
 
 mod common;
-use common::menus::{described, pruned, tidy, unescaped};
+use common::menus::{as_recorded, described, pruned, tidy, unescaped};
 
 #[test]
 fn the_viewer_s_menu_is_the_reference_s() {
@@ -66,6 +66,7 @@ fn the_viewer_s_menu_is_the_reference_s() {
             };
             let entries = viewer_menu(&store, file, &state, &InfoLineSettings::default(), now_ms);
             let ours = described(&entries);
+            let recorded_ours = as_recorded(&ours);
             // (and the window's template shows it as it is)
             assert_eq!(described(&Slots::new(&entries).entries()), ours);
             // the reference's, less what hydrus-rs doesn't have (its info's
@@ -87,11 +88,11 @@ fn the_viewer_s_menu_is_the_reference_s() {
             theirs.insert(1, json!("---"));
             let theirs = tidy(theirs);
             assert!(
-                ours == theirs,
+                recorded_ours == theirs,
                 "{} {}\n{}\n!=\n{}",
                 viewer["viewer"],
                 case["file"],
-                serde_json::to_string_pretty(&ours).unwrap(),
+                serde_json::to_string_pretty(&recorded_ours).unwrap(),
                 serde_json::to_string_pretty(&theirs).unwrap(),
             );
             checked += 1;

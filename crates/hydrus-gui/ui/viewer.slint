@@ -1,22 +1,27 @@
 // The media viewer's window: one file, at its default zoom (fitted to the
 // window, by default). Right and left (or down and up, page down and up,
 // or the mouse wheel) move through the page's files, home and end to the
-// first and last; space pauses and plays video, and ctrl+b and ctrl+n go
-// a frame back or on; f switches fullscreen; escape, enter or a middle
-// click closes it. As the reference's default shortcuts have it,
-// z switches between 100% and fitting the window, + and - (or ctrl and the
-// mouse wheel) zoom in and out, and shift and the arrow keys (or dragging)
-// move the file. Under a file that plays, its scanbar shows how far through
-// it is: a click or drag on it seeks there, and ctrl and left or right seek
-// back 2.5 seconds or on 5. Beside the scanbar of a file with sound, its
-// volume control: ctrl+g (or a click on it) mutes and unmutes everything,
-// and with the pointer on it the volume and the viewer's own mute show
-// above it. F3 manages the file's tags. F7 archives the file and
-// shift+F7 returns it to the inbox; delete deletes it (asking first: enter
-// or escape answers) and shift+delete undeletes it. With the pointer over the
-// window's left fifth, the file's tags show there, as the reference's tags
-// hover frame does. A right-click opens the viewer's menu, whose slideshow
-// submenu may ask for a period to type.
+// first and last; space pauses and plays video, and ctrl+b and ctrl+n go a
+// frame back or on; f switches fullscreen; escape, enter, a middle click
+// or a double-click closes it. As the reference's default shortcuts have
+// it, z switches between 100% and fitting the window, + and - (or ctrl and
+// the mouse wheel) zoom in and out, and shift and the arrow keys (or
+// dragging) move the file. Under a file that plays, its scanbar shows how
+// far through it is: a click or drag on it seeks there, and ctrl and left
+// or right seek back 2.5 seconds or on 5. Beside the scanbar of a file
+// with sound, its volume control: ctrl+g (or a click on it) mutes and
+// unmutes everything, and with the pointer on it the volume and the
+// viewer's own mute show above it. F3 manages the file's tags. F7 archives
+// the file and shift+F7 returns it to the inbox; delete deletes it (asking
+// first: enter or escape answers) and shift+delete undeletes it. With the
+// pointer over the window's left fifth, the file's tags show there, as the
+// reference's tags hover frame does; with it near the top middle, the
+// reference's top hover frame: the file's place in the list, buttons to
+// archive, delete and undelete it, its zoom and buttons to zoom, to switch
+// fullscreen, to open it externally or show it in the file browser (where
+// the reference has a button to drag it out), and to close the viewer; and
+// the file's info line. A right-click opens the viewer's menu, whose
+// slideshow submenu may ask for a period to type.
 
 import { LineEdit } from "std-widgets.slint";
 import { ListText } from "theme.slint";
@@ -50,6 +55,26 @@ export struct RatingRow {
     brush: color,
 }
 
+// a button of the top hover frame: the reference's icon for it
+component HoverButton inherits Rectangle {
+    in property <image> icon;
+    callback clicked();
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
+    Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 16px;
+        height: 16px;
+        source: root.icon;
+    }
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
 export component MediaViewerWindow inherits Window {
     title: root.caption;
     preferred-width: 1000px;
@@ -66,11 +91,23 @@ export component MediaViewerWindow inherits Window {
     out property <bool> notes-showing: root.notes.length > 0 && pointer.has-hover
         && pointer.mouse-x >= notes-box.x
         && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
-    // the file's info line, for the top hover frame
+    // the file's info line, for the top hover frame, which shows with the
+    // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
-    out property <bool> info-showing: root.info-line != "" && pointer.has-hover
-        && pointer.mouse-y <= info-box.preferred-height + 20px
-        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8;
+    out property <bool> info-showing: top-frame.has-hover || (pointer.has-hover
+        && pointer.mouse-y <= top-box.preferred-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8);
+    // the file's state, for the frame's buttons: in the inbox (archive,
+    // else re-inbox), in the trash (delete completely), here and not
+    // trashed (send to trash), deleted from a local file domain (undelete)
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local;
+    in property <bool> file-undeletable;
+    // the zoom, as the reference writes it ("100%"); empty for a file that
+    // doesn't zoom
+    in property <string> zoom-text;
+    callback show-in-file-browser();
     // the file's ratings, for the top-right hover frame, as the reference
     // draws them
     in property <[RatingRow]> ratings;
@@ -944,22 +981,96 @@ export component MediaViewerWindow inherits Window {
                 }
             }
         }
-        // (nothing in it takes the pointer, so the area below keeps it)
-        info-box := Rectangle {
-            x: (root.width - self.width) / 2;
+        // the top hover frame (`CanvasHoverFrameTop`): its place in the
+        // list on the left, the file's buttons in the middle, the zoom and
+        // the viewer's on the right, and the info line under them
+        top-frame := TouchArea {
+            x: root.width * 0.2;
             y: 0;
-            width: min(root.width * 0.6, info-text.preferred-width + 24px);
-            height: info-text.preferred-height + 12px;
-            background: #202020e8;
+            width: root.width * 0.6;
+            height: top-box.preferred-height;
             visible: root.info-showing;
-            info-text := Text {
-                x: 12px;
-                width: parent.width - 24px;
-                text: root.info-line;
-                color: #f0f0f0;
-                horizontal-alignment: center;
-                vertical-alignment: center;
-                overflow: elide;
+            top-box := Rectangle {
+                background: #202020e8;
+                VerticalLayout {
+                    padding: 4px;
+                    spacing: 2px;
+                    HorizontalLayout {
+                        spacing: 2px;
+                        Text {
+                            horizontal-stretch: 1;
+                            text: root.caption;
+                            color: #f0f0f0;
+                            vertical-alignment: center;
+                            overflow: elide;
+                        }
+                        HoverButton {
+                            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
+                            clicked => {
+                                if (root.file-inbox) {
+                                    root.archive();
+                                } else {
+                                    root.inbox();
+                                }
+                            }
+                        }
+                        // (send to trash, or from the trash delete completely)
+                        if root.file-trashed || root.file-local: HoverButton {
+                            icon: root.file-trashed ? @image-url("../../../static/delete.png") : @image-url("../../../static/trash.png");
+                            clicked => { root.delete(); }
+                        }
+                        if root.file-undeletable: HoverButton {
+                            icon: @image-url("../../../static/undelete.png");
+                            clicked => { root.undelete(); }
+                        }
+                        HorizontalLayout {
+                            horizontal-stretch: 1;
+                            alignment: end;
+                            spacing: 2px;
+                            Text {
+                                text: root.zoom-text;
+                                color: #f0f0f0;
+                                vertical-alignment: center;
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_in.png");
+                                clicked => { root.zoom(1, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_out.png");
+                                clicked => { root.zoom(-1, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_switch.png");
+                                clicked => { root.zoom(0, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/fullscreen_switch.svg");
+                                clicked => { root.toggle-fullscreen(); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/open_externally.png");
+                                clicked => { root.open-externally(); }
+                            }
+                            // (in the place of the reference's button to drag
+                            // the file out, which Slint can't do)
+                            HoverButton {
+                                icon: @image-url("../../../static/drag.png");
+                                clicked => { root.show-in-file-browser(); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/stop.png");
+                                clicked => { root.close-requested(); }
+                            }
+                        }
+                    }
+                    if root.info-line != "": Text {
+                        text: root.info-line;
+                        color: #f0f0f0;
+                        horizontal-alignment: center;
+                        overflow: elide;
+                    }
+                }
             }
         }
         // (nothing in it takes the pointer, so the area below keeps it)

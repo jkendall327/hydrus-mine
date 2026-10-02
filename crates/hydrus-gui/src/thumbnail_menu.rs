@@ -65,9 +65,11 @@ pub enum Action {
     /// Open a page searching for files that look like the selected ones,
     /// within this hamming distance.
     OpenSimilar(u64),
-    /// Open the focused file as the OS opens it, or in a web browser.
+    /// Open the focused file as the OS opens it, or in a web browser, or
+    /// show it in the OS's file browser.
     OpenExternally,
     OpenInWebBrowser,
+    OpenInFileBrowser,
     /// Copy the entry's text (a label's).
     Copy,
     /// Copy the selected local files themselves (as files a file manager
@@ -531,7 +533,8 @@ pub const SIMILAR_DISTANCES: [(&str, u64); 4] = [
 /// The open menu (`AddOpenMenu`): in a new page, or a new duplicate filter
 /// page; similar files in a new page, when the focused file is a still
 /// image; and the focused file as the OS opens it (the reference's default
-/// launch) or in a web browser.
+/// launch), in a web browser, or (when it is here) in the file browser,
+/// which the reference offers in advanced mode.
 pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) -> Vec<Entry> {
     let mut open = vec![
         Entry::Item("in a new page".into(), Action::OpenInNewPage),
@@ -563,6 +566,12 @@ pub fn open_menu(store: &Store, focused: Option<HashId>, num_selected: usize) ->
             format!("{prefix}in web browser"),
             Action::OpenInWebBrowser,
         ));
+        if !paths(store, &[focused]).is_empty() {
+            open.push(Entry::Item(
+                format!("{prefix}in file browser"),
+                Action::OpenInFileBrowser,
+            ));
+        }
     }
     open
 }

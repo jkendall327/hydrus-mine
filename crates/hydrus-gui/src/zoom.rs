@@ -452,6 +452,9 @@ struct Sharp {
     shown: Option<(crate::still::Plan, Rect, slint::Image)>,
 }
 
+/// What a window is told of its file's zoom (none, if it doesn't zoom).
+type Watch = Rc<dyn Fn(Option<f64>)>;
+
 /// A window's zoomed file, kept as the file, the window and the user
 /// change it, and drawn by the window's own setters: the file's box, and
 /// a still's sharp overlay.
@@ -465,6 +468,8 @@ pub(crate) struct Zoomed {
     /// Draw the file at (x, y, width, height).
     draw: Setter<Rect>,
     overlay: Setter<Option<Overlay>>,
+    /// Told the zoom each time the file is drawn.
+    watch: Rc<RefCell<Option<Watch>>>,
 }
 
 impl std::fmt::Debug for Zoomed {
@@ -504,7 +509,14 @@ impl Zoomed {
                     overlay(&window, shown);
                 }
             }),
+            watch: Rc::default(),
         }
+    }
+
+    /// Tell `watch` the zoom (none, for a file that doesn't zoom) each time
+    /// the file is drawn, as the reference tells its top hover frame.
+    pub fn watch(&self, watch: impl Fn(Option<f64>) + 'static) {
+        *self.watch.borrow_mut() = Some(Rc::new(watch));
     }
 
     /// The file shown next is this still (its file decoded whole), to be
@@ -541,6 +553,16 @@ impl Zoomed {
         };
         (self.draw)(rect);
         self.sharpen(rect);
+        let zoom = self
+            .zoom
+            .borrow()
+            .as_ref()
+            .filter(|z| z.zoomable())
+            .map(Zoom::zoom);
+        let watch = self.watch.borrow().clone();
+        if let Some(watch) = watch {
+            watch(zoom);
+        }
     }
 
     /// Draw the still sharply at `rect`: what was drawn moved along with

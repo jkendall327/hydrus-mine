@@ -1515,12 +1515,12 @@ fn shared_menu_action(
     let focused: Vec<HashId> = target.focused.into_iter().collect();
     match action {
         Action::Copy => copy_to_clipboard(label),
-        Action::OpenExternally | Action::OpenInWebBrowser => {
+        Action::OpenExternally | Action::OpenInWebBrowser | Action::OpenInFileBrowser => {
             if let Some(path) = thumbnail_menu::paths(store, &focused).pop() {
-                if action == Action::OpenExternally {
-                    launch(&path);
-                } else {
-                    launch(&file_url(&path));
+                match action {
+                    Action::OpenExternally => launch(&path),
+                    Action::OpenInWebBrowser => launch(&file_url(&path)),
+                    _ => show_in_file_browser(&path),
                 }
             }
         }
@@ -1835,6 +1835,63 @@ fn launch(target: &str) {
     }
 }
 
+thread_local! {
+    /// What shows files in a file browser in place of the OS, if anything.
+    static FILE_BROWSER: RefCell<Option<Launcher>> = RefCell::new(None);
+}
+
+/// Show files with `browser` rather than in the OS's file browser (for
+/// tests, which shouldn't open anything), on this thread.
+pub fn set_file_browser(browser: impl Fn(&str) + 'static) {
+    FILE_BROWSER.with(|b| *b.borrow_mut() = Some(Rc::new(browser)));
+}
+
+/// Show the file at `path`, selected, in the OS's file browser, as the
+/// reference's `OpenFileLocation` does: Explorer's `/select,` and
+/// Finder's `open -R`; elsewhere the file manager's own
+/// org.freedesktop.FileManager1 ShowItems, as the show-in-file-manager
+/// package the reference uses there does, else its folder opened.
+fn show_in_file_browser(path: &str) {
+    use std::process::Command;
+    if let Some(browser) = FILE_BROWSER.with(|b| b.borrow().clone()) {
+        browser(path);
+        return;
+    }
+    #[cfg(windows)]
+    let shown = Command::new("explorer").arg("/select,").arg(path).spawn();
+    #[cfg(target_os = "macos")]
+    let shown = Command::new("open").arg("-R").arg(path).spawn();
+    #[cfg(not(any(windows, target_os = "macos")))]
+    let shown = {
+        let (url, path) = (file_url(path), path.to_owned());
+        // (dbus-send waits for the reply, so off this thread)
+        std::thread::Builder::new()
+            .name("file browser".into())
+            .spawn(move || {
+                let shown = Command::new("dbus-send")
+                    .args([
+                        "--session",
+                        "--print-reply",
+                        "--dest=org.freedesktop.FileManager1",
+                        "--type=method_call",
+                        "/org/freedesktop/FileManager1",
+                        "org.freedesktop.FileManager1.ShowItems",
+                    ])
+                    .arg(format!("array:string:{url}"))
+                    .arg("string:")
+                    .output()
+                    .is_ok_and(|output| output.status.success());
+                if !shown && let Some(folder) = std::path::Path::new(&path).parent() {
+                    launch(&folder.display().to_string());
+                }
+            })
+            .map(|_| ())
+    };
+    if let Err(e) = shown {
+        eprintln!("could not show {path} in the file browser: {e}");
+    }
+}
+
 /// A `file://` URL for `path`.
 fn file_url(path: &str) -> String {
     let path = path.replace('\\', "/");
@@ -2054,6 +2111,16 @@ fn open_viewer(
         .read(hydrus_store::settings::get)
         .unwrap_or_default();
     let zoomed = zoom_window!(window, settings.clone());
+    // the zoom, in the top hover frame
+    zoomed.watch({
+        let weak = window.as_weak();
+        move |zoom| {
+            if let Some(window) = weak.upgrade() {
+                let text = zoom.map(viewer_menu::zoom_percentage).unwrap_or_default();
+                window.set_zoom_text(text.into());
+            }
+        }
+    });
     // the volume and mutes, as kept, on the window and the player; and
     // this viewer's own mute, if forced (`SetPerPlayerMuteState`, for as
     // long as the viewer is open)
@@ -2100,7 +2167,8 @@ fn open_viewer(
             }
         }
     };
-    // the file's info line, in the top hover frame, and its notes
+    // the file's info line and buttons, in the top hover frame, and its
+    // notes
     let show_info = {
         let model = model.clone();
         let weak = window.as_weak();
@@ -2109,9 +2177,14 @@ fn open_viewer(
                 return;
             };
             let model = model.borrow();
-            let (line, notes) = viewer::info_line(model.store(), model.current());
-            window.set_info_line(line.into());
-            let notes: Vec<NoteRow> = notes
+            let shown = viewer::shown(model.store(), model.current());
+            window.set_info_line(shown.line.into());
+            window.set_file_inbox(shown.inbox);
+            window.set_file_trashed(shown.trashed);
+            window.set_file_local(shown.local);
+            window.set_file_undeletable(shown.undeletable);
+            let notes: Vec<NoteRow> = shown
+                .notes
                 .into_iter()
                 .map(|(name, text)| NoteRow {
                     name: name.into(),
@@ -2561,6 +2634,17 @@ fn open_viewer(
             }
         }
     });
+    // the top hover frame's stand-in for dragging the file out: it shown,
+    // selected, in the OS's file browser
+    window.on_show_in_file_browser({
+        let model = model.clone();
+        move || {
+            let model = model.borrow();
+            if let Some(path) = thumbnail_menu::paths(model.store(), &[model.current()]).pop() {
+                show_in_file_browser(&path);
+            }
+        }
+    });
     let pending: Rc<RefCell<Option<ViewerAsked>>> = Rc::default();
     let ask = {
         let pending = pending.clone();
@@ -2818,6 +2902,7 @@ fn open_viewer(
     });
     window.on_answer({
         let model = model.clone();
+        let show_info = show_info.clone();
         let weak = window.as_weak();
         move |yes| {
             let asked = pending.borrow_mut().take();
@@ -2842,9 +2927,12 @@ fn open_viewer(
                 eprintln!("could not delete the file: {e}");
                 return;
             }
-            // (out of the page's domains, it leaves the page and the viewer)
+            // (out of the page's domains, it leaves the page and the viewer;
+            // else, trashed say, its hover frame says so)
             if media_actions::still_in(&store, &location, &[file]).is_empty() {
                 remove_file(file);
+            } else {
+                show_info();
             }
         }
     });

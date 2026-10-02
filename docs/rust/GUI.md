@@ -306,13 +306,22 @@ pointer still (or wherever your zoom centre option says), shift and the
 arrow keys pan a twelfth of the way, and dragging moves the file; a file
 zoomed wholly off the window is brought back, and resizing the window fits
 it again. Video renders at the size it's shown, up to twice the window's.
-With the pointer near the window's top, the file's info line shows there,
-as the reference's top hover frame has it: its "interesting" info lines
+With the pointer near the top of the window's middle three fifths, the
+reference's top hover frame shows there: the file's place in the list
+("3/30"); buttons, with the reference's icons, to archive it or return it
+to the inbox, to send it to the trash (or, from the trash, delete it
+completely), and to undelete it (one deleted from any of your local file
+domains), each shown as the reference shows it; the zoom ("266.67%") and
+buttons to zoom in, out and switch, to switch fullscreen, to open the file
+externally, to show it, selected, in your file browser (in the place of
+the reference's button to drag the file out to other programs, which
+Slint can't do), and to close the viewer. Under them, the file's info line,
+as the reference's has it: its "interesting" info lines
 (`src/info_lines.rs`, `GetPrettyMediaResultInfoLines`: size, type,
 resolution, duration and frames, audio; imported, deleted or in the trash;
 modified, if far from its import; archived) joined with ` | `, as your
 file info line options say (now migrated); archiving or returning the
-file to the inbox updates it. Its notes show on the right, under the
+file to the inbox, or deleting it, updates it. Its notes show on the right, under the
 ratings, each name bold over its text, while the pointer is over them, as
 the reference's notes hover frame does. With the pointer near the window's top right, the file's ratings show
 there, as in the reference's top-right hover frame: each like/dislike
@@ -421,8 +430,10 @@ screenshots land in `target/tmp/`). Not yet: the reference's menu of
 closed pages (Ctrl+U reopens them one at a time), managing tags on tag
 repositories (pending and petitioning), dragging thumbnails, the rest of
 the thumbnails' menu, system
-predicates in the autocomplete, the viewer's other hover frames
-(the top one's buttons; editing, copying and hiding notes), the volume shortcuts
+predicates in the autocomplete, the rest of the viewer's hover frames
+(the top one's zoom options, volume, shortcuts and view options menus,
+window move and embedded metadata buttons, and its tooltips; editing,
+copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, watcher pages' own panels, downloader
 pages' file and search log windows and import options buttons, and a

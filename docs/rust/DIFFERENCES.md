@@ -237,6 +237,18 @@ search.
   narrow as the reference's, which shows the status columns as single
   characters; with Slint's table they take what room the sidebar has.
 
+## The media viewer (`hydrus-gui`)
+
+- **The top hover frame's drag button shows the file in your file
+  browser instead.** The reference's lets you drag the file out to other
+  programs (a chat, a web page); Slint can't start a drag out of its
+  window, so the button in that place shows the file, selected, in
+  Explorer, Finder or your desktop's file manager (its FileManager1 D-Bus
+  service, as the reference's show-in-file-manager package uses, or else
+  the folder opened), from where it can be dragged. For the same reason
+  the open menus offer "in file browser" whether or not hydrus's advanced
+  mode is on (the reference offers it only in advanced mode).
+
 ## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
 
 Its comparison statements are checked by
