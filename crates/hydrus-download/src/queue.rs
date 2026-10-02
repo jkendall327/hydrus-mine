@@ -71,16 +71,35 @@ pub struct QueueRunner {
     started: std::sync::atomic::AtomicBool,
     handles: Mutex<HashMap<i64, Arc<Handle>>>,
     /// Seconds to wait after a network failure.
-    network_error_delay: u64,
+    network_error_delay: std::sync::atomic::AtomicU64,
 }
 
 impl QueueRunner {
+    fn network_error_delay(&self) -> u64 {
+        self.network_error_delay
+            .load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    /// Pick up changed network and downloader options (the downloader's,
+    /// its network engine's, and the wait after a network error); whether
+    /// they had changed.
+    pub fn reload_settings(&self) -> Result<bool, WorkError> {
+        let changed = self.downloader.reload_settings()?;
+        self.network_error_delay.store(
+            self.downloader
+                .network_settings()
+                .downloader_network_error_delay,
+            std::sync::atomic::Ordering::Relaxed,
+        );
+        Ok(changed)
+    }
+
     pub fn new(downloader: Arc<Downloader>, network_error_delay: u64) -> Arc<Self> {
         Arc::new(Self {
             downloader,
             started: std::sync::atomic::AtomicBool::new(false),
             handles: Mutex::default(),
-            network_error_delay,
+            network_error_delay: std::sync::atomic::AtomicU64::new(network_error_delay),
         })
     }
 
@@ -504,7 +523,7 @@ impl QueueRunner {
                 }
             }
             Err(WorkError::Network(e)) => {
-                state.delay(self.network_error_delay as i64, &e.to_string(), now());
+                state.delay(self.network_error_delay() as i64, &e.to_string(), now());
                 set_gallery_status(&mut seed, SeedStatus::Error, e.to_string());
             }
             Err(e) => set_gallery_status(&mut seed, SeedStatus::Error, e.to_string()),
@@ -783,7 +802,7 @@ impl QueueRunner {
 
     /// `_DelayWork`: wait out a network failure.
     fn delay(&self, handle: &Handle, e: &hydrus_net::NetError) {
-        let until = now() + self.network_error_delay as i64;
+        let until = now() + self.network_error_delay() as i64;
         let mut status = handle.status.lock();
         status.delayed_until = Some(until);
         status.files_status = format!("{e} - waiting to retry");

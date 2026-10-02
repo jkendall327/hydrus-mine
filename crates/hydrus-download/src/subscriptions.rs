@@ -406,7 +406,7 @@ impl Downloader {
                 ));
                 delay(
                     &mut sub,
-                    self.network.subscription_network_error_delay,
+                    self.network.read().subscription_network_error_delay,
                     &format!("network error: {e}"),
                 );
             }
@@ -417,7 +417,7 @@ impl Downloader {
                 ));
                 delay(
                     &mut sub,
-                    self.network.subscription_other_error_delay,
+                    self.network.read().subscription_other_error_delay,
                     &format!("error: {e}"),
                 );
             }
@@ -537,7 +537,7 @@ impl Downloader {
     fn gug_functional(&self, gugs: &hydrus_core::url::Gugs, gug: &AnyGug) -> Result<(), String> {
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
-        let options = gug_options(classes, self.network.gug_percent_twenty_is_space);
+        let options = gug_options(classes, self.network.read().gug_percent_twenty_is_space);
         let examples: Vec<String> = match gug {
             AnyGug::Single(g) => vec![
                 g.example_url(options)
@@ -616,7 +616,7 @@ impl Downloader {
             .gallery_urls(
                 gug,
                 &query.state.query_text,
-                gug_options(classes, self.network.gug_percent_twenty_is_space),
+                gug_options(classes, self.network.read().gug_percent_twenty_is_space),
             )
             .map_err(|e| RunStop::Failed(e.to_string()))?;
         if urls.is_empty() {
@@ -964,7 +964,7 @@ impl Downloader {
 impl Downloader {
     /// `_GetQueryHeadersForProcessing`'s order: random, or by name.
     fn order_queries(&self, queries: &mut [SubscriptionQuery]) {
-        if self.network.process_subs_in_random_order {
+        if self.network.read().process_subs_in_random_order {
             queries.shuffle(&mut rand::rng());
         } else {
             queries.sort_by_cached_key(|q| q.state.human_name().to_owned());
@@ -1078,7 +1078,7 @@ impl SubscriptionRunner {
                 soonest = Some(soonest.map_or(when, |s| s.min(when)));
             }
         }
-        let next = if self.downloader.network.process_subs_in_random_order {
+        let next = if self.downloader.network.read().process_subs_in_random_order {
             ready.choose(&mut rand::rng()).cloned()
         } else {
             ready

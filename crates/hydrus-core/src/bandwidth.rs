@@ -506,6 +506,12 @@ impl Manager {
         }
     }
 
+    /// Replace every context's rules (as [`Manager::new`] sets them),
+    /// keeping the usage so far.
+    pub fn set_all_rules(&mut self, rules: Vec<(NetworkContext, Rules)>) {
+        self.rules = Self::new(rules).rules;
+    }
+
     /// Carry on from stored usage.
     pub fn set_trackers(&mut self, trackers: impl IntoIterator<Item = (NetworkContext, Tracker)>) {
         self.trackers = trackers.into_iter().collect();

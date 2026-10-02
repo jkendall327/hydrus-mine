@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use std::sync::Arc;
 use std::time::{Duration, SystemTime, UNIX_EPOCH};
 
-use parking_lot::Mutex;
+use parking_lot::{Mutex, RwLock};
 use reqwest::header::{HeaderMap, HeaderName, HeaderValue};
 use tokio::io::AsyncWriteExt as _;
 use tokio::sync::Semaphore;
@@ -24,7 +24,7 @@ use crate::cookies::{CookieChange, CookieUrl, cookie_header, set_cookie_changes}
 use crate::error::{NetError, StatusOutcome, status_outcome};
 
 /// The client options that shape requests (the reference's defaults).
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct NetOptions {
     /// Seconds to wait for a connection; reading waits six times as long.
     pub network_timeout: u64,
@@ -326,14 +326,14 @@ impl Job {
 /// Makes requests with the client's cookies and headers.
 #[derive(Debug)]
 pub struct NetEngine {
-    client: reqwest::Client,
+    client: RwLock<reqwest::Client>,
     store: Arc<Store>,
-    options: NetOptions,
-    slots: Arc<Semaphore>,
+    options: RwLock<NetOptions>,
+    slots: RwLock<Arc<Semaphore>>,
     domain_slots: Mutex<std::collections::HashMap<String, Arc<Semaphore>>>,
     /// The bandwidth rules and usage, and when the usage was last saved.
     bandwidth: Mutex<(Manager, i64)>,
-    bandwidth_settings: BandwidthSettings,
+    bandwidth_settings: RwLock<BandwidthSettings>,
     /// When each domain last had serious errors (`DomainOK`).
     domain_errors: Mutex<std::collections::HashMap<String, Vec<i64>>>,
     /// When the sleep check last ran, and (after a wake) when requests may
@@ -402,6 +402,39 @@ fn now() -> i64 {
         .map_or(0, |d| d.as_secs() as i64)
 }
 
+/// The HTTP client for these options: its timeouts, HTTPS checks and
+/// proxies.
+fn http_client(options: &NetOptions) -> Result<reqwest::Client, NetError> {
+    let failed =
+        |e: reqwest::Error| NetError::Network(format!("could not start the HTTP client: {e}"));
+    let mut builder = reqwest::Client::builder()
+        .redirect(reqwest::redirect::Policy::none())
+        .connect_timeout(Duration::from_secs(options.network_timeout))
+        .read_timeout(Duration::from_secs(options.network_timeout * 6))
+        .tls_danger_accept_invalid_certs(!options.verify_https);
+    // (the hosts that skip the proxies only apply when there is one, as
+    // in the reference)
+    let no_proxy = options
+        .no_proxy
+        .as_deref()
+        .and_then(reqwest::NoProxy::from_string);
+    if let Some(proxy) = &options.http_proxy {
+        builder = builder.proxy(
+            reqwest::Proxy::http(proxy)
+                .map_err(failed)?
+                .no_proxy(no_proxy.clone()),
+        );
+    }
+    if let Some(proxy) = &options.https_proxy {
+        builder = builder.proxy(
+            reqwest::Proxy::https(proxy)
+                .map_err(failed)?
+                .no_proxy(no_proxy),
+        );
+    }
+    builder.build().map_err(failed)
+}
+
 fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
     headers.retain(|(n, _)| !n.eq_ignore_ascii_case(name));
     headers.push((name.to_owned(), value));
@@ -409,34 +442,7 @@ fn set_header(headers: &mut Vec<(String, String)>, name: &str, value: String) {
 
 impl NetEngine {
     pub fn new(store: Arc<Store>, options: NetOptions) -> Result<Self, NetError> {
-        let failed =
-            |e: reqwest::Error| NetError::Network(format!("could not start the HTTP client: {e}"));
-        let mut builder = reqwest::Client::builder()
-            .redirect(reqwest::redirect::Policy::none())
-            .connect_timeout(Duration::from_secs(options.network_timeout))
-            .read_timeout(Duration::from_secs(options.network_timeout * 6))
-            .tls_danger_accept_invalid_certs(!options.verify_https);
-        // (the hosts that skip the proxies only apply when there is one, as
-        // in the reference)
-        let no_proxy = options
-            .no_proxy
-            .as_deref()
-            .and_then(reqwest::NoProxy::from_string);
-        if let Some(proxy) = &options.http_proxy {
-            builder = builder.proxy(
-                reqwest::Proxy::http(proxy)
-                    .map_err(failed)?
-                    .no_proxy(no_proxy.clone()),
-            );
-        }
-        if let Some(proxy) = &options.https_proxy {
-            builder = builder.proxy(
-                reqwest::Proxy::https(proxy)
-                    .map_err(failed)?
-                    .no_proxy(no_proxy),
-            );
-        }
-        let client = builder.build().map_err(failed)?;
+        let client = http_client(&options)?;
         let now = now();
         let (bandwidth_settings, usage) = store
             .read(|conn| {
@@ -449,18 +455,77 @@ impl NetEngine {
         let mut manager = Manager::new(bandwidth_settings.rules.clone());
         manager.set_trackers(usage);
         Ok(Self {
-            client,
+            client: RwLock::new(client),
             store,
-            slots: Arc::new(Semaphore::new(options.max_jobs.max(1))),
+            slots: RwLock::new(Arc::new(Semaphore::new(options.max_jobs.max(1)))),
             domain_slots: Mutex::default(),
             bandwidth: Mutex::new((manager, now)),
-            bandwidth_settings,
+            bandwidth_settings: RwLock::new(bandwidth_settings),
             domain_errors: Mutex::default(),
             wake: Mutex::default(),
             started: now,
             session: Mutex::new(Tracker::new(now)),
-            options,
+            options: RwLock::new(options),
         })
+    }
+
+    /// Use these options from now on, as the reference reads its options
+    /// as it goes: requests made from now are made with them (a request
+    /// already going keeps its slot and connection).
+    pub fn set_options(&self, options: NetOptions) -> Result<(), NetError> {
+        let old = self.options();
+        if old == options {
+            return Ok(());
+        }
+        let connection = |o: &NetOptions| {
+            (
+                o.network_timeout,
+                o.verify_https,
+                o.http_proxy.clone(),
+                o.https_proxy.clone(),
+                o.no_proxy.clone(),
+            )
+        };
+        if connection(&old) != connection(&options) {
+            *self.client.write() = http_client(&options)?;
+        }
+        if old.max_jobs != options.max_jobs {
+            *self.slots.write() = Arc::new(Semaphore::new(options.max_jobs.max(1)));
+        }
+        if old.max_jobs_per_domain != options.max_jobs_per_domain {
+            self.domain_slots.lock().clear();
+        }
+        *self.options.write() = options;
+        Ok(())
+    }
+
+    /// Pick up the store's network options and bandwidth rules if they
+    /// have changed (the options window, say, changed them); whether
+    /// they had.
+    pub fn reload_settings(&self) -> Result<bool, NetError> {
+        let (network, bandwidth) = self
+            .store
+            .read(|conn| {
+                Ok((
+                    hydrus_store::settings::get::<hydrus_store::network::NetworkSettings>(conn)?,
+                    hydrus_store::settings::get::<BandwidthSettings>(conn)?,
+                ))
+            })
+            .map_err(|e| NetError::Io(e.to_string()))?;
+        let mut options = NetOptions::from_settings(&network);
+        // (whether bandwidth is obeyed isn't an option the store keeps)
+        options.obey_bandwidth = self.options.read().obey_bandwidth;
+        let mut changed = options != self.options();
+        self.set_options(options)?;
+        if bandwidth != *self.bandwidth_settings.read() {
+            changed = true;
+            self.bandwidth
+                .lock()
+                .0
+                .set_all_rules(bandwidth.rules.clone());
+            *self.bandwidth_settings.write() = bandwidth;
+        }
+        Ok(changed)
     }
 
     /// When it started, the data it has read since, and in the last second
@@ -489,7 +554,7 @@ impl NetEngine {
         let mut wake = self.wake.lock();
         let (last, awake_at) = &mut *wake;
         if last.is_some_and(|t| now - t > 60_000) {
-            let delay = i64::try_from(self.options.wake_delay).unwrap_or(i64::MAX);
+            let delay = i64::try_from(self.options.read().wake_delay).unwrap_or(i64::MAX);
             *awake_at = Some(now.saturating_add(delay.saturating_mul(1000)));
             tracing::info!("the computer seems to have just woken up; requests wait {delay} s");
         } else if awake_at.is_some_and(|t| now >= t) {
@@ -505,14 +570,14 @@ impl NetEngine {
     /// Whether requests to `url`'s domain may go (`DomainOK`): not if it or
     /// a parent domain has had too many serious errors recently.
     pub fn domain_ok(&self, url: &str) -> bool {
-        let number = self.options.domain_error_number;
+        let number = self.options.read().domain_error_number;
         if number == 0 {
             return true;
         }
         let Ok(domain) = hydrus_core::url::url_domain(url) else {
             return true;
         };
-        let cutoff = now() - self.options.domain_error_window;
+        let cutoff = now() - self.options.read().domain_error_window;
         let mut errors = self.domain_errors.lock();
         let mut ok = true;
         for domain in psl::all_applicable_domains(&domain) {
@@ -549,8 +614,8 @@ impl NetEngine {
         Ok(())
     }
 
-    pub fn bandwidth_settings(&self) -> &BandwidthSettings {
-        &self.bandwidth_settings
+    pub fn bandwidth_settings(&self) -> BandwidthSettings {
+        self.bandwidth_settings.read().clone()
     }
 
     /// The network contexts a request to `url` counts against: everything,
@@ -571,7 +636,7 @@ impl NetEngine {
     /// rules over `threshold` seconds or less (a subscription asks before
     /// working on a query).
     pub fn can_do_work(&self, contexts: &[NetworkContext], threshold: u64) -> bool {
-        !self.options.obey_bandwidth
+        !self.options.read().obey_bandwidth
             || self
                 .bandwidth
                 .lock()
@@ -581,7 +646,7 @@ impl NetEngine {
 
     /// Seconds until `contexts`' rules all have room again.
     pub fn waiting_estimate(&self, contexts: &[NetworkContext]) -> u64 {
-        if !self.options.obey_bandwidth {
+        if !self.options.read().obey_bandwidth {
             return 0;
         }
         self.bandwidth
@@ -732,11 +797,13 @@ impl NetEngine {
         kind: GalleryTokenKind,
         job: &Job,
     ) -> Result<(), NetError> {
-        let s = &self.bandwidth_settings;
-        let delay = match kind {
-            GalleryTokenKind::DownloadPage => s.gallery_page_wait_pages,
-            GalleryTokenKind::Subscription => s.gallery_page_wait_subscriptions,
-            GalleryTokenKind::Watcher => s.watcher_page_wait,
+        let delay = {
+            let s = self.bandwidth_settings.read();
+            match kind {
+                GalleryTokenKind::DownloadPage => s.gallery_page_wait_pages,
+                GalleryTokenKind::Subscription => s.gallery_page_wait_subscriptions,
+                GalleryTokenKind::Watcher => s.watcher_page_wait,
+            }
         };
         loop {
             let now = now();
@@ -763,8 +830,8 @@ impl NetEngine {
         }
     }
 
-    pub fn options(&self) -> &NetOptions {
-        &self.options
+    pub fn options(&self) -> NetOptions {
+        self.options.read().clone()
     }
 
     /// Make a request, retrying as the reference does, and report progress
@@ -853,7 +920,7 @@ impl NetEngine {
             job.set_status("looks like computer just woke up, waiting a bit");
             job.sleep(5.0).await?;
         }
-        if self.options.obey_bandwidth {
+        if self.options.read().obey_bandwidth {
             let override_at = request
                 .override_bandwidth_after
                 .or(scope.override_after)
@@ -871,11 +938,11 @@ impl NetEngine {
         }
         let gallery_token = scope
             .gallery_token
-            .filter(|_| request.gallery_page && self.options.obey_bandwidth);
+            .filter(|_| request.gallery_page && self.options.read().obey_bandwidth);
 
         job.set_status("waiting for a slot");
         let _slot = tokio::select! {
-            slot = Arc::clone(&self.slots).acquire_owned() => slot.expect("never closed"),
+            slot = Arc::clone(&self.slots.read()).acquire_owned() => slot.expect("never closed"),
             () = job.cancel.cancelled() => return Err(NetError::Cancelled),
         };
         let domain_slots = Arc::clone(
@@ -883,7 +950,9 @@ impl NetEngine {
                 .lock()
                 .entry(registrable.clone())
                 .or_insert_with(|| {
-                    Arc::new(Semaphore::new(self.options.max_jobs_per_domain.max(1)))
+                    Arc::new(Semaphore::new(
+                        self.options.read().max_jobs_per_domain.max(1),
+                    ))
                 }),
         );
         let _domain_slot = tokio::select! {
@@ -897,7 +966,7 @@ impl NetEngine {
         let mut connection_attempt: u32 = 1;
         let mut request_attempt: u32 = 1;
         let max_requests = match request.method {
-            Method::Get => self.options.max_get_attempts,
+            Method::Get => self.options.read().max_get_attempts,
             Method::Post => 1,
         };
         loop {
@@ -925,7 +994,7 @@ impl NetEngine {
                         || {
                             let rating = f64::from(connection_attempt + request_attempt - 1);
                             1.25_f64.powf(rating)
-                                * self.options.serverside_bandwidth_wait_time as f64
+                                * self.options.read().serverside_bandwidth_wait_time as f64
                         },
                         |s| s as f64,
                     );
@@ -969,7 +1038,8 @@ impl NetEngine {
                 Failure::Connect(fail_text) => {
                     connection_attempt += 1;
                     request_attempt = 1;
-                    if request.one_shot || connection_attempt > self.options.max_connection_attempts
+                    if request.one_shot
+                        || connection_attempt > self.options.read().max_connection_attempts
                     {
                         return Err(NetError::Connection(fail_text));
                     }
@@ -986,7 +1056,8 @@ impl NetEngine {
         connection_attempt: u32,
         status: &str,
     ) -> Result<(), NetError> {
-        let seconds = u64::from(connection_attempt - 1) * self.options.connection_error_wait_time;
+        let seconds =
+            u64::from(connection_attempt - 1) * self.options.read().connection_error_wait_time;
         if seconds > 0 {
             job.set_status(format!("{status} - retrying in {seconds} seconds"));
         }
@@ -1125,6 +1196,8 @@ impl NetEngine {
             }
             let mut builder = self
                 .client
+                .read()
+                .clone()
                 .request(
                     match method {
                         Method::Get => reqwest::Method::GET,
@@ -1302,7 +1375,7 @@ impl NetEngine {
     /// Count `bytes` against the request's contexts, and wait while a speed
     /// limit is used up.
     async fn report_data(&self, a: &Attempt<'_>, bytes: u64) -> Result<(), NetError> {
-        if !self.options.obey_bandwidth {
+        if !self.options.read().obey_bandwidth {
             return Ok(());
         }
         let mut last_failed = None;
@@ -1491,4 +1564,94 @@ fn parse_last_modified(value: &str) -> Option<i64> {
     let when = httpdate::parse_http_date(value.trim()).ok()?;
     let when = when.duration_since(UNIX_EPOCH).ok()?.as_secs() as i64;
     (when > 86400 * 7).then_some(when)
+}
+
+#[cfg(test)]
+mod reload_tests {
+    use super::*;
+    use hydrus_store::network::NetworkSettings;
+
+    fn engine() -> (tempfile::TempDir, Arc<Store>, NetEngine) {
+        let dir = tempfile::tempdir().unwrap();
+        let store = Store::open(dir.path()).unwrap();
+        let settings: NetworkSettings = store.read(hydrus_store::settings::get).unwrap();
+        let mut options = NetOptions::from_settings(&settings);
+        options.obey_bandwidth = false;
+        let engine = NetEngine::new(Arc::clone(&store), options).unwrap();
+        (dir, store, engine)
+    }
+
+    #[test]
+    fn changed_options_are_picked_up() {
+        let (_dir, store, engine) = engine();
+        assert!(!engine.reload_settings().unwrap(), "nothing changed");
+        assert!(
+            engine
+                .bandwidth
+                .lock()
+                .0
+                .all_rules()
+                .iter()
+                .any(|(_, rules)| !rules.is_empty()),
+            "(hydrus's default rules, to begin with)"
+        );
+        let slots = Arc::clone(&engine.slots.read());
+        engine
+            .domain_slots
+            .lock()
+            .insert("example.com".into(), Arc::new(Semaphore::new(3)));
+        store
+            .write(|ctx| {
+                let mut network: NetworkSettings = hydrus_store::settings::get(ctx.conn())?;
+                network.max_jobs = 2;
+                network.max_jobs_per_domain = 1;
+                network.max_connection_attempts = 9;
+                network.http_proxy = Some("http://127.0.0.1:1".into());
+                hydrus_store::settings::set(ctx.conn(), &network)?;
+                let mut bandwidth: BandwidthSettings = hydrus_store::settings::get(ctx.conn())?;
+                bandwidth.gallery_page_wait_pages = 61;
+                bandwidth.rules = vec![];
+                hydrus_store::settings::set(ctx.conn(), &bandwidth)
+            })
+            .unwrap();
+        assert!(engine.reload_settings().unwrap());
+        let options = engine.options();
+        assert_eq!(
+            (
+                options.max_jobs,
+                options.max_jobs_per_domain,
+                options.max_connection_attempts
+            ),
+            (2, 1, 9)
+        );
+        assert_eq!(options.http_proxy.as_deref(), Some("http://127.0.0.1:1"));
+        // (bandwidth is still not obeyed: that isn't the store's to say)
+        assert!(!options.obey_bandwidth);
+        // new slots for the new number; the domains' made anew as needed
+        assert!(!Arc::ptr_eq(&slots, &engine.slots.read()));
+        assert_eq!(engine.slots.read().available_permits(), 2);
+        assert!(engine.domain_slots.lock().is_empty());
+        assert_eq!(engine.bandwidth_settings().gallery_page_wait_pages, 61);
+        assert!(
+            engine
+                .bandwidth
+                .lock()
+                .0
+                .all_rules()
+                .iter()
+                .all(|(_, rules)| rules.is_empty()),
+            "the rules are the store's"
+        );
+        assert!(!engine.reload_settings().unwrap(), "and not again");
+    }
+
+    #[test]
+    fn options_unchanged_keep_their_slots() {
+        let (_dir, _store, engine) = engine();
+        let slots = Arc::clone(&engine.slots.read());
+        let mut options = engine.options();
+        options.max_get_attempts += 1;
+        engine.set_options(options).unwrap();
+        assert!(Arc::ptr_eq(&slots, &engine.slots.read()));
+    }
 }

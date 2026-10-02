@@ -448,3 +448,88 @@ fn a_download_is_published_as_it_goes_and_can_be_cancelled() {
     exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
     assert_eq!(live_of(queue), None);
 }
+
+#[test]
+fn changed_network_options_apply_without_a_restart() {
+    use hydrus_store::queues::{self, QueueKind};
+
+    let (_parent, dir) = store();
+    hydrus_store::Store::open(&dir)
+        .unwrap()
+        .write(|ctx| settings::set(ctx.conn(), &settings::Pauses::default()))
+        .unwrap();
+    // (the daemon's log, to see it notice)
+    let mut child = Command::new(HYDRUS)
+        .arg("serve")
+        .arg(&dir)
+        .args(["--port", "0", "--attached"])
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .spawn()
+        .unwrap();
+    let output = child.stdout.take().unwrap();
+    let mut serving = Serving(child);
+    let (said, lines) = mpsc::channel();
+    std::thread::spawn(move || {
+        for line in BufReader::new(output).lines().map_while(Result::ok) {
+            let _ = said.send(line);
+        }
+    });
+    let wait_for = |text: &str| loop {
+        let line = lines
+            .recv_timeout(Duration::from_secs(60))
+            .unwrap_or_else(|_| panic!("never said {text:?}"));
+        if line.contains(text) {
+            break;
+        }
+    };
+    wait_for("Client API at");
+    // a proxy, which notes what it is asked for
+    let proxy = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let proxy_url = format!("http://127.0.0.1:{}", proxy.local_addr().unwrap().port());
+    let (asked, asks) = mpsc::channel();
+    std::thread::spawn(move || {
+        use std::io::{Read as _, Write as _};
+        for mut stream in proxy.incoming().map_while(Result::ok) {
+            let mut request = [0; 4096];
+            let read = stream.read(&mut request).unwrap_or(0);
+            let first = String::from_utf8_lossy(&request[..read])
+                .lines()
+                .next()
+                .unwrap_or_default()
+                .to_owned();
+            let _ = asked.send(first);
+            let _ = stream.write_all(b"HTTP/1.1 404 Not Found\r\nContent-Length: 0\r\n\r\n");
+        }
+    });
+    // set while the daemon runs: it says it noticed
+    let store = hydrus_store::Store::open(&dir).unwrap();
+    store
+        .write(move |ctx| {
+            let mut network: hydrus_store::network::NetworkSettings = settings::get(ctx.conn())?;
+            network.http_proxy = Some(proxy_url);
+            settings::set(ctx.conn(), &network)
+        })
+        .unwrap();
+    wait_for("the network options changed");
+    // and a file on a site that isn't there is asked of the proxy
+    store
+        .write(|ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let queue =
+                queues::create_queue(conn, QueueKind::Urls, "url import", None, &options, 0)?;
+            queues::request_urls(
+                conn,
+                queue,
+                &["http://hydrus-test.invalid/file.png".to_owned()],
+            )
+        })
+        .unwrap();
+    let first = asks
+        .recv_timeout(Duration::from_secs(30))
+        .expect("the proxy is asked");
+    assert_eq!(first, "GET http://hydrus-test.invalid/file.png HTTP/1.1");
+    drop(serving.0.stdin.take());
+    exited_within(&mut serving.0, Duration::from_secs(30)).expect("stopped");
+}

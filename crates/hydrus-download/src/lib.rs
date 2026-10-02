@@ -64,7 +64,7 @@ pub struct Downloader {
     net: Arc<NetEngine>,
     importer: FileImporter,
     definitions: RwLock<Arc<Downloaders>>,
-    network: hydrus_store::network::NetworkSettings,
+    network: RwLock<hydrus_store::network::NetworkSettings>,
 }
 
 impl Downloader {
@@ -84,13 +84,27 @@ impl Downloader {
             net,
             importer,
             definitions: RwLock::new(Arc::new(definitions)),
-            network,
+            network: RwLock::new(network),
         })
     }
 
     /// The client's network and downloader options.
-    pub fn network_settings(&self) -> &hydrus_store::network::NetworkSettings {
-        &self.network
+    pub fn network_settings(&self) -> hydrus_store::network::NetworkSettings {
+        self.network.read().clone()
+    }
+
+    /// Pick up the store's network and downloader options, and the network
+    /// engine's, if they have changed (as the reference reads its options
+    /// as it goes); whether they had.
+    pub fn reload_settings(&self) -> Result<bool, WorkError> {
+        let network: hydrus_store::network::NetworkSettings =
+            self.store.read(hydrus_store::settings::get)?;
+        let mut changed = self.net.reload_settings().map_err(WorkError::Network)?;
+        if network != *self.network.read() {
+            changed = true;
+            *self.network.write() = network;
+        }
+        Ok(changed)
     }
 
     pub fn store(&self) -> &Arc<Store> {

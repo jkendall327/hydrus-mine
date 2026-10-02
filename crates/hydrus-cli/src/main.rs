@@ -871,6 +871,23 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                 }
             })
         });
+        // the network and downloader options, as they are changed (by the
+        // client's options window, say): the reference reads its options as
+        // it goes, so changes apply without a restart
+        if let Some(downloads) = state.downloads.clone() {
+            tokio::spawn(async move {
+                loop {
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    match downloads.reload_settings() {
+                        Ok(true) => tracing::info!("the network options changed"),
+                        Ok(false) => {}
+                        Err(e) => {
+                            tracing::error!(error = %e, "reading the network options failed");
+                        }
+                    }
+                }
+            });
+        }
         // queues made by other processes that don't nudge (older ones)
         if let Some(downloads) = state.downloads.clone() {
             tokio::spawn(async move {

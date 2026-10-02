@@ -234,9 +234,8 @@ search.
   those on ten pages; the others, and pages with none, aren't there). It
   opens on its first page, rather than "gui" or the page last open; it has
   no search box; options' tooltips aren't shown; and a box's title is a
-  heading over its options rather than a frame around them. Options the
-  daemon reads only as it starts (connection, downloading, maintenance)
-  aren't in it yet.
+  heading over its options rather than a frame around them. The
+  connection, downloading and maintenance pages aren't in it yet.
 
 - **The page chooser takes the top row's digits too.** The reference takes
   only the number pad's; Slint doesn't tell them apart.
@@ -408,6 +407,11 @@ deletes its files from the client, migrated from the reference's database.
   speaks HTTP/1.1 and asks for what it has installed.
 - **Redirect targets are encoded by the URL parser** rather than by
   `requests`' `requote_uri`; both percent-encode what a URL can't contain.
+- **Changed network options apply within a second.** The reference reads
+  its options as it goes; the daemon reads the store's network and
+  downloader options and bandwidth rules again each second, and uses them
+  from then on (new requests use new timeouts, proxies and HTTPS checks,
+  and the new job limits; a request already going keeps its slot).
 
 ## Downloading (`hydrus-download`)
 
