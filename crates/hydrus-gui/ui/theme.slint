@@ -21,6 +21,8 @@ export global Theme {
     out property <brush> good: self.dark ? #7ed87e : #007000;
     out property <brush> bad: self.dark ? #ff8080 : #b00000;
     out property <brush> text: Palette.foreground;
+    // text of a control not in use
+    out property <brush> muted: self.dark ? #ffffff80 : #00000080;
     // behind a dialog
     out property <brush> shade: #00000080;
 }

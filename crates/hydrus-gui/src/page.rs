@@ -299,6 +299,27 @@ impl SearchPage {
         page
     }
 
+    /// The page's search as "save this search" saves it
+    /// (`_SaveFavouriteSearch`): "new favourite search", in no folder, with
+    /// the page's search, whether it searches as it changes, its sort and
+    /// its collect; none for a page without a search.
+    pub fn favourite_to_save(&self) -> Option<hydrus_core::pages::FavouriteSearch> {
+        if self.note.is_some() {
+            return None;
+        }
+        Some(hydrus_core::pages::FavouriteSearch {
+            folder: None,
+            name: "new favourite search".into(),
+            search: FileSearchContext {
+                predicates: self.predicates.clone(),
+                ..self.context.clone()
+            },
+            synchronised: self.synchronised,
+            sort: Some(self.sort.clone()),
+            collect: Some(self.collect.clone()),
+        })
+    }
+
     /// Load a favourite search, as the reference's favourites menu does:
     /// its domains, tag service and predicates, whether the page searches
     /// as they change, and its sort; it searches if synchronised. A page

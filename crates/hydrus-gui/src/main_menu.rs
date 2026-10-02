@@ -157,6 +157,9 @@ pub enum Command {
     ImportFiles,
     /// Search a file or tag domain (a search page's domain buttons).
     SearchDomain(crate::domains::Choice),
+    /// Manage, save or load a favourite search (a search page's star
+    /// button).
+    Favourite(crate::favourites::Action),
 }
 
 /// A repository with content to upload (the pending menu).

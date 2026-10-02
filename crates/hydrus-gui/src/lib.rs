@@ -31,6 +31,7 @@ pub mod domains;
 mod drops;
 pub mod duplicate_filter;
 pub mod favourites;
+pub mod favourites_window;
 mod filter_window;
 mod gallery;
 mod grid;
@@ -167,6 +168,8 @@ pub struct Bound {
     pub review_imports: ReviewSlot,
     /// The "multiple/deleted locations" list while it is open.
     pub locations: Rc<RefCell<Option<LocationsWindow>>>,
+    /// The favourite searches' dialogs while they are open.
+    pub favourites: favourites_window::Slots,
     /// A system predicate's editor while one is open.
     pub predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>>,
     /// Files dropped on the main window: the "review files to import"
@@ -279,37 +282,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         },
     );
     show_tabs(window, &pages.borrow());
-    // the favourite searches, read once (the reference reads its own
-    // manager, loaded at boot)
-    let favourites: Rc<Vec<hydrus_core::pages::FavouriteSearch>> = Rc::new(
-        current
-            .borrow()
-            .borrow()
-            .store()
-            .read(hydrus_store::settings::get::<hydrus_store::settings::FavouriteSearches>)
-            .map(|f| f.0)
-            .unwrap_or_default(),
-    );
-    let favourite_rows: Vec<FavouriteRow> = favourites::favourite_rows(&favourites)
-        .into_iter()
-        .map(|row| FavouriteRow {
-            label: row.label.into(),
-            depth: i32::try_from(row.depth).unwrap_or(i32::MAX),
-            search: row.search.and_then(|i| i32::try_from(i).ok()).unwrap_or(-1),
-        })
-        .collect();
-    let favourite_rows = ModelRc::new(VecModel::from(favourite_rows));
-    refresh(window, &current.borrow().borrow(), &favourite_rows);
+    refresh(window, &current.borrow().borrow());
 
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
         let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
-        let favourite_rows = favourite_rows.clone();
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
-                refresh(&window, &current.borrow().borrow(), &favourite_rows);
+                refresh(&window, &current.borrow().borrow());
                 if files {
                     rows.reset();
                 }
@@ -404,6 +386,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let review_imports: ReviewSlot = Rc::default();
     // the "multiple/deleted locations" list, from the file domain button
     let locations: Rc<RefCell<Option<LocationsWindow>>> = Rc::default();
+    let favourite_dialogs = favourites_window::Slots::default();
+    // the favourites the star button's menu was made from, to load from
+    let menu_favourites: Rc<RefCell<Vec<hydrus_core::pages::FavouriteSearch>>> = Rc::default();
     // a system predicate's editor, from the search box
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
@@ -594,17 +579,6 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow_mut().enter();
             shown(true);
             open_editor(page());
-        }
-    });
-    window.on_favourite_chosen({
-        let page = page.clone();
-        let shown = shown.clone();
-        let favourites = favourites.clone();
-        move |index| {
-            if let Some(favourite) = usize::try_from(index).ok().and_then(|i| favourites.get(i)) {
-                page().borrow_mut().load_favourite(favourite);
-                shown(true);
-            }
         }
     });
     window.on_move_highlight({
@@ -1073,6 +1047,60 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         }
                     }
                     shown(true);
+                })
+            },
+            favourites_menu: {
+                let page = page.clone();
+                let menu_favourites = menu_favourites.clone();
+                Rc::new(move || {
+                    let page = page();
+                    let page = page.borrow();
+                    if page.note().is_some() {
+                        return Vec::new();
+                    }
+                    // (read as the menu opens, as the reference's manager
+                    // has them now)
+                    let read: Vec<hydrus_core::pages::FavouriteSearch> =
+                        page.store()
+                            .read(
+                                hydrus_store::settings::get::<
+                                    hydrus_store::settings::FavouriteSearches,
+                                >,
+                            )
+                            .map(|f| f.0)
+                            .unwrap_or_default();
+                    let entries = favourites::menu(&read);
+                    *menu_favourites.borrow_mut() = read;
+                    entries
+                })
+            },
+            favourite: {
+                let page = page.clone();
+                let shown = shown.clone();
+                let menu_favourites = menu_favourites.clone();
+                let dialogs = favourite_dialogs.clone();
+                Rc::new(move |action| {
+                    let page = page();
+                    let store = page.borrow().store().clone();
+                    let opened = match action {
+                        favourites::Action::Load(i) => {
+                            if let Some(favourite) = menu_favourites.borrow().get(i) {
+                                page.borrow_mut().load_favourite(favourite);
+                            }
+                            shown(true);
+                            return;
+                        }
+                        favourites::Action::Manage => {
+                            favourites_window::open(&dialogs, &store, None)
+                        }
+                        favourites::Action::Save => {
+                            let to_save = page.borrow().favourite_to_save();
+                            favourites_window::open(&dialogs, &store, to_save)
+                        }
+                    };
+                    if let Err(e) = opened {
+                        eprintln!("could not open the favourite searches: {e}");
+                    }
                 })
             },
         },
@@ -2010,6 +2038,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_page,
         review_imports,
         locations,
+        favourites: favourite_dialogs,
         predicate_editor,
         drop_files: review_files,
         sync,
@@ -3796,7 +3825,7 @@ pub(crate) fn download_line(line: &hydrus_store::live::JobLine) -> DownloadLine 
     }
 }
 
-fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<FavouriteRow>) {
+fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());
@@ -3807,12 +3836,8 @@ fn refresh(window: &MainWindow, page: &SearchPage, favourites: &ModelRc<Favourit
     show_gallery(window, page);
     window.set_watcher_page(page.watchers().is_some());
     show_watchers(window, page);
-    // (only a page with a search can load one)
-    window.set_favourites(if page.note().is_none() {
-        favourites.clone()
-    } else {
-        ModelRc::default()
-    });
+    // (only a page with a search can save or load one)
+    window.set_can_favourite(page.note().is_none());
     window.set_can_filter(page.duplicates().is_some());
     window.set_can_lock_search(page.note().is_none());
     window.set_synchronised(page.synchronised());

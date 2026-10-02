@@ -1,0 +1,376 @@
+// The favourite searches' dialogs (`src/favourites_window.rs` binds them):
+// the reference's "edit favourite searches" (`EditFavouriteSearchesPanel`),
+// a list of them to add to, edit and delete from, and its "edit favourite
+// search" (`EditFavouriteSearchPanel`) for one.
+
+import { Button, CheckBox, LineEdit, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// A row of the list: its folder, name, search, sort and collect.
+export struct FavouriteListRow {
+    cells: [string],
+    selected: bool,
+}
+
+// A yes/no question asked in the window, with its answers.
+component Question {
+    in property <string> text;
+    callback answered(bool);
+    HorizontalLayout {
+        spacing: 6px;
+        Text {
+            horizontal-stretch: 1;
+            vertical-alignment: center;
+            text: root.text;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        Button {
+            text: "yes";
+            clicked => { root.answered(true); }
+        }
+        Button {
+            text: "no";
+            clicked => { root.answered(false); }
+        }
+    }
+}
+
+export component FavouritesWindow inherits Window {
+    title: "edit favourite searches";
+    preferred-width: 980px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <[string]> columns;
+    in property <[length]> widths: [140px, 140px, 360px, 190px, 120px];
+    in property <[FavouriteListRow]> rows;
+    // the column sorted on, and whether ascending
+    in property <int> sort-column;
+    in property <bool> ascending: true;
+    in property <bool> can-edit;
+    in property <bool> can-delete;
+    // a question waiting on an answer
+    in property <string> question;
+    callback header-clicked(int);
+    // (row, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback answered(bool);
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            if (event.text == Key.Delete && root.can-delete) {
+                root.delete();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                VerticalLayout {
+                    padding: 1px;
+                    HorizontalLayout {
+                        height: 24px;
+                        for column[c] in root.columns: Rectangle {
+                            width: root.widths[c];
+                            background: header-touch.has-hover ? Theme.hover : transparent;
+                            Text {
+                                x: 4px;
+                                width: parent.width - 8px;
+                                vertical-alignment: center;
+                                text: column + (c == root.sort-column ? (root.ascending ? " ▲" : " ▼") : "");
+                                overflow: elide;
+                                color: Theme.text;
+                                font-weight: 700;
+                            }
+                            header-touch := TouchArea {
+                                clicked => { root.header-clicked(c); }
+                            }
+                        }
+                        Rectangle { horizontal-stretch: 1; }
+                    }
+                    ScrollView {
+                        min-height: 12 * 22px;
+                        VerticalLayout {
+                            alignment: start;
+                            for row[r] in root.rows: Rectangle {
+                                height: 22px;
+                                background: row.selected ? Theme.highlight : row-touch.has-hover ? Theme.hover : transparent;
+                                HorizontalLayout {
+                                    for cell[c] in row.cells: Text {
+                                        width: root.widths[c];
+                                        vertical-alignment: center;
+                                        text: " " + cell;
+                                        overflow: elide;
+                                        color: row.selected ? Theme.highlight-text : Theme.text;
+                                    }
+                                    Rectangle { horizontal-stretch: 1; }
+                                }
+                                row-touch := TouchArea {
+                                    pointer-event(event) => {
+                                        if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                            root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                                        }
+                                    }
+                                    double-clicked => { root.row-activated(r); }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+                Button {
+                    text: "add";
+                    clicked => { root.add(); }
+                }
+                Button {
+                    text: "edit";
+                    enabled: root.can-edit;
+                    clicked => { root.edit(); }
+                }
+                Button {
+                    text: "delete";
+                    enabled: root.can-delete;
+                    clicked => { root.delete(); }
+                }
+            }
+            if root.question != "": Question {
+                text: root.question;
+                answered(yes) => { root.answered(yes); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}
+
+export component FavouriteEditWindow inherits Window {
+    title: "edit favourite search";
+    min-width: 560px;
+    background: Theme.window;
+    in-out property <string> folder;
+    in-out property <string> name;
+    // the search's domains, as the page's buttons name them
+    in property <string> location-label;
+    in property <string> tags-label;
+    in property <[string]> predicates;
+    in-out property <string> typed;
+    // why what was typed couldn't be added
+    in property <string> error;
+    in property <bool> synchronised;
+    in property <string> sort-label;
+    in property <bool> save-sort;
+    in property <string> collect-label;
+    in property <bool> save-collect;
+    in property <string> question;
+    callback typed-accepted();
+    callback predicate-removed(int);
+    callback flip-synchronised();
+    callback save-sort-ticked(bool);
+    callback save-collect-ticked(bool);
+    callback answered(bool);
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            GridLayout {
+                spacing: 6px;
+                Row {
+                    Text {
+                        text: "folder (blank for none, \"/\" for nested): ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    LineEdit {
+                        text <=> root.folder;
+                    }
+                }
+                Row {
+                    Text {
+                        text: "name: ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    LineEdit {
+                        text <=> root.name;
+                    }
+                }
+            }
+            // the search: what is typed adds to it, a double-click removes
+            // from it
+            LineEdit {
+                placeholder-text: "search";
+                text <=> root.typed;
+                accepted => { root.typed-accepted(); }
+            }
+            if root.error != "": Text {
+                text: root.error;
+                wrap: word-wrap;
+                color: Theme.error;
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                Button {
+                    horizontal-stretch: 1;
+                    text: root.synchronised ? "searching immediately" : "search paused";
+                    clicked => { root.flip-synchronised(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                Button {
+                    horizontal-stretch: 1;
+                    enabled: false;
+                    text: root.location-label;
+                }
+                Button {
+                    horizontal-stretch: 1;
+                    enabled: false;
+                    text: root.tags-label;
+                }
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
+                ScrollView {
+                    x: 3px;
+                    y: 3px;
+                    width: parent.width - 6px;
+                    height: parent.height - 6px;
+                    VerticalLayout {
+                        alignment: start;
+                        for predicate[i] in root.predicates: Rectangle {
+                            height: 22px;
+                            background: remove-touch.has-hover ? Theme.hover : transparent;
+                            Text {
+                                x: 4px;
+                                width: parent.width - 8px;
+                                vertical-alignment: center;
+                                text: predicate;
+                                overflow: elide;
+                                color: Theme.text;
+                            }
+                            remove-touch := TouchArea {
+                                double-clicked => { root.predicate-removed(i); }
+                            }
+                        }
+                    }
+                }
+            }
+            GridLayout {
+                spacing: 6px;
+                Row {
+                    Text {
+                        width: 100px;
+                        text: "save sort: ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    CheckBox {
+                        horizontal-stretch: 1;
+                        checked: root.save-sort;
+                        toggled => { root.save-sort-ticked(self.checked); }
+                    }
+                }
+                Row {
+                    Text {
+                        width: 100px;
+                        text: "sort: ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    Text {
+                        horizontal-stretch: 1;
+                        text: root.sort-label;
+                        vertical-alignment: center;
+                        color: root.save-sort ? Theme.text : Theme.muted;
+                    }
+                }
+                Row {
+                    Text {
+                        width: 100px;
+                        text: "save collect: ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    CheckBox {
+                        horizontal-stretch: 1;
+                        checked: root.save-collect;
+                        toggled => { root.save-collect-ticked(self.checked); }
+                    }
+                }
+                Row {
+                    Text {
+                        width: 100px;
+                        text: "collect: ";
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    Text {
+                        horizontal-stretch: 1;
+                        text: root.collect-label;
+                        vertical-alignment: center;
+                        color: root.save-collect ? Theme.text : Theme.muted;
+                    }
+                }
+            }
+            if root.question != "": Question {
+                text: root.question;
+                answered(yes) => { root.answered(yes); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,1095 @@
+{
+ "added": [
+  {
+   "list": [
+    [
+     "",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by time: import time, newest first",
+     "creator"
+    ],
+    [
+     "",
+     "Banana",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by tags: series-creator, a-z",
+     "series, creator, favourites"
+    ],
+    [
+     "",
+     "new favourite search",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "zebra",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "/art/",
+     "colour",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "paintings",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by rating: stars, descending",
+     "stars"
+    ],
+    [
+     "art",
+     "Zed",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by dimensions: width, slimmest first",
+     "no collections"
+    ],
+    [
+     "art/sketches",
+     "pencil",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art/sketches/old",
+     "charcoal",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "beta",
+     "a",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "Beta",
+     "b",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "example search",
+     "inbox filter",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ]
+   ],
+   "started": {
+    "folder": "",
+    "name": "new favourite search",
+    "save_collect": true,
+    "save_sort": true,
+    "value": {
+     "collect": "no collections",
+     "folder": null,
+     "location": "my files",
+     "name": "new favourite search",
+     "predicates": [
+      "system:inbox",
+      "blue eyes",
+      "series:metroid"
+     ],
+     "sort": "sort by file: filesize, smallest first",
+     "synchronised": true
+    }
+   },
+   "what": "saved"
+  },
+  {
+   "list": [
+    [
+     "",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by time: import time, newest first",
+     "creator"
+    ],
+    [
+     "",
+     "Banana",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by tags: series-creator, a-z",
+     "series, creator, favourites"
+    ],
+    [
+     "",
+     "new favourite search",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (1)",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "zebra",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "/art/",
+     "colour",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "paintings",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by rating: stars, descending",
+     "stars"
+    ],
+    [
+     "art",
+     "Zed",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by dimensions: width, slimmest first",
+     "no collections"
+    ],
+    [
+     "art/sketches",
+     "pencil",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art/sketches/old",
+     "charcoal",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "beta",
+     "a",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "Beta",
+     "b",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "example search",
+     "inbox filter",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ]
+   ],
+   "started": {
+    "folder": "",
+    "name": "new favourite search (1)",
+    "save_collect": true,
+    "save_sort": true,
+    "value": {
+     "collect": "no collections",
+     "folder": null,
+     "location": "my files",
+     "name": "new favourite search (1)",
+     "predicates": [
+      "system:inbox",
+      "blue eyes",
+      "series:metroid"
+     ],
+     "sort": "sort by file: filesize, smallest first",
+     "synchronised": true
+    }
+   },
+   "what": "saved"
+  },
+  {
+   "list": [
+    [
+     "",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by time: import time, newest first",
+     "creator"
+    ],
+    [
+     "",
+     "Banana",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by tags: series-creator, a-z",
+     "series, creator, favourites"
+    ],
+    [
+     "",
+     "new favourite search",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (1)",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (2)",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "zebra",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "/art/",
+     "colour",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "paintings",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by rating: stars, descending",
+     "stars"
+    ],
+    [
+     "art",
+     "Zed",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by dimensions: width, slimmest first",
+     "no collections"
+    ],
+    [
+     "art/sketches",
+     "pencil",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art/sketches/old",
+     "charcoal",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "beta",
+     "a",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "Beta",
+     "b",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "example search",
+     "inbox filter",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ]
+   ],
+   "started": {
+    "folder": "",
+    "name": "new favourite search (2)",
+    "save_collect": false,
+    "save_sort": false,
+    "value": {
+     "collect": null,
+     "folder": null,
+     "location": "my files",
+     "name": "new favourite search (2)",
+     "predicates": [],
+     "sort": null,
+     "synchronised": true
+    }
+   },
+   "what": "add"
+  },
+  {
+   "list": [
+    [
+     "",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by time: import time, newest first",
+     "creator"
+    ],
+    [
+     "",
+     "Banana",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by tags: series-creator, a-z",
+     "series, creator, favourites"
+    ],
+    [
+     "",
+     "new favourite search",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (1)",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (2)",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "new favourite search (3)",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "zebra",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "/art/",
+     "colour",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "paintings",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by rating: stars, descending",
+     "stars"
+    ],
+    [
+     "art",
+     "Zed",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by dimensions: width, slimmest first",
+     "no collections"
+    ],
+    [
+     "art/sketches",
+     "pencil",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art/sketches/old",
+     "charcoal",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "beta",
+     "a",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "Beta",
+     "b",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "example search",
+     "inbox filter",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ]
+   ],
+   "started": {
+    "folder": "",
+    "name": "new favourite search (3)",
+    "save_collect": false,
+    "save_sort": false,
+    "value": {
+     "collect": null,
+     "folder": null,
+     "location": "my files",
+     "name": "new favourite search (3)",
+     "predicates": [],
+     "sort": null,
+     "synchronised": true
+    }
+   },
+   "what": "add"
+  },
+  {
+   "list": [
+    [
+     "",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by time: import time, newest first",
+     "creator"
+    ],
+    [
+     "",
+     "Banana",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by tags: series-creator, a-z",
+     "series, creator, favourites"
+    ],
+    [
+     "",
+     "new favourite search",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (1)",
+     "system:inbox, blue eyes, series:metroid",
+     "sort by file: filesize, smallest first",
+     "no collections"
+    ],
+    [
+     "",
+     "new favourite search (2)",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "new favourite search (3)",
+     "",
+     "",
+     ""
+    ],
+    [
+     "",
+     "paintings (1)",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "",
+     "zebra",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "/art/",
+     "colour",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "apple",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art",
+     "paintings",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by rating: stars, descending",
+     "stars"
+    ],
+    [
+     "art",
+     "Zed",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "sort by dimensions: width, slimmest first",
+     "no collections"
+    ],
+    [
+     "art/sketches",
+     "pencil",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "art/sketches/old",
+     "charcoal",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "beta",
+     "a",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "Beta",
+     "b",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ],
+    [
+     "example search",
+     "inbox filter",
+     "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+     "",
+     ""
+    ]
+   ],
+   "started": {
+    "folder": "",
+    "name": "paintings (1)",
+    "save_collect": false,
+    "save_sort": false,
+    "value": {
+     "collect": null,
+     "folder": null,
+     "location": "my files",
+     "name": "paintings (1)",
+     "predicates": [
+      "system:inbox",
+      "system:limit is 256",
+      "system:filetype is animation, image, video"
+     ],
+     "sort": null,
+     "synchronised": true
+    }
+   },
+   "what": "paintings"
+  }
+ ],
+ "edits": [
+  {
+   "answer": false,
+   "asked": [
+    "The search \"paintings\" under folder \"art\" already exists! Do you want to overwrite it?"
+   ],
+   "ok": false,
+   "original": [
+    "art",
+    "pencil"
+   ],
+   "renamed": [
+    "art",
+    "paintings"
+   ]
+  },
+  {
+   "answer": true,
+   "asked": [
+    "The search \"paintings\" under folder \"art\" already exists! Do you want to overwrite it?"
+   ],
+   "ok": true,
+   "original": [
+    "art",
+    "pencil"
+   ],
+   "renamed": [
+    "art",
+    "paintings"
+   ]
+  },
+  {
+   "answer": false,
+   "asked": [
+    "The search \"zebra\" already exists! Do you want to overwrite it?"
+   ],
+   "ok": false,
+   "original": [
+    "art",
+    "pencil"
+   ],
+   "renamed": [
+    "",
+    "zebra"
+   ]
+  },
+  {
+   "answer": false,
+   "asked": [],
+   "ok": true,
+   "original": [
+    "art",
+    "pencil"
+   ],
+   "renamed": [
+    "art",
+    "new name"
+   ]
+  },
+  {
+   "answer": false,
+   "asked": [],
+   "ok": true,
+   "original": [
+    "art",
+    "paintings"
+   ],
+   "renamed": [
+    "art",
+    "paintings"
+   ]
+  },
+  {
+   "answer": false,
+   "asked": [],
+   "ok": true,
+   "original": [
+    null,
+    "zebra"
+   ],
+   "renamed": [
+    "Art",
+    "paintings"
+   ]
+  }
+ ],
+ "list": [
+  [
+   "",
+   "apple",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "sort by time: import time, newest first",
+   "creator"
+  ],
+  [
+   "",
+   "Banana",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "sort by tags: series-creator, a-z",
+   "series, creator, favourites"
+  ],
+  [
+   "",
+   "zebra",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "/art/",
+   "colour",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "art",
+   "apple",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "art",
+   "paintings",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "sort by rating: stars, descending",
+   "stars"
+  ],
+  [
+   "art",
+   "Zed",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "sort by dimensions: width, slimmest first",
+   "no collections"
+  ],
+  [
+   "art/sketches",
+   "pencil",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "art/sketches/old",
+   "charcoal",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "beta",
+   "a",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "Beta",
+   "b",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ],
+  [
+   "example search",
+   "inbox filter",
+   "system:inbox, system:limit is 256, system:filetype is animation, image, video",
+   "",
+   ""
+  ]
+ ],
+ "menu": [
+  {
+   "text": "manage favourite searches"
+  },
+  "---",
+  {
+   "text": "save this search"
+  },
+  "---",
+  {
+   "submenu": [
+    {
+     "text": "inbox filter"
+    }
+   ],
+   "text": "example search"
+  }
+ ],
+ "nested_menu": [
+  {
+   "text": "manage favourite searches"
+  },
+  "---",
+  {
+   "text": "save this search"
+  },
+  "---",
+  {
+   "text": "Banana"
+  },
+  {
+   "text": "apple"
+  },
+  {
+   "text": "zebra"
+  },
+  {
+   "submenu": [
+    {
+     "text": "b"
+    }
+   ],
+   "text": "Beta"
+  },
+  {
+   "submenu": [
+    {
+     "text": "Zed"
+    },
+    {
+     "text": "apple"
+    },
+    {
+     "text": "colour"
+    },
+    {
+     "text": "paintings"
+    },
+    {
+     "submenu": [
+      {
+       "text": "pencil"
+      },
+      {
+       "submenu": [
+        {
+         "text": "charcoal"
+        }
+       ],
+       "text": "old"
+      }
+     ],
+     "text": "sketches"
+    }
+   ],
+   "text": "art"
+  },
+  {
+   "submenu": [
+    {
+     "text": "a"
+    }
+   ],
+   "text": "beta"
+  },
+  {
+   "submenu": [
+    {
+     "text": "inbox filter"
+    }
+   ],
+   "text": "example search"
+  }
+ ],
+ "page_predicates": [
+  "system:inbox",
+  "blue eyes",
+  "series:metroid"
+ ],
+ "rows": [
+  [
+   null,
+   "zebra",
+   null,
+   null
+  ],
+  [
+   null,
+   "apple",
+   [
+    "system",
+    "SORT_FILES_BY_IMPORT_TIME",
+    false
+   ],
+   [
+    [
+     "creator"
+    ],
+    []
+   ]
+  ],
+  [
+   null,
+   "Banana",
+   [
+    "namespaces",
+    [
+     "series",
+     "creator"
+    ],
+    true
+   ],
+   [
+    [
+     "series",
+     "creator"
+    ],
+    [
+     "favourites"
+    ]
+   ]
+  ],
+  [
+   "art",
+   "paintings",
+   [
+    "rating",
+    "stars",
+    false
+   ],
+   [
+    [],
+    [
+     "stars"
+    ]
+   ]
+  ],
+  [
+   "art",
+   "Zed",
+   [
+    "system",
+    "SORT_FILES_BY_WIDTH",
+    true
+   ],
+   [
+    [],
+    []
+   ]
+  ],
+  [
+   "art",
+   "apple",
+   null,
+   null
+  ],
+  [
+   "art/sketches",
+   "pencil",
+   null,
+   null
+  ],
+  [
+   "art/sketches/old",
+   "charcoal",
+   null,
+   null
+  ],
+  [
+   "/art/",
+   "colour",
+   null,
+   null
+  ],
+  [
+   "Beta",
+   "b",
+   null,
+   null
+  ],
+  [
+   "beta",
+   "a",
+   null,
+   null
+  ],
+  [
+   "example search",
+   "inbox filter",
+   null,
+   null
+  ]
+ ],
+ "saved": {
+  "collect": "no collections",
+  "folder": null,
+  "location": "my files",
+  "name": "new favourite search",
+  "predicates": [
+   "system:inbox",
+   "blue eyes",
+   "series:metroid"
+  ],
+  "sort": "sort by file: filesize, smallest first",
+  "synchronised": true
+ },
+ "values": [
+  {
+   "folder": "",
+   "save_collect": false,
+   "save_sort": false,
+   "value": {
+    "collect": null,
+    "folder": null,
+    "location": "my files",
+    "name": "name",
+    "predicates": [
+     "system:inbox",
+     "system:limit is 256",
+     "system:filetype is animation, image, video"
+    ],
+    "sort": null,
+    "synchronised": false
+   }
+  },
+  {
+   "folder": "a/b",
+   "save_collect": false,
+   "save_sort": true,
+   "value": {
+    "collect": null,
+    "folder": "a/b",
+    "location": "my files",
+    "name": "name",
+    "predicates": [
+     "system:inbox",
+     "system:limit is 256",
+     "system:filetype is animation, image, video"
+    ],
+    "sort": "sort by file: filesize, largest first",
+    "synchronised": false
+   }
+  },
+  {
+   "folder": " spaced ",
+   "save_collect": true,
+   "save_sort": false,
+   "value": {
+    "collect": "no collections",
+    "folder": " spaced ",
+    "location": "my files",
+    "name": "name",
+    "predicates": [
+     "system:inbox",
+     "system:limit is 256",
+     "system:filetype is animation, image, video"
+    ],
+    "sort": null,
+    "synchronised": false
+   }
+  }
+ ]
+}

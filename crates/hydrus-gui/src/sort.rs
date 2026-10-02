@@ -278,6 +278,17 @@ pub fn page_choices(store: &hydrus_store::Store, current: &PageSortBy) -> Vec<Pa
     out
 }
 
+/// A page's sort as the reference writes it (`MediaSort.ToString`): "sort
+/// by time: import time, newest first".
+pub fn sort_text(store: &hydrus_store::Store, sort: &hydrus_core::pages::PageSort) -> String {
+    let choices = page_choices(store, &sort.by);
+    let Some(choice) = choices.iter().find(|c| c.by == sort.by) else {
+        return String::new();
+    };
+    let order = choice.orders[usize::from(!sort.ascending)];
+    format!("sort by {}, {order}", choice.name)
+}
+
 /// A namespace or rating sort as the control offers it
 /// (`GetSortTypeString`, `GetSortOrderStrings`).
 fn other_choice(services: &hydrus_store::services::ServiceRegistry, by: PageSortBy) -> PageChoice {

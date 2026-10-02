@@ -34,6 +34,11 @@ pub(crate) struct Hooks {
     pub domain_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
     /// Search the domain chosen from one.
     pub search_domain: Rc<dyn Fn(crate::domains::Choice)>,
+    /// The page shown's star button's menu: none for a page without a
+    /// search.
+    pub favourites_menu: Rc<dyn Fn() -> Vec<main_menu::Entry>>,
+    /// Do what was chosen from it.
+    pub favourite: Rc<dyn Fn(crate::favourites::Action)>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -208,6 +213,19 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
         let show = show.clone();
         move |which, x, y| {
             let entries = (hooks.domain_menu)(which);
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
+        }
+    });
+    // and its star button's
+    window.on_favourites_menu_requested({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |x, y| {
+            let entries = (hooks.favourites_menu)();
             if !entries.is_empty() {
                 open.borrow_mut().open_popup(entries, x, y);
                 show();
@@ -477,5 +495,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::Options => (hooks.options)(),
         Command::ImportFiles => (hooks.import_files)(),
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
+        Command::Favourite(action) => (hooks.favourite)(action),
     }
 }

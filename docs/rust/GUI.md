@@ -377,10 +377,21 @@ have them (namespaces shown or hidden, the namespace connector,
 underscores and emojis replaced; checked against `RenderTag`), each in its
 namespace's colour (system predicates in `system`'s; yours come across
 from hydrus). The ★ beside
-the search box lists your favourite searches in hydrus's folders and
-order; choosing one loads its domains, tag service, predicates, sort and
+the search box opens hydrus's menu: "manage favourite searches", "save
+this search", and your favourite searches in hydrus's folders and order
+(a folder with "/" in its name nests; searches before folders, by name).
+Choosing one loads its domains, tag service, predicates, sort and
 collect into the page (the collect at once, on the files shown), searching
-if it is synchronised (saving and editing favourites isn't here yet). The lock button beside them
+if it is synchronised. "manage favourite searches" opens hydrus's "edit
+favourite searches" list (folder, name, search, sort, collect; sorted on
+a header clicked, the folder by default, as hydrus sorts it), with "add",
+"edit" (or a double-click) and "delete" (asking first), kept only on
+"apply". "edit favourite search" has the folder and name, the search
+(typed predicates added, a double-click removing one, searching as it
+changes or not), and whether to save its sort and collect; renaming onto
+a search that exists asks before overwriting it. "save this search" opens
+both on the page's search, sort and collect, named "new favourite search"
+(with " (1)" and so on if any folder has that name). The lock button beside them
 locks the page's search to a `system:hash` of the files in view (asking
 first, as hydrus does, unless the search is empty or already that hash);
 a page opened on files ("open in a new page") starts locked. A locked

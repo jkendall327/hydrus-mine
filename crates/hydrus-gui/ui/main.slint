@@ -21,6 +21,7 @@ export { ArchiveDeleteWindow } from "archive_delete.slint";
 export { ManageTagsWindow } from "manage_tags.slint";
 export { DurationField, OptionRow, OptionsWindow } from "options.slint";
 export { LocationTick, LocationsWindow } from "domains.slint";
+export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
 export { EditorField, EditorPanel, PredicateEditorWindow } from "predicate_editor.slint";
 export { ImportRow, ReviewImportsWindow } from "import_files.slint";
 export { UnlockWindow } from "unlock.slint";
@@ -351,14 +352,6 @@ component ThumbnailGrid inherits ListView {
     }
 }
 
-// A row of the favourite searches menu: a folder, or a search to load.
-export struct FavouriteRow {
-    label: string,
-    depth: int,
-    // the search it loads; -1 for a folder
-    search: int,
-}
-
 export component MainWindow inherits Window {
     // how far the thumbnails are scrolled (each page keeps its own)
     in-out property <length> grid-scroll <=> grid.content-y;
@@ -496,9 +489,8 @@ export component MainWindow inherits Window {
     in property <bool> daemon-retry;
     callback start-daemon-again();
     in-out property <string> search-text;
-    // the favourite searches menu (none: no button)
-    in property <[FavouriteRow]> favourites;
-    in-out property <bool> favourites-open;
+    // whether the page has a search, to save or load a favourite into
+    in property <bool> can-favourite;
     // a page's search locked to a system:hash of its files, in place of
     // the search box and predicates: the button saying how many, which
     // unlocks it, and the cog's what the hash follows
@@ -565,7 +557,8 @@ export component MainWindow inherits Window {
     callback order-chosen(int);
     callback search-edited(string);
     callback search-accepted();
-    callback favourite-chosen(int);
+    // the star button's menu, opened at (x, y)
+    callback favourites-menu-requested(length, length);
     callback move-highlight(int);
     callback suggestion-chosen(int);
     callback remove-predicate(int);
@@ -1009,12 +1002,12 @@ export component MainWindow inherits Window {
                                 edited(text) => { root.search-edited(text); }
                                 accepted(text) => { root.search-accepted(); }
                             }
-                            // as the reference's star button: the favourite searches
-                            if root.favourites.length > 0: Button {
+                            // as the reference's star button: load or save a
+                            // favourite search
+                            if root.can-favourite: Button {
                                 width: 30px;
                                 text: "★";
-                                checkable: true;
-                                checked <=> root.favourites-open;
+                                clicked => { root.favourites-menu-requested(self.absolute-position.x, self.absolute-position.y + self.height); }
                             }
                             // and its lock button: lock the files in view to a
                             // fixed system:hash
@@ -1062,37 +1055,7 @@ export component MainWindow inherits Window {
                             clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
                         }
                     }
-                    if root.favourites-open && !root.search-locked: Rectangle {
-                        border-width: 1px;
-                        border-color: Theme.border;
-                        background: Theme.panel;
-                        height: min(root.favourites.length, 12) * 22px + 4px;
-                        VerticalLayout {
-                            padding: 2px;
-                            alignment: start;
-                            for favourite in root.favourites: Rectangle {
-                                height: 22px;
-                                background: favourite.search >= 0 && load.has-hover ? Theme.hover : transparent;
-                                Text {
-                                    x: 4px + favourite.depth * 14px;
-                                    text: favourite.label;
-                                    color: Theme.text;
-                                    font-weight: favourite.search < 0 ? 700 : 400;
-                                    vertical-alignment: center;
-                                    overflow: elide;
-                                    width: parent.width - self.x - 4px;
-                                }
-                                load := TouchArea {
-                                    enabled: favourite.search >= 0;
-                                    clicked => {
-                                        root.favourites-open = false;
-                                        root.favourite-chosen(favourite.search);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    if root.suggestions.length > 0 && !root.favourites-open && !root.search-locked: Rectangle {
+                    if root.suggestions.length > 0 && !root.search-locked: Rectangle {
                         border-width: 1px;
                         border-color: Theme.border;
                         background: Theme.panel;
