@@ -212,6 +212,22 @@ The subscription query editor's "history" box has "file log" and
 as the reference's is), and the edit import folder dialog a "file log"
 button for its cached import paths.
 
+The edit subscription and edit import folder dialogs' "import options"
+button, and a gallery or watcher page's (for the searches or watchers it
+makes), opens the import options editor (`src/import_options_window.rs`,
+`hydrus-gui-model/src/import_options_editor.rs`), the reference's
+`EditSpecificImportOptionsContainerPanel`: a list of the kinds of options
+(in simple mode, as a new client has it), each labelled with whose
+default it uses ("default presentation (import folder)") or its custom
+options' summary ("> presentation: presenting new files"), and the chosen
+kind's page: "use the default import options" or "set custom import
+options" (starting from the default's), and the options. Presentation,
+prefetch (with its rule that the two checks can't both be dispositive),
+file filtering's switches and size and resolution limits, and locations'
+destination and switches are edited there. "apply" gives the dialog the
+importer's options. As `oracle/record_import_options_editor.py` recorded
+the reference's.
+
 A gallery or watcher page's list has the reference's right-click menu
 (`src/importer_list_menu.rs`, `hydrus-gui-model/src/importer_menu.rs`):
 a right press selects the row (if it isn't already), and the menu acts
@@ -871,8 +887,7 @@ predicates in the autocomplete, the rest of the viewer's hover frames
 window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
-shading, playing animated JPEG XL, downloader
-pages' import options buttons, and a
+shading, playing animated JPEG XL, a
 download's cog and error menus (bandwidth rules, the last error); in
 the duplicates page, editing its search, editing auto-resolution rules
 and reviewing their actions, and quick and dirty processing; in the duplicate filter, the custom action,

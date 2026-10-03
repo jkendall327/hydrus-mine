@@ -1088,6 +1088,16 @@ impl SearchPage {
         }
     }
 
+    /// Set the page's import options for new searches or watchers.
+    pub fn set_page_import_options(
+        &mut self,
+        options: hydrus_core::import_options::ImportOptionsSlice,
+    ) {
+        if let Some(state) = self.multi_state() {
+            state.options = options;
+        }
+    }
+
     /// Set the page's file limit for new searches (`None`: no limit).
     pub fn set_file_limit(&mut self, limit: Option<u64>) {
         if let Some(gallery) = &mut self.gallery {

@@ -83,6 +83,8 @@ export component EditSubscriptionWindow inherits Window {
     in-out property <bool> label-override-none;
     in-out property <bool> merge-publish;
     in property <string> import-options;
+    // its import options' editor
+    callback edit-import-options();
     // a question waiting on an answer
     in property <bool> asking;
     in property <string> asking-title;
@@ -344,9 +346,8 @@ export component EditSubscriptionWindow inherits Window {
                     }
                 }
                 Button {
-                    // (not editable here yet)
                     text: root.import-options;
-                    enabled: false;
+                    clicked => { root.edit-import-options(); }
                 }
             }
             if root.editing-query: VerticalLayout {

@@ -43,6 +43,8 @@ pub struct Slots {
     pub import_edit: Rc<RefCell<Option<ImportFolderWindow>>>,
     pub export_list: Rc<RefCell<Option<FoldersWindow>>>,
     pub export_edit: Rc<RefCell<Option<ExportFolderWindow>>>,
+    /// The import options editor.
+    pub import_options: Rc<RefCell<Option<crate::ImportOptionsWindow>>>,
     /// An import folder's file log, and where it shows files.
     pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
     pub open_files: crate::file_log_window::OpenFiles,
@@ -55,6 +57,7 @@ impl std::fmt::Debug for Slots {
             .field("import_edit", &self.import_edit.borrow().is_some())
             .field("export_list", &self.export_list.borrow().is_some())
             .field("export_edit", &self.export_edit.borrow().is_some())
+            .field("import_options", &self.import_options.borrow().is_some())
             .field("log", &self.log.borrow().is_some())
             .field("open_files", &self.open_files)
             .finish()
@@ -249,13 +252,14 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
                     queues::rename_queue(conn, id, &folder.name)?;
                     queues::set_paused(conn, id, Some(folder.paused), None)?;
                     import_folders::set_settings(conn, id, &folder.settings)?;
+                    queues::set_queue_options(conn, id, &folder.options)?;
                 }
                 None => {
                     if import_folders::create_import_folder(
                         conn,
                         &folder.name,
                         &folder.settings,
-                        &ImportOptionsSlice::default(),
+                        &folder.options,
                         folder.paused,
                         now,
                     )?
@@ -286,6 +290,12 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
             id: Some(f.id()),
             name: f.name().to_owned(),
             paused: f.paused(),
+            options: store
+                .read(|c| queues::queue(c, f.id()))
+                .ok()
+                .flatten()
+                .map(|q| q.options)
+                .unwrap_or_default(),
             settings: f.settings,
         })
         .collect();
@@ -583,12 +593,8 @@ fn open_import_folder(
         .and_then(|id| store.read(|c| queues::file_seed_counts(c, id)).ok())
         .unwrap_or_default();
     window.set_cached_paths(queues::file_log_status(&seen).into());
-    let options = folder
-        .id
-        .and_then(|id| store.read(|c| queues::queue(c, id)).ok().flatten())
-        .map(|q| q.options)
-        .unwrap_or_default();
-    window.set_import_options(crate::edit_subscription::import_options_label(&options).into());
+    window
+        .set_import_options(crate::edit_subscription::import_options_label(&folder.options).into());
     window.set_action_choices(strings(
         ACTION_CHOICES.iter().map(|&c| c.to_owned()).collect(),
     ));
@@ -709,6 +715,41 @@ fn open_import_folder(
             close();
         }
     };
+    // its import options, in the editor (an import folder's defaults)
+    window.on_edit_import_options({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let editor_slot = slots.import_options.clone();
+        move || {
+            if editor_slot.borrow().is_some() {
+                return;
+            }
+            let own = state.borrow().folder.options.clone();
+            let done: Rc<dyn Fn(ImportOptionsSlice)> = {
+                let weak = weak.clone();
+                let state = state.clone();
+                Rc::new(move |options| {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_import_options(
+                            crate::edit_subscription::import_options_label(&options).into(),
+                        );
+                    }
+                    state.borrow_mut().folder.options = options;
+                })
+            };
+            match crate::import_options_window::open(
+                &store,
+                hydrus_core::import_options::CallerType::LocalImportFolder,
+                &own,
+                &editor_slot,
+                done,
+            ) {
+                Ok(editor) => *editor_slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
+            }
+        }
+    });
     window.on_apply({
         let weak = window.as_weak();
         let state = state.clone();

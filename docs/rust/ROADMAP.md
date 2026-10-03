@@ -51,8 +51,8 @@ and are tested against the reference. The work is the GUI over them.
   `edit_subscription`), opened by "add" and "edit": tested against
   `oracle/fixtures/edit_subscription.json` in
   `tests/model/edit_subscription.rs`, and `tests/gui/edit_subscription.rs`.
-  Its import options button and the query editor's additional tags wait
-  on an import options editor.
+  The query editor's additional tags wait on the import options
+  editor's tags page.
 - The list's other buttons (merge, separate, lowercase, retry, reset,
   overwrite downloader and checker options), recorded by
   `oracle/record_subscriptions_buttons.py` and tested in
@@ -103,7 +103,6 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 ## 4. Downloader pages: leftovers
 
 - Dragging across rows to select.
-- Watcher pages have no import options buttons.
 - The "highlighted" boxes don't show a search's or watcher's own file
   limit and import options.
 - The Client API's `/manage_pages/get_page_info` for gallery and watcher
@@ -112,15 +111,24 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 
 ## 5. The import options editor
 
-The subscriptions, import folder and downloader pages' "import options"
-buttons wait on it. **Done**: its model (`hydrus-gui-model`'s
-`import_options_editor`: the kinds listed, whose default each uses, the
-list's labels and every kind's summary), recorded by
-`oracle/record_import_options_editor.py`. **Next**: the window
-(`EditSpecificImportOptionsContainerPanel`) with pages for the simpler
-kinds (presentation, prefetch, file filtering, locations; the reference's
-widgets are catalogued in the recorder's notes of each panel), then tags,
-notes and tag filtering, then wiring it to the buttons.
+**Done**: the editor for an importer's own options (`ui/import_options.slint`,
+`src/import_options_window.rs`, `hydrus-gui-model`'s `import_options_editor`),
+recorded by `oracle/record_import_options_editor.py`, opened from the
+edit subscription and edit import folder dialogs and gallery and watcher
+pages. It edits presentation,
+prefetch, file filtering (not yet its filetypes) and locations (one
+destination).
+
+**Next**:
+
+- Pages for tags (per tag service: get tags and its filter, additional
+  tags, the cog menu's switches), notes and tag filtering (the blacklist
+  and whitelist need the tag filter editor and a tags input), and file
+  filtering's filetypes (the reference's mimes tree).
+- The "highlighted" boxes' import options buttons (a search's or
+  watcher's own), the URL downloader and local import pages', and the
+  subscriptions list's "import options" button.
+- The editor's copy and paste and favourites buttons.
 
 ## Later
 

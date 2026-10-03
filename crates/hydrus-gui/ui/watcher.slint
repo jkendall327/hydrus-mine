@@ -22,6 +22,8 @@ export struct WatcherData {
     // a selected one's options aren't the page's: "update selected with
     // current options" shows
     can-set-options: bool,
+    // the page's import options for new ones, as its button names them
+    import-options: string,
     // the watcher shown: its thread, and its boxes' lines and buttons
     highlighted: bool,
     subject: string,
@@ -52,6 +54,8 @@ export component WatcherSidebar inherits VerticalLayout {
     callback row-clicked(int, bool, bool);
     // a right press on a row, and where (the list's menu)
     callback row-menu(int, length, length);
+    // the page's import options' editor
+    callback import-options();
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -180,6 +184,10 @@ export component WatcherSidebar inherits VerticalLayout {
             Button {
                 text: "checker options";
                 clicked => { root.page-checker(); }
+            }
+            Button {
+                text: root.data.import-options;
+                clicked => { root.import-options(); }
             }
             if root.data.can-set-options: Button {
                 text: "update selected with current options";

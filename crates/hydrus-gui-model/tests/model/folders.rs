@@ -25,6 +25,7 @@ fn import_folder(case: &Json) -> ImportFolderEdit {
             period: case["period"].as_i64().unwrap(),
             ..ImportFolderSettings::default()
         },
+        options: hydrus_core::import_options::ImportOptionsSlice::default(),
     }
 }
 

@@ -36,6 +36,7 @@ export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 export { SubscriptionsWindow } from "subscriptions.slint";
 export { EditSubscriptionWindow } from "edit_subscription.slint";
 export { FileLogWindow } from "file_log.slint";
+export { ImportOptionsWindow, SizeLimit, ResolutionLimit } from "import_options.slint";
 export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
 
 // an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
@@ -567,6 +568,8 @@ export component MainWindow inherits Window {
     callback importer-list-menu(int, length, length);
     // and its entry chosen (by its index in the menu's actions)
     callback importer-list-action(int);
+    // a gallery or watcher page's import options for new ones, edited
+    callback page-import-options();
     callback gallery-sort(int, bool);
     callback gallery-highlight();
     callback gallery-clear-highlight();
@@ -861,6 +864,7 @@ export component MainWindow inherits Window {
                         search-download: root.search-download;
                         row-clicked(row, ctrl, shift) => { root.gallery-row-clicked(row, ctrl, shift); }
                         row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
+                        import-options => { root.page-import-options(); }
                         sort(column, ascending) => { root.gallery-sort(column, ascending); }
                         highlight => { root.gallery-highlight(); }
                         clear-highlight => { root.gallery-clear-highlight(); }
@@ -897,6 +901,7 @@ export component MainWindow inherits Window {
                         search-download: root.search-download;
                         row-clicked(row, ctrl, shift) => { root.watcher-row-clicked(row, ctrl, shift); }
                         row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
+                        import-options => { root.page-import-options(); }
                         sort(column, ascending) => { root.watcher-sort(column, ascending); }
                         highlight => { root.watcher-highlight(); }
                         clear-highlight => { root.watcher-clear-highlight(); }

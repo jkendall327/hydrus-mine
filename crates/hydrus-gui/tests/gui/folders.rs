@@ -12,7 +12,7 @@ use hydrus_store::{import_folders, settings};
 use crate::subscriptions::store;
 
 /// file > import/export folders > `label`.
-fn open(ui: &MainWindow, label: &str) {
+pub(crate) fn open(ui: &MainWindow, label: &str) {
     let titles = ui.get_menu_titles();
     let file = (0..titles.row_count())
         .position(|i| titles.row_data(i).unwrap().label == "file")
@@ -50,7 +50,7 @@ fn shot(windows: &headless::Windows, name: &str, width: u32, height: u32) {
     headless::save_png(&shots.join(name), &pixels, width, height).unwrap();
 }
 
-fn import_list(bound: &Bound) -> FoldersWindow {
+pub(crate) fn import_list(bound: &Bound) -> FoldersWindow {
     bound
         .folders
         .import_list

@@ -21,6 +21,8 @@ export struct GalleryData {
     // a selected one's options aren't the page's: "update selected with
     // current options" shows
     can-set-options: bool,
+    // the page's import options for new ones, as its button names them
+    import-options: string,
     // the downloader for new queries, among those offered
     gug-names: [string],
     gug-index: int,
@@ -53,6 +55,8 @@ export component GallerySidebar inherits VerticalLayout {
     callback row-clicked(int, bool, bool);
     // a right press on a row, and where (the list's menu)
     callback row-menu(int, length, length);
+    // the page's import options' editor
+    callback import-options();
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -194,6 +198,10 @@ export component GallerySidebar inherits VerticalLayout {
                 text: "no limit";
                 checked: root.data.no-limit;
                 toggled => { root.limit-changed(self.checked, limit.value); }
+            }
+            Button {
+                text: root.data.import-options;
+                clicked => { root.import-options(); }
             }
             if root.data.can-set-options: Button {
                 text: "update selected with current options";

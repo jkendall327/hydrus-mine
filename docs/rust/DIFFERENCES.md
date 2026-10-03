@@ -327,18 +327,14 @@ search.
   page's own presentation options (new files only, say) aren't applied
   yet, and the page has no sort or collect controls yet: its files are in
   the queue's order.
-- **A gallery or watcher downloader page's list has no right-click
-  menu** (copy queries, file and search logs, presentation), and
-  dragging across rows doesn't select them: click, ctrl+click and
-  shift+click do. A watcher page has no import options buttons yet
-  (the page's options, from hydrus, are given to new watchers), so
-  "update selected with current options" only differs on a watcher's
-  checker options there, and on a gallery page's search's file limit.
-  The "highlighted" boxes don't show a search's or watcher's own file
-  limit or import options. Its
+- **A gallery or watcher downloader page's list**: dragging across rows
+  doesn't select them (click, ctrl+click and shift+click do). The page's
+  "import options" button edits what new searches or watchers get (see
+  the import options editor below). The "highlighted" boxes don't show a
+  search's or watcher's own file limit or import options. Its
   downloader list is flat (the reference nests a site's downloaders and
-  greys out ones that can't work), and its searches' import options and
-  file limits can't be edited from the page yet. Its columns are as
+  greys out ones that can't work), and a search's own import options and
+  file limit can't be edited from the page yet. Its columns are as
   narrow as the reference's, which shows the status columns as single
   characters; their widths are fixed, but for the first, which takes
   the room left.
@@ -564,8 +560,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   writes only what the dialog changed, so a subscription the daemon ran
   meanwhile keeps what the run found, unless the dialog changed the same
   query.
-- **The edit subscription dialog** has no import options button (it
-  shows, disabled, what they are), no multi-site downloader warning, and
+- **The edit subscription dialog** has no multi-site downloader warning, and
   no "additional tags" or file log compaction number in the query editor.
   Its downloader choice is one list (the reference puts the downloaders
   not on show, and those that don't work, under further entries); its
@@ -575,8 +570,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   in case doesn't add " (1)" (the reference counts its old name as
   taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
 - **The import and export folders dialogs** don't edit filename tagging
-  or sidecars yet (they show what is set, which is kept), nor an import
-  folder's import options. Paths are typed, with no directory picker. An export folder's
+  or sidecars yet (they show what is set, which is kept). Paths are typed, with no directory picker. An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete, and its sidecars can't be tested on example files. They
   don't pause the folders while open, as the reference does.
@@ -595,6 +589,13 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
+- **The import options editor** can set tags, notes and tag filtering
+  to custom options (starting from their defaults) but not yet edit them,
+  nor file filtering's filetypes; locations take one destination (the
+  reference's takes several), and presentation's location is all my
+  files or all local files. It has no copy, paste or favourites buttons,
+  and always lists kinds as the reference's "simple mode" does (hydrus-rs
+  has no option for it yet).
 - **The search log window** can't yet export URLs to a png, import new
   URLs, or export the selected page objects (greyed out).
 - **A subscription query's logs**, opened from the query editor, change

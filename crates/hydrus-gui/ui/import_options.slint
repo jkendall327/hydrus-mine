@@ -1,0 +1,344 @@
+// The import options editor for an importer ("edit import options", the
+// reference's `EditSpecificImportOptionsContainerPanel`; its workings are
+// hydrus-gui-model's `import_options_editor`, bound by
+// `src/import_options_window.rs`): the kinds of options in a list, each
+// labelled with whose default it uses or its custom options' summary, and
+// the page of the kind chosen: its description, "use the default" or
+// "set custom", and its options.
+
+import { Button, CheckBox, ComboBox, ScrollView, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// a file size limit: whether there is one, its number and unit (B, KB,
+// MB, GB)
+export struct SizeLimit {
+    label: string,
+    on: bool,
+    value: int,
+    unit: int,
+}
+
+// a resolution limit
+export struct ResolutionLimit {
+    label: string,
+    on: bool,
+    width: int,
+    height: int,
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+// a labelled row
+component Row inherits HorizontalLayout {
+    in property <string> label;
+    spacing: 6px;
+    Label {
+        text: root.label;
+        horizontal-stretch: 1;
+    }
+    @children
+}
+
+export component ImportOptionsWindow inherits Window {
+    title: "edit import options";
+    preferred-width: 900px;
+    preferred-height: 620px;
+    background: Theme.window;
+    in property <string> description;
+    in property <[string]> labels;
+    in property <int> shown;
+    // the page: its kind's name, description and default choice's label
+    in property <string> kind;
+    in property <string> kind-description;
+    in property <[string]> custom-choices;
+    in-out property <int> custom-index;
+    // (a kind with no editor here yet: its options' summary)
+    in property <string> summary;
+    // presentation
+    in-out property <int> status-index;
+    in property <[string]> inbox-choices;
+    in-out property <int> inbox-index;
+    in property <[string]> location-choices;
+    in-out property <int> location-index;
+    // prefetch
+    in-out property <int> hash-index;
+    in-out property <int> url-index;
+    in-out property <bool> fetch-hash;
+    in-out property <bool> fetch-url;
+    in-out property <bool> neighbour-spam;
+    // file filtering
+    in property <string> filetypes;
+    in-out property <bool> exclude-deleted;
+    in-out property <bool> bombs;
+    in property <[SizeLimit]> sizes;
+    in property <[ResolutionLimit]> resolutions;
+    // locations
+    in property <[string]> destination-choices;
+    in-out property <int> destination-index;
+    in-out property <bool> already-destinations;
+    in-out property <bool> archive;
+    in-out property <bool> archive-already;
+    in property <bool> downloader;
+    in-out property <bool> primary-urls;
+    in-out property <bool> source-urls;
+    callback kind-clicked(int);
+    // a field changed: what the window's two-way fields hold is read
+    callback changed();
+    callback size-edited(int, bool, int, int);
+    callback resolution-edited(int, bool, int, int);
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 8px;
+        Label {
+            text: root.description;
+            horizontal-alignment: center;
+        }
+        HorizontalLayout {
+            spacing: 10px;
+            vertical-stretch: 1;
+            Rectangle {
+                width: 300px;
+                border-width: 1px;
+                border-color: Theme.border;
+                VerticalLayout {
+                    alignment: start;
+                    for label[i] in root.labels: Rectangle {
+                        height: 26px;
+                        background: i == root.shown ? Theme.highlight : transparent;
+                        Text {
+                            x: 6px;
+                            width: parent.width - 12px;
+                            text: label;
+                            vertical-alignment: center;
+                            overflow: elide;
+                            color: i == root.shown ? Theme.highlight-text : Theme.text;
+                        }
+                        TouchArea {
+                            clicked => { root.kind-clicked(i); }
+                        }
+                    }
+                }
+            }
+            ScrollView {
+                horizontal-stretch: 1;
+                VerticalLayout {
+                    spacing: 8px;
+                    alignment: start;
+                    Text {
+                        text: root.kind;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                        color: Theme.text;
+                    }
+                    Label {
+                        text: root.kind-description;
+                        horizontal-alignment: center;
+                    }
+                    ComboBox {
+                        model: root.custom-choices;
+                        current-index <=> root.custom-index;
+                        selected => { root.changed(); }
+                    }
+                    if root.custom-index == 1 && root.kind == "presentation": HorizontalLayout {
+                        spacing: 6px;
+                        ComboBox {
+                            model: ["all files", "new files", "do not show anything"];
+                            current-index <=> root.status-index;
+                            selected => { root.changed(); }
+                        }
+                        ComboBox {
+                            enabled: root.status-index != 2;
+                            model: root.inbox-choices;
+                            current-index <=> root.inbox-index;
+                            selected => { root.changed(); }
+                        }
+                        ComboBox {
+                            enabled: root.status-index != 2;
+                            model: root.location-choices;
+                            current-index <=> root.location-index;
+                            selected => { root.changed(); }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "prefetch logic": VerticalLayout {
+                        spacing: 6px;
+                        Label {
+                            text: "BE CAREFUL, PREFETCH LOGIC IS ADVANCED";
+                            horizontal-alignment: center;
+                            color: Theme.error;
+                        }
+                        Row {
+                            label: "check hashes to determine \"already in db/previously deleted\" outcome?: ";
+                            ComboBox {
+                                model: ["do not check", "check", "check - and matches are dispositive"];
+                                current-index <=> root.hash-index;
+                                selected => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "check URLs to determine \"already in db/previously deleted\" outcome?: ";
+                            ComboBox {
+                                model: ["do not check", "check", "check - and matches are dispositive"];
+                                current-index <=> root.url-index;
+                                selected => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "force metadata/page fetch even if hash recognised and file appears \"already in db\"?: ";
+                            CheckBox {
+                                checked <=> root.fetch-hash;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "force metadata/page fetch even if url recognised and file appears \"already in db\"?: ";
+                            CheckBox {
+                                checked <=> root.fetch-url;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "during URL check, check for neighbour-spam?: ";
+                            CheckBox {
+                                enabled: root.url-index != 0;
+                                checked <=> root.neighbour-spam;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "file filtering": VerticalLayout {
+                        spacing: 6px;
+                        Row {
+                            label: "allowed filetypes: ";
+                            Label { text: root.filetypes; }
+                        }
+                        Row {
+                            label: "exclude previously deleted files: ";
+                            CheckBox {
+                                checked <=> root.exclude-deleted;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "allow decompression bombs: ";
+                            CheckBox {
+                                checked <=> root.bombs;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        for size[i] in root.sizes: Row {
+                            label: size.label;
+                            CheckBox {
+                                checked: size.on;
+                                toggled => { root.size-edited(i, self.checked, size.value, size.unit); }
+                            }
+                            SpinBox {
+                                enabled: size.on;
+                                minimum: 1;
+                                maximum: 1000000;
+                                value: size.value;
+                                edited(v) => { root.size-edited(i, size.on, v, size.unit); }
+                            }
+                            ComboBox {
+                                enabled: size.on;
+                                model: ["B", "KB", "MB", "GB"];
+                                current-index: size.unit;
+                                selected => { root.size-edited(i, size.on, size.value, self.current-index); }
+                            }
+                        }
+                        for res[i] in root.resolutions: Row {
+                            label: res.label;
+                            CheckBox {
+                                checked: res.on;
+                                toggled => { root.resolution-edited(i, self.checked, res.width, res.height); }
+                            }
+                            SpinBox {
+                                enabled: res.on;
+                                minimum: 1;
+                                maximum: 100000;
+                                value: res.width;
+                                edited(v) => { root.resolution-edited(i, res.on, v, res.height); }
+                            }
+                            Label { text: "x"; }
+                            SpinBox {
+                                enabled: res.on;
+                                minimum: 1;
+                                maximum: 100000;
+                                value: res.height;
+                                edited(v) => { root.resolution-edited(i, res.on, res.width, v); }
+                            }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "locations": VerticalLayout {
+                        spacing: 6px;
+                        Row {
+                            label: "destination file service(s):";
+                            ComboBox {
+                                model: root.destination-choices;
+                                current-index <=> root.destination-index;
+                                selected => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "-- ensure 'already in db' files are added to destinations?: ";
+                            CheckBox {
+                                checked <=> root.already-destinations;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "auto-archive imports: ";
+                            CheckBox {
+                                checked <=> root.archive;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "-- even for 'already in db' files?: ";
+                            CheckBox {
+                                enabled: root.archive;
+                                checked <=> root.archive-already;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        if root.downloader: Row {
+                            label: "associate primary urls: ";
+                            CheckBox {
+                                checked <=> root.primary-urls;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        if root.downloader: Row {
+                            label: "associate (and trust) additional source urls: ";
+                            CheckBox {
+                                checked <=> root.source-urls;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                    }
+                    if root.custom-index == 1 && root.summary != "": Label {
+                        text: root.summary;
+                    }
+                }
+            }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

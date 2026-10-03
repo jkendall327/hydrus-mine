@@ -219,6 +219,8 @@ export component ImportFolderWindow inherits Window {
     in-out property <bool> publish-page;
     in property <string> cached-paths;
     in property <bool> has-file-log;
+    // its import options' editor
+    callback edit-import-options();
     // the cached paths' file log
     callback file-log();
     in property <string> import-options;
@@ -340,9 +342,8 @@ export component ImportFolderWindow inherits Window {
                         }
                     }
                     Button {
-                        // (not editable here yet)
                         text: root.import-options;
-                        enabled: false;
+                        clicked => { root.edit-import-options(); }
                     }
                     Group {
                         title: "source file actions";

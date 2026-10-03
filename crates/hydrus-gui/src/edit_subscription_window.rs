@@ -227,6 +227,7 @@ pub(crate) struct Slots {
     pub checker: Rc<RefCell<Option<CheckerOptionsWindow>>>,
     pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
     pub open_files: crate::file_log_window::OpenFiles,
+    pub import_options: Rc<RefCell<Option<crate::ImportOptionsWindow>>>,
 }
 
 /// Open the dialog on a subscription; on "apply" it gives the edited
@@ -310,6 +311,42 @@ pub(crate) fn open(
             match opened {
                 Ok(window) => *log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the log: {e}"),
+            }
+        }
+    });
+    // the subscription's import options, in the editor (a subscription's
+    // defaults)
+    window.on_edit_import_options({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let editor_slot = slots.import_options.clone();
+        move || {
+            if editor_slot.borrow().is_some() {
+                return;
+            }
+            let own = state.borrow().dialog.settings.import_options.clone();
+            let done: Rc<dyn Fn(hydrus_core::import_options::ImportOptionsSlice)> = {
+                let weak = weak.clone();
+                let state = state.clone();
+                Rc::new(move |options| {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_import_options(
+                            crate::edit_subscription::import_options_label(&options).into(),
+                        );
+                    }
+                    state.borrow_mut().dialog.settings.import_options = options;
+                })
+            };
+            match crate::import_options_window::open(
+                &store,
+                hydrus_core::import_options::CallerType::Subscription,
+                &own,
+                &editor_slot,
+                done,
+            ) {
+                Ok(editor) => *editor_slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
             }
         }
     });

@@ -104,6 +104,8 @@ pub struct ImportFolderEdit {
     pub name: String,
     pub paused: bool,
     pub settings: ImportFolderSettings,
+    /// Its own import options.
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
 }
 
 impl ImportFolderEdit {
@@ -114,6 +116,7 @@ impl ImportFolderEdit {
             name: "import folder".into(),
             paused: false,
             settings: ImportFolderSettings::default(),
+            options: hydrus_core::import_options::ImportOptionsSlice::default(),
         }
     }
 }

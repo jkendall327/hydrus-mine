@@ -354,3 +354,161 @@ pub fn note_conflict_label(conflict: hydrus_core::import_options::NoteConflict) 
         N::Rename => "add the new note under a new name",
     }
 }
+
+/// The editor while it is open: every kind's options (the importer's own,
+/// or its defaults' to start from), which are custom, and the kind shown.
+#[derive(Debug, Clone)]
+pub struct Editor {
+    pub caller: CallerType,
+    pub kinds: Vec<Kind>,
+    /// Every kind set: what its page shows.
+    pub values: ImportOptionsSlice,
+    pub custom: Vec<Kind>,
+    /// The kind whose page is shown (an index into `kinds`).
+    pub shown: usize,
+    sources: Vec<String>,
+}
+
+impl Editor {
+    /// The editor on an importer's own options, whose defaults are
+    /// `caller`'s.
+    pub fn new(
+        manager: &ImportOptionsManager,
+        caller: CallerType,
+        simple: bool,
+        own: &ImportOptionsSlice,
+    ) -> Self {
+        let full = manager.full(caller, None, &[]);
+        let mut values = ImportOptionsSlice {
+            prefetch: Some(full.prefetch),
+            file_filtering: Some(full.file_filtering),
+            tag_filtering: Some(full.tag_filtering),
+            locations: Some(full.locations),
+            tags: Some(full.tags),
+            notes: Some(full.notes),
+            presentation: Some(full.presentation),
+            external_programs: Some(
+                hydrus_core::import_options::ExternalProgramsOptions::default(),
+            ),
+        };
+        let kinds = listed_kinds(caller, simple, own);
+        let mut custom = Vec::new();
+        for kind in Kind::ALL {
+            if kind.is_set(own) {
+                kind.copy(own, &mut values);
+                custom.push(kind);
+            }
+        }
+        let sources = Kind::ALL
+            .iter()
+            .map(|k| source_label(manager, caller, *k))
+            .collect();
+        Self {
+            caller,
+            kinds,
+            values,
+            custom,
+            shown: 0,
+            sources,
+        }
+    }
+
+    pub fn is_custom(&self, kind: Kind) -> bool {
+        self.custom.contains(&kind)
+    }
+
+    /// Use custom options for a kind (starting from what its page shows),
+    /// or the default.
+    pub fn set_custom(&mut self, kind: Kind, custom: bool) {
+        self.custom.retain(|k| *k != kind);
+        if custom {
+            self.custom.push(kind);
+        }
+    }
+
+    /// Whose default a kind uses.
+    pub fn source(&self, kind: Kind) -> &str {
+        let i = Kind::ALL.iter().position(|k| *k == kind).unwrap_or(0);
+        &self.sources[i]
+    }
+
+    /// The list's labels.
+    pub fn labels(&self, name: &dyn Fn(&str) -> String) -> Vec<String> {
+        self.kinds
+            .iter()
+            .map(|&kind| {
+                let custom = self
+                    .is_custom(kind)
+                    .then(|| summary(kind, &self.values, name));
+                tab_label(kind, custom.as_deref(), self.source(kind))
+            })
+            .collect()
+    }
+
+    /// The importer's options, as edited: the custom kinds alone.
+    pub fn value(&self) -> ImportOptionsSlice {
+        let mut slice = ImportOptionsSlice::default();
+        for kind in &self.custom {
+            kind.copy(&self.values, &mut slice);
+        }
+        slice
+    }
+
+    /// Set prefetch's hash check; both checks can't be dispositive, so the
+    /// URL check gives way (`EditPrefetchImportOptionsPanel`).
+    pub fn set_hash_check(&mut self, check: hydrus_core::import_options::PrefetchCheck) {
+        use hydrus_core::import_options::PrefetchCheck as C;
+        if let Some(o) = &mut self.values.prefetch {
+            o.hash_check = check;
+            if check == C::CheckAndMatchesAreDispositive && o.url_check == check {
+                o.url_check = C::Check;
+            }
+        }
+    }
+
+    /// Set prefetch's URL check; the hash check gives way.
+    pub fn set_url_check(&mut self, check: hydrus_core::import_options::PrefetchCheck) {
+        use hydrus_core::import_options::PrefetchCheck as C;
+        if let Some(o) = &mut self.values.prefetch {
+            o.url_check = check;
+            if check == C::CheckAndMatchesAreDispositive && o.hash_check == check {
+                o.hash_check = C::Check;
+            }
+        }
+    }
+
+    /// Set presentation's status; "or in inbox" goes with "new files"
+    /// alone (`_UpdateInboxChoices`).
+    pub fn set_presentation_status(
+        &mut self,
+        status: hydrus_core::import_options::PresentationStatus,
+    ) {
+        use hydrus_core::import_options::{PresentationInbox as I, PresentationStatus as S};
+        if let Some(o) = &mut self.values.presentation {
+            o.status = status;
+            if status != S::NewOnly && o.inbox == I::AndIncludeAllInbox {
+                o.inbox = I::Agnostic;
+            }
+        }
+    }
+}
+
+/// Prefetch's check choices, in order.
+pub const CHECK_CHOICES: [&str; 3] = [
+    "do not check",
+    "check",
+    "check - and matches are dispositive",
+];
+
+/// Presentation's status choices, in order.
+pub const STATUS_CHOICES: [&str; 3] = ["all files", "new files", "do not show anything"];
+
+/// Presentation's inbox choices for a status: "or in inbox" only with
+/// "new files".
+pub fn inbox_choices(status: hydrus_core::import_options::PresentationStatus) -> Vec<&'static str> {
+    let mut choices = vec!["inbox or archive", "must be in inbox"];
+    if status == hydrus_core::import_options::PresentationStatus::NewOnly {
+        choices.push("or in inbox");
+    }
+    choices
+}

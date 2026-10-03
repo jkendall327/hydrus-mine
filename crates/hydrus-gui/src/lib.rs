@@ -34,6 +34,7 @@ mod folders_window;
 mod gallery;
 mod grid;
 pub mod headless;
+mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 mod locations_window;
@@ -134,10 +135,11 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, file_log, folders, importer_menu, info_lines,
-    list_selection, local_import, main_menu, manage_tags, media_actions, options, page_chooser,
-    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sort, status,
-    subscriptions_dialog, subscriptions_list, thumbnail_icons, thumbnail_ratings,
+    duplicates_page, edit_subscription, favourites, file_log, folders, import_options_editor,
+    importer_menu, info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
+    options, page_chooser, predicate_editors, ratings, scanbar, search_log, selection,
+    session_saving, sort, status, subscriptions_dialog, subscriptions_list, thumbnail_icons,
+    thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -1095,6 +1097,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let edit_slot = edit_subscription.clone();
                 let checker_slot = checker_options.clone();
                 let log_slot = folders.log.clone();
+                let import_options_slot = folders.import_options.clone();
                 let open_files = open_files.clone();
                 Rc::new(move || {
                     if slot.borrow().is_some() {
@@ -1106,6 +1109,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         checker: checker_slot.clone(),
                         log: log_slot.clone(),
                         open_files: open_files.clone(),
+                        import_options: import_options_slot.clone(),
                     };
                     match subscriptions_window::open(&store, &slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
@@ -1545,6 +1549,48 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 },
                 &action,
             );
+        }
+    });
+    // a gallery or watcher page's import options for its new searches or
+    // watchers, in the editor
+    window.on_page_import_options({
+        let page = page.clone();
+        let shown = shown.clone();
+        let slot = folders.import_options.clone();
+        move || {
+            if slot.borrow().is_some() {
+                return;
+            }
+            let page = page();
+            let (caller, own) = {
+                let page = page.borrow();
+                if let Some(g) = page.gallery() {
+                    (
+                        hydrus_core::import_options::CallerType::PostUrls,
+                        g.state.options.clone(),
+                    )
+                } else if let Some(w) = page.watchers() {
+                    (
+                        hydrus_core::import_options::CallerType::WatcherUrls,
+                        w.state.options.clone(),
+                    )
+                } else {
+                    return;
+                }
+            };
+            let store = page.borrow().store().clone();
+            let done: Rc<dyn Fn(hydrus_core::import_options::ImportOptionsSlice)> = {
+                let page = page.clone();
+                let shown = shown.clone();
+                Rc::new(move |options| {
+                    page.borrow_mut().set_page_import_options(options);
+                    shown(false);
+                })
+            };
+            match import_options_window::open(&store, caller, &own, &slot, done) {
+                Ok(editor) => *slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
+            }
         }
     });
     // a watcher page's sidebar, as a gallery page's
@@ -4043,6 +4089,7 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
         can_retry_ignored: has(SeedStatus::Vetoed),
         can_retry_failed: has(SeedStatus::Error),
         can_set_options: page.selected_options_differ(),
+        import_options: edit_subscription::import_options_label(&gallery.state.options).into(),
         gug_names: ModelRc::new(VecModel::from(gug_names)),
         gug_index: i32::try_from(gug_index).unwrap_or(0),
         initial_search_text: found
@@ -4105,6 +4152,7 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
         can_retry_ignored: has(SeedStatus::Vetoed),
         can_retry_failed: has(SeedStatus::Error),
         can_set_options: page.selected_options_differ(),
+        import_options: edit_subscription::import_options_label(&view.state.options).into(),
         highlighted: shown.is_some(),
         // (`WatcherReviewPanel`: "no subject" for one with none yet)
         subject: shown
