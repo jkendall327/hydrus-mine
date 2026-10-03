@@ -41,6 +41,9 @@ pub struct UrlQueueStatus {
     pub files_status: String,
     /// File work is waiting out a network error until this time (seconds).
     pub delayed_until: Option<i64>,
+    /// What its gallery work is doing, or last did (a simple downloader's
+    /// `_gallery_status`).
+    pub gallery_status: String,
 }
 
 #[derive(Debug, Default)]
@@ -122,7 +125,11 @@ impl QueueRunner {
         for queue in all {
             if matches!(
                 queue.kind,
-                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
+                QueueKind::Urls
+                    | QueueKind::Watcher
+                    | QueueKind::Gallery
+                    | QueueKind::LocalImport
+                    | QueueKind::SimpleDownloader
             ) {
                 self.wake(queue.id);
             }
@@ -170,7 +177,11 @@ impl QueueRunner {
         if !matches!(
             kind,
             Some(
-                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
+                QueueKind::Urls
+                    | QueueKind::Watcher
+                    | QueueKind::Gallery
+                    | QueueKind::LocalImport
+                    | QueueKind::SimpleDownloader
             )
         ) {
             return;
@@ -234,7 +245,7 @@ impl QueueRunner {
                     queue,
                     QueueLive {
                         files_status: status.files_status,
-                        gallery_status: String::new(),
+                        gallery_status: status.gallery_status,
                         file_job: job_live(&handle.file_job),
                         gallery_job: job_live(&handle.gallery_job),
                     },
@@ -587,6 +598,12 @@ impl QueueRunner {
         match kind {
             None => {}
             Some(QueueKind::Watcher) => self.run_files(queue_id, handle).await,
+            Some(QueueKind::SimpleDownloader) => {
+                tokio::join!(
+                    self.run_files(queue_id, handle),
+                    self.run_simple_jobs(queue_id, handle)
+                );
+            }
             Some(_) => {
                 tokio::join!(
                     self.run_files(queue_id, handle),
@@ -655,6 +672,146 @@ impl QueueRunner {
             let _ = tokio::time::timeout(Duration::from_secs(wait), handle.gallery_wake.notified())
                 .await;
         }
+    }
+
+    /// A simple downloader's page work: each page waiting, parsed by its
+    /// formula for files to download (`_WorkOnGallery`).
+    async fn run_simple_jobs(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
+        loop {
+            let store = &self.downloader.store;
+            let queue = match store.read(|conn| queues::queue(conn, queue_id)) {
+                Ok(Some(q)) => q,
+                Ok(None) => return,
+                Err(e) => {
+                    tracing::error!(queue_id, "reading an import queue: {e}");
+                    return;
+                }
+            };
+            let pauses = store
+                .read(hydrus_store::settings::get::<Pauses>)
+                .unwrap_or_default();
+            let delayed_until = handle.status.lock().delayed_until;
+            if let Some(until) = delayed_until {
+                let wait = until - now();
+                if wait > 0 {
+                    tokio::time::sleep(Duration::from_secs(wait as u64)).await;
+                    continue;
+                }
+            }
+            let job = queues::SimpleDownloader::of(&queue).and_then(|s| s.pending.first().cloned());
+            if !queue.gallery_paused
+                && !queue.page_closed
+                && pauses.galleries_run()
+                && let Some(job) = job
+            {
+                let error = self.work_on_simple_job(queue_id, job, handle).await;
+                handle.wake.notify_one();
+                // (a failed page waits a while before the next)
+                let pause = if error { 5 } else { 1 };
+                tokio::time::sleep(Duration::from_secs(pause)).await;
+                continue;
+            }
+            let wait = if pauses.paged_importers || pauses.gallery_searches {
+                30
+            } else {
+                600
+            };
+            let _ = tokio::time::timeout(Duration::from_secs(wait), handle.gallery_wake.notified())
+                .await;
+        }
+    }
+
+    /// One page of a simple downloader: fetched, parsed by its formula,
+    /// the files found queued (with the page as their referrer), and the
+    /// page logged with what came of it; whether it failed.
+    async fn work_on_simple_job(
+        &self,
+        queue_id: i64,
+        job: queues::SimpleJob,
+        handle: &Handle,
+    ) -> bool {
+        handle.status.lock().gallery_status = format!("checking {}", job.url);
+        let net_job = Job::scoped(bandwidth_scope(QueueKind::Gallery, queue_id));
+        *handle.gallery_job.lock() = Some(Arc::clone(&net_job));
+        let mut request = hydrus_net::Request::get(job.url.clone());
+        request.override_bandwidth_after = Some(30);
+        let fetched = self.downloader.net.fetch(&request, &net_job).await;
+        *handle.gallery_job.lock() = None;
+        let (status, note, error) = match fetched {
+            Ok(response) => match job.formula.file_urls(&job.url, &response.text()) {
+                Ok(urls) => {
+                    let classes = &self.downloader.store.snapshot().url_classes;
+                    let seeds: Vec<queues::NewFileSeed> = urls
+                        .iter()
+                        .map(|url| {
+                            let mut seed = new_url_seed(classes, url);
+                            seed.referral_url = Some(job.url.clone());
+                            seed
+                        })
+                        .collect();
+                    let total = seeds.len();
+                    let added = self.downloader.store.write(move |ctx| {
+                        queues::add_file_seeds(ctx.conn(), queue_id, &seeds, false, now())
+                    });
+                    match added {
+                        Ok(new) => {
+                            let mut note = format!(
+                                "page checked OK with formula \"{}\" - {} new urls",
+                                job.formula.name,
+                                hydrus_core::numbers::human_int(new as u64)
+                            );
+                            if total > new {
+                                note.push_str(&format!(
+                                    " ({} already in queue)",
+                                    hydrus_core::numbers::human_int((total - new) as u64)
+                                ));
+                            }
+                            (SeedStatus::SuccessfulAndNew, note, false)
+                        }
+                        Err(e) => (SeedStatus::Error, e.to_string(), true),
+                    }
+                }
+                Err(e) => (SeedStatus::Error, e.to_string(), true),
+            },
+            Err(hydrus_net::NetError::Status {
+                kind: hydrus_net::StatusKind::NotFound,
+                ..
+            }) => (SeedStatus::Vetoed, "page 404".to_owned(), true),
+            Err(e) => {
+                self.delay(handle, &e);
+                (SeedStatus::Error, e.to_string(), true)
+            }
+        };
+        note.lines()
+            .next()
+            .unwrap_or_default()
+            .clone_into(&mut handle.status.lock().gallery_status);
+        let url = job.url.clone();
+        let saved = self.downloader.store.write(move |ctx| {
+            let conn = ctx.conn();
+            let page = queues::NewGallerySeed {
+                url: url.clone(),
+                can_generate_more_pages: false,
+                referral_url: None,
+                meta: queues::GallerySeedMeta::default(),
+            };
+            if queues::add_gallery_seeds(conn, queue_id, &[page], None, now())? > 0
+                && let Some(mut seed) = queues::gallery_seeds(conn, queue_id)?.pop()
+            {
+                crate::gallery::set_gallery_status(&mut seed, status, note);
+                queues::update_gallery_seed(conn, &seed)?;
+            }
+            // (the job done, wherever it is now)
+            queues::update_simple_downloader(conn, queue_id, |state| {
+                if let Some(i) = state.pending.iter().position(|j| *j == job) {
+                    state.pending.remove(i);
+                }
+            })
+        });
+        if let Err(e) = saved {
+            tracing::error!(queue_id, "saving a simple downloader's page: {e}");
+        }
+        error
     }
 
     /// A queue's file work (and a watcher's checks).
@@ -857,7 +1014,10 @@ impl QueueRunner {
             if !known
                 && matches!(
                     queue.kind,
-                    QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery
+                    QueueKind::Urls
+                        | QueueKind::Watcher
+                        | QueueKind::Gallery
+                        | QueueKind::SimpleDownloader
                 )
             {
                 self.wake(queue.id);

@@ -87,6 +87,9 @@ pub struct ClientOptions {
     /// Each window's remembered size and place (`frame_locations`), by
     /// frame key (`main_gui`, `media_viewer`...).
     pub frame_locations: BTreeMap<String, FrameLocation>,
+    /// The simple downloader's parsing formulae
+    /// (`simple_downloader_formulae`).
+    pub simple_downloader_formulae: Vec<hydrus_parse::simple::SimpleFormula>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -173,6 +176,11 @@ impl ClientOptions {
             )?,
             media_view: media_view(&settings)?,
             frame_locations: frame_locations(&settings)?,
+            simple_downloader_formulae: object_list(
+                &settings,
+                "simple_downloader_formulae",
+                super::parsers::simple_formula,
+            )?,
             dictionary: dictionary.clone(),
         };
         Ok(options)

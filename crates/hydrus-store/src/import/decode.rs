@@ -236,6 +236,20 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &mut input,
         &options
             .as_ref()
+            .map(|o| crate::settings::SimpleDownloaderFormulae {
+                formulae: o.simple_downloader_formulae.clone(),
+                favourite: o
+                    .strings
+                    .get("favourite_simple_downloader_formula")
+                    .cloned()
+                    .unwrap_or_default(),
+            })
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
             .map(legacy::ClientOptions::window_settings)
             .unwrap_or_default(),
     )?;

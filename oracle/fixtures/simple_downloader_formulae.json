@@ -1,0 +1,218 @@
+{
+ "formulae": [
+  [
+   63,
+   "all files linked by images in page",
+   1,
+   [
+    27,
+    8,
+    [
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         62,
+         3,
+         [
+          0,
+          "a",
+          {},
+          null,
+          null,
+          false,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         62,
+         3,
+         [
+          0,
+          "img",
+          {},
+          null,
+          null,
+          false,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         62,
+         3,
+         [
+          1,
+          "a",
+          null,
+          null,
+          1,
+          false,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     0,
+     "href",
+     "",
+     [
+      84,
+      1,
+      [
+       26,
+       3,
+       []
+      ]
+     ]
+    ]
+   ]
+  ],
+  [
+   63,
+   "all images embedded in page",
+   1,
+   [
+    27,
+    8,
+    [
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         62,
+         3,
+         [
+          0,
+          "img",
+          {},
+          null,
+          null,
+          false,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "example string"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     0,
+     "src",
+     "",
+     [
+      84,
+      1,
+      [
+       26,
+       3,
+       []
+      ]
+     ]
+    ]
+   ]
+  ]
+ ],
+ "pages": [
+  {
+   "url": "https://example.com/gallery/page.html",
+   "text": "<html><body><a href=\"/full/1.jpg\"><img src=\"/thumbs/1.jpg\"></a><a href=\"full/2.png\"><img src=\"t2.png\"></a><img src=\"https://cdn.example.com/solo.gif\"><p>text</p></body></html>",
+   "found": {
+    "all files linked by images in page": [
+     "https://example.com/full/1.jpg",
+     "https://example.com/gallery/full/2.png"
+    ],
+    "all images embedded in page": [
+     "https://example.com/thumbs/1.jpg",
+     "https://example.com/gallery/t2.png",
+     "https://cdn.example.com/solo.gif"
+    ]
+   }
+  },
+  {
+   "url": "https://example.com/a/b/",
+   "text": "<div><a href=\"../c/x.webm\"><span><img src=\"y.jpg\"></span></a><img src=\"//other.net/z.jpg\"></div>",
+   "found": {
+    "all files linked by images in page": [
+     "https://example.com/a/c/x.webm"
+    ],
+    "all images embedded in page": [
+     "https://example.com/a/b/y.jpg",
+     "https://other.net/z.jpg"
+    ]
+   }
+  },
+  {
+   "url": "https://example.com/",
+   "text": "<html><body><p>nothing here</p><a href=\"link.html\">a link</a></body></html>",
+   "found": {
+    "all files linked by images in page": [],
+    "all images embedded in page": []
+   }
+  },
+  {
+   "url": "https://example.com/q?x=1",
+   "text": "<a href=\"?page=2\"><img src=\"i.png\"></a><a href=\"#frag\"><img src=\"j.png\"></a>",
+   "found": {
+    "all files linked by images in page": [
+     "https://example.com/q?page=2",
+     "https://example.com/q?x=1#frag"
+    ],
+    "all images embedded in page": [
+     "https://example.com/i.png",
+     "https://example.com/j.png"
+    ]
+   }
+  }
+ ]
+}

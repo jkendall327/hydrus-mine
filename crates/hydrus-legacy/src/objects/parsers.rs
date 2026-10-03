@@ -36,6 +36,7 @@ const CONTENT_PARSER: SerialisableType = SerialisableType(30);
 const PAGE_PARSER: SerialisableType = SerialisableType(58);
 const SUBSIDIARY_PAGE_PARSER: SerialisableType = SerialisableType(135);
 const GUG: SerialisableType = SerialisableType(69);
+const SIMPLE_FORMULA: SerialisableType = SerialisableType(63);
 const NESTED_GUG: SerialisableType = SerialisableType(70);
 const DOMAIN_MANAGER: SerialisableType = SerialisableType(53);
 
@@ -45,6 +46,34 @@ fn object_at(
     what: &str,
 ) -> DecodeResult<SerialisableObject> {
     SerialisableObject::from_tuple(value).map_err(|e| malformed(kind, format!("{what}: {e}")))
+}
+
+/// Decode a simple downloader's formula (`SimpleDownloaderParsingFormula`):
+/// its name, and its formula as its info.
+pub fn simple_formula(
+    object: &SerialisableObject,
+) -> DecodeResult<hydrus_parse::simple::SimpleFormula> {
+    let k = SIMPLE_FORMULA;
+    expect(object, k, &[1])?;
+    let formula = formula(&object_at(k, &object.info(), "formula")?)?;
+    Ok(hydrus_parse::simple::SimpleFormula {
+        name: object.name.clone().unwrap_or_default(),
+        formula,
+    })
+}
+
+/// The simple downloader formulae of a new reference client
+/// (`static/default/simple_downloader_formulae`, as
+/// `oracle/dump_simple_downloader_formulae.py` recorded them).
+pub fn default_simple_formulae() -> DecodeResult<Vec<hydrus_parse::simple::SimpleFormula>> {
+    let tuples = PyJson::parse(include_str!("simple_downloader_formulae_defaults.json"))
+        .map_err(|e| malformed(SIMPLE_FORMULA, e.to_string()))?;
+    tuples
+        .as_list()
+        .unwrap_or_default()
+        .iter()
+        .map(|t| simple_formula(&object_at(SIMPLE_FORMULA, t, "default formula")?))
+        .collect()
 }
 
 /// Decode any kind of formula.

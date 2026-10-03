@@ -29,6 +29,10 @@ pub enum QueueKind {
     /// Files imported from disk (the reference's "import" page,
     /// `HDDImport`; its [`LocalImport`] settings are the queue's extra).
     LocalImport,
+    /// A simple downloader (`SimpleDownloaderImport`): pages parsed by a
+    /// formula for files to download, its [`SimpleDownloader`] jobs the
+    /// queue's extra, the pages done its gallery seeds.
+    SimpleDownloader,
 }
 
 impl QueueKind {
@@ -40,6 +44,7 @@ impl QueueKind {
             QueueKind::Subscription => "subscription",
             QueueKind::ImportFolder => "import_folder",
             QueueKind::LocalImport => "local_import",
+            QueueKind::SimpleDownloader => "simple_downloader",
         }
     }
 
@@ -51,6 +56,7 @@ impl QueueKind {
             "subscription" => QueueKind::Subscription,
             "import_folder" => QueueKind::ImportFolder,
             "local_import" => QueueKind::LocalImport,
+            "simple_downloader" => QueueKind::SimpleDownloader,
             _ => return None,
         })
     }
@@ -501,6 +507,68 @@ impl LocalImport {
         (queue.kind == QueueKind::LocalImport)
             .then(|| serde_json::from_value(queue.extra.clone()).unwrap_or_default())
     }
+}
+
+/// A page a simple downloader is to parse, with the formula it was given.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+pub struct SimpleJob {
+    pub url: String,
+    pub formula: hydrus_parse::simple::SimpleFormula,
+}
+
+/// A simple downloader's state, kept as its queue's extra: the formula
+/// chosen for new jobs, and the pages waiting to be parsed, in order.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct SimpleDownloader {
+    pub formula_name: String,
+    pub pending: Vec<SimpleJob>,
+}
+
+impl SimpleDownloader {
+    /// A queue's, if it is a simple downloader.
+    pub fn of(queue: &Queue) -> Option<Self> {
+        (queue.kind == QueueKind::SimpleDownloader)
+            .then(|| serde_json::from_value(queue.extra.clone()).unwrap_or_default())
+    }
+}
+
+/// Make a simple downloader (`SimpleDownloaderImport.__init__`) on this
+/// formula, with no jobs yet; its id.
+pub fn create_simple_downloader(
+    conn: &Connection,
+    page_key: Option<&[u8]>,
+    options: &ImportOptionsSlice,
+    state: &SimpleDownloader,
+    now: i64,
+) -> Result<i64> {
+    let id = create_queue(
+        conn,
+        QueueKind::SimpleDownloader,
+        "simple downloader",
+        page_key,
+        options,
+        now,
+    )?;
+    set_queue_extra(conn, id, &serde_json::to_value(state)?)?;
+    Ok(id)
+}
+
+/// Change a simple downloader's state (`PendJob`, `SetPendingJobs`,
+/// `SetFormulaName`...): `change` is given it as stored now.
+pub fn update_simple_downloader(
+    conn: &Connection,
+    id: i64,
+    change: impl FnOnce(&mut SimpleDownloader),
+) -> Result<()> {
+    let Some(queue) = queue(conn, id)? else {
+        return Ok(());
+    };
+    let Some(mut state) = SimpleDownloader::of(&queue) else {
+        return Ok(());
+    };
+    change(&mut state);
+    set_queue_extra(conn, id, &serde_json::to_value(state)?)
 }
 
 /// Tags for some paths: by path, `(tag service key hex, tags)`.

@@ -390,6 +390,30 @@ impl Setting for hydrus_core::pages::DownloaderPageSettings {
     const KEY: &'static str = "downloader_pages";
 }
 
+/// The simple downloader's parsing formulae (the reference's options'
+/// `simple_downloader_formulae`) and the one last chosen
+/// (`favourite_simple_downloader_formula`), which new pages start on.
+#[derive(Debug, Clone, PartialEq, Serialize, serde::Deserialize)]
+pub struct SimpleDownloaderFormulae {
+    pub formulae: Vec<hydrus_parse::simple::SimpleFormula>,
+    pub favourite: String,
+}
+
+impl Default for SimpleDownloaderFormulae {
+    /// A new reference client's.
+    fn default() -> Self {
+        Self {
+            formulae: hydrus_legacy::objects::parsers::default_simple_formulae()
+                .unwrap_or_default(),
+            favourite: "all files linked by images in page".to_owned(),
+        }
+    }
+}
+
+impl Setting for SimpleDownloaderFormulae {
+    const KEY: &'static str = "simple_downloader_formulae";
+}
+
 /// What the daemon (`hydrus serve`) running on the store last said of its
 /// Client API, for the desktop client to show: and which process it was.
 #[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]

@@ -13,7 +13,12 @@ have had their first pass. Next, in the owner's order (2026-10-03), the
 screens not started yet:
 
 1. The about window (help > about). **Done.**
-2. The simple downloader page.
+2. The simple downloader page. **Done**: its engine (a
+   `simple_downloader` queue, `hydrus-download`'s `run_simple_jobs`), the
+   formulae (`hydrus-parse::simple`, the reference's defaults, imported
+   from its options). **Next**: carrying its pages over from hydrus's
+   sessions, and the page itself (the sidebar's parsing box, pending jobs,
+   the formula chooser and "edit formulae").
 3. The rest of the media "manage" dialogs: URLs, times, ratings, force
    filetype, the embedded metadata window, and share > export files.
 4. Services: review services and manage services.
