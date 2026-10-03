@@ -354,6 +354,26 @@ impl StringConverter {
         }
         Ok(s)
     }
+
+    /// `Convert( text, max_steps_allowed )`: the first `max_steps`
+    /// conversions only, if given; an error in the reference's words
+    /// ("ERROR: Could not apply \"reverse text\" to string \"x\": ...").
+    pub fn convert_upto(&self, text: &str, max_steps: Option<usize>) -> Result<String, String> {
+        let mut s = text.to_owned();
+        for conversion in self
+            .conversions
+            .iter()
+            .take(max_steps.unwrap_or(usize::MAX))
+        {
+            s = apply(conversion, &s).map_err(|reason| {
+                format!(
+                    "ERROR: Could not apply \"{}\" to string \"{s}\": {reason}",
+                    conversion.describe()
+                )
+            })?;
+        }
+        Ok(s)
+    }
 }
 
 fn apply(conversion: &Conversion, s: &str) -> Result<String, String> {
@@ -382,7 +402,7 @@ fn apply(conversion: &Conversion, s: &str) -> Result<String, String> {
         Conversion::AppendRandom { population, count } => {
             let choices: Vec<char> = population.chars().collect();
             if choices.is_empty() && *count > 0 {
-                return Err("nothing to choose random characters from".into());
+                return Err("string index out of range".into());
             }
             let mut out = s.to_owned();
             for _ in 0..*count {
@@ -399,9 +419,12 @@ fn apply(conversion: &Conversion, s: &str) -> Result<String, String> {
         } => regex_sub(pattern, replacement, s)?,
         Conversion::IntegerAddition(delta) => {
             let digits: String = s.trim().chars().filter(|&c| c != '_').collect();
-            let value: i128 = digits
-                .parse()
-                .map_err(|_| format!("{s:?} is not an integer"))?;
+            let value: i128 = digits.parse().map_err(|_| {
+                format!(
+                    "invalid literal for int() with base 10: {}",
+                    super::string_descriptions::python_repr_str(s)
+                )
+            })?;
             (value + i128::from(*delta)).to_string()
         }
         Conversion::Hash(function) => {
@@ -445,7 +468,15 @@ fn decode(encoding: Encoding, s: &str) -> Result<String, String> {
         Encoding::UrlPercent => return Ok(unquote(s)),
         Encoding::UnicodeEscape => return unicode_escape_decode(s.as_bytes()),
         Encoding::HtmlEntities => return Ok(crate::pyhtml::unescape(s)),
-        Encoding::HexUtf8 => fromhex(s).ok_or("non-hexadecimal number found in fromhex() arg")?,
+        Encoding::HexUtf8 => fromhex(s).ok_or_else(|| {
+            // (where Python's `bytes.fromhex` stops: the first character
+            // that isn't a hex digit or space, else the odd one at the end)
+            let position = s
+                .chars()
+                .position(|c| !c.is_ascii_hexdigit() && c != ' ')
+                .unwrap_or_else(|| s.chars().count());
+            format!("non-hexadecimal number found in fromhex() arg at position {position}")
+        })?,
         Encoding::Base64Utf8 => b64decode(&padded()).ok_or("Incorrect padding")?,
         Encoding::Base64UrlUtf8 => urlsafe_b64decode(&padded()).ok_or("Incorrect padding")?,
     };

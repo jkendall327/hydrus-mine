@@ -5,9 +5,11 @@
 //! each step), and the editors of the steps it opens: splitter, joiner,
 //! sorter and selector/slicer.
 
+use hydrus_core::pyjson::PyJson;
 use hydrus_core::url::strings::{
-    FlexibleMatch, MatchKind, ProcessingStep, PyRegex, SortKind, StringConverter, StringMatch,
-    StringProcessor, TagFilterStep, join_texts, slice_texts, sort_texts, split_text,
+    Conversion, Encoding, FlexibleMatch, HashFunction, MatchKind, ProcessingStep, PyRegex,
+    SortKind, StringConverter, StringMatch, StringProcessor, TagFilterStep, join_texts,
+    slice_texts, sort_texts, split_text,
 };
 
 /// What a step's results show when there are none (`NO_RESULTS_TEXT`).
@@ -707,5 +709,491 @@ impl MatchEditor {
             .test(&current.example)
             .map(|()| current.clone())
             .map_err(|_| "Please enter an example text that matches the given rules!".to_owned())
+    }
+}
+
+/// The conversion editor's title (`DialogEdit`'s).
+pub const CONVERSION_TITLE: &str = "edit conversion";
+
+/// The conversion types the conversion editor offers, in its order, by
+/// the reference's codes, with their names.
+pub const CONVERSION_TYPES: [(i64, &str); 16] = [
+    (0, "remove text from beginning of string"),
+    (1, "remove text from end of string"),
+    (6, "take the start of the string"),
+    (7, "take the end of the string"),
+    (2, "prepend text"),
+    (3, "append text"),
+    (15, "append random text"),
+    (4, "encode"),
+    (5, "decode"),
+    (8, "reverse text"),
+    (9, "regex substitution"),
+    (14, "datestring to timestamp (easy)"),
+    (10, "datestring to timestamp (advanced)"),
+    (12, "timestamp to datestring"),
+    (11, "integer addition"),
+    (13, "get hash of string"),
+];
+
+/// The encodings the conversion editor offers, in its order.
+pub const ENCODINGS: [(Encoding, &str); 6] = [
+    (Encoding::HexUtf8, "hex (utf-8)"),
+    (Encoding::Base64Utf8, "base64 (utf-8)"),
+    (Encoding::Base64UrlUtf8, "base64url (utf-8)"),
+    (Encoding::UrlPercent, "url percent encoding"),
+    (Encoding::UnicodeEscape, "unicode escape characters"),
+    (Encoding::HtmlEntities, "html entities"),
+];
+
+/// The hash functions it offers, in its order.
+pub const HASH_FUNCTIONS: [(HashFunction, &str); 4] = [
+    (HashFunction::Md5, "md5"),
+    (HashFunction::Sha1, "sha1"),
+    (HashFunction::Sha256, "sha256"),
+    (HashFunction::Sha512, "sha512"),
+];
+
+/// A date decode's timezones ("UTC", "Local", "Offset"); a date encode
+/// offers the first two.
+pub const TIMEZONES: [&str; 3] = ["UTC", "Local", "Offset"];
+
+/// A string converter's editor (`EditStringConverterPanel`): its
+/// conversions numbered, each with the example converted up to it, and
+/// the example string.
+#[derive(Debug, Clone)]
+pub struct ConverterEditor {
+    conversions: Vec<Conversion>,
+    pub example: String,
+    selected: Vec<bool>,
+}
+
+impl ConverterEditor {
+    /// The converter, with the example the editor is given in place of
+    /// its own, if any.
+    pub fn new(converter: &StringConverter, example: Option<String>) -> Self {
+        Self {
+            selected: vec![false; converter.conversions.len()],
+            conversions: converter.conversions.clone(),
+            example: example.unwrap_or_else(|| converter.example.clone()),
+        }
+    }
+
+    pub fn value(&self) -> StringConverter {
+        StringConverter {
+            conversions: self.conversions.clone(),
+            example: self.example.clone(),
+        }
+    }
+
+    /// The list's rows: the number, the conversion, and the example
+    /// converted up to and including it (or why not).
+    pub fn rows(&self) -> Vec<[String; 3]> {
+        let converter = self.value();
+        self.conversions
+            .iter()
+            .enumerate()
+            .map(|(i, conversion)| {
+                let result = converter
+                    .convert_upto(&self.example, Some(i + 1))
+                    .unwrap_or_else(|e| e);
+                [
+                    hydrus_core::numbers::human_int(i as u64 + 1),
+                    conversion.describe(),
+                    result,
+                ]
+            })
+            .collect()
+    }
+
+    pub fn selected(&self) -> Vec<usize> {
+        (0..self.conversions.len())
+            .filter(|&i| self.selected[i])
+            .collect()
+    }
+
+    /// A row clicked, with ctrl held to add to the selection or not.
+    pub fn click(&mut self, row: usize, ctrl: bool) {
+        if row >= self.conversions.len() {
+            return;
+        }
+        if ctrl {
+            self.selected[row] = !self.selected[row];
+        } else {
+            self.selected.fill(false);
+            self.selected[row] = true;
+        }
+    }
+
+    /// The example as a conversion at `index` sees it: through the ones
+    /// before it (the end, for a new one), or as it is if they fail.
+    pub fn example_at(&self, index: usize) -> String {
+        self.value()
+            .convert_upto(&self.example, Some(index))
+            .unwrap_or_else(|_| self.example.clone())
+    }
+
+    /// "add"'s conversion editor: the last conversion used, else "append
+    /// extra text", with the example through all of them.
+    pub fn adding(&self, last_used: Option<&Conversion>) -> ConversionEditor {
+        let conversion = last_used
+            .cloned()
+            .unwrap_or_else(|| Conversion::Append("extra text".to_owned()));
+        ConversionEditor::new(&conversion, self.example_at(self.conversions.len()))
+    }
+
+    /// "edit"'s: the first selected, with its index.
+    pub fn editing(&self) -> Option<(usize, ConversionEditor)> {
+        let index = self.selected.iter().position(|&s| s)?;
+        Some((
+            index,
+            ConversionEditor::new(&self.conversions[index], self.example_at(index)),
+        ))
+    }
+
+    /// A conversion added at the end, selected.
+    pub fn add(&mut self, conversion: Conversion) {
+        self.conversions.push(conversion);
+        self.selected.fill(false);
+        self.selected.push(true);
+    }
+
+    pub fn replace(&mut self, index: usize, conversion: Conversion) {
+        if let Some(slot) = self.conversions.get_mut(index) {
+            *slot = conversion;
+        }
+    }
+
+    /// "delete"'s question, if anything is selected.
+    pub fn delete_question(&self) -> Option<&'static str> {
+        self.selected
+            .contains(&true)
+            .then_some("Delete all selected?")
+    }
+
+    /// The selected conversions removed ("yes" to the question).
+    pub fn delete(&mut self) {
+        let mut kept = self.selected.iter().map(|&s| !s);
+        self.conversions.retain(|_| kept.next().unwrap_or(true));
+        self.selected.retain(|&s| !s);
+    }
+
+    fn single(&self) -> Option<usize> {
+        let selected = self.selected();
+        (selected.len() == 1).then(|| selected[0])
+    }
+
+    pub fn can_move_up(&self) -> bool {
+        self.single().is_some_and(|i| i > 0)
+    }
+
+    pub fn can_move_down(&self) -> bool {
+        self.single()
+            .is_some_and(|i| i + 1 < self.conversions.len())
+    }
+
+    /// The one selected swapped with the one above (-1) or below (1).
+    pub fn move_selected(&mut self, distance: isize) {
+        let Some(index) = self.single() else {
+            return;
+        };
+        let Some(other) = index
+            .checked_add_signed(distance)
+            .filter(|&o| o < self.conversions.len())
+        else {
+            return;
+        };
+        self.conversions.swap(index, other);
+        self.selected.swap(index, other);
+    }
+}
+
+/// Which of a conversion editor's rows show, and their labels.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ConversionShown {
+    /// The text row's label ("text to append: "), if it shows.
+    pub text: Option<&'static str>,
+    /// The number row's label ("characters to remove: "), if it shows.
+    pub number: Option<&'static str>,
+    pub encoding: bool,
+    pub decoding: bool,
+    pub regex: bool,
+    /// The link to the date phrases.
+    pub date_link: bool,
+    pub timezone_decode: bool,
+    pub timezone_offset: bool,
+    pub timezone_encode: bool,
+    pub hash: bool,
+    /// The easy date parser's explanation.
+    pub dateparser: bool,
+}
+
+/// The easy date parser's explanation.
+pub const DATEPARSER_NOTE: &str = "This will parse pretty much any normal looking date into a timestamp that hydrus understands, timezone conversions included, with zero setup! It can even do \"2 hours ago\"!";
+
+/// A conversion's editor (`EditStringConverterPanel._ConversionPanel`).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ConversionEditor {
+    /// An index into [`CONVERSION_TYPES`].
+    pub kind: usize,
+    pub text: String,
+    pub number: i64,
+    /// The number box's least value: as the type last shown set it.
+    number_min: i64,
+    /// Indices into [`ENCODINGS`].
+    pub encoding: usize,
+    pub decoding: usize,
+    pub pattern: String,
+    pub replacement: String,
+    /// Indices into [`TIMEZONES`].
+    pub timezone_decode: usize,
+    pub timezone_offset: i64,
+    pub timezone_encode: usize,
+    /// An index into [`HASH_FUNCTIONS`].
+    pub hash: usize,
+    /// The example it converts (read only).
+    pub example: String,
+}
+
+fn code_index(code: i64) -> usize {
+    CONVERSION_TYPES
+        .iter()
+        .position(|(c, _)| *c == code)
+        .unwrap_or(0)
+}
+
+fn encoding_index(encoding: Encoding) -> usize {
+    ENCODINGS
+        .iter()
+        .position(|(e, _)| *e == encoding)
+        .unwrap_or(0)
+}
+
+fn count_of(n: i64) -> usize {
+    usize::try_from(n).unwrap_or(0)
+}
+
+impl ConversionEditor {
+    pub fn new(conversion: &Conversion, example: String) -> Self {
+        let mut editor = Self {
+            kind: 0,
+            text: String::new(),
+            // (its box starts at 1, with a least value of 0)
+            number: 1,
+            number_min: 0,
+            encoding: 0,
+            decoding: 0,
+            pattern: String::new(),
+            replacement: String::new(),
+            timezone_decode: 0,
+            timezone_offset: 0,
+            timezone_encode: 0,
+            hash: 0,
+            example,
+        };
+        // (numbers are set while the box's least value is still 0)
+        let number = |n: i64| n.max(0);
+        editor.kind = match conversion {
+            Conversion::RemoveFromStart(n) => {
+                editor.number = number(i64::try_from(*n).unwrap_or(i64::MAX));
+                code_index(0)
+            }
+            Conversion::RemoveFromEnd(n) => {
+                editor.number = number(i64::try_from(*n).unwrap_or(i64::MAX));
+                code_index(1)
+            }
+            Conversion::KeepStart(n) => {
+                editor.number = number(i64::try_from(*n).unwrap_or(i64::MAX));
+                code_index(6)
+            }
+            Conversion::KeepEnd(n) => {
+                editor.number = number(i64::try_from(*n).unwrap_or(i64::MAX));
+                code_index(7)
+            }
+            Conversion::Prepend(t) => {
+                editor.text.clone_from(t);
+                code_index(2)
+            }
+            Conversion::Append(t) => {
+                editor.text.clone_from(t);
+                code_index(3)
+            }
+            Conversion::AppendRandom { population, count } => {
+                editor.text.clone_from(population);
+                editor.number = number(i64::try_from(*count).unwrap_or(i64::MAX));
+                code_index(15)
+            }
+            Conversion::Encode(e) => {
+                editor.encoding = encoding_index(*e);
+                code_index(4)
+            }
+            Conversion::Decode(e) => {
+                editor.decoding = encoding_index(*e);
+                code_index(5)
+            }
+            Conversion::Reverse => code_index(8),
+            Conversion::RegexSub {
+                pattern,
+                replacement,
+            } => {
+                pattern.pattern().clone_into(&mut editor.pattern);
+                editor.replacement.clone_from(replacement);
+                code_index(9)
+            }
+            Conversion::IntegerAddition(n) => {
+                editor.number = number(*n);
+                code_index(11)
+            }
+            Conversion::Hash(h) => {
+                editor.hash = HASH_FUNCTIONS.iter().position(|(f, _)| f == h).unwrap_or(0);
+                code_index(13)
+            }
+            Conversion::Unsupported { code, data } => {
+                let data = hydrus_core::pyjson::PyJson::parse(data).ok();
+                let item = |i: usize| {
+                    data.as_ref()
+                        .and_then(|d| d.as_list())
+                        .and_then(|l| l.get(i))
+                };
+                let text = |i: usize| item(i).and_then(PyJson::as_str).unwrap_or("").to_owned();
+                let int = |i: usize| item(i).and_then(PyJson::as_i64).unwrap_or(0);
+                match code {
+                    10 => {
+                        editor.text = text(0);
+                        editor.timezone_decode = count_of(int(1));
+                        editor.timezone_offset = int(2);
+                    }
+                    12 => {
+                        editor.text = text(0);
+                        editor.timezone_encode = count_of(int(1));
+                    }
+                    _ => {}
+                }
+                code_index(*code)
+            }
+        };
+        editor.update_number_min();
+        editor
+    }
+
+    /// A type chosen.
+    pub fn set_kind(&mut self, kind: usize) {
+        self.kind = kind.min(CONVERSION_TYPES.len() - 1);
+        self.update_number_min();
+    }
+
+    fn code(&self) -> i64 {
+        CONVERSION_TYPES[self.kind].0
+    }
+
+    /// The number box's least value as the type sets it (append random
+    /// text 1, integer addition -65535, the counts 0, others leave it),
+    /// the number raised to it.
+    fn update_number_min(&mut self) {
+        match self.code() {
+            15 => self.number_min = 1,
+            11 => self.number_min = -65535,
+            0 | 1 | 6 | 7 => self.number_min = 0,
+            _ => {}
+        }
+        self.number = self.number.max(self.number_min);
+    }
+
+    /// A number typed (held to the box's least value).
+    pub fn set_number(&mut self, number: i64) {
+        self.number = number.clamp(self.number_min, 65535);
+    }
+
+    pub fn shown(&self) -> ConversionShown {
+        let code = self.code();
+        let mut shown = ConversionShown {
+            text: None,
+            number: None,
+            encoding: code == 4,
+            decoding: code == 5,
+            regex: code == 9,
+            date_link: matches!(code, 10 | 12),
+            timezone_decode: code == 10,
+            timezone_offset: code == 10 && self.timezone_decode == 2,
+            timezone_encode: code == 12,
+            hash: code == 13,
+            dateparser: code == 14,
+        };
+        match code {
+            15 => {
+                shown.text = Some("population");
+                shown.number = Some("number of characters");
+            }
+            2 => shown.text = Some("text to prepend: "),
+            3 => shown.text = Some("text to append: "),
+            10 => shown.text = Some("date decode phrase: "),
+            12 => shown.text = Some("date encode phrase: "),
+            0 | 1 => shown.number = Some("characters to remove: "),
+            6 | 7 => shown.number = Some("characters to take: "),
+            11 => shown.number = Some("number to add: "),
+            _ => {}
+        }
+        shown
+    }
+
+    /// The conversion as the boxes say (`GetValue`).
+    pub fn value(&self) -> Conversion {
+        let count = count_of(self.number);
+        let unsupported = |code: i64, data: serde_json::Value| Conversion::Unsupported {
+            code,
+            data: hydrus_core::pyjson::PyJson::parse(&data.to_string())
+                .map_or_else(|_| data.to_string(), |d| d.to_python_string()),
+        };
+        match self.code() {
+            0 => Conversion::RemoveFromStart(count),
+            1 => Conversion::RemoveFromEnd(count),
+            6 => Conversion::KeepStart(count),
+            7 => Conversion::KeepEnd(count),
+            2 => Conversion::Prepend(self.text.clone()),
+            3 => Conversion::Append(self.text.clone()),
+            15 => Conversion::AppendRandom {
+                population: self.text.clone(),
+                count,
+            },
+            4 => Conversion::Encode(ENCODINGS[self.encoding].0),
+            5 => Conversion::Decode(ENCODINGS[self.decoding].0),
+            8 => Conversion::Reverse,
+            9 => Conversion::RegexSub {
+                pattern: PyRegex::new(self.pattern.clone()),
+                replacement: self.replacement.clone(),
+            },
+            11 => Conversion::IntegerAddition(self.number),
+            13 => Conversion::Hash(HASH_FUNCTIONS[self.hash].0),
+            10 => unsupported(
+                10,
+                serde_json::json!([self.text, self.timezone_decode, self.timezone_offset]),
+            ),
+            12 => unsupported(12, serde_json::json!([self.text, self.timezone_encode])),
+            code => unsupported(code, serde_json::Value::Null),
+        }
+    }
+
+    /// The example converted ("converted string"), or why not.
+    pub fn result(&self) -> String {
+        StringConverter {
+            conversions: vec![self.value()],
+            example: self.example.clone(),
+        }
+        .convert_upto(&self.example, None)
+        .unwrap_or_else(|e| e)
+    }
+
+    /// What "ok" asks first: a regex that looks like it captures a group,
+    /// with nothing to replace it with.
+    pub fn ok_question(&self) -> Option<&'static str> {
+        if self.code() != 9 || !self.replacement.is_empty() {
+            return None;
+        }
+        // (`(?<!\\)\((?!\?:|[=!>])`, matched at the start)
+        let rest = self.pattern.strip_prefix('(')?;
+        let other = rest.starts_with("?:") || rest.starts_with(['=', '!', '>']);
+        (!other).then_some(
+            "Are you sure you want this? It looks like you are matching a group, but the regex \"replacement\" input is empty.",
+        )
     }
 }

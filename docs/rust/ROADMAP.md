@@ -91,9 +91,10 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   the splitter, joiner, sorter and slicer editors, and their windows
   (`src/string_processor_window.rs`), from a router's or source's
   processing button, and the string match editor
-  (`oracle/record_string_match_editor.py`). **Next**: the converter
-  editor (and the tag filter step's example test); the JSON formula
-  editor; the router editor's testing panel.
+  (`oracle/record_string_match_editor.py`) and string converter editor
+  (`oracle/record_string_converter_editor.py`). **Next**: the tag filter
+  step's example test; the JSON formula editor; the router editor's
+  testing panel.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 

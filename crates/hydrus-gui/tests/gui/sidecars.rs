@@ -387,3 +387,98 @@ fn a_routers_processing_is_edited_in_the_string_processor_editor() {
         }
     ));
 }
+
+#[test]
+fn a_sidecars_filename_conversion_is_edited_in_the_converter_editor() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui, "manage import folders\u{2026}");
+    let list = bound
+        .folders
+        .import_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.invoke_edit_sidecars();
+    let slots = &bound.folders.sidecars;
+    let routers = slots.routers.borrow().as_ref().unwrap().clone_strong();
+    routers.invoke_add();
+    let router = slots.router.borrow().as_ref().unwrap().clone_strong();
+    router.invoke_add();
+    router.invoke_chosen(0);
+    let node = slots.node.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(node.get_converter_label(), "no string conversions");
+    assert_eq!(node.get_result(), "my_image.jpg.txt");
+
+    // the converter, with the sidecar path as its example
+    node.invoke_edit_converter();
+    let strings = &slots.strings;
+    let converter = strings.converter.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(converter.get_window_title(), "edit string converter");
+    assert_eq!(converter.get_example(), "my_image.jpg.txt");
+    assert_eq!(converter.get_rows().row_count(), 0);
+    // a conversion: "append extra text" at first, made a removal
+    converter.invoke_add();
+    let conversion = strings.conversion.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(conversion.get_window_title(), "edit conversion");
+    assert_eq!(conversion.get_text_label(), "text to append: ");
+    assert_eq!(conversion.get_text(), "extra text");
+    assert_eq!(conversion.get_result(), "my_image.jpg.txtextra text");
+    conversion.set_kind(0);
+    conversion.invoke_changed();
+    assert_eq!(conversion.get_text_label(), "");
+    assert_eq!(conversion.get_number_label(), "characters to remove: ");
+    conversion.set_number(3);
+    conversion.invoke_changed();
+    assert_eq!(conversion.get_result(), "image.jpg.txt");
+    conversion.invoke_apply();
+    assert!(strings.conversion.borrow().is_none());
+    let rows: Vec<Vec<String>> = (0..converter.get_rows().row_count())
+        .map(|r| {
+            let cells = converter.get_rows().row_data(r).unwrap().cells;
+            (0..cells.row_count())
+                .map(|c| cells.row_data(c).unwrap().to_string())
+                .collect()
+        })
+        .collect();
+    assert_eq!(
+        rows,
+        [["1", "remove the first 3 characters", "image.jpg.txt"]]
+    );
+    // "add" again starts from the last conversion made
+    converter.invoke_add();
+    let conversion = strings.conversion.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(conversion.get_number_label(), "characters to remove: ");
+    assert_eq!(conversion.get_example(), "image.jpg.txt");
+    conversion.invoke_cancel();
+    // a regex that captures a group and replaces it with nothing: asked
+    converter.invoke_row_clicked(0, false, false);
+    converter.invoke_edit();
+    let conversion = strings.conversion.borrow().as_ref().unwrap().clone_strong();
+    conversion.set_kind(10);
+    conversion.invoke_changed();
+    conversion.set_pattern("(_)".into());
+    conversion.invoke_changed();
+    conversion.invoke_apply();
+    assert!(conversion.get_asking());
+    conversion.invoke_chosen(0);
+    assert!(strings.conversion.borrow().is_none());
+    converter.invoke_apply();
+    assert!(strings.converter.borrow().is_none());
+    assert_eq!(
+        node.get_converter_label(),
+        "regex substitution: ('(_)', '')"
+    );
+    assert_eq!(node.get_result(), "myimage.jpg.txt");
+}

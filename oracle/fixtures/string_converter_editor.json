@@ -1,0 +1,6943 @@
+{
+ "cases": [
+  {
+   "conversions": [],
+   "example": "hello world",
+   "converter": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [],
+         "the converter's own"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      null
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello world",
+        "result": "hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     ],
+     "state": {
+      "rows": [],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {}
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello world",
+        "result": "hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello world",
+        "result": "hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "prepend text",
+       "text": ">> "
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello worldextra text",
+        "result": "hello worldextra textextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "prepend text",
+        "shown": {
+         "text": "text to prepend: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": ">> ",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello worldextra text",
+        "result": ">> hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                2,
+                ">> "
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "remove text from beginning of string",
+       "number": 3
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "prepend text",
+        "shown": {
+         "text": "text to prepend: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": ">> ",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": ">> hello worldextra text",
+        "result": ">> >> hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                2,
+                ">> "
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "remove text from beginning of string",
+        "shown": {
+         "text": null,
+         "number": "characters to remove: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": ">> ",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": ">> hello worldextra text",
+        "result": "hello worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                0,
+                3
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "take the end of the string",
+       "number": 4
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "remove text from beginning of string",
+        "shown": {
+         "text": null,
+         "number": "characters to remove: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello worldextra text",
+        "result": "lo worldextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                0,
+                3
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "take the end of the string",
+        "shown": {
+         "text": null,
+         "number": "characters to take: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 4,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "hello worldextra text",
+        "result": "text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                7,
+                4
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ]
+      ],
+      "selected": [
+       3
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "reverse text"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "take the end of the string",
+        "shown": {
+         "text": null,
+         "number": "characters to take: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 4,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "text",
+        "result": "text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                7,
+                4
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "reverse text",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 4,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "text",
+        "result": "txet",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                8,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ]
+      ],
+      "selected": [
+       4
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "encode",
+       "encoding": "base64 (utf-8)"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "reverse text",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "txet",
+        "result": "text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                8,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "encode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": true,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "base64 (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "txet",
+        "result": "dHhldA==",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                4,
+                4
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "encode to base64 (utf-8)",
+        "dHhldA=="
+       ]
+      ],
+      "selected": [
+       5
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              4,
+              4
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "decode",
+       "decoding": "hex (utf-8)"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "encode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": true,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "base64 (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "dHhldA==",
+        "result": "ZEhobGRBPT0=",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                4,
+                4
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "decode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": true,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "base64 (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "dHhldA==",
+        "result": "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dHhldA==\": non-hexadecimal number found in fromhex() arg at position 1",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                5,
+                3
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "encode to base64 (utf-8)",
+        "dHhldA=="
+       ],
+       [
+        "7",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dHhldA==\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [
+       6
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              4,
+              4
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      5,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "encode to base64 (utf-8)",
+        "dHhldA=="
+       ],
+       [
+        "7",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dHhldA==\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [
+       5
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              4,
+              4
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete all selected?"
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"txet\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"txet\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      2,
+      true
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "append with \"extra text\"",
+        "hello worldextra text"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> hello worldextra text"
+       ],
+       [
+        "3",
+        "remove the first 3 characters",
+        "hello worldextra text"
+       ],
+       [
+        "4",
+        "take the last 4 characters",
+        "text"
+       ],
+       [
+        "5",
+        "reverse text",
+        "txet"
+       ],
+       [
+        "6",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"txet\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       0,
+       2
+      ],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              3,
+              "extra text"
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              0,
+              3
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete all selected?"
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "prepend with \">> \"",
+        ">> hello world"
+       ],
+       [
+        "2",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "3",
+        "reverse text",
+        "dlro"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dlro\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              2,
+              ">> "
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "prepend with \">> \"",
+        ">> hello world"
+       ],
+       [
+        "2",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "3",
+        "reverse text",
+        "dlro"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dlro\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              2,
+              ">> "
+             ],
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "2",
+        "prepend with \">> \"",
+        ">> orld"
+       ],
+       [
+        "3",
+        "reverse text",
+        "dlro >>"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dlro >>\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "2",
+        "reverse text",
+        "dlro"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> dlro"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> dlro\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "2",
+        "reverse text",
+        "dlro"
+       ],
+       [
+        "3",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dlro\": non-hexadecimal number found in fromhex() arg at position 1"
+       ],
+       [
+        "4",
+        "prepend with \">> \"",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \"dlro\": non-hexadecimal number found in fromhex() arg at position 1"
+       ]
+      ],
+      "selected": [
+       3
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              5,
+              3
+             ],
+             [
+              2,
+              ">> "
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "up"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "orld"
+       ],
+       [
+        "2",
+        "reverse text",
+        "dlro"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> dlro"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> dlro\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "hello world"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "goodbye"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "dbye"
+       ],
+       [
+        "2",
+        "reverse text",
+        "eybd"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> eybd"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> eybd\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "goodbye"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "dbye"
+       ],
+       [
+        "2",
+        "reverse text",
+        "eybd"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> eybd"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> eybd\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              8,
+              null
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "goodbye"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "take the start of the string",
+       "number": 2
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "reverse text",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "dbye",
+        "result": "eybd",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                8,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "take the start of the string",
+        "shown": {
+         "text": null,
+         "number": "characters to take: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 2,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "dbye",
+        "result": "db",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                6,
+                2
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "dbye"
+       ],
+       [
+        "2",
+        "take the first 2 characters",
+        "db"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> db"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> db\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              6,
+              2
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "goodbye"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      null
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "take the start of the string",
+        "shown": {
+         "text": null,
+         "number": "characters to take: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 2,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "dbye",
+        "result": "db",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                6,
+                2
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "take the last 4 characters",
+        "dbye"
+       ],
+       [
+        "2",
+        "take the first 2 characters",
+        "db"
+       ],
+       [
+        "3",
+        "prepend with \">> \"",
+        ">> db"
+       ],
+       [
+        "4",
+        "decode from hex (utf-8)",
+        "ERROR: Could not apply \"decode from hex (utf-8)\" to string \">> db\": non-hexadecimal number found in fromhex() arg at position 0"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              7,
+              4
+             ],
+             [
+              6,
+              2
+             ],
+             [
+              2,
+              ">> "
+             ],
+             [
+              5,
+              3
+             ]
+            ],
+            "goodbye"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "conversions": [
+    [
+     11,
+     -5
+    ],
+    [
+     9,
+     [
+      "(\\d+)",
+      ""
+     ]
+    ],
+    [
+     15,
+     [
+      "ab",
+      3
+     ]
+    ]
+   ],
+   "example": "41",
+   "converter": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           11,
+           -5
+          ],
+          [
+           9,
+           [
+            "(\\d+)",
+            ""
+           ]
+          ],
+          [
+           15,
+           [
+            "ab",
+            3
+           ]
+          ]
+         ],
+         "the converter's own"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add -5",
+        "36"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bba"
+       ]
+      ],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              -5
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add -5",
+        "36"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bba"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              -5
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "number": -7
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "integer addition",
+        "shown": {
+         "text": null,
+         "number": "number to add: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 0,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "41",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                11,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "integer addition",
+        "shown": {
+         "text": null,
+         "number": "number to add: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": -7,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "34",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                11,
+                -7
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add -7",
+        "34"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "aab"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              -7
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "remove text from end of string"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "integer addition",
+        "shown": {
+         "text": null,
+         "number": "number to add: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 0,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "41",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                11,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "remove text from end of string",
+        "shown": {
+         "text": null,
+         "number": "characters to remove: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 0,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                1,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "remove the last 0 characters",
+        ""
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "baa"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              1,
+              0
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "integer addition",
+       "number": 10
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "remove text from end of string",
+        "shown": {
+         "text": null,
+         "number": "characters to remove: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 0,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                1,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "integer addition",
+        "shown": {
+         "text": null,
+         "number": "number to add: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 10,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "41",
+        "result": "51",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                11,
+                10
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "aab"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "aab"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "ok": false
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      },
+      {
+       "asked": "Are you sure you want this? It looks like you are matching a group, but the regex \"replacement\" input is empty."
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d+)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d+)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d+)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d+)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": false
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d+)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bba"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d+)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "pattern": "(?:x)",
+       "ok": true
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d+)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d+)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(?:x)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "51",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(?:x)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(?:x)', '')",
+        "51"
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "51abb"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(?:x)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "pattern": "(\\d)",
+       "replacement": "<\\1>",
+       "ok": true
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(?:x)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "51",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(?:x)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d)",
+        "replacement": "<\\1>",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "<5><1>",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d)",
+                 "<\\1>"
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '<\\\\1>')",
+        "<5><1>"
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "<5><1>aaa"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               "<\\1>"
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "pattern": "(\\d)",
+       "replacement": "",
+       "ok": true
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      },
+      {
+       "asked": "Are you sure you want this? It looks like you are matching a group, but the regex \"replacement\" input is empty."
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d)",
+        "replacement": "<\\1>",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "<5><1>",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d)",
+                 "<\\1>"
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "regex substitution",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": true,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "(\\d)",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "51",
+        "result": "",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                9,
+                [
+                 "(\\d)",
+                 ""
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bbb"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      2,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bbb"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "append random text"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append random text",
+        "shown": {
+         "text": "population",
+         "number": "number of characters",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "ab",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "bab",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                15,
+                [
+                 "ab",
+                 3
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "append random text",
+        "shown": {
+         "text": "population",
+         "number": "number of characters",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "ab",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "bab",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                15,
+                [
+                 "ab",
+                 3
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "append with 3 random characters, from \"ab\"",
+        "bab"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              15,
+              [
+               "ab",
+               3
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "get hash of string",
+       "hash": "sha1"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append random text",
+        "shown": {
+         "text": "population",
+         "number": "number of characters",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "ab",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "bbb",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                15,
+                [
+                 "ab",
+                 3
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "get hash of string",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": true,
+         "dateparser": false
+        },
+        "text": "ab",
+        "number": 3,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "sha1",
+        "example": "",
+        "result": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                13,
+                "sha1"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "hash string by sha1",
+        "da39a3ee5e6b4b0d3255bfef95601890afd80709"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              13,
+              "sha1"
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "datestring to timestamp (easy)"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "get hash of string",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": true,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "sha1",
+        "example": "",
+        "result": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                13,
+                "sha1"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (easy)",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": true
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "sha1",
+        "example": "",
+        "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"\": Sorry, could not parse that date!",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                14,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "datestring to timestamp: automatic",
+        "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"\": Sorry, could not parse that date!"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              14,
+              null
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "datestring to timestamp (advanced)",
+       "text": "%Y-%m-%d",
+       "timezone_decode": "Offset",
+       "offset": 3600
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (easy)",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": true
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "ERROR: Could not apply \"datestring to timestamp: automatic\" to string \"\": Sorry, could not parse that date!",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                14,
+                null
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": true,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 2, 3600)\" to string \"\": time data '' does not match format '%Y-%m-%d'",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 2,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "datestring to timestamp: ('%Y-%m-%d', 2, 3600)",
+        "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 2, 3600)\" to string \"\": time data '' does not match format '%Y-%m-%d'"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              10,
+              [
+               "%Y-%m-%d",
+               2,
+               3600
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "timestamp to datestring",
+       "text": "%Y",
+       "timezone_encode": "Local"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "datestring to timestamp (advanced)",
+        "shown": {
+         "text": "date decode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": true,
+         "timezone_offset": true,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y-%m-%d",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "",
+        "result": "ERROR: Could not apply \"datestring to timestamp: ('%Y-%m-%d', 2, 3600)\" to string \"\": time data '' does not match format '%Y-%m-%d'",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                10,
+                [
+                 "%Y-%m-%d",
+                 2,
+                 3600
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "Offset",
+        "offset": 3600,
+        "timezone_encode": "Local",
+        "hash": "md5",
+        "example": "",
+        "result": "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"\": \"\" was not an integer!",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y",
+                 1
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "51"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        ""
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"\": \"\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "41"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "abc"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ]
+      ],
+      "selected": [
+       2
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {}
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "Local",
+        "hash": "md5",
+        "example": "abc",
+        "result": "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y",
+                 1
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "timestamp to datestring",
+        "shown": {
+         "text": "date encode phrase: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": true,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": true,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "%Y",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "Local",
+        "hash": "md5",
+        "example": "abc",
+        "result": "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                12,
+                [
+                 "%Y",
+                 1
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ]
+      ],
+      "selected": [
+       3
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "integer addition: add 10",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              11,
+              10
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "decode",
+       "decoding": "base64url (utf-8)"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "integer addition",
+        "shown": {
+         "text": null,
+         "number": "number to add: ",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 10,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "ERROR: Could not apply \"integer addition: add 10\" to string \"abc\": invalid literal for int() with base 10: 'abc'",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                11,
+                10
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "decode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": true,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 10,
+        "encoding": "hex (utf-8)",
+        "decoding": "base64url (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "i�",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                5,
+                5
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "decode from base64url (utf-8)",
+        "i�"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "i�"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"i�\": \"i�\" was not an integer!"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"i�\": \"i�\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              5,
+              5
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "decoding": "url percent encoding"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "decode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": true,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "base64url (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "i�",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                5,
+                5
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "decode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": true,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "url percent encoding",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "abc",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                5,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "decode from url percent encoding",
+        "abc"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "abc"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              5,
+              0
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "type": "encode",
+       "encoding": "html entities"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "decode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": false,
+         "decoding": true,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "url percent encoding",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "abc",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                5,
+                0
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "encode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": true,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "html entities",
+        "decoding": "url percent encoding",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "abc",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                4,
+                2
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "encode to html entities",
+        "abc"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "abc"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              4,
+              2
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "encoding": "unicode escape characters"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "encode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": true,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "html entities",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "abc",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                4,
+                2
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "encode",
+        "shown": {
+         "text": null,
+         "number": null,
+         "encoding": true,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "unicode escape characters",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "abc",
+        "result": "abc",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                4,
+                1
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "encode to unicode escape characters",
+        "abc"
+       ],
+       [
+        "2",
+        "regex substitution: ('(\\\\d)', '')",
+        "abc"
+       ],
+       [
+        "3",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ],
+       [
+        "4",
+        "timestamp to datestring: ('%Y', 1)",
+        "ERROR: Could not apply \"timestamp to datestring: ('%Y', 1)\" to string \"abc\": \"abc\" was not an integer!"
+       ]
+      ],
+      "selected": [
+       0
+      ],
+      "can_up": false,
+      "can_down": true,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              4,
+              1
+             ],
+             [
+              9,
+              [
+               "(\\d)",
+               ""
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ],
+             [
+              12,
+              [
+               "%Y",
+               1
+              ]
+             ]
+            ],
+            "abc"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "conversions": [
+    [
+     2,
+     "x"
+    ]
+   ],
+   "example": null,
+   "converter": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        55,
+        2,
+        [
+         [
+          [
+           2,
+           "x"
+          ]
+         ],
+         "the converter's own"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "1",
+        "prepend with \"x\"",
+        "xthe converter's own"
+       ]
+      ],
+      "selected": [],
+      "can_up": false,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              2,
+              "x"
+             ]
+            ],
+            "the converter's own"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      {
+       "type": "append random text",
+       "text": "",
+       "number": 0
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit conversion"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "type": "append text",
+        "shown": {
+         "text": "text to append: ",
+         "number": null,
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "extra text",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "xthe converter's own",
+        "result": "xthe converter's ownextra text",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                3,
+                "extra text"
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "edited": {
+        "type": "append random text",
+        "shown": {
+         "text": "population",
+         "number": "number of characters",
+         "encoding": false,
+         "decoding": false,
+         "regex": false,
+         "date_link": false,
+         "timezone_decode": false,
+         "timezone_offset": false,
+         "timezone_encode": false,
+         "hash": false,
+         "dateparser": false
+        },
+        "text": "",
+        "number": 1,
+        "encoding": "hex (utf-8)",
+        "decoding": "hex (utf-8)",
+        "pattern": "",
+        "replacement": "",
+        "timezone_decode": "UTC",
+        "offset": 0,
+        "timezone_encode": "UTC",
+        "hash": "md5",
+        "example": "xthe converter's own",
+        "result": "ERROR: Could not apply \"append with 1 random characters, from \"\"\" to string \"xthe converter's own\": string index out of range",
+        "value": [
+         84,
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             55,
+             2,
+             [
+              [
+               [
+                15,
+                [
+                 "",
+                 1
+                ]
+               ]
+              ],
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       },
+       "ok": true
+      }
+     ],
+     "state": {
+      "rows": [
+       [
+        "1",
+        "prepend with \"x\"",
+        "xthe converter's own"
+       ],
+       [
+        "2",
+        "append with 1 random characters, from \"\"",
+        "ERROR: Could not apply \"append with 1 random characters, from \"\"\" to string \"xthe converter's own\": string index out of range"
+       ]
+      ],
+      "selected": [
+       1
+      ],
+      "can_up": true,
+      "can_down": false,
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [
+             [
+              2,
+              "x"
+             ],
+             [
+              15,
+              [
+               "",
+               1
+              ]
+             ]
+            ],
+            "the converter's own"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

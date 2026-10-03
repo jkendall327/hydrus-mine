@@ -328,9 +328,17 @@ or sorter is edited in a step window (its fields, summary and results,
 and "apply" refusing a splitter with no separator), as is a string match
 (its type, fixed text, character set or regex, its limits and example,
 whether the example matches and why not, and "apply" refusing one it
-fails); a tag filter in the tag filter editor. What they show at each
-step is as `oracle/record_string_processor_editor.py` and
-`oracle/record_string_match_editor.py` recorded the reference's.
+fails); a tag filter in the tag filter editor; a converter in the
+string converter editor, which a sidecar's filename conversion button
+opens too: its conversions numbered, each with the example converted up
+to it (or the error), with add (starting from the last conversion made),
+edit, delete ("Delete all selected?"), move up and move down, and the
+example; each conversion in a conversion window (its type, the fields
+the type has, and the example converted; "apply" asking first about a
+regex that captures a group with no replacement). What they show at each
+step is as `oracle/record_string_processor_editor.py`,
+`oracle/record_string_match_editor.py` and
+`oracle/record_string_converter_editor.py` recorded the reference's.
 
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as

@@ -561,3 +561,298 @@ export component StringStepWindow inherits Window {
         }
     }
 }
+
+// A string converter's editor (`EditStringConverterPanel`): its
+// conversions numbered, each with the example converted up to it.
+export component StringConverterWindow inherits Window {
+    in property <string> window-title: "edit string converter";
+    title: root.window-title;
+    preferred-width: 760px;
+    preferred-height: 460px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    in property <bool> can-up;
+    in property <bool> can-down;
+    in-out property <string> example;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback up();
+    callback down();
+    callback example-edited();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        HorizontalLayout {
+            spacing: 6px;
+            vertical-stretch: 1;
+            ListTable {
+                horizontal-stretch: 1;
+                columns: [
+                    { title: "#", width: 40px },
+                    { title: "conversion", width: 280px },
+                    { title: "result", width: 280px, stretch: true },
+                ];
+                rows: root.rows;
+                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(r); }
+            }
+            VerticalLayout {
+                spacing: 4px;
+                alignment: start;
+                Button {
+                    text: "add";
+                    enabled: !root.asking;
+                    clicked => { root.add(); }
+                }
+                Button {
+                    text: "edit";
+                    enabled: root.one-selected && !root.asking;
+                    clicked => { root.edit(); }
+                }
+                Button {
+                    text: "delete";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.delete(); }
+                }
+                Button {
+                    text: "move up";
+                    enabled: root.can-up && !root.asking;
+                    clicked => { root.up(); }
+                }
+                Button {
+                    text: "move down";
+                    enabled: root.can-down && !root.asking;
+                    clicked => { root.down(); }
+                }
+            }
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            Label { text: "example string: "; }
+            LineEdit {
+                text <=> root.example;
+                edited => { root.example-edited(); }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}
+
+// A conversion's editor (`_ConversionPanel`): its type and the fields the
+// type has, and the example converted.
+export component ConversionWindow inherits Window {
+    in property <string> window-title: "edit conversion";
+    title: root.window-title;
+    preferred-width: 560px;
+    preferred-height: 380px;
+    background: Theme.window;
+    in property <[string]> types;
+    in-out property <int> kind;
+    in property <string> text-label;
+    in-out property <string> text;
+    in property <string> number-label;
+    in property <int> number-min;
+    in-out property <int> number;
+    in property <[string]> encodings;
+    in property <bool> show-encoding;
+    in-out property <int> encoding;
+    in property <bool> show-decoding;
+    in-out property <int> decoding;
+    in property <bool> show-regex;
+    in-out property <string> pattern;
+    in-out property <string> replacement;
+    in property <bool> show-date-link;
+    in property <bool> show-timezone-decode;
+    in-out property <int> timezone-decode;
+    in property <bool> show-timezone-offset;
+    in-out property <int> timezone-offset;
+    in property <bool> show-timezone-encode;
+    in-out property <int> timezone-encode;
+    in property <[string]> hashes;
+    in property <bool> show-hash;
+    in-out property <int> hash;
+    in property <string> dateparser-note;
+    in property <string> example;
+    in property <string> result;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback changed();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Box {
+            title: "string conversion step";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "conversion type: "; }
+                ComboBox {
+                    model: root.types;
+                    current-index <=> root.kind;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.text-label != "": HorizontalLayout {
+                spacing: 6px;
+                Label { text: root.text-label; }
+                LineEdit {
+                    text <=> root.text;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.number-label != "": HorizontalLayout {
+                spacing: 6px;
+                Label { text: root.number-label; }
+                SpinBox {
+                    minimum: root.number-min;
+                    maximum: 65535;
+                    value <=> root.number;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-encoding: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "encoding type: "; }
+                ComboBox {
+                    model: root.encodings;
+                    current-index <=> root.encoding;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-decoding: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "decoding type: "; }
+                ComboBox {
+                    model: root.encodings;
+                    current-index <=> root.decoding;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-regex: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "regex pattern: "; }
+                LineEdit {
+                    text <=> root.pattern;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-regex: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "regex replacement: "; }
+                LineEdit {
+                    text <=> root.replacement;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-date-link: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "date info: "; }
+                Label { text: "https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior"; }
+            }
+            if root.show-timezone-decode: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "date decode timezone: "; }
+                ComboBox {
+                    model: ["UTC", "Local", "Offset"];
+                    current-index <=> root.timezone-decode;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-timezone-offset: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "timezone offset: "; }
+                SpinBox {
+                    minimum: -86400;
+                    maximum: 86400;
+                    value <=> root.timezone-offset;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-timezone-encode: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "date encode timezone: "; }
+                ComboBox {
+                    model: ["UTC", "Local"];
+                    current-index <=> root.timezone-encode;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-hash: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "hashing function: "; }
+                ComboBox {
+                    model: root.hashes;
+                    current-index <=> root.hash;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.dateparser-note != "": Label {
+                text: root.dateparser-note;
+                wrap: word-wrap;
+            }
+        }
+        Box {
+            title: "test results";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "example string: "; }
+                LineEdit {
+                    read-only: true;
+                    text: root.example;
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "converted string: "; }
+                LineEdit {
+                    read-only: true;
+                    text: root.result;
+                }
+            }
+        }
+        Rectangle { vertical-stretch: 1; }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}

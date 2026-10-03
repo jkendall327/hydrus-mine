@@ -359,6 +359,53 @@ pub fn open_node(
             refresh();
         }
     });
+    // the sidecar filename's conversion, in the string converter editor,
+    // with the sidecar path it would convert
+    window.on_edit_converter({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let strings = slots.strings.clone();
+        move || {
+            if strings.converter.borrow().is_some() {
+                return;
+            }
+            let (converter, example) = {
+                let state = state.borrow();
+                let naming = &state.editing.boxes().naming;
+                let unconverted = hydrus_parse::sidecar::SidecarNaming {
+                    filename_converter: hydrus_core::url::strings::StringConverter::default(),
+                    ..naming.naming.clone()
+                };
+                (
+                    naming.naming.filename_converter.clone(),
+                    unconverted.path(&naming.example, naming.extension),
+                )
+            };
+            let applied: Rc<dyn Fn(hydrus_core::url::strings::StringConverter)> = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |converter| {
+                    state
+                        .borrow_mut()
+                        .editing
+                        .boxes_mut()
+                        .naming
+                        .naming
+                        .filename_converter = converter;
+                    refresh();
+                }
+            });
+            match crate::string_processor_window::open_converter(
+                &converter,
+                Some(example),
+                &strings,
+                applied,
+            ) {
+                Ok(w) => *strings.converter.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the string converter: {e}"),
+            }
+        }
+    });
     // a source's processing, in the string processor editor
     window.on_edit_processing({
         let state = state.clone();
