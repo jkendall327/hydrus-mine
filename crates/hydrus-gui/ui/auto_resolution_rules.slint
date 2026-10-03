@@ -249,6 +249,8 @@ export component AutoResolutionRuleWindow inherits Window {
     in-out property <string> search-1;
     in-out property <string> search-2;
     in property <string> location;
+    // the location button clicked
+    callback edit-location();
     in property <[string]> pixel-choices;
     in-out property <int> pixel;
     in-out property <int> distance;
@@ -379,7 +381,18 @@ export component AutoResolutionRuleWindow inherits Window {
                 current-index <=> root.pair-search;
                 selected => { root.changed(); }
             }
-            Label { text: "in " + root.location + "; a search term a line (tags, or system predicates as the Client API takes them):"; }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "searching: "; }
+                Button {
+                    text: root.location;
+                    clicked => { root.edit-location(); }
+                }
+                Label {
+                    horizontal-stretch: 1;
+                    text: "a search term a line (tags, or system predicates as the Client API takes them):";
+                }
+            }
             HorizontalLayout {
                 spacing: 6px;
                 vertical-stretch: 1;

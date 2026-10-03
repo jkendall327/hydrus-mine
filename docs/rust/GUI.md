@@ -975,7 +975,9 @@ search, comparison, action, progress and operation, its warning, and
 "delete" (asking first); "apply" writes them (a changed rule starting its
 work over, as the reference's does). The rule editor sets the name,
 paused, operation and most pending pairs, and has tabs for the search
-(which pairs, the searches typed a term a line, the distance and pixel
+(which pairs, the location both searches search, chosen in the
+"multiple/deleted locations" list, the searches typed a term a line, the
+distance and pixel
 duplicates), the comparison (the comparators, added by kind and edited
 in their own editors: a search for A, B or either; A or B's progressive
 jpeg test; a relative test of a file property with its operator,

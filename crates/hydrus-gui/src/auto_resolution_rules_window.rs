@@ -42,6 +42,8 @@ pub struct Slots {
     pub comparators: ComparatorStack,
     /// A rule's custom merge options' editor.
     pub merge_options: crate::merge_options_window::Slot,
+    /// The rule's searches' location list.
+    pub locations: Rc<RefCell<Option<crate::LocationsWindow>>>,
     /// The duplicate filter opened from the preview's lists.
     pub preview_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 }
@@ -53,6 +55,7 @@ impl std::fmt::Debug for Slots {
             .field("rule", &self.rule.borrow().is_some())
             .field("comparators", &self.comparators.borrow().len())
             .field("merge_options", &self.merge_options.borrow().is_some())
+            .field("locations", &self.locations.borrow().is_some())
             .field("preview_filter", &self.preview_filter.borrow().is_some())
             .finish()
     }
@@ -713,21 +716,10 @@ fn open_rule(
             .collect(),
     ));
     window.set_comparator_kinds(strings(kind_labels()));
-    let snapshot = store.snapshot();
-    let location: Vec<String> = rule
-        .search
-        .search_1
-        .location
-        .current()
-        .iter()
-        .map(|k| {
-            snapshot
-                .services
-                .by_key(k)
-                .map_or_else(|_| "unknown service".to_owned(), |s| s.name.clone())
-        })
-        .collect();
-    window.set_location(location.join(", ").into());
+    window.set_location(
+        crate::domains::location_label(&store.snapshot().services, &rule.search.search_1.location)
+            .into(),
+    );
     let merge_for = rule
         .custom_merge
         .is_some()
@@ -760,6 +752,44 @@ fn open_rule(
             let mut state = state.borrow_mut();
             read_rule(&window, &store, &mut state);
             show_rule(&window, &state, false);
+        }
+    });
+    // the searches' location, chosen in the locations list
+    window.on_edit_location({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slot = slots.locations.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let current = {
+                let mut state = state.borrow_mut();
+                read_rule(&window, &store, &mut state);
+                state.rule.search.search_1.location.clone()
+            };
+            let chosen: Rc<dyn Fn(hydrus_search::LocationContext)> = {
+                let weak = window.as_weak();
+                let state = state.clone();
+                let store = store.clone();
+                Rc::new(move |location| {
+                    let Some(window) = weak.upgrade() else {
+                        return;
+                    };
+                    window.set_location(
+                        crate::domains::location_label(&store.snapshot().services, &location)
+                            .into(),
+                    );
+                    let mut state = state.borrow_mut();
+                    // (both searches search the one location)
+                    state.rule.search.search_2.location = location.clone();
+                    state.rule.search.search_1.location = location;
+                })
+            };
+            if let Err(e) = crate::locations_window::open(&slot, store.clone(), &current, chosen) {
+                eprintln!("could not open the locations list: {e}");
+            }
         }
     });
     // the custom merge options, in their editor

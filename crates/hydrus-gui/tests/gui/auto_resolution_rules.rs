@@ -213,3 +213,80 @@ fn rules_are_added_edited_deleted_and_written() {
         Comparator::Or(vec![Comparator::Pair(PairTest::FiletypeSame)])
     );
 }
+
+#[test]
+fn a_rules_searches_location_is_chosen() {
+    let _windows = headless::init();
+    let (_dir, store) = store_with_pairs();
+    let (_, key) = my_files(&store);
+    let search = FileSearchContext {
+        location: LocationContext::single(key),
+        ..FileSearchContext::default()
+    };
+    let session = Session {
+        name: LAST_SESSION.into(),
+        pages: vec![Page {
+            key: PageKey::random(),
+            name: "duplicates".into(),
+            content: PageContent::Duplicates {
+                duplicates: DuplicatesPage::new(DuplicatesSearch {
+                    search_1: search.clone(),
+                    search_2: search,
+                    kind: PairSearchKind::OneFileMatchesOneSearch,
+                    pixel_duplicates: PixelDuplicates::Allowed,
+                    max_hamming_distance: 4,
+                }),
+                sort: None,
+            },
+        }],
+    };
+    store
+        .write(move |ctx| sessions::save(ctx.conn(), &session, 0))
+        .unwrap();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    ui.invoke_duplicates_action("edit rules".into(), 0, false, false);
+    let list = bound
+        .auto_resolution
+        .list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add_suggested();
+    list.invoke_suggested_chosen(0);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let rule = bound
+        .auto_resolution
+        .rule
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert_eq!(rule.get_location(), "combined local file domains");
+    // my files and the trash, in the locations list
+    rule.invoke_edit_location();
+    let locations = bound
+        .auto_resolution
+        .locations
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the list opens");
+    let ticks = locations.get_ticks();
+    for label in ["my files", "trash"] {
+        let at = (0..ticks.row_count())
+            .position(|i| ticks.row_data(i).unwrap().label == label)
+            .unwrap();
+        locations.invoke_toggled(i32::try_from(at).unwrap(), true);
+    }
+    locations.invoke_apply();
+    assert_eq!(rule.get_location(), "my files, trash");
+    rule.invoke_apply();
+    list.invoke_apply();
+    let written = store.read(auto::rules).unwrap();
+    let search = &written[0].1.search;
+    assert_eq!(search.search_1.location.current().len(), 2);
+    assert_eq!(search.search_1.location, search.search_2.location);
+}

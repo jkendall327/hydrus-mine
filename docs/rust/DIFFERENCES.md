@@ -614,9 +614,10 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   which rule `hydrus serve` is working on ("searching", "resolving"): it
   says "working".
 - **The auto-resolution rule editor** takes its searches as terms typed
-  a line each (as the Client API reads them), in the rule's location
-  (which isn't changed there), where the reference has search
-  autocompletes with a location button and a live count of pairs. It has
+  a line each (as the Client API reads them), where the reference has
+  search autocompletes and a live count of pairs; its location button
+  opens the "multiple/deleted locations" list straight away (the
+  reference's offers a menu of single domains first). It has
   no import/export/duplicate of rules or comparators, and its custom
   merge options are edited in their own window (the reference embeds
   the editor). A relative comparator's time delta and range are
