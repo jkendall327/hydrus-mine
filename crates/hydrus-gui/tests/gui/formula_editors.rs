@@ -670,7 +670,9 @@ fn lifecycle_string_editors_cancel_descendants_and_reopen() {
     // A processor's step/tag-filter branch is canceled with the same helper.
     let tags = StringProcessor {
         steps: vec![ProcessingStep::TagFilter(
-            hydrus_core::tag_filter::TagFilter::default(),
+            hydrus_core::url::strings::TagFilterStep::new(
+                hydrus_core::tag_filter::TagFilter::default(),
+            ),
         )],
     };
     let processor = open(&tags);
