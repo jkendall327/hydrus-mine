@@ -60,6 +60,7 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 mod search_log_window;
+pub mod services_review_window;
 mod session_dialog;
 pub mod sidecars_window;
 pub mod slideshow;
@@ -189,6 +190,8 @@ pub struct Bound {
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The about window while it is open.
     pub about: Rc<RefCell<Option<AboutWindow>>>,
+    /// The review services window while it is open.
+    pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -1165,6 +1168,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
+    let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
@@ -1285,6 +1289,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            review_services: {
+                let pages = pages.clone();
+                let slot = services_review.clone();
+                Rc::new(move || {
+                    match services_review_window::open(pages.borrow().store().clone()) {
+                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not review services: {e}"),
                     }
                 })
             },
@@ -2770,6 +2784,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_urls,
         options,
         about,
+        services_review,
         checker_options,
         session_dialog,
         subscriptions,

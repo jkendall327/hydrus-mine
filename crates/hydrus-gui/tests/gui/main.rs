@@ -68,3 +68,5 @@ mod viewer_window;
 mod volume;
 mod watcher_checker;
 mod zoom;
+
+mod services_review;

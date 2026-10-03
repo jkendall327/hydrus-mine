@@ -51,6 +51,8 @@ pub(crate) struct Hooks {
     pub importer_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
     /// Open the about window.
     pub about: Rc<dyn Fn()>,
+    /// Open service review.
+    pub review_services: Rc<dyn Fn()>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -561,5 +563,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),
         Command::About => (hooks.about)(),
+        Command::ReviewServices => (hooks.review_services)(),
     }
 }

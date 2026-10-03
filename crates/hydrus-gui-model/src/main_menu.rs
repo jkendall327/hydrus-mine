@@ -133,6 +133,8 @@ pub enum Command {
     CheckImportFolder(Option<String>),
     /// Run an export folder now (none: all of them).
     RunExportFolder(Option<String>),
+    /// Review the local service registry and statistics.
+    ReviewServices,
     OpenInstallDirectory,
     OpenDatabaseDirectory,
     Exit,
@@ -869,7 +871,7 @@ fn services_menu() -> Entry {
                 vec![check("all repository synchronisation", None, false)],
             ),
             SEP,
-            todo("review"),
+            item("review", Command::ReviewServices),
             todo(dots("edit")),
             SEP,
             menu(

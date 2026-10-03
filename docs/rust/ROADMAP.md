@@ -25,7 +25,7 @@ screens not started yet:
    (manage > ratings), times (manage > times), force filetype.
    **Half done**: the embedded metadata window (see "Handover: the
    embedded metadata window" below).
-4. Services: review services and manage services.
+4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Next**: manage local services; remote repositories/IPFS/account administration and bulk maintenance remain subsequent work.
 5. Tag siblings and parents (and tags > display/search, migrate tags,
    sibling/parent sync).
 6. The downloader definition editors: URL classes, parsers, gallery URL

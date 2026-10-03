@@ -1315,3 +1315,5 @@ autocomplete options, sessions, shortcut sets, recent tags.
 
 - Slint is to be tried first (DECISIONS.md); the first milestone, a search
   page with a thumbnail grid over a real library, is where that is judged.
+
+Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.

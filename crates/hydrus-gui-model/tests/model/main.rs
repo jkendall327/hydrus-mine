@@ -42,3 +42,5 @@ mod tag_filter_editor;
 mod thumbnail_ratings;
 mod times_editor;
 mod urls_editor;
+
+mod services_review;

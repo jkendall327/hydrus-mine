@@ -841,3 +841,5 @@ Checked by the `popups` conformance scenario.
 - **Booleans are not numbers.** `/edit_ratings/set_rating` rejects `true` or
   `false` for a numerical or inc/dec rating service (Python counts a bool as
   an int, so the reference stores `true` as one star).
+
+- **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, Client API account controls, repository/IPFS administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
