@@ -183,3 +183,62 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     let page = page.borrow();
     assert!(page.gallery().unwrap().state.options.presentation.is_some());
 }
+
+#[test]
+fn a_highlighted_searchs_own_file_limit_and_import_options_are_edited() {
+    let (_dirs, store) = store();
+    crate::importer_list_menu::with_downloader(&store);
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(6);
+    ui.invoke_gallery_queries("blue".into());
+    let queue = {
+        let page = bound.current.borrow();
+        let page = page.borrow();
+        page.gallery().unwrap().queries[0].queue
+    };
+    // (a new query is shown, as a new client's options have it)
+    assert!(ui.get_gallery_data().highlighted);
+    assert_eq!(
+        ui.get_gallery_data().shown_import_options,
+        "import options (all default)"
+    );
+
+    // its file limit
+    ui.invoke_gallery_shown_limit(false, 50);
+    let extra = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap()
+        .extra;
+    assert_eq!(extra["file_limit"], 50);
+    assert!(!ui.get_gallery_data().shown_no_limit);
+    assert_eq!(ui.get_gallery_data().shown_file_limit, 50);
+
+    // its import options
+    ui.invoke_shown_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    editor.invoke_kind_clicked(7);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    editor.invoke_apply();
+    let options = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap()
+        .options;
+    assert!(options.presentation.is_some());
+    assert_eq!(
+        ui.get_gallery_data().shown_import_options,
+        "import options (presentation set)"
+    );
+}

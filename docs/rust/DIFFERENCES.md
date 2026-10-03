@@ -330,11 +330,10 @@ search.
 - **A gallery or watcher downloader page's list**: dragging across rows
   doesn't select them (click, ctrl+click and shift+click do). The page's
   "import options" button edits what new searches or watchers get (see
-  the import options editor below). The "highlighted" boxes don't show a
-  search's or watcher's own file limit or import options. Its
+  the import options editor below), as do the "highlighted" boxes' own
+  (and the highlighted search's file limit). Its
   downloader list is flat (the reference nests a site's downloaders and
-  greys out ones that can't work), and a search's own import options and
-  file limit can't be edited from the page yet. Its columns are as
+  greys out ones that can't work). Its columns are as
   narrow as the reference's, which shows the status columns as single
   characters; their widths are fixed, but for the first, which takes
   the room left.

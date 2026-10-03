@@ -51,20 +51,8 @@ fn queries(bound: &Bound) -> Vec<(i64, String)> {
         .collect()
 }
 
-#[test]
-fn a_gallery_lists_menu_acts_on_the_pressed_search() {
-    let (_dirs, store) = store();
-    let first: (HashId, hydrus_core::Sha256) = store
-        .read(|conn| {
-            let id: HashId = conn.query_row(
-                "SELECT hash_id FROM files ORDER BY hash_id LIMIT 1",
-                [],
-                |r| r.get(0),
-            )?;
-            Ok((id, hydrus_store::master::hash(conn, id)?.unwrap()))
-        })
-        .unwrap();
-    // (a downloader, the page's)
+/// Give the store a downloader, a gallery page's default.
+pub(crate) fn with_downloader(store: &hydrus_store::Store) {
     let gug = hydrus_core::url::AnyGug::Single(hydrus_core::url::Gug {
         name: "example tag search".into(),
         key: "aa".into(),
@@ -91,6 +79,22 @@ fn a_gallery_lists_menu_acts_on_the_pressed_search() {
             hydrus_store::settings::set(ctx.conn(), &defaults)
         })
         .unwrap();
+}
+
+#[test]
+fn a_gallery_lists_menu_acts_on_the_pressed_search() {
+    let (_dirs, store) = store();
+    let first: (HashId, hydrus_core::Sha256) = store
+        .read(|conn| {
+            let id: HashId = conn.query_row(
+                "SELECT hash_id FROM files ORDER BY hash_id LIMIT 1",
+                [],
+                |r| r.get(0),
+            )?;
+            Ok((id, hydrus_store::master::hash(conn, id)?.unwrap()))
+        })
+        .unwrap();
+    with_downloader(&store);
     let copied: Rc<RefCell<Vec<Clip>>> = Rc::default();
     set_clipper({
         let copied = copied.clone();

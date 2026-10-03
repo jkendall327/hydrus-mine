@@ -103,8 +103,6 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 ## 4. Downloader pages: leftovers
 
 - Dragging across rows to select.
-- The "highlighted" boxes don't show a search's or watcher's own file
-  limit and import options.
 - The Client API's `/manage_pages/get_page_info` for gallery and watcher
   pages.
 - See `DIFFERENCES.md`, "Pages".
@@ -124,9 +122,8 @@ filetypes aren't edited yet.
 - File filtering's filetypes (the reference's mimes tree), the tag
   filter editor for "get tags" filters and the blacklist, and a tags
   input with autocomplete for additional tags and the whitelist.
-- The "highlighted" boxes' import options buttons (a search's or
-  watcher's own), the URL downloader and local import pages', and the
-  subscriptions list's "import options" button.
+- The URL downloader and local import pages' import options buttons,
+  and the subscriptions list's "import options" button.
 - The editor's copy and paste and favourites buttons.
 
 ## Later

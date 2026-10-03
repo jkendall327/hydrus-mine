@@ -1098,6 +1098,42 @@ impl SearchPage {
         }
     }
 
+    /// Give one of the page's searches or watchers its own import options.
+    pub fn set_query_import_options(
+        &mut self,
+        queue: i64,
+        options: &hydrus_core::import_options::ImportOptionsSlice,
+    ) {
+        let options = options.clone();
+        if let Err(e) = self
+            .store
+            .write(move |ctx| hydrus_store::queues::set_queue_options(ctx.conn(), queue, &options))
+        {
+            eprintln!("could not set the import options: {e}");
+        }
+        self.refresh_import();
+    }
+
+    /// Give one of the page's searches its own file limit (`None`: no
+    /// limit).
+    pub fn set_query_file_limit(&mut self, queue: i64, limit: Option<u64>) {
+        if let Err(e) = self.store.write(move |ctx| {
+            let conn = ctx.conn();
+            let Some(row) = hydrus_store::queues::queue(conn, queue)? else {
+                return Ok(());
+            };
+            let mut search: hydrus_core::gallery::GallerySearch =
+                serde_json::from_value(row.extra).unwrap_or_default();
+            search.file_limit = limit;
+            let extra = serde_json::to_value(&search).expect("plain data serialises");
+            hydrus_store::queues::set_queue_extra(conn, queue, &extra)?;
+            hydrus_store::queues::nudge(conn, queue)
+        }) {
+            eprintln!("could not set the file limit: {e}");
+        }
+        self.refresh_import();
+    }
+
     /// Set the page's file limit for new searches (`None`: no limit).
     pub fn set_file_limit(&mut self, limit: Option<u64>) {
         if let Some(gallery) = &mut self.gallery {

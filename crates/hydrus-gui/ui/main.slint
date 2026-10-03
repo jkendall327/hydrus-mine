@@ -570,6 +570,9 @@ export component MainWindow inherits Window {
     callback importer-list-action(int);
     // a gallery or watcher page's import options for new ones, edited
     callback page-import-options();
+    // and the shown search's or watcher's own
+    callback shown-import-options();
+    callback gallery-shown-limit(bool, int);
     callback gallery-sort(int, bool);
     callback gallery-highlight();
     callback gallery-clear-highlight();
@@ -865,6 +868,7 @@ export component MainWindow inherits Window {
                         row-clicked(row, ctrl, shift) => { root.gallery-row-clicked(row, ctrl, shift); }
                         row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
                         import-options => { root.page-import-options(); }
+                        shown-import-options => { root.shown-import-options(); }
                         sort(column, ascending) => { root.gallery-sort(column, ascending); }
                         highlight => { root.gallery-highlight(); }
                         clear-highlight => { root.gallery-clear-highlight(); }
@@ -876,6 +880,7 @@ export component MainWindow inherits Window {
                         paste => { root.gallery-paste(); }
                         gug-chosen(index) => { root.gallery-gug(index); }
                         limit-changed(none, value) => { root.gallery-limit(none, value); }
+                        shown-limit-changed(none, value) => { root.gallery-shown-limit(none, value); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
                         file-log => { root.open-file-log(); }
                         search-log => { root.open-search-log(); }
@@ -902,6 +907,7 @@ export component MainWindow inherits Window {
                         row-clicked(row, ctrl, shift) => { root.watcher-row-clicked(row, ctrl, shift); }
                         row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
                         import-options => { root.page-import-options(); }
+                        shown-import-options => { root.shown-import-options(); }
                         sort(column, ascending) => { root.watcher-sort(column, ascending); }
                         highlight => { root.watcher-highlight(); }
                         clear-highlight => { root.watcher-clear-highlight(); }

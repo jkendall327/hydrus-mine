@@ -26,6 +26,8 @@ export struct WatcherData {
     import-options: string,
     // the watcher shown: its thread, and its boxes' lines and buttons
     highlighted: bool,
+    // the shown watcher's import options, as its button names them
+    shown-import-options: string,
     subject: string,
     url: string,
     files-line: string,
@@ -54,8 +56,9 @@ export component WatcherSidebar inherits VerticalLayout {
     callback row-clicked(int, bool, bool);
     // a right press on a row, and where (the list's menu)
     callback row-menu(int, length, length);
-    // the page's import options' editor
+    // the page's import options' editor, and the shown watcher's
     callback import-options();
+    callback shown-import-options();
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -319,6 +322,10 @@ export component WatcherSidebar inherits VerticalLayout {
                         }
                     }
                 }
+            }
+            Button {
+                text: root.data.shown-import-options;
+                clicked => { root.shown-import-options(); }
             }
         }
     }

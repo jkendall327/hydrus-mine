@@ -30,8 +30,11 @@ export struct GalleryData {
     // the file limit for new queries
     no-limit: bool,
     file-limit: int,
-    // the search shown, and its status lines
+    // the search shown, and its status lines, file limit and import options
     highlighted: bool,
+    shown-no-limit: bool,
+    shown-file-limit: int,
+    shown-import-options: string,
     highlighted-query: string,
     files-line: string,
     search-line: string,
@@ -57,6 +60,10 @@ export component GallerySidebar inherits VerticalLayout {
     callback row-menu(int, length, length);
     // the page's import options' editor
     callback import-options();
+    // the shown search's file limit changed (no limit, the limit), and its
+    // import options' editor
+    callback shown-limit-changed(bool, int);
+    callback shown-import-options();
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -240,6 +247,30 @@ export component GallerySidebar inherits VerticalLayout {
                 cancel-download(gallery) => { root.cancel-download(gallery); }
                 file-log => { root.file-log(); }
                 search-log => { root.search-log(); }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: "stop after this many files";
+                    vertical-alignment: center;
+                }
+                shown-limit := SpinBox {
+                    horizontal-stretch: 1;
+                    minimum: 1;
+                    maximum: 1000000;
+                    value: root.data.shown-file-limit;
+                    enabled: !root.data.shown-no-limit;
+                    edited(value) => { root.shown-limit-changed(false, value); }
+                }
+            }
+            CheckBox {
+                text: "no limit";
+                checked: root.data.shown-no-limit;
+                toggled => { root.shown-limit-changed(self.checked, shown-limit.value); }
+            }
+            Button {
+                text: root.data.shown-import-options;
+                clicked => { root.shown-import-options(); }
             }
         }
     }

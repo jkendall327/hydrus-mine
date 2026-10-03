@@ -1593,6 +1593,74 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // the shown search's or watcher's own import options, in the editor
+    window.on_shown_import_options({
+        let page = page.clone();
+        let shown = shown.clone();
+        let slot = folders.import_options.clone();
+        move || {
+            if slot.borrow().is_some() {
+                return;
+            }
+            let page = page();
+            let found = {
+                let page = page.borrow();
+                if let Some(g) = page.gallery() {
+                    g.state.highlighted.and_then(|q| g.query(q)).map(|q| {
+                        (
+                            q.queue,
+                            hydrus_core::import_options::CallerType::PostUrls,
+                            q.options.clone(),
+                        )
+                    })
+                } else {
+                    page.watchers().and_then(|w| {
+                        w.state.highlighted.and_then(|q| w.watcher(q)).map(|r| {
+                            (
+                                r.queue,
+                                hydrus_core::import_options::CallerType::WatcherUrls,
+                                r.options.clone(),
+                            )
+                        })
+                    })
+                }
+            };
+            let Some((queue, caller, own)) = found else {
+                return;
+            };
+            let store = page.borrow().store().clone();
+            let done: Rc<dyn Fn(hydrus_core::import_options::ImportOptionsSlice)> = {
+                let page = page.clone();
+                let shown = shown.clone();
+                Rc::new(move |options| {
+                    page.borrow_mut().set_query_import_options(queue, &options);
+                    shown(false);
+                })
+            };
+            match import_options_window::open(&store, caller, &own, &slot, done) {
+                Ok(editor) => *slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
+            }
+        }
+    });
+    // and the shown search's file limit
+    window.on_gallery_shown_limit({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |none, value| {
+            let page = page();
+            let queue = page.borrow().gallery().and_then(|g| g.state.highlighted);
+            if let Some(queue) = queue {
+                let limit = if none {
+                    None
+                } else {
+                    u64::try_from(value).ok()
+                };
+                page.borrow_mut().set_query_file_limit(queue, limit);
+                shown(false);
+            }
+        }
+    });
     // a watcher page's sidebar, as a gallery page's
     window.on_watcher_row_clicked({
         let page = page.clone();
@@ -4101,6 +4169,14 @@ fn show_gallery(window: &MainWindow, page: &SearchPage) {
             .file_limit
             .map_or(2000, |n| i32::try_from(n).unwrap_or(i32::MAX)),
         highlighted: shown.is_some(),
+        shown_no_limit: shown.is_none_or(|q| q.file_limit.is_none()),
+        shown_file_limit: shown
+            .and_then(|q| q.file_limit)
+            .map_or(2000, |n| i32::try_from(n).unwrap_or(i32::MAX)),
+        shown_import_options: shown
+            .map(|q| edit_subscription::import_options_label(&q.options))
+            .unwrap_or_default()
+            .into(),
         highlighted_query: shown.map(|q| q.query.as_str()).unwrap_or_default().into(),
         files_line: shown
             .map(|q| gallery::live_line(&q.live.files_status, q.files_paused, q.working()))
@@ -4154,6 +4230,10 @@ fn show_watchers(window: &MainWindow, page: &SearchPage) {
         can_set_options: page.selected_options_differ(),
         import_options: edit_subscription::import_options_label(&view.state.options).into(),
         highlighted: shown.is_some(),
+        shown_import_options: shown
+            .map(|w| edit_subscription::import_options_label(&w.options))
+            .unwrap_or_default()
+            .into(),
         // (`WatcherReviewPanel`: "no subject" for one with none yet)
         subject: shown
             .map(|w| match w.subject() {
