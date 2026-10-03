@@ -3,7 +3,7 @@
 //! reference's select, "Remove all selected?" and the help asked in the
 //! window's own panel, and "apply" handing the filter back.
 
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -430,20 +430,33 @@ pub fn open(
         move |i| answer(i == 0)
     });
     window.on_cancelled(move || answer(false));
+    let active = Rc::new(Cell::new(true));
     let close = {
         let weak = window.as_weak();
         let slot = slot.clone();
+        let active = active.clone();
         move || {
-            if let Some(window) = weak.upgrade() {
+            if !active.replace(false) {
+                return;
+            }
+            let window = weak.upgrade();
+            if let Some(window) = &window {
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     };
     window.on_apply({
         let state = state.clone();
         let close = close.clone();
+        let active = active.clone();
         move || {
+            if !active.get() {
+                return;
+            }
             let filter = state.borrow().editor.value();
             close();
             applied(filter);

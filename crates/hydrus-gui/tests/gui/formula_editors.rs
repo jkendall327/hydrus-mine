@@ -1,7 +1,7 @@
 //! Formula child windows, test parsing, cancel/apply, and persistence in
 //! simple downloader settings and JSON sidecar sources.
 use crate::subscriptions::store;
-use hydrus_core::url::strings::{StringConverter, StringProcessor};
+use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter, StringProcessor};
 use hydrus_gui::formula_window::FormulaTestData;
 use hydrus_gui::{
     MainWindow, Pages, bind, formula_editors::new_formula, formula_window, headless,
@@ -505,4 +505,196 @@ fn formula_editors_bulk_edit_sequences_and_cancelled_children_unlock_parent() {
         expected
     );
     assert_eq!(saved.favourite, before.favourite);
+}
+
+#[test]
+fn lifecycle_formula_parent_keeps_rule_address_stable() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = formula_window::Slots::default();
+    let mut formula = new_formula(false);
+    let FormulaKind::Html { rules, .. } = &mut formula.kind else {
+        panic!()
+    };
+    let mut second = rules[0].clone();
+    second.tag_name = Some("b".into());
+    rules.push(second);
+    let accepted = Rc::new(RefCell::new(None));
+    let w = formula_window::open(
+        &store,
+        &formula,
+        FormulaTestData::default(),
+        &slots,
+        Rc::new({
+            let accepted = accepted.clone();
+            move |f| *accepted.borrow_mut() = Some(f)
+        }),
+    )
+    .unwrap();
+    *slots.formula.borrow_mut() = Some(w.clone_strong());
+    w.invoke_row_clicked(0, false, false);
+    w.invoke_edit();
+    let rule = slots.rule.borrow().as_ref().unwrap().clone_strong();
+    rule.set_tag("span".into());
+    rule.set_match_on(true);
+    rule.invoke_changed();
+    let before = labels(&w.get_rules());
+    assert!(w.get_child_open());
+    w.invoke_shift(true);
+    w.invoke_delete();
+    w.invoke_chosen(0);
+    w.invoke_add();
+    w.invoke_edit_processing();
+    w.set_kind(1);
+    w.invoke_type_chosen();
+    w.invoke_apply();
+    assert_eq!(w.get_kind(), 0);
+    assert_eq!(labels(&w.get_rules()), before);
+    assert!(!w.get_deleting());
+    assert!(slots.strings.processor.borrow().is_none());
+    assert!(accepted.borrow().is_none());
+    rule.invoke_edit_match();
+    let matcher = slots.strings.step.borrow().as_ref().unwrap().clone_strong();
+    assert!(rule.get_child_open());
+    rule.invoke_apply();
+    assert!(slots.rule.borrow().is_some());
+    matcher.invoke_cancel();
+    assert!(!rule.get_child_open());
+    assert!(w.get_child_open());
+    rule.invoke_apply();
+    assert!(!w.get_child_open());
+    // The child replaces A, and moving the queue works again after it closes.
+    assert!(labels(&w.get_rules())[0].contains("span"));
+    assert!(labels(&w.get_rules())[1].contains("<b>"));
+    w.invoke_shift(true);
+    let after_move = labels(&w.get_rules());
+    assert!(after_move[0].contains("<b>"));
+    w.invoke_edit_processing();
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(w.get_child_open());
+    w.invoke_shift(false);
+    w.invoke_delete();
+    w.invoke_apply();
+    assert_eq!(labels(&w.get_rules()), after_move);
+    assert!(accepted.borrow().is_none());
+    processor.invoke_cancel();
+    assert!(!w.get_child_open());
+    w.invoke_apply();
+    let accepted = accepted.borrow();
+    let FormulaKind::Html { rules, .. } = &accepted.as_ref().unwrap().kind else {
+        panic!()
+    };
+    assert_eq!(
+        rules
+            .iter()
+            .map(|r| r.tag_name.as_deref())
+            .collect::<Vec<_>>(),
+        [Some("b"), Some("span")]
+    );
+}
+
+#[test]
+fn lifecycle_string_editors_cancel_descendants_and_reopen() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let slots = hydrus_gui::string_processor_window::Slots::default();
+    let original = StringProcessor {
+        steps: vec![ProcessingStep::Convert(StringConverter {
+            conversions: vec![Conversion::Append("!".into())],
+            example: "example".into(),
+        })],
+    };
+    let accepted = Rc::new(RefCell::new(None));
+    let open = |value: &StringProcessor| {
+        let w = hydrus_gui::string_processor_window::open(
+            &store,
+            value,
+            vec!["example".into()],
+            &slots,
+            Rc::new({
+                let accepted = accepted.clone();
+                move |p| *accepted.borrow_mut() = Some(p)
+            }),
+        )
+        .unwrap();
+        *slots.processor.borrow_mut() = Some(w.clone_strong());
+        w
+    };
+    let processor = open(&original);
+    processor.invoke_row_clicked(0, false, false);
+    processor.invoke_edit();
+    let converter = slots.converter.borrow().as_ref().unwrap().clone_strong();
+    converter.invoke_row_clicked(0, false, false);
+    converter.invoke_edit();
+    let conversion = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    conversion.set_text("discarded".into());
+    conversion.invoke_changed();
+    assert!(processor.get_child_open());
+    assert!(converter.get_child_open());
+    processor.invoke_apply();
+    converter.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    assert!(slots.processor.borrow().is_some());
+    assert!(slots.converter.borrow().is_some());
+    processor.invoke_cancel();
+    assert!(!slots.has_open());
+    assert!(!converter.window().is_visible());
+    assert!(!conversion.window().is_visible());
+    // Retained canceled handles cannot commit into the old draft or clear
+    // newly opened slots.
+    let fresh = open(&original);
+    conversion.invoke_apply();
+    converter.invoke_apply();
+    processor.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    assert!(slots.processor.borrow().is_some());
+    fresh.invoke_row_clicked(0, false, false);
+    fresh.invoke_edit();
+    let converter = slots.converter.borrow().as_ref().unwrap().clone_strong();
+    converter.invoke_row_clicked(0, false, false);
+    converter.invoke_edit();
+    let conversion = slots.conversion.borrow().as_ref().unwrap().clone_strong();
+    conversion.invoke_cancel();
+    assert!(!converter.get_child_open());
+    converter.invoke_apply();
+    assert!(!fresh.get_child_open());
+    fresh.invoke_apply();
+    assert_eq!(*accepted.borrow(), Some(original));
+    accepted.borrow_mut().take();
+    // A processor's step/tag-filter branch is canceled with the same helper.
+    let tags = StringProcessor {
+        steps: vec![ProcessingStep::TagFilter(
+            hydrus_core::tag_filter::TagFilter::default(),
+        )],
+    };
+    let processor = open(&tags);
+    processor.invoke_row_clicked(0, false, false);
+    processor.invoke_edit();
+    let step = slots.step.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_edit_tag_filter();
+    let filter = slots.tag_filter.borrow().as_ref().unwrap().clone_strong();
+    assert!(step.get_child_open());
+    step.invoke_apply();
+    assert!(slots.step.borrow().is_some());
+    processor.invoke_cancel();
+    assert!(!slots.has_open());
+    assert!(!step.window().is_visible());
+    assert!(!filter.window().is_visible());
+    let fresh = open(&tags);
+    fresh.invoke_row_clicked(0, false, false);
+    fresh.invoke_edit();
+    let fresh_step = slots.step.borrow().as_ref().unwrap().clone_strong();
+    fresh_step.invoke_edit_tag_filter();
+    filter.invoke_apply();
+    step.invoke_apply();
+    assert!(accepted.borrow().is_none());
+    assert!(slots.tag_filter.borrow().is_some());
+    slots.cancel_all();
+    assert!(!slots.has_open());
 }

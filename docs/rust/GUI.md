@@ -438,7 +438,10 @@ optional indices and optional string matches. JSON rules select dictionary
 keys, all items, an index, matching scalar values, ancestors or deminified
 JSON. The test panel accepts a document and context variables, runs the real
 parser with its caller's newline policy and shows results or the parse error.
-The processor receives the parsed strings before processing. JSON sidecar
+The processor receives the parsed strings before processing. Formula controls
+stay locked until an open rule or string editor closes. Processors and
+converters require their child draft to finish before Apply; Cancel or
+closing their window discards all unfinished descendants. JSON sidecar
 sources open this same formula editor from "edit parsing formula", restricted
 to JSON and preserving parsed newlines as the sidecar importer does.
 `oracle/record_formula_editors.py` records the real reference controls and

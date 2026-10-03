@@ -5,7 +5,7 @@ use crate::{FormulaRuleWindow, FormulaWindow, TableRow};
 use hydrus_parse::formula::{Formula, FormulaKind, HtmlContent, JsonContent};
 use hydrus_store::Store;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
-use std::cell::RefCell;
+use std::cell::{Cell, RefCell};
 use std::rc::Rc;
 use std::sync::Arc;
 
@@ -38,24 +38,19 @@ impl Slots {
             self.cancel_children();
         }
     }
+    fn has_children(&self) -> bool {
+        self.rule.borrow().is_some() || self.strings.has_open()
+    }
     fn cancel_children(&self) {
-        macro_rules! cancel {
-            ($slot:expr) => {{
-                let window = $slot
-                    .borrow()
-                    .as_ref()
-                    .map(slint::ComponentHandle::clone_strong);
-                if let Some(w) = window {
-                    w.invoke_cancel();
-                }
-            }};
+        self.strings.cancel_all();
+        let rule = self
+            .rule
+            .borrow()
+            .as_ref()
+            .map(slint::ComponentHandle::clone_strong);
+        if let Some(window) = rule {
+            window.invoke_cancel();
         }
-        cancel!(self.strings.tag_filter);
-        cancel!(self.strings.conversion);
-        cancel!(self.strings.converter);
-        cancel!(self.strings.step);
-        cancel!(self.strings.processor);
-        cancel!(self.rule);
     }
 }
 fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
@@ -159,6 +154,12 @@ pub fn open(
     applied: Rc<dyn Fn(Formula)>,
 ) -> Result<FormulaWindow, slint::PlatformError> {
     let w = FormulaWindow::new()?;
+    let active = Rc::new(Cell::new(true));
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || slots.has_children()
+    });
     w.set_document(test_data.text.as_str().into());
     w.set_context(
         test_data
@@ -173,9 +174,11 @@ pub fn open(
     let refresh: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let state = state.clone();
+        let slots = slots.clone();
         move || {
             if let Some(w) = weak.upgrade() {
                 show(&w, &state.borrow());
+                w.set_child_open(slots.has_children());
             }
         }
     });
@@ -183,7 +186,11 @@ pub fn open(
         let weak = w.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 read(&w, &mut state.borrow_mut());
                 w.set_veto(SharedString::new());
@@ -195,7 +202,12 @@ pub fn open(
         let weak = w.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                refresh();
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 let mut e = state.borrow_mut();
                 if w.get_allow_type_change() {
@@ -208,7 +220,11 @@ pub fn open(
     w.on_row_clicked({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |r, c, s| {
+            if blocked() {
+                return;
+            }
             if let Ok(r) = usize::try_from(r) {
                 state.borrow_mut().click(r, c, s);
             }
@@ -220,8 +236,10 @@ pub fn open(
         let refresh = refresh.clone();
         let store = store.clone();
         let slots = slots.clone();
+        let blocked = blocked.clone();
+        let active = active.clone();
         move |at| {
-            if slots.rule.borrow().is_some() {
+            if blocked() {
                 return;
             }
             let rule = {
@@ -232,15 +250,24 @@ pub fn open(
             let put: Rc<dyn Fn(Rule)> = Rc::new({
                 let state = state.clone();
                 let refresh = refresh.clone();
+                let active = active.clone();
                 move |r| {
+                    if !active.get() {
+                        return;
+                    }
                     state.borrow_mut().put(at, r);
                     refresh();
                 }
             });
             match open_rule(&store, &rule, &slots, put) {
-                Ok(w) => *slots.rule.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let refresh = refresh.clone();
+                    w.on_closed(move || refresh());
+                    *slots.rule.borrow_mut() = Some(w);
+                }
                 Err(e) => eprintln!("could not open formula rule: {e}"),
             }
+            refresh();
         }
     });
     w.on_add({
@@ -265,7 +292,11 @@ pub fn open(
     w.on_delete({
         let weak = w.as_weak();
         let state = state.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 let count = state.borrow().selected().len();
                 if count > 0 {
@@ -279,7 +310,11 @@ pub fn open(
         let weak = w.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 if w.get_deleting() && i == 0 {
                     state.borrow_mut().delete();
@@ -300,7 +335,11 @@ pub fn open(
     w.on_shift({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |down| {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().shift(down);
             refresh();
         }
@@ -308,7 +347,11 @@ pub fn open(
     w.on_test({
         let weak = w.as_weak();
         let state = state.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 read(&w, &mut state.borrow_mut());
                 match state.borrow().results() {
@@ -330,7 +373,11 @@ pub fn open(
         let store = store.clone();
         let slots = slots.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if slots.strings.processor.borrow().is_some() {
                 return;
             }
@@ -356,21 +403,31 @@ pub fn open(
                 &slots.strings,
                 applied,
             ) {
-                Ok(w) => *slots.strings.processor.borrow_mut() = Some(w),
+                Ok(w) => {
+                    let refresh = refresh.clone();
+                    w.on_closed(move || refresh());
+                    *slots.strings.processor.borrow_mut() = Some(w);
+                }
                 Err(e) => eprintln!("could not open string processor: {e}"),
             }
+            refresh();
         }
     });
     let close: Rc<dyn Fn(bool)> = Rc::new({
         let weak = w.as_weak();
         let slots = slots.clone();
+        let active = active.clone();
         move |accepted| {
+            if !active.replace(false) {
+                return;
+            }
             slots.cancel_children();
-            if let Some(w) = weak.upgrade() {
+            let window = weak.upgrade();
+            if let Some(w) = &window {
                 let _ = w.hide();
             }
             slots.formula.borrow_mut().take();
-            if let Some(w) = weak.upgrade() {
+            if let Some(w) = window {
                 w.invoke_closed(accepted);
             }
         }
@@ -379,7 +436,11 @@ pub fn open(
         let weak = w.as_weak();
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 read(&w, &mut state.borrow_mut());
                 let value = state.borrow().value();
@@ -424,6 +485,12 @@ fn open_rule(
     applied: Rc<dyn Fn(Rule)>,
 ) -> Result<FormulaRuleWindow, slint::PlatformError> {
     let w = FormulaRuleWindow::new()?;
+    let active = Rc::new(Cell::new(true));
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let strings = slots.strings.clone();
+        move || !active.get() || strings.has_open()
+    });
     let e = RuleEditor::new(rule);
     w.set_window_title(
         if e.html {
@@ -475,7 +542,11 @@ fn open_rule(
         let weak = w.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 read_rule(&w, &mut state.borrow_mut());
             }
@@ -486,7 +557,11 @@ fn open_rule(
         let weak = w.as_weak();
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 state
                     .borrow_mut()
@@ -498,7 +573,11 @@ fn open_rule(
     w.on_attribute_remove({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |r| {
+            if blocked() {
+                return;
+            }
             if let Ok(i) = usize::try_from(r)
                 && i < state.borrow().attrs.len()
             {
@@ -512,7 +591,13 @@ fn open_rule(
         let strings = slots.strings.clone();
         let state = state.clone();
         let refresh = refresh.clone();
+        let active = active.clone();
+        let weak = w.as_weak();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             let m = state.borrow().string_match().clone();
             crate::string_processor_window::open_match(
                 &store,
@@ -521,38 +606,63 @@ fn open_rule(
                 Rc::new({
                     let state = state.clone();
                     let refresh = refresh.clone();
+                    let active = active.clone();
                     move |m| {
+                        if !active.get() {
+                            return;
+                        }
                         state.borrow_mut().set_match(m);
                         refresh();
                     }
                 }),
             );
+            let step = strings
+                .step
+                .borrow()
+                .as_ref()
+                .map(slint::ComponentHandle::clone_strong);
+            if let Some(step) = step {
+                let parent = weak.clone();
+                step.on_closed(move || {
+                    if let Some(w) = parent.upgrade() {
+                        w.set_child_open(false);
+                    }
+                });
+                if let Some(w) = weak.upgrade() {
+                    w.set_child_open(true);
+                }
+            }
         }
     });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = w.as_weak();
         let slot = slots.rule.clone();
         let strings = slots.strings.clone();
+        let active = active.clone();
         move || {
-            let step = strings
-                .step
-                .borrow()
-                .as_ref()
-                .map(slint::ComponentHandle::clone_strong);
-            if let Some(w) = step {
-                w.invoke_cancel();
+            if !active.replace(false) {
+                return;
             }
-            if let Some(w) = weak.upgrade() {
+            strings.cancel_all();
+            let window = weak.upgrade();
+            if let Some(w) = &window {
                 let _ = w.hide();
             }
             slot.borrow_mut().take();
+            if let Some(w) = window {
+                w.invoke_closed();
+            }
         }
     });
     w.on_apply({
         let weak = w.as_weak();
         let state = state.clone();
         let close = close.clone();
+        let blocked = blocked.clone();
         move || {
+            if blocked() {
+                return;
+            }
             if let Some(w) = weak.upgrade() {
                 read_rule(&w, &mut state.borrow_mut());
             }
