@@ -253,7 +253,7 @@ pub async fn get_service_rating_svg(
     Ok(ApiResponse::Bytes {
         content_type: "image/svg+xml".into(),
         body: body.into(),
-        cache: false,
+        max_age: None,
         attachment: false,
     })
 }

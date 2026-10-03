@@ -15,7 +15,8 @@ Everything lives in a single SQLite database, `hydrus.db`, in WAL mode.
   primary tables (and the in-memory tag display graph, which is itself a pure
   function of primary tables). Each has exactly one *rebuild* path and one
   *incremental* path, and property tests assert they agree (ARCHITECTURE.md,
-  ADR-6). `hydrus maintenance rebuild-caches` drops and rebuilds them all.
+  ADR-6). `hydrus maintenance <store> rebuild-caches` drops and rebuilds them
+  all.
 
 One file keeps transactions atomic across everything (the reference splits
 four files, which makes cross-file transactions non-atomic in WAL mode).

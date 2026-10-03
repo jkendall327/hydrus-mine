@@ -1,0 +1,294 @@
+// A watcher downloader page's sidebar (the reference's
+// SidebarImporterMultipleWatcher): the "watchers" box with its watchers'
+// list, their buttons and the watcher url box; and the "highlighted
+// watcher" box (the reference's WatcherReviewPanel).
+
+import { Button, LineEdit, ProgressIndicator } from "std-widgets.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Theme } from "theme.slint";
+import { DownloadLine, DownloadControl } from "importing.slint";
+
+export struct WatcherData {
+    // "3 watchers - 12/40" and the total status, or "waiting for new
+    // watchers"
+    top-status: string,
+    bottom-status: string,
+    // what the list's buttons can do for the selected watcher
+    has-selection: bool,
+    can-highlight: bool,
+    can-clear-highlight: bool,
+    can-retry-ignored: bool,
+    can-retry-failed: bool,
+    // a selected one's options aren't the page's: "update selected with
+    // current options" shows
+    can-set-options: bool,
+    // the watcher shown: its thread, and its boxes' lines and buttons
+    highlighted: bool,
+    subject: string,
+    url: string,
+    files-line: string,
+    files-paused: bool,
+    velocity-line: string,
+    checker-line: string,
+    checking-paused: bool,
+    // (a dead watcher's checking only resumes when it is checked now)
+    can-pause-checking: bool,
+    can-check-now: bool,
+}
+
+export component WatcherSidebar inherits VerticalLayout {
+    in property <WatcherData> data;
+    in property <[TableRow]> rows;
+    in property <int> sort-column: -1;
+    in property <bool> ascending: true;
+    // the highlighted watcher's file log and check log, as an importer's
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <DownloadLine> file-download;
+    in property <string> search-status;
+    in property <DownloadLine> search-download;
+    // (the row shown, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback sort(int, bool);
+    callback highlight();
+    callback clear-highlight();
+    // a watcher's files or (true) its checking, from the list or the
+    // highlighted box (true: the shown one, else the list's selection)
+    callback pause-play(bool, bool);
+    callback check-now(bool);
+    callback retry(bool);
+    callback remove();
+    callback set-options();
+    callback urls-entered(string);
+    callback paste();
+    callback cancel-download(bool);
+    // the checker options the page gives new watchers, or (the highlighted
+    // box's) the shown watcher's
+    callback page-checker();
+    callback watcher-checker();
+    spacing: 6px;
+    Text {
+        text: "watchers";
+        font-weight: 700;
+    }
+    Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            Text {
+                text: root.data.top-status;
+                overflow: elide;
+            }
+            if root.data.bottom-status != "": Text {
+                text: root.data.bottom-status;
+                overflow: elide;
+            }
+            ListTable {
+                height: 180px;
+                columns: [
+                    { title: "subject", width: 110px, stretch: true },
+                    { title: "files status", width: 18px },
+                    { title: "checking status", width: 18px },
+                    { title: "status", width: 70px },
+                    { title: "items", width: 54px },
+                    { title: "added", width: 64px },
+                ];
+                rows: root.rows;
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                sort(column, ascending) => { root.sort(column, ascending); }
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                // (a double click: highlight it, as the button does)
+                row-activated(row) => { root.highlight(); }
+                delete-pressed => { if root.data.has-selection { root.remove(); } }
+            }
+            // the reference's buttons: highlight, clear highlight, pause/play
+            // files, pause/play checking, check now, retry, remove
+            HorizontalLayout {
+                spacing: 4px;
+                Button {
+                    icon: @image-url("../../../static/highlight.png");
+                    enabled: root.data.can-highlight;
+                    clicked => { root.highlight(); }
+                }
+                Button {
+                    icon: @image-url("../../../static/clear_highlight.png");
+                    enabled: root.data.can-clear-highlight;
+                    clicked => { root.clear-highlight(); }
+                }
+                Button {
+                    icon: @image-url("../../../static/file_pause.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.pause-play(false, false); }
+                }
+                Button {
+                    icon: @image-url("../../../static/gallery_pause.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.pause-play(true, false); }
+                }
+                Button {
+                    text: "check now";
+                    enabled: root.data.has-selection;
+                    clicked => { root.check-now(false); }
+                }
+                Button {
+                    icon: @image-url("../../../static/trash.png");
+                    enabled: root.data.has-selection;
+                    clicked => { root.remove(); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+            }
+            if root.data.can-retry-ignored || root.data.can-retry-failed: HorizontalLayout {
+                spacing: 4px;
+                if root.data.can-retry-ignored: Button {
+                    text: "retry ignored";
+                    clicked => { root.retry(true); }
+                }
+                if root.data.can-retry-failed: Button {
+                    text: "retry failed";
+                    clicked => { root.retry(false); }
+                }
+                Rectangle { horizontal-stretch: 1; }
+            }
+            HorizontalLayout {
+                spacing: 4px;
+                LineEdit {
+                    horizontal-stretch: 1;
+                    placeholder-text: "watcher url";
+                    accepted(text) => {
+                        root.urls-entered(text);
+                        self.text = "";
+                    }
+                }
+                // (the reference's paste button: newline-separated URLs
+                // from the clipboard)
+                Button {
+                    icon: @image-url("../../../static/paste.png");
+                    clicked => { root.paste(); }
+                }
+            }
+            Button {
+                text: "checker options";
+                clicked => { root.page-checker(); }
+            }
+            if root.data.can-set-options: Button {
+                text: "update selected with current options";
+                clicked => { root.set-options(); }
+            }
+        }
+    }
+    if root.data.highlighted: Rectangle {
+        border-width: 1px;
+        border-color: Theme.border;
+        VerticalLayout {
+            padding: 6px;
+            spacing: 4px;
+            Text {
+                text: "highlighted watcher";
+                font-weight: 700;
+            }
+            Text {
+                text: root.data.subject;
+                overflow: elide;
+            }
+            LineEdit {
+                text: root.data.url;
+                read-only: true;
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                VerticalLayout {
+                    padding: 6px;
+                    spacing: 4px;
+                    Text {
+                        text: "imports";
+                        font-weight: 600;
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text {
+                            text: root.data.files-line;
+                            overflow: elide;
+                            vertical-alignment: center;
+                            horizontal-stretch: 1;
+                        }
+                        Button {
+                            icon: root.data.files-paused ? @image-url("../../../static/file_play.png") : @image-url("../../../static/file_pause.png");
+                            clicked => { root.pause-play(false, true); }
+                        }
+                    }
+                    if root.import-status != "": Text {
+                        text: root.import-status;
+                        wrap: word-wrap;
+                    }
+                    if root.import-progress != "": Text {
+                        text: root.import-progress;
+                    }
+                    ProgressIndicator {
+                        progress: root.import-fraction;
+                    }
+                    DownloadControl {
+                        line: root.file-download;
+                        cancel => { root.cancel-download(false); }
+                    }
+                }
+            }
+            Rectangle {
+                border-width: 1px;
+                border-color: Theme.border;
+                VerticalLayout {
+                    padding: 6px;
+                    spacing: 4px;
+                    Text {
+                        text: "checker";
+                        font-weight: 600;
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text {
+                            text: root.data.velocity-line;
+                            overflow: elide;
+                            vertical-alignment: center;
+                            horizontal-stretch: 1;
+                        }
+                        Button {
+                            icon: root.data.checking-paused ? @image-url("../../../static/gallery_play.png") : @image-url("../../../static/gallery_pause.png");
+                            enabled: root.data.can-pause-checking;
+                            clicked => { root.pause-play(true, true); }
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Text {
+                            text: root.data.checker-line;
+                            overflow: elide;
+                            vertical-alignment: center;
+                            horizontal-stretch: 1;
+                        }
+                        Button {
+                            text: "check now";
+                            enabled: root.data.can-check-now;
+                            clicked => { root.check-now(true); }
+                        }
+                    }
+                    if root.search-status != "": Text {
+                        text: root.search-status;
+                        wrap: word-wrap;
+                    }
+                    DownloadControl {
+                        line: root.search-download;
+                        cancel => { root.cancel-download(true); }
+                    }
+                    Button {
+                        text: "checker options";
+                        clicked => { root.watcher-checker(); }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -6,6 +6,7 @@
 //! options' rules, copy it into file storage and record it. Every source of
 //! files (the Client API, import folders, downloaders) goes through here.
 
+pub mod maintenance;
 pub mod options;
 pub mod paths;
 pub mod status;
@@ -57,7 +58,11 @@ pub struct FileImporter {
 }
 
 impl FileImporter {
+    /// An importer for `store`, which also applies the store's file
+    /// handling settings to this process (as the reference applies its
+    /// options at boot).
     pub fn new(store: Arc<Store>, tools: MediaTools) -> Self {
+        apply_file_handling(&store);
         Self { store, tools }
     }
 
@@ -70,7 +75,7 @@ impl FileImporter {
     pub fn import_path(&self, path: &Path, options: &FileImportOptions) -> Result<ImportResult> {
         let scratch = self.scratch_dir()?;
         let temp = tempfile::NamedTempFile::new_in(&scratch)?;
-        std::fs::copy(path, temp.path())?;
+        hydrus_store::paths::copy_file(path, temp.path())?;
         let modified = std::fs::metadata(path)
             .and_then(|m| m.modified())
             .ok()
@@ -171,6 +176,20 @@ impl FileImporter {
         options: &FileImportOptions,
     ) -> Result<ImportResult> {
         let snap = self.store.snapshot();
+        if !options.allow_decompression_bombs
+            && let Ok(info) = self.tools.inspect(temp)
+            && is_decompression_bomb(&info)
+        {
+            // (the reference's job raises this, a veto, from GenerateInfo)
+            let note = "Image seems to be a Decompression Bomb!".to_owned();
+            return Ok(ImportResult {
+                status: ImportStatus::Vetoed,
+                hash: Some(hash),
+                mime: Some(info.mime),
+                note: note.clone(),
+                raised: Some(note),
+            });
+        }
         let spec = thumbnail_spec(&snap.thumbnails);
         let analysis = match self.tools.analyse(temp, &spec) {
             Ok(a) => a,
@@ -186,6 +205,20 @@ impl FileImporter {
                 raised: None,
             });
         }
+        // (the reference's job raises this before the file reaches the
+        // database; here it is before the file reaches storage)
+        let destinations = match options.destinations(&snap.services) {
+            Ok(d) => d,
+            Err(note) => {
+                return Ok(ImportResult {
+                    status: ImportStatus::Vetoed,
+                    hash: Some(hash),
+                    mime: Some(mime),
+                    note: note.to_owned(),
+                    raised: Some(note.to_owned()),
+                });
+            }
+        };
 
         // media first, under a claim, so the purge job can't race us
         let _claim = self.store.media_claims().claim(hash);
@@ -193,7 +226,21 @@ impl FileImporter {
             .storage
             .file_path(&hash, mime)
             .ok_or_else(|| StoreError::Corrupt(format!("no storage location for {hash}")))?;
-        write_into_storage(temp, &file_path)?;
+        let size = std::fs::metadata(temp)?.len();
+        if free_space(&file_path).is_some_and(|free| free < MIN_FREE_SPACE || free < size) {
+            return Err(self.critical_drive_error(format!(
+                "The disk for path \"{}\" is almost full and cannot take the file \"{hash}\", which is {}! Shut the client down now and fix this!",
+                file_path.display(),
+                hydrus_core::numbers::human_bytes(size),
+            )));
+        }
+        if let Err(e) = write_into_storage(temp, &file_path) {
+            return Err(self.critical_drive_error(format!(
+                "Copying the file from \"{}\" to \"{}\" failed ({e})! Other import queues have been paused. You should shut the client down now and fix this!",
+                temp.display(),
+                file_path.display(),
+            )));
+        }
         if let Some(thumbnail) = analysis.thumbnail.as_ref().filter(|t| !t.is_default)
             && let Some(thumb_path) = snap.storage.thumbnail_path(&hash)
         {
@@ -203,7 +250,6 @@ impl FileImporter {
             std::fs::write(&thumb_path, &thumbnail.bytes)?;
         }
 
-        let destinations = options.destinations(&snap.services);
         let archive = options.automatically_archive;
         let record = FileRecord::new(hash, &analysis, modified);
         let status = self.store.write_content(move |w| {
@@ -242,7 +288,8 @@ impl FileImporter {
     pub fn update_already_in_db(&self, hash: &Sha256, options: &FileImportOptions) -> Result<()> {
         let snap = self.store.snapshot();
         let destinations = if options.destinations_for_already_in_db {
-            options.destinations(&snap.services)
+            // (with no destination, there is nowhere to add it)
+            options.destinations(&snap.services).unwrap_or_default()
         } else {
             Vec::new()
         };
@@ -295,7 +342,120 @@ fn error_result(hash: Sha256, error: &MediaError) -> ImportResult {
     }
 }
 
-fn thumbnail_spec(settings: &hydrus_core::thumbnail::ThumbnailSettings) -> ThumbnailSpec {
+/// `IsDecompressionBomb`: a JPEG or PNG Pillow refuses to open, having
+/// more than twice the pixel limit the reference sets (512 MiB / 3).
+fn is_decompression_bomb(info: &hydrus_media::FileInfo) -> bool {
+    const MAX_IMAGE_PIXELS: u64 = (512 * 1024 * 1024) / 3;
+    matches!(info.mime, Mime::ImageJpeg | Mime::ImagePng)
+        && match (info.width, info.height) {
+            (Some(w), Some(h)) => u64::from(w) * u64::from(h) > 2 * MAX_IMAGE_PIXELS,
+            _ => false,
+        }
+}
+
+/// The least free space an import leaves on a media disk (the reference's).
+const MIN_FREE_SPACE: u64 = 100 * 1_048_576;
+
+/// The free space on the disk `path` is (or will be) on.
+fn free_space(path: &Path) -> Option<u64> {
+    let existing = path.ancestors().find(|p| p.exists())?;
+    fs4::available_space(existing).ok()
+}
+
+impl FileImporter {
+    /// `_HandleCriticalDriveError`: a media disk is full or failing, so stop
+    /// the importers (import folders, subscriptions, file queues) before
+    /// they lose more files, and say why.
+    fn critical_drive_error(&self, message: String) -> ImportError {
+        tracing::error!("{message}");
+        let paused = self.store.write(|ctx| {
+            let conn = ctx.conn();
+            let mut folders: hydrus_store::settings::FolderSettings =
+                hydrus_store::settings::get(conn)?;
+            folders.pause_import_folders = true;
+            hydrus_store::settings::set(conn, &folders)?;
+            let mut pauses: hydrus_store::settings::Pauses = hydrus_store::settings::get(conn)?;
+            pauses.subscriptions = true;
+            pauses.file_queues = true;
+            hydrus_store::settings::set(conn, &pauses)
+        });
+        match paused {
+            Ok(()) => tracing::error!(
+                "A critical drive error has occurred. All importers--subscriptions, import folders, and file import queues--have been paused. Once the issue is clear, resume them (hydrus resume <store> subscriptions, file-queues and import-folders)."
+            ),
+            Err(e) => tracing::error!(error = %e, "pausing the importers failed"),
+        }
+        ImportError::Io(std::io::Error::other(message))
+    }
+
+    /// `RegenerateThumbnail`, for a thumbnail that has gone missing: make it
+    /// again from the file, under the client's thumbnail settings. Its path,
+    /// or `None` when the file has no thumbnail of its own (its type has
+    /// none, or it is shown with its type's icon); an error when the file
+    /// isn't stored here or can't be read.
+    pub fn regenerate_thumbnail(
+        &self,
+        media: &hydrus_store::media::MediaResult,
+    ) -> Result<Option<std::path::PathBuf>> {
+        let missing =
+            |why: String| ImportError::Io(std::io::Error::new(std::io::ErrorKind::NotFound, why));
+        let snap = self.store.snapshot();
+        let Some(info) = &media.info else {
+            return Err(missing(format!("no metadata for file {}", media.hash)));
+        };
+        if !info.mime.has_thumbnail() {
+            return Ok(None);
+        }
+        let local_storage =
+            hydrus_store::content::DomainRoles::new(&snap.services)?.local_file_storage;
+        if !media.current.iter().any(|c| c.service == local_storage) {
+            return Err(missing(
+                "I was called to regenerate a thumbnail from source, but the source file does not think it is in the local file store!".into(),
+            ));
+        }
+        let file = snap
+            .storage
+            .file_path(&media.hash, info.mime)
+            .filter(|p| p.is_file())
+            .ok_or_else(|| {
+                missing(format!(
+                    "The thumbnail for file {} could not be regenerated from the original file because the original file is missing! This event could indicate hard drive corruption. Please check everything is ok.",
+                    media.hash
+                ))
+            })?;
+        let file_info = hydrus_media::FileInfo {
+            mime: info.mime,
+            size: info.size,
+            width: info.width,
+            height: info.height,
+            duration_ms: info.duration_ms,
+            num_frames: info.num_frames,
+            has_audio: info.has_audio,
+            num_words: info.num_words,
+        };
+        let thumbnail = self
+            .tools
+            .thumbnail(&file, &file_info, &thumbnail_spec(&snap.thumbnails))
+            .map_err(|e| {
+                missing(format!(
+                    "The thumbnail for file {} could not be regenerated from the original file ({e}).",
+                    media.hash
+                ))
+            })?;
+        if thumbnail.is_default {
+            return Ok(None);
+        }
+        let path = snap.storage.thumbnail_path(&media.hash).ok_or_else(|| {
+            StoreError::Corrupt(format!("no storage location for {}", media.hash))
+        })?;
+        write_bytes_into_storage(&thumbnail.bytes, &path)?;
+        Ok(Some(path))
+    }
+}
+
+pub(crate) fn thumbnail_spec(
+    settings: &hydrus_core::thumbnail::ThumbnailSettings,
+) -> ThumbnailSpec {
     use hydrus_core::thumbnail::ThumbnailScale as Core;
     use hydrus_media::ThumbnailScale as Media;
     ThumbnailSpec {
@@ -306,7 +466,7 @@ fn thumbnail_spec(settings: &hydrus_core::thumbnail::ThumbnailSettings) -> Thumb
             Core::ToFill => Media::ToFill,
         },
         dpr_percent: settings.dpr_percent,
-        ..ThumbnailSpec::default()
+        video_percentage_in: settings.video_percentage_in,
     }
 }
 
@@ -318,11 +478,43 @@ fn write_into_storage(source: &Path, destination: &Path) -> Result<()> {
         .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
     std::fs::create_dir_all(dir)?;
     let partial = tempfile::NamedTempFile::new_in(dir)?;
-    std::fs::copy(source, partial.path())?;
+    hydrus_store::paths::copy_file(source, partial.path())?;
     partial
         .persist(destination)
         .map_err(|e| ImportError::Io(e.error))?;
+    paths::give_nice_permission_bits(destination);
     Ok(())
+}
+
+/// Write bytes into storage the same way.
+fn write_bytes_into_storage(bytes: &[u8], destination: &Path) -> Result<()> {
+    let dir = destination
+        .parent()
+        .ok_or_else(|| std::io::Error::other("storage path has no directory"))?;
+    std::fs::create_dir_all(dir)?;
+    let mut partial = tempfile::NamedTempFile::new_in(dir)?;
+    std::io::Write::write_all(&mut partial, bytes)?;
+    partial
+        .persist(destination)
+        .map_err(|e| ImportError::Io(e.error))?;
+    paths::give_nice_permission_bits(destination);
+    Ok(())
+}
+
+/// Apply the store's file handling settings to this process: comic book
+/// detection, what counts as transparency, and whether files' permissions
+/// are left alone.
+pub fn apply_file_handling(store: &Store) {
+    use hydrus_media::TransparencyStrictness as Level;
+    let settings: hydrus_store::settings::FileHandlingSettings =
+        store.read(hydrus_store::settings::get).unwrap_or_default();
+    hydrus_media::set_comic_book_detection(settings.comic_book_detection);
+    hydrus_media::set_transparency_strictness(match settings.transparency_strictness {
+        0 => Level::ChannelPresence,
+        1 => Level::NotBlackOrWhite,
+        _ => Level::Human,
+    });
+    hydrus_store::paths::set_do_not_chmod(settings.do_not_chmod);
 }
 
 /// Everything the database records about a newly imported file.
@@ -346,6 +538,9 @@ impl FileRecord {
                 a.flags.has_human_readable_embedded_metadata,
                 FileFlags::HUMAN_READABLE_METADATA,
             ),
+            (a.flags.has_xmp, FileFlags::XMP),
+            (a.flags.has_iptc, FileFlags::IPTC),
+            (a.flags.has_software_source, FileFlags::SOFTWARE_SOURCE),
         ] {
             if on {
                 flags |= flag;

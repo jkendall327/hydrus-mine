@@ -16,6 +16,7 @@ use hydrus_core::HashId;
 use hydrus_core::search::context::{FileSearchContext, LocationContext};
 use hydrus_core::search::predicate::{Predicate, SystemPredicate};
 use hydrus_search::{Clock, FileSort, SortBy, SortOrder};
+use hydrus_store::delete_lock::Reinbox;
 use hydrus_store::duplicates::auto::{
     self, GroupPair, OperationMode, PairStatus, Rule, RuleAction,
 };
@@ -274,6 +275,7 @@ fn action_pair(
                 delete_a: delete_first,
                 delete_b: delete_second,
                 deletion_reason: &reason,
+                reinbox: Reinbox::InAutoResolution,
             },
         )?;
         auto::record_actioned(

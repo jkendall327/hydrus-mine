@@ -15,7 +15,7 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::human_int;
+use hydrus_core::numbers::{float_to_percentage, human_int};
 use hydrus_core::search::filetype::FiletypeSet;
 use hydrus_core::search::number::{Comparison, NumberOp, NumberTest, RatioOp, TagNumberOp};
 use hydrus_core::search::predicate::{
@@ -48,6 +48,9 @@ pub struct TextContext {
     pub services: Vec<NamedService>,
     /// The canvases `system:views` counts when it names none.
     pub default_canvases: Vec<ViewCanvas>,
+    /// How to show tags to the user (`render_for_user`), for the GUI's
+    /// lists; none writes them as the Client API does.
+    pub presentation: Option<hydrus_core::tag_presentation::TagPresentation>,
 }
 
 impl TextContext {
@@ -78,6 +81,15 @@ impl TextContext {
                     _ => None,
                 })
                 .collect(),
+            presentation: None,
+        }
+    }
+
+    /// `ClientTags.RenderTag`, for the user or not as this context says.
+    fn render_tag(&self, tag: &str) -> String {
+        match &self.presentation {
+            Some(presentation) => presentation.render(tag),
+            None => render_tag(tag).to_owned(),
         }
     }
 
@@ -121,14 +133,14 @@ pub fn predicate_text(predicate: &Predicate, context: &TextContext) -> String {
     let minus = |inclusive: bool| if inclusive { "" } else { "-" };
     match predicate {
         Predicate::Tag { tag, inclusive } => {
-            format!("{}{}", minus(*inclusive), render_tag(tag.as_str()))
+            format!("{}{}", minus(*inclusive), context.render_tag(tag.as_str()))
         }
         Predicate::Namespace {
             namespace,
             inclusive,
         } => {
             let anything = combine_tag(namespace_for_user(namespace), "*anything*");
-            format!("{}{}", minus(*inclusive), render_tag(&anything))
+            format!("{}{}", minus(*inclusive), context.render_tag(&anything))
         }
         Predicate::Wildcard { pattern, inclusive } => {
             let pattern = pattern.as_str();
@@ -140,17 +152,32 @@ pub fn predicate_text(predicate: &Predicate, context: &TextContext) -> String {
             format!("{}{text}", minus(*inclusive))
         }
         Predicate::Or(predicates) => {
-            // the reference sorts an OR's members by their text when it makes one
-            let mut texts: Vec<String> = predicates
+            // the reference sorts an OR's members by their text when it
+            // makes one (not as the user sees them)
+            let plain = TextContext {
+                presentation: None,
+                ..context.clone()
+            };
+            let mut texts: Vec<(String, String)> = predicates
                 .iter()
-                .map(|p| predicate_text(p, context))
+                .map(|p| {
+                    let text = predicate_text(p, &plain);
+                    let shown = if context.presentation.is_some() {
+                        predicate_text(p, context)
+                    } else {
+                        text.clone()
+                    };
+                    (text, shown)
+                })
                 .collect();
-            texts.sort_by_cached_key(|t| human_sort_key(t));
-            texts.join(" OR ")
+            texts.sort_by_cached_key(|(t, _)| human_sort_key(t));
+            texts
+                .into_iter()
+                .map(|(_, shown)| shown)
+                .collect::<Vec<_>>()
+                .join(" OR ")
         }
-        Predicate::System(p) => {
-            render_tag(&format!("system:{}", system_text(p, context))).to_owned()
-        }
+        Predicate::System(p) => context.render_tag(&format!("system:{}", system_text(p, context))),
     }
 }
 
@@ -252,6 +279,7 @@ fn system_text(p: &SystemPredicate, c: &TextContext) -> String {
                 SizeUnit::Kilobytes => "KB",
                 SizeUnit::Megabytes => "MB",
                 SizeUnit::Gigabytes => "GB",
+                SizeUnit::Terabytes => "TB",
             };
             format!("filesize {} {}{unit}", op.symbol(), human_int(*size))
         }
@@ -273,7 +301,7 @@ fn system_text(p: &SystemPredicate, c: &TextContext) -> String {
                     RatioOp::WiderThan => return "ratio is landscape".into(),
                     RatioOp::TallerThan => return "ratio is portrait".into(),
                     RatioOp::Equal => return "ratio is square".into(),
-                    RatioOp::Approx => {}
+                    RatioOp::Approx | RatioOp::NotEqual => {}
                 }
             }
             format!(
@@ -550,17 +578,6 @@ fn number_test_text(test: &NumberTest, render: fn(u64) -> String) -> String {
         }
     };
     format!("{op} {}{extra}", render(test.value))
-}
-
-/// `HydrusNumbers.FloatToPercentage`.
-#[allow(clippy::float_cmp)] // as the reference tests for a whole number
-fn float_to_percentage(f: f64) -> String {
-    let percent = f * 100.0;
-    if percent == percent.trunc() {
-        format!("{}%", percent as i64)
-    } else {
-        format!("{percent:.1}%")
-    }
 }
 
 /// `HydrusTime.MillisecondsDurationToPrettyTime` with `force_numbers`.

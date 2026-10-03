@@ -1,0 +1,248 @@
+{
+ "transparency": [
+  {
+   "file": "media/apng_3frames.png",
+   "has_transparency_by_strictness": [
+    true,
+    false,
+    false
+   ],
+   "mime": 23
+  },
+  {
+   "file": "media/apng_odd_delays.png",
+   "has_transparency_by_strictness": [
+    true,
+    false,
+    false
+   ],
+   "mime": 23
+  },
+  {
+   "file": "media/apng_rgba.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 23
+  },
+  {
+   "file": "media/avif_alpha.avif",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 65
+  },
+  {
+   "file": "media/avif_sequence.avifs",
+   "has_transparency_by_strictness": [
+    true,
+    false,
+    false
+   ],
+   "mime": 66
+  },
+  {
+   "file": "media/gif_anim_transparent.gif",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 3
+  },
+  {
+   "file": "media/gif_static_transparent.gif",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 68
+  },
+  {
+   "file": "media/heic_alpha.heic",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 63
+  },
+  {
+   "file": "media/ico_bmp.ico",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 7
+  },
+  {
+   "file": "media/ico_png.ico",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 7
+  },
+  {
+   "file": "media/png_chrm_rgba.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_la.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_p_trns.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba16.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_clear.png",
+   "has_transparency_by_strictness": [
+    true,
+    false,
+    false
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_nearly_opaque.png",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    false
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/png_rgba_opaque.png",
+   "has_transparency_by_strictness": [
+    true,
+    false,
+    false
+   ],
+   "mime": 2
+  },
+  {
+   "file": "media/qoi_rgba.qoi",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 70
+  },
+  {
+   "file": "media/tiff_lzw_rgba.tiff",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 34
+  },
+  {
+   "file": "media/webp_alpha.webp",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 33
+  },
+  {
+   "file": "media/webp_alpha_lossless.webp",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 33
+  },
+  {
+   "file": "media/webp_anim_alpha.webp",
+   "has_transparency_by_strictness": [
+    true,
+    true,
+    true
+   ],
+   "mime": 83
+  }
+ ],
+ "zips": [
+  {
+   "file": "media/cbz_flat.cbz",
+   "mime": 73,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/cbz_folder.zip",
+   "mime": 73,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/procreate_notsilica.zip",
+   "mime": 11,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/zip_encrypted.zip",
+   "mime": 11,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/zip_mixed_images.zip",
+   "mime": 11,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/zip_one_image.zip",
+   "mime": 11,
+   "mime_without_detection": 11
+  },
+  {
+   "file": "media/zip_plain.zip",
+   "mime": 11,
+   "mime_without_detection": 11
+  }
+ ]
+}

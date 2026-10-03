@@ -1,0 +1,5422 @@
+{
+ "now": 1790857043,
+ "pages": [
+  {
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+   ],
+   "menus": [
+    {
+     "menu": [
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "---"
+     ],
+     "selected": [],
+     "selection": "none"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "134B zip",
+        "134 bytes",
+        "imported: 1 day 17 hours ago",
+        "added to art: 1 day 17 hours ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 1 day 17 hours ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "---",
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 zip, 134B"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete from art",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "one in the inbox"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps)",
+        "2,771 bytes",
+        "approx bitrate: 4.51 KB/s",
+        "imported: 1 day 17 hours ago",
+        "added to art: 1 day 17 hours ago",
+        "added to my files: 1 day 17 hours ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 1 day 17 hours ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "archived: 1 day 17 hours ago",
+        "---",
+        "viewed 1 times in media viewer, totalling 2.5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 apng, 2.71 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "re-inbox",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (1 files)",
+          "my files (1 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (1 files)"
+         ],
+         "menu": "move (merge)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1000",
+          "files with https://example.com/post/0",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b)",
+          "md5 (9757493665f05cc8562c8ee5163f7970)",
+          "sha1 (1e2fb68814dcb2e5dedd04363aee2f905d9b68f4)",
+          "sha512 (31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982)",
+          "blurhash (USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (1)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+     ],
+     "selection": "one archived"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 10 times in media viewer, totalling 25 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "4 files, 39.6 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (32)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (4)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (32)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 3 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (4 files)",
+          "my files (3 files)"
+         ],
+         "menu": "currently in"
+        },
+        "add to my files (1 files)",
+        {
+         "entries": [
+          "from art to my files (4 files)",
+          "from my files to art (3 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (3 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+     ],
+     "selection": "several"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 21 times in media viewer, totalling 52.5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "36 files, 362 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "clear deletion record for selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 35 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (8 files)",
+          "my files (30 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "art (23 files)",
+          "my files (1 files)"
+         ],
+         "menu": "add to"
+        },
+        {
+         "entries": [
+          "from art to my files (8 files)",
+          "from my files to art (30 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (23 files)"
+         ],
+         "menu": "move (strict)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1000",
+          "files with https://example.com/post/0",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (35 hashes)",
+          "pixel hashes (27 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b)",
+          "md5 (9757493665f05cc8562c8ee5163f7970)",
+          "sha1 (1e2fb68814dcb2e5dedd04363aee2f905d9b68f4)",
+          "sha512 (31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982)",
+          "blurhash (USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (1)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+      "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+      "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+      "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+      "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+      "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+      "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+      "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+      "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+      "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+      "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+      "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+      "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+      "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+      "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+     ],
+     "selection": "all"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)",
+        "17,508 bytes",
+        "approx bitrate: 8.55 KB/s",
+        "imported: 1 day 17 hours ago",
+        "removed from my files 1 day 17 hours ago",
+        "sent to trash 1 day 17 hours ago (fixture: trashed)",
+        "modified: 1 day 17 hours ago"
+       ],
+       "menu": "1 webm, 17.1 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete physically now",
+      "undelete",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+     ],
+     "selection": "one in the trash"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "2 files, 17.2 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (34)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (2)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (34)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "---",
+      "delete from art",
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 1 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (1 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "trash and not"
+    }
+   ],
+   "page": "my files"
+  },
+  {
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+   ],
+   "menus": [
+    {
+     "menu": [
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "---"
+     ],
+     "selected": [],
+     "selection": "none"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "134B zip",
+        "134 bytes",
+        "imported: 1 day 17 hours ago",
+        "added to art: 1 day 17 hours ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 1 day 17 hours ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "---",
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 zip, 134B"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete from art",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "one in the inbox"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "2.71 KB apng (100x100), 600 milliseconds (4 frames, 6.7fps)",
+        "2,771 bytes",
+        "approx bitrate: 4.51 KB/s",
+        "imported: 1 day 17 hours ago",
+        "added to art: 1 day 17 hours ago",
+        "added to my files: 1 day 17 hours ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 1 day 17 hours ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "archived: 1 day 17 hours ago",
+        "---",
+        "viewed 1 times in media viewer, totalling 2.5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 apng, 2.71 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "re-inbox",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (1 files)",
+          "my files (1 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (1 files)"
+         ],
+         "menu": "move (merge)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1000",
+          "files with https://example.com/post/0",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b)",
+          "md5 (9757493665f05cc8562c8ee5163f7970)",
+          "sha1 (1e2fb68814dcb2e5dedd04363aee2f905d9b68f4)",
+          "sha512 (31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982)",
+          "blurhash (USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (1)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+     ],
+     "selection": "one archived"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 10 times in media viewer, totalling 25 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "4 files, 39.6 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (32)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (4)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (32)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 3 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (4 files)",
+          "my files (3 files)"
+         ],
+         "menu": "currently in"
+        },
+        "add to my files (1 files)",
+        {
+         "entries": [
+          "from art to my files (4 files)",
+          "from my files to art (3 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (3 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+     ],
+     "selection": "several"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 21 times in media viewer, totalling 52.5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "36 files, 362 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "clear deletion record for selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 35 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (8 files)",
+          "my files (30 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "art (23 files)",
+          "my files (1 files)"
+         ],
+         "menu": "add to"
+        },
+        {
+         "entries": [
+          "from art to my files (8 files)",
+          "from my files to art (30 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (23 files)"
+         ],
+         "menu": "move (strict)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1000",
+          "files with https://example.com/post/0",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1000",
+          "https://example.com/post/0",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2000",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (35 hashes)",
+          "pixel hashes (27 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b)",
+          "md5 (9757493665f05cc8562c8ee5163f7970)",
+          "sha1 (1e2fb68814dcb2e5dedd04363aee2f905d9b68f4)",
+          "sha512 (31dc5890c62c497fb0dc554e9e42b53e840b2a37ad69e4dd6ba41b21fc74152a4cfc170c29e5bd80090a5eae16c321a24679b25977b5a2f3b9ee9d4e431b3982)",
+          "blurhash (USG8xmG=cBxByzy4k8Vxk.jGjGayW=Z:V_kA)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (1)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce",
+      "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+      "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+      "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+      "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+      "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+      "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+      "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+      "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+      "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+      "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+      "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+      "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+      "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+      "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+     ],
+     "selection": "all"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)",
+        "17,508 bytes",
+        "approx bitrate: 8.55 KB/s",
+        "imported: 1 day 17 hours ago",
+        "removed from my files 1 day 17 hours ago",
+        "sent to trash 1 day 17 hours ago (fixture: trashed)",
+        "modified: 1 day 17 hours ago"
+       ],
+       "menu": "1 webm, 17.1 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (35)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete physically now",
+      "undelete",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+     ],
+     "selection": "one in the trash"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "2 files, 17.2 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (34)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (2)",
+        "---",
+        "all (36)",
+        "---",
+        "inbox (16)",
+        "archive (20)",
+        "---",
+        "art (8)",
+        "my files (30)",
+        "combined local file domains (31)",
+        "trash (2)",
+        "---",
+        "local (33)",
+        "not local (3)",
+        "---",
+        "not selected (34)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "---",
+      "delete from art",
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 1 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (1 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "trash and not"
+    }
+   ],
+   "page": "all local files"
+  },
+  {
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+   ],
+   "menus": [
+    {
+     "menu": [
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "---"
+     ],
+     "selected": [],
+     "selection": "none"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "134B zip",
+        "134 bytes",
+        "imported: 1 day 17 hours ago",
+        "added to art: 1 day 17 hours ago",
+        "modified: 6 years ago",
+        {
+         "entries": [
+          "local: 1 day 17 hours ago",
+          "example.com: 6 years ago"
+         ],
+         "menu": "all modified times"
+        },
+        "---",
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "1 zip, 134B"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (15)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (15)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete from art",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "one in the inbox"
+    },
+    {
+     "menu": [
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "---"
+     ],
+     "selected": [],
+     "selection": "one archived"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 6 times in media viewer, totalling 15 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "2 files, 16.3 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (14)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (2)",
+        "---",
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (14)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 1 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (2 files)",
+          "my files (1 files)"
+         ],
+         "menu": "currently in"
+        },
+        "add to my files (1 files)",
+        {
+         "entries": [
+          "from art to my files (2 files)",
+          "from my files to art (1 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (1 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+     ],
+     "selection": "several"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 12 times in media viewer, totalling 30 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "16 files, 186 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "---",
+      {
+       "entries": [
+        "from art",
+        "from my files"
+       ],
+       "menu": "delete selected"
+      },
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 15 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "art (4 files)",
+          "my files (14 files)"
+         ],
+         "menu": "currently in"
+        },
+        {
+         "entries": [
+          "art (11 files)",
+          "my files (1 files)"
+         ],
+         "menu": "add to"
+        },
+        {
+         "entries": [
+          "from art to my files (4 files)",
+          "from my files to art (14 files)"
+         ],
+         "menu": "move (merge)"
+        },
+        {
+         "entries": [
+          "from art to my files (1 files)",
+          "from my files to art (11 files)"
+         ],
+         "menu": "move (strict)"
+        }
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1001",
+          "files with https://example.com/post/1",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1001",
+          "https://example.com/post/1",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (15 hashes)",
+          "pixel hashes (11 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61)",
+          "md5 (4ad379b2181ef8d95f534a48ba5d398f)",
+          "sha1 (bc1e353d76a5099b6244b9f863eebd187759abf1)",
+          "sha512 (66b28190dfc71c2f0a04eccdfbdd282100fe3111d1cf6d0960e17c150df0c465623e263a9a9144b070eeabdd18e15e3f3436a9d37b09d2ab560b5a007efa57da)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (2)"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+      "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+      "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+      "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+      "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+      "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+     ],
+     "selection": "all"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "17.1 KB webm (128x96), 2 seconds (16 frames, 8.0fps)",
+        "17,508 bytes",
+        "approx bitrate: 8.55 KB/s",
+        "imported: 1 day 17 hours ago",
+        "removed from my files 1 day 17 hours ago",
+        "sent to trash 1 day 17 hours ago (fixture: trashed)",
+        "modified: 1 day 17 hours ago"
+       ],
+       "menu": "1 webm, 17.1 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (15)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (15)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete physically now",
+      "undelete",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "manage"
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+     ],
+     "selection": "one in the trash"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "viewed 2 times in media viewer, totalling 5 seconds, last 2 years 10 months ago"
+       ],
+       "menu": "2 files, 17.2 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (14)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (2)",
+        "---",
+        "all (16) (all in inbox)",
+        "---",
+        "art (4)",
+        "my files (14)",
+        "combined local file domains (15)",
+        "trash (1)",
+        "---",
+        "not selected (14)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "---",
+      "delete from art",
+      "delete trash physically now",
+      "delete selected physically now",
+      "undelete selected",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 1 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in art (1 files)",
+        "add to my files (1 files)",
+        "move (merge) from art to my files (1 files)",
+        "move (strict) from art to my files (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (1 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428)",
+          "md5 (a60b7c65d2ab013852d68d64caa23488)",
+          "sha1 (25daa471dfe5f9b3e0a4eba2b9d0160d0ef021cc)",
+          "sha512 (6dec251d4e13c09d2a0cc0bbda4266813f99aa3ab77a58fd4f826efd5b4ceddd89afa41244f1230fa8ac555f4fe74c3333205fdf88ff80b4eb4c4652b6c6f8cf)",
+          "blurhash (U=HoOWrS%0zMEKi$TKbnn4aiWYS_sqjunhfk)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (57)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+      "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+     ],
+     "selection": "trash and not"
+    }
+   ],
+   "page": "inbox files"
+  },
+  {
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2"
+   ],
+   "menus": [
+    {
+     "menu": [
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "---"
+     ],
+     "selected": [],
+     "selection": "none"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "19.3 KB animated gif (120x90), 500 milliseconds (5 frames, 10fps)",
+        "19,729 bytes",
+        "approx bitrate: 38.5 KB/s",
+        "imported: 1 day 17 hours ago",
+        "added to my files: 1 day 17 hours ago",
+        "modified: 1 day 17 hours ago"
+       ],
+       "menu": "1 animated gif, 19.3 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (22)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (22)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to start",
+        "back one",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships"
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1009",
+          "files with https://example.com/post/9",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726)",
+          "md5 (c22755364fedaf4a54cff61d0af0f1c3)",
+          "sha1 (b2dee9d3966ed4a95430a2bc6f47c4b2d21aeb8b)",
+          "sha512 (0f58a8a2ab143b0747c106ae8b0abe151d70a7aa6290d5979e963664ba683d7b1fa524ac471d0ee7718a799a079212ca1d31d4438e20f1ffb2072baa38d994aa)",
+          "blurhash (UnDoXfB{*Sf}t[XnrsaLII#,KcnUotVxnmou)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (14)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726"
+     ],
+     "selection": "one in the inbox"
+    },
+    {
+     "menu": [
+      {
+       "entries": [
+        "show detailed embedded file metadata",
+        "---",
+        "5.85 KB jpeg (320x240)",
+        "5,990 bytes",
+        "imported: 1 day 17 hours ago",
+        "added to my files: 1 day 17 hours ago",
+        "modified: 1 day 17 hours ago",
+        "archived: 1 day 17 hours ago"
+       ],
+       "menu": "1 jpeg, 5.85 KB"
+      },
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (22)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (1)",
+        "---",
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (22)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "re-inbox",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file is in a duplicate file group",
+          "show the best quality file of this file's group",
+          "---",
+          "view 1 duplicates",
+          "view 2 potential duplicates",
+          "---",
+          "set this file as the best quality of its group",
+          "---",
+          {
+           "entries": [
+            "remove this file from its duplicate group"
+           ],
+           "menu": "remove for this file"
+          },
+          "---",
+          {
+           "entries": [
+            "DUPLICATE WIPE: dissolve this file's duplicate group",
+            "---",
+            "schedule this file to be searched for potentials again",
+            "delete all this file's potential relationships"
+           ],
+           "menu": "reset for this file"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (1 files)",
+        "add to art (1 files)",
+        "move (merge) from my files to art (1 files)",
+        "move (strict) from my files to art (1 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1008",
+          "https://example.com/post/8",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1008",
+          "files with https://example.com/post/8",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1008",
+          "https://example.com/post/8",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "using Default OS File Launch",
+        "in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8)",
+          "md5 (6da66337e784c2256c0aeab117cea91f)",
+          "sha1 (b516af7daf25ff1f164b69ede2b364d1238c0cb9)",
+          "sha512 (5397125d271c4eafc2ac65a41a52fdfc70fb1ae9302f243d7c2ab58fe72851c98f989c071c2fefeac983bb9084c43b187cb26d842e0cdb9c999cc7d672c7567f)",
+          "blurhash (MhDIS9D}KFr{jbv=TBV@W.ofBIwQxIofV[)",
+          "pixel hash (bee496943b8390791f97624824378646fafaf4a30e6ace6ae6e77f61e34115ed)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (12)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+     ],
+     "selection": "one archived"
+    },
+    {
+     "menu": [
+      "4 files, 32.3 KB",
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (19)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "selected (4)",
+        "---",
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "not selected (19)"
+       ],
+       "menu": "remove"
+      },
+      {
+       "entries": [
+        "to here",
+        "forward one",
+        "to end"
+       ],
+       "menu": "rearrange"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file has no duplicate relationships",
+          "---",
+          "set this file as better than the 3 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (4 files)",
+        "add to art (4 files)",
+        "move (merge) from my files to art (4 files)",
+        "move (strict) from my files to art (4 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1009",
+          "files with https://example.com/post/9",
+          "files with https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1009",
+          "https://example.com/post/9",
+          "https://gelbooru.com/index.php?page=post&&s=view&&id=2009",
+          "---",
+          "this file's 3 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (4 hashes)",
+          "pixel hashes (3 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726)",
+          "md5 (c22755364fedaf4a54cff61d0af0f1c3)",
+          "sha1 (b2dee9d3966ed4a95430a2bc6f47c4b2d21aeb8b)",
+          "sha512 (0f58a8a2ab143b0747c106ae8b0abe151d70a7aa6290d5979e963664ba683d7b1fa524ac471d0ee7718a799a079212ca1d31d4438e20f1ffb2072baa38d994aa)",
+          "blurhash (UnDoXfB{*Sf}t[XnrsaLII#,KcnUotVxnmou)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (14)",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+     ],
+     "selection": "several"
+    },
+    {
+     "menu": [
+      "23 files, 253 KB",
+      "---",
+      "refresh",
+      "---",
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)",
+        "---",
+        "none (0)"
+       ],
+       "menu": "select"
+      },
+      {
+       "entries": [
+        "all (23)",
+        "---",
+        "inbox (11)",
+        "archive (12)",
+        "---",
+        "my files (23)"
+       ],
+       "menu": "remove"
+      },
+      "---",
+      "archive/delete filter",
+      "archive selected",
+      "re-inbox selected",
+      "---",
+      "delete from my files",
+      "---",
+      {
+       "entries": [
+        "tags",
+        "ratings",
+        "notes",
+        "times",
+        "force filetype",
+        {
+         "entries": [
+          "this file is in a duplicate file group",
+          "show the best quality file of this file's group",
+          "---",
+          "view 1 duplicates",
+          "view 2 potential duplicates",
+          "---",
+          "set this file as the best quality of its group",
+          "---",
+          "set this file as better than the 22 other selected",
+          "set all selected as same quality duplicates",
+          "---",
+          "set all selected as alternates",
+          "set a relationship with custom metadata merge options",
+          "---",
+          {
+           "entries": [
+            "for this is a better duplicate",
+            "for same quality"
+           ],
+           "menu": "edit default duplicate metadata merge options"
+          },
+          "---",
+          "set all possible pair combinations as 'potential' duplicates for the duplicates filter.",
+          "---",
+          {
+           "entries": [
+            "remove this file from its duplicate group"
+           ],
+           "menu": "remove for this file"
+          },
+          "---",
+          {
+           "entries": [
+            "DUPLICATE WIPE: dissolve this file's duplicate group",
+            "---",
+            "schedule this file to be searched for potentials again",
+            "delete all this file's potential relationships"
+           ],
+           "menu": "reset for this file"
+          },
+          {
+           "entries": [
+            "delete all false-positive relationships these files' alternate groups have between each other"
+           ],
+           "menu": "remove for all selected"
+          },
+          {
+           "entries": [
+            "DUPLICATE WIPE: completely dissolve these files' duplicate groups",
+            "EVEN BIGGER WIPE: completely dissolve these files' alternate groups",
+            "---",
+            "delete all false-positive relationships these files' alternate groups have with other groups",
+            "---",
+            "schedule these files to be searched for potentials again",
+            "delete these files' potential relationships"
+           ],
+           "menu": "advanced: reset for all selected"
+          }
+         ],
+         "menu": "file relationships"
+        },
+        {
+         "entries": [
+          "if file is missing, then if has URL try to redownload, else remove record",
+          "if file is missing, then if has URL try to redownload",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload, else remove record",
+          "if file is missing/incorrect, then move file out, and if has URL try to redownload",
+          "if file is missing, remove record (leave no delete record)",
+          "if file is missing, remove record (leave a delete record)",
+          "if file is missing/incorrect, move file out and remove record",
+          "if file is incorrect, move file out",
+          "if file is missing, note it in log",
+          "regenerate file metadata",
+          "regenerate thumbnail if incorrect size",
+          "regenerate thumbnail",
+          "regenerate blurhash",
+          "regenerate pixel hashes",
+          "regenerate perceptual hashes",
+          "regenerate file modified time",
+          "regenerate non-standard hashes",
+          "check for membership in the potential duplicate pairs search system",
+          "determine if the file has transparency",
+          "determine if the file has EXIF metadata",
+          "determine if the file has XMP metadata",
+          "determine if the file has IPTC metadata",
+          "determine if the file has human-readable metadata",
+          "determine if the file has software/source metadata",
+          "determine if the file has an icc profile",
+          "fix file read/write permissions",
+          "delete duplicate neighbours with incorrect file extension"
+         ],
+         "menu": "maintenance"
+        },
+        {
+         "entries": [
+          "clear"
+         ],
+         "menu": "viewing stats"
+        }
+       ],
+       "menu": "manage"
+      },
+      {
+       "entries": [
+        "currently in my files (23 files)",
+        "add to art (23 files)",
+        "move (merge) from my files to art (23 files)",
+        "move (strict) from my files to art (23 files)"
+       ],
+       "menu": "locations"
+      },
+      {
+       "entries": [
+        "manage",
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1008",
+          "https://example.com/post/8",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "open in browser"
+        },
+        {
+         "entries": [
+          "files with https://danbooru.donmai.us/posts/1008",
+          "files with https://example.com/post/8",
+          "---",
+          "files with any of the above"
+         ],
+         "menu": "open in a new page"
+        },
+        {
+         "entries": [
+          "https://danbooru.donmai.us/posts/1008",
+          "https://example.com/post/8",
+          "---",
+          "this file's 2 urls",
+          "---",
+          "all these files' urls"
+         ],
+         "menu": "copy"
+        },
+        "---",
+        {
+         "entries": [],
+         "menu": "force metadata refetch"
+        }
+       ],
+       "menu": "urls"
+      },
+      {
+       "entries": [
+        "in a new page",
+        "in a new duplicate filter page",
+        {
+         "entries": [
+          "exact match",
+          "very similar",
+          "similar",
+          "speculative",
+          "---",
+          "custom"
+         ],
+         "menu": "similar files in a new page"
+        },
+        "---",
+        "focused file using Default OS File Launch",
+        "focused file in web browser"
+       ],
+       "menu": "open"
+      },
+      {
+       "entries": [
+        "export files",
+        "---",
+        "copy files",
+        "copy paths",
+        {
+         "entries": [
+          "sha256",
+          "md5",
+          "sha1",
+          "sha512",
+          "blurhash (23 hashes)",
+          "pixel hashes (22 hashes)"
+         ],
+         "menu": "copy hashes"
+        },
+        "copy file ids",
+        "---",
+        "copy file",
+        "copy path",
+        {
+         "entries": [
+          "sha256 (f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8)",
+          "md5 (6da66337e784c2256c0aeab117cea91f)",
+          "sha1 (b516af7daf25ff1f164b69ede2b364d1238c0cb9)",
+          "sha512 (5397125d271c4eafc2ac65a41a52fdfc70fb1ae9302f243d7c2ab58fe72851c98f989c071c2fefeac983bb9084c43b187cb26d842e0cdb9c999cc7d672c7567f)",
+          "blurhash (MhDIS9D}KFr{jbv=TBV@W.ofBIwQxIofV[)",
+          "pixel hash (bee496943b8390791f97624824378646fafaf4a30e6ace6ae6e77f61e34115ed)"
+         ],
+         "menu": "copy hash"
+        },
+        "copy file id (12)",
+        "copy bitmap",
+        "copy thumbnail bitmap"
+       ],
+       "menu": "share"
+      }
+     ],
+     "selected": [
+      "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8",
+      "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+      "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077",
+      "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+      "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+      "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+      "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+      "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+      "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+      "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+      "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc",
+      "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+      "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+      "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+      "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+      "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+      "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+      "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+      "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+      "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+      "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+      "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+      "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2"
+     ],
+     "selection": "all"
+    }
+   ],
+   "page": "my files only"
+  }
+ ]
+}

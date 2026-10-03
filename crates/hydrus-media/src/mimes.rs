@@ -240,6 +240,32 @@ pub fn can_have_exif(mime: Mime) -> bool {
     ) || is_in(mime, HEIF_STILLS_AND_SEQUENCES)
 }
 
+/// `HC.FILES_THAT_CAN_HAVE_XMP`.
+pub fn can_have_xmp(mime: Mime) -> bool {
+    matches!(
+        mime,
+        M::ImageJpeg
+            | M::ImageTiff
+            | M::ImagePng
+            | M::ImageWebp
+            | M::AnimationWebp
+            | M::AnimationApng
+            | M::ImageAvif
+            | M::ImageAvifSequence
+    ) || is_in(mime, HEIF_STILLS_AND_SEQUENCES)
+}
+
+/// `HC.FILES_THAT_CAN_HAVE_IPTC`.
+pub fn can_have_iptc(mime: Mime) -> bool {
+    matches!(mime, M::ImageJpeg | M::ImageTiff)
+}
+
+/// `HC.FILES_THAT_CAN_HAVE_SOFTWARE_SOURCE`: the human-readable metadata
+/// types but PDF.
+pub fn can_have_software_source(mime: Mime) -> bool {
+    mime != M::ApplicationPdf && can_have_human_readable_embedded_metadata(mime)
+}
+
 /// `HC.FILES_THAT_CAN_HAVE_HUMAN_READABLE_EMBEDDED_METADATA`.
 pub fn can_have_human_readable_embedded_metadata(mime: Mime) -> bool {
     matches!(

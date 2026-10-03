@@ -1,0 +1,182 @@
+// The checker options editor ("edit checker options", `src/checker_options.rs`
+// in hydrus-gui-model, bound by `src/checker_options_window.rs`), as the
+// reference's `EditCheckerOptions`: its reasonable defaults, the velocity
+// checking stops below, static or reactive checking, and each's box.
+
+import { Button, CheckBox, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { DurationField, TimeFields } from "options.slint";
+import { Question } from "favourites.slint";
+
+// its texts, as the reference's
+export struct CheckerTexts {
+    warning: string,
+    defaults-box: string,
+    velocity-label: string,
+    velocity-per: string,
+    static-label: string,
+    advanced-warning: string,
+    reactive-box: string,
+    reactive-text: string,
+    intended-label: string,
+    faster-label: string,
+    slower-label: string,
+    static-box: string,
+    period-label: string,
+}
+
+// a box's title, as the options window's
+component BoxTitle inherits Text {
+    font-weight: 700;
+    horizontal-alignment: center;
+    color: Theme.text;
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+export component CheckerOptionsWindow inherits Window {
+    title: "edit checker options";
+    preferred-width: 700px;
+    background: Theme.window;
+    in property <CheckerTexts> texts;
+    in property <[string]> presets;
+    // (the checkbox's, the intended files' and the velocity's number's
+    // texts are two-way, so they show what's set after they're edited)
+    in-out property <string> velocity-files;
+    in property <[DurationField]> velocity-fields;
+    in-out property <bool> flat;
+    in property <bool> advanced;
+    in-out property <string> intended;
+    in property <[DurationField]> faster-fields;
+    in property <[DurationField]> slower-fields;
+    in property <[DurationField]> period-fields;
+    // a question waiting on an answer
+    in property <string> question;
+    callback preset(int);
+    callback velocity-files-edited(int);
+    // (a time's field: 0 never faster than, 1 never slower than, 2 the
+    // check period, 3 the velocity's time; the field; its value)
+    callback field-edited(int, int, int);
+    callback intended-edited(string);
+    callback flat-toggled();
+    callback answered(bool);
+    callback ok();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 8px;
+        Label {
+            text: root.texts.warning;
+            color: Theme.error;
+        }
+        BoxTitle { text: root.texts.defaults-box; }
+        for label[i] in root.presets: Button {
+            text: label;
+            clicked => { root.preset(i); }
+        }
+        GridLayout {
+            spacing: 6px;
+            Row {
+                Label { text: root.texts.velocity-label; }
+                HorizontalLayout {
+                    spacing: 6px;
+                    alignment: start;
+                    LineEdit {
+                        width: 64px;
+                        input-type: InputType.number;
+                        text <=> root.velocity-files;
+                        edited(text) => { root.velocity-files-edited(round(text.to-float())); }
+                    }
+                    Text {
+                        text: root.texts.velocity-per;
+                        vertical-alignment: center;
+                        color: Theme.text;
+                    }
+                    TimeFields {
+                        fields: root.velocity-fields;
+                        edited(f, n) => { root.field-edited(3, f, n); }
+                    }
+                }
+            }
+            Row {
+                Label { text: root.texts.static-label; }
+                CheckBox {
+                    checked <=> root.flat;
+                    toggled => { root.flat-toggled(); }
+                }
+            }
+        }
+        if root.advanced: Label {
+            text: root.texts.advanced-warning;
+            color: Theme.error;
+        }
+        if !root.flat: VerticalLayout {
+            spacing: 6px;
+            BoxTitle { text: root.texts.reactive-box; }
+            Label { text: root.texts.reactive-text; }
+            GridLayout {
+                spacing: 6px;
+                Row {
+                    Label { text: root.texts.intended-label; }
+                    HorizontalLayout {
+                        alignment: start;
+                        LineEdit {
+                            width: 100px;
+                            text <=> root.intended;
+                            edited(text) => { root.intended-edited(text); }
+                        }
+                    }
+                }
+                Row {
+                    Label { text: root.texts.faster-label; }
+                    TimeFields {
+                        fields: root.faster-fields;
+                        edited(f, n) => { root.field-edited(0, f, n); }
+                    }
+                }
+                Row {
+                    Label { text: root.texts.slower-label; }
+                    TimeFields {
+                        fields: root.slower-fields;
+                        edited(f, n) => { root.field-edited(1, f, n); }
+                    }
+                }
+            }
+        }
+        if root.flat: VerticalLayout {
+            spacing: 6px;
+            BoxTitle { text: root.texts.static-box; }
+            GridLayout {
+                spacing: 6px;
+                Row {
+                    Label { text: root.texts.period-label; }
+                    TimeFields {
+                        fields: root.period-fields;
+                        edited(f, n) => { root.field-edited(2, f, n); }
+                    }
+                }
+            }
+        }
+        if root.question != "": Question {
+            text: root.question;
+            answered(yes) => { root.answered(yes); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.ok(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

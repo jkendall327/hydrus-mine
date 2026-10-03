@@ -12,18 +12,28 @@ path = "src/main.rs"
 
 [dependencies]
 hydrus-core.workspace = true
+hydrus-gui-model.workspace = true
 hydrus-store.workspace = true
+hydrus-parse.workspace = true
+rusqlite.workspace = true
 hydrus-search.workspace = true
+hydrus-duplicates.workspace = true
 hydrus-media.workspace = true
+hydrus-import.workspace = true
 anyhow.workspace = true
+crossbeam-channel.workspace = true
+libloading.workspace = true
 serde_json.workspace = true
 png.workspace = true
-slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software"] }
+rand.workspace = true
+arboard = { version = "3", default-features = false }
+slint = { version = "1.18", default-features = false, features = ["std", "compat-1-2", "backend-winit", "renderer-software", "unstable-winit-030"] }
 
 [build-dependencies]
 slint-build = "1.18"
 
 [dev-dependencies]
+hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 tempfile.workspace = true
 

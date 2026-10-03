@@ -1,0 +1,67 @@
+// The session saving dialog (`src/session_dialog.rs`, driven by
+// hydrus-gui-model's session_saving): a name asked, as the reference's
+// text entry asks it (after a warning, for a name that can't be had), or a
+// yes/no question with the reference's buttons.
+
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component SessionDialog inherits Window {
+    in property <string> window-title: "Enter Text";
+    title: root.window-title;
+    preferred-width: 520px;
+    background: Theme.window;
+    in property <string> message;
+    // asking a name (else a question), its text, and a warning over it
+    in property <bool> asking-name;
+    in-out property <string> text;
+    in property <string> warning;
+    in property <string> yes-label: "yes";
+    in property <string> no-label: "no";
+    callback name-entered(string);
+    callback cancelled();
+    callback answered(bool);
+    forward-focus: name;
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 8px;
+        if root.asking-name && root.warning != "": Text {
+            text: root.warning;
+            wrap: word-wrap;
+            color: Theme.error;
+        }
+        Text {
+            text: root.message;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        name := LineEdit {
+            visible: root.asking-name;
+            // (no room taken while a question is asked)
+            height: root.asking-name ? self.preferred-height : 0px;
+            text <=> root.text;
+            accepted => { root.name-entered(self.text); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            if root.asking-name: Button {
+                text: "apply";
+                clicked => { root.name-entered(root.text); }
+            }
+            if root.asking-name: Button {
+                text: "cancel";
+                clicked => { root.cancelled(); }
+            }
+            if !root.asking-name: Button {
+                text: root.yes-label;
+                clicked => { root.answered(true); }
+            }
+            if !root.asking-name: Button {
+                text: root.no-label;
+                clicked => { root.answered(false); }
+            }
+        }
+    }
+}

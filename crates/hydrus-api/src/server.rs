@@ -24,7 +24,22 @@ pub async fn serve(
     options: &ServerOptions,
     shutdown: impl Future<Output = ()> + Send + 'static,
 ) -> std::io::Result<()> {
-    let listener = tokio::net::TcpListener::bind(options.addr).await?;
+    let listener = bind(options).await?;
+    serve_on(listener, state, options, shutdown).await
+}
+
+/// Listen where `options` says (a port in use fails here).
+pub async fn bind(options: &ServerOptions) -> std::io::Result<tokio::net::TcpListener> {
+    tokio::net::TcpListener::bind(options.addr).await
+}
+
+/// Serve on `listener` until `shutdown` resolves.
+pub async fn serve_on(
+    listener: tokio::net::TcpListener,
+    state: Arc<AppState>,
+    options: &ServerOptions,
+    shutdown: impl Future<Output = ()> + Send + 'static,
+) -> std::io::Result<()> {
     let mut app = crate::router(state);
     if options.cors {
         app = app.layer(
@@ -41,7 +56,8 @@ pub async fn serve(
             HeaderValue::from_static(concat!("hydrus-rs/", env!("CARGO_PKG_VERSION"))),
         ),
     );
-    tracing::info!(addr = %options.addr, "Client API listening");
+    let addr = listener.local_addr().unwrap_or(options.addr);
+    tracing::info!(%addr, "Client API listening");
     axum::serve(listener, app)
         .with_graceful_shutdown(shutdown)
         .await

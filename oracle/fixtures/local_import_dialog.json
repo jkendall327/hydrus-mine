@@ -1,0 +1,293 @@
+{
+ "cases": [
+  {
+   "search_subdirectories": true,
+   "given": [
+    "<folder>",
+    "<folder>/a.png",
+    "<missing>"
+   ],
+   "rows": [
+    [
+     "1",
+     "<folder>/a.png.json",
+     "sidecar",
+     "126B"
+    ],
+    [
+     "2",
+     "<folder>/a.png.time.txt",
+     "sidecar",
+     "10B"
+    ],
+    [
+     "3",
+     "<folder>/a.png.txt",
+     "sidecar",
+     "48B"
+    ],
+    [
+     "4",
+     "<folder>/b p12.jpg.txt",
+     "sidecar",
+     "14B"
+    ],
+    [
+     "5",
+     "<folder>/b p12.notes.txt",
+     "sidecar",
+     "30B"
+    ],
+    [
+     "6",
+     "<folder>/dupe.gif.txt",
+     "sidecar",
+     "17B"
+    ],
+    [
+     "7",
+     "<folder>/sub/c.png.txt",
+     "sidecar",
+     "12B"
+    ],
+    [
+     "8",
+     "<folder>/a.png",
+     "png",
+     "7.89 KB"
+    ],
+    [
+     "9",
+     "<missing>",
+     "PROBLEM: file missing",
+     "-"
+    ],
+    [
+     "10",
+     "<folder>/b p12.jpg",
+     "jpeg",
+     "3.88 KB"
+    ],
+    [
+     "11",
+     "<folder>/dupe.gif",
+     "static gif",
+     "3.24 KB"
+    ],
+    [
+     "12",
+     "<folder>/empty.png",
+     "PROBLEM: file empty",
+     "0B"
+    ],
+    [
+     "13",
+     "<folder>/notes.txt",
+     "PROBLEM: filetype unsupported",
+     "43B"
+    ],
+    [
+     "14",
+     "<folder>/recent.png",
+     "png",
+     "10.4 KB"
+    ],
+    [
+     "15",
+     "<folder>/sub/c.png",
+     "png",
+     "10.3 KB"
+    ],
+    [
+     "16",
+     "<folder>/sub/deeper/d.bmp",
+     "bitmap",
+     "75.1 KB"
+    ],
+    [
+     "17",
+     "<folder>/Thumbs.db",
+     "PROBLEM: filetype unsupported",
+     "7.89 KB"
+    ]
+   ],
+   "progress": "17 files parsed - 6 good | 4 bad: 1 were empty, 1 were missing, 2 had unsupported file types - and looks like 7 txt/json/xml sidecars.",
+   "enabled": {
+    "import now": true,
+    "add tags/urls with the import >>": true,
+    "pause": false,
+    "stop": false
+   },
+   "imported": [
+    "<folder>/a.png",
+    "<folder>/b p12.jpg",
+    "<folder>/dupe.gif",
+    "<folder>/recent.png",
+    "<folder>/sub/c.png",
+    "<folder>/sub/deeper/d.bmp"
+   ]
+  },
+  {
+   "search_subdirectories": false,
+   "given": [
+    "<folder>",
+    "<folder>/a.png",
+    "<missing>"
+   ],
+   "rows": [
+    [
+     "1",
+     "<folder>/a.png.json",
+     "sidecar",
+     "126B"
+    ],
+    [
+     "2",
+     "<folder>/a.png.time.txt",
+     "sidecar",
+     "10B"
+    ],
+    [
+     "3",
+     "<folder>/a.png.txt",
+     "sidecar",
+     "48B"
+    ],
+    [
+     "4",
+     "<folder>/b p12.jpg.txt",
+     "sidecar",
+     "14B"
+    ],
+    [
+     "5",
+     "<folder>/b p12.notes.txt",
+     "sidecar",
+     "30B"
+    ],
+    [
+     "6",
+     "<folder>/dupe.gif.txt",
+     "sidecar",
+     "17B"
+    ],
+    [
+     "7",
+     "<folder>/a.png",
+     "png",
+     "7.89 KB"
+    ],
+    [
+     "8",
+     "<missing>",
+     "PROBLEM: file missing",
+     "-"
+    ],
+    [
+     "9",
+     "<folder>/b p12.jpg",
+     "jpeg",
+     "3.88 KB"
+    ],
+    [
+     "10",
+     "<folder>/dupe.gif",
+     "static gif",
+     "3.24 KB"
+    ],
+    [
+     "11",
+     "<folder>/empty.png",
+     "PROBLEM: file empty",
+     "0B"
+    ],
+    [
+     "12",
+     "<folder>/notes.txt",
+     "PROBLEM: filetype unsupported",
+     "43B"
+    ],
+    [
+     "13",
+     "<folder>/recent.png",
+     "png",
+     "10.4 KB"
+    ],
+    [
+     "14",
+     "<folder>/Thumbs.db",
+     "PROBLEM: filetype unsupported",
+     "7.89 KB"
+    ]
+   ],
+   "progress": "14 files parsed - 4 good | 4 bad: 1 were empty, 1 were missing, 2 had unsupported file types - and looks like 6 txt/json/xml sidecars.",
+   "enabled": {
+    "import now": true,
+    "add tags/urls with the import >>": true,
+    "pause": false,
+    "stop": false
+   },
+   "imported": [
+    "<folder>/a.png",
+    "<folder>/b p12.jpg",
+    "<folder>/dupe.gif",
+    "<folder>/recent.png"
+   ]
+  },
+  {
+   "search_subdirectories": true,
+   "given": [
+    "<folder>/a.png",
+    "<folder>/a.png.txt",
+    "<folder>/a.png.json",
+    "<folder>/notes.txt"
+   ],
+   "rows": [
+    [
+     "1",
+     "<folder>/a.png",
+     "png",
+     "7.89 KB"
+    ],
+    [
+     "2",
+     "<folder>/a.png.txt",
+     "sidecar",
+     "0B"
+    ],
+    [
+     "3",
+     "<folder>/a.png.json",
+     "sidecar",
+     "0B"
+    ],
+    [
+     "4",
+     "<folder>/notes.txt",
+     "PROBLEM: filetype unsupported",
+     "43B"
+    ]
+   ],
+   "progress": "4 files parsed - 1 good | 1 bad: 1 had unsupported file types - and looks like 2 txt/json/xml sidecars.",
+   "enabled": {
+    "import now": true,
+    "add tags/urls with the import >>": true,
+    "pause": false,
+    "stop": false
+   },
+   "imported": [
+    "<folder>/a.png"
+   ]
+  }
+ ],
+ "empty": {
+  "progress": "waiting for paths to parse.",
+  "enabled": {
+   "import now": false,
+   "add tags/urls with the import >>": false,
+   "pause": false,
+   "stop": false
+  }
+ },
+ "delete_warning": "YOUR ORIGINAL FILES WILL BE DELETED"
+}

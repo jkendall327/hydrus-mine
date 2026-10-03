@@ -15,8 +15,11 @@ A fresh client is set up with the folder (and the one file) and saved
 recorded so the test can rewrite it); then the folder does its work once.
 Recorded (oracle/fixtures/import_folder_run.json): each file seed's path
 (relative to the folder), status and note; each imported file's storage
-tags per service, URLs, notes and modified time; and both folders' contents
-afterwards. The source files are in oracle/fixtures/import_folder/.
+tags per service, URLs, notes and modified time; both folders' contents
+afterwards; and the popups the work showed (its files, by label). Then the
+folder's path is made one that doesn't exist and it is checked now, and the
+popups that shows are recorded too. The source files are in
+oracle/fixtures/import_folder/.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_import_folder.py
 """
@@ -179,7 +182,7 @@ def run_folder( s ):
 
     import_folder = s.read( 'serialisable_named', HydrusSerialisable.SERIALISABLE_TYPE_IMPORT_FOLDER, NAME )
 
-    import_folder.DoWork()
+    popups = hydrus_driver.popups_sent( import_folder.DoWork )
 
     import_folder = s.read( 'serialisable_named', HydrusSerialisable.SERIALISABLE_TYPE_IMPORT_FOLDER, NAME )
 
@@ -190,7 +193,15 @@ def run_folder( s ):
 
     metadata = s.api.get( '/get_files/file_metadata', hashes = json.dumps( hashes ), include_notes = 'true' )[ 'metadata' ] if hashes else []
 
-    return ( seeds, metadata, import_folder.GetSerialisableTuple() )
+    stored = import_folder.GetSerialisableTuple()
+
+    # then with its folder gone, checked now
+    import_folder._path = import_folder._path + ' (gone)'
+    import_folder._check_now = True
+
+    broken_popups = hydrus_driver.popups_sent( import_folder.DoWork )
+
+    return ( seeds, metadata, stored, popups, broken_popups )
 
 
 def listing( folder ):
@@ -231,11 +242,11 @@ def main():
 
         elif step == 'run':
 
-            ( seeds, metadata, stored ) = hydrus_driver.run_client( db_dir, run_folder, port = PORT )
+            ( seeds, metadata, stored, popups, broken_popups ) = hydrus_driver.run_client( db_dir, run_folder, port = PORT )
 
             with open( os.path.join( db_dir, 'run.json' ), 'w' ) as f:
 
-                json.dump( { 'seeds' : seeds, 'metadata' : metadata, 'stored' : stored }, f )
+                json.dump( { 'seeds' : seeds, 'metadata' : metadata, 'stored' : stored, 'popups' : popups, 'broken_popups' : broken_popups }, f )
 
 
 
@@ -295,6 +306,8 @@ def main():
             'metadata' : run[ 'metadata' ],
             'in_after' : listing( folder ),
             'moved_after' : listing( moved ),
+            'popups' : run[ 'popups' ],
+            'broken_popups' : run[ 'broken_popups' ],
         }
 
     finally:

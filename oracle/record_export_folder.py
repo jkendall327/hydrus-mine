@@ -19,7 +19,9 @@ The client is saved with the folders set up
 recorded so the test can rewrite them); then each folder does its work
 once. Recorded (oracle/fixtures/export_folder_run.json): every folder's
 contents afterwards (sizes, sidecar text, which file a link points at),
-which files the client still has, and each folder's stored state.
+which files the client still has, and each folder's stored state. Then
+"regular" is run now with a path that doesn't exist, and the popups that
+shows are recorded too.
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_export_folder.py
 """
@@ -160,7 +162,15 @@ def run_folders( s ):
 
     current = sorted( s.api.get( '/get_files/search_files', tags = json.dumps( [ 'system:everything' ] ), return_hashes = 'true' )[ 'hashes' ] )
 
-    return ( stored, current )
+    # then "regular" with its folder gone, run now
+    folder = s.read( 'serialisable_named', HydrusSerialisable.SERIALISABLE_TYPE_EXPORT_FOLDER, 'regular' )
+
+    folder._path = folder._path + ' (gone)'
+    folder._run_now = True
+
+    broken_popups = hydrus_driver.popups_sent( folder.DoWork )
+
+    return ( stored, current, broken_popups )
 
 
 def listing( folder ):
@@ -224,11 +234,11 @@ def main():
 
         elif step == 'run':
 
-            ( stored, current ) = hydrus_driver.run_client( db_dir, run_folders, port = PORT )
+            ( stored, current, broken_popups ) = hydrus_driver.run_client( db_dir, run_folders, port = PORT )
 
             with open( os.path.join( db_dir, 'run.json' ), 'w' ) as f:
 
-                json.dump( { 'stored' : stored, 'current' : current }, f )
+                json.dump( { 'stored' : stored, 'current' : current, 'broken_popups' : broken_popups }, f )
 
 
 
@@ -276,6 +286,7 @@ def main():
             'hashes' : hashes,
             'current' : run[ 'current' ],
             'stored' : run[ 'stored' ],
+            'broken_popups' : run[ 'broken_popups' ],
             'folders' : { name : listing( os.path.join( work, name ) ) for name in ( 'regular', 'sync', 'delete' ) },
         }
 

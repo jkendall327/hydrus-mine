@@ -57,7 +57,23 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         // (the reference stores "no limit" as None)
         gallery.file_limit = value.as_i64().and_then(|n| u64::try_from(n).ok());
     }
+    if let Some(options) = &options {
+        gallery.gug = options.default_gug();
+    }
     insert_setting(&mut input, &gallery)?;
+
+    // (the reference keeps "no limit" as None; its defaults fill missing keys)
+    let limit = |key| {
+        legacy_options
+            .get(key)
+            .and_then(hydrus_legacy::objects::YamlValue::as_i64)
+            .and_then(|n| u64::try_from(n).ok())
+    };
+    let trash = crate::trash::TrashSettings {
+        max_age_hours: limit("trash_max_age"),
+        max_size_mb: limit("trash_max_size"),
+    };
+    insert_setting(&mut input, &trash)?;
 
     let mut folders = crate::settings::FolderSettings::default();
     if let Some(value) = legacy_options
@@ -87,6 +103,238 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
     }
     insert_setting(&mut input, &folders)?;
+    let mut pauses = crate::settings::Pauses::default();
+    if let Some(options) = &options {
+        for (key, field) in pauses.by_option_name() {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &pauses)?;
+    if let Some(&advanced) = options
+        .as_ref()
+        .and_then(|o| o.booleans.get("advanced_mode"))
+    {
+        insert_setting(&mut input, &crate::settings::AdvancedMode(advanced))?;
+    }
+    let mut delete_lock = crate::delete_lock::DeleteLock::default();
+    if let Some(options) = &options {
+        for (key, field) in delete_lock.by_option_name() {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &delete_lock)?;
+    let mut maintenance = crate::file_maintenance::FileMaintenanceSettings::default();
+    if let Some(options) = &options {
+        let m = &mut maintenance;
+        for (key, field) in [
+            ("file_maintenance_during_idle", &mut m.during_idle),
+            ("file_maintenance_during_active", &mut m.during_active),
+        ] {
+            if let Some(&value) = options.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("file_maintenance_idle_throttle_files", &mut m.idle_files),
+            (
+                "file_maintenance_idle_throttle_time_delta",
+                &mut m.idle_seconds,
+            ),
+            (
+                "file_maintenance_active_throttle_files",
+                &mut m.active_files,
+            ),
+            (
+                "file_maintenance_active_throttle_time_delta",
+                &mut m.active_seconds,
+            ),
+        ] {
+            if let Some(value) = options
+                .integers
+                .get(key)
+                .and_then(|&v| u64::try_from(v).ok())
+            {
+                *field = value;
+            }
+        }
+    }
+    insert_setting(&mut input, &maintenance)?;
+    let lock = hydrus_core::lock::LockPassword {
+        sha256: legacy_options.password_hash().map(hex::encode),
+    };
+    insert_setting(&mut input, &lock)?;
+    if let Some(options) = &options {
+        insert_setting(&mut input, &tag_presentation(options))?;
+    }
+    insert_setting(
+        &mut input,
+        &namespace_colours(&legacy_options, options.as_ref()),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::media_viewer_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::info_line_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::thumbnail_rating_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(|o| o.recent_predicates(&|key| scales.get(key).copied()))
+            .transpose()
+            .map_err(|e| StoreError::Invalid(format!("recent predicates: {e}")))?
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::audio_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::slideshow_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::page_name_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::downloader_page_settings)
+            .unwrap_or_default(),
+    )?;
+    insert_setting(
+        &mut input,
+        &options
+            .as_ref()
+            .map(legacy::ClientOptions::window_settings)
+            .unwrap_or_default(),
+    )?;
+    let mut handling = crate::settings::FileHandlingSettings::default();
+    if let Some(options) = &options {
+        let boolean = |key: &str| options.booleans.get(key).copied();
+        handling.comic_book_detection =
+            boolean("allow_comic_book_archive_detection").unwrap_or(handling.comic_book_detection);
+        handling.do_not_chmod = boolean("do_not_do_chmod_mode").unwrap_or(handling.do_not_chmod);
+        if let Some(level) = options
+            .integers
+            .get("file_has_transparency_strictness")
+            .and_then(|&v| u8::try_from(v).ok())
+            .filter(|&v| v <= 2)
+        {
+            handling.transparency_strictness = level;
+        }
+    }
+    insert_setting(&mut input, &handling)?;
+    let mut pages = crate::settings::PageSettings::default();
+    if let Some(uses_all_my_files) = options.as_ref().and_then(|o| {
+        o.booleans
+            .get("open_files_to_duplicate_filter_uses_all_my_files")
+            .copied()
+    }) {
+        pages.duplicate_filter_uses_all_my_files = uses_all_my_files;
+    }
+    insert_setting(&mut input, &pages)?;
+    let mut sorts = hydrus_core::pages::SortSettings::default();
+    if let Some(options) = &options {
+        if let Some(sort) = &options.default_sort {
+            sorts.default_sort = page_sort(sort);
+        }
+        if let Some(sort) = &options.fallback_sort {
+            sorts.fallback_sort = page_sort(sort);
+        }
+        sorts.namespace_sorts = options
+            .default_namespace_sorts
+            .iter()
+            .map(page_sort)
+            .collect();
+        if let Some(collect) = &options.default_collect {
+            sorts.default_collect = page_collect(collect);
+        }
+        if let Some(&save) = options.booleans.get("save_page_sort_on_change") {
+            sorts.save_page_sort_on_change = save;
+        }
+    }
+    insert_setting(&mut input, &sorts)?;
+    let mut network = crate::network::NetworkSettings::default();
+    if let Some(options) = &options {
+        let n = &mut network;
+        let int = |key: &str| options.integers.get(key).copied();
+        let unsigned = |key: &str| int(key).and_then(|v| u64::try_from(v).ok());
+        let small = |key: &str| int(key).and_then(|v| u32::try_from(v).ok());
+        let count = |key: &str| int(key).and_then(|v| usize::try_from(v).ok());
+        let boolean = |key: &str| options.booleans.get(key).copied();
+        let string = |key: &str| options.noneable_strings.get(key).cloned();
+        n.network_timeout = unsigned("network_timeout").unwrap_or(n.network_timeout);
+        n.connection_error_wait_time =
+            unsigned("connection_error_wait_time").unwrap_or(n.connection_error_wait_time);
+        n.serverside_bandwidth_wait_time =
+            unsigned("serverside_bandwidth_wait_time").unwrap_or(n.serverside_bandwidth_wait_time);
+        n.max_connection_attempts =
+            small("max_connection_attempts_allowed").unwrap_or(n.max_connection_attempts);
+        n.max_get_attempts =
+            small("max_request_attempts_allowed_get").unwrap_or(n.max_get_attempts);
+        n.max_jobs = count("max_network_jobs").unwrap_or(n.max_jobs);
+        n.max_jobs_per_domain =
+            count("max_network_jobs_per_domain").unwrap_or(n.max_jobs_per_domain);
+        n.verify_https = boolean("verify_regular_https").unwrap_or(n.verify_https);
+        n.domain_error_number =
+            count("domain_network_infrastructure_error_number").unwrap_or(n.domain_error_number);
+        n.domain_error_window =
+            int("domain_network_infrastructure_error_time_delta").unwrap_or(n.domain_error_window);
+        if let Some(proxy) = string("http_proxy") {
+            n.http_proxy = proxy;
+        }
+        if let Some(proxy) = string("https_proxy") {
+            n.https_proxy = proxy;
+        }
+        if let Some(hosts) = string("no_proxy") {
+            n.no_proxy = hosts;
+        }
+        n.downloader_network_error_delay =
+            unsigned("downloader_network_error_delay").unwrap_or(n.downloader_network_error_delay);
+        n.subscription_network_error_delay =
+            int("subscription_network_error_delay").unwrap_or(n.subscription_network_error_delay);
+        n.subscription_other_error_delay =
+            int("subscription_other_error_delay").unwrap_or(n.subscription_other_error_delay);
+        n.process_subs_in_random_order =
+            boolean("process_subs_in_random_order").unwrap_or(n.process_subs_in_random_order);
+        n.max_simultaneous_subscriptions =
+            small("max_simultaneous_subscriptions").unwrap_or(n.max_simultaneous_subscriptions);
+        n.gug_percent_twenty_is_space = boolean("replace_percent_twenty_with_space_in_gug_input")
+            .unwrap_or(n.gug_percent_twenty_is_space);
+        n.wake_delay_period = unsigned("wake_delay_period").unwrap_or(n.wake_delay_period);
+    }
+    insert_setting(&mut input, &network)?;
     let mut export = crate::settings::ExportSettings::default();
     if let Some(options) = &options {
         if let Some(phrase) = options.strings.get("export_phrase") {
@@ -131,9 +379,55 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
                 }
             };
         }
+        if let Some(percent) = options
+            .integers
+            .get("video_thumbnail_percentage_in")
+            .and_then(|&p| u32::try_from(p).ok())
+        {
+            thumbnails.video_percentage_in = percent;
+        }
         if let Some(&dpr) = options.integers.get("thumbnail_dpr_percent") {
             thumbnails.dpr_percent = positive(dpr, "thumbnail dpr percent")?;
         }
+        let mut layout = crate::settings::ThumbnailLayout::default();
+        let pixels = |key: &str| {
+            options
+                .integers
+                .get(key)
+                .and_then(|&n| u32::try_from(n).ok())
+        };
+        if let Some(border) = pixels("thumbnail_border") {
+            layout.border = border;
+        }
+        if let Some(margin) = pixels("thumbnail_margin") {
+            layout.margin = margin;
+        }
+        insert_setting(&mut input, &layout)?;
+        let mut search_defaults = crate::settings::SearchDefaults::default();
+        if let Some(key) = options.keys.get("default_tag_service_search_page") {
+            search_defaults.tag_service = ServiceKey::new(key.clone());
+        }
+        if let Some(location) = &options.default_local_location_context {
+            search_defaults.local_location = hydrus_core::search::context::LocationContext::new(
+                location.current.iter().cloned(),
+                location.deleted.iter().cloned(),
+            );
+        }
+        insert_setting(&mut input, &search_defaults)?;
+        let mut summaries = hydrus_core::tag_summary::TagSummaries::default();
+        for (name, field) in [
+            ("thumbnail_top", &mut summaries.thumbnail_top),
+            (
+                "thumbnail_bottom_right",
+                &mut summaries.thumbnail_bottom_right,
+            ),
+            ("media_viewer_top", &mut summaries.media_viewer_top),
+        ] {
+            if let Some(generator) = options.tag_summary_generators.get(name) {
+                generator.clone_into(field);
+            }
+        }
+        insert_setting(&mut input, &summaries)?;
         if let Some(tags) = options.string_lists.get("favourite_tags") {
             insert_setting(&mut input, &FavouriteTags(tags.clone()))?;
         }
@@ -223,23 +517,36 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         }
         insert_setting(&mut input, &checkers)?;
         if let Some(stored) = &options.duplicate_action_options {
-            let merge = duplicate_merge_settings(stored, &mut input.warnings)?;
+            let merge = duplicate_merge_settings(stored)?;
             insert_setting(&mut input, &merge)?;
         }
+        let mut filter = DuplicateFilterSettings::default();
         if let Some(&size) = options.integers.get("duplicate_filter_max_batch_size") {
-            insert_setting(
-                &mut input,
-                &DuplicateFilterSettings {
-                    max_batch_size: positive(size, "duplicate filter batch size")?,
-                },
-            )?;
+            filter.max_batch_size = positive(size, "duplicate filter batch size")?;
         }
+        if let Some(&size) = options
+            .noneable_integers
+            .get("duplicate_filter_auto_commit_batch_size")
+        {
+            filter.auto_commit_batch_size = size.map(|n| u32::try_from(n).unwrap_or(0));
+        }
+        if let Some(&advanced) = options.booleans.get("advanced_mode") {
+            filter.merge_alternates = advanced;
+        }
+        for (name, score) in filter.scores.by_option_name() {
+            if let Some(&n) = options.integers.get(name) {
+                *score = i32::try_from(n).unwrap_or(0);
+            }
+        }
+        insert_setting(&mut input, &filter)?;
     }
     insert_setting(&mut input, &thumbnails)?;
     if let Some(manager) = db.tag_display_manager()? {
         insert_setting(&mut input, &autocomplete_settings(&manager))?;
+        insert_setting(&mut input, &tag_display_filters(&manager))?;
     }
     network_input(db, &mut input)?;
+    bandwidth_input(db, options.as_ref(), &mut input)?;
     match db.url_class_settings() {
         Ok(Some(mut url_classes)) => {
             url_classes.collapse_leading_slashes = options
@@ -303,6 +610,39 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         &|key| scales.get(key).copied(),
         &mut input,
     );
+    other_sessions(
+        db,
+        &legacy_options,
+        &|key| scales.get(key).copied(),
+        &mut input,
+    );
+    match db.favourite_search_manager() {
+        Ok(Some(manager)) => {
+            let mut converted = Vec::new();
+            for f in manager.searches {
+                match file_search(&f.file_search_context, &|key| scales.get(key).copied()) {
+                    Ok(search) => converted.push(hydrus_core::pages::FavouriteSearch {
+                        folder: f.folder,
+                        name: f.name,
+                        search,
+                        synchronised: f.synchronised,
+                        sort: f.media_sort.as_ref().map(page_sort),
+                        collect: f.media_collect.as_ref().map(page_collect),
+                    }),
+                    Err(e) => input.warnings.push(format!(
+                        "The favourite search \"{}\" searches for something hydrus-rs can't, \
+                         so it was not converted: {e}",
+                        f.name
+                    )),
+                }
+            }
+            insert_setting(&mut input, &crate::settings::FavouriteSearches(converted))?;
+        }
+        Ok(None) => {}
+        Err(e) => input
+            .warnings
+            .push(format!("Favourite searches were not converted: {e}")),
+    }
     match db.export_folders() {
         Ok(folders) => {
             let mut converted = Vec::new();
@@ -378,7 +718,7 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
         Ok(rules) => {
             for (name, decoded) in rules {
                 let converted = decoded.map_err(|e| e.to_string()).and_then(|r| {
-                    auto_resolution_rule(&r, &|key| scales.get(key).copied(), &mut input.warnings)
+                    auto_resolution_rule(&r, &|key| scales.get(key).copied())
                         .map(|rule| (r.id, rule))
                 });
                 match converted {
@@ -393,22 +733,147 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             "Duplicates auto-resolution rules were not converted: {e}"
         )),
     }
+    match db.logins() {
+        Ok(Some(logins)) => {
+            let active: Vec<_> = logins.into_iter().filter(|l| l.active).collect();
+            if !active.is_empty() {
+                let list: Vec<String> = active
+                    .iter()
+                    .map(|l| format!("{} ({})", l.domain, l.script))
+                    .collect();
+                input.warnings.push(format!(
+                    "hydrus logged in to these sites with login scripts, which hydrus-rs doesn't run: {}. Their requests carry only the cookies you have for them, so keep those fresh (Hydrus Companion can send them)",
+                    list.join(", ")
+                ));
+                let domains =
+                    crate::network::LoginDomains(active.into_iter().map(|l| l.domain).collect());
+                insert_setting(&mut input, &domains)?;
+            }
+        }
+        Ok(None) => {}
+        Err(e) => input
+            .warnings
+            .push(format!("The login settings could not be read: {e}")),
+    }
+    let callers = external_program_users(&input);
+    if !callers.is_empty() {
+        input.warnings.push(format!(
+            "Some import options run a program on each imported file, which hydrus-rs doesn't do yet, so they won't run: {} (the options are kept)",
+            callers.join("; ")
+        ));
+    }
     Ok(input)
+}
+
+/// Where import options are set to run a program on each imported file
+/// (`DoExternalProgramCalls`).
+pub(super) fn external_program_users(input: &ImportInput) -> Vec<String> {
+    use hydrus_core::import_options::{ImportOptionsManager, ImportOptionsSlice};
+    let calls = |s: &ImportOptionsSlice| {
+        s.external_programs
+            .as_ref()
+            .is_some_and(|e| e.stored.is_some())
+    };
+    let mut out = Vec::new();
+    if let Some(Ok(manager)) = input
+        .settings
+        .get(ImportOptionsManager::KEY)
+        .map(|v| serde_json::from_value::<ImportOptionsManager>(v.clone()))
+    {
+        for (caller, slice) in &manager.caller_defaults {
+            if calls(slice) {
+                out.push(format!("the default import options ({caller:?})"));
+            }
+        }
+        if manager.url_class_defaults.iter().any(|(_, s)| calls(s)) {
+            out.push("a URL class's default import options".into());
+        }
+        for (name, slice) in &manager.favourites {
+            if calls(slice) {
+                out.push(format!("the favourite import options \"{name}\""));
+            }
+        }
+    }
+    for sub in &input.subscriptions {
+        if calls(&sub.settings.import_options) {
+            out.push(format!("subscription \"{}\"", sub.name));
+        }
+    }
+    for folder in &input.import_folders {
+        if calls(&folder.options) {
+            out.push(format!("import folder \"{}\"", folder.name));
+        }
+    }
+    for page in &input.downloader_pages {
+        if page.queues.iter().any(|q| calls(&q.options)) {
+            out.push(format!("downloader page \"{}\"", page.name));
+        }
+    }
+    out
+}
+
+/// A duplicates page's filtering.
+fn duplicates_page(
+    d: &legacy::gui_sessions::LegacyDuplicatesPage,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> std::result::Result<hydrus_core::pages::DuplicatesPage, String> {
+    use hydrus_core::duplicates::PairOrder;
+    Ok(hydrus_core::pages::DuplicatesPage {
+        search: duplicates_search(&d.search, scales)?,
+        synchronised: d.synchronised,
+        order: PairOrder::from_code(d.sort_type).unwrap_or(PairOrder::MaxFilesize),
+        ascending: d.sort_ascending,
+        group_mode: d.group_mode,
+    })
+}
+
+/// A duplicates page that an import kept as stored, from before duplicates
+/// pages were read (its page data, as `PageContent::Other` keeps it): its
+/// filtering, if it can be read. (Rating predicates in its search are read
+/// without the services' star counts.)
+pub fn stored_duplicates_page(stored: &Json) -> Option<hydrus_core::pages::DuplicatesPage> {
+    use hydrus_legacy::objects::gui_sessions::{PageContent, page_data};
+    use hydrus_legacy::serialisable::{SerialisableObject, SerialisableType};
+    let object = SerialisableObject::from_stored(
+        SerialisableType::GUI_SESSION_PAGE_DATA,
+        None,
+        1,
+        &stored.to_string(),
+    )
+    .ok()?;
+    match page_data(&object).ok()?.page.content {
+        PageContent::Duplicates(d) => duplicates_page(&d, &|_| None).ok(),
+        _ => None,
+    }
+}
+
+/// A potential-duplicates search (a rule's, a duplicates page's).
+fn duplicates_search(
+    search: &legacy::auto_resolution::PotentialsSearch,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+) -> std::result::Result<hydrus_core::duplicates::DuplicatesSearch, String> {
+    use hydrus_core::duplicates::{DuplicatesSearch, PairSearchKind, PixelDuplicates};
+    Ok(DuplicatesSearch {
+        search_1: file_search(&search.search_1, scales)?,
+        search_2: file_search(&search.search_2, scales)?,
+        kind: PairSearchKind::from_code(search.dupe_search_type)
+            .ok_or_else(|| format!("unknown pair search type {}", search.dupe_search_type))?,
+        pixel_duplicates: PixelDuplicates::from_code(search.pixel_dupes)
+            .ok_or_else(|| format!("unknown pixel duplicates preference {}", search.pixel_dupes))?,
+        max_hamming_distance: u32::try_from(search.max_hamming_distance)
+            .map_err(|_| format!("a search distance of {}", search.max_hamming_distance))?,
+    })
 }
 
 /// A stored duplicates auto-resolution rule in our model, or why it can't
 /// be converted. `scales` gives each numerical rating service's scale (see
-/// [`predicate_with_scales`]). Warnings about details that were dropped are
-/// added to `warnings`.
+/// [`predicate_with_scales`]).
 pub fn auto_resolution_rule(
     r: &legacy::auto_resolution::AutoResolutionRule,
     scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
-    warnings: &mut Vec<String>,
 ) -> std::result::Result<crate::duplicates::auto::Rule, String> {
-    use crate::duplicates::auto::{OperationMode, Rule, RuleAction, RuleSearch};
-    use crate::duplicates::{PairSearchKind, PixelDuplicates};
+    use crate::duplicates::auto::{OperationMode, Rule, RuleAction};
 
-    let search = &r.search;
     Ok(Rule {
         name: r.name.clone(),
         paused: r.paused,
@@ -420,24 +885,7 @@ pub fn auto_resolution_rule(
         max_pending_pairs: r
             .max_pending_pairs
             .map(|n| u32::try_from(n.max(0)).unwrap_or(u32::MAX)),
-        search: RuleSearch {
-            search_1: file_search(&search.search_1, scales)?,
-            search_2: file_search(&search.search_2, scales)?,
-            kind: match search.dupe_search_type {
-                0 => PairSearchKind::OneFileMatchesOneSearch,
-                1 => PairSearchKind::BothFilesMatchOneSearch,
-                2 => PairSearchKind::BothFilesMatchDifferentSearches,
-                other => return Err(format!("unknown pair search type {other}")),
-            },
-            pixel_duplicates: match search.pixel_dupes {
-                0 => PixelDuplicates::Required,
-                1 => PixelDuplicates::Allowed,
-                2 => PixelDuplicates::Excluded,
-                other => return Err(format!("unknown pixel duplicates preference {other}")),
-            },
-            max_hamming_distance: u32::try_from(search.max_hamming_distance)
-                .map_err(|_| format!("a search distance of {}", search.max_hamming_distance))?,
-        },
+        search: duplicates_search(&r.search, scales)?,
         comparators: r
             .comparators
             .iter()
@@ -453,7 +901,7 @@ pub fn auto_resolution_rule(
         custom_merge: r
             .custom_merge_options
             .as_ref()
-            .map(|o| merge_options(o, &format!("rule \"{}\"'s merge options", r.name), warnings))
+            .map(merge_options)
             .transpose()
             .map_err(|e| e.to_string())?,
     })
@@ -665,6 +1113,8 @@ pub(super) fn file_seed(
             tags: f.tags.iter().cloned().collect(),
             notes: f.notes.clone(),
             hashes: f.hashes.clone(),
+            // (the reference keeps this only while the seed works)
+            cloudflare_last_modified: None,
         },
     })
 }
@@ -824,6 +1274,108 @@ fn appearance(appearance: &legacy::StarAppearance) -> Result<StarAppearance> {
 }
 
 /// Custom headers and unexpired cookies.
+/// The bandwidth rules (with the options that pace gallery pages) and each
+/// network context's usage so far, so today's limits carry on.
+fn bandwidth_input(
+    db: &LegacyDb,
+    options: Option<&legacy::ClientOptions>,
+    input: &mut ImportInput,
+) -> Result<()> {
+    use crate::bandwidth::BandwidthSettings;
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules, Tracker};
+    use hydrus_core::network::NetworkContext;
+
+    let context = |c: &legacy::bandwidth::LegacyNetworkContext| NetworkContext {
+        kind: c.kind,
+        data: c.data.clone().unwrap_or_default(),
+    };
+    let mut settings = BandwidthSettings::default();
+    match db.bandwidth_manager() {
+        Ok(Some(manager)) => {
+            let mut rules = Vec::new();
+            for (c, legacy_rules) in &manager.rules {
+                let mut converted = Rules::default();
+                for &(kind, span, max) in legacy_rules {
+                    let Some(kind) = BandwidthType::from_code(kind) else {
+                        input.warnings.push(format!(
+                            "A bandwidth rule of unknown type {kind} on {} was dropped",
+                            context(c).to_human_string()
+                        ));
+                        continue;
+                    };
+                    converted.add(Rule::new(
+                        kind,
+                        span.and_then(|s| u64::try_from(s).ok()),
+                        u64::try_from(max).unwrap_or(0),
+                    ));
+                }
+                rules.push((context(c), converted));
+            }
+            settings.rules = rules;
+        }
+        Ok(None) => {}
+        Err(e) => input.warnings.push(format!(
+            "The bandwidth rules could not be read, so the defaults apply: {e}"
+        )),
+    }
+    if let Some(options) = options {
+        for (key, field) in [
+            (
+                "gallery_page_wait_period_pages",
+                &mut settings.gallery_page_wait_pages,
+            ),
+            (
+                "gallery_page_wait_period_subscriptions",
+                &mut settings.gallery_page_wait_subscriptions,
+            ),
+            ("watcher_page_wait_period", &mut settings.watcher_page_wait),
+        ] {
+            if let Some(&n) = options.integers.get(key) {
+                *field = n;
+            }
+        }
+        if let Some(&b) = options
+            .booleans
+            .get("override_bandwidth_on_file_urls_from_post_urls")
+        {
+            settings.override_on_file_urls_from_posts = b;
+        }
+    }
+    insert_setting(input, &settings)?;
+
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    match db.bandwidth_trackers() {
+        Ok(trackers) => {
+            for (name, decoded) in trackers {
+                match decoded {
+                    Ok(t) => {
+                        let c = context(&t.context);
+                        // (downloader and watcher pages' usage isn't kept)
+                        if c.is_ephemeral() {
+                            continue;
+                        }
+                        let counters = t.counters.map(|v| {
+                            v.into_iter()
+                                .map(|(k, n)| (k, u64::try_from(n).unwrap_or(0)))
+                                .collect()
+                        });
+                        input
+                            .bandwidth_usage
+                            .push((c, Tracker::from_counters(counters, now)));
+                    }
+                    Err(e) => input.warnings.push(format!(
+                        "Bandwidth usage {name:?} could not be read, so it starts afresh: {e}"
+                    )),
+                }
+            }
+        }
+        Err(e) => input.warnings.push(format!(
+            "Bandwidth usage could not be read, so it starts afresh: {e}"
+        )),
+    }
+    Ok(())
+}
+
 fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
     use crate::network::{Approval, Cookie, CustomHeader, NetworkContext};
 
@@ -890,6 +1442,111 @@ fn network_input(db: &LegacyDb, input: &mut ImportInput) -> Result<()> {
     Ok(())
 }
 
+/// The tag lists' colours: the old options' namespace colours (the
+/// defaults if it has none), and the namespace OR predicates take theirs
+/// from.
+fn namespace_colours(
+    legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    options: Option<&legacy::ClientOptions>,
+) -> hydrus_core::tag_presentation::NamespaceColours {
+    let mut out = hydrus_core::tag_presentation::NamespaceColours::default();
+    let colours = legacy_options.namespace_colours();
+    if !colours.is_empty() {
+        out.colours = colours
+            .into_iter()
+            .map(|(namespace, rgb)| (namespace.map(str::to_owned), rgb))
+            .collect();
+    }
+    if let Some(Some(namespace)) = options.and_then(|o| {
+        o.noneable_strings
+            .get("or_connector_custom_namespace_colour")
+    }) {
+        out.or_connector = Some(namespace.clone());
+    }
+    out
+}
+
+/// How tags are shown: `RenderTag`'s options, the namespace order and the
+/// search page's and media viewer's tag sorts.
+fn tag_presentation(
+    options: &legacy::ClientOptions,
+) -> hydrus_core::tag_presentation::TagPresentation {
+    use hydrus_core::tag_presentation::TagPresentation;
+    use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+    let mut out = TagPresentation::default();
+    for (key, field) in [
+        ("show_namespaces", &mut out.show_namespaces),
+        ("show_number_namespaces", &mut out.show_number_namespaces),
+        (
+            "show_subtag_number_namespaces",
+            &mut out.show_subtag_number_namespaces,
+        ),
+        (
+            "replace_tag_underscores_with_spaces",
+            &mut out.replace_underscores,
+        ),
+        ("replace_tag_emojis_with_boxes", &mut out.replace_emojis),
+    ] {
+        if let Some(&value) = options.booleans.get(key) {
+            *field = value;
+        }
+    }
+    if let Some(connector) = options.strings.get("namespace_connector") {
+        out.namespace_connector.clone_from(connector);
+    }
+    if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
+        out.user_namespaces.clone_from(namespaces);
+    }
+    let sort = |legacy: &legacy::TagSort| -> Option<TagSort> {
+        Some(TagSort {
+            sort_type: match legacy.sort_type {
+                0 => TagSortType::Tag,
+                1 => TagSortType::Subtag,
+                2 => TagSortType::Count,
+                _ => return None,
+            },
+            ascending: legacy.sort_order == legacy::SortOrder::Ascending,
+            group_by: match legacy.group_by {
+                0 => TagGroupBy::Nothing,
+                1 => TagGroupBy::NamespaceAz,
+                2 => TagGroupBy::NamespaceUser,
+                _ => return None,
+            },
+        })
+    };
+    // (`CC.TAG_PRESENTATION_SEARCH_PAGE` and `_MEDIA_VIEWER`)
+    for (code, field) in [
+        (0, &mut out.search_page_sort),
+        (2, &mut out.media_viewer_sort),
+    ] {
+        if let Some(converted) = options.default_tag_sorts.get(&code).and_then(sort) {
+            *field = converted;
+        }
+    }
+    out
+}
+
+/// The tag display manager's filters for the single media and selection
+/// list views (the others it may hold aren't used by the reference).
+fn tag_display_filters(
+    manager: &hydrus_legacy::objects::TagDisplayManager,
+) -> crate::tag_display::TagDisplayFilters {
+    use crate::tag_display::{TagDisplayFilters, TagView};
+    let mut out = TagDisplayFilters::default();
+    for (code, per_service) in &manager.tag_filters {
+        let Some(view) = TagView::from_code(*code) else {
+            continue;
+        };
+        for (key, filter) in per_service {
+            let filter = tag_filter(filter);
+            if !filter.allows_everything() {
+                out.for_view_mut(view).insert(key.to_hex(), filter);
+            }
+        }
+    }
+    out
+}
+
 fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
     let mut filter = TagFilter::new();
     for (slice, rule) in legacy.effective_rules() {
@@ -906,28 +1563,22 @@ fn tag_filter(legacy: &legacy::TagFilter) -> TagFilter {
 /// stored options merge nothing, as in the reference.
 fn duplicate_merge_settings(
     stored: &std::collections::BTreeMap<i64, legacy::DuplicateMergeOptions>,
-    warnings: &mut Vec<String>,
 ) -> Result<DuplicateMergeSettings> {
-    let mut convert = |code: i64, label: &str| -> Result<MergeOptions> {
+    let convert = |code: i64| -> Result<MergeOptions> {
         match stored.get(&code) {
-            Some(o) => merge_options(o, &format!("the {label} duplicate merge options"), warnings),
+            Some(o) => merge_options(o),
             None => Ok(MergeOptions::default()),
         }
     };
     Ok(DuplicateMergeSettings {
-        better: convert(DuplicateType::Better.code().into(), "better")?,
-        same_quality: convert(DuplicateType::SameQuality.code().into(), "same quality")?,
-        alternate: convert(DuplicateType::Alternate.code().into(), "alternate")?,
+        better: convert(DuplicateType::Better.code().into())?,
+        same_quality: convert(DuplicateType::SameQuality.code().into())?,
+        alternate: convert(DuplicateType::Alternate.code().into())?,
     })
 }
 
-/// One set of duplicate metadata merge options. `what` names them in
-/// warnings.
-pub(crate) fn merge_options(
-    o: &legacy::DuplicateMergeOptions,
-    what: &str,
-    warnings: &mut Vec<String>,
-) -> Result<MergeOptions> {
+/// One set of duplicate metadata merge options.
+pub(crate) fn merge_options(o: &legacy::DuplicateMergeOptions) -> Result<MergeOptions> {
     use crate::duplicates::merge::{ArchiveSync, MergeAction, RatingMerge, SyncAction, TagMerge};
     use hydrus_core::notes::{NoteConflict, NoteMerge};
     use legacy::MergeAction as Legacy;
@@ -945,14 +1596,11 @@ pub(crate) fn merge_options(
         Legacy::Move | Legacy::None => None,
     };
     let notes = &o.note_import;
-    if !notes.name_whitelist.is_empty()
-        || notes.all_name_override.is_some()
-        || !notes.names_to_name_overrides.is_empty()
-    {
-        warnings.push(format!(
-            "{what}' note name filters and renames were dropped (the reference's editor doesn't show them)"
-        ));
-    }
+    let note_names = crate::duplicates::merge::NoteNames {
+        whitelist: notes.name_whitelist.clone(),
+        all_override: notes.all_name_override.clone(),
+        overrides: notes.names_to_name_overrides.clone(),
+    };
     let note_merge = if notes.get_notes && o.sync_notes != Legacy::None {
         let conflict = NoteConflict::from_code(notes.conflict_resolution).ok_or_else(|| {
             StoreError::Invalid(format!(
@@ -991,6 +1639,7 @@ pub(crate) fn merge_options(
             .collect(),
         notes: action(o.sync_notes),
         note_merge,
+        note_names,
         archive: match o.sync_archive {
             legacy::ArchiveSync::None => ArchiveSync::Never,
             legacy::ArchiveSync::IfOneDoBoth => ArchiveSync::IfEither,
@@ -1051,6 +1700,7 @@ fn session(
         pages: &pages,
         scales,
         input,
+        downloaders: true,
     };
     let pages = top.iter().filter_map(|node| context.page(node)).collect();
     input.session = Some(super::SessionInput {
@@ -1059,11 +1709,75 @@ fn session(
     });
 }
 
+/// The other saved sessions, to load later. As the owner chose, their
+/// downloader pages are kept but make no queues: the reference only runs a
+/// session's downloaders while it is open, and ours would run at once.
+fn other_sessions(
+    db: &LegacyDb,
+    legacy_options: &hydrus_legacy::objects::LegacyOptions,
+    scales: &dyn Fn(&ServiceKey) -> Option<StarScale>,
+    input: &mut ImportInput,
+) {
+    let opened = legacy_options
+        .get("default_gui_session")
+        .and_then(hydrus_legacy::objects::YamlValue::as_str)
+        .unwrap_or("last session")
+        .to_owned();
+    let names = match db.gui_session_names() {
+        Ok(names) => names,
+        Err(e) => {
+            input.warnings.push(format!(
+                "The saved sessions could not be listed, so only the one hydrus opens with was carried over: {e}"
+            ));
+            return;
+        }
+    };
+    for name in names.into_iter().filter(|n| *n != opened) {
+        let (session, pages) = match db.gui_session(&name) {
+            Ok(Some(found)) => found,
+            Ok(None) => continue,
+            Err(e) => {
+                input.warnings.push(format!(
+                    "Session \"{name}\" could not be read, so it was not carried over (the \
+                     original is kept): {e}"
+                ));
+                continue;
+            }
+        };
+        let hydrus_legacy::objects::gui_sessions::SessionNode::Notebook { pages: top, .. } =
+            &session.top
+        else {
+            continue;
+        };
+        let mut context = SessionContext {
+            name: &name,
+            pages: &pages,
+            scales,
+            input,
+            downloaders: false,
+        };
+        let pages = top.iter().filter_map(|node| context.page(node)).collect();
+        // (our own "last session" is the one we open with)
+        let kept_name = if name == crate::sessions::LAST_SESSION {
+            format!("{name} (from hydrus)")
+        } else {
+            name.clone()
+        };
+        input.other_sessions.push(super::SessionInput {
+            name: kept_name,
+            pages,
+        });
+    }
+}
+
 struct SessionContext<'a> {
     name: &'a str,
     pages: &'a HashMap<Vec<u8>, hydrus_legacy::readers::StoredHashedObject>,
     scales: &'a dyn Fn(&ServiceKey) -> Option<StarScale>,
     input: &'a mut ImportInput,
+    /// Whether downloader pages bring their queues (the session opened
+    /// with) or are only kept (the others).
+    downloaders: bool,
 }
 
 impl SessionContext<'_> {
@@ -1105,6 +1819,9 @@ impl SessionContext<'_> {
         };
         let page = data.page;
         let sort = page.sort.as_ref().map(page_sort);
+        // (one collecting nothing is kept for whether unmatched files
+        // would collect, which the page's collect control shows)
+        let collect = page.collect.as_ref().map(page_collect);
         let hashes = data
             .hashes
             .iter()
@@ -1115,6 +1832,17 @@ impl SessionContext<'_> {
             stored: serde_json::from_str(&stored.dump).ok(),
             sort,
         };
+        let (state, highlighted) = match &page.content {
+            PageContent::Gallery(m) => {
+                let (state, highlighted) = gallery_page_state(m);
+                (Some(state), highlighted)
+            }
+            PageContent::Watchers(m) => {
+                let (state, highlighted) = watcher_page_state(m);
+                (Some(state), highlighted)
+            }
+            _ => (None, None),
+        };
         let queues = match page.content {
             PageContent::Query(q) => {
                 let content = match file_search(&q.search, self.scales) {
@@ -1122,6 +1850,11 @@ impl SessionContext<'_> {
                         search,
                         synchronised: q.synchronised,
                         sort,
+                        lock: q.hash_locked.then_some(hydrus_core::pages::HashLock {
+                            syncs_new: q.lock_syncs.syncs_new,
+                            syncs_removes: q.lock_syncs.syncs_removes,
+                        }),
+                        collect,
                     },
                     Err(e) => {
                         self.input.warnings.push(format!(
@@ -1207,11 +1940,49 @@ impl SessionContext<'_> {
                     }
                 })
                 .collect(),
+            PageContent::LocalImport(h) => {
+                if h.metadata_routers > 0 {
+                    self.input.warnings.push(format!(
+                        "Import page \"{}\" of session \"{name}\" reads sidecars for its files, \
+                         which hydrus-rs's import pages don't yet, so its files left to import \
+                         will be imported without them",
+                        page.name
+                    ));
+                }
+                vec![super::PageQueueInput {
+                    options: h.import_options,
+                    files_paused: h.paused,
+                    gallery_paused: false,
+                    created: None,
+                    state: super::PageQueueState::LocalImport(crate::queues::LocalImport {
+                        delete_after_success: h.delete_after_success,
+                    }),
+                    file_seeds: h.file_seeds,
+                    gallery_seeds: Vec::new(),
+                }]
+            }
+            PageContent::Duplicates(d) => {
+                let content = match duplicates_page(&d, self.scales) {
+                    Ok(duplicates) => super::PageInputContent::Duplicates { duplicates, sort },
+                    Err(e) => {
+                        self.input.warnings.push(format!(
+                            "Duplicates page \"{}\" of session \"{name}\" searches for something \
+                             hydrus-rs can't, so it is kept but not opened: {e}",
+                            page.name
+                        ));
+                        kept(sort)
+                    }
+                };
+                return Some(super::PageInput {
+                    name: page.name,
+                    content,
+                    hashes,
+                });
+            }
             PageContent::Other => {
                 use hydrus_legacy::objects::gui_sessions::page_type;
                 let what = match page.page_type {
                     page_type::SIMPLE_DOWNLOADER => Some("a simple downloader page"),
-                    page_type::IMPORT_FROM_DISK => Some("an import from disk"),
                     _ => None,
                 };
                 if let Some(what) = what {
@@ -1229,9 +2000,19 @@ impl SessionContext<'_> {
                 });
             }
         };
+        if !self.downloaders {
+            return Some(super::PageInput {
+                name: page.name,
+                content: kept(sort),
+                hashes,
+            });
+        }
         let kind = match page.page_type {
             hydrus_legacy::objects::gui_sessions::page_type::URLS => DownloaderKind::Urls,
             hydrus_legacy::objects::gui_sessions::page_type::GALLERY => DownloaderKind::Gallery,
+            hydrus_legacy::objects::gui_sessions::page_type::IMPORT_FROM_DISK => {
+                DownloaderKind::Local
+            }
             _ => DownloaderKind::Watchers,
         };
         self.input
@@ -1239,6 +2020,8 @@ impl SessionContext<'_> {
             .push(super::DownloaderPageInput {
                 name: page.name.clone(),
                 queues,
+                state,
+                highlighted,
             });
         Some(super::PageInput {
             name: page.name,
@@ -1252,11 +2035,71 @@ impl SessionContext<'_> {
     }
 }
 
+/// A gallery page's own state (`MultipleGalleryImport`), and the search it
+/// shows, by its place among the page's searches.
+pub(crate) fn gallery_page_state(
+    m: &hydrus_legacy::objects::gui_sessions::LegacyMultipleGalleryImport,
+) -> (hydrus_core::pages::DownloaderPageState, Option<usize>) {
+    let highlighted = m
+        .highlighted
+        .as_ref()
+        .and_then(|key| m.gallery_imports.iter().position(|g| &g.key == key));
+    let state = hydrus_core::pages::DownloaderPageState {
+        highlighted: None,
+        options: m.import_options.clone(),
+        gallery: Some(hydrus_core::pages::GalleryPageState {
+            gug_key: m.gug_key.clone(),
+            gug_name: m.gug_name.clone(),
+            file_limit: m.file_limit.and_then(|n| u64::try_from(n).ok()),
+            start_files_paused: m.start_file_queues_paused,
+            start_gallery_paused: m.start_gallery_queues_paused,
+            no_new_dupes: m.do_not_allow_new_dupes,
+            merge_pends: m.merge_simultaneous_pends_to_one_importer,
+        }),
+        checker: None,
+    };
+    (state, highlighted)
+}
+
+/// A watcher page's own state (`MultipleWatcherImport`), and the watcher it
+/// shows, by its place among the page's watchers that come across (those
+/// with a thread).
+pub(crate) fn watcher_page_state(
+    m: &hydrus_legacy::objects::gui_sessions::LegacyMultipleWatcherImport,
+) -> (hydrus_core::pages::DownloaderPageState, Option<usize>) {
+    let highlighted = m
+        .highlighted
+        .as_ref()
+        .filter(|url| !url.is_empty())
+        .and_then(|url| {
+            m.watchers
+                .iter()
+                .filter(|w| !w.url.is_empty())
+                .position(|w| &w.url == url)
+        });
+    let state = hydrus_core::pages::DownloaderPageState {
+        highlighted: None,
+        options: m.import_options.clone(),
+        gallery: None,
+        checker: Some(m.checker.clone()),
+    };
+    (state, highlighted)
+}
+
 #[cfg(test)]
 pub(super) fn file_search_for_tests(
     f: &legacy::FileSearchContext,
 ) -> hydrus_core::search::context::FileSearchContext {
     file_search(f, &|_| None).unwrap()
+}
+
+/// A legacy page collect in our page model.
+fn page_collect(collect: &legacy::MediaCollect) -> hydrus_core::pages::PageCollect {
+    hydrus_core::pages::PageCollect {
+        namespaces: collect.namespaces.clone(),
+        ratings: collect.rating_service_keys.clone(),
+        collect_unmatched: collect.collect_unmatched,
+    }
 }
 
 /// A legacy page sort in our page model.
@@ -1286,6 +2129,362 @@ mod tests {
 
     use super::*;
 
+    /// The lock password comes across as hydrus stored it (the sha256 of
+    /// "hunter2", in the old options' YAML).
+    #[test]
+    fn the_lock_password_converts() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<hydrus_core::lock::LockPassword>(
+                input.settings["lock_password"].clone(),
+            )
+            .unwrap()
+        };
+        assert!(!decoded(source.path()).is_set());
+        let conn = rusqlite::Connection::open(source.path().join("client.db")).unwrap();
+        let yaml: String = conn
+            .query_row("SELECT options FROM options", [], |r| r.get(0))
+            .unwrap();
+        let yaml = yaml.replace(
+            "password: null\n",
+            "password: !!binary |\n  9S+9MrKzuG/4jvbEkGKChfSCrxXdyylUH5S89Saj9sc=\n",
+        );
+        conn.execute("UPDATE options SET options = ?1", [&yaml])
+            .unwrap();
+        drop(conn);
+        let lock = decoded(source.path());
+        assert_eq!(
+            lock.sha256.as_deref(),
+            Some("f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7")
+        );
+        assert!(lock.accepts("hunter2") && !lock.accepts("hunter"));
+    }
+
+    /// The fixture's client options (`ClientOptions`), with text in their
+    /// stored form replaced.
+    fn edit_client_options(source: &std::path::Path, edits: &[(&str, &str)]) {
+        let conn = rusqlite::Connection::open(source.join("client.db")).unwrap();
+        let dump: Vec<u8> = conn
+            .query_row(
+                "SELECT dump FROM json_dumps WHERE dump_type = 22",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        let mut dump = String::from_utf8(dump).unwrap();
+        for (from, to) in edits {
+            assert!(dump.contains(from), "{from}");
+            dump = dump.replace(from, to);
+        }
+        conn.execute(
+            "UPDATE json_dumps SET dump = ?1 WHERE dump_type = 22",
+            [dump.into_bytes()],
+        )
+        .unwrap();
+    }
+
+    /// The thumbnail grid's border and margin come across.
+    #[test]
+    fn the_thumbnail_border_and_margin_convert() {
+        use crate::settings::ThumbnailLayout;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<ThumbnailLayout>(input.settings["thumbnail_layout"].clone())
+                .unwrap()
+        };
+        // the fixture's are hydrus's defaults
+        assert_eq!(
+            decoded(source.path()),
+            ThumbnailLayout {
+                border: 1,
+                margin: 2
+            }
+        );
+        // as are its ratings over thumbnails
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert_eq!(
+            serde_json::from_value::<hydrus_core::thumbnail::ThumbnailRatingSettings>(
+                input.settings["thumbnail_ratings"].clone()
+            )
+            .unwrap(),
+            hydrus_core::thumbnail::ThumbnailRatingSettings::default()
+        );
+        // and its recent predicates (none)
+        assert_eq!(
+            serde_json::from_value::<hydrus_core::search::recent::RecentPredicates>(
+                input.settings["recent_predicates"].clone()
+            )
+            .unwrap(),
+            hydrus_core::search::recent::RecentPredicates::default()
+        );
+        // and the user's
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "thumbnail_border"], [0, 1]]"#,
+                    r#"[[0, "thumbnail_border"], [0, 0]]"#,
+                ),
+                (
+                    r#"[[0, "thumbnail_margin"], [0, 2]]"#,
+                    r#"[[0, "thumbnail_margin"], [0, 7]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(source.path()),
+            ThumbnailLayout {
+                border: 0,
+                margin: 7
+            }
+        );
+    }
+
+    /// The tag summaries drawn over thumbnails come across.
+    #[test]
+    fn the_tag_summaries_convert() {
+        use hydrus_core::tag_summary::TagSummaries;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<TagSummaries>(input.settings["tag_summaries"].clone()).unwrap()
+        };
+        // the fixture's are hydrus's defaults (their examples in another
+        // order)
+        let sorted = |mut s: TagSummaries| {
+            for g in [
+                &mut s.thumbnail_top,
+                &mut s.thumbnail_bottom_right,
+                &mut s.media_viewer_top,
+            ] {
+                g.example_tags.sort();
+            }
+            s
+        };
+        assert_eq!(
+            sorted(decoded(source.path())),
+            sorted(TagSummaries::default())
+        );
+        // and the user's: the top one hidden, the bottom right one's
+        // separator changed
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"["series:series", "title:title", "creator:creator"], true]]]], [[0, "thumbnail_bottom_right"]"#,
+                    r#"["series:series", "title:title", "creator:creator"], false]]]], [[0, "thumbnail_bottom_right"]"#,
+                ),
+                (
+                    r#"[["volume", "v", "-"], ["chapter", "c", "-"], ["page", "p", "-"]], "-", ["chapter:10""#,
+                    r#"[["volume", "v", "-"], ["chapter", "c", "-"], ["page", "p", "-"]], " ", ["chapter:10""#,
+                ),
+            ],
+        );
+        let after = decoded(source.path());
+        assert!(!after.thumbnail_top.show);
+        assert_eq!(after.thumbnail_bottom_right.separator, " ");
+        assert!(after.media_viewer_top.show);
+    }
+
+    /// New search pages' tag service, and the default local file domain,
+    /// come across.
+    #[test]
+    fn the_search_defaults_convert() {
+        use crate::settings::SearchDefaults;
+        use hydrus_core::search::context::LocationContext;
+        use hydrus_core::service::builtin_keys;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<SearchDefaults>(input.settings["search_defaults"].clone())
+                .unwrap()
+        };
+        // the fixture's are hydrus's defaults
+        assert_eq!(decoded(source.path()), SearchDefaults::default());
+        // and the user's: "my tags", and "my files" with the trash
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "default_tag_service_search_page"], [0, "616c6c206b6e6f776e2074616773"]]"#,
+                    r#"[[0, "default_tag_service_search_page"], [0, "6c6f63616c2074616773"]]"#,
+                ),
+                (
+                    r#"[[0, "default_local_location_context"], [2, [103, 1, [["6c6f63616c2066696c6573"], []]]]]"#,
+                    r#"[[0, "default_local_location_context"], [2, [103, 1, [["6c6f63616c2066696c6573", "7472617368"], []]]]]"#,
+                ),
+            ],
+        );
+        let key = |k: &[u8]| ServiceKey::new(k.to_vec());
+        assert_eq!(
+            decoded(source.path()),
+            SearchDefaults {
+                tag_service: key(builtin_keys::MY_TAGS),
+                local_location: LocationContext::new(
+                    [key(builtin_keys::MY_FILES), key(builtin_keys::TRASH)],
+                    []
+                ),
+            }
+        );
+    }
+
+    /// Whether a sort chosen on a page becomes the default comes across.
+    #[test]
+    fn saving_the_page_sort_on_change_converts() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = |source: &std::path::Path| {
+            let input = decode_input(&LegacyDb::open(source).unwrap()).unwrap();
+            serde_json::from_value::<hydrus_core::pages::SortSettings>(
+                input.settings["sorts"].clone(),
+            )
+            .unwrap()
+            .save_page_sort_on_change
+        };
+        assert!(!decoded(source.path()));
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "save_page_sort_on_change"], [0, false]]"#,
+                r#"[[0, "save_page_sort_on_change"], [0, true]]"#,
+            )],
+        );
+        assert!(decoded(source.path()));
+    }
+
+    /// The tag lists' colours come across: hydrus's defaults, the user's,
+    /// and the namespace OR predicates take theirs from.
+    #[test]
+    fn namespace_colours_convert() {
+        use hydrus_core::tag_presentation::NamespaceColours;
+        use hydrus_legacy::objects::LegacyOptions;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        // the fixture's are hydrus's defaults
+        let sorted = |c: NamespaceColours| {
+            let mut colours = c.colours;
+            colours.sort();
+            colours
+        };
+        assert_eq!(
+            sorted(namespace_colours(
+                &db.legacy_options().unwrap(),
+                Some(&options)
+            )),
+            sorted(NamespaceColours::default())
+        );
+        // the user's, and the OR connector's
+        let custom = LegacyOptions::parse(Some(
+            "namespace_colours:\n  null: !!python/tuple\n  - 1\n  - 2\n  - 3\n  ? ''\n  : !!python/tuple\n  - 4\n  - 5\n  - 6\n  character: !!python/tuple\n  - 7\n  - 8\n  - 9\n",
+        ))
+        .unwrap();
+        options.noneable_strings.insert(
+            "or_connector_custom_namespace_colour".into(),
+            Some("character".into()),
+        );
+        let converted = namespace_colours(&custom, Some(&options));
+        assert_eq!(
+            sorted(converted.clone()),
+            vec![
+                (None, [1, 2, 3]),
+                (Some(String::new()), [4, 5, 6]),
+                (Some("character".into()), [7, 8, 9]),
+            ]
+        );
+        assert_eq!(converted.or_connector.as_deref(), Some("character"));
+    }
+
+    /// The user's tag presentation options come across, with the search
+    /// page's and media viewer's tag sorts.
+    #[test]
+    fn tag_presentation_converts() {
+        use hydrus_core::tag_sort::{TagGroupBy, TagSort, TagSortType};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let db = LegacyDb::open(source.path()).unwrap();
+        let mut options = db.client_options().unwrap().unwrap();
+        assert_eq!(
+            tag_presentation(&options),
+            hydrus_core::tag_presentation::TagPresentation::default()
+        );
+        options.booleans.insert("show_namespaces".into(), false);
+        options
+            .booleans
+            .insert("replace_tag_underscores_with_spaces".into(), true);
+        options
+            .strings
+            .insert("namespace_connector".into(), " - ".into());
+        options.string_lists.insert(
+            "user_namespace_group_by_sort".into(),
+            vec!["series".into(), ":".into(), String::new()],
+        );
+        options.default_tag_sorts.insert(
+            0,
+            legacy::TagSort {
+                sort_type: 2,
+                sort_order: legacy::SortOrder::Descending,
+                use_siblings: true,
+                group_by: 1,
+            },
+        );
+        let converted = tag_presentation(&options);
+        assert!(!converted.show_namespaces && converted.replace_underscores);
+        assert_eq!(converted.namespace_connector, " - ");
+        assert_eq!(converted.user_namespaces, ["series", ":", ""]);
+        assert_eq!(
+            converted.search_page_sort,
+            TagSort {
+                sort_type: TagSortType::Count,
+                ascending: false,
+                group_by: TagGroupBy::NamespaceAz,
+            }
+        );
+        assert_eq!(converted.media_viewer_sort, TagSort::DEFAULT);
+    }
+
+    /// The single media and selection list filters come across by service;
+    /// filters that hide nothing, and other views, are left out.
+    #[test]
+    fn tag_display_filters_convert() {
+        use crate::tag_display::TagView;
+        let key = |k: &[u8]| ServiceKey::new(k.to_vec());
+        let hide = |slice: &str| legacy::TagFilter {
+            rules: vec![(slice.into(), TagRule::Block)],
+        };
+        let manager = legacy::TagDisplayManager {
+            tag_filters: vec![
+                (
+                    2,
+                    vec![
+                        (key(b"local tags"), hide("meta:")),
+                        (key(b"downloader tags"), legacy::TagFilter { rules: vec![] }),
+                    ],
+                ),
+                (3, vec![(key(b"all known tags"), hide("blue eyes"))]),
+                (4, vec![(key(b"local tags"), hide("page:"))]),
+            ],
+            autocomplete_options: Vec::new(),
+        };
+        let filters = tag_display_filters(&manager);
+        let rules = |view, k: &[u8]| -> Option<Vec<(String, FilterRule)>> {
+            filters
+                .for_view(view)
+                .get(&key(k).to_hex())
+                .map(|f| f.rules().map(|(s, r)| (s.to_owned(), r)).collect())
+        };
+        assert_eq!(
+            rules(TagView::SingleMedia, b"local tags"),
+            Some(vec![("meta:".to_owned(), FilterRule::Blacklist)])
+        );
+        assert_eq!(rules(TagView::SingleMedia, b"downloader tags"), None);
+        assert_eq!(
+            rules(TagView::SelectionList, b"all known tags"),
+            Some(vec![("blue eyes".to_owned(), FilterRule::Blacklist)])
+        );
+        assert_eq!(filters.single_media.len() + filters.selection_list.len(), 2);
+    }
+
     /// Every rule the reference stores (its suggestions, rules using every
     /// comparator, and the owner's own; `oracle/dump_auto_resolution.py`)
     /// converts.
@@ -1298,8 +2497,7 @@ mod tests {
             let legacy =
                 hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&stored)
                     .unwrap();
-            let mut warnings = Vec::new();
-            let rule = auto_resolution_rule(&legacy, &|_| None, &mut warnings)
+            let rule = auto_resolution_rule(&legacy, &|_| None)
                 .unwrap_or_else(|e| panic!("{}: {e}", legacy.name));
             let expected = &case["expected"];
             assert_eq!(rule.name, expected["name"].as_str().unwrap());
@@ -1335,6 +2533,68 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn downloader_pages_own_state_converts() {
+        use hydrus_legacy::objects::gui_sessions::{
+            multiple_gallery_import, multiple_watcher_import,
+        };
+        use hydrus_legacy::serialisable::SerialisableObject;
+
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let object =
+            |v: &serde_json::Value| SerialisableObject::from_tuple_str(&v.to_string()).unwrap();
+        let mut highlighted_any = false;
+        for case in recorded["multiple_gallery_imports"].as_array().unwrap() {
+            let facts = &case["facts"];
+            let m = multiple_gallery_import(&object(&case["stored"])).unwrap();
+            let (state, highlighted) = gallery_page_state(&m);
+            let gallery = state.gallery.as_ref().unwrap();
+            assert_eq!(gallery.gug_key, facts["gug_key"]);
+            assert_eq!(gallery.gug_name, facts["gug_name"]);
+            assert_eq!(gallery.file_limit, facts["file_limit"].as_u64());
+            assert_eq!(
+                gallery.start_files_paused,
+                facts["start_file_queues_paused"]
+            );
+            assert_eq!(
+                gallery.start_gallery_paused,
+                facts["start_gallery_queues_paused"]
+            );
+            assert_eq!(gallery.no_new_dupes, facts["do_not_allow_new_dupes"]);
+            assert_eq!(
+                gallery.merge_pends,
+                facts["merge_simultaneous_pends_to_one_importer"]
+            );
+            assert_eq!(state.options, m.import_options);
+            assert!(state.checker.is_none());
+            // (the highlighted search, by its place among the page's)
+            let expected = facts["gallery_imports"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .position(|g| g["key"] == facts["highlighted"]);
+            assert_eq!(highlighted, expected, "{facts}");
+            highlighted_any |= highlighted.is_some();
+        }
+        for case in recorded["multiple_watcher_imports"].as_array().unwrap() {
+            let facts = &case["facts"];
+            let m = multiple_watcher_import(&object(&case["stored"])).unwrap();
+            let (state, highlighted) = watcher_page_state(&m);
+            assert_eq!(state.checker.as_ref(), Some(&m.checker));
+            assert!(state.gallery.is_none());
+            // (among the watchers that come across: those with a thread)
+            let expected = facts["watchers"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .filter(|w| w["url"] != "")
+                .position(|w| !facts["highlighted"].is_null() && w["url"] == facts["highlighted"]);
+            assert_eq!(highlighted, expected, "{facts}");
+            highlighted_any |= highlighted.is_some();
+        }
+        assert!(highlighted_any);
     }
 
     #[test]
@@ -1413,11 +2673,9 @@ mod tests {
                 )
             })
             .collect();
-        let mut warnings = Vec::new();
-        let converted = duplicate_merge_settings(&stored, &mut warnings).unwrap();
+        let converted = duplicate_merge_settings(&stored).unwrap();
         let expected: DuplicateMergeSettings =
             serde_json::from_value(phase["settings"].clone()).unwrap();
         assert_eq!(converted, expected);
-        assert!(warnings.is_empty());
     }
 }

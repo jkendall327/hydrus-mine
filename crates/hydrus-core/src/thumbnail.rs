@@ -23,6 +23,14 @@ pub struct ThumbnailSettings {
     pub scale: ThumbnailScale,
     /// Device pixel ratio as a percentage (100 = no scaling).
     pub dpr_percent: u32,
+    /// How far into a video its thumbnail frame is, as a percentage
+    /// (`video_thumbnail_percentage_in`).
+    #[serde(default = "default_video_percentage_in")]
+    pub video_percentage_in: u32,
+}
+
+fn default_video_percentage_in() -> u32 {
+    35
 }
 
 impl Default for ThumbnailSettings {
@@ -32,6 +40,34 @@ impl Default for ThumbnailSettings {
             bounding_height: 125,
             scale: ThumbnailScale::DownOnly,
             dpr_percent: 100,
+            video_percentage_in: default_video_percentage_in(),
+        }
+    }
+}
+
+/// How ratings are drawn over thumbnails: a like or numerical rating's
+/// shapes this many pixels square (`draw_thumbnail_rating_icon_size_px`),
+/// an inc/dec rating this tall (`thumbnail_rating_incdec_height_px`), each
+/// row of them on a box of the window's colour
+/// (`draw_thumbnail_rating_background`), and each numerical rating as one
+/// shape after its "stars/of" text
+/// (`draw_thumbnail_numerical_ratings_collapsed_always`).
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct ThumbnailRatingSettings {
+    pub icon_size: f64,
+    pub incdec_height: f64,
+    pub background: bool,
+    pub numerical_collapsed: bool,
+}
+
+impl Default for ThumbnailRatingSettings {
+    fn default() -> Self {
+        Self {
+            icon_size: 12.0,
+            incdec_height: 12.0,
+            background: true,
+            numerical_collapsed: false,
         }
     }
 }

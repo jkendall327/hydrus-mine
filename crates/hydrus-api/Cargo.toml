@@ -14,6 +14,7 @@ hydrus-download.workspace = true
 hydrus-net.workspace = true
 hydrus-media.workspace = true
 hydrus-search.workspace = true
+hydrus-duplicates.workspace = true
 hydrus-legacy.workspace = true
 axum.workspace = true
 tokio.workspace = true

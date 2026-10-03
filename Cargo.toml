@@ -6,13 +6,14 @@ default-members = ["crates/*"]
 [workspace.package]
 version = "0.1.0"
 edition = "2024"
-rust-version = "1.88"
+rust-version = "1.89"
 license = "WTFPL"
 repository = "https://github.com/jkendall327/hydrus-mine"
 
 [workspace.dependencies]
 # internal
 hydrus-core = { path = "crates/hydrus-core" }
+hydrus-gui-model = { path = "crates/hydrus-gui-model" }
 hydrus-legacy = { path = "crates/hydrus-legacy" }
 hydrus-parse = { path = "crates/hydrus-parse" }
 hydrus-store = { path = "crates/hydrus-store" }
@@ -37,6 +38,7 @@ once_cell = "1"
 parking_lot = "0.12"
 arc-swap = "1"
 crossbeam-channel = "0.5"
+libloading = "0.8"
 rayon = "1"
 tokio = { version = "1", features = ["full"] }
 axum = { version = "0.8", features = ["macros"] }
@@ -51,6 +53,7 @@ md-5 = "0.11"
 roaring = "0.11"
 clap = { version = "4", features = ["derive"] }
 trash = "5.2.9"
+fs4 = { version = "0.13", features = ["sync"] }
 tempfile = "3"
 proptest = "1"
 tar = "0.4"

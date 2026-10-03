@@ -134,7 +134,8 @@ pub enum ApiResponse {
     Bytes {
         content_type: String,
         body: Bytes,
-        cache: bool,
+        /// `Cache-Control: max-age`, in seconds, if the response may be cached.
+        max_age: Option<u64>,
         /// `Content-Disposition: attachment` (else `inline`).
         attachment: bool,
     },
@@ -195,7 +196,11 @@ impl IntoResponse for ApiResponse {
                         .or_insert(json!(REFERENCE_VERSION));
                 }
                 (
-                    [(header::CONTENT_TYPE, "application/json")],
+                    [
+                        (header::CONTENT_TYPE, "application/json"),
+                        (header::CACHE_CONTROL, BODY_CACHE_CONTROL),
+                        (header::CONTENT_DISPOSITION, "inline"),
+                    ],
                     value.to_string(),
                 )
                     .into_response()
@@ -205,12 +210,20 @@ impl IntoResponse for ApiResponse {
                 if let Err(e) = ciborium::into_writer(&value, &mut out) {
                     return ApiError::server(format!("could not encode cbor: {e}")).into_response();
                 }
-                ([(header::CONTENT_TYPE, "application/cbor")], out).into_response()
+                (
+                    [
+                        (header::CONTENT_TYPE, "application/cbor"),
+                        (header::CACHE_CONTROL, BODY_CACHE_CONTROL),
+                        (header::CONTENT_DISPOSITION, "inline"),
+                    ],
+                    out,
+                )
+                    .into_response()
             }
             ApiResponse::Bytes {
                 content_type,
                 body,
-                cache,
+                max_age,
                 attachment,
             } => {
                 let disposition = if attachment { "attachment" } else { "inline" };
@@ -222,11 +235,10 @@ impl IntoResponse for ApiResponse {
                     body,
                 )
                     .into_response();
-                if cache {
-                    response.headers_mut().insert(
-                        header::CACHE_CONTROL,
-                        header::HeaderValue::from_static("max-age=2592000"),
-                    );
+                if let Some(max_age) = max_age
+                    && let Ok(value) = header::HeaderValue::from_str(&format!("max-age={max_age}"))
+                {
+                    response.headers_mut().insert(header::CACHE_CONTROL, value);
                 }
                 response
             }
@@ -243,7 +255,11 @@ impl IntoResponse for ApiResponse {
 }
 
 /// Files are cached for a year, as the reference serves them.
-const FILE_MAX_AGE: u64 = 86400 * 365;
+pub(crate) const FILE_MAX_AGE: u64 = 86400 * 365;
+
+/// How long a response body (JSON, or an error) may be cached: the
+/// reference's default for responses with a body.
+pub(crate) const BODY_CACHE_CONTROL: &str = "max-age=4";
 
 fn file_response(
     source: FileSource,

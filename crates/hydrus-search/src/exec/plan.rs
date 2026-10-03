@@ -590,6 +590,7 @@ fn ratio(op: RatioOp, width: u64, height: u64) -> Expr {
     let ratio = "((width * 1.0) / height)";
     let (sql, params) = match op {
         RatioOp::Equal => (format!("{ratio} = ?"), vec![w / h]),
+        RatioOp::NotEqual => (format!("{ratio} != ?"), vec![w / h]),
         RatioOp::WiderThan => (format!("{ratio} > ?"), vec![w / h]),
         RatioOp::TallerThan => (format!("{ratio} < ?"), vec![w / h]),
         RatioOp::Approx => (

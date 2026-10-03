@@ -539,13 +539,18 @@ pub async fn render(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRes
                     .next(),
                 None => None,
             };
-            let Some((hash, mime)) = result.and_then(|m| Some((m.hash, m.info?.mime))) else {
+            let Some(result) = result.filter(|m| m.info.is_some()) else {
                 return Err(not_an_image());
             };
+            let (hash, mime) = (
+                result.hash,
+                result
+                    .info
+                    .as_ref()
+                    .map_or(Mime::ApplicationUnknown, |i| i.mime),
+            );
             if mime == Mime::AnimationUgoira {
-                return Err(ApiError::bad_request(
-                    "Sorry, rendering ugoiras is not supported yet!",
-                ));
+                return render_ugoira(app, &result, &p);
             }
             if !is_static_image(mime) {
                 return Err(not_an_image());
@@ -606,16 +611,63 @@ pub async fn render(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiRes
                 RenderFormat::Jpeg => "image/jpeg",
                 RenderFormat::Webp => "image/webp",
             };
-            Ok((content_type, body))
+            Ok((content_type, body, crate::request::FILE_MAX_AGE))
         })
         .await?;
-    let (content_type, body) = encoding;
+    let (content_type, body, max_age) = encoding;
     Ok(ApiResponse::Bytes {
         content_type: content_type.into(),
         body: body.into(),
-        cache: true,
+        max_age: Some(max_age),
         attachment,
     })
+}
+
+/// A ugoira rendered as an animation (APNG unless asked for animated
+/// WebP), its frames timed as the reference times them. With a duration
+/// in its metadata it has a valid animation.json, so its render never
+/// changes; without, a note can change its timing, so it is cached for an
+/// hour.
+fn render_ugoira(
+    app: &AppState,
+    media: &media::MediaResult,
+    p: &crate::params::Params,
+) -> ApiResult<(&'static str, Vec<u8>, u64)> {
+    use hydrus_media::encode::{AnimationFormat, encode_animation};
+
+    let (format, content_type) = match p.optional::<i64>("render_format")? {
+        None => (AnimationFormat::Apng, "image/apng"),
+        Some(code) => match u8::try_from(code).ok().and_then(Mime::from_code) {
+            Some(Mime::AnimationApng) => (AnimationFormat::Apng, "image/apng"),
+            Some(Mime::AnimationWebp) => (AnimationFormat::Webp, "image/webp"),
+            _ => return Err(ApiError::bad_request("Invalid render format!")),
+        },
+    };
+    let info = media
+        .info
+        .as_ref()
+        .ok_or_else(|| ApiError::bad_request("Requested file is not an image!"))?;
+    let path = app
+        .store
+        .snapshot()
+        .storage
+        .file_path(&media.hash, info.mime)
+        .filter(|p| p.is_file())
+        .ok_or_else(|| ApiError::not_found("That file seems to be missing!"))?;
+    let tools = app.importer.tools();
+    let frames = tools
+        .ugoira_frames(&path)
+        .map_err(|e| ApiError::server(format!("Could not render that file: {e}")))?;
+    let durations =
+        hydrus_media::MediaTools::ugoira_frame_durations(&path, &media.notes, info.num_frames);
+    let body = encode_animation(&frames, &durations, format)
+        .map_err(|e| ApiError::server(e.to_string()))?;
+    let max_age = if info.duration_ms.is_some() {
+        crate::request::FILE_MAX_AGE
+    } else {
+        3600
+    };
+    Ok((content_type, body, max_age))
 }
 
 pub async fn thumbnail(
@@ -635,6 +687,7 @@ pub async fn thumbnail(
                     .storage
                     .thumbnail_path(&hash)
                     .filter(|p| p.is_file())
+                    .or_else(|| regenerated_thumbnail(app, m.as_ref()))
             } else {
                 None
             };
@@ -659,6 +712,21 @@ pub async fn thumbnail(
         content_type: "image/png".into(),
         attachment: false,
     })
+}
+
+/// A missing thumbnail, made again from its file (`GetThumbnailPath`).
+fn regenerated_thumbnail(
+    app: &AppState,
+    media: Option<&MediaResult>,
+) -> Option<std::path::PathBuf> {
+    let media = media?;
+    match app.importer.regenerate_thumbnail(media) {
+        Ok(path) => path,
+        Err(e) => {
+            tracing::warn!(hash = %media.hash, error = %e, "regenerating a thumbnail failed");
+            None
+        }
+    }
 }
 
 /// Thumbnails are stored without an extension; sniff whether they are PNG.
@@ -763,6 +831,7 @@ pub async fn thumbnail_path(
                 .storage
                 .thumbnail_path(&hash)
                 .filter(|p| p.is_file())
+                .or_else(|| regenerated_thumbnail(app, m.as_ref()))
                 .ok_or_else(|| {
                     ApiError::new(ErrorKind::FileMissing, "Could not find that thumbnail!")
                 })?;

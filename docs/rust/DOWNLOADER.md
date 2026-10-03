@@ -10,8 +10,14 @@ watchers, which check the thread on the reference's timing until it 404s
 or goes quiet. Gallery searches (the gallery downloader page) run from
 `hydrus gallery <store> --downloader <name> <queries>`, up to the file
 limit. All four kinds are checked against the reference end to end.
-Tracked as task "Downloader engine"; what's left is migrating custom
-bandwidth rules, and the GUI.
+The reference's bandwidth rules apply, with your rules and recent usage
+migrated (`hydrus_core::bandwidth`): per network context (everything,
+each domain, each subscription query, downloader page and watcher), the
+gallery page waits per site, subscriptions asking before each file, and
+the reference's "go ahead after waiting" for subscription requests,
+gallery pages and files found on posts. In the GUI, URL downloader pages
+are live views of their queues (adding URLs, pausing, their status and
+files); gallery and watcher pages are next.
 
 ## Goal
 
@@ -100,9 +106,9 @@ show named queues as pages.
 1. `hydrus-parse`: formulas and string processing, then page parsers, then
    migrating parser definitions and GUGs. Randomised oracle. **Done.**
 2. `hydrus-net`: HTTP jobs with cookies, headers, retries, ranged
-   downloads and the reference's default pacing (one request a second per
-   site, five overall); local test server. **Done**, except migrating
-   custom bandwidth rules and proxies.
+   downloads and the reference's bandwidth rules, migrated with their
+   usage; local test server. **Done**, except proxies
+   ([issue 15](https://github.com/jkendall327/hydrus-mine/issues/15)).
 3. `hydrus-download`: import options (migrated, layered as the reference
    layers them), queue tables, the URL worker, URL queues and
    `/add_urls/add_url`. **Done.** Then gallery pages (including gallery
@@ -117,9 +123,10 @@ show named queues as pages.
    reference on the same site is task "End-to-end downloader oracle".
 
 Login scripts are not planned: logins come from cookies (Companion sends
-them), which already migrate and work. A migrated downloader that names a
-login script is reported, and its requests go out with the domain's cookies
-as usual.
+them), which already migrate and work. The migration reports each site
+hydrus logged in to with a login script, and those sites' requests go out
+with the domain's cookies as usual; a file such a site refuses (403) says
+that its cookies may need refreshing.
 
 ## Decisions (from the questions in issue #1)
 

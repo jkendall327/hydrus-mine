@@ -15,5 +15,5 @@ mod engine;
 mod error;
 pub mod text;
 
-pub use engine::{Job, JobState, Method, NetEngine, NetOptions, Request, Response};
+pub use engine::{BandwidthScope, Job, JobState, Method, NetEngine, NetOptions, Request, Response};
 pub use error::{NetError, StatusKind};

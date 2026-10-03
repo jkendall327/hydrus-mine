@@ -209,6 +209,22 @@ pub struct LocationOptions {
     pub destinations_for_already_in_db: bool,
 }
 
+/// Why an importer without an import destination can't import
+/// (`CheckReadyToImport`'s `FileImportBlockException`).
+pub const NO_IMPORT_DESTINATION: &str =
+    "There is no import destination set in the Location Import Options!";
+
+impl LocationOptions {
+    /// `CheckReadyToImport`: there is somewhere to put new files.
+    pub fn check_ready_to_import(&self) -> Result<(), &'static str> {
+        if self.destinations.is_empty() {
+            Err(NO_IMPORT_DESTINATION)
+        } else {
+            Ok(())
+        }
+    }
+}
+
 impl Default for LocationOptions {
     fn default() -> Self {
         Self {
@@ -471,6 +487,35 @@ impl ImportOptionsSlice {
     }
 }
 
+impl PresentationOptions {
+    /// Whether a file an import has just had is shown (`ShouldPresent` for
+    /// a file just imported, whose domain isn't checked;
+    /// `GetPresentedHashes`): `new` if it is new to the client, otherwise
+    /// already in it; `inbox` is looked up only if it matters.
+    pub fn presents(&self, new: bool, inbox: impl FnOnce() -> bool) -> bool {
+        use PresentationInbox as I;
+        use PresentationStatus as S;
+        if self.status == S::None {
+            return false;
+        }
+        // (`_DefinitelyShouldNotPresentIgnorantOfInbox`)
+        if self.status == S::NewOnly && !new && self.inbox != I::AndIncludeAllInbox {
+            return false;
+        }
+        // (`_DefinitelyShouldPresentIgnorantOfInbox`)
+        if self.inbox != I::RequireInbox && (self.status == S::AnyGood || new) {
+            return true;
+        }
+        // (`_ShouldPresentGivenStatusAndInbox`)
+        let inbox = inbox();
+        match self.inbox {
+            I::AndIncludeAllInbox if inbox => true,
+            I::RequireInbox if !inbox => false,
+            _ => self.status != S::NewOnly || new,
+        }
+    }
+}
+
 /// Every kind of option, as an import uses them.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FullImportOptions {
@@ -708,6 +753,53 @@ pub fn preference_stack(
 
 #[cfg(test)]
 mod tests {
+    /// As `PresentationImportOptions.GetPresentedHashes` decides, for each
+    /// status and inbox setting.
+    #[test]
+    fn presentation_shows_files_as_the_reference_s_does() {
+        use super::{PresentationInbox as I, PresentationOptions, PresentationStatus as S};
+        let options = |status, inbox| PresentationOptions {
+            status,
+            inbox,
+            ..PresentationOptions::default()
+        };
+        // (new, in the inbox) for each case: new and inboxed, new and
+        // archived, old and inboxed, old and archived
+        let cases = [(true, true), (true, false), (false, true), (false, false)];
+        let shown = |o: &PresentationOptions| -> Vec<bool> {
+            cases
+                .iter()
+                .map(|&(new, inbox)| o.presents(new, || inbox))
+                .collect()
+        };
+        assert_eq!(shown(&options(S::None, I::Agnostic)), [false; 4]);
+        assert_eq!(shown(&options(S::AnyGood, I::Agnostic)), [true; 4]);
+        assert_eq!(
+            shown(&options(S::NewOnly, I::Agnostic)),
+            [true, true, false, false]
+        );
+        assert_eq!(
+            shown(&options(S::AnyGood, I::RequireInbox)),
+            [true, false, true, false]
+        );
+        assert_eq!(
+            shown(&options(S::NewOnly, I::RequireInbox)),
+            [true, false, false, false]
+        );
+        assert_eq!(
+            shown(&options(S::NewOnly, I::AndIncludeAllInbox)),
+            [true, true, true, false]
+        );
+        assert_eq!(
+            shown(&options(S::AnyGood, I::AndIncludeAllInbox)),
+            [true; 4]
+        );
+        // (the inbox isn't looked up when it can't matter)
+        let o = options(S::NewOnly, I::Agnostic);
+        assert!(o.presents(true, || panic!("looked up")));
+        assert!(!o.presents(false, || panic!("looked up")));
+    }
+
     use super::*;
 
     #[test]

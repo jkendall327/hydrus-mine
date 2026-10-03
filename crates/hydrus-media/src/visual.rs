@@ -65,6 +65,45 @@ pub struct VisualDataTiled {
     pub edges: [Vec<f32>; 3],
 }
 
+/// A comparison's outcome, as the reference gives it: whether the images
+/// are similar, how confident that is (`VISUAL_DUPLICATES_RESULT_*`), and
+/// the statement the duplicate filter shows.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct Verdict {
+    pub similar: bool,
+    pub result: u8,
+    pub statement: &'static str,
+}
+
+impl Verdict {
+    const fn new(similar: bool, result: u8, statement: &'static str) -> Self {
+        Self {
+            similar,
+            result,
+            statement,
+        }
+    }
+
+    const fn not(statement: &'static str) -> Self {
+        Self::new(false, NOT, statement)
+    }
+}
+
+const DIFFERENT_RATIO: Verdict = Verdict::not("not visual duplicates\n(different ratio)");
+const TOO_LOW_RESOLUTION: Verdict =
+    Verdict::not("cannot determine visual duplicates\n(too low resolution)");
+const ONE_HAS_TRANSPARENCY: Verdict = Verdict::not("not visual duplicates\n(one has transparency)");
+const TOO_SIMPLE: Verdict = Verdict::not("too simple to compare");
+const ALTERNATE: Verdict = Verdict::not("not visual duplicates\n(alternate)");
+const SEVERE_REENCODE: Verdict =
+    Verdict::not("probably not visual duplicates\n(alternate/severe re-encode?)");
+const NEAR_PERFECT_DUPLICATES: Verdict =
+    Verdict::new(true, NEAR_PERFECT, "near-perfect visual duplicates");
+const ALMOST_CERTAIN_DUPLICATES: Verdict =
+    Verdict::new(true, ALMOST_CERTAINLY, "almost certainly visual duplicates");
+const VERY_PROBABLE_DUPLICATES: Verdict =
+    Verdict::new(true, VERY_PROBABLY, "very probably visual duplicates");
+
 fn too_low_resolution(r: (u32, u32)) -> bool {
     r.0 < 32 || r.1 < 32
 }
@@ -266,28 +305,30 @@ fn different_ratio(a: (u32, u32), b: (u32, u32)) -> bool {
     !(rb * 0.85 <= ra && ra <= rb * 1.15)
 }
 
-/// `FilesAreVisuallySimilarSimple`: (worth a closer look, result).
-pub fn similar_simple(a: &VisualData, b: &VisualData) -> (bool, u8) {
+/// `FilesAreVisuallySimilarSimple`: similar means worth a closer look.
+pub fn similar_simple(a: &VisualData, b: &VisualData) -> Verdict {
     if different_ratio(a.resolution, b.resolution) {
-        return (false, NOT);
+        return DIFFERENT_RATIO;
     }
     if too_low_resolution(a.resolution) || too_low_resolution(b.resolution) {
-        return (false, NOT);
+        return TOO_LOW_RESOLUTION;
     }
     match (&a.alpha, &b.alpha) {
         (Some(x), Some(y)) => {
             if wasserstein(x, y) > 0.005 {
-                return (false, NOT);
+                return Verdict::not("not visual duplicates\n(transparency does not match)");
             }
         }
         (None, None) => {}
-        _ => return (false, NOT),
+        _ => return ONE_HAS_TRANSPARENCY,
     }
     let (interesting, score) = lab_score(&a.lab, &b.lab);
-    if interesting && score < 0.01 {
-        (true, PROBABLY)
+    if !interesting {
+        TOO_SIMPLE
+    } else if score < 0.01 {
+        Verdict::new(true, PROBABLY, "probably visual duplicates")
     } else {
-        (false, NOT)
+        Verdict::not("not visual duplicates")
     }
 }
 
@@ -336,19 +377,25 @@ pub fn edge_map_raw(a: &VisualDataTiled, b: &VisualDataTiled) -> (f64, f64) {
 }
 
 /// `FilesAreVisuallySimilarRegionalEdgeMap`.
-fn edge_map_verdict(a: &VisualDataTiled, b: &VisualDataTiled) -> (bool, u8) {
+fn edge_map_verdict(a: &VisualDataTiled, b: &VisualDataTiled) -> Verdict {
     let (largest, pull) = edge_map_raw(a, b);
     if pull > 16.5 {
-        return (false, NOT);
+        return if pull > 200.0 {
+            ALTERNATE
+        } else {
+            SEVERE_REENCODE
+        };
     }
     if largest < 3.0 {
-        (true, NEAR_PERFECT)
+        NEAR_PERFECT_DUPLICATES
     } else if largest < 11.0 {
-        (true, ALMOST_CERTAINLY)
+        ALMOST_CERTAIN_DUPLICATES
     } else if largest < 19.0 {
-        (true, VERY_PROBABLY)
+        VERY_PROBABLE_DUPLICATES
+    } else if largest > 45.0 {
+        ALTERNATE
     } else {
-        (false, NOT)
+        SEVERE_REENCODE
     }
 }
 
@@ -394,55 +441,63 @@ pub fn tile_stats(a: &VisualDataTiled, b: &VisualDataTiled) -> TileStats {
 }
 
 /// `FilesAreVisuallySimilarRegionalLabHistograms`.
-fn tiles_verdict(a: &VisualDataTiled, b: &VisualDataTiled) -> (bool, u8) {
+fn tiles_verdict(a: &VisualDataTiled, b: &VisualDataTiled) -> Verdict {
     let s = tile_stats(a, b);
-    if s.skew_pull > 50.0
-        || s.variance > 0.000_003_5
+    let exceeds_skew = s.skew_pull > 50.0;
+    let exceeds_variance = s.variance > 0.000_003_5;
+    if exceeds_skew
+        || exceeds_variance
         || s.mean > 0.003
         || s.max > 0.01
         || s.mixed_perfect
         || s.none_interesting
     {
-        return (false, NOT);
+        return if s.none_interesting {
+            TOO_SIMPLE
+        } else if s.mixed_perfect {
+            Verdict::not("probably not visual duplicates\n(small difference?)")
+        } else if exceeds_skew {
+            Verdict::not("not visual duplicates\n(alternate/watermark?)")
+        } else if !exceeds_variance {
+            SEVERE_REENCODE
+        } else {
+            Verdict::not("probably not visual duplicates")
+        };
     }
     if s.max < 0.001 && s.mean < 0.0001 && s.variance < 0.000_001 && s.skew_pull < 1.5 {
-        (true, NEAR_PERFECT)
+        NEAR_PERFECT_DUPLICATES
     } else if s.max < 0.004 && s.mean < 0.0015 && s.variance < 0.000_001 && s.skew_pull < 5.0 {
-        (true, ALMOST_CERTAINLY)
+        ALMOST_CERTAIN_DUPLICATES
     } else {
-        (true, VERY_PROBABLY)
+        VERY_PROBABLE_DUPLICATES
     }
 }
 
-/// `FilesAreVisuallySimilarRegional`: (similar, confidence).
-pub fn similar_regional(a: &VisualDataTiled, b: &VisualDataTiled) -> (bool, u8) {
+/// `FilesAreVisuallySimilarRegional`: whether they are visual duplicates,
+/// and how confidently.
+pub fn similar_regional(a: &VisualDataTiled, b: &VisualDataTiled) -> Verdict {
     if a.had_alpha != b.had_alpha {
-        return (false, NOT);
+        return ONE_HAS_TRANSPARENCY;
     }
     if different_ratio(a.resolution, b.resolution) {
-        return (false, NOT);
+        return DIFFERENT_RATIO;
     }
     if too_low_resolution(a.resolution) || too_low_resolution(b.resolution) {
-        return (false, NOT);
+        return TOO_LOW_RESOLUTION;
     }
-    let (edge_ok, edge) = edge_map_verdict(a, b);
-    if !edge_ok {
-        return (false, edge);
+    let edge = edge_map_verdict(a, b);
+    if !edge.similar {
+        return edge;
     }
-    let (lab_ok, lab) = tiles_verdict(a, b);
-    if edge < lab {
-        (edge_ok, edge)
-    } else {
-        (lab_ok, lab)
-    }
+    let lab = tiles_verdict(a, b);
+    if edge.result < lab.result { edge } else { lab }
 }
 
 /// The whole test (`PairComparatorRelativeVisualDuplicates.Test`): the
 /// confidence that two images are visual duplicates.
 pub fn visual_duplicates(a: &Raster, b: &Raster) -> u8 {
-    let (simple_ok, _) = similar_simple(&visual_data(a), &visual_data(b));
-    if !simple_ok {
+    if !similar_simple(&visual_data(a), &visual_data(b)).similar {
         return NOT;
     }
-    similar_regional(&visual_data_tiled(a), &visual_data_tiled(b)).1
+    similar_regional(&visual_data_tiled(a), &visual_data_tiled(b)).result
 }

@@ -14,19 +14,27 @@
 use std::collections::BTreeMap;
 
 use hydrus_core::ServiceKey;
+use hydrus_core::media_viewer::{
+    AudioSettings, InfoLineSettings, MediaView, MediaViewerSettings, ScaleAction, ShowAction,
+    SlideshowSettings, ZoomCentre, ZoomRules, ZoomType,
+};
+use hydrus_core::pages::{DownloaderPageSettings, FileCountDisplay, PageNameSettings};
 use hydrus_core::subscriptions::CheckerOptions;
+use hydrus_core::windows::{FrameLocation, WindowSettings};
 
 use super::duplicates::DuplicateMergeOptions;
 use super::location::LocationContext;
 use super::services::Rgb;
 use super::sort::{MediaCollect, MediaSort, TagSort};
 use super::tag_filter::TagFilter;
+use super::tag_summary::tag_summary_generator;
 use super::util::{
     DecodeResult, Settings, boolean, dictionary_pairs, float, hex_bytes, int, list, list_items,
     malformed, opt_int, opt_string, plain, service_key, string, tuple,
 };
 use crate::pyjson::PyJson;
 use crate::serialisable::{Meta, SerialisableObject, SerialisableType};
+use hydrus_core::tag_summary::TagSummaryGenerator;
 
 const KIND: SerialisableType = SerialisableType::CLIENT_OPTIONS;
 
@@ -53,6 +61,10 @@ pub struct ClientOptions {
     /// Favourite tags shown in the "suggested tags" panel, per tag service.
     pub suggested_tags_favourites: BTreeMap<ServiceKey, Vec<String>>,
     pub favourite_tag_filters: BTreeMap<String, TagFilter>,
+    /// The tag summaries drawn over thumbnails and the media viewer, by
+    /// where (`thumbnail_top`, `thumbnail_bottom_right`,
+    /// `media_viewer_top`).
+    pub tag_summary_generators: BTreeMap<String, TagSummaryGenerator>,
     pub default_sort: Option<MediaSort>,
     pub fallback_sort: Option<MediaSort>,
     pub default_namespace_sorts: Vec<MediaSort>,
@@ -68,6 +80,13 @@ pub struct ClientOptions {
     /// `default_thread_watcher_options`).
     pub default_subscription_checker_options: Option<CheckerOptions>,
     pub default_watcher_checker_options: Option<CheckerOptions>,
+    /// How each file type (or general class), by `HC` mime code, is shown
+    /// in the media viewer and the preview (`media_view`); `None` if not
+    /// stored.
+    pub media_view: Option<BTreeMap<i64, MediaView>>,
+    /// Each window's remembered size and place (`frame_locations`), by
+    /// frame key (`main_gui`, `media_viewer`...).
+    pub frame_locations: BTreeMap<String, FrameLocation>,
     /// The whole stored options dictionary (type 21), including everything
     /// not decoded above.
     pub dictionary: SerialisableObject,
@@ -124,6 +143,7 @@ impl ClientOptions {
             slideshow_durations: floats(&settings, "slideshow_durations")?,
             suggested_tags_favourites: suggested_tags_favourites(&settings)?,
             favourite_tag_filters: favourite_tag_filters(&settings)?,
+            tag_summary_generators: tag_summary_generators(&settings)?,
             default_sort: optional_object(&settings, "default_sort", MediaSort::from_object)?,
             fallback_sort: optional_object(&settings, "fallback_sort", MediaSort::from_object)?,
             default_namespace_sorts: object_list(
@@ -151,6 +171,8 @@ impl ClientOptions {
                 &settings,
                 "default_thread_watcher_options",
             )?,
+            media_view: media_view(&settings)?,
+            frame_locations: frame_locations(&settings)?,
             dictionary: dictionary.clone(),
         };
         Ok(options)
@@ -191,6 +213,7 @@ impl ClientOptions {
         keys(&mut self.noneable_integers, &defaults.noneable_integers);
         keys(&mut self.floats, &defaults.floats);
         keys(&mut self.strings, &defaults.strings);
+        keys(&mut self.frame_locations, &defaults.frame_locations);
         keys(&mut self.noneable_strings, &defaults.noneable_strings);
         keys(&mut self.keys, &defaults.keys);
         keys(&mut self.key_lists, &defaults.key_lists);
@@ -200,6 +223,10 @@ impl ClientOptions {
         keys(
             &mut self.favourite_tag_filters,
             &defaults.favourite_tag_filters,
+        );
+        keys(
+            &mut self.tag_summary_generators,
+            &defaults.tag_summary_generators,
         );
         for (k, v) in &defaults.default_tag_sorts {
             self.default_tag_sorts
@@ -235,6 +262,297 @@ impl ClientOptions {
             &mut self.default_watcher_checker_options,
             defaults.default_watcher_checker_options.as_ref(),
         );
+        whole(&mut self.media_view, defaults.media_view.as_ref());
+    }
+
+    /// How a file's info lines read, and which are interesting.
+    pub fn info_line_settings(&self) -> InfoLineSettings {
+        let mut out = InfoLineSettings::default();
+        for (key, field) in [
+            (
+                "file_info_line_consider_archived_interesting",
+                &mut out.archived_interesting,
+            ),
+            (
+                "file_info_line_consider_archived_time_interesting",
+                &mut out.archived_time_interesting,
+            ),
+            (
+                "file_info_line_consider_file_services_interesting",
+                &mut out.file_services_interesting,
+            ),
+            (
+                "file_info_line_consider_file_services_import_times_interesting",
+                &mut out.file_services_import_times_interesting,
+            ),
+            (
+                "file_info_line_consider_trash_time_interesting",
+                &mut out.trash_time_interesting,
+            ),
+            (
+                "file_info_line_consider_trash_reason_interesting",
+                &mut out.trash_reason_interesting,
+            ),
+            (
+                "hide_uninteresting_modified_time",
+                &mut out.hide_uninteresting_modified_time,
+            ),
+            ("use_nice_resolution_strings", &mut out.nice_resolutions),
+            (
+                "show_extended_single_file_info_in_status_bar",
+                &mut out.single_file_in_status_bar,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        if let Some(label) = self.strings.get("has_audio_label") {
+            out.has_audio_label.clone_from(label);
+        }
+        out
+    }
+
+    /// The main window's and the media viewer's frames, and whether the
+    /// viewer's is saved as it closes.
+    pub fn window_settings(&self) -> WindowSettings {
+        let mut out = WindowSettings::default();
+        if let Some(frame) = self.frame_locations.get("main_gui") {
+            out.main_gui = frame.clone();
+        }
+        if let Some(frame) = self.frame_locations.get("media_viewer") {
+            out.media_viewer = frame.clone();
+        }
+        if let Some(&save) = self
+            .booleans
+            .get("save_media_viewer_window_size_and_position_on_close")
+        {
+            out.save_media_viewer_on_close = save;
+        }
+        out
+    }
+
+    /// How tabs are named and what importers' short summaries count
+    /// (`max_page_name_chars`, `page_file_count_display`,
+    /// `import_page_progress_display`, `decorate_page_of_pages_tab_names`,
+    /// `page_of_pages_decorator`, `show_new_on_file_seed_short_summary`,
+    /// `show_deleted_on_file_seed_short_summary`).
+    pub fn page_name_settings(&self) -> PageNameSettings {
+        let mut out = PageNameSettings::default();
+        if let Some(&chars) = self.integers.get("max_page_name_chars") {
+            out.max_chars = usize::try_from(chars).unwrap_or(out.max_chars);
+        }
+        if let Some(display) = self
+            .integers
+            .get("page_file_count_display")
+            .and_then(|&code| FileCountDisplay::from_code(code))
+        {
+            out.file_counts = display;
+        }
+        for (key, field) in [
+            ("import_page_progress_display", &mut out.import_progress),
+            (
+                "decorate_page_of_pages_tab_names",
+                &mut out.decorate_notebooks,
+            ),
+            (
+                "show_new_on_file_seed_short_summary",
+                &mut out.short_summary_new,
+            ),
+            (
+                "show_deleted_on_file_seed_short_summary",
+                &mut out.short_summary_deleted,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        if let Some(decorator) = self.strings.get("page_of_pages_decorator") {
+            out.notebook_decorator.clone_from(decorator);
+        }
+        out
+    }
+
+    /// The downloader a new gallery page uses, key (hex) and name
+    /// (`GetDefaultGUGKeyAndName`: none while the name is empty).
+    pub fn default_gug(&self) -> Option<(String, String)> {
+        let name = self.strings.get("default_gug_name")?;
+        if name.is_empty() {
+            return None;
+        }
+        let key = self
+            .keys
+            .get("default_gug_key")
+            .map(hex::encode)
+            .unwrap_or_default();
+        Some((key, name.clone()))
+    }
+
+    /// Downloader pages' options (`confirm_non_empty_downloader_page_close`,
+    /// `highlight_new_query`, `highlight_new_watcher`, `pause_character`,
+    /// `stop_character`).
+    pub fn downloader_page_settings(&self) -> DownloaderPageSettings {
+        let mut out = DownloaderPageSettings::default();
+        for (key, field) in [
+            (
+                "confirm_non_empty_downloader_page_close",
+                &mut out.confirm_non_empty_close,
+            ),
+            ("highlight_new_query", &mut out.highlight_new_query),
+            ("highlight_new_watcher", &mut out.highlight_new_watcher),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("pause_character", &mut out.pause_character),
+            ("stop_character", &mut out.stop_character),
+        ] {
+            if let Some(value) = self.strings.get(key) {
+                field.clone_from(value);
+            }
+        }
+        out
+    }
+
+    /// The slideshows' periods and options (`slideshow_durations`,
+    /// `slideshows_progress_randomly`, `slideshow_*`).
+    pub fn slideshow_settings(&self) -> SlideshowSettings {
+        let mut out = SlideshowSettings {
+            durations: self.slideshow_durations.clone(),
+            ..SlideshowSettings::default()
+        };
+        for (key, field) in [
+            ("slideshows_progress_randomly", &mut out.shuffle),
+            (
+                "slideshow_always_play_duration_media_once_through",
+                &mut out.once_through,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            (
+                "slideshow_short_duration_loop_percentage",
+                &mut out.short_loop_percentage,
+            ),
+            (
+                "slideshow_short_duration_loop_seconds",
+                &mut out.short_loop_seconds,
+            ),
+            (
+                "slideshow_short_duration_cutoff_percentage",
+                &mut out.short_cutoff_percentage,
+            ),
+            (
+                "slideshow_long_duration_overspill_percentage",
+                &mut out.long_overspill_percentage,
+            ),
+        ] {
+            if let Some(&value) = self.noneable_integers.get(key) {
+                *field = value;
+            }
+        }
+        out
+    }
+
+    /// The volumes and mutes (`global_audio_*`, `media_viewer_audio_*`).
+    pub fn audio_settings(&self) -> AudioSettings {
+        let mut out = AudioSettings::default();
+        for (key, field) in [
+            ("global_audio_mute", &mut out.global_mute),
+            ("media_viewer_audio_mute", &mut out.viewer_mute),
+            (
+                "media_viewer_uses_its_own_audio_volume",
+                &mut out.viewer_uses_its_own_volume,
+            ),
+        ] {
+            if let Some(&value) = self.booleans.get(key) {
+                *field = value;
+            }
+        }
+        for (key, field) in [
+            ("global_audio_volume", &mut out.global_volume),
+            ("media_viewer_audio_volume", &mut out.viewer_volume),
+        ] {
+            if let Some(&value) = self.integers.get(key) {
+                *field = u8::try_from(value.clamp(0, 100)).unwrap_or(*field);
+            }
+        }
+        out
+    }
+
+    /// The system predicates last added from the system predicate editors,
+    /// by the reference's number for their type, newest first
+    /// (`predicate_types_to_recent_predicates`), numerical ratings read
+    /// with their services' `scales`. One this can't read is left out.
+    pub fn recent_predicates(
+        &self,
+        scales: &dyn Fn(&ServiceKey) -> Option<super::predicates::StarScale>,
+    ) -> DecodeResult<hydrus_core::search::recent::RecentPredicates> {
+        let settings = Settings::new(KIND, &self.dictionary)?;
+        match settings.get("predicate_types_to_recent_predicates") {
+            Some(meta) => recent_predicates(expect_object(meta, "recent predicates")?, scales),
+            None => Ok(hydrus_core::search::recent::RecentPredicates::default()),
+        }
+    }
+
+    /// How ratings are drawn over thumbnails.
+    pub fn thumbnail_rating_settings(&self) -> hydrus_core::thumbnail::ThumbnailRatingSettings {
+        let mut out = hydrus_core::thumbnail::ThumbnailRatingSettings::default();
+        let float = |key: &str| self.floats.get(key).copied().filter(|v| *v > 0.0);
+        if let Some(size) = float("draw_thumbnail_rating_icon_size_px") {
+            out.icon_size = size;
+        }
+        if let Some(height) = float("thumbnail_rating_incdec_height_px") {
+            out.incdec_height = height;
+        }
+        if let Some(&background) = self.booleans.get("draw_thumbnail_rating_background") {
+            out.background = background;
+        }
+        if let Some(&collapsed) = self
+            .booleans
+            .get("draw_thumbnail_numerical_ratings_collapsed_always")
+        {
+            out.numerical_collapsed = collapsed;
+        }
+        out
+    }
+
+    /// The media viewer's options: the zoom steps, where zooming centres,
+    /// the default zoom and how each file type is shown.
+    pub fn media_viewer_settings(&self) -> MediaViewerSettings {
+        let mut out = MediaViewerSettings::default();
+        if !self.media_zooms.is_empty() {
+            out.media_zooms.clone_from(&self.media_zooms);
+        }
+        let integer = |key: &str| self.integers.get(key).copied();
+        if let Some(centre) = integer("media_viewer_zoom_center").and_then(ZoomCentre::from_code) {
+            out.zoom_centre = centre;
+        }
+        if let Some(zoom) =
+            integer("media_viewer_default_zoom_type_override").and_then(ZoomType::from_code)
+        {
+            out.default_zoom_type = zoom;
+        }
+        let float = |key: &str| self.floats.get(key).copied().filter(|v| *v > 0.0);
+        if let Some(size) = float("media_viewer_rating_icon_size_px") {
+            out.rating_icon_size = size;
+        }
+        if let Some(height) = float("media_viewer_rating_incdec_height_px") {
+            out.rating_incdec_height = height;
+        }
+        if let Some(view) = &self.media_view {
+            out.media_view = view
+                .iter()
+                .filter_map(|(&mime, view)| Some((u8::try_from(mime).ok()?, *view)))
+                .collect();
+        }
+        out
     }
 }
 
@@ -279,6 +597,39 @@ fn named_group(settings: &Settings<'_>, group: &str) -> DecodeResult<NamedGroup>
         })
         .collect::<DecodeResult<_>>()?;
     Ok(NamedGroup { entries })
+}
+
+/// The recent predicates stored as `predicate_types_to_recent_predicates`
+/// (a dictionary of type numbers to lists of predicates), numerical
+/// ratings read with their services' `scales`. One this can't read is left
+/// out.
+pub fn recent_predicates(
+    object: &SerialisableObject,
+    scales: &dyn Fn(&ServiceKey) -> Option<super::predicates::StarScale>,
+) -> DecodeResult<hydrus_core::search::recent::RecentPredicates> {
+    use hydrus_core::search::predicate::Predicate;
+    let mut out = hydrus_core::search::recent::RecentPredicates::default();
+    for (kind, kept) in dictionary_pairs(object)?.iter() {
+        let kind = kind
+            .as_json()
+            .and_then(PyJson::as_i64)
+            .and_then(|k| u8::try_from(k).ok())
+            .ok_or_else(|| malformed(KIND, "a recent predicate type is not a number"))?;
+        let predicates: Vec<_> = list_items(expect_object(kept, "recent predicates")?)?
+            .iter()
+            .filter_map(Meta::as_object)
+            .filter_map(
+                |object| match super::predicates::predicate_with_scales(object, scales) {
+                    Ok(Predicate::System(p)) => Some(p),
+                    _ => None,
+                },
+            )
+            .collect();
+        if !predicates.is_empty() {
+            out.by_type.insert(kind, predicates);
+        }
+    }
+    Ok(out)
 }
 
 fn expect_object<'a>(meta: &'a Meta, what: &str) -> DecodeResult<&'a SerialisableObject> {
@@ -403,6 +754,26 @@ fn favourite_tag_filters(settings: &Settings<'_>) -> DecodeResult<BTreeMap<Strin
         .collect()
 }
 
+fn tag_summary_generators(
+    settings: &Settings<'_>,
+) -> DecodeResult<BTreeMap<String, TagSummaryGenerator>> {
+    let Some(meta) = settings.get("tag_summary_generators") else {
+        return Ok(BTreeMap::new());
+    };
+    dictionary_pairs(expect_object(meta, "tag_summary_generators")?)?
+        .iter()
+        .map(|(name, generator)| {
+            let name = name
+                .as_str()
+                .ok_or_else(|| malformed(KIND, "tag summary name is not a string"))?;
+            Ok((
+                name.to_owned(),
+                tag_summary_generator(expect_object(generator, "tag summary generator")?)?,
+            ))
+        })
+        .collect()
+}
+
 fn default_tag_sorts(settings: &Settings<'_>) -> DecodeResult<BTreeMap<i64, TagSort>> {
     let Some(meta) = settings.get("default_tag_sorts") else {
         return Ok(BTreeMap::new());
@@ -457,9 +828,321 @@ fn duplicate_action_options(
         .map(Some)
 }
 
+/// The `media_view` dictionary: mime code to (media show action, start
+/// paused, start with embed, preview show action, start paused, start with
+/// embed, (media scale up, scale down, preview scale up, scale down, exact
+/// zooms only, scale up quality, scale down quality)).
+fn frame_locations(settings: &Settings<'_>) -> DecodeResult<BTreeMap<String, FrameLocation>> {
+    let Some(meta) = settings.get("frame_locations") else {
+        return Ok(BTreeMap::new());
+    };
+    let pair = |value: &PyJson, what: &str| -> DecodeResult<Option<(i32, i32)>> {
+        if matches!(value, PyJson::Null) {
+            return Ok(None);
+        }
+        let [a, b] = tuple::<2>(KIND, value, what)?;
+        let number = |v: &PyJson| {
+            i32::try_from(int(KIND, v, what)?)
+                .map_err(|_| malformed(KIND, "frame size out of range"))
+        };
+        Ok(Some((number(a)?, number(b)?)))
+    };
+    dictionary_pairs(expect_object(meta, "frame_locations")?)?
+        .iter()
+        .map(|(key, frame)| {
+            let key = key
+                .as_json()
+                .and_then(PyJson::as_str)
+                .ok_or_else(|| malformed(KIND, "frame key is not a string"))?
+                .to_owned();
+            let frame = plain(KIND, frame, "frame location")?;
+            let [
+                remember_size,
+                remember_position,
+                last_size,
+                last_position,
+                gravity,
+                position,
+                maximised,
+                fullscreen,
+            ] = tuple::<8>(KIND, &frame, "frame location")?;
+            Ok((
+                key,
+                FrameLocation {
+                    remember_size: boolean(KIND, remember_size, "remember size")?,
+                    remember_position: boolean(KIND, remember_position, "remember position")?,
+                    last_size: pair(last_size, "last size")?,
+                    last_position: pair(last_position, "last position")?,
+                    default_gravity: pair(gravity, "default gravity")?.unwrap_or((-1, -1)),
+                    default_position: string(KIND, position, "default position")?,
+                    maximised: boolean(KIND, maximised, "maximised")?,
+                    fullscreen: boolean(KIND, fullscreen, "fullscreen")?,
+                },
+            ))
+        })
+        .collect()
+}
+
+fn media_view(settings: &Settings<'_>) -> DecodeResult<Option<BTreeMap<i64, MediaView>>> {
+    let Some(meta) = settings.get("media_view") else {
+        return Ok(None);
+    };
+    let code = |value: &PyJson, what: &str| int(KIND, value, what);
+    let action = |value: &PyJson| {
+        ShowAction::from_code(code(value, "show action")?)
+            .ok_or_else(|| malformed(KIND, "unknown media viewer show action"))
+    };
+    let scale = |value: &PyJson| {
+        ScaleAction::from_code(code(value, "scale action")?)
+            .ok_or_else(|| malformed(KIND, "unknown media viewer scale action"))
+    };
+    let quality = |value: &PyJson| {
+        u8::try_from(code(value, "zoom quality")?)
+            .map_err(|_| malformed(KIND, "zoom quality out of range"))
+    };
+    dictionary_pairs(expect_object(meta, "media_view")?)?
+        .iter()
+        .map(|(mime, view)| {
+            let mime = mime
+                .as_json()
+                .and_then(PyJson::as_i64)
+                .ok_or_else(|| malformed(KIND, "media_view mime is not an integer"))?;
+            let view = plain(KIND, view, "media view options")?;
+            let [show, paused, embed, p_show, p_paused, p_embed, zoom] =
+                tuple::<7>(KIND, &view, "media view options")?;
+            let [up, down, p_up, p_down, exact, up_quality, down_quality] =
+                tuple::<7>(KIND, zoom, "zoom options")?;
+            Ok((
+                mime,
+                MediaView {
+                    media_show_action: action(show)?,
+                    media_start_paused: boolean(KIND, paused, "start paused")?,
+                    media_start_with_embed: boolean(KIND, embed, "start with embed")?,
+                    preview_show_action: action(p_show)?,
+                    preview_start_paused: boolean(KIND, p_paused, "start paused")?,
+                    preview_start_with_embed: boolean(KIND, p_embed, "start with embed")?,
+                    zoom: ZoomRules {
+                        media_scale_up: scale(up)?,
+                        media_scale_down: scale(down)?,
+                        preview_scale_up: scale(p_up)?,
+                        preview_scale_down: scale(p_down)?,
+                        exact_zooms_only: boolean(KIND, exact, "exact zooms only")?,
+                        scale_up_quality: quality(up_quality)?,
+                        scale_down_quality: quality(down_quality)?,
+                    },
+                },
+            ))
+        })
+        .collect::<DecodeResult<_>>()
+        .map(Some)
+}
+
 #[cfg(test)]
 mod tests {
     use super::ClientOptions;
+    use crate::serialisable::SerialisableObject;
+
+    #[test]
+    fn the_volumes_and_mutes_come_across() {
+        use hydrus_core::media_viewer::AudioSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.booleans.insert("global_audio_mute".into(), true);
+        options
+            .booleans
+            .insert("media_viewer_uses_its_own_audio_volume".into(), true);
+        options.integers.insert("global_audio_volume".into(), 35);
+        // (out of the slider's range, as a hand-edited option might be)
+        options
+            .integers
+            .insert("media_viewer_audio_volume".into(), 150);
+        assert_eq!(
+            options.audio_settings(),
+            AudioSettings {
+                global_volume: 35,
+                global_mute: true,
+                viewer_volume: 100,
+                viewer_mute: false,
+                viewer_uses_its_own_volume: true,
+            }
+        );
+    }
+
+    /// The reference's recent predicates (`oracle/record_recent_predicates.py`
+    /// stores some) come across: as many of each type as it keeps, each
+    /// under its own type.
+    #[test]
+    fn the_recent_predicates_come_across() {
+        let recorded = hydrus_testkit::fixture_json("recent_predicates.json");
+        let object = SerialisableObject::from_tuple_str(&recorded["stored"].to_string()).unwrap();
+        let migrated = super::recent_predicates(&object, &|_| None).unwrap();
+        let kept = recorded["steps"].as_array().unwrap().last().unwrap()["recent"]
+            .as_object()
+            .unwrap();
+        let counts: std::collections::BTreeMap<u8, usize> = kept
+            .iter()
+            .map(|(kind, texts)| (kind.parse().unwrap(), texts.as_array().unwrap().len()))
+            .collect();
+        let ours: std::collections::BTreeMap<u8, usize> = migrated
+            .by_type
+            .iter()
+            .map(|(kind, kept)| (*kind, kept.len()))
+            .collect();
+        assert_eq!(ours, counts);
+        for (kind, kept) in &migrated.by_type {
+            for predicate in kept {
+                assert_eq!(predicate.reference_type(), *kind, "{predicate:?}");
+            }
+        }
+        // and from the options, where the reference keeps them
+        let options = include_str!("client_options_defaults.json").replace(
+            r#"[[0, "predicate_types_to_recent_predicates"], [2, [21, 2, []]]]"#,
+            &format!(
+                r#"[[0, "predicate_types_to_recent_predicates"], [2, {}]]"#,
+                recorded["stored"]
+            ),
+        );
+        let options =
+            ClientOptions::from_object(&SerialisableObject::from_tuple_str(&options).unwrap())
+                .unwrap();
+        assert_eq!(options.recent_predicates(&|_| None).unwrap(), migrated);
+        // a type that isn't a number is refused
+        let bad = r#"[21, 2, [[[0, "thirteen"], [2, [26, 3, []]]]]]"#;
+        assert!(
+            super::recent_predicates(&SerialisableObject::from_tuple_str(bad).unwrap(), &|_| None)
+                .is_err()
+        );
+    }
+
+    #[test]
+    #[allow(clippy::float_cmp)] // (sizes set, not computed)
+    fn the_thumbnail_rating_options_come_across() {
+        use hydrus_core::thumbnail::ThumbnailRatingSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options
+            .floats
+            .insert("draw_thumbnail_rating_icon_size_px".into(), 20.0);
+        options
+            .floats
+            .insert("thumbnail_rating_incdec_height_px".into(), 16.5);
+        options
+            .booleans
+            .insert("draw_thumbnail_rating_background".into(), false);
+        options.booleans.insert(
+            "draw_thumbnail_numerical_ratings_collapsed_always".into(),
+            true,
+        );
+        assert_eq!(
+            options.thumbnail_rating_settings(),
+            ThumbnailRatingSettings {
+                icon_size: 20.0,
+                incdec_height: 16.5,
+                background: false,
+                numerical_collapsed: true,
+            }
+        );
+        // (a size of none is no size)
+        options
+            .floats
+            .insert("draw_thumbnail_rating_icon_size_px".into(), 0.0);
+        assert_eq!(options.thumbnail_rating_settings().icon_size, 12.0);
+    }
+
+    #[test]
+    fn the_slideshow_options_come_across() {
+        use hydrus_core::media_viewer::SlideshowSettings;
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.slideshow_durations = vec![2.5, 15.0];
+        options
+            .booleans
+            .insert("slideshows_progress_randomly".into(), true);
+        options
+            .noneable_integers
+            .insert("slideshow_short_duration_loop_seconds".into(), None);
+        options.noneable_integers.insert(
+            "slideshow_long_duration_overspill_percentage".into(),
+            Some(80),
+        );
+        assert_eq!(
+            options.slideshow_settings(),
+            SlideshowSettings {
+                durations: vec![2.5, 15.0],
+                shuffle: true,
+                once_through: false,
+                short_loop_percentage: Some(20),
+                short_loop_seconds: None,
+                short_cutoff_percentage: Some(75),
+                long_overspill_percentage: Some(80),
+            }
+        );
+    }
+
+    #[test]
+    fn the_tab_name_options_come_across() {
+        use hydrus_core::pages::{FileCountDisplay, PageNameSettings};
+
+        let mut options = ClientOptions::defaults().unwrap();
+        options.integers.insert("max_page_name_chars".into(), 32);
+        options.integers.insert("page_file_count_display".into(), 2);
+        options
+            .booleans
+            .insert("import_page_progress_display".into(), false);
+        options
+            .booleans
+            .insert("show_deleted_on_file_seed_short_summary".into(), true);
+        options
+            .strings
+            .insert("page_of_pages_decorator".into(), " +".into());
+        assert_eq!(
+            options.page_name_settings(),
+            PageNameSettings {
+                max_chars: 32,
+                file_counts: FileCountDisplay::OnlyImporters,
+                import_progress: false,
+                decorate_notebooks: true,
+                notebook_decorator: " +".into(),
+                short_summary_new: false,
+                short_summary_deleted: true,
+            }
+        );
+    }
+
+    #[test]
+    fn the_default_downloader_comes_across() {
+        let mut options = ClientOptions::defaults().unwrap();
+        // (a new client's has no name, so none)
+        assert_eq!(options.default_gug(), None);
+        options
+            .strings
+            .insert("default_gug_name".into(), "safebooru tag search".into());
+        options
+            .keys
+            .insert("default_gug_key".into(), vec![0xab, 0x01]);
+        assert_eq!(
+            options.default_gug(),
+            Some(("ab01".into(), "safebooru tag search".into()))
+        );
+    }
+
+    #[test]
+    fn whether_a_full_downloader_page_asks_before_closing_comes_across() {
+        let mut options = ClientOptions::defaults().unwrap();
+        assert!(options.downloader_page_settings().confirm_non_empty_close);
+        options
+            .booleans
+            .insert("confirm_non_empty_downloader_page_close".into(), false);
+        options.booleans.insert("highlight_new_query".into(), false);
+        options
+            .strings
+            .insert("pause_character".into(), "||".into());
+        let settings = options.downloader_page_settings();
+        assert!(!settings.confirm_non_empty_close);
+        assert!(!settings.highlight_new_query && settings.highlight_new_watcher);
+        assert_eq!(settings.pause_character, "||");
+        assert_eq!(settings.stop_character, "\u{23F9}");
+    }
 
     #[test]
     fn the_new_client_defaults_decode() {
@@ -467,5 +1150,50 @@ mod tests {
         assert!(defaults.booleans.len() > 200);
         assert!(defaults.default_sort.is_some());
         assert_eq!(defaults.default_tag_sorts.len(), 4);
+        // (a new client's media_view, where mpv plays video)
+        assert_eq!(
+            defaults.media_viewer_settings(),
+            hydrus_core::media_viewer::MediaViewerSettings::default()
+        );
+        assert_eq!(
+            defaults.info_line_settings(),
+            hydrus_core::media_viewer::InfoLineSettings::default()
+        );
+        assert_eq!(
+            defaults.audio_settings(),
+            hydrus_core::media_viewer::AudioSettings::default()
+        );
+        assert_eq!(
+            defaults.thumbnail_rating_settings(),
+            hydrus_core::thumbnail::ThumbnailRatingSettings::default()
+        );
+        // (and no recent predicates)
+        assert_eq!(
+            defaults.recent_predicates(&|_| None).unwrap(),
+            hydrus_core::search::recent::RecentPredicates::default()
+        );
+        assert_eq!(
+            defaults.slideshow_settings(),
+            hydrus_core::media_viewer::SlideshowSettings::default()
+        );
+        assert_eq!(
+            defaults.page_name_settings(),
+            hydrus_core::pages::PageNameSettings::default()
+        );
+        assert_eq!(
+            defaults.downloader_page_settings(),
+            hydrus_core::pages::DownloaderPageSettings::default()
+        );
+        // (the main window maximised, the media viewer fullscreen too)
+        assert_eq!(
+            defaults.window_settings(),
+            hydrus_core::windows::WindowSettings::default()
+        );
+        assert_eq!(
+            defaults.frame_locations.len(),
+            22,
+            "{:?}",
+            defaults.frame_locations.keys()
+        );
     }
 }

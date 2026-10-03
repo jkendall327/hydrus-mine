@@ -39,6 +39,12 @@ async fn post(State(site): State<Arc<Site>>, Path(id): Path<String>) -> Response
     if id == "404" {
         return (StatusCode::NOT_FOUND, "no such post").into_response();
     }
+    if id == "403" {
+        return (StatusCode::FORBIDDEN, "log in first").into_response();
+    }
+    if id == "500" {
+        return (StatusCode::INTERNAL_SERVER_ERROR, "the site broke").into_response();
+    }
     let html = format!(
         r#"<html><head><title>post {id}</title></head><body>
         <ul id="tags"><li class="tag">blue eyes</li><li class="tag">creator:someone</li><li class="tag">post {id}</li></ul>
@@ -256,7 +262,16 @@ async fn setup() -> Setup {
             hydrus_store::settings::set(ctx.conn(), &downloaders)
         })
         .unwrap();
-    let net = Arc::new(NetEngine::new(Arc::clone(&store), NetOptions::default()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
     Setup {
@@ -474,4 +489,169 @@ async fn a_gallery_url_in_a_url_queue_queues_its_posts() {
             .primary_urls
             .contains(&format!("{}/gallery/1", s.base))
     );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn queues_wait_while_their_downloads_are_paused_globally() {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    // hydrus's "pause all file import queues"
+    let paused = Pauses {
+        file_queues: true,
+        ..Pauses::default()
+    };
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &paused))
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    tokio::time::sleep(Duration::from_millis(1500)).await;
+    let waiting = s
+        .store
+        .read(|conn| queues::next_file_seed(conn, queue.id))
+        .unwrap();
+    assert!(waiting.is_some(), "nothing was downloaded");
+    assert!(s.site.hits.lock().is_empty());
+    // resumed: the queue gets on with it
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    s.runner.wake(queue.id);
+    wait_until_done(&s.store, queue.id).await;
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_file_that_fails_does_not_hold_up_the_rest_of_its_queue() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/500", s.base), format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    wait_until_done(&s.store, queue.id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    let statuses: Vec<SeedStatus> = seeds.iter().map(|seed| seed.status).collect();
+    assert_eq!(
+        statuses,
+        [SeedStatus::Error, SeedStatus::SuccessfulAndNew],
+        "{seeds:?}"
+    );
+    assert!(seeds[0].note.contains("500"), "{}", seeds[0].note);
+    assert_eq!(s.runner.status(queue.id).delayed_until, None);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_refusal_from_a_site_hydrus_logged_in_to_says_why() {
+    let s = setup().await;
+    let host = s.base.trim_start_matches("http://").to_owned();
+    let logins = hydrus_store::network::LoginDomains(vec![host]);
+    s.store
+        .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &logins))
+        .unwrap();
+    s.runner.start_all().unwrap();
+    let queue = s
+        .runner
+        .url_queue_for(Some("my downloads"), None, None)
+        .unwrap();
+    let urls = vec![format!("{}/post/403", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    wait_until_done(&s.store, queue.id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::Vetoed);
+    assert!(seeds[0].note.contains("login script"), "{}", seeds[0].note);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_queue_with_no_import_destination_pauses_its_files() {
+    use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions};
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let options = ImportOptionsSlice {
+        locations: Some(LocationOptions {
+            destinations: Vec::new(),
+            ..LocationOptions::default()
+        }),
+        ..ImportOptionsSlice::default()
+    };
+    let queue = s
+        .runner
+        .url_queue_for(Some("nowhere"), None, Some(&options))
+        .unwrap();
+    let urls = vec![format!("{}/post/1", s.base)];
+    s.runner
+        .pend_urls(queue.id, &urls, &BTreeSet::new(), &[])
+        .unwrap();
+    let mut paused = false;
+    for _ in 0..100 {
+        let q = s.store.read(|conn| queues::queue(conn, queue.id)).unwrap();
+        if q.is_some_and(|q| q.files_paused) {
+            paused = true;
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    assert!(paused, "the queue's files paused");
+    // the URL waits, untouched
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(seeds[0].status, SeedStatus::Unknown);
+    assert!(s.site.hits.lock().is_empty());
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn missing_files_download_again_in_their_own_queue() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    // (as the reference's integrity checks send a bad file's URLs)
+    let added = s
+        .runner
+        .redownload(&[format!("{}/post/1", s.base), "not a url".to_owned()])
+        .unwrap();
+    assert_eq!(added, 1);
+    let all = s
+        .store
+        .read(|conn| queues::queues(conn, Some(queues::QueueKind::Urls)))
+        .unwrap();
+    assert_eq!(all.len(), 1);
+    assert_eq!(
+        all[0].name,
+        hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME
+    );
+    wait_until_done(&s.store, all[0].id).await;
+    let seeds = s
+        .store
+        .read(|conn| queues::file_seeds(conn, all[0].id))
+        .unwrap();
+    assert_eq!(seeds.len(), 1);
+    assert_eq!(seeds[0].status, SeedStatus::SuccessfulAndNew);
+    // later ones join it
+    s.runner
+        .redownload(&[format!("{}/post/2", s.base)])
+        .unwrap();
+    let all = s
+        .store
+        .read(|conn| queues::queues(conn, Some(queues::QueueKind::Urls)))
+        .unwrap();
+    assert_eq!(all.len(), 1);
 }

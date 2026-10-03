@@ -105,6 +105,7 @@ pub fn run(dir: &Path, action: Action) -> Result<()> {
         Action::Pause { name } => set_paused(&store, &name, true),
         Action::Resume { name } => set_paused(&store, &name, false),
         Action::Run { name } => {
+            let _lock = crate::lock_store(dir, "an import folder run")?;
             let mut folder = find(&store, &name)?;
             if folder.paused() {
                 bail!("{name:?} is paused; resume it first");
@@ -112,9 +113,11 @@ pub fn run(dir: &Path, action: Action) -> Result<()> {
             folder.settings.check_now = true;
             let (id, settings) = (folder.id(), folder.settings);
             store.write(move |ctx| import_folders::set_settings(ctx.conn(), id, &settings))?;
+            let network: hydrus_store::network::NetworkSettings =
+                store.read(hydrus_store::settings::get)?;
             let net = Arc::new(hydrus_net::NetEngine::new(
                 Arc::clone(&store),
-                hydrus_net::NetOptions::default(),
+                hydrus_net::NetOptions::from_settings(&network),
             )?);
             let importer = hydrus_import::FileImporter::new(
                 Arc::clone(&store),
@@ -209,6 +212,7 @@ pub fn run_export(dir: &Path, action: ExportAction) -> Result<()> {
             Ok(())
         }
         ExportAction::Run { name } => {
+            let _lock = crate::lock_store(dir, "an export folder run")?;
             for f in &mut folders.0 {
                 if f.name == name {
                     f.run_now = true;

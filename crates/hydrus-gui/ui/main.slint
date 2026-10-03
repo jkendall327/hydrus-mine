@@ -1,23 +1,108 @@
 // The main window: for now one search page, laid out as the reference's
 // (a sidebar with the search, and the thumbnail grid), and a status bar.
 
-import { ComboBox, LineEdit, ListView, VerticalBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, ScrollView, VerticalBox } from "std-widgets.slint";
+import { ListText, Theme } from "theme.slint";
+import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
+import { GalleryData, GallerySidebar } from "gallery.slint";
+import { WatcherData, WatcherSidebar } from "watcher.slint";
+import { TableColumn, TableRow } from "list_table.slint";
+import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
+import { PopupData, PopupStack } from "popups.slint";
+import { RatingShape } from "viewer.slint";
+export { DownloadLine, GalleryData, WatcherData }
+export { MenuLine, MenuPane, MenuTitle, PopupData }
+export { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+export { ListText }
 
-export { MediaViewerWindow } from "viewer.slint";
+// (the palette, to choose light or dark: by default the system's)
+export { Palette } from "std-widgets.slint";
+export { MediaViewerWindow, NoteRow, RatingRow, RatingShape } from "viewer.slint";
+export { ArchiveDeleteWindow } from "archive_delete.slint";
+export { ManageTagsWindow } from "manage_tags.slint";
+export { DurationField, OptionRow, OptionsWindow } from "options.slint";
+export { CheckerOptionsWindow, CheckerTexts } from "checker_options.slint";
+export { SessionDialog } from "session_dialog.slint";
+export { TableColumn, TableRow }
+export { LocationTick, LocationsWindow } from "domains.slint";
+export { FavouriteEditWindow, FavouriteListRow, FavouritesWindow } from "favourites.slint";
+export { EditorField, EditorPanel, PredicateEditorWindow } from "predicate_editor.slint";
+export { ImportRow, ReviewImportsWindow } from "import_files.slint";
+export { UnlockWindow } from "unlock.slint";
+export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
+export { SubscriptionsWindow } from "subscriptions.slint";
+
+// an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
+// its top left corner goes in the thumbnail
+export struct ThumbIcon {
+    kind: int,
+    x: length,
+    y: length,
+}
+
+// a rating drawn over a thumbnail (`src/thumbnail_ratings.rs`'s `Drawn`),
+// at (x, y): shapes (kind 0), or a counter (kind 1)
+export struct ThumbRating {
+    kind: int,
+    x: length,
+    y: length,
+    // the shapes: their outline (SVG path commands in a 12x12 box), where
+    // the first goes from x, how big each is and how far apart, how thick
+    // its outline, and each one's colours
+    path: string,
+    first: length,
+    size: length,
+    step: length,
+    outline: length,
+    shapes: [RatingShape],
+    // a counter's box, and its colours
+    width: length,
+    height: length,
+    pen: color,
+    brush: color,
+    // a numerical rating's "stars/of" (from its top left), or a counter's
+    // number (right aligned in its box, which is text-height tall)
+    text: string,
+    text-x: length,
+    text-y: length,
+    text-width: length,
+    text-height: length,
+    text-size: length,
+}
+
+// a box behind a row of ratings
+export struct ThumbBox {
+    x: length,
+    y: length,
+    width: length,
+    height: length,
+}
 
 export struct Thumbnail {
     image: image,
     selected: bool,
+    // a collection's number of files, as text; empty for a file
+    files: string,
+    icons: [ThumbIcon],
+    ratings: [ThumbRating],
+    rating-boxes: [ThumbBox],
+    // the tag banners' texts (`src/thumbnail_icons.rs`'s `banners`): across
+    // the top, and at the bottom right; empty for none
+    top: string,
+    bottom: string,
 }
 
 component Predicate inherits Rectangle {
     in property <string> text;
+    in property <color> colour: Theme.text;
     callback remove();
     height: 22px;
-    background: touch.has-hover ? #e8e8e8 : transparent;
+    background: touch.has-hover ? Theme.hover : transparent;
     Text {
         x: 4px;
         text: root.text;
+        color: root.colour;
         vertical-alignment: center;
         overflow: elide;
         width: parent.width - 8px;
@@ -25,6 +110,55 @@ component Predicate inherits Rectangle {
     touch := TouchArea {
         // as in the reference, double-clicking a predicate removes it
         double-clicked => { root.remove(); }
+    }
+}
+
+// the tags of the selected files (or of the page's), with their counts, as
+// the reference's "selection tags" box; double-clicking one searches for it
+component TagList inherits Rectangle {
+    in property <[ListText]> tags;
+    callback activated(int);
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    ListView {
+        for tag[i] in root.tags: Rectangle {
+            height: 20px;
+            background: pick.has-hover ? Theme.hover : transparent;
+            Text {
+                x: 4px;
+                text: tag.text;
+                color: tag.colour;
+                vertical-alignment: center;
+                overflow: elide;
+                width: parent.width - 8px;
+            }
+            pick := TouchArea {
+                double-clicked => { root.activated(i); }
+            }
+        }
+    }
+}
+
+// a page chooser button: `label` empty hides it
+component ChooserButton inherits Rectangle {
+    in property <string> label;
+    callback pressed();
+    visible: root.label != "";
+    border-radius: 4px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: touch.has-hover ? Theme.highlight : Theme.panel;
+    Text {
+        text: root.label;
+        color: touch.has-hover ? Theme.highlight-text : Theme.text;
+        horizontal-alignment: center;
+        vertical-alignment: center;
+        wrap: word-wrap;
+        width: parent.width - 8px;
+    }
+    touch := TouchArea {
+        clicked => { root.pressed(); }
     }
 }
 
@@ -38,11 +172,13 @@ component Tab inherits Rectangle {
     in property <string> text;
     in property <bool> selected;
     callback chosen();
+    // as in the reference, a middle click closes a page
+    callback close();
     height: 26px;
     width: label.preferred-width + 20px;
-    background: root.selected ? #ffffff : touch.has-hover ? #e8e8e8 : #dcdcdc;
+    background: root.selected ? Theme.panel : touch.has-hover ? Theme.hover : Theme.window;
     border-width: 1px;
-    border-color: #c0c0c0;
+    border-color: Theme.border;
     label := Text {
         text: root.text;
         vertical-alignment: center;
@@ -51,7 +187,19 @@ component Tab inherits Rectangle {
     }
     touch := TouchArea {
         clicked => { root.chosen(); }
+        pointer-event(event) => {
+            if (event.button == PointerEventButton.middle && event.kind == PointerEventKind.up) {
+                root.close();
+            }
+        }
     }
+}
+
+
+// a choice in the collect control
+export struct CollectRow {
+    name: string,
+    checked: bool,
 }
 
 export struct ThumbnailRow {
@@ -60,198 +208,1550 @@ export struct ThumbnailRow {
     thumbnails: [Thumbnail],
 }
 
-// A list of rows of thumbnails, so only the rows in view are made.
+// A list of rows of thumbnails, so only the rows in view are made. As the
+// reference's, a thumbnail's cell is the thumbnail bounding box and its
+// border, and the thumbnail is drawn in it at its own size, centred; each
+// cell has its margin all round, so a span is the cell and two margins.
 component ThumbnailGrid inherits ListView {
     in property <[ThumbnailRow]> rows;
-    in property <length> thumbnail-size: 150px;
-    in property <length> gap: 4px;
-    out property <int> columns: max(1, floor((self.visible-width - self.gap) / (self.thumbnail-size + self.gap)));
-    callback clicked(int);
+    in property <length> thumbnail-width: 152px;
+    in property <length> thumbnail-height: 127px;
+    in property <length> border: 1px;
+    in property <length> margin: 2px;
+    // the tag banners' colours
+    in property <color> banner-top-background;
+    in property <color> banner-top-text;
+    in property <color> banner-bottom-background;
+    in property <color> banner-bottom-text;
+    property <length> span-width: self.thumbnail-width + 2 * self.margin;
+    property <length> span-height: self.thumbnail-height + 2 * self.margin;
+    out property <int> columns: max(1, floor(self.visible-width / self.span-width));
+    // how many rows a page up or down moves
+    out property <int> page-rows: max(1, floor(self.visible-height / self.span-height));
+    // a click on a file (-1 for none), with ctrl or shift held
+    callback clicked(int, bool, bool);
     callback activated(int);
-    for row in root.rows: HorizontalLayout {
-        padding-left: root.gap;
-        padding-top: root.gap;
-        spacing: root.gap;
-        alignment: start;
-        height: root.thumbnail-size + root.gap;
-        for thumbnail[column] in row.thumbnails: Rectangle {
-            width: root.thumbnail-size;
-            height: root.thumbnail-size;
-            border-width: thumbnail.selected ? 2px : 1px;
-            border-color: thumbnail.selected ? #3b78e7 : #c8c8c8;
-            background: #ffffff;
-            Image {
-                x: 2px;
-                y: 2px;
-                width: parent.width - 4px;
-                height: parent.height - 4px;
-                source: thumbnail.image;
-                image-fit: contain;
+    // a right-click on a file (-1 for none), where in the window
+    callback menu-requested(int, length, length);
+    property <bool> ctrl;
+    property <bool> shift;
+
+    // scroll so the file at `index` shows
+    public function scroll-to(index: int) {
+        let span = root.span-height;
+        let top = floor(index / root.columns) * span;
+        if (top < -root.content-y) {
+            root.content-y = -top;
+        } else if (top + span > -root.content-y + root.visible-height) {
+            root.content-y = -(top + span - root.visible-height);
+        }
+    }
+
+    // which of a row's `count` thumbnails is at (x, y), or -1 for a
+    // margin (as the reference's `_GetThumbnailUnderMouse`: a margin's
+    // last pixel before a thumbnail counts as the margin, and its first
+    // after as the thumbnail)
+    pure function thumbnail-at(count: int, x: length, y: length) -> int {
+        let column = floor(x / root.span-width);
+        let within = x - column * root.span-width;
+        if (column >= count || within <= root.margin || within > root.span-width - root.margin
+            || y <= root.margin || y > root.span-height - root.margin) {
+            return -1;
+        }
+        return column;
+    }
+
+    for row in root.rows: Rectangle {
+        height: root.span-height;
+        HorizontalLayout {
+            padding-left: root.margin;
+            padding-top: root.margin;
+            padding-bottom: root.margin;
+            spacing: 2 * root.margin;
+            alignment: start;
+            for thumbnail in row.thumbnails: Rectangle {
+                width: root.thumbnail-width;
+                height: root.thumbnail-height;
+                background: Theme.panel;
+                // (what is drawn over it stays in it, as the reference
+                // paints each thumbnail on an image of its own)
+                clip: true;
+                // pixel for pixel (it is decoded at the screen's scale): the
+                // renderer would scale it by picking the nearest pixels
+                Image {
+                    width: self.source.width * 1phx;
+                    height: self.source.height * 1phx;
+                    x: round((parent.width - self.width) / 2 / 1phx) * 1phx;
+                    y: round((parent.height - self.height) / 2 / 1phx) * 1phx;
+                    source: thumbnail.image;
+                }
+                // the reference's tag banners: across the top, the text
+                // centred on the thumbnail; and at the bottom right, its
+                // box running two pixels into the border. The reference
+                // paints its border over them, so they are kept inside it.
+                Rectangle {
+                    x: root.border;
+                    y: root.border;
+                    width: parent.width - 2 * root.border;
+                    height: parent.height - 2 * root.border;
+                    clip: true;
+                    if thumbnail.top != "": Rectangle {
+                        y: 0;
+                        height: top-text.preferred-height + 2px;
+                        background: root.banner-top-background;
+                        top-text := Text {
+                            x: (parent.width - self.preferred-width) / 2;
+                            y: 1px;
+                            text: thumbnail.top;
+                            color: root.banner-top-text;
+                        }
+                    }
+                    if thumbnail.bottom != "": Rectangle {
+                        width: bottom-text.preferred-width + 2px;
+                        height: bottom-text.preferred-height + 2px;
+                        x: parent.width - self.width;
+                        y: parent.height - bottom-text.preferred-height;
+                        background: root.banner-bottom-background;
+                        bottom-text := Text {
+                            x: 1px;
+                            y: 1px;
+                            text: thumbnail.bottom;
+                            color: root.banner-bottom-text;
+                        }
+                    }
+                }
+                // (over the thumbnail, which may fill the cell; a
+                // selection shows however thin the border)
+                Rectangle {
+                    border-width: thumbnail.selected ? max(root.border, 2px) : root.border;
+                    border-color: thumbnail.selected ? Theme.accent : Theme.border;
+                }
+                // the ratings at the top right, over their boxes
+                for box in thumbnail.rating-boxes: Rectangle {
+                    x: box.x;
+                    y: box.y;
+                    width: box.width;
+                    height: box.height;
+                    background: Theme.window;
+                }
+                for rating in thumbnail.ratings: Rectangle {
+                    x: 0;
+                    y: 0;
+                    if rating.kind == 0: Rectangle {
+                        for shape[k] in rating.shapes: Path {
+                            x: rating.x + rating.first + k * rating.step;
+                            y: rating.y;
+                            width: rating.size;
+                            height: rating.size;
+                            viewbox-width: 12;
+                            viewbox-height: 12;
+                            commands: rating.path;
+                            fill: shape.brush;
+                            stroke: shape.pen;
+                            stroke-width: rating.outline;
+                        }
+                    }
+                    if rating.kind == 1: Rectangle {
+                        x: rating.x;
+                        y: rating.y;
+                        width: rating.width;
+                        height: rating.height;
+                        border-width: 1px;
+                        border-color: rating.pen;
+                        background: rating.brush;
+                    }
+                    if rating.text != "": Text {
+                        x: rating.text-x;
+                        y: rating.text-y;
+                        width: rating.text-width;
+                        height: rating.kind == 1 ? rating.text-height : self.preferred-height;
+                        horizontal-alignment: rating.kind == 1 ? right : left;
+                        vertical-alignment: rating.kind == 1 ? center : top;
+                        text: rating.text;
+                        color: rating.kind == 1 ? rating.pen : Theme.text;
+                        font-size: rating.text-size;
+                    }
+                }
+                // a collection: its icon and number of files, in a box at
+                // the bottom left (the icon drawn with the others)
+                if thumbnail.files != "": Rectangle {
+                    x: root.border;
+                    y: parent.height - root.border - self.height;
+                    width: 16px + count.preferred-width + 3px;
+                    height: 18px;
+                    background: Theme.window;
+                    count := Text {
+                        x: 18px;
+                        y: 1px;
+                        text: thumbnail.files;
+                        color: Theme.text;
+                        font-size: 11px;
+                    }
+                }
+                // the reference's icons: inbox, trash, notes... at the top
+                // right, sound or play and the file repositories at the top
+                // left
+                for icon in thumbnail.icons: Image {
+                    x: icon.x;
+                    y: icon.y;
+                    width: 16px;
+                    height: 16px;
+                    source: icon.kind == 0 ? @image-url("../../../static/inbox.png")
+                        : icon.kind == 1 ? @image-url("../../../static/trash.png")
+                        : icon.kind == 2 ? @image-url("../../../static/notes.png")
+                        : icon.kind == 3 ? @image-url("../../../static/downloading.png")
+                        : icon.kind == 4 ? @image-url("../../../static/sound.png")
+                        : icon.kind == 5 ? @image-url("../../../static/play.png")
+                        : icon.kind == 6 ? @image-url("../../../static/file_repository_small.png")
+                        : icon.kind == 7 ? @image-url("../../../static/file_repository_pending_small.png")
+                        : icon.kind == 8 ? @image-url("../../../static/file_repository_petitioned_small.png")
+                        : icon.kind == 9 ? @image-url("../../../static/ipfs_small.png")
+                        : icon.kind == 10 ? @image-url("../../../static/ipfs_pending_small.png")
+                        : icon.kind == 11 ? @image-url("../../../static/ipfs_petitioned_small.png")
+                        : @image-url("../../../static/collection.png");
+                }
             }
-            TouchArea {
-                clicked => { root.clicked(row.first + column); }
-                // as in the reference, double-clicking a thumbnail opens the viewer
-                double-clicked => { root.activated(row.first + column); }
+        }
+        // one for the row, not one per thumbnail: a click redraws the row
+        // to show the selection, which makes its thumbnails afresh, so a
+        // double-click's second click would land on one that never saw the
+        // first
+        TouchArea {
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down) {
+                    root.ctrl = event.modifiers.control;
+                    root.shift = event.modifiers.shift;
+                    if (event.button == PointerEventButton.right) {
+                        let column = root.thumbnail-at(row.thumbnails.length, self.mouse-x, self.mouse-y);
+                        root.menu-requested(column >= 0 ? row.first + column : -1,
+                            self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                    }
+                }
+            }
+            // (a gap between thumbnails is a click on no file)
+            clicked => {
+                let column = root.thumbnail-at(row.thumbnails.length, self.pressed-x, self.pressed-y);
+                root.clicked(column >= 0 ? row.first + column : -1, root.ctrl, root.shift);
+            }
+            // as in the reference, double-clicking a thumbnail opens the viewer
+            double-clicked => {
+                let column = root.thumbnail-at(row.thumbnails.length, self.pressed-x, self.pressed-y);
+                if (column >= 0) {
+                    root.activated(row.first + column);
+                }
             }
         }
     }
 }
 
 export component MainWindow inherits Window {
+    // how far the thumbnails are scrolled (each page keeps its own)
+    in-out property <length> grid-scroll <=> grid.content-y;
     title: "hydrus-rs";
     preferred-width: 1100px;
     preferred-height: 700px;
-    background: #f4f4f4;
+    background: Theme.window;
+
+    // the menu bar (`src/main_menu.rs`): its titles, the one whose menu is
+    // open, and the menus open
+    in property <[MenuTitle]> menu-titles;
+    in property <int> menu-open: -1;
+    in property <[MenuPane]> menu-panes;
+    callback menu-title-pressed(int, length, length);
+    callback menu-title-hovered(int, length, length);
+    callback menu-title-placed(int, length);
+    callback menu-line-hovered(int, int, length, length, length);
+    callback menu-line-clicked(int, int, length, length, length);
+    callback menu-placed(int, length, length, length);
+    callback menu-dismissed();
+    // a key while a menu is open, or with alt (a mnemonic): whether it
+    // was taken
+    callback menu-key(string, bool) -> bool;
+    // what last had the keyboard (1 the search box, 2 the thumbnails), to
+    // have it back when a menu, which takes it, closes (the thumbnails, if
+    // neither had)
+    property <int> last-focus: 0;
+    changed menu-open => {
+        if (self.menu-open == -1) {
+            if (self.last-focus == 1) {
+                self.search-focus-requests += 1;
+            } else {
+                grid-keys.focus();
+            }
+        }
+    }
+
+    // popup messages (`src/popups.rs`): those shown, and the line under
+    // them
+    in property <[PopupData]> popups;
+    in property <string> popup-summary;
+    callback popup-dismiss(int);
+    callback popup-pause-play(int);
+    callback popup-cancel(int);
+    callback popup-show-files(int);
+    callback popup-copy-traceback(int);
+    callback popups-dismiss-all();
 
     // the tabs of each notebook on the way to the page shown
     in property <[TabRow]> tab-rows;
+    // a press on a tab row's empty space (middle or left), twice for the
+    // page chooser
+    callback tab-space-pressed(int, bool);
     // why the page shown has no search, if it hasn't
     in property <string> note;
+    // a duplicates page, which can launch the duplicate filter
+    in property <bool> can-filter;
     in property <[string]> sort-names;
     in property <int> sort-index;
     in property <[string]> order-names;
     in property <int> order-index;
-    in property <[string]> predicates;
-    in property <[string]> suggestions;
+    in property <[ListText]> predicates;
+    in property <[ListText]> tags;
+    in property <[ListText]> suggestions;
     in property <int> highlighted: -1;
     in property <[ThumbnailRow]> thumbnail-rows;
+    // a thumbnail's cell: the thumbnail bounding box and its border; and
+    // the margin round each
+    in property <length> thumbnail-width: 152px;
+    in property <length> thumbnail-height: 127px;
+    in property <length> thumbnail-border: 1px;
+    in property <length> thumbnail-margin: 2px;
+    in property <color> banner-top-background;
+    in property <color> banner-top-text;
+    in property <color> banner-bottom-background;
+    in property <color> banner-bottom-text;
     in property <string> status;
+    in property <string> status-network;
     in property <string> error;
+    // a downloader page's importer (the reference's "url downloader" box):
+    // its file log's status and progress, whether it is paused, and its
+    // search log's status
+    in property <bool> importing;
+    // (a local import page's, rather than a URL downloader page's; and
+    // what its importer is doing)
+    in property <bool> local-import;
+    in property <string> import-action;
+    in property <string> import-status;
+    in property <string> import-progress;
+    in property <float> import-fraction;
+    in property <bool> import-paused;
+    in property <string> search-status;
+    // what it is downloading: a file, and a gallery page; cancelling one
+    // (the gallery page's when true)
+    in property <DownloadLine> file-download: { fraction: 0, can-cancel: false };
+    in property <DownloadLine> search-download: { fraction: 0, can-cancel: false };
+    callback cancel-download(bool);
+    // a gallery page's sidebar (gallery.slint)
+    in property <bool> gallery-page;
+    in property <GalleryData> gallery-data;
+    in property <[TableRow]> gallery-rows;
+    in property <int> gallery-sort-column: -1;
+    in property <bool> gallery-ascending: true;
+    // (the row shown, ctrl held, shift held)
+    callback gallery-row-clicked(int, bool, bool);
+    callback gallery-sort(int, bool);
+    callback gallery-highlight();
+    callback gallery-clear-highlight();
+    callback gallery-pause-play(bool, bool);
+    callback gallery-retry(bool);
+    callback gallery-remove();
+    callback gallery-set-options();
+    callback gallery-queries(string);
+    callback gallery-paste();
+    callback gallery-gug(int);
+    callback gallery-limit(bool, int);
+    // a watcher page's sidebar (watcher.slint)
+    in property <bool> watcher-page;
+    in property <WatcherData> watcher-data;
+    in property <[TableRow]> watcher-rows;
+    in property <int> watcher-sort-column: -1;
+    in property <bool> watcher-ascending: true;
+    // (the row shown, ctrl held, shift held)
+    callback watcher-row-clicked(int, bool, bool);
+    callback watcher-sort(int, bool);
+    callback watcher-highlight();
+    callback watcher-clear-highlight();
+    callback watcher-pause-play(bool, bool);
+    callback watcher-check-now(bool);
+    callback watcher-retry(bool);
+    callback watcher-remove();
+    callback watcher-set-options();
+    callback watcher-urls(string);
+    callback watcher-paste();
+    callback watcher-page-checker();
+    callback watcher-checker();
+    callback pause-play-files();
+    callback url-entered(string);
+    callback paste-urls();
+    // the daemon (`hydrus serve`), or its Client API, not running, and why;
+    // and whether starting it again would help
+    in property <string> daemon-note;
+    in property <bool> daemon-retry;
+    callback start-daemon-again();
     in-out property <string> search-text;
+    // whether the page has a search, to save or load a favourite into
+    in property <bool> can-favourite;
+    // a page's search locked to a system:hash of its files, in place of
+    // the search box and predicates: the button saying how many, which
+    // unlocks it, and the cog's what the hash follows
+    in property <bool> can-lock-search;
+    in property <bool> search-locked;
+    in property <string> lock-label;
+    in-out property <bool> lock-syncs-new;
+    in-out property <bool> lock-syncs-removes;
+    callback lock-search();
+    callback unlock-search();
+    callback lock-syncs-changed(bool, bool);
+    // the collect control: its label, its choices (shown while open), and
+    // the cog's whether files matching none collect into one group or
+    // stay separate
+    in property <string> collect-label;
+    in property <[CollectRow]> collect-choices;
+    in-out property <bool> collect-open;
+    in-out property <bool> collect-unmatched;
+    in-out property <bool> collect-separate;
+    callback collect-toggled(int, bool);
+    callback collect-unmatched-chosen(bool);
 
     // a notebook's (level's) tab was chosen
     callback tab-chosen(int, int);
+    // a notebook's tab was middle-clicked
+    callback close-tab(int, int);
+    // the reference's main window shortcuts: ctrl+t and F9 open a page,
+    // ctrl+w closes the page shown
+    callback new-page();
+    callback close-page();
+    callback unclose-page();
+    callback archive-delete-filter();
+    callback flip-global-mute();
+    // f5: search the page again; ctrl+page up and down: the page beside
+    callback refresh-page();
+    callback move-pages(int);
+    // whether the page searches as its search changes, and ctrl+i (or the
+    // button under the search box) switching it
+    in property <bool> synchronised: true;
+    callback flip-synchronised();
+    // the search's domains (`src/domains.rs`): the file and tag domain
+    // buttons' labels, each opening its menu below it (0 files, 1 tags),
+    // and whether current and pending tags are searched (each button
+    // switching one: 0 current, 1 pending)
+    in property <string> location-label;
+    in property <string> tags-label;
+    in property <bool> include-current: true;
+    in property <bool> include-pending: true;
+    callback domain-menu-requested(int, length, length);
+    callback include-flipped(int);
+    // ctrl+s: the search box takes the keyboard (counted, for the box to
+    // see each ask)
+    in-out property <int> search-focus-requests;
+    // the selected file's shortcuts, and a question's answer
+    callback archive-selected();
+    callback inbox-selected();
+    callback delete-selected();
+    callback undelete-selected();
+    callback manage-tags-selected();
+    callback answer(bool);
+    // a question to answer (a deletion): enter is yes, escape no
+    in property <string> question;
     callback sort-chosen(int);
     callback order-chosen(int);
     callback search-edited(string);
     callback search-accepted();
+    // the star button's menu, opened at (x, y)
+    callback favourites-menu-requested(length, length);
     callback move-highlight(int);
     callback suggestion-chosen(int);
     callback remove-predicate(int);
-    callback thumbnail-clicked(int);
+    callback tag-activated(int);
+    callback launch-filter();
+    // the page chooser: its buttons' labels by number - 1 (as on a number
+    // pad, 7 at the top left), none while it is closed
+    in property <[string]> chooser-labels;
+    callback chooser-pressed(int);
+    callback chooser-enter();
+    callback chooser-cancel();
+    // a click on a file (-1 for none), with ctrl or shift held
+    callback thumbnail-clicked(int, bool, bool);
     callback thumbnail-activated(int);
+    // the thumbnails' keyboard: select all, select none, open the viewer,
+    // and move the focus (0 left, 1 right, 2 up, 3 down, 4 page up, 5 page
+    // down, 6 home, 7 end; with shift selecting, in a grid so many columns
+    // wide showing so many rows), saying the file moved to, to scroll to (-1: none)
+    callback select-all();
+    callback select-none();
+    callback launch-viewer();
+    // the media shortcuts: ctrl+r takes the selected files off the page,
+    // ctrl+e opens the focused file as the OS opens it
+    callback remove-selected();
+    callback open-externally();
+    // ctrl+c: the selected files onto the clipboard, as files
+    callback copy-files();
+    // alt and home, end, left or right: the selected thumbnails to the
+    // start (0), back one (1), forward one (3) or to the end (4)
+    callback rearrange(int);
+    callback move-focus(int, bool, int, int) -> int;
+    // the right-click menu: asked for on a file (-1 for none), then shown;
+    // an entry chosen
+    in property <ThumbnailMenu> thumbnail-menu;
+    callback thumbnail-menu-requested(int);
+    callback menu-chosen(int);
     callback columns-changed(int);
     // how many thumbnails fit across the grid
     out property <int> grid-columns: grid.columns;
     changed grid-columns => { root.columns-changed(self.grid-columns); }
 
-    VerticalLayout {
-        for row[level] in root.tab-rows: HorizontalLayout {
-            padding-left: 4px;
-            padding-top: 2px;
-            spacing: 2px;
-            alignment: start;
-            for name[index] in row.names: Tab {
-                text: name;
-                selected: index == row.selected;
-                chosen => { root.tab-chosen(level, index); }
+    // the main window's shortcuts, whatever has the keyboard
+    FocusScope {
+        width: 100%;
+        height: 100%;
+        capture-key-pressed(event) => {
+            // an open menu takes every key, and alt and a letter opens one
+            if (root.menu-panes.length > 0) {
+                root.menu-key(event.text, event.modifiers.alt);
+                return accept;
             }
-        }
-        HorizontalLayout {
-            if root.note != "": VerticalBox {
-                width: 300px;
-                alignment: start;
-                Text {
-                    text: root.note;
-                    wrap: word-wrap;
+            if (event.modifiers.alt && !event.modifiers.control && root.question == "" && root.chooser-labels.length == 0) {
+                if (root.menu-key(event.text, true)) {
+                    return accept;
                 }
             }
-            if root.note == "": VerticalBox {
-                width: 300px;
-                // the sort control, as at the top of the reference's sidebar
+            // a question takes every key while it is asked
+            if (root.question != "") {
+                if (event.text == Key.Return) {
+                    root.answer(true);
+                } else if (event.text == Key.Escape) {
+                    root.answer(false);
+                }
+                return accept;
+            }
+            // the page chooser takes every key while it is open
+            if (root.chooser-labels.length > 0) {
+                if (event.text.character-count == 1 && event.text.is-float() && event.text != "0") {
+                    root.chooser-pressed(event.text.to-float());
+                } else if (event.text == Key.UpArrow) {
+                    root.chooser-pressed(8);
+                } else if (event.text == Key.LeftArrow) {
+                    root.chooser-pressed(4);
+                } else if (event.text == Key.RightArrow) {
+                    root.chooser-pressed(6);
+                } else if (event.text == Key.DownArrow) {
+                    root.chooser-pressed(2);
+                } else if (event.text == Key.Return) {
+                    root.chooser-enter();
+                } else if (event.text == Key.Escape) {
+                    root.chooser-cancel();
+                }
+                return accept;
+            }
+            if (event.text == Key.F9 || (event.modifiers.control && (event.text == "t" || event.text == "T"))) {
+                root.new-page();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "w" || event.text == "W")) {
+                root.close-page();
+                return accept;
+            }
+            // as in the reference, F12 opens the archive/delete filter
+            if (event.text == Key.F12) {
+                root.archive-delete-filter();
+                return accept;
+            }
+            // as the reference's global shortcuts have it, ctrl+g mutes and
+            // unmutes everything
+            if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
+                root.flip-global-mute();
+                return accept;
+            }
+            // as the reference's main window shortcuts have it: f5 searches
+            // the page again, ctrl+page up and down show the page beside,
+            // ctrl+s and ctrl+m give the keyboard to the search box and to
+            // the thumbnails
+            if (event.text == Key.F5) {
+                root.refresh-page();
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.PageUp) {
+                root.move-pages(-1);
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.PageDown) {
+                root.move-pages(1);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "s" || event.text == "S")) {
+                root.search-focus-requests += 1;
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "m" || event.text == "M")) {
+                grid-keys.focus();
+                return accept;
+            }
+            // as in the reference, ctrl+u reopens the page closed last
+            if (event.modifiers.control && (event.text == "u" || event.text == "U")) {
+                root.unclose-page();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            menu-bar := MenuBarRow {
+                titles: root.menu-titles;
+                open: root.menu-open;
+                pressed(i, x) => { root.menu-title-pressed(i, x, self.absolute-position.y + self.height); }
+                hovered(i, x) => { root.menu-title-hovered(i, x, self.absolute-position.y + self.height); }
+                placed(i, x) => { root.menu-title-placed(i, x); }
+            }
+            for row[level] in root.tab-rows: HorizontalLayout {
+                padding-left: 4px;
+                padding-top: 2px;
+                spacing: 2px;
+                for name[index] in row.names: Tab {
+                    text: name;
+                    selected: index == row.selected;
+                    chosen => { root.tab-chosen(level, index); }
+                    close => { root.close-tab(level, index); }
+                }
+                // the row's empty space: as the reference's tab bar, a
+                // double click (left or middle) there chooses a new page for
+                // this notebook
+                TouchArea {
+                    horizontal-stretch: 1;
+                    min-width: 24px;
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down
+                            && (event.button == PointerEventButton.left || event.button == PointerEventButton.middle)) {
+                            root.tab-space-pressed(level, event.button == PointerEventButton.middle);
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                if root.gallery-page: VerticalBox {
+                    width: 400px;
+                    alignment: start;
+                    GallerySidebar {
+                        data: root.gallery-data;
+                        rows: root.gallery-rows;
+                        sort-column: root.gallery-sort-column;
+                        ascending: root.gallery-ascending;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        row-clicked(row, ctrl, shift) => { root.gallery-row-clicked(row, ctrl, shift); }
+                        sort(column, ascending) => { root.gallery-sort(column, ascending); }
+                        highlight => { root.gallery-highlight(); }
+                        clear-highlight => { root.gallery-clear-highlight(); }
+                        pause-play(search, shown) => { root.gallery-pause-play(search, shown); }
+                        retry(ignored) => { root.gallery-retry(ignored); }
+                        remove => { root.gallery-remove(); }
+                        set-options => { root.gallery-set-options(); }
+                        queries-entered(text) => { root.gallery-queries(text); }
+                        paste => { root.gallery-paste(); }
+                        gug-chosen(index) => { root.gallery-gug(index); }
+                        limit-changed(none, value) => { root.gallery-limit(none, value); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.watcher-page: VerticalBox {
+                    width: 400px;
+                    alignment: start;
+                    WatcherSidebar {
+                        data: root.watcher-data;
+                        rows: root.watcher-rows;
+                        sort-column: root.watcher-sort-column;
+                        ascending: root.watcher-ascending;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        row-clicked(row, ctrl, shift) => { root.watcher-row-clicked(row, ctrl, shift); }
+                        sort(column, ascending) => { root.watcher-sort(column, ascending); }
+                        highlight => { root.watcher-highlight(); }
+                        clear-highlight => { root.watcher-clear-highlight(); }
+                        pause-play(checking, shown) => { root.watcher-pause-play(checking, shown); }
+                        check-now(shown) => { root.watcher-check-now(shown); }
+                        retry(ignored) => { root.watcher-retry(ignored); }
+                        remove => { root.watcher-remove(); }
+                        set-options => { root.watcher-set-options(); }
+                        urls-entered(text) => { root.watcher-urls(text); }
+                        paste => { root.watcher-paste(); }
+                        page-checker => { root.watcher-page-checker(); }
+                        watcher-checker => { root.watcher-checker(); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && root.local-import: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    LocalImportBox {
+                        current-action: root.import-action;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        pause-play-files => { root.pause-play-files(); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && !root.local-import && !root.gallery-page && !root.watcher-page: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    Text {
+                        text: "url downloader";
+                        font-weight: 700;
+                    }
+                    ImporterBoxes {
+                        status-lines: false;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        file-download: root.file-download;
+                        search-status: root.search-status;
+                        search-download: root.search-download;
+                        pause-play-files => { root.pause-play-files(); }
+                        cancel-download(gallery) => { root.cancel-download(gallery); }
+                    }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        url-box := LineEdit {
+                            horizontal-stretch: 1;
+                            placeholder-text: "any url hydrus recognises, or a raw file url";
+                            accepted(text) => {
+                                root.url-entered(text);
+                                self.text = "";
+                            }
+                        }
+                        // (the reference's paste button: newline-separated
+                        // URLs from the clipboard)
+                        Button {
+                            text: "paste";
+                            clicked => { root.paste-urls(); }
+                        }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    Text {
+                        text: root.note;
+                        wrap: word-wrap;
+                    }
+                    if root.can-filter: Button {
+                        text: "launch the duplicate filter";
+                        clicked => { root.launch-filter(); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.note == "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
+                    width: 300px;
+                    // the sort control, as at the top of the reference's sidebar
+                    HorizontalLayout {
+                        spacing: 4px;
+                        ComboBox {
+                            model: root.sort-names;
+                            current-index: root.sort-index;
+                            selected => { root.sort-chosen(self.current-index); }
+                        }
+                        ComboBox {
+                            width: 130px;
+                            model: root.order-names;
+                            current-index: root.order-index;
+                            selected => { root.order-chosen(self.current-index); }
+                        }
+                    }
+                    // and the collect control under it: the choices open
+                    // from the label, and stay open while checked, as the
+                    // reference's
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            text: root.collect-label;
+                            checkable: true;
+                            checked <=> root.collect-open;
+                        }
+                        collect-cog := ContextMenuArea {
+                            width: 30px;
+                            Menu {
+                                Menu {
+                                    title: "unmatched files";
+                                    MenuItem {
+                                        title: "collect into one group";
+                                        checkable: true;
+                                        checked <=> root.collect-unmatched;
+                                        activated => { root.collect-unmatched-chosen(true); }
+                                    }
+                                    MenuItem {
+                                        title: "leave separate";
+                                        checkable: true;
+                                        checked <=> root.collect-separate;
+                                        activated => { root.collect-unmatched-chosen(false); }
+                                    }
+                                }
+                            }
+                            Button {
+                                width: 30px;
+                                text: "⚙";
+                                clicked => { collect-cog.show({ x: 0px, y: self.height }); }
+                            }
+                        }
+                    }
+                    if root.collect-open: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 2px;
+                            for choice[index] in root.collect-choices: CheckBox {
+                                text: choice.name;
+                                checked: choice.checked;
+                                toggled => { root.collect-toggled(index, self.checked); }
+                            }
+                        }
+                    }
+                    if root.search-locked: VerticalLayout {
+                        spacing: 2px;
+                        Text {
+                            text: "search locked";
+                            color: Theme.text;
+                            font-weight: 700;
+                        }
+                        HorizontalLayout {
+                            spacing: 4px;
+                            Button {
+                                horizontal-stretch: 1;
+                                text: root.lock-label;
+                                clicked => { root.unlock-search(); }
+                            }
+                            cog-menu := ContextMenuArea {
+                                width: 30px;
+                                Menu {
+                                    MenuItem {
+                                        title: "update when files added to page";
+                                        checkable: true;
+                                        checked <=> root.lock-syncs-new;
+                                        activated => { root.lock-syncs-changed(root.lock-syncs-new, root.lock-syncs-removes); }
+                                    }
+                                    MenuItem {
+                                        title: "update when files removed from page";
+                                        checkable: true;
+                                        checked <=> root.lock-syncs-removes;
+                                        activated => { root.lock-syncs-changed(root.lock-syncs-new, root.lock-syncs-removes); }
+                                    }
+                                }
+                                Button {
+                                    width: 30px;
+                                    text: "⚙";
+                                    clicked => { cog-menu.show({ x: 0px, y: self.height }); }
+                                }
+                            }
+                        }
+                    }
+                    if !root.search-locked: FocusScope {
+                        height: search-row.preferred-height;
+                        property <int> focus-requests: root.search-focus-requests;
+                        changed focus-requests => { search.focus(); }
+                        // up and down move through the suggestions, as in the reference
+                        capture-key-pressed(event) => {
+                            // ctrl+i: searching as the search changes, or waiting
+                            if (event.modifiers.control && (event.text == "i" || event.text == "I")) {
+                                root.flip-synchronised();
+                                return accept;
+                            }
+                            if (event.text == Key.UpArrow) {
+                                root.move-highlight(-1);
+                                return accept;
+                            }
+                            if (event.text == Key.DownArrow) {
+                                root.move-highlight(1);
+                                return accept;
+                            }
+                            reject
+                        }
+                        search-row := HorizontalLayout {
+                            spacing: 4px;
+                            search := LineEdit {
+                                horizontal-stretch: 1;
+                                placeholder-text: "search";
+                                changed has-focus => {
+                                    if (self.has-focus) {
+                                        root.last-focus = 1;
+                                    }
+                                }
+                                text <=> root.search-text;
+                                edited(text) => { root.search-edited(text); }
+                                accepted(text) => { root.search-accepted(); }
+                            }
+                            // as the reference's star button: load or save a
+                            // favourite search
+                            if root.can-favourite: Button {
+                                width: 30px;
+                                text: "★";
+                                clicked => { root.favourites-menu-requested(self.absolute-position.x, self.absolute-position.y + self.height); }
+                            }
+                            // and its lock button: lock the files in view to a
+                            // fixed system:hash
+                            if root.can-lock-search: Button {
+                                text: "lock";
+                                clicked => { root.lock-search(); }
+                            }
+                        }
+                    }
+                    // the reference's buttons under the search box: which
+                    // tags to search, its pause/play button (searching as
+                    // the search changes, or waiting), and the file and tag
+                    // domains
+                    if !root.search-locked && root.note == "": HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.include-current ? "include current tags" : "exclude current tags";
+                            clicked => { root.include-flipped(0); }
+                        }
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.include-pending ? "include pending tags" : "exclude pending tags";
+                            clicked => { root.include-flipped(1); }
+                        }
+                    }
+                    if !root.search-locked && root.note == "": Button {
+                        text: root.synchronised ? "searching immediately" : "search paused";
+                        clicked => { root.flip-synchronised(); }
+                    }
+                    if !root.search-locked && root.note == "": HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.location-label;
+                            clicked => { root.domain-menu-requested(0, self.absolute-position.x, self.absolute-position.y + self.height); }
+                        }
+                        Button {
+                            horizontal-stretch: 1;
+                            min-width: 20px;
+                            text: root.tags-label;
+                            clicked => { root.domain-menu-requested(1, self.absolute-position.x, self.absolute-position.y + self.height); }
+                        }
+                    }
+                    if root.suggestions.length > 0 && !root.search-locked: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        height: min(root.suggestions.length, 12) * 22px + 4px;
+                        // (more than twelve scroll, as the reference's
+                        // dropdown does, the highlighted one kept in view)
+                        property <int> kept-in-view: root.highlighted;
+                        changed kept-in-view => {
+                            if (self.kept-in-view >= 0) {
+                                if (self.kept-in-view * 22px < -suggestion-scroll.content-y) {
+                                    suggestion-scroll.content-y = -self.kept-in-view * 22px;
+                                } else if ((self.kept-in-view + 1) * 22px > suggestion-scroll.visible-height - suggestion-scroll.content-y) {
+                                    suggestion-scroll.content-y = suggestion-scroll.visible-height - (self.kept-in-view + 1) * 22px;
+                                }
+                            }
+                        }
+                        suggestion-scroll := ScrollView {
+                            x: 2px;
+                            y: 2px;
+                            width: parent.width - 4px;
+                            height: parent.height - 4px;
+                            VerticalLayout {
+                            alignment: start;
+                            for suggestion[i] in root.suggestions: Rectangle {
+                                height: 22px;
+                                background: i == root.highlighted ? Theme.highlight : pick.has-hover ? Theme.hover : transparent;
+                                Text {
+                                    x: 4px;
+                                    text: suggestion.text;
+                                    color: i == root.highlighted ? Theme.highlight-text : suggestion.colour;
+                                    vertical-alignment: center;
+                                    overflow: elide;
+                                    width: parent.width - 8px;
+                                }
+                                pick := TouchArea {
+                                    clicked => { root.suggestion-chosen(i); }
+                                }
+                            }
+                            }
+                        }
+                    }
+                    if root.error != "": Text {
+                        text: root.error;
+                        color: Theme.error;
+                        wrap: word-wrap;
+                    }
+                    if !root.search-locked: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        background: Theme.panel;
+                        height: min(max(root.predicates.length, 1) * 22px, 154px) + 6px;
+                        // (more than seven scroll)
+                        ScrollView {
+                            x: 3px;
+                            y: 3px;
+                            width: parent.width - 6px;
+                            height: parent.height - 6px;
+                            VerticalLayout {
+                                alignment: start;
+                                for predicate[i] in root.predicates: Predicate {
+                                    text: predicate.text;
+                                    colour: predicate.colour;
+                                    remove => { root.remove-predicate(i); }
+                                }
+                            }
+                        }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                // the thumbnails' shortcuts, once a click gives them the
+                // keyboard: F3 manages the files selected's tags, F7
+                // archives them and shift+F7
+                // inboxes them, delete deletes them (asking first) and
+                // shift+delete undeletes them; ctrl+a selects every file
+                // and escape none, the arrows, page up and down, home and
+                // end move (with shift, selecting), and enter opens the
+                // media viewer
+                // the right-click menu, as the reference's (`src/thumbnail_menu.rs`)
+                menu-area := ContextMenuArea {
+                    horizontal-stretch: 1;
+                    Menu {
+                        if root.thumbnail-menu.info-is-menu: Menu {
+                            title: root.thumbnail-menu.info-title;
+                            for row in root.thumbnail-menu.info-before: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.info-sub-title != "": Menu {
+                                title: root.thumbnail-menu.info-sub-title;
+                                for row in root.thumbnail-menu.info-sub: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.info-after: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.views: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.views-sub-title != "": Menu {
+                                title: root.thumbnail-menu.views-sub-title;
+                                for row in root.thumbnail-menu.views-sub: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                        }
+                        if root.thumbnail-menu.info-title != "" && !root.thumbnail-menu.info-is-menu: MenuItem {
+                            title: root.thumbnail-menu.info-title;
+                            activated => { root.menu-chosen(root.thumbnail-menu.info-title-id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.thumbnail-menu.head: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        if root.thumbnail-menu.has-select: Menu {
+                            title: "select";
+                            for row in root.thumbnail-menu.select.g1: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g2: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g3: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g4: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g5: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.select.g6: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                        }
+                        if root.thumbnail-menu.has-remove: Menu {
+                            title: "remove";
+                            for row in root.thumbnail-menu.remove.g1: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g2: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g3: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g4: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g5: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.remove.g6: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                        }
+                        if root.thumbnail-menu.has-rearrange: Menu {
+                            title: "rearrange";
+                            for row in root.thumbnail-menu.rearrange: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        MenuSeparator { }
+                        for row in root.thumbnail-menu.filter: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.thumbnail-menu.delete: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        if root.thumbnail-menu.delete-title != "": Menu {
+                            title: root.thumbnail-menu.delete-title;
+                            for row in root.thumbnail-menu.delete-menu: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        for row in root.thumbnail-menu.trash: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        if root.thumbnail-menu.manage.length > 0: Menu {
+                            title: "manage";
+                            for row in root.thumbnail-menu.manage: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.has-urls: Menu {
+                            title: "urls";
+                            Menu {
+                                title: "open in browser";
+                                for row in root.thumbnail-menu.urls-visit.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-visit.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            if root.thumbnail-menu.has-url-pages: Menu {
+                                title: "open in a new page";
+                                for row in root.thumbnail-menu.urls-pages.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-pages.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            Menu {
+                                title: "copy";
+                                for row in root.thumbnail-menu.urls-copy.g1: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g2: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g3: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g4: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g5: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                                MenuSeparator { }
+                                for row in root.thumbnail-menu.urls-copy.g6: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                        }
+                        if root.thumbnail-menu.has-open: Menu {
+                            title: "open";
+                            for row in root.thumbnail-menu.open-a: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.open-similar-title != "": Menu {
+                                title: root.thumbnail-menu.open-similar-title;
+                                for row in root.thumbnail-menu.open-similar: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.open-b: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                        if root.thumbnail-menu.has-share: Menu {
+                            title: "share";
+                            for row in root.thumbnail-menu.share-a: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-hashes-title != "": Menu {
+                                title: root.thumbnail-menu.share-hashes-title;
+                                for row in root.thumbnail-menu.share-hashes: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.share-b: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            MenuSeparator { }
+                            for row in root.thumbnail-menu.share-c: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-hash-title != "": Menu {
+                                title: root.thumbnail-menu.share-hash-title;
+                                for row in root.thumbnail-menu.share-hash: MenuItem {
+                                    title: row.label;
+                                    activated => { root.menu-chosen(row.id); }
+                                }
+                            }
+                            for row in root.thumbnail-menu.share-d: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                        }
+                    }
+                    grid-keys := FocusScope {
+                        changed has-focus => {
+                            if (self.has-focus) {
+                                root.last-focus = 2;
+                            }
+                        }
+                        key-pressed(event) => {
+                            if (event.modifiers.control && (event.text == "a" || event.text == "A")) {
+                                root.select-all();
+                                return accept;
+                            }
+                            if (event.text == Key.Escape) {
+                                root.select-none();
+                                return accept;
+                            }
+                            if (event.text == Key.Return) {
+                                root.launch-viewer();
+                                return accept;
+                            }
+                            if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
+                                root.remove-selected();
+                                return accept;
+                            }
+                            if (event.modifiers.alt) {
+                                let to = event.text == Key.Home ? 0 : event.text == Key.LeftArrow ? 1
+                                    : event.text == Key.RightArrow ? 3 : event.text == Key.End ? 4 : -1;
+                                if (to >= 0) {
+                                    root.rearrange(to);
+                                    return accept;
+                                }
+                            }
+                            if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
+                                root.open-externally();
+                                return accept;
+                            }
+                            if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
+                                root.copy-files();
+                                return accept;
+                            }
+                            let move = event.modifiers.alt || event.modifiers.control ? -1
+                                : event.text == Key.LeftArrow ? 0 : event.text == Key.RightArrow ? 1
+                                : event.text == Key.UpArrow ? 2 : event.text == Key.DownArrow ? 3
+                                : event.text == Key.PageUp ? 4 : event.text == Key.PageDown ? 5
+                                : event.text == Key.Home ? 6 : event.text == Key.End ? 7 : -1;
+                            if (move >= 0) {
+                                let focused = root.move-focus(move, event.modifiers.shift, grid.columns, grid.page-rows);
+                                if (focused >= 0) {
+                                    grid.scroll-to(focused);
+                                }
+                                return accept;
+                            }
+                            if (event.text == Key.F3) {
+                                root.manage-tags-selected();
+                                return accept;
+                            }
+                            if (event.text == Key.F7) {
+                                if (event.modifiers.shift) {
+                                    root.inbox-selected();
+                                } else {
+                                    root.archive-selected();
+                                }
+                                return accept;
+                            }
+                            if (event.text == Key.Delete) {
+                                if (event.modifiers.shift) {
+                                    root.undelete-selected();
+                                } else {
+                                    root.delete-selected();
+                                }
+                                return accept;
+                            }
+                            reject
+                        }
+                        grid := ThumbnailGrid {
+                            width: 100%;
+                            height: 100%;
+                            rows: root.thumbnail-rows;
+                            thumbnail-width: root.thumbnail-width;
+                            thumbnail-height: root.thumbnail-height;
+                            border: root.thumbnail-border;
+                            margin: root.thumbnail-margin;
+                            banner-top-background: root.banner-top-background;
+                            banner-top-text: root.banner-top-text;
+                            banner-bottom-background: root.banner-bottom-background;
+                            banner-bottom-text: root.banner-bottom-text;
+                            clicked(i, ctrl, shift) => {
+                                grid-keys.focus();
+                                root.thumbnail-clicked(i, ctrl, shift);
+                            }
+                            activated(i) => { root.thumbnail-activated(i); }
+                            menu-requested(i, x, y) => {
+                                root.thumbnail-menu-requested(i);
+                                menu-area.show({ x: x - menu-area.absolute-position.x, y: y - menu-area.absolute-position.y });
+                            }
+                        }
+                    }
+                }
+            }
+            if root.daemon-note != "": Rectangle {
+                background: Theme.panel;
+                // (its own height, whatever room is left over)
+                height: note-row.preferred-height;
+                note-row := HorizontalLayout {
+                    padding: 4px;
+                    padding-left: 6px;
+                    spacing: 8px;
+                    Text {
+                        text: root.daemon-note;
+                        color: Theme.error;
+                        wrap: word-wrap;
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                    }
+                    if root.daemon-retry: Button {
+                        text: "start again";
+                        clicked => { root.start-daemon-again(); }
+                    }
+                }
+            }
+            // the status bar, as the reference's: the page's, then the
+            // network's (what has been read since opening, and pauses)
+            Rectangle {
+                height: 24px;
+                background: Theme.panel;
                 HorizontalLayout {
-                    spacing: 4px;
-                    ComboBox {
-                        model: root.sort-names;
-                        current-index: root.sort-index;
-                        selected => { root.sort-chosen(self.current-index); }
+                    padding-left: 6px;
+                    padding-right: 8px;
+                    spacing: 12px;
+                    Text {
+                        text: root.status;
+                        vertical-alignment: center;
+                        horizontal-stretch: 1;
+                        overflow: elide;
                     }
-                    ComboBox {
-                        width: 130px;
-                        model: root.order-names;
-                        current-index: root.order-index;
-                        selected => { root.order-chosen(self.current-index); }
-                    }
-                }
-                FocusScope {
-                    height: search.preferred-height;
-                    // up and down move through the suggestions, as in the reference
-                    capture-key-pressed(event) => {
-                        if (event.text == Key.UpArrow) {
-                            root.move-highlight(-1);
-                            return accept;
-                        }
-                        if (event.text == Key.DownArrow) {
-                            root.move-highlight(1);
-                            return accept;
-                        }
-                        reject
-                    }
-                    search := LineEdit {
-                        width: 100%;
-                        placeholder-text: "search";
-                        text <=> root.search-text;
-                        edited(text) => { root.search-edited(text); }
-                        accepted(text) => { root.search-accepted(); }
+                    Text {
+                        text: root.status-network;
+                        vertical-alignment: center;
+                        min-width: 120px;
                     }
                 }
-                if root.suggestions.length > 0: Rectangle {
-                    border-width: 1px;
-                    border-color: #c8c8c8;
-                    background: #ffffff;
-                    height: min(root.suggestions.length, 12) * 22px + 4px;
-                    VerticalLayout {
-                        padding: 2px;
-                        alignment: start;
-                        for suggestion[i] in root.suggestions: Rectangle {
-                            height: 22px;
-                            background: i == root.highlighted ? #cfe0fc : pick.has-hover ? #eeeeee : transparent;
-                            Text {
-                                x: 4px;
-                                text: suggestion;
-                                vertical-alignment: center;
-                                overflow: elide;
-                                width: parent.width - 8px;
-                            }
-                            pick := TouchArea {
-                                clicked => { root.suggestion-chosen(i); }
-                            }
-                        }
-                    }
-                }
-                if root.error != "": Text {
-                    text: root.error;
-                    color: #b00020;
-                    wrap: word-wrap;
-                }
-                Rectangle {
-                    border-width: 1px;
-                    border-color: #c8c8c8;
-                    background: #ffffff;
-                    VerticalLayout {
-                        padding: 2px;
-                        alignment: start;
-                        for predicate[i] in root.predicates: Predicate {
-                            text: predicate;
-                            remove => { root.remove-predicate(i); }
-                        }
-                    }
-                }
-            }
-            grid := ThumbnailGrid {
-                rows: root.thumbnail-rows;
-                clicked(i) => { root.thumbnail-clicked(i); }
-                activated(i) => { root.thumbnail-activated(i); }
             }
         }
-        Rectangle {
-            height: 24px;
-            background: #e6e6e6;
-            Text {
-                x: 6px;
-                text: root.status;
-                vertical-alignment: center;
+
+        // (at the bottom right, over the status bar's corner, as the
+        // reference's)
+        if root.popup-summary != "": PopupStack {
+            x: parent.width - self.width - 20px;
+            y: parent.height - self.height - 25px;
+            popups: root.popups;
+            summary: root.popup-summary;
+            dismiss(i) => { root.popup-dismiss(i); }
+            pause-play(i) => { root.popup-pause-play(i); }
+            cancel(i) => { root.popup-cancel(i); }
+            show-files(i) => { root.popup-show-files(i); }
+            copy-traceback(i) => { root.popup-copy-traceback(i); }
+            dismiss-all => { root.popups-dismiss-all(); }
+        }
+        if root.question != "": Rectangle {
+            background: Theme.shade;
+            TouchArea {}
+            Rectangle {
+                width: 420px;
+                height: 90px;
+                background: Theme.window;
+                border-radius: 6px;
+                VerticalLayout {
+                    padding: 12px;
+                    spacing: 8px;
+                    Text {
+                        text: root.question;
+                        wrap: word-wrap;
+                        horizontal-alignment: center;
+                    }
+                    Text {
+                        text: "enter: yes, escape: no";
+                        color: Theme.text;
+                        opacity: 0.7;
+                        horizontal-alignment: center;
+                    }
+                }
             }
+        }
+        if root.chooser-labels.length > 0: Rectangle {
+            background: Theme.shade;
+            TouchArea {
+                clicked => { root.chooser-cancel(); }
+            }
+            Rectangle {
+                width: 336px;
+                height: 336px;
+                background: Theme.window;
+                border-radius: 6px;
+                TouchArea {}
+                for number in [7, 8, 9, 4, 5, 6, 1, 2, 3]: ChooserButton {
+                    // (the grid's columns and rows, from the top left)
+                    x: 8px + mod(number - 1, 3) * 108px;
+                    y: 8px + (2 - floor((number - 1) / 3)) * 108px;
+                    width: 104px;
+                    height: 104px;
+                    label: root.chooser-labels[number - 1];
+                    pressed => { root.chooser-pressed(number); }
+                }
+            }
+        }
+        if root.menu-panes.length > 0: MenuPanes {
+            panes: root.menu-panes;
+            top: menu-bar.height;
+            line-hovered(p, i, right, top, left) => { root.menu-line-hovered(p, i, right, top, left); }
+            line-clicked(p, i, right, top, left) => { root.menu-line-clicked(p, i, right, top, left); }
+            placed(p, x, y, width) => { root.menu-placed(p, x, y, width); }
+            dismiss => { root.menu-dismissed(); }
         }
     }
 }

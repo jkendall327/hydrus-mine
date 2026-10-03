@@ -47,6 +47,7 @@
 //! and sorts the results; see the [`exec`] module for how.
 
 pub mod api;
+pub mod entry;
 pub use hydrus_core::search::context;
 pub mod error;
 pub mod exec;
@@ -62,8 +63,12 @@ pub use hydrus_core::search::time;
 
 pub use api::parse_api_search;
 pub use context::{FileSearchContext, LocationContext, TagContext};
+pub use entry::enter_predicates;
 pub use error::{ApiSearchError, ParseError, ParseErrorKind};
-pub use exec::{Clock, FileSort, SearchError, SortBy, SortOrder, search_files, sort_files};
+pub use exec::{
+    Clock, FileSort, SearchError, SortBy, SortOrder, collect_page_files, search_files, sort_files,
+    sort_page_files,
+};
 pub use filetype::FiletypeSet;
 pub use number::{
     Comparison, DEFAULT_APPROX_PERCENT, NumberOp, NumberTest, RatingOp, RatioOp, TagNumberOp,
@@ -76,6 +81,14 @@ pub use predicate::{
 };
 pub use text::{NamedService, TextContext, predicate_text};
 pub use time::{CalendarDelta, CivilDateTime, RelativeOp, TimeKind, TimeTest};
+
+/// Whether a `system:has url matching regex` pattern compiles as the search
+/// compiles it; why not if it doesn't.
+pub fn check_url_regex(pattern: &str) -> Result<(), String> {
+    fancy_regex::Regex::new(pattern)
+        .map(|_| ())
+        .map_err(|e| e.to_string())
+}
 
 #[cfg(test)]
 pub(crate) mod test_fixtures {

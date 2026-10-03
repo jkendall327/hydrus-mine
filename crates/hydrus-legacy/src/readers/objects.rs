@@ -276,6 +276,46 @@ impl LegacyDb {
         self.singleton(SerialisableType(53), crate::objects::domain::custom_headers)
     }
 
+    /// The login manager's per-domain logins (type 48), if stored.
+    pub fn logins(&self) -> Result<Option<Vec<crate::objects::logins::LegacyLogin>>> {
+        self.singleton(SerialisableType(48), crate::objects::logins::logins)
+    }
+
+    /// The bandwidth manager's rules (type 94), if stored.
+    pub fn bandwidth_manager(
+        &self,
+    ) -> Result<Option<crate::objects::bandwidth::LegacyBandwidthManager>> {
+        self.singleton(
+            SerialisableType(94),
+            crate::objects::bandwidth::bandwidth_manager,
+        )
+    }
+
+    /// The bandwidth manager's usage containers (type 97), by name. Each is
+    /// decoded on its own: one that can't be read comes back as its error.
+    #[allow(clippy::type_complexity)]
+    pub fn bandwidth_trackers(
+        &self,
+    ) -> Result<
+        Vec<(
+            String,
+            std::result::Result<crate::objects::bandwidth::LegacyTrackerContainer, LegacyError>,
+        )>,
+    > {
+        Ok(self
+            .latest_named(SerialisableType(97))?
+            .into_iter()
+            .map(|row| {
+                let location = format!("json_dumps_named tracker {:?}", row.name);
+                let decoded = row
+                    .parse()
+                    .and_then(|object| crate::objects::bandwidth::tracker_container(&object))
+                    .map_err(|e| LegacyError::serialisable(&location, e));
+                (row.name, decoded)
+            })
+            .collect())
+    }
+
     /// The latest object of each name of one type in `json_dumps_named`.
     fn latest_named(&self, kind: SerialisableType) -> Result<Vec<StoredNamedObject>> {
         let mut latest: std::collections::BTreeMap<String, StoredNamedObject> =
@@ -293,6 +333,15 @@ impl LegacyDb {
             }
         }
         Ok(latest.into_values().collect())
+    }
+
+    /// The names of the saved GUI sessions (type 104), a-z.
+    pub fn gui_session_names(&self) -> Result<Vec<String>> {
+        Ok(self
+            .latest_named(SerialisableType(104))?
+            .into_iter()
+            .map(|row| row.name)
+            .collect())
     }
 
     /// The latest save of the GUI session `name` (type 104), and the stored

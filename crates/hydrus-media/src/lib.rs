@@ -24,6 +24,7 @@
 //!   hashes, perceptual hashes and thumbnails.
 //! - [`perceptual_hash`], [`blurhash()`], [`thumbnail_resolution`].
 
+pub mod animation;
 mod blurhash;
 mod detect;
 pub mod encode;
@@ -41,15 +42,16 @@ mod tools;
 pub mod visual;
 
 pub use blurhash::blurhash;
+pub use detect::set_comic_book_detection;
 pub use error::MediaError;
 pub use ffmpeg::Ffmpeg;
 pub use hashes::{FileHashes, hash_bytes, hash_file};
-pub use imaging::Raster;
+pub use imaging::{Raster, TransparencyStrictness, set_transparency_strictness};
 pub use phash::{BLANK_PERCEPTUAL_HASH, is_blank as is_blank_perceptual_hash, perceptual_hash};
 pub use thumbnail::{
     Thumbnail, ThumbnailFormat, ThumbnailScale, ThumbnailSpec, thumbnail_resolution,
 };
-pub use tools::{Analysis, FileFlags, FileInfo, MediaTools};
+pub use tools::{Analysis, FileFlags, FileInfo, MediaTools, UGOIRA_DEFAULT_FRAME_DURATION_MS};
 
 /// Decode image bytes the way the reference's `GenerateNumPyImage` does
 /// (EXIF rotation, sRGB colour management, RGB/RGBA, useless alpha dropped).

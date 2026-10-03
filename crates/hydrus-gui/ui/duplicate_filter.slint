@@ -1,0 +1,264 @@
+// The duplicate filter's window: the file shown of a pair, and beside it
+// how it compares with the other (the reference's comparison statements)
+// and the decisions. As in the reference: a left click on the file says it
+// is better and deletes the other, a right click says they are alternates,
+// a middle click goes back, up skips; left and right (page up and down, or
+// the mouse wheel) switch between the two files, keeping the zoom and
+// position. Video, audio and animations play, as in the media viewer;
+// space pauses. As in the media viewer, z switches between 100% and
+// fitting, + and - (or ctrl and the mouse wheel) zoom, shift and the arrow
+// keys pan, and escape or enter closes it.
+
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export struct Statement {
+    text: string,
+    // positive counts for the file shown, negative against
+    score: int,
+}
+
+component Choice inherits Button {
+    width: 100%;
+}
+
+export component DuplicateFilterWindow inherits Window {
+    title: "duplicate filter";
+    preferred-width: 1200px;
+    preferred-height: 800px;
+    background: #202020;
+
+    in property <image> media;
+    // e.g. "File One - 3/100 - 2 decisions"
+    in property <string> index-text;
+    in property <[Statement]> statements;
+    in property <string> score-text;
+    in property <int> score;
+    // a question for the user (commit the batch? another group?), with
+    // its answers; none while filtering
+    in property <string> question;
+    in property <[string]> answers;
+    // where the file is drawn in its area: its box at its zoom
+    in property <length> media-x;
+    in property <length> media-y;
+    in property <length> media-width: area.width;
+    in property <length> media-height: area.height;
+    // the still drawn sharply over it, once rendered (see still.rs)
+    in property <image> sharp;
+    in property <bool> sharp-shown;
+    in property <bool> sharp-opaque: true;
+    in property <length> sharp-x;
+    in property <length> sharp-y;
+    in property <length> sharp-width;
+    in property <length> sharp-height;
+    out property <length> canvas-width: area.width;
+    out property <length> canvas-height: area.height;
+
+    // "better-delete", "better-keep", "same", "alternates", "false-positive",
+    // "skip", "back"
+    callback decide(string);
+    callback switch-media();
+    callback toggle-pause();
+    callback answer(int);
+    callback close-requested();
+    // zoom in (1), out (-1) or switch (0), about the pointer if it is over
+    // the file's area
+    callback zoom(int, bool, length, length);
+    callback pan(int, int);
+    // (files aren't dragged here: a click decides)
+    callback drag(length, length);
+    callback canvas-resized(length, length);
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (root.question != "") {
+                return reject;
+            }
+            if (event.modifiers.shift) {
+                if (event.text == Key.UpArrow) {
+                    root.pan(0, -1);
+                    return accept;
+                }
+                if (event.text == Key.DownArrow) {
+                    root.pan(0, 1);
+                    return accept;
+                }
+                if (event.text == Key.LeftArrow) {
+                    root.pan(-1, 0);
+                    return accept;
+                }
+                if (event.text == Key.RightArrow) {
+                    root.pan(1, 0);
+                    return accept;
+                }
+            }
+            if ((event.text == "z" || event.text == "Z") && !event.modifiers.control && !event.modifiers.alt) {
+                root.zoom(0, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "+") {
+                root.zoom(1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "-") {
+                root.zoom(-1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == Key.RightArrow || event.text == Key.PageDown
+                || event.text == Key.LeftArrow || event.text == Key.PageUp) {
+                root.switch-media();
+                return accept;
+            }
+            if (event.text == Key.UpArrow) {
+                root.decide("skip");
+                return accept;
+            }
+            if (event.text == " ") {
+                root.toggle-pause();
+                return accept;
+            }
+            if (event.text == Key.Escape || event.text == Key.Return) {
+                root.close-requested();
+                return accept;
+            }
+            reject
+        }
+
+        HorizontalLayout {
+            area := Rectangle {
+                horizontal-stretch: 1;
+                clip: true;
+                changed width => { root.canvas-resized(self.width, self.height); }
+                changed height => { root.canvas-resized(self.width, self.height); }
+                Image {
+                    x: root.media-x;
+                    y: root.media-y;
+                    width: root.media-width;
+                    height: root.media-height;
+                    source: root.media;
+                    visible: !root.sharp-shown || root.sharp-opaque;
+                    image-fit: contain;
+                }
+                if root.sharp-shown: Image {
+                    x: root.sharp-x;
+                    y: root.sharp-y;
+                    width: root.sharp-width;
+                    height: root.sharp-height;
+                    source: root.sharp;
+                    image-fit: fill;
+                }
+                Text {
+                    x: 8px;
+                    y: 6px;
+                    text: root.index-text;
+                    color: #e0e0e0;
+                    font-size: 14px;
+                }
+                pointer := TouchArea {
+                    pointer-event(event) => {
+                        if (root.question != "" || event.kind != PointerEventKind.down) {
+                            return;
+                        }
+                        if (event.button == PointerEventButton.left) {
+                            root.decide("better-delete");
+                        } else if (event.button == PointerEventButton.right) {
+                            root.decide("alternates");
+                        } else if (event.button == PointerEventButton.middle) {
+                            root.decide("back");
+                        }
+                    }
+                    scroll-event(event) => {
+                        if (root.question != "") {
+                            return accept;
+                        }
+                        if (event.modifiers.control) {
+                            if (event.delta-y > 0) {
+                                root.zoom(1, true, self.mouse-x, self.mouse-y);
+                            } else if (event.delta-y < 0) {
+                                root.zoom(-1, true, self.mouse-x, self.mouse-y);
+                            }
+                        } else if (event.delta-y != 0) {
+                            root.switch-media();
+                        }
+                        accept
+                    }
+                }
+            }
+
+            Rectangle {
+                width: 330px;
+                background: Theme.window;
+                VerticalLayout {
+                    padding: 8px;
+                    spacing: 4px;
+                    for statement in root.statements: Text {
+                        text: statement.text;
+                        wrap: word-wrap;
+                        color: statement.score > 0 ? Theme.good : statement.score < 0 ? Theme.bad : Theme.text;
+                    }
+                    Text {
+                        text: root.score-text;
+                        font-weight: 700;
+                        color: root.score > 0 ? Theme.good : root.score < 0 ? Theme.bad : Theme.text;
+                    }
+                    Rectangle {
+                        height: 8px;
+                    }
+                    Choice {
+                        text: "this is better, and delete the other";
+                        clicked => { root.decide("better-delete"); }
+                    }
+                    Choice {
+                        text: "this is better, but keep both";
+                        clicked => { root.decide("better-keep"); }
+                    }
+                    Choice {
+                        text: "they are the same quality";
+                        clicked => { root.decide("same"); }
+                    }
+                    Choice {
+                        text: "they are related alternates";
+                        clicked => { root.decide("alternates"); }
+                    }
+                    Choice {
+                        text: "they are not related";
+                        clicked => { root.decide("false-positive"); }
+                    }
+                    Choice {
+                        text: "skip";
+                        clicked => { root.decide("skip"); }
+                    }
+                    Choice {
+                        text: "go back";
+                        clicked => { root.decide("back"); }
+                    }
+                    Rectangle {}
+                }
+            }
+        }
+
+        if root.question != "": Rectangle {
+            background: Theme.shade;
+            TouchArea {}
+            Rectangle {
+                width: 360px;
+                height: dialog.preferred-height;
+                background: Theme.window;
+                border-radius: 4px;
+                dialog := VerticalLayout {
+                    padding: 12px;
+                    spacing: 8px;
+                    Text {
+                        text: root.question;
+                        wrap: word-wrap;
+                    }
+                    for answer[i] in root.answers: Button {
+                        text: answer;
+                        clicked => { root.answer(i); }
+                    }
+                }
+            }
+        }
+    }
+}

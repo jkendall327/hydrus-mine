@@ -90,6 +90,16 @@ impl WatcherState {
         }
     }
 
+    /// `SetCheckerOptions`: other checker options time the next check
+    /// again (and may find the thread dead, pausing checking); the same
+    /// change nothing.
+    pub fn set_checker_options(&mut self, checker: CheckerOptions, seeds: &[SeedTime], now: i64) {
+        if checker != self.checker {
+            self.checker = checker;
+            self.update_next_check_time(seeds, now);
+        }
+    }
+
     /// `CheckNow`: check again soon, alive again.
     pub fn check_now(&mut self, seeds: &[SeedTime], now: i64) {
         self.check_now = true;

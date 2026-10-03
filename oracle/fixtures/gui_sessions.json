@@ -1,4 +1,3374 @@
 {
+ "collected_pages": [
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [],
+       false
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [
+        "page",
+        "chapter",
+        "title"
+       ],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": false,
+     "system_hash_locked_syncs_new": true,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [
+            "page",
+            "chapter",
+            "title"
+           ],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [],
+           false
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [],
+       false
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [
+        "chapter",
+        "title"
+       ],
+       [],
+       false,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": false,
+     "system_hash_locked_syncs_new": true,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [
+            "chapter",
+            "title"
+           ],
+           [],
+           false,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [],
+           false
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [],
+       false
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [
+        "chapter",
+        "creator"
+       ],
+       [
+        "5f8779cb3aad6d3846ce022f21251262ff82661011c877d1adb8917069af50f0",
+        "f7af338b1db4e107e7c422d49f8a67729364dbbfd4d21b32620c29561a811680"
+       ],
+       false,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": false,
+     "system_hash_locked_syncs_new": true,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [
+            "chapter",
+            "creator"
+           ],
+           [
+            "5f8779cb3aad6d3846ce022f21251262ff82661011c877d1adb8917069af50f0",
+            "f7af338b1db4e107e7c422d49f8a67729364dbbfd4d21b32620c29561a811680"
+           ],
+           false,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [],
+           false
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [],
+       false
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [
+        "series",
+        "creator",
+        "chapter"
+       ],
+       [
+        "340ea02779e449e91e1a420c1c1c4292f4e33c27f6b47d655aa82b931b5cb215",
+        "85730f8c0f1fe1980d2420d4f9ab5d0fa8f8152716d95bcadec6dac13aba60e2"
+       ],
+       false,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": false,
+     "system_hash_locked_syncs_new": true,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [
+            "series",
+            "creator",
+            "chapter"
+           ],
+           [
+            "340ea02779e449e91e1a420c1c1c4292f4e33c27f6b47d655aa82b931b5cb215",
+            "85730f8c0f1fe1980d2420d4f9ab5d0fa8f8152716d95bcadec6dac13aba60e2"
+           ],
+           false,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [],
+           false
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
+ "duplicates_pages": [
+  {
+   "facts": {
+    "name": "dupes",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": false,
+     "duplicate_pair_sort_type": 2,
+     "filter_group_mode": true,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "éclair",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "éclair",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       1,
+       1,
+       8
+      ]
+     ],
+     "synchronised": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "dupes",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "éclair",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "éclair",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           1,
+           1,
+           8
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         2
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "duplicates",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": false,
+     "duplicate_pair_sort_type": 2,
+     "filter_group_mode": false,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "616c6c206c6f63616c206d65646961"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "616c6c206c6f63616c206d65646961"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       2,
+       0,
+       8
+      ]
+     ],
+     "synchronised": false
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "duplicates",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "616c6c206c6f63616c206d65646961"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "616c6c206c6f63616c206d65646961"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           2,
+           0,
+           8
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         2
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         false
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "duplicates",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": true,
+     "duplicate_pair_sort_type": 3,
+     "filter_group_mode": true,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "series:metroid",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "meta:highres",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "series:metroid",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "meta:highres",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       1,
+       1,
+       4
+      ]
+     ],
+     "synchronised": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "duplicates",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "series:metroid",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "meta:highres",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "series:metroid",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "meta:highres",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           1,
+           1,
+           4
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         3
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "dupes",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": true,
+     "duplicate_pair_sort_type": 2,
+     "filter_group_mode": true,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "solo",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "キャラクター:初音ミク",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "solo",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "キャラクター:初音ミク",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       0,
+       1,
+       8
+      ]
+     ],
+     "synchronised": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "dupes",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "solo",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "キャラクター:初音ミク",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "solo",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "キャラクター:初音ミク",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           0,
+           1,
+           8
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         2
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "duplicates",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": false,
+     "duplicate_pair_sort_type": 3,
+     "filter_group_mode": false,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       1,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "solo",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "series:metroid",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "meta:highres",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "solo",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "series:metroid",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "meta:highres",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       2,
+       0,
+       8
+      ]
+     ],
+     "synchronised": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "duplicates",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           1,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "solo",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "series:metroid",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "meta:highres",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "solo",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "series:metroid",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "meta:highres",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           2,
+           0,
+           8
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         3
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         false
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "dupes",
+    "type": 8,
+    "variables": {
+     "duplicate_pair_sort_asc": true,
+     "duplicate_pair_sort_type": 2,
+     "filter_group_mode": false,
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "potential_duplicates_search_context": [
+      134,
+      1,
+      [
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "éclair",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       [
+        15,
+        5,
+        [
+         [
+          103,
+          1,
+          [
+           [
+            "6c6f63616c2066696c6573"
+           ],
+           []
+          ]
+         ],
+         [
+          80,
+          2,
+          [
+           "616c6c206b6e6f776e2074616773",
+           true,
+           true,
+           "616c6c206b6e6f776e2074616773"
+          ]
+         ],
+         0,
+         [
+          [
+           14,
+           8,
+           [
+            0,
+            "blue eyes",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "creator:someone",
+            true
+           ]
+          ],
+          [
+           14,
+           8,
+           [
+            0,
+            "éclair",
+            true
+           ]
+          ]
+         ],
+         false
+        ]
+       ],
+       1,
+       2,
+       0
+      ]
+     ],
+     "synchronised": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "dupes",
+     8,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "potential_duplicates_search_context"
+        ],
+        [
+         2,
+         [
+          134,
+          1,
+          [
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "éclair",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           [
+            15,
+            5,
+            [
+             [
+              103,
+              1,
+              [
+               [
+                "6c6f63616c2066696c6573"
+               ],
+               []
+              ]
+             ],
+             [
+              80,
+              2,
+              [
+               "616c6c206b6e6f776e2074616773",
+               true,
+               true,
+               "616c6c206b6e6f776e2074616773"
+              ]
+             ],
+             0,
+             [
+              [
+               14,
+               8,
+               [
+                0,
+                "blue eyes",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "creator:someone",
+                true
+               ]
+              ],
+              [
+               14,
+               8,
+               [
+                0,
+                "éclair",
+                true
+               ]
+              ]
+             ],
+             false
+            ]
+           ],
+           1,
+           2,
+           0
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_type"
+        ],
+        [
+         0,
+         2
+        ]
+       ],
+       [
+        [
+         0,
+         "duplicate_pair_sort_asc"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "filter_group_mode"
+        ],
+        [
+         0,
+         false
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
  "gallery_imports": [
   {
    "facts": {
@@ -3491,6 +6861,6516 @@
      ],
      0,
      "network error: 503"
+    ]
+   ]
+  }
+ ],
+ "hdd_import_pages": [
+  {
+   "facts": {
+    "name": "import",
+    "type": 3,
+    "variables": {
+     "hdd_import": {
+      "delete_after_success": true,
+      "file_seeds": [
+       {
+        "additional": {
+         "abababababababababababababababababababababababababababababababab": [
+          "series:metroid"
+         ]
+        },
+        "comparison": "/home/someone/import 0/0.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 0/0.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": null,
+        "status": 9,
+        "tags": [],
+        "type": 0
+       },
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [],
+         "6c6f63616c2074616773": [
+          "series:metroid"
+         ]
+        },
+        "comparison": "/home/someone/import 0/1.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 0/1.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": null,
+        "status": 8,
+        "tags": [],
+        "type": 0
+       },
+       {
+        "additional": {},
+        "comparison": "/home/someone/import 0/2.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 0/2.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": null,
+        "status": 7,
+        "tags": [],
+        "type": 0
+       }
+      ],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        [
+         [
+          [
+           0,
+           5
+          ],
+          [
+           2,
+           [
+            153,
+            1,
+            [
+             false,
+             true,
+             3,
+             [],
+             null,
+             []
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "metadata_routers": 0,
+      "paused": false
+     },
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       1,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ]
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "import",
+     3,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           1,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "hdd_import"
+        ],
+        [
+         2,
+         [
+          9,
+          4,
+          [
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 0/0.png",
+                 "/home/someone/import 0/0.png",
+                 1790940219,
+                 1790940219,
+                 null,
+                 9,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "abababababababababababababababababababababababababababababababab",
+                    [
+                     "series:metroid"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 0/1.png",
+                 "/home/someone/import 0/1.png",
+                 1790940219,
+                 1790940219,
+                 null,
+                 8,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "6c6f63616c2074616773",
+                    [
+                     "series:metroid"
+                    ]
+                   ],
+                   [
+                    "646f776e6c6f616465722074616773",
+                    []
+                   ]
+                  ]
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 0/2.png",
+                 "/home/someone/import 0/2.png",
+                 1790940219,
+                 1790940219,
+                 null,
+                 7,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             [
+              [
+               [
+                0,
+                5
+               ],
+               [
+                2,
+                [
+                 153,
+                 1,
+                 [
+                  false,
+                  true,
+                  3,
+                  [],
+                  null,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            26,
+            3,
+            []
+           ],
+           true,
+           false
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "import",
+    "type": 3,
+    "variables": {
+     "hdd_import": {
+      "delete_after_success": false,
+      "file_seeds": [
+       {
+        "additional": {},
+        "comparison": "/home/someone/import 1/0.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 1/0.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": null,
+        "status": 7,
+        "tags": [],
+        "type": 0
+       }
+      ],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        []
+       ]
+      ],
+      "metadata_routers": 1,
+      "paused": false
+     },
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ]
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "import",
+     3,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "hdd_import"
+        ],
+        [
+         2,
+         [
+          9,
+          4,
+          [
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 1/0.png",
+                 "/home/someone/import 1/0.png",
+                 1790940219,
+                 1790940219,
+                 null,
+                 7,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             []
+            ]
+           ],
+           [
+            26,
+            3,
+            [
+             [
+              2,
+              [
+               109,
+               3,
+               [
+                [
+                 26,
+                 3,
+                 []
+                ],
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  [
+                   [
+                    2,
+                    [
+                     99,
+                     1,
+                     [
+                      2,
+                      true,
+                      null
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                [
+                 116,
+                 3,
+                 [
+                  false,
+                  "",
+                  [
+                   55,
+                   2,
+                   [
+                    [],
+                    "0123456789abcdef.jpg.txt"
+                   ]
+                  ],
+                  "\n"
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "import",
+    "type": 3,
+    "variables": {
+     "hdd_import": {
+      "delete_after_success": true,
+      "file_seeds": [
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "creator:someone",
+          "キャラクター:初音ミク"
+         ],
+         "abababababababababababababababababababababababababababababababab": [
+          "meta:highres",
+          "solo",
+          "éclair"
+         ]
+        },
+        "comparison": "/home/someone/import 2/0.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 2/0.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": 1682314255,
+        "status": 0,
+        "tags": [],
+        "type": 0
+       },
+       {
+        "additional": {},
+        "comparison": "/home/someone/import 2/1.png",
+        "created": 1790940219,
+        "data": "/home/someone/import 2/1.png",
+        "filterable": [],
+        "hashes": [],
+        "headers": [],
+        "modified": 1790940219,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": 1667095564,
+        "status": 0,
+        "tags": [],
+        "type": 0
+       }
+      ],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        [
+         [
+          [
+           0,
+           5
+          ],
+          [
+           2,
+           [
+            153,
+            1,
+            [
+             false,
+             true,
+             3,
+             [
+              "comment"
+             ],
+             null,
+             []
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "metadata_routers": 0,
+      "paused": true
+     },
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       1,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ]
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "import",
+     3,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           1,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "hdd_import"
+        ],
+        [
+         2,
+         [
+          9,
+          4,
+          [
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 2/0.png",
+                 "/home/someone/import 2/0.png",
+                 1790940219,
+                 1790940219,
+                 1682314255,
+                 0,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "キャラクター:初音ミク",
+                     "creator:someone"
+                    ]
+                   ],
+                   [
+                    "abababababababababababababababababababababababababababababababab",
+                    [
+                     "solo",
+                     "meta:highres",
+                     "éclair"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import 2/1.png",
+                 "/home/someone/import 2/1.png",
+                 1790940219,
+                 1790940219,
+                 1667095564,
+                 0,
+                 "",
+                 null,
+                 {},
+                 [],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [],
+                 [],
+                 [],
+                 [],
+                 []
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             [
+              [
+               [
+                0,
+                5
+               ],
+               [
+                2,
+                [
+                 153,
+                 1,
+                 [
+                  false,
+                  true,
+                  3,
+                  [
+                   "comment"
+                  ],
+                  null,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            26,
+            3,
+            []
+           ],
+           true,
+           true
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
+ ],
+ "hdd_import_sessions": [
+  {
+   "container": [
+    104,
+    "last session",
+    1,
+    [
+     106,
+     "top",
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         107,
+         "import",
+         1,
+         "143dcabd9d845e69d3bb35afb86597a4e253343171fa6d7496a52aa88b37ea95"
+        ]
+       ],
+       [
+        2,
+        [
+         107,
+         "import",
+         1,
+         "83f0ce1bf432a5ec06785bc0cbd8b5163778fd74976ee215ce5abedf9a489510"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "facts": {
+    "name": "last session",
+    "pages": {
+     "143dcabd9d845e69d3bb35afb86597a4e253343171fa6d7496a52aa88b37ea95": {
+      "hashes": [],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": false,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 0/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 0/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1650306955,
+           "status": 4,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 0/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 0/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 1,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 0/2.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 0/2.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 4,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           []
+          ]
+         ],
+         "metadata_routers": 0,
+         "paused": false
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          2,
+          0,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "83f0ce1bf432a5ec06785bc0cbd8b5163778fd74976ee215ce5abedf9a489510": {
+      "hashes": [
+       "95c6fe8e69c3bed9601ecdbb2a90283f3f55c141b9a6c8b083c5bdc4268a0c0c"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": false,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 1/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 1/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1501753795,
+           "status": 1,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {
+            "6c6f63616c2074616773": [
+             "series:metroid"
+            ]
+           },
+           "comparison": "/home/someone/import 1/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 1/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 4,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           [
+            [
+             [
+              0,
+              5
+             ],
+             [
+              2,
+              [
+               153,
+               1,
+               [
+                false,
+                true,
+                3,
+                [
+                 "artist note",
+                 "comment"
+                ],
+                null,
+                []
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         "metadata_routers": 1,
+         "paused": true
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          2,
+          1,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     }
+    },
+    "tree": {
+     "name": "top",
+     "pages": [
+      {
+       "name": "import",
+       "page_data_hash": "143dcabd9d845e69d3bb35afb86597a4e253343171fa6d7496a52aa88b37ea95"
+      },
+      {
+       "name": "import",
+       "page_data_hash": "83f0ce1bf432a5ec06785bc0cbd8b5163778fd74976ee215ce5abedf9a489510"
+      }
+     ]
+    }
+   },
+   "page_data": {
+    "143dcabd9d845e69d3bb35afb86597a4e253343171fa6d7496a52aa88b37ea95": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              2,
+              0,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 0/0.png",
+                    "/home/someone/import 0/0.png",
+                    1790940219,
+                    1790940219,
+                    1650306955,
+                    4,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 0/1.png",
+                    "/home/someone/import 0/1.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    1,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 0/2.png",
+                    "/home/someone/import 0/2.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    4,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                []
+               ]
+              ],
+              [
+               26,
+               3,
+               []
+              ],
+              false,
+              false
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      []
+     ]
+    ],
+    "83f0ce1bf432a5ec06785bc0cbd8b5163778fd74976ee215ce5abedf9a489510": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              2,
+              1,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 1/0.png",
+                    "/home/someone/import 1/0.png",
+                    1790940219,
+                    1790940219,
+                    1501753795,
+                    1,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 1/1.png",
+                    "/home/someone/import 1/1.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    4,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     [
+                      [
+                       "6c6f63616c2074616773",
+                       [
+                        "series:metroid"
+                       ]
+                      ]
+                     ]
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                [
+                 [
+                  [
+                   0,
+                   5
+                  ],
+                  [
+                   2,
+                   [
+                    153,
+                    1,
+                    [
+                     false,
+                     true,
+                     3,
+                     [
+                      "artist note",
+                      "comment"
+                     ],
+                     null,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               26,
+               3,
+               [
+                [
+                 2,
+                 [
+                  109,
+                  3,
+                  [
+                   [
+                    26,
+                    3,
+                    []
+                   ],
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     [
+                      [
+                       2,
+                       [
+                        99,
+                        1,
+                        [
+                         2,
+                         true,
+                         null
+                        ]
+                       ]
+                      ]
+                     ]
+                    ]
+                   ],
+                   [
+                    116,
+                    3,
+                    [
+                     false,
+                     "",
+                     [
+                      55,
+                      2,
+                      [
+                       [],
+                       "0123456789abcdef.jpg.txt"
+                      ]
+                     ],
+                     "\n"
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              false,
+              true
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "95c6fe8e69c3bed9601ecdbb2a90283f3f55c141b9a6c8b083c5bdc4268a0c0c"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "container": [
+    104,
+    "my saved session",
+    1,
+    [
+     106,
+     "top",
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         106,
+         "downloaders",
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             107,
+             "import",
+             1,
+             "7401113bf73828fafe0c10211e31e7cd7c22c683c17fcb0c027ea0e439006bbe"
+            ]
+           ],
+           [
+            2,
+            [
+             107,
+             "import",
+             1,
+             "eb7a6f4c554b4c943084e5f14070a53f5db992fb0ab6025d3fba965b65fed8a5"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         107,
+         "import",
+         1,
+         "b2d8e3b518173cec04aabd4442613678e64317f201292f2f783f96eab71dc7a6"
+        ]
+       ],
+       [
+        2,
+        [
+         107,
+         "import",
+         1,
+         "d21e7eb9dd1b58aac5d0e97bfefc0169e54e02ed41134e7c96cddafc69375d2f"
+        ]
+       ],
+       [
+        2,
+        [
+         107,
+         "import",
+         1,
+         "f547f334f57a3d6c239d2b8c70bb898899e831e985e2483b7a4d3f4efe1e4ad0"
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "facts": {
+    "name": "my saved session",
+    "pages": {
+     "7401113bf73828fafe0c10211e31e7cd7c22c683c17fcb0c027ea0e439006bbe": {
+      "hashes": [
+       "9b71318b8310c63366e54ac487e2112408f4f6bf7485064e4ac90a5e6454a3d0"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": false,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 100/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 100/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 0,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 100/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 100/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 9,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           []
+          ]
+         ],
+         "metadata_routers": 0,
+         "paused": false
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          0,
+          0,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "b2d8e3b518173cec04aabd4442613678e64317f201292f2f783f96eab71dc7a6": {
+      "hashes": [
+       "ad20525ea301a51b3ba54cd4ee09219fbc4cd5b87ed7fc03f974490d2d0f1a3a",
+       "c68107a0982b02771d175b02d821db067cd26d28d3407c1d9c92579746394ae3",
+       "ce23e264f6755f899fe4080eb299633565adf7b01fd8162123241e90225807a8"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": false,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 102/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 102/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 3,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           []
+          ]
+         ],
+         "metadata_routers": 0,
+         "paused": true
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          2,
+          1,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "d21e7eb9dd1b58aac5d0e97bfefc0169e54e02ed41134e7c96cddafc69375d2f": {
+      "hashes": [
+       "1fed725e07116984e70c24011e84564a51e35a5bb9f496c9467129d7c187666b",
+       "b225afb0d6766706c998c43f0f158b3e6bf63b316a717cc9c74bc91d89a151d3"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": true,
+         "file_seeds": [
+          {
+           "additional": {
+            "6c6f63616c2074616773": [
+             "series:metroid"
+            ]
+           },
+           "comparison": "/home/someone/import 103/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 103/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1593465450,
+           "status": 8,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 103/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 103/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1540021947,
+           "status": 0,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 103/2.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 103/2.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1655321700,
+           "status": 9,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           []
+          ]
+         ],
+         "metadata_routers": 0,
+         "paused": true
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          0,
+          0,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "eb7a6f4c554b4c943084e5f14070a53f5db992fb0ab6025d3fba965b65fed8a5": {
+      "hashes": [
+       "c4a98cae6df29576d310e23d445cec015cf17f27e3adb9bc58c0d7e7a5dc4fae"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": true,
+         "file_seeds": [
+          {
+           "additional": {
+            "6c6f63616c2074616773": [
+             "series:metroid"
+            ]
+           },
+           "comparison": "/home/someone/import 101/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 101/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 7,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 101/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 101/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 1,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 101/2.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 101/2.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 4,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 101/3.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 101/3.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1637932040,
+           "status": 8,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           [
+            [
+             [
+              0,
+              5
+             ],
+             [
+              2,
+              [
+               153,
+               1,
+               [
+                true,
+                true,
+                3,
+                [
+                 "artist note"
+                ],
+                null,
+                []
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         "metadata_routers": 1,
+         "paused": false
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          2,
+          1,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     },
+     "f547f334f57a3d6c239d2b8c70bb898899e831e985e2483b7a4d3f4efe1e4ad0": {
+      "hashes": [
+       "8dcda4cc861c394a5afed00271144d20e51ee0b903c3998a9ee74384b6787024",
+       "f6967b1ef723e0ad2e66ddd07243bd14cb685747540e15e015e13472b4e2ce5e"
+      ],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": true,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 104/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 104/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1619132992,
+           "status": 9,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {
+            "646f776e6c6f616465722074616773": []
+           },
+           "comparison": "/home/someone/import 104/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 104/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 3,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           [
+            [
+             [
+              0,
+              5
+             ],
+             [
+              2,
+              [
+               153,
+               1,
+               [
+                true,
+                true,
+                3,
+                [],
+                null,
+                []
+               ]
+              ]
+             ]
+            ]
+           ]
+          ]
+         ],
+         "metadata_routers": 0,
+         "paused": false
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          0,
+          0,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     }
+    },
+    "tree": {
+     "name": "top",
+     "pages": [
+      {
+       "name": "downloaders",
+       "pages": [
+        {
+         "name": "import",
+         "page_data_hash": "7401113bf73828fafe0c10211e31e7cd7c22c683c17fcb0c027ea0e439006bbe"
+        },
+        {
+         "name": "import",
+         "page_data_hash": "eb7a6f4c554b4c943084e5f14070a53f5db992fb0ab6025d3fba965b65fed8a5"
+        }
+       ]
+      },
+      {
+       "name": "import",
+       "page_data_hash": "b2d8e3b518173cec04aabd4442613678e64317f201292f2f783f96eab71dc7a6"
+      },
+      {
+       "name": "import",
+       "page_data_hash": "d21e7eb9dd1b58aac5d0e97bfefc0169e54e02ed41134e7c96cddafc69375d2f"
+      },
+      {
+       "name": "import",
+       "page_data_hash": "f547f334f57a3d6c239d2b8c70bb898899e831e985e2483b7a4d3f4efe1e4ad0"
+      }
+     ]
+    }
+   },
+   "page_data": {
+    "7401113bf73828fafe0c10211e31e7cd7c22c683c17fcb0c027ea0e439006bbe": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              0,
+              0,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 100/0.png",
+                    "/home/someone/import 100/0.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    0,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 100/1.png",
+                    "/home/someone/import 100/1.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    9,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                []
+               ]
+              ],
+              [
+               26,
+               3,
+               []
+              ],
+              false,
+              false
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "9b71318b8310c63366e54ac487e2112408f4f6bf7485064e4ac90a5e6454a3d0"
+      ]
+     ]
+    ],
+    "b2d8e3b518173cec04aabd4442613678e64317f201292f2f783f96eab71dc7a6": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              2,
+              1,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 102/0.png",
+                    "/home/someone/import 102/0.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    3,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                []
+               ]
+              ],
+              [
+               26,
+               3,
+               []
+              ],
+              false,
+              true
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "ad20525ea301a51b3ba54cd4ee09219fbc4cd5b87ed7fc03f974490d2d0f1a3a",
+       "c68107a0982b02771d175b02d821db067cd26d28d3407c1d9c92579746394ae3",
+       "ce23e264f6755f899fe4080eb299633565adf7b01fd8162123241e90225807a8"
+      ]
+     ]
+    ],
+    "d21e7eb9dd1b58aac5d0e97bfefc0169e54e02ed41134e7c96cddafc69375d2f": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              0,
+              0,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 103/0.png",
+                    "/home/someone/import 103/0.png",
+                    1790940219,
+                    1790940219,
+                    1593465450,
+                    8,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     [
+                      [
+                       "6c6f63616c2074616773",
+                       [
+                        "series:metroid"
+                       ]
+                      ]
+                     ]
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 103/1.png",
+                    "/home/someone/import 103/1.png",
+                    1790940219,
+                    1790940219,
+                    1540021947,
+                    0,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 103/2.png",
+                    "/home/someone/import 103/2.png",
+                    1790940219,
+                    1790940219,
+                    1655321700,
+                    9,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                []
+               ]
+              ],
+              [
+               26,
+               3,
+               []
+              ],
+              true,
+              true
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "1fed725e07116984e70c24011e84564a51e35a5bb9f496c9467129d7c187666b",
+       "b225afb0d6766706c998c43f0f158b3e6bf63b316a717cc9c74bc91d89a151d3"
+      ]
+     ]
+    ],
+    "eb7a6f4c554b4c943084e5f14070a53f5db992fb0ab6025d3fba965b65fed8a5": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              2,
+              1,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 101/0.png",
+                    "/home/someone/import 101/0.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    7,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     [
+                      [
+                       "6c6f63616c2074616773",
+                       [
+                        "series:metroid"
+                       ]
+                      ]
+                     ]
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 101/1.png",
+                    "/home/someone/import 101/1.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    1,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 101/2.png",
+                    "/home/someone/import 101/2.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    4,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 101/3.png",
+                    "/home/someone/import 101/3.png",
+                    1790940219,
+                    1790940219,
+                    1637932040,
+                    8,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                [
+                 [
+                  [
+                   0,
+                   5
+                  ],
+                  [
+                   2,
+                   [
+                    153,
+                    1,
+                    [
+                     true,
+                     true,
+                     3,
+                     [
+                      "artist note"
+                     ],
+                     null,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               26,
+               3,
+               [
+                [
+                 2,
+                 [
+                  109,
+                  3,
+                  [
+                   [
+                    26,
+                    3,
+                    []
+                   ],
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     [
+                      [
+                       2,
+                       [
+                        99,
+                        1,
+                        [
+                         2,
+                         true,
+                         null
+                        ]
+                       ]
+                      ]
+                     ]
+                    ]
+                   ],
+                   [
+                    116,
+                    3,
+                    [
+                     false,
+                     "",
+                     [
+                      55,
+                      2,
+                      [
+                       [],
+                       "0123456789abcdef.jpg.txt"
+                      ]
+                     ],
+                     "\n"
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              true,
+              false
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "c4a98cae6df29576d310e23d445cec015cf17f27e3adb9bc58c0d7e7a5dc4fae"
+      ]
+     ]
+    ],
+    "f547f334f57a3d6c239d2b8c70bb898899e831e985e2483b7a4d3f4efe1e4ad0": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              0,
+              0,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 104/0.png",
+                    "/home/someone/import 104/0.png",
+                    1790940219,
+                    1790940219,
+                    1619132992,
+                    9,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 104/1.png",
+                    "/home/someone/import 104/1.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    3,
+                    "",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     [
+                      [
+                       "646f776e6c6f616465722074616773",
+                       []
+                      ]
+                     ]
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                [
+                 [
+                  [
+                   0,
+                   5
+                  ],
+                  [
+                   2,
+                   [
+                    153,
+                    1,
+                    [
+                     true,
+                     true,
+                     3,
+                     [],
+                     null,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               26,
+               3,
+               []
+              ],
+              true,
+              false
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "8dcda4cc861c394a5afed00271144d20e51ee0b903c3998a9ee74384b6787024",
+       "f6967b1ef723e0ad2e66ddd07243bd14cb685747540e15e015e13472b4e2ce5e"
+      ]
+     ]
+    ]
+   }
+  },
+  {
+   "container": [
+    104,
+    "last session",
+    1,
+    [
+     106,
+     "top",
+     1,
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         106,
+         "downloaders",
+         1,
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ],
+       [
+        2,
+        [
+         106,
+         "downloaders",
+         1,
+         [
+          26,
+          3,
+          [
+           [
+            2,
+            [
+             107,
+             "import",
+             1,
+             "ff1b2e6405d0a5ba0b1448b6a1ff5e45e0d689b19187d5dea160fa0cca5da966"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "facts": {
+    "name": "last session",
+    "pages": {
+     "ff1b2e6405d0a5ba0b1448b6a1ff5e45e0d689b19187d5dea160fa0cca5da966": {
+      "hashes": [],
+      "page": {
+       "name": "import",
+       "type": 3,
+       "variables": {
+        "hdd_import": {
+         "delete_after_success": false,
+         "file_seeds": [
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 200/0.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 200/0.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1676022558,
+           "status": 7,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {
+            "646f776e6c6f616465722074616773": [
+             "series:metroid",
+             "solo",
+             "éclair"
+            ],
+            "6c6f63616c2074616773": []
+           },
+           "comparison": "/home/someone/import 200/1.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 200/1.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": 1522879617,
+           "status": 9,
+           "tags": [],
+           "type": 0
+          },
+          {
+           "additional": {},
+           "comparison": "/home/someone/import 200/2.png",
+           "created": 1790940219,
+           "data": "/home/someone/import 200/2.png",
+           "filterable": [],
+           "hashes": [],
+           "headers": [],
+           "modified": 1790940219,
+           "note": "Source file does not exist!",
+           "notes": [],
+           "primary": [],
+           "referral": null,
+           "source": [],
+           "source_time": null,
+           "status": 0,
+           "tags": [],
+           "type": 0
+          }
+         ],
+         "import_options": [
+          143,
+          1,
+          [
+           21,
+           2,
+           []
+          ]
+         ],
+         "metadata_routers": 1,
+         "paused": false
+        },
+        "media_collect": [
+         78,
+         2,
+         [
+          [],
+          [],
+          true,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ],
+        "media_sort": [
+         49,
+         3,
+         [
+          "system",
+          0,
+          1,
+          [
+           80,
+           2,
+           [
+            "616c6c206b6e6f776e2074616773",
+            true,
+            true,
+            "616c6c206b6e6f776e2074616773"
+           ]
+          ]
+         ]
+        ]
+       }
+      }
+     }
+    },
+    "tree": {
+     "name": "top",
+     "pages": [
+      {
+       "name": "downloaders",
+       "pages": []
+      },
+      {
+       "name": "downloaders",
+       "pages": [
+        {
+         "name": "import",
+         "page_data_hash": "ff1b2e6405d0a5ba0b1448b6a1ff5e45e0d689b19187d5dea160fa0cca5da966"
+        }
+       ]
+      }
+     ]
+    }
+   },
+   "page_data": {
+    "ff1b2e6405d0a5ba0b1448b6a1ff5e45e0d689b19187d5dea160fa0cca5da966": [
+     105,
+     1,
+     [
+      [
+       12,
+       17,
+       [
+        "import",
+        3,
+        [
+         21,
+         2,
+         [
+          [
+           [
+            0,
+            "media_sort"
+           ],
+           [
+            2,
+            [
+             49,
+             3,
+             [
+              "system",
+              0,
+              1,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "media_collect"
+           ],
+           [
+            2,
+            [
+             78,
+             2,
+             [
+              [],
+              [],
+              true,
+              [
+               80,
+               2,
+               [
+                "616c6c206b6e6f776e2074616773",
+                true,
+                true,
+                "616c6c206b6e6f776e2074616773"
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           [
+            0,
+            "hdd_import"
+           ],
+           [
+            2,
+            [
+             9,
+             4,
+             [
+              [
+               8,
+               8,
+               [
+                26,
+                3,
+                [
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 200/0.png",
+                    "/home/someone/import 200/0.png",
+                    1790940219,
+                    1790940219,
+                    1676022558,
+                    7,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 200/1.png",
+                    "/home/someone/import 200/1.png",
+                    1790940219,
+                    1790940219,
+                    1522879617,
+                    9,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     [
+                      [
+                       "6c6f63616c2074616773",
+                       []
+                      ],
+                      [
+                       "646f776e6c6f616465722074616773",
+                       [
+                        "solo",
+                        "series:metroid",
+                        "éclair"
+                       ]
+                      ]
+                     ]
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  2,
+                  [
+                   57,
+                   8,
+                   [
+                    0,
+                    "/home/someone/import 200/2.png",
+                    "/home/someone/import 200/2.png",
+                    1790940219,
+                    1790940219,
+                    null,
+                    0,
+                    "Source file does not exist!",
+                    null,
+                    {},
+                    [],
+                    [
+                     77,
+                     1,
+                     []
+                    ],
+                    [],
+                    [],
+                    [],
+                    [],
+                    []
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               143,
+               1,
+               [
+                21,
+                2,
+                []
+               ]
+              ],
+              [
+               26,
+               3,
+               [
+                [
+                 2,
+                 [
+                  109,
+                  3,
+                  [
+                   [
+                    26,
+                    3,
+                    []
+                   ],
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     [
+                      [
+                       2,
+                       [
+                        99,
+                        1,
+                        [
+                         2,
+                         true,
+                         null
+                        ]
+                       ]
+                      ]
+                     ]
+                    ]
+                   ],
+                   [
+                    116,
+                    3,
+                    [
+                     false,
+                     "",
+                     [
+                      55,
+                      2,
+                      [
+                       [],
+                       "0123456789abcdef.jpg.txt"
+                      ]
+                     ],
+                     "\n"
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              false,
+              false
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      []
+     ]
+    ]
+   }
+  }
+ ],
+ "hdd_imports": [
+  {
+   "facts": {
+    "delete_after_success": false,
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 0/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 0/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 0,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {
+       "6c6f63616c2074616773": [
+        "creator:someone"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "blue eyes",
+        "creator:someone",
+        "éclair"
+       ]
+      },
+      "comparison": "/home/someone/import 0/1.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 0/1.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1696560642,
+      "status": 9,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         5
+        ],
+        [
+         2,
+         [
+          153,
+          1,
+          [
+           false,
+           true,
+           3,
+           [
+            "comment",
+            "artist note"
+           ],
+           null,
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": true
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 0/0.png",
+           "/home/someone/import 0/0.png",
+           1790940219,
+           1790940219,
+           null,
+           0,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 0/1.png",
+           "/home/someone/import 0/1.png",
+           1790940219,
+           1790940219,
+           1696560642,
+           9,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "6c6f63616c2074616773",
+              [
+               "creator:someone"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "blue eyes",
+               "creator:someone",
+               "éclair"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       [
+        [
+         [
+          0,
+          5
+         ],
+         [
+          2,
+          [
+           153,
+           1,
+           [
+            false,
+            true,
+            3,
+            [
+             "comment",
+             "artist note"
+            ],
+            null,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     false,
+     true
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": true,
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 1/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 1/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 4,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 1/1.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 1/1.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 8,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 1/2.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 1/2.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "Source file does not exist!",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 9,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": false
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 1/0.png",
+           "/home/someone/import 1/0.png",
+           1790940219,
+           1790940219,
+           null,
+           4,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 1/1.png",
+           "/home/someone/import 1/1.png",
+           1790940219,
+           1790940219,
+           null,
+           8,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 1/2.png",
+           "/home/someone/import 1/2.png",
+           1790940219,
+           1790940219,
+           null,
+           9,
+           "Source file does not exist!",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": false,
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 2/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 2/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1607830153,
+      "status": 3,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 2/1.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 2/1.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "Source file does not exist!",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 4,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "blue eyes"
+       ]
+      },
+      "comparison": "/home/someone/import 2/2.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 2/2.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1553230715,
+      "status": 0,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 2/3.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 2/3.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1619149918,
+      "status": 3,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": false
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 2/0.png",
+           "/home/someone/import 2/0.png",
+           1790940219,
+           1790940219,
+           1607830153,
+           3,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 2/1.png",
+           "/home/someone/import 2/1.png",
+           1790940219,
+           1790940219,
+           null,
+           4,
+           "Source file does not exist!",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 2/2.png",
+           "/home/someone/import 2/2.png",
+           1790940219,
+           1790940219,
+           1553230715,
+           0,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "blue eyes"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 2/3.png",
+           "/home/someone/import 2/3.png",
+           1790940219,
+           1790940219,
+           1619149918,
+           3,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     false,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": true,
+    "file_seeds": [
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "éclair",
+        "キャラクター:初音ミク"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "creator:someone",
+        "solo"
+       ]
+      },
+      "comparison": "/home/someone/import 3/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 3/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1590572900,
+      "status": 2,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": true
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 3/0.png",
+           "/home/someone/import 3/0.png",
+           1790940219,
+           1790940219,
+           1590572900,
+           2,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "キャラクター:初音ミク",
+               "éclair"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "creator:someone",
+               "solo"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     true,
+     true
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": true,
+    "file_seeds": [
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "creator:someone",
+        "series:metroid"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "creator:someone",
+        "series:metroid",
+        "éclair"
+       ]
+      },
+      "comparison": "/home/someone/import 4/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 4/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "Source file does not exist!",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": 1684203298,
+      "status": 3,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "meta:highres",
+        "キャラクター:初音ミク"
+       ],
+       "6c6f63616c2074616773": [
+        "meta:highres",
+        "solo"
+       ]
+      },
+      "comparison": "/home/someone/import 4/1.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 4/1.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "Source file does not exist!",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 2,
+      "tags": [],
+      "type": 0
+     },
+     {
+      "additional": {
+       "6c6f63616c2074616773": [
+        "solo",
+        "éclair"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "solo",
+        "éclair"
+       ]
+      },
+      "comparison": "/home/someone/import 4/2.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 4/2.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 3,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": false
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 4/0.png",
+           "/home/someone/import 4/0.png",
+           1790940219,
+           1790940219,
+           1684203298,
+           3,
+           "Source file does not exist!",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "creator:someone",
+               "series:metroid"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "creator:someone",
+               "series:metroid",
+               "éclair"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 4/1.png",
+           "/home/someone/import 4/1.png",
+           1790940219,
+           1790940219,
+           null,
+           2,
+           "Source file does not exist!",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "キャラクター:初音ミク",
+               "meta:highres"
+              ]
+             ],
+             [
+              "6c6f63616c2074616773",
+              [
+               "solo",
+               "meta:highres"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 4/2.png",
+           "/home/someone/import 4/2.png",
+           1790940219,
+           1790940219,
+           null,
+           3,
+           "",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "6c6f63616c2074616773",
+              [
+               "solo",
+               "éclair"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "solo",
+               "éclair"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": false,
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "/home/someone/import 5/0.png",
+      "created": 1790940219,
+      "data": "/home/someone/import 5/0.png",
+      "filterable": [],
+      "hashes": [],
+      "headers": [],
+      "modified": 1790940219,
+      "note": "Source file does not exist!",
+      "notes": [],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 2,
+      "tags": [],
+      "type": 0
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": false
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import 5/0.png",
+           "/home/someone/import 5/0.png",
+           1790940219,
+           1790940219,
+           null,
+           2,
+           "Source file does not exist!",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [],
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     false,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": true,
+    "file_seeds": [],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         5
+        ],
+        [
+         2,
+         [
+          153,
+          1,
+          [
+           true,
+           true,
+           3,
+           [
+            "artist note"
+           ],
+           null,
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "metadata_routers": 1,
+    "paused": false
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       []
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       [
+        [
+         [
+          0,
+          5
+         ],
+         [
+          2,
+          [
+           153,
+           1,
+           [
+            true,
+            true,
+            3,
+            [
+             "artist note"
+            ],
+            null,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      26,
+      3,
+      [
+       [
+        2,
+        [
+         109,
+         3,
+         [
+          [
+           26,
+           3,
+           []
+          ],
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            [
+             [
+              2,
+              [
+               99,
+               1,
+               [
+                2,
+                true,
+                null
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          [
+           116,
+           3,
+           [
+            false,
+            "",
+            [
+             55,
+             2,
+             [
+              [],
+              "0123456789abcdef.jpg.txt"
+             ]
+            ],
+            "\n"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "delete_after_success": true,
+    "file_seeds": [],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "metadata_routers": 0,
+    "paused": true
+   },
+   "stored": [
+    9,
+    4,
+    [
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       []
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     [
+      26,
+      3,
+      []
+     ],
+     true,
+     true
+    ]
+   ]
+  }
+ ],
+ "locked_pages": [
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [
+        [
+         14,
+         8,
+         [
+          12,
+          [
+           [
+            "e952ffd8bbf262e83800317bbc741c6edcb7ddac614e77651b773efb44397b84",
+            "823443a79c9bda65c93ac8078139137c69bb2058700275db03ff71ffe5ca46db",
+            "2977c7f83ba06369eb5521b525c7d37f26c357dba82358e80b509b1a6e9204eb",
+            "30df7a2d1380d6eaff0aa37ac6db546fdd739b7730c96ef997e3566e623d32aa"
+           ],
+           "sha256"
+          ],
+          true
+         ]
+        ]
+       ],
+       true
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": true,
+     "system_hash_locked_syncs_new": true,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [
+            [
+             14,
+             8,
+             [
+              12,
+              [
+               [
+                "e952ffd8bbf262e83800317bbc741c6edcb7ddac614e77651b773efb44397b84",
+                "823443a79c9bda65c93ac8078139137c69bb2058700275db03ff71ffe5ca46db",
+                "2977c7f83ba06369eb5521b525c7d37f26c357dba82358e80b509b1a6e9204eb",
+                "30df7a2d1380d6eaff0aa37ac6db546fdd739b7730c96ef997e3566e623d32aa"
+               ],
+               "sha256"
+              ],
+              true
+             ]
+            ]
+           ],
+           true
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [
+        [
+         14,
+         8,
+         [
+          12,
+          [
+           [
+            "71817779016d2fd590bbbc3c32c03f9781e13d23c6b36bd5665c692e3dda9501",
+            "17205e5a7af3375eaca9cc0ac70474f7be11d0ebc0732e408ce1fc79d52b3c44",
+            "5ee8c8b9839c4e9ddc93b1958ec556bfc53ceb24107e026d0ba5cee677f2083c",
+            "46bc7c412cba18c91381eb86bdf61864426d13301daaf832ee393c25e2594404"
+           ],
+           "sha256"
+          ],
+          true
+         ]
+        ]
+       ],
+       true
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": true,
+     "system_hash_locked_syncs_new": false,
+     "system_hash_locked_syncs_removes": false
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [
+            [
+             14,
+             8,
+             [
+              12,
+              [
+               [
+                "71817779016d2fd590bbbc3c32c03f9781e13d23c6b36bd5665c692e3dda9501",
+                "17205e5a7af3375eaca9cc0ac70474f7be11d0ebc0732e408ce1fc79d52b3c44",
+                "5ee8c8b9839c4e9ddc93b1958ec556bfc53ceb24107e026d0ba5cee677f2083c",
+                "46bc7c412cba18c91381eb86bdf61864426d13301daaf832ee393c25e2594404"
+               ],
+               "sha256"
+              ],
+              true
+             ]
+            ]
+           ],
+           true
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         false
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [
+        [
+         14,
+         8,
+         [
+          12,
+          [
+           [
+            "b95a5f9afeaa8e9394de1187eeb57e6f201b6e48652b4d529c7575b58fcc5472",
+            "0ec1b22194638a882f1d33aa905cf3ed9e1abe428646b4bea2489c1beb005a3b",
+            "3e90577c8569f733f84fcd21c39d04a6d547870d8060dbaf602c0df6c7137f59",
+            "62b80e048f4cb5b9876582ba6b3a2f00404ca7ac5fd005e8bddda66134e9c8a2"
+           ],
+           "sha256"
+          ],
+          true
+         ]
+        ]
+       ],
+       true
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": true,
+     "system_hash_locked_syncs_new": false,
+     "system_hash_locked_syncs_removes": true
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [
+            [
+             14,
+             8,
+             [
+              12,
+              [
+               [
+                "b95a5f9afeaa8e9394de1187eeb57e6f201b6e48652b4d529c7575b58fcc5472",
+                "0ec1b22194638a882f1d33aa905cf3ed9e1abe428646b4bea2489c1beb005a3b",
+                "3e90577c8569f733f84fcd21c39d04a6d547870d8060dbaf602c0df6c7137f59",
+                "62b80e048f4cb5b9876582ba6b3a2f00404ca7ac5fd005e8bddda66134e9c8a2"
+               ],
+               "sha256"
+              ],
+              true
+             ]
+            ]
+           ],
+           true
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         true
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "files",
+    "type": 6,
+    "variables": {
+     "file_search_context": [
+      15,
+      5,
+      [
+       [
+        103,
+        1,
+        [
+         [
+          "616c6c206c6f63616c206d65646961"
+         ],
+         []
+        ]
+       ],
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ],
+       0,
+       [
+        [
+         14,
+         8,
+         [
+          12,
+          [
+           [
+            "e43fd7a2402e763d2fd468714aca65d33f35388e40ea90a5c9dbc5c5374433fd",
+            "f6ef16bcfee7531f7f9fff0891f3c5f67a54b81fdbd041e6b150e475716fef8a",
+            "d63d4cb6b3dad2e66ef323391d2430cce028e5159b7e8f9cd1efcf5d1ebbe8a7"
+           ],
+           "sha256"
+          ],
+          true
+         ]
+        ]
+       ],
+       true
+      ]
+     ],
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       0,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "synchronised": true,
+     "system_hash_locked": true,
+     "system_hash_locked_syncs_new": false,
+     "system_hash_locked_syncs_removes": false
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "files",
+     6,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           0,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "file_search_context"
+        ],
+        [
+         2,
+         [
+          15,
+          5,
+          [
+           [
+            103,
+            1,
+            [
+             [
+              "616c6c206c6f63616c206d65646961"
+             ],
+             []
+            ]
+           ],
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ],
+           0,
+           [
+            [
+             14,
+             8,
+             [
+              12,
+              [
+               [
+                "e43fd7a2402e763d2fd468714aca65d33f35388e40ea90a5c9dbc5c5374433fd",
+                "f6ef16bcfee7531f7f9fff0891f3c5f67a54b81fdbd041e6b150e475716fef8a",
+                "d63d4cb6b3dad2e66ef323391d2430cce028e5159b7e8f9cd1efcf5d1ebbe8a7"
+               ],
+               "sha256"
+              ],
+              true
+             ]
+            ]
+           ],
+           true
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "synchronised"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked"
+        ],
+        [
+         0,
+         true
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_new"
+        ],
+        [
+         0,
+         false
+        ]
+       ],
+       [
+        [
+         0,
+         "system_hash_locked_syncs_removes"
+        ],
+        [
+         0,
+         false
+        ]
+       ]
+      ]
+     ]
     ]
    ]
   }

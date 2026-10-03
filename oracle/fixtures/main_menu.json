@@ -1,0 +1,2936 @@
+{
+ "advanced": [
+  {
+   "entries": [
+    "import files…",
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "import folders",
+         "checked": false
+        },
+        {
+         "check": "export folders",
+         "checked": false
+        }
+       ],
+       "menu": "pause"
+      },
+      "---",
+      "manage import folders…",
+      "manage export folders…"
+     ],
+     "menu": "import/export folders"
+    },
+    "---",
+    {
+     "entries": [
+      "installation directory",
+      "database directory",
+      "quick export directory"
+     ],
+     "menu": "open"
+    },
+    "---",
+    "options…",
+    "---",
+    "restart",
+    "exit/force maintenance",
+    "exit"
+   ],
+   "menu": "&file"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "clear all…",
+      "---",
+      "files"
+     ],
+     "menu": "closed pages"
+    }
+   ],
+   "menu": "&undo"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "0 pages open",
+      "total session weight: 0"
+     ],
+     "menu": "weight"
+    },
+    "---",
+    {
+     "entries": [
+      "Clear History"
+     ],
+     "menu": "history"
+    },
+    "---",
+    "refresh",
+    "---",
+    {
+     "entries": [
+      "show/hide sidebar and preview panel",
+      "---",
+      {
+       "check": "save current page's sidebar/preview size on client exit",
+       "checked": true
+      },
+      "---",
+      "save current page's sidebar/preview size now",
+      "---",
+      "restore all pages' sidebar/preview sizes to saved value"
+     ],
+     "menu": "sidebar"
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "clear and load"
+      },
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "append"
+      },
+      {
+       "entries": [
+        "as new session…"
+       ],
+       "menu": "save"
+      }
+     ],
+     "menu": "sessions"
+    },
+    "---",
+    "new page…",
+    {
+     "entries": [
+      "new \"art\" search page",
+      "new \"my files\" search page",
+      "new \"trash\" page"
+     ],
+     "menu": "file search"
+    },
+    {
+     "entries": [
+      "new url download page",
+      "new watcher page",
+      "new gallery page",
+      "new simple downloader page"
+     ],
+     "menu": "download"
+    },
+    {
+     "entries": [
+      "new page of pages",
+      "new duplicates processing page"
+     ],
+     "menu": "special"
+    },
+    "---",
+    {
+     "entries": [
+      "all multiwatcher highlights"
+     ],
+     "menu": "clear"
+    }
+   ],
+   "menu": "&pages"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "set up a database backup location…",
+      "---",
+      "restore from a database backup…"
+     ],
+     "menu": "backup"
+    },
+    "---",
+    "locations…",
+    "---",
+    "how boned am I?",
+    "view file history",
+    "---",
+    {
+     "entries": [
+      "manage scheduled jobs…",
+      "---",
+      {
+       "check": "work file jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work file jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "clear orphan files…",
+      "---",
+      "fix missing file archived times…"
+     ],
+     "menu": "file maintenance"
+    },
+    {
+     "entries": [
+      "review deferred delete table data",
+      "---",
+      {
+       "check": "work deferred delete jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work deferred delete jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "analyze…",
+      "review vacuum data…",
+      "---",
+      "clear/fix orphan file records…",
+      "clear orphan URL mappings…",
+      "clear orphan tables…",
+      "clear orphan hashed serialisables…",
+      "---",
+      "get tables using definitions…"
+     ],
+     "menu": "db maintenance"
+    },
+    {
+     "entries": [
+      "fix invalid tags…",
+      "fix logically inconsistent mappings…",
+      "---",
+      "repopulate truncated mappings tables…",
+      "---",
+      "resync combined deleted files…",
+      "resync tag mappings cache files…"
+     ],
+     "menu": "check and repair"
+    },
+    {
+     "entries": [
+      "total pending count, in the pending menu…",
+      "tag storage mappings cache (all, with deferred siblings && parents calculation)…",
+      "tag storage mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (all, deferred siblings && parents calculation)…",
+      "tag display mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (missing file repopulation)…",
+      "tag siblings lookup cache…",
+      "tag parents lookup cache…",
+      "tag text search cache…",
+      "tag text search cache (subtags repopulation)…",
+      "tag text search cache (searchable subtag maps)…",
+      "---",
+      "local hashes cache…",
+      "local tags cache…",
+      "---",
+      "service info numbers…",
+      "similar files search tree…"
+     ],
+     "menu": "regenerate"
+    },
+    {
+     "entries": [
+      "clear all file viewing statistics…",
+      "cull file viewing statistics based on current min/max values…"
+     ],
+     "menu": "clear"
+    },
+    "---",
+    "set a password…"
+   ],
+   "menu": "&database"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all new network traffic",
+       "checked": true
+      },
+      {
+       "check": "always boot the client with paused network traffic",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "subscriptions",
+       "checked": false
+      },
+      "nudge subscriptions awake",
+      "---",
+      {
+       "check": "all paged importer work",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "paged file importing",
+       "checked": false
+      },
+      {
+       "check": "paged gallery searching",
+       "checked": false
+      },
+      {
+       "check": "paged watcher checking",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "subscriptions…",
+    "---",
+    {
+     "entries": [
+      "review bandwidth usage and edit rules",
+      "review current network jobs",
+      "review session cookies",
+      "manage http headers…"
+     ],
+     "menu": "data"
+    },
+    {
+     "entries": [
+      "import downloaders…",
+      "user-run downloader repository",
+      "export downloaders…",
+      "---",
+      "downloader and url display…",
+      {
+       "entries": [
+        {
+         "check": "watcher urls",
+         "checked": false
+        },
+        {
+         "check": "other recognised urls",
+         "checked": false
+        }
+       ],
+       "menu": "watch clipboard for urls"
+      },
+      "---",
+      "gallery url generators…",
+      "url classes…",
+      "parsers…",
+      "---",
+      "url class links…",
+      "---",
+      "LEGACY: lookup scripts…"
+     ],
+     "menu": "downloaders"
+    },
+    {
+     "entries": [
+      "THIS SYSTEM IS LEGACY",
+      "TRY TO MIGRATE AWAY FROM IT",
+      "---",
+      "logins…",
+      "---",
+      "login scripts…"
+     ],
+     "menu": "logins"
+    }
+   ],
+   "menu": "&network"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all repository synchronisation",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "review",
+    "edit…",
+    "---",
+    {
+     "entries": [
+      "import repository update files…"
+     ],
+     "menu": "advanced"
+    }
+   ],
+   "menu": "&services"
+  },
+  {
+   "entries": [
+    "migrate…",
+    "---",
+    "display/search…",
+    "---",
+    "siblings…",
+    "parents…",
+    {
+     "entries": [
+      "manage where tag siblings and parents apply…"
+     ],
+     "menu": "advanced"
+    },
+    {
+     "entries": [
+      "review current sibling/parent sync",
+      "---",
+      "sync now",
+      "---",
+      {
+       "check": "sync tag display during idle time",
+       "checked": true
+      },
+      {
+       "check": "sync tag display during normal time",
+       "checked": true
+      }
+     ],
+     "menu": "sync"
+    }
+   ],
+   "menu": "&tags"
+  },
+  {
+   "entries": [
+    "open help",
+    {
+     "entries": [
+      "site",
+      "github repository",
+      "latest build",
+      "issue tracker",
+      "8chan.moe /t/ (Hydrus Network General)",
+      "x",
+      "tumblr",
+      "discord",
+      "patreon"
+     ],
+     "menu": "links"
+    },
+    "changelog",
+    "---",
+    "add the PTR…",
+    "---",
+    {
+     "check": "darkmode",
+     "checked": false
+    },
+    {
+     "check": "advanced mode",
+     "checked": true
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "force idle mode",
+         "checked": false
+        },
+        "simulate a wake from sleep",
+        {
+         "check": "thumbnail debug mode",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "allow crashy files in mpv",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors)",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors) (PERSISTENT)",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "use faulthandler to log crashes",
+         "checked": false
+        }
+       ],
+       "menu": "debug modes"
+      },
+      {
+       "entries": [
+        "what is this?",
+        {
+         "check": "profile mode (client api)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (db)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (threads)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (ui)",
+         "checked": false
+        },
+        {
+         "check": "query planner mode",
+         "checked": false
+        }
+       ],
+       "menu": "profiling"
+      },
+      {
+       "entries": [
+        {
+         "check": "blurhash mode",
+         "checked": false
+        },
+        {
+         "check": "cache report mode",
+         "checked": false
+        },
+        {
+         "check": "callto report mode",
+         "checked": false
+        },
+        {
+         "check": "canvas tile borders mode",
+         "checked": false
+        },
+        {
+         "check": "daemon report mode",
+         "checked": false
+        },
+        {
+         "check": "db report mode",
+         "checked": false
+        },
+        {
+         "check": "file report mode",
+         "checked": false
+        },
+        {
+         "check": "file import report mode",
+         "checked": false
+        },
+        {
+         "check": "file sort report mode",
+         "checked": false
+        },
+        {
+         "check": "graphics view thumbnail update report mode",
+         "checked": false
+        },
+        {
+         "check": "gui report mode",
+         "checked": false
+        },
+        {
+         "check": "hover window report mode",
+         "checked": false
+        },
+        {
+         "check": "idle report mode",
+         "checked": false
+        },
+        {
+         "check": "media load report mode",
+         "checked": false
+        },
+        {
+         "check": "mpv report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode (silent)",
+         "checked": false
+        },
+        {
+         "check": "potential duplicates report mode",
+         "checked": false
+        },
+        {
+         "check": "pubsub report mode",
+         "checked": false
+        },
+        {
+         "check": "similar files metadata generation report mode",
+         "checked": false
+        },
+        {
+         "check": "shortcut report mode",
+         "checked": false
+        },
+        {
+         "check": "shutdown report mode",
+         "checked": false
+        },
+        {
+         "check": "subprocess report mode",
+         "checked": false
+        },
+        {
+         "check": "subscription report mode",
+         "checked": false
+        }
+       ],
+       "menu": "report modes"
+      },
+      {
+       "entries": [
+        {
+         "check": "autocomplete delay mode",
+         "checked": false
+        },
+        "close and reload current gui session",
+        "force a main gui layout now",
+        "isolate existing mpv widgets",
+        "make a long text popup",
+        "make a modal popup in five seconds",
+        "make a new page in five seconds",
+        "make a non-cancellable modal popup in five seconds",
+        "make a parentless text ctrl dialog",
+        "make a popup in five seconds",
+        "make a QMessageBox",
+        "make some popups",
+        "publish some sub files in five seconds",
+        "refresh pages menu in five seconds",
+        "reload current qss stylesheet",
+        "reload icon cache",
+        "reset multi-column list settings to default",
+        "save 'last session' gui session"
+       ],
+       "menu": "gui actions"
+      },
+      {
+       "entries": [
+        "flush log",
+        "force database commit",
+        "review threads",
+        "scan file storage folders",
+        "show env",
+        "show scheduled jobs",
+        "subscription manager snapshot",
+        "---",
+        "simulate program exit signal"
+       ],
+       "menu": "data actions"
+      },
+      {
+       "entries": [
+        "run fast memory maintenance",
+        "run slow memory maintenance",
+        "clear all rendering caches",
+        "clear thumbnail cache"
+       ],
+       "menu": "memory actions"
+      },
+      {
+       "entries": [
+        "review current network jobs",
+        "fetch a url"
+       ],
+       "menu": "network actions"
+      },
+      "---",
+      "what is this object?",
+      "---",
+      {
+       "entries": [
+        "run the ui test",
+        "run the client api test",
+        "run the server test on fresh server",
+        "---",
+        "run the visual duplicates tuning suite",
+        "run the visual duplicates tuning suite (alpha)",
+        "---",
+        {
+         "check": "fake petition mode",
+         "checked": false
+        },
+        "---",
+        "do self-sigterm",
+        "do self-sigterm (fake)",
+        "---",
+        "induce a program crash"
+       ],
+       "menu": "tests, do not touch"
+      }
+     ],
+     "menu": "debug"
+    },
+    "---",
+    "about Qt",
+    "about"
+   ],
+   "menu": "&help"
+  }
+ ],
+ "closed": {
+  "menus": [
+   {
+    "entries": [
+     "import files…",
+     "---",
+     {
+      "entries": [
+       {
+        "entries": [
+         {
+          "check": "import folders",
+          "checked": false
+         },
+         {
+          "check": "export folders",
+          "checked": false
+         }
+        ],
+        "menu": "pause"
+       },
+       "---",
+       "manage import folders…",
+       "manage export folders…"
+      ],
+      "menu": "import/export folders"
+     },
+     "---",
+     {
+      "entries": [
+       "installation directory",
+       "database directory",
+       "quick export directory"
+      ],
+      "menu": "open"
+     },
+     "---",
+     "options…",
+     "---",
+     "restart",
+     "exit/force maintenance",
+     "exit"
+    ],
+    "menu": "&file"
+   },
+   {
+    "entries": [
+     {
+      "entries": [
+       "clear all…",
+       "---",
+       "files"
+      ],
+      "menu": "closed pages"
+     }
+    ],
+    "menu": "&undo"
+   },
+   {
+    "entries": [
+     {
+      "entries": [
+       "0 pages open",
+       "total session weight: 0"
+      ],
+      "menu": "weight"
+     },
+     "---",
+     {
+      "entries": [
+       "Clear History"
+      ],
+      "menu": "history"
+     },
+     "---",
+     "refresh",
+     "---",
+     {
+      "entries": [
+       "show/hide sidebar and preview panel",
+       "---",
+       {
+        "check": "save current page's sidebar/preview size on client exit",
+        "checked": true
+       },
+       "---",
+       "save current page's sidebar/preview size now",
+       "---",
+       "restore all pages' sidebar/preview sizes to saved value"
+      ],
+      "menu": "sidebar"
+     },
+     "---",
+     {
+      "entries": [
+       {
+        "entries": [
+         "exit session",
+         "last session"
+        ],
+        "menu": "clear and load"
+       },
+       {
+        "entries": [
+         "exit session",
+         "last session"
+        ],
+        "menu": "append"
+       },
+       {
+        "entries": [
+         "as new session…"
+        ],
+        "menu": "save"
+       }
+      ],
+      "menu": "sessions"
+     },
+     "---",
+     "new page…",
+     {
+      "entries": [
+       "new \"art\" search page",
+       "new \"my files\" search page",
+       "new \"trash\" page"
+      ],
+      "menu": "file search"
+     },
+     {
+      "entries": [
+       "new url download page",
+       "new watcher page",
+       "new gallery page",
+       "new simple downloader page"
+      ],
+      "menu": "download"
+     },
+     {
+      "entries": [
+       "new page of pages",
+       "new duplicates processing page"
+      ],
+      "menu": "special"
+     },
+     "---",
+     {
+      "entries": [
+       "all multiwatcher highlights"
+      ],
+      "menu": "clear"
+     }
+    ],
+    "menu": "&pages"
+   },
+   {
+    "entries": [
+     {
+      "entries": [
+       "set up a database backup location…",
+       "---",
+       "restore from a database backup…"
+      ],
+      "menu": "backup"
+     },
+     "---",
+     "locations…",
+     "---",
+     "how boned am I?",
+     "view file history",
+     "---",
+     {
+      "entries": [
+       "manage scheduled jobs…",
+       "---",
+       {
+        "check": "work file jobs during idle time",
+        "checked": true
+       },
+       {
+        "check": "work file jobs during normal time",
+        "checked": true
+       },
+       "---",
+       "clear orphan files…",
+       "---",
+       "fix missing file archived times…"
+      ],
+      "menu": "file maintenance"
+     },
+     {
+      "entries": [
+       "review deferred delete table data",
+       "---",
+       {
+        "check": "work deferred delete jobs during idle time",
+        "checked": true
+       },
+       {
+        "check": "work deferred delete jobs during normal time",
+        "checked": true
+       },
+       "---",
+       "analyze…",
+       "review vacuum data…",
+       "---",
+       "clear/fix orphan file records…",
+       "clear orphan URL mappings…",
+       "clear orphan tables…",
+       "clear orphan hashed serialisables…",
+       "---",
+       "get tables using definitions…"
+      ],
+      "menu": "db maintenance"
+     },
+     {
+      "entries": [
+       "fix invalid tags…",
+       "fix logically inconsistent mappings…",
+       "---",
+       "repopulate truncated mappings tables…",
+       "---",
+       "resync combined deleted files…",
+       "resync tag mappings cache files…"
+      ],
+      "menu": "check and repair"
+     },
+     {
+      "entries": [
+       "total pending count, in the pending menu…",
+       "tag storage mappings cache (all, with deferred siblings && parents calculation)…",
+       "tag storage mappings cache (just pending tags, instant calculation)…",
+       "tag display mappings cache (all, deferred siblings && parents calculation)…",
+       "tag display mappings cache (just pending tags, instant calculation)…",
+       "tag display mappings cache (missing file repopulation)…",
+       "tag siblings lookup cache…",
+       "tag parents lookup cache…",
+       "tag text search cache…",
+       "tag text search cache (subtags repopulation)…",
+       "tag text search cache (searchable subtag maps)…",
+       "---",
+       "local hashes cache…",
+       "local tags cache…",
+       "---",
+       "service info numbers…",
+       "similar files search tree…"
+      ],
+      "menu": "regenerate"
+     },
+     {
+      "entries": [
+       "clear all file viewing statistics…",
+       "cull file viewing statistics based on current min/max values…"
+      ],
+      "menu": "clear"
+     },
+     "---",
+     "set a password…"
+    ],
+    "menu": "&database"
+   },
+   {
+    "entries": [
+     {
+      "entries": [
+       {
+        "check": "all new network traffic",
+        "checked": true
+       },
+       {
+        "check": "always boot the client with paused network traffic",
+        "checked": false
+       },
+       "---",
+       {
+        "check": "subscriptions",
+        "checked": false
+       },
+       "---",
+       {
+        "check": "all paged importer work",
+        "checked": false
+       },
+       "---",
+       {
+        "check": "paged file importing",
+        "checked": false
+       },
+       {
+        "check": "paged gallery searching",
+        "checked": false
+       },
+       {
+        "check": "paged watcher checking",
+        "checked": false
+       }
+      ],
+      "menu": "pause"
+     },
+     "---",
+     "subscriptions…",
+     "---",
+     {
+      "entries": [
+       "review bandwidth usage and edit rules",
+       "review current network jobs",
+       "review session cookies",
+       "manage http headers…"
+      ],
+      "menu": "data"
+     },
+     {
+      "entries": [
+       "import downloaders…",
+       "user-run downloader repository",
+       "export downloaders…",
+       "---",
+       "downloader and url display…",
+       {
+        "entries": [
+         {
+          "check": "watcher urls",
+          "checked": false
+         },
+         {
+          "check": "other recognised urls",
+          "checked": false
+         }
+        ],
+        "menu": "watch clipboard for urls"
+       },
+       "---",
+       "gallery url generators…",
+       "url classes…",
+       "parsers…",
+       "---",
+       "url class links…",
+       "---",
+       "LEGACY: lookup scripts…"
+      ],
+      "menu": "downloaders"
+     },
+     {
+      "entries": [
+       "THIS SYSTEM IS LEGACY",
+       "TRY TO MIGRATE AWAY FROM IT",
+       "---",
+       "logins…",
+       "---",
+       "login scripts…"
+      ],
+      "menu": "logins"
+     }
+    ],
+    "menu": "&network"
+   },
+   {
+    "entries": [
+     {
+      "entries": [
+       {
+        "check": "all repository synchronisation",
+        "checked": false
+       }
+      ],
+      "menu": "pause"
+     },
+     "---",
+     "review",
+     "edit…",
+     "---",
+     {
+      "entries": [
+       "import repository update files…"
+      ],
+      "menu": "advanced"
+     }
+    ],
+    "menu": "&services"
+   },
+   {
+    "entries": [
+     "migrate…",
+     "---",
+     "display/search…",
+     "---",
+     "siblings…",
+     "parents…",
+     {
+      "entries": [
+       "manage where tag siblings and parents apply…"
+      ],
+      "menu": "advanced"
+     },
+     {
+      "entries": [
+       "review current sibling/parent sync",
+       "---",
+       "sync now",
+       "---",
+       {
+        "check": "sync tag display during idle time",
+        "checked": true
+       },
+       {
+        "check": "sync tag display during normal time",
+        "checked": true
+       }
+      ],
+      "menu": "sync"
+     }
+    ],
+    "menu": "&tags"
+   },
+   {
+    "entries": [
+     "open help",
+     {
+      "entries": [
+       "site",
+       "github repository",
+       "latest build",
+       "issue tracker",
+       "8chan.moe /t/ (Hydrus Network General)",
+       "x",
+       "tumblr",
+       "discord",
+       "patreon"
+      ],
+      "menu": "links"
+     },
+     "changelog",
+     "---",
+     "add the PTR…",
+     "---",
+     {
+      "check": "darkmode",
+      "checked": false
+     },
+     {
+      "check": "advanced mode",
+      "checked": false
+     },
+     "---",
+     {
+      "entries": [
+       {
+        "entries": [
+         {
+          "check": "force idle mode",
+          "checked": false
+         },
+         "simulate a wake from sleep",
+         {
+          "check": "thumbnail debug mode",
+          "checked": false
+         },
+         "---",
+         {
+          "check": "allow crashy files in mpv",
+          "checked": false
+         },
+         {
+          "check": "allow crashy files in mpv (and silence errors)",
+          "checked": false
+         },
+         {
+          "check": "allow crashy files in mpv (and silence errors) (PERSISTENT)",
+          "checked": false
+         },
+         "---",
+         {
+          "check": "use faulthandler to log crashes",
+          "checked": false
+         }
+        ],
+        "menu": "debug modes"
+       },
+       {
+        "entries": [
+         "what is this?",
+         {
+          "check": "profile mode (client api)",
+          "checked": false
+         },
+         {
+          "check": "profile mode (db)",
+          "checked": false
+         },
+         {
+          "check": "profile mode (threads)",
+          "checked": false
+         },
+         {
+          "check": "profile mode (ui)",
+          "checked": false
+         },
+         {
+          "check": "query planner mode",
+          "checked": false
+         }
+        ],
+        "menu": "profiling"
+       },
+       {
+        "entries": [
+         {
+          "check": "blurhash mode",
+          "checked": false
+         },
+         {
+          "check": "cache report mode",
+          "checked": false
+         },
+         {
+          "check": "callto report mode",
+          "checked": false
+         },
+         {
+          "check": "canvas tile borders mode",
+          "checked": false
+         },
+         {
+          "check": "daemon report mode",
+          "checked": false
+         },
+         {
+          "check": "db report mode",
+          "checked": false
+         },
+         {
+          "check": "file report mode",
+          "checked": false
+         },
+         {
+          "check": "file import report mode",
+          "checked": false
+         },
+         {
+          "check": "file sort report mode",
+          "checked": false
+         },
+         {
+          "check": "graphics view thumbnail update report mode",
+          "checked": false
+         },
+         {
+          "check": "gui report mode",
+          "checked": false
+         },
+         {
+          "check": "hover window report mode",
+          "checked": false
+         },
+         {
+          "check": "idle report mode",
+          "checked": false
+         },
+         {
+          "check": "media load report mode",
+          "checked": false
+         },
+         {
+          "check": "mpv report mode",
+          "checked": false
+         },
+         {
+          "check": "network report mode",
+          "checked": false
+         },
+         {
+          "check": "network report mode (silent)",
+          "checked": false
+         },
+         {
+          "check": "potential duplicates report mode",
+          "checked": false
+         },
+         {
+          "check": "pubsub report mode",
+          "checked": false
+         },
+         {
+          "check": "similar files metadata generation report mode",
+          "checked": false
+         },
+         {
+          "check": "shortcut report mode",
+          "checked": false
+         },
+         {
+          "check": "shutdown report mode",
+          "checked": false
+         },
+         {
+          "check": "subprocess report mode",
+          "checked": false
+         },
+         {
+          "check": "subscription report mode",
+          "checked": false
+         }
+        ],
+        "menu": "report modes"
+       },
+       {
+        "entries": [
+         {
+          "check": "autocomplete delay mode",
+          "checked": false
+         },
+         "close and reload current gui session",
+         "force a main gui layout now",
+         "isolate existing mpv widgets",
+         "make a long text popup",
+         "make a modal popup in five seconds",
+         "make a new page in five seconds",
+         "make a non-cancellable modal popup in five seconds",
+         "make a parentless text ctrl dialog",
+         "make a popup in five seconds",
+         "make a QMessageBox",
+         "make some popups",
+         "publish some sub files in five seconds",
+         "refresh pages menu in five seconds",
+         "reload current qss stylesheet",
+         "reload icon cache",
+         "reset multi-column list settings to default",
+         "save 'last session' gui session"
+        ],
+        "menu": "gui actions"
+       },
+       {
+        "entries": [
+         "flush log",
+         "force database commit",
+         "review threads",
+         "scan file storage folders",
+         "show env",
+         "show scheduled jobs",
+         "subscription manager snapshot",
+         "---",
+         "simulate program exit signal"
+        ],
+        "menu": "data actions"
+       },
+       {
+        "entries": [
+         "run fast memory maintenance",
+         "run slow memory maintenance",
+         "clear all rendering caches",
+         "clear thumbnail cache"
+        ],
+        "menu": "memory actions"
+       },
+       {
+        "entries": [
+         "review current network jobs",
+         "fetch a url"
+        ],
+        "menu": "network actions"
+       },
+       "---",
+       "what is this object?",
+       "---",
+       {
+        "entries": [
+         "run the ui test",
+         "run the client api test",
+         "run the server test on fresh server",
+         "---",
+         "run the visual duplicates tuning suite",
+         "run the visual duplicates tuning suite (alpha)",
+         "---",
+         {
+          "check": "fake petition mode",
+          "checked": false
+         },
+         "---",
+         "do self-sigterm",
+         "do self-sigterm (fake)",
+         "---",
+         "induce a program crash"
+        ],
+        "menu": "tests, do not touch"
+       }
+      ],
+      "menu": "debug"
+     },
+     "---",
+     "about Qt",
+     "about"
+    ],
+    "menu": "&help"
+   }
+  ],
+  "page": "files"
+ },
+ "default": [
+  {
+   "entries": [
+    "import files…",
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "import folders",
+         "checked": false
+        },
+        {
+         "check": "export folders",
+         "checked": false
+        }
+       ],
+       "menu": "pause"
+      },
+      "---",
+      "manage import folders…",
+      "manage export folders…"
+     ],
+     "menu": "import/export folders"
+    },
+    "---",
+    {
+     "entries": [
+      "installation directory",
+      "database directory",
+      "quick export directory"
+     ],
+     "menu": "open"
+    },
+    "---",
+    "options…",
+    "---",
+    "restart",
+    "exit/force maintenance",
+    "exit"
+   ],
+   "menu": "&file"
+  },
+  {
+   "disabled": true,
+   "entries": [
+    "initialising",
+    "initialising",
+    "---",
+    {
+     "disabled": true,
+     "entries": [],
+     "menu": "closed pages"
+    },
+    {
+     "disabled": true,
+     "entries": [],
+     "menu": "searching"
+    }
+   ],
+   "menu": "&undo"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "1 pages open",
+      "total session weight: 0"
+     ],
+     "menu": "weight"
+    },
+    "---",
+    {
+     "entries": [
+      "1: files",
+      "---",
+      "Clear History"
+     ],
+     "menu": "history"
+    },
+    "---",
+    "refresh",
+    "---",
+    {
+     "entries": [
+      "show/hide sidebar and preview panel",
+      "---",
+      {
+       "check": "save current page's sidebar/preview size on client exit",
+       "checked": true
+      },
+      "---",
+      "save current page's sidebar/preview size now",
+      "---",
+      "restore all pages' sidebar/preview sizes to saved value"
+     ],
+     "menu": "sidebar"
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "clear and load"
+      },
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "append"
+      },
+      {
+       "entries": [
+        "as new session…"
+       ],
+       "menu": "save"
+      }
+     ],
+     "menu": "sessions"
+    },
+    "---",
+    "new page…",
+    {
+     "entries": [
+      "new \"art\" search page",
+      "new \"my files\" search page",
+      "new \"trash\" page"
+     ],
+     "menu": "file search"
+    },
+    {
+     "entries": [
+      "new url download page",
+      "new watcher page",
+      "new gallery page",
+      "new simple downloader page"
+     ],
+     "menu": "download"
+    },
+    {
+     "entries": [
+      "new page of pages",
+      "new duplicates processing page"
+     ],
+     "menu": "special"
+    },
+    "---",
+    {
+     "entries": [
+      "all multiwatcher highlights"
+     ],
+     "menu": "clear"
+    }
+   ],
+   "menu": "&pages"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "set up a database backup location…",
+      "---",
+      "restore from a database backup…"
+     ],
+     "menu": "backup"
+    },
+    "---",
+    "locations…",
+    "---",
+    "how boned am I?",
+    "view file history",
+    "---",
+    {
+     "entries": [
+      "manage scheduled jobs…",
+      "---",
+      {
+       "check": "work file jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work file jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "clear orphan files…",
+      "---",
+      "fix missing file archived times…"
+     ],
+     "menu": "file maintenance"
+    },
+    {
+     "entries": [
+      "review deferred delete table data",
+      "---",
+      {
+       "check": "work deferred delete jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work deferred delete jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "analyze…",
+      "review vacuum data…",
+      "---",
+      "clear/fix orphan file records…",
+      "clear orphan URL mappings…",
+      "clear orphan tables…",
+      "clear orphan hashed serialisables…",
+      "---",
+      "get tables using definitions…"
+     ],
+     "menu": "db maintenance"
+    },
+    {
+     "entries": [
+      "fix invalid tags…",
+      "fix logically inconsistent mappings…",
+      "---",
+      "repopulate truncated mappings tables…",
+      "---",
+      "resync combined deleted files…",
+      "resync tag mappings cache files…"
+     ],
+     "menu": "check and repair"
+    },
+    {
+     "entries": [
+      "total pending count, in the pending menu…",
+      "tag storage mappings cache (all, with deferred siblings && parents calculation)…",
+      "tag storage mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (all, deferred siblings && parents calculation)…",
+      "tag display mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (missing file repopulation)…",
+      "tag siblings lookup cache…",
+      "tag parents lookup cache…",
+      "tag text search cache…",
+      "tag text search cache (subtags repopulation)…",
+      "tag text search cache (searchable subtag maps)…",
+      "---",
+      "local hashes cache…",
+      "local tags cache…",
+      "---",
+      "service info numbers…",
+      "similar files search tree…"
+     ],
+     "menu": "regenerate"
+    },
+    {
+     "entries": [
+      "clear all file viewing statistics…",
+      "cull file viewing statistics based on current min/max values…"
+     ],
+     "menu": "clear"
+    },
+    "---",
+    "set a password…"
+   ],
+   "menu": "&database"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all new network traffic",
+       "checked": true
+      },
+      {
+       "check": "always boot the client with paused network traffic",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "subscriptions",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "all paged importer work",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "paged file importing",
+       "checked": false
+      },
+      {
+       "check": "paged gallery searching",
+       "checked": false
+      },
+      {
+       "check": "paged watcher checking",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "subscriptions…",
+    "---",
+    {
+     "entries": [
+      "review bandwidth usage and edit rules",
+      "review current network jobs",
+      "review session cookies",
+      "manage http headers…"
+     ],
+     "menu": "data"
+    },
+    {
+     "entries": [
+      "import downloaders…",
+      "user-run downloader repository",
+      "export downloaders…",
+      "---",
+      "downloader and url display…",
+      {
+       "entries": [
+        {
+         "check": "watcher urls",
+         "checked": false
+        },
+        {
+         "check": "other recognised urls",
+         "checked": false
+        }
+       ],
+       "menu": "watch clipboard for urls"
+      },
+      "---",
+      "gallery url generators…",
+      "url classes…",
+      "parsers…",
+      "---",
+      "url class links…",
+      "---",
+      "LEGACY: lookup scripts…"
+     ],
+     "menu": "downloaders"
+    },
+    {
+     "entries": [
+      "THIS SYSTEM IS LEGACY",
+      "TRY TO MIGRATE AWAY FROM IT",
+      "---",
+      "logins…",
+      "---",
+      "login scripts…"
+     ],
+     "menu": "logins"
+    }
+   ],
+   "menu": "&network"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all repository synchronisation",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "review",
+    "edit…",
+    "---",
+    {
+     "entries": [
+      "import repository update files…"
+     ],
+     "menu": "advanced"
+    }
+   ],
+   "menu": "&services"
+  },
+  {
+   "entries": [
+    "migrate…",
+    "---",
+    "display/search…",
+    "---",
+    "siblings…",
+    "parents…",
+    {
+     "entries": [
+      "manage where tag siblings and parents apply…"
+     ],
+     "menu": "advanced"
+    },
+    {
+     "entries": [
+      "review current sibling/parent sync",
+      "---",
+      "sync now",
+      "---",
+      {
+       "check": "sync tag display during idle time",
+       "checked": true
+      },
+      {
+       "check": "sync tag display during normal time",
+       "checked": true
+      }
+     ],
+     "menu": "sync"
+    }
+   ],
+   "menu": "&tags"
+  },
+  {
+   "entries": [
+    "open help",
+    {
+     "entries": [
+      "site",
+      "github repository",
+      "latest build",
+      "issue tracker",
+      "8chan.moe /t/ (Hydrus Network General)",
+      "x",
+      "tumblr",
+      "discord",
+      "patreon"
+     ],
+     "menu": "links"
+    },
+    "changelog",
+    "---",
+    "add the PTR…",
+    "---",
+    {
+     "check": "darkmode",
+     "checked": false
+    },
+    {
+     "check": "advanced mode",
+     "checked": false
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "force idle mode",
+         "checked": false
+        },
+        "simulate a wake from sleep",
+        {
+         "check": "thumbnail debug mode",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "allow crashy files in mpv",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors)",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors) (PERSISTENT)",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "use faulthandler to log crashes",
+         "checked": false
+        }
+       ],
+       "menu": "debug modes"
+      },
+      {
+       "entries": [
+        "what is this?",
+        {
+         "check": "profile mode (client api)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (db)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (threads)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (ui)",
+         "checked": false
+        },
+        {
+         "check": "query planner mode",
+         "checked": false
+        }
+       ],
+       "menu": "profiling"
+      },
+      {
+       "entries": [
+        {
+         "check": "blurhash mode",
+         "checked": false
+        },
+        {
+         "check": "cache report mode",
+         "checked": false
+        },
+        {
+         "check": "callto report mode",
+         "checked": false
+        },
+        {
+         "check": "canvas tile borders mode",
+         "checked": false
+        },
+        {
+         "check": "daemon report mode",
+         "checked": false
+        },
+        {
+         "check": "db report mode",
+         "checked": false
+        },
+        {
+         "check": "file report mode",
+         "checked": false
+        },
+        {
+         "check": "file import report mode",
+         "checked": false
+        },
+        {
+         "check": "file sort report mode",
+         "checked": false
+        },
+        {
+         "check": "graphics view thumbnail update report mode",
+         "checked": false
+        },
+        {
+         "check": "gui report mode",
+         "checked": false
+        },
+        {
+         "check": "hover window report mode",
+         "checked": false
+        },
+        {
+         "check": "idle report mode",
+         "checked": false
+        },
+        {
+         "check": "media load report mode",
+         "checked": false
+        },
+        {
+         "check": "mpv report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode (silent)",
+         "checked": false
+        },
+        {
+         "check": "potential duplicates report mode",
+         "checked": false
+        },
+        {
+         "check": "pubsub report mode",
+         "checked": false
+        },
+        {
+         "check": "similar files metadata generation report mode",
+         "checked": false
+        },
+        {
+         "check": "shortcut report mode",
+         "checked": false
+        },
+        {
+         "check": "shutdown report mode",
+         "checked": false
+        },
+        {
+         "check": "subprocess report mode",
+         "checked": false
+        },
+        {
+         "check": "subscription report mode",
+         "checked": false
+        }
+       ],
+       "menu": "report modes"
+      },
+      {
+       "entries": [
+        {
+         "check": "autocomplete delay mode",
+         "checked": false
+        },
+        "close and reload current gui session",
+        "force a main gui layout now",
+        "isolate existing mpv widgets",
+        "make a long text popup",
+        "make a modal popup in five seconds",
+        "make a new page in five seconds",
+        "make a non-cancellable modal popup in five seconds",
+        "make a parentless text ctrl dialog",
+        "make a popup in five seconds",
+        "make a QMessageBox",
+        "make some popups",
+        "publish some sub files in five seconds",
+        "refresh pages menu in five seconds",
+        "reload current qss stylesheet",
+        "reload icon cache",
+        "reset multi-column list settings to default",
+        "save 'last session' gui session"
+       ],
+       "menu": "gui actions"
+      },
+      {
+       "entries": [
+        "flush log",
+        "force database commit",
+        "review threads",
+        "scan file storage folders",
+        "show env",
+        "show scheduled jobs",
+        "subscription manager snapshot",
+        "---",
+        "simulate program exit signal"
+       ],
+       "menu": "data actions"
+      },
+      {
+       "entries": [
+        "run fast memory maintenance",
+        "run slow memory maintenance",
+        "clear all rendering caches",
+        "clear thumbnail cache"
+       ],
+       "menu": "memory actions"
+      },
+      {
+       "entries": [
+        "review current network jobs",
+        "fetch a url"
+       ],
+       "menu": "network actions"
+      },
+      "---",
+      "what is this object?",
+      "---",
+      {
+       "entries": [
+        "run the ui test",
+        "run the client api test",
+        "run the server test on fresh server",
+        "---",
+        "run the visual duplicates tuning suite",
+        "run the visual duplicates tuning suite (alpha)",
+        "---",
+        {
+         "check": "fake petition mode",
+         "checked": false
+        },
+        "---",
+        "do self-sigterm",
+        "do self-sigterm (fake)",
+        "---",
+        "induce a program crash"
+       ],
+       "menu": "tests, do not touch"
+      }
+     ],
+     "menu": "debug"
+    },
+    "---",
+    "about Qt",
+    "about"
+   ],
+   "menu": "&help"
+  }
+ ],
+ "export_folder_file_menu": {
+  "entries": [
+   "import files…",
+   "---",
+   {
+    "entries": [
+     {
+      "entries": [
+       {
+        "check": "import folders",
+        "checked": false
+       },
+       {
+        "check": "export folders",
+        "checked": false
+       }
+      ],
+      "menu": "pause"
+     },
+     "---",
+     {
+      "entries": [
+       "run all",
+       "---",
+       "delete after",
+       "regular",
+       "sync"
+      ],
+      "menu": "run export folder now"
+     },
+     "---",
+     "manage import folders…",
+     "manage export folders…"
+    ],
+    "menu": "import/export folders"
+   },
+   "---",
+   {
+    "entries": [
+     "installation directory",
+     "database directory",
+     "quick export directory"
+    ],
+    "menu": "open"
+   },
+   "---",
+   "options…",
+   "---",
+   "restart",
+   "exit/force maintenance",
+   "exit"
+  ],
+  "menu": "&file"
+ },
+ "facts": {
+  "pause_all_new_network_traffic": true
+ },
+ "import_folder_file_menu": {
+  "entries": [
+   "import files…",
+   "---",
+   {
+    "entries": [
+     {
+      "entries": [
+       {
+        "check": "import folders",
+        "checked": false
+       },
+       {
+        "check": "export folders",
+        "checked": false
+       }
+      ],
+      "menu": "pause"
+     },
+     "---",
+     {
+      "entries": [
+       "drop box"
+      ],
+      "menu": "check import folder now"
+     },
+     "---",
+     "manage import folders…",
+     "manage export folders…"
+    ],
+    "menu": "import/export folders"
+   },
+   "---",
+   {
+    "entries": [
+     "installation directory",
+     "database directory",
+     "quick export directory"
+    ],
+    "menu": "open"
+   },
+   "---",
+   "options…",
+   "---",
+   "restart",
+   "exit/force maintenance",
+   "exit"
+  ],
+  "menu": "&file"
+ },
+ "repositories": [
+  {
+   "entries": [
+    "import files…",
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "import folders",
+         "checked": false
+        },
+        {
+         "check": "export folders",
+         "checked": false
+        }
+       ],
+       "menu": "pause"
+      },
+      "---",
+      "manage import folders…",
+      "manage export folders…"
+     ],
+     "menu": "import/export folders"
+    },
+    "---",
+    {
+     "entries": [
+      "installation directory",
+      "database directory",
+      "quick export directory"
+     ],
+     "menu": "open"
+    },
+    "---",
+    "options…",
+    "---",
+    "restart",
+    "exit/force maintenance",
+    "exit"
+   ],
+   "menu": "&file"
+  },
+  {
+   "disabled": true,
+   "entries": [
+    "initialising",
+    "initialising",
+    "---",
+    {
+     "disabled": true,
+     "entries": [],
+     "menu": "closed pages"
+    },
+    {
+     "disabled": true,
+     "entries": [],
+     "menu": "searching"
+    }
+   ],
+   "menu": "&undo"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "1 pages open",
+      "total session weight: 0"
+     ],
+     "menu": "weight"
+    },
+    "---",
+    {
+     "entries": [
+      "1: files",
+      "---",
+      "Clear History"
+     ],
+     "menu": "history"
+    },
+    "---",
+    "refresh",
+    "---",
+    {
+     "entries": [
+      "show/hide sidebar and preview panel",
+      "---",
+      {
+       "check": "save current page's sidebar/preview size on client exit",
+       "checked": true
+      },
+      "---",
+      "save current page's sidebar/preview size now",
+      "---",
+      "restore all pages' sidebar/preview sizes to saved value"
+     ],
+     "menu": "sidebar"
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "clear and load"
+      },
+      {
+       "entries": [
+        "exit session",
+        "last session"
+       ],
+       "menu": "append"
+      },
+      {
+       "entries": [
+        {
+         "entries": [
+          "2026-09-29 18:38:58"
+         ],
+         "menu": "exit session"
+        }
+       ],
+       "menu": "append backup"
+      },
+      {
+       "entries": [
+        "as new session…"
+       ],
+       "menu": "save"
+      }
+     ],
+     "menu": "sessions"
+    },
+    "---",
+    "new page…",
+    {
+     "entries": [
+      "new \"art\" search page",
+      "new \"my files\" search page",
+      "new \"trash\" page",
+      "new \"a file repository\" search page"
+     ],
+     "menu": "file search"
+    },
+    {
+     "entries": [
+      "new url download page",
+      "new watcher page",
+      "new gallery page",
+      "new simple downloader page"
+     ],
+     "menu": "download"
+    },
+    {
+     "entries": [
+      "new page of pages",
+      "new duplicates processing page"
+     ],
+     "menu": "special"
+    },
+    "---",
+    {
+     "entries": [
+      "all multiwatcher highlights"
+     ],
+     "menu": "clear"
+    }
+   ],
+   "menu": "&pages"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "set up a database backup location…",
+      "---",
+      "restore from a database backup…"
+     ],
+     "menu": "backup"
+    },
+    "---",
+    "locations…",
+    "---",
+    "how boned am I?",
+    "view file history",
+    "---",
+    {
+     "entries": [
+      "manage scheduled jobs…",
+      "---",
+      {
+       "check": "work file jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work file jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "clear orphan files…",
+      "---",
+      "fix missing file archived times…"
+     ],
+     "menu": "file maintenance"
+    },
+    {
+     "entries": [
+      "review deferred delete table data",
+      "---",
+      {
+       "check": "work deferred delete jobs during idle time",
+       "checked": true
+      },
+      {
+       "check": "work deferred delete jobs during normal time",
+       "checked": true
+      },
+      "---",
+      "analyze…",
+      "review vacuum data…",
+      "---",
+      "clear/fix orphan file records…",
+      "clear orphan URL mappings…",
+      "clear orphan tables…",
+      "clear orphan hashed serialisables…",
+      "---",
+      "get tables using definitions…"
+     ],
+     "menu": "db maintenance"
+    },
+    {
+     "entries": [
+      "fix invalid tags…",
+      "fix logically inconsistent mappings…",
+      "---",
+      "repopulate truncated mappings tables…",
+      "---",
+      "resync combined deleted files…",
+      "resync tag mappings cache files…"
+     ],
+     "menu": "check and repair"
+    },
+    {
+     "entries": [
+      "total pending count, in the pending menu…",
+      "tag storage mappings cache (all, with deferred siblings && parents calculation)…",
+      "tag storage mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (all, deferred siblings && parents calculation)…",
+      "tag display mappings cache (just pending tags, instant calculation)…",
+      "tag display mappings cache (missing file repopulation)…",
+      "tag siblings lookup cache…",
+      "tag parents lookup cache…",
+      "tag text search cache…",
+      "tag text search cache (subtags repopulation)…",
+      "tag text search cache (searchable subtag maps)…",
+      "---",
+      "local hashes cache…",
+      "local tags cache…",
+      "---",
+      "service info numbers…",
+      "similar files search tree…"
+     ],
+     "menu": "regenerate"
+    },
+    {
+     "entries": [
+      "clear all file viewing statistics…",
+      "cull file viewing statistics based on current min/max values…"
+     ],
+     "menu": "clear"
+    },
+    "---",
+    "set a password…"
+   ],
+   "menu": "&database"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all new network traffic",
+       "checked": true
+      },
+      {
+       "check": "always boot the client with paused network traffic",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "subscriptions",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "all paged importer work",
+       "checked": false
+      },
+      "---",
+      {
+       "check": "paged file importing",
+       "checked": false
+      },
+      {
+       "check": "paged gallery searching",
+       "checked": false
+      },
+      {
+       "check": "paged watcher checking",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "subscriptions…",
+    "---",
+    {
+     "entries": [
+      "review bandwidth usage and edit rules",
+      "review current network jobs",
+      "review session cookies",
+      "manage http headers…"
+     ],
+     "menu": "data"
+    },
+    {
+     "entries": [
+      "import downloaders…",
+      "user-run downloader repository",
+      "export downloaders…",
+      "---",
+      "downloader and url display…",
+      {
+       "entries": [
+        {
+         "check": "watcher urls",
+         "checked": false
+        },
+        {
+         "check": "other recognised urls",
+         "checked": false
+        }
+       ],
+       "menu": "watch clipboard for urls"
+      },
+      "---",
+      "gallery url generators…",
+      "url classes…",
+      "parsers…",
+      "---",
+      "url class links…",
+      "---",
+      "LEGACY: lookup scripts…"
+     ],
+     "menu": "downloaders"
+    },
+    {
+     "entries": [
+      "THIS SYSTEM IS LEGACY",
+      "TRY TO MIGRATE AWAY FROM IT",
+      "---",
+      "logins…",
+      "---",
+      "login scripts…"
+     ],
+     "menu": "logins"
+    }
+   ],
+   "menu": "&network"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      {
+       "check": "all repository synchronisation",
+       "checked": false
+      }
+     ],
+     "menu": "pause"
+    },
+    "---",
+    "review",
+    "edit…",
+    "---",
+    {
+     "entries": [
+      "import repository update files…"
+     ],
+     "menu": "advanced"
+    }
+   ],
+   "menu": "&services"
+  },
+  {
+   "entries": [
+    "migrate…",
+    "---",
+    "display/search…",
+    "---",
+    "siblings…",
+    "parents…",
+    {
+     "entries": [
+      "manage where tag siblings and parents apply…"
+     ],
+     "menu": "advanced"
+    },
+    {
+     "entries": [
+      "review current sibling/parent sync",
+      "---",
+      "sync now",
+      "---",
+      {
+       "check": "sync tag display during idle time",
+       "checked": true
+      },
+      {
+       "check": "sync tag display during normal time",
+       "checked": true
+      }
+     ],
+     "menu": "sync"
+    }
+   ],
+   "menu": "&tags"
+  },
+  {
+   "entries": [
+    {
+     "entries": [
+      "2 files to upload",
+      "---",
+      "commit",
+      "forget"
+     ],
+     "menu": "a file repository"
+    },
+    {
+     "entries": [
+      "4 tag data to upload",
+      "---",
+      "commit",
+      "forget"
+     ],
+     "menu": "a tag repository"
+    }
+   ],
+   "menu": "pending (6)"
+  },
+  {
+   "entries": [
+    "open help",
+    {
+     "entries": [
+      "site",
+      "github repository",
+      "latest build",
+      "issue tracker",
+      "8chan.moe /t/ (Hydrus Network General)",
+      "x",
+      "tumblr",
+      "discord",
+      "patreon"
+     ],
+     "menu": "links"
+    },
+    "changelog",
+    "---",
+    "add the PTR…",
+    "---",
+    {
+     "check": "darkmode",
+     "checked": false
+    },
+    {
+     "check": "advanced mode",
+     "checked": false
+    },
+    "---",
+    {
+     "entries": [
+      {
+       "entries": [
+        {
+         "check": "force idle mode",
+         "checked": false
+        },
+        "simulate a wake from sleep",
+        {
+         "check": "thumbnail debug mode",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "allow crashy files in mpv",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors)",
+         "checked": false
+        },
+        {
+         "check": "allow crashy files in mpv (and silence errors) (PERSISTENT)",
+         "checked": false
+        },
+        "---",
+        {
+         "check": "use faulthandler to log crashes",
+         "checked": false
+        }
+       ],
+       "menu": "debug modes"
+      },
+      {
+       "entries": [
+        "what is this?",
+        {
+         "check": "profile mode (client api)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (db)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (threads)",
+         "checked": false
+        },
+        {
+         "check": "profile mode (ui)",
+         "checked": false
+        },
+        {
+         "check": "query planner mode",
+         "checked": false
+        }
+       ],
+       "menu": "profiling"
+      },
+      {
+       "entries": [
+        {
+         "check": "blurhash mode",
+         "checked": false
+        },
+        {
+         "check": "cache report mode",
+         "checked": false
+        },
+        {
+         "check": "callto report mode",
+         "checked": false
+        },
+        {
+         "check": "canvas tile borders mode",
+         "checked": false
+        },
+        {
+         "check": "daemon report mode",
+         "checked": false
+        },
+        {
+         "check": "db report mode",
+         "checked": false
+        },
+        {
+         "check": "file report mode",
+         "checked": false
+        },
+        {
+         "check": "file import report mode",
+         "checked": false
+        },
+        {
+         "check": "file sort report mode",
+         "checked": false
+        },
+        {
+         "check": "graphics view thumbnail update report mode",
+         "checked": false
+        },
+        {
+         "check": "gui report mode",
+         "checked": false
+        },
+        {
+         "check": "hover window report mode",
+         "checked": false
+        },
+        {
+         "check": "idle report mode",
+         "checked": false
+        },
+        {
+         "check": "media load report mode",
+         "checked": false
+        },
+        {
+         "check": "mpv report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode",
+         "checked": false
+        },
+        {
+         "check": "network report mode (silent)",
+         "checked": false
+        },
+        {
+         "check": "potential duplicates report mode",
+         "checked": false
+        },
+        {
+         "check": "pubsub report mode",
+         "checked": false
+        },
+        {
+         "check": "similar files metadata generation report mode",
+         "checked": false
+        },
+        {
+         "check": "shortcut report mode",
+         "checked": false
+        },
+        {
+         "check": "shutdown report mode",
+         "checked": false
+        },
+        {
+         "check": "subprocess report mode",
+         "checked": false
+        },
+        {
+         "check": "subscription report mode",
+         "checked": false
+        }
+       ],
+       "menu": "report modes"
+      },
+      {
+       "entries": [
+        {
+         "check": "autocomplete delay mode",
+         "checked": false
+        },
+        "close and reload current gui session",
+        "force a main gui layout now",
+        "isolate existing mpv widgets",
+        "make a long text popup",
+        "make a modal popup in five seconds",
+        "make a new page in five seconds",
+        "make a non-cancellable modal popup in five seconds",
+        "make a parentless text ctrl dialog",
+        "make a popup in five seconds",
+        "make a QMessageBox",
+        "make some popups",
+        "publish some sub files in five seconds",
+        "refresh pages menu in five seconds",
+        "reload current qss stylesheet",
+        "reload icon cache",
+        "reset multi-column list settings to default",
+        "save 'last session' gui session"
+       ],
+       "menu": "gui actions"
+      },
+      {
+       "entries": [
+        "flush log",
+        "force database commit",
+        "review threads",
+        "scan file storage folders",
+        "show env",
+        "show scheduled jobs",
+        "subscription manager snapshot",
+        "---",
+        "simulate program exit signal"
+       ],
+       "menu": "data actions"
+      },
+      {
+       "entries": [
+        "run fast memory maintenance",
+        "run slow memory maintenance",
+        "clear all rendering caches",
+        "clear thumbnail cache"
+       ],
+       "menu": "memory actions"
+      },
+      {
+       "entries": [
+        "review current network jobs",
+        "fetch a url"
+       ],
+       "menu": "network actions"
+      },
+      "---",
+      "what is this object?",
+      "---",
+      {
+       "entries": [
+        "run the ui test",
+        "run the client api test",
+        "run the server test on fresh server",
+        "---",
+        "run the visual duplicates tuning suite",
+        "run the visual duplicates tuning suite (alpha)",
+        "---",
+        {
+         "check": "fake petition mode",
+         "checked": false
+        },
+        "---",
+        "do self-sigterm",
+        "do self-sigterm (fake)",
+        "---",
+        "induce a program crash"
+       ],
+       "menu": "tests, do not touch"
+      }
+     ],
+     "menu": "debug"
+    },
+    "---",
+    "about Qt",
+    "about"
+   ],
+   "menu": "&help"
+  }
+ ]
+}

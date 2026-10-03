@@ -24,6 +24,17 @@ impl Subsampling {
             Subsampling::Greyscale => 0.967,
         }
     }
+
+    /// `subsampling_str_lookup`.
+    pub fn name(self) -> &'static str {
+        match self {
+            Subsampling::S444 => "4:4:4",
+            Subsampling::S422 => "4:2:2",
+            Subsampling::S420 => "4:2:0",
+            Subsampling::Unknown => "unknown",
+            Subsampling::Greyscale => "greyscale (no subsampling)",
+        }
+    }
 }
 
 /// What the reference knows about a jpeg's encoding.
@@ -36,6 +47,24 @@ pub struct JpegQuality {
 }
 
 impl JpegQuality {
+    /// The reference's word for the quality ("very low" to "extremely
+    /// high"; "unknown" if it couldn't be read).
+    pub fn quality_label(&self) -> &'static str {
+        let Some(q) = self.quality else {
+            return "unknown";
+        };
+        match q {
+            q if q >= 2800.0 => "very low",
+            q if q >= 2000.0 => "low",
+            q if q >= 1400.0 => "medium low",
+            q if q >= 1000.0 => "medium",
+            q if q >= 700.0 => "medium high",
+            q if q >= 480.0 => "high",
+            q if q >= 330.0 => "very high",
+            _ => "extremely high",
+        }
+    }
+
     const UNREADABLE: JpegQuality = JpegQuality {
         subsampling: Subsampling::Unknown,
         quality: None,

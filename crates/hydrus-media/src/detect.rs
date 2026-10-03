@@ -317,10 +317,25 @@ fn zip_mime(path: &Path) -> Mime {
     if archive::looks_like_ugoira(&mut zip) {
         return Mime::AnimationUgoira;
     }
-    if archive::looks_like_cbz(&mut zip) {
+    if comic_book_detection() && archive::looks_like_cbz(&mut zip) {
         return Mime::ApplicationCbz;
     }
     Mime::ApplicationZip
+}
+
+/// `HydrusFileHandling.ALLOW_COMIC_BOOK_ARCHIVE_INSPECTION`, which, as in
+/// the reference, holds for the whole process.
+static COMIC_BOOK_DETECTION: std::sync::atomic::AtomicBool =
+    std::sync::atomic::AtomicBool::new(true);
+
+/// Tell comic book archives (CBZ) from other zips, or don't
+/// (`allow_comic_book_archive_detection`).
+pub fn set_comic_book_detection(on: bool) {
+    COMIC_BOOK_DETECTION.store(on, std::sync::atomic::Ordering::Relaxed);
+}
+
+fn comic_book_detection() -> bool {
+    COMIC_BOOK_DETECTION.load(std::sync::atomic::Ordering::Relaxed)
 }
 
 /// `GetMimeFromFFMPEG`.

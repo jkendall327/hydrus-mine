@@ -6,7 +6,7 @@ use std::sync::Arc;
 
 use hydrus_core::HashId;
 use hydrus_media::jpeg::{self, JpegQuality};
-use hydrus_media::visual::{self, VisualData, VisualDataTiled};
+use hydrus_media::visual::{self, Verdict, VisualData, VisualDataTiled};
 use hydrus_media::{MediaTools, Raster};
 use hydrus_store::{Snapshot, Store};
 
@@ -100,13 +100,17 @@ impl FileContent for StoreContent<'_> {
         q
     }
 
-    fn visual_confidence(&mut self, a: HashId, b: HashId) -> Option<u8> {
+    fn visual_comparison(&mut self, a: HashId, b: HashId) -> Option<(Verdict, Option<Verdict>)> {
         let (va, vb) = (self.visual_data(a)?, self.visual_data(b)?);
-        if !visual::similar_simple(&va, &vb).0 {
-            return None;
+        let simple = visual::similar_simple(&va, &vb);
+        if !simple.similar {
+            return Some((simple, None));
         }
-        let (ta, tb) = (self.tiled(a)?, self.tiled(b)?);
-        Some(visual::similar_regional(&ta, &tb).1)
+        let regional = match (self.tiled(a), self.tiled(b)) {
+            (Some(ta), Some(tb)) => Some(visual::similar_regional(&ta, &tb)),
+            _ => None,
+        };
+        Some((simple, regional))
     }
 }
 

@@ -1,0 +1,1162 @@
+{
+ "gallery": {
+  "page_options": 50,
+  "steps": [
+   {
+    "do": "start",
+    "rows": [],
+    "argument": null,
+    "selected": [],
+    "highlighted": "blue",
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "highlight",
+    "rows": [
+     0
+    ],
+    "argument": null,
+    "selected": [
+     "blue"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "green",
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "green",
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected queries?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "blue",
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "blue",
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected queries?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "work",
+    "rows": [
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     0,
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 3 selected queries?\n\n1 are still working.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "file limit",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": 50,
+    "selected": [
+     "blue",
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "set options",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "blue",
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [
+     {
+      "message": "Set the page's current file limit and import options to all the selected queries?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     2000,
+     2000,
+     2000
+    ]
+   },
+   {
+    "do": "set options",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "blue",
+     "green"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Set the page's current file limit and import options to all the selected queries?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": true
+     }
+    ],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     50,
+     50,
+     2000
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "green",
+     "red"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "blue",
+     "green",
+     "red"
+    ],
+    "options": [
+     50,
+     50,
+     2000
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected queries?\n\n1 are still working.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": true
+     }
+    ],
+    "rows_now": [
+     "blue"
+    ],
+    "options": [
+     50
+    ]
+   }
+  ]
+ },
+ "watcher": {
+  "page_options": [
+   1,
+   14400,
+   604800,
+   [
+    1,
+    2592000
+   ]
+  ],
+  "steps": [
+   {
+    "do": "start",
+    "rows": [],
+    "argument": null,
+    "selected": [],
+    "highlighted": "https://boards.example/thread/1",
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "highlight",
+    "rows": [
+     0
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected watchers?\n\n2 are not yet DEAD.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected watchers?\n\n2 are not yet DEAD.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "work",
+    "rows": [
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": false,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     0,
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 3 selected watchers?\n\n1 are still working.\n\n3 are not yet DEAD.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "checker",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": [
+     1,
+     14400,
+     604800,
+     [
+      1,
+      2592000
+     ]
+    ],
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": true,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "set options",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [
+     {
+      "message": "Set the current checker and import options to all the selected watchers?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": false
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "set options",
+    "rows": [
+     0,
+     1
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Set the current checker and import options to all the selected watchers?",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": true
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      1,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ],
+     [
+      1,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "select",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": true,
+    "asked": [],
+    "rows_now": [
+     "https://boards.example/thread/1",
+     "https://boards.example/thread/2",
+     "https://boards.example/thread/3"
+    ],
+    "options": [
+     [
+      1,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ],
+     [
+      1,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ],
+     [
+      4,
+      300,
+      86400,
+      [
+       1,
+       259200
+      ]
+     ]
+    ]
+   },
+   {
+    "do": "remove",
+    "rows": [
+     1,
+     2
+    ],
+    "argument": null,
+    "selected": [],
+    "highlighted": null,
+    "can_highlight": false,
+    "set_options_shown": false,
+    "asked": [
+     {
+      "message": "Remove the 2 selected watchers?\n\n1 are still working.\n\n2 are not yet DEAD.",
+      "title": "Are you sure?",
+      "yes": "yes",
+      "no": "no",
+      "answer": true
+     }
+    ],
+    "rows_now": [
+     "https://boards.example/thread/1"
+    ],
+    "options": [
+     [
+      1,
+      14400,
+      604800,
+      [
+       1,
+       2592000
+      ]
+     ]
+    ]
+   }
+  ]
+ }
+}

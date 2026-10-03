@@ -156,7 +156,27 @@ mod tests {
             };
             let expected: BTreeMap<String, String> =
                 serde_json::from_value(case["result"].clone()).unwrap();
-            assert_eq!(merge.merge(&existing, &incoming), expected, "{case}");
+            if case.get("name_whitelist").is_none() {
+                assert_eq!(merge.merge(&existing, &incoming), expected, "{case}");
+                continue;
+            }
+            // whitelisted and renamed first, as note import options have it
+            let mut overrides: Vec<(String, String)> = case["names_to_name_overrides"]
+                .as_object()
+                .unwrap()
+                .iter()
+                .map(|(k, v)| (k.clone(), v.as_str().unwrap().to_owned()))
+                .collect();
+            overrides.sort();
+            let options = crate::import_options::NoteImportOptions {
+                get_notes: true,
+                extend_existing_note_if_possible: merge.extend_existing,
+                conflict: merge.conflict,
+                name_whitelist: serde_json::from_value(case["name_whitelist"].clone()).unwrap(),
+                all_name_override: case["all_name_override"].as_str().map(str::to_owned),
+                name_overrides: overrides,
+            };
+            assert_eq!(options.updates(&existing, &incoming), expected, "{case}");
         }
         // every conflict code the reference knows is one we know
         for code in data["conflict_resolutions"].as_object().unwrap().keys() {

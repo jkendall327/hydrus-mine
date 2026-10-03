@@ -114,6 +114,37 @@ pub async fn delete_files(
                 ServiceType::LocalFileDomain,
             ],
         );
+        // deleting for good refuses files the delete lock holds, naming them
+        if let Some(storage) = snap
+            .services
+            .of_type(ServiceType::HydrusLocalFileStorage)
+            .next()
+            .map(|s| s.id)
+            .filter(|id| domains.contains(id))
+        {
+            let lookup = hashes.clone();
+            let locked: Vec<Sha256> = app.store.read(move |conn| {
+                let ids = master::hash_ids(conn, &lookup)?;
+                let by_id: std::collections::HashMap<HashId, Sha256> =
+                    ids.iter().map(|(hash, &id)| (id, *hash)).collect();
+                let ids: Vec<HashId> = ids.into_values().collect();
+                Ok(hydrus_store::delete_lock::locked(conn, storage, &ids)?
+                    .into_iter()
+                    .filter_map(|id| by_id.get(&id).copied())
+                    .collect())
+            })?;
+            if !locked.is_empty() {
+                let mut hexes: Vec<String> = locked.iter().map(Sha256::to_hex).collect();
+                hexes.sort();
+                return Err(ApiError::new(
+                    crate::error::ErrorKind::Conflict,
+                    format!(
+                        "Sorry, some of the files you selected are currently delete locked. Their hashes are:\n\n{}",
+                        hexes.join("\n")
+                    ),
+                ));
+            }
+        }
         // deleting records the deletion even for files we've never seen
         app.store.write_content(move |w| {
             let ids = hashes
@@ -283,7 +314,7 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
                         ));
                     }
                 }
-                options.destinations = domains.current;
+                options.destinations = Some(domains.current);
             }
             let result = match &file {
                 GivenFile::Upload(bytes) => app.importer.import_bytes(bytes, &options),
@@ -294,14 +325,25 @@ pub async fn add_file(State(app): State<Arc<AppState>>, req: ApiRequest) -> ApiR
                 && delete_after
                 && result.status.is_successful()
             {
-                let _ = std::fs::remove_file(path);
+                let recycle = app
+                    .store
+                    .read(hydrus_store::settings::get::<hydrus_store::settings::FolderSettings>)
+                    .map_or(true, |s| s.delete_to_recycle_bin);
+                if let Err(e) = hydrus_store::paths::delete_or_recycle(path, recycle) {
+                    tracing::warn!(path = %path.display(), error = %e, "deleting an imported file failed");
+                }
             }
             Ok(result)
         })
         .await?;
     Ok(ApiResponse::Json(
         serde_json::json!({
-            "status": result.status.code(),
+            // (the reference reports an import that raised as an error)
+            "status": if result.raised.is_some() {
+                hydrus_import::ImportStatus::Error.code()
+            } else {
+                result.status.code()
+            },
             "hash": result.hash.map(|h| h.to_hex()),
             "note": result.note,
         }),

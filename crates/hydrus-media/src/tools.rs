@@ -14,7 +14,7 @@ use crate::formats::archive::{self, Zip};
 use crate::formats::{apng, clip, flash, gif, isobmff, ole, pdf, pdn, psd, svg, webp};
 use crate::hashes::{self, FileHashes};
 use crate::imaging::decode::{self, InfoValue, Opened};
-use crate::imaging::{Raster, resample};
+use crate::imaging::{Raster, metadata, resample};
 use crate::thumbnail::{self, Thumbnail, ThumbnailSpec};
 use crate::{blurhash, detect, mimes, phash};
 
@@ -43,6 +43,13 @@ pub struct FileFlags {
     pub has_icc_profile: bool,
     /// Text metadata such as PNG comments or generation parameters.
     pub has_human_readable_embedded_metadata: bool,
+    /// An XMP packet.
+    pub has_xmp: bool,
+    /// IPTC fields worth showing.
+    pub has_iptc: bool,
+    /// The program that made or edited it (a PNG's Software, Creator or
+    /// Source text, or a "Created with ..." comment).
+    pub has_software_source: bool,
 }
 
 /// Everything importing a file computes.
@@ -306,6 +313,90 @@ impl MediaTools {
         info.num_frames = archive::ugoira_zip_frame_paths(&zip).map(|p| p.len() as u64);
     }
 
+    /// A ugoira's frames, in `GetFramePathsUgoira`'s order, opened as
+    /// `GeneratePILImage` opens them (EXIF-rotated, RGB or RGBA).
+    pub fn ugoira_frames(&self, path: &Path) -> Result<Vec<Raster>> {
+        let damaged = || MediaError::damaged("Could not read the ugoira's frames!");
+        let mut zip = Zip::open(path).ok_or_else(damaged)?;
+        let names = archive::ugoira_frame_paths(&mut zip).ok_or_else(damaged)?;
+        names
+            .iter()
+            .map(|name| raster_from_bytes(&zip.read(name).ok_or_else(damaged)?, false))
+            .collect()
+    }
+
+    /// `GetFrameDurationsMSUgoira`: how long each of a ugoira's frames
+    /// shows, in ms: from its animation.json, else its "ugoira json" or
+    /// "ugoira frame delay array" note (`notes` are (name, text)), else
+    /// 125ms for each of its `num_frames`.
+    pub fn ugoira_frame_durations(
+        path: &Path,
+        notes: &[(String, String)],
+        num_frames: Option<u64>,
+    ) -> Vec<u32> {
+        let ms = |v: &serde_json::Value| {
+            v.as_f64()
+                .map(|d| d.round().clamp(0.0, f64::from(u32::MAX)) as u32)
+        };
+        let from_json = Zip::open(path)
+            .and_then(|mut zip| archive::ugoira_json_delays(&mut zip))
+            .and_then(|delays| delays.iter().map(ms).collect::<Option<Vec<u32>>>());
+        if let Some(durations) = from_json {
+            return durations;
+        }
+        if let Some(durations) = Self::ugoira_note_frame_durations(notes) {
+            return durations;
+        }
+        let n = usize::try_from(num_frames.unwrap_or(0).max(1)).unwrap_or(1);
+        vec![UGOIRA_DEFAULT_FRAME_DURATION_MS; n]
+    }
+
+    /// A ugoira's frame durations from its notes alone
+    /// (`GetFrameDurationsMSFromNote`): its "ugoira json" note, else its
+    /// "ugoira frame delay array"; `None` if neither reads.
+    pub fn ugoira_note_frame_durations(notes: &[(String, String)]) -> Option<Vec<u32>> {
+        let ms = |v: &serde_json::Value| {
+            v.as_f64()
+                .map(|d| d.round().clamp(0.0, f64::from(u32::MAX)) as u32)
+        };
+        // (`GetFrameDurationsMSFromNote`: a list whose first delay is an int)
+        let note = |name: &str| notes.iter().find(|(n, _)| n == name).map(|(_, t)| t);
+        let ints = |delays: &[serde_json::Value]| -> Option<Vec<u32>> {
+            delays.first().filter(|d| d.is_i64() || d.is_u64())?;
+            delays.iter().map(ms).collect()
+        };
+        if let Some(text) = note("ugoira json")
+            && let Ok(json) = serde_json::from_str::<serde_json::Value>(text)
+        {
+            let frames = match &json {
+                serde_json::Value::Array(frames) => Some(frames),
+                serde_json::Value::Object(o) => {
+                    o.get("frames").and_then(serde_json::Value::as_array)
+                }
+                _ => None,
+            };
+            let delays: Option<Vec<serde_json::Value>> =
+                frames.and_then(|frames| frames.iter().map(|f| f.get("delay").cloned()).collect());
+            if let Some(durations) = delays.as_deref().and_then(ints) {
+                return Some(durations);
+            }
+        }
+        if let Some(text) = note("ugoira frame delay array")
+            && let Ok(serde_json::Value::Array(delays)) = serde_json::from_str(text)
+            && let Some(durations) = ints(&delays)
+        {
+            return Some(durations);
+        }
+        None
+    }
+
+    /// Whether a ugoira has a note timing its frames (`HasFrameTimesNote`).
+    pub fn has_ugoira_frame_times_note(notes: &[(String, String)]) -> bool {
+        notes
+            .iter()
+            .any(|(name, _)| name == "ugoira json" || name == "ugoira frame delay array")
+    }
+
     /// Decode an image file to the array the reference hashes and thumbnails
     /// (`GenerateNumPyImage`): EXIF-rotated, colour-managed to sRGB, RGB or
     /// RGBA, useless alpha removed.
@@ -337,6 +428,33 @@ impl MediaTools {
     fn ffmpeg_still(&self, path: &Path) -> Result<Raster> {
         let lines = self.ffmpeg.info_lines(path, None)?;
         let (w, h) = parse::video_resolution(&lines, true)?;
+        // newer ffmpeg gives a HEIF or AVIF image's alpha plane as a stream
+        // of its own (older ones drop it): merge it back
+        if let Some((primary, alpha)) = std::fs::read(path)
+            .ok()
+            .and_then(|data| isobmff::alpha_item(&data))
+            && lines.iter().any(|l| l.contains(&format!("[{alpha:#x}]")))
+        {
+            let graph = format!("[0:i:{primary}][0:i:{alpha}]alphamerge");
+            let merged = self.ffmpeg.render_to_stdout(&[
+                OsStr::new("-i"),
+                path.as_os_str(),
+                OsStr::new("-filter_complex"),
+                OsStr::new(&graph),
+                OsStr::new("-frames:v"),
+                OsStr::new("1"),
+                OsStr::new("-loglevel"),
+                OsStr::new("quiet"),
+                OsStr::new("-f"),
+                OsStr::new("rawvideo"),
+                OsStr::new("-pix_fmt"),
+                OsStr::new("rgba"),
+                OsStr::new("-"),
+            ]);
+            if let Ok(raster) = merged.and_then(|raw| Raster::new(w, h, 4, raw)) {
+                return Ok(raster);
+            }
+        }
         let raw = self.ffmpeg.render_to_stdout(&[
             OsStr::new("-i"),
             path.as_os_str(),
@@ -362,6 +480,29 @@ impl MediaTools {
         self.load_image(path, info.mime)
             .ok()
             .map(|r| hashes::sha256(r.data()))
+    }
+
+    /// What the reference's "system:similar to data" editor pastes for a
+    /// file (`_Paste`): its pixel hash and perceptual hashes; why not, for a
+    /// file whose type has none or that can't be read.
+    pub fn similar_search_hashes(
+        &self,
+        path: &Path,
+    ) -> std::result::Result<(Sha256, Vec<PerceptualHash>), String> {
+        let mime = self.detect_mime(path).map_err(|e| e.to_string())?;
+        if !mimes::has_perceptual_hash(mime) {
+            return Err(format!(
+                "Sorry, \"{}\" files are not compatible with the similar file search system!",
+                mime.human_name()
+            ));
+        }
+        let image = self
+            .load_image(path, mime)
+            .map_err(|e| format!("Sorry, seemed to be a problem: {e}"))?;
+        Ok((
+            hashes::sha256(image.data()),
+            self.perceptual_hashes(path, mime),
+        ))
     }
 
     /// Perceptual hashes for similar-file search (empty on failure, as in the reference).
@@ -558,6 +699,12 @@ impl MediaTools {
             flags.has_human_readable_embedded_metadata =
                 mimes::can_have_human_readable_embedded_metadata(mime)
                     && is_human_readable(&opened);
+            flags.has_xmp = mimes::can_have_xmp(mime)
+                && opened.xmp.as_deref().is_some_and(metadata::xmp_is_readable);
+            flags.has_iptc = mimes::can_have_iptc(mime)
+                && opened.iptc.as_deref().is_some_and(metadata::has_shown_iptc);
+            flags.has_software_source = mimes::can_have_software_source(mime)
+                && metadata::has_software_source(&opened.text_info);
         }
         flags
     }
@@ -679,6 +826,9 @@ fn cover_bytes(path: &Path, mime: Mime) -> Option<Vec<u8>> {
 }
 
 /// Info keys the reference never shows as human-readable metadata.
+/// A ugoira frame's duration when nothing says (`UGOIRA_DEFAULT_FRAME_DURATION_MS`).
+pub const UGOIRA_DEFAULT_FRAME_DURATION_MS: u32 = 125;
+
 const NOT_HUMAN_READABLE: &[&str] = &[
     "exif",
     "Raw profile type exif",
@@ -736,16 +886,7 @@ const NOT_HUMAN_READABLE: &[&str] = &[
 
 /// `GetSoftwareSourceFromCommentInfoField` matched: such comments are not counted.
 fn is_software_comment(text: &str) -> bool {
-    for verb in ["Created", "Converted", "Cropped", "Compressed", "Edited"] {
-        for v in [verb.to_owned(), verb.to_lowercase()] {
-            if let Some(rest) = text.strip_prefix(&format!("{v} with "))
-                && rest.chars().next().is_some_and(|c| c != '\n')
-            {
-                return true;
-            }
-        }
-    }
-    false
+    metadata::software_from_comment(text).is_some()
 }
 
 /// `HasHumanReadableEmbeddedMetadata` over Pillow's `info` dict.

@@ -1,0 +1,4 @@
+# Check every file out byte for byte, on Windows too: tests compare the
+# fixtures (and files served from them) with what the reference recorded,
+# and line-ending conversion would change them.
+* -text

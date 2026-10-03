@@ -81,8 +81,185 @@ impl Default for FolderSettings {
     }
 }
 
+/// The client's global pause switches (the reference's "network > pause"
+/// menu): each stops a kind of downloading until it is switched off.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct Pauses {
+    /// Subscriptions (`pause_subs_sync`).
+    pub subscriptions: bool,
+    /// Every new request (`pause_all_new_network_traffic`); subscriptions
+    /// wait too.
+    pub network_traffic: bool,
+    /// Every downloader queue: URL queues, gallery searches and watchers
+    /// (`pause_all_paged_importers`).
+    pub paged_importers: bool,
+    /// The queues' file downloads (`pause_all_file_queues`).
+    pub file_queues: bool,
+    /// Gallery pages: gallery searches and URL queues' gallery URLs
+    /// (`pause_all_gallery_searches`).
+    pub gallery_searches: bool,
+    /// Watchers' thread checks (`pause_all_watcher_checkers`).
+    pub watcher_checkers: bool,
+}
+
+impl Setting for Pauses {
+    const KEY: &'static str = "pauses";
+}
+
+impl Pauses {
+    /// The reference's option names, with this field.
+    pub fn by_option_name(&mut self) -> [(&'static str, &mut bool); 6] {
+        [
+            ("pause_subs_sync", &mut self.subscriptions),
+            ("pause_all_new_network_traffic", &mut self.network_traffic),
+            ("pause_all_paged_importers", &mut self.paged_importers),
+            ("pause_all_file_queues", &mut self.file_queues),
+            ("pause_all_gallery_searches", &mut self.gallery_searches),
+            ("pause_all_watcher_checkers", &mut self.watcher_checkers),
+        ]
+    }
+
+    /// Whether subscriptions may run.
+    pub fn subscriptions_run(self) -> bool {
+        !(self.subscriptions || self.network_traffic)
+    }
+
+    /// Whether queues may download files.
+    pub fn files_run(self) -> bool {
+        !(self.paged_importers || self.file_queues)
+    }
+
+    /// Whether queues may read gallery pages.
+    pub fn galleries_run(self) -> bool {
+        !(self.paged_importers || self.gallery_searches)
+    }
+
+    /// Whether watchers may check their threads.
+    pub fn watchers_run(self) -> bool {
+        !(self.paged_importers || self.watcher_checkers)
+    }
+}
+
+/// Advanced mode (`advanced_mode`): the reference's menus and dialogs
+/// offer more with it on.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct AdvancedMode(pub bool);
+
+impl Setting for AdvancedMode {
+    const KEY: &'static str = "advanced_mode";
+}
+
 impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
+}
+
+/// How files are read and written. As in the reference, these hold for the
+/// whole process, set when an importer is made for the store.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct FileHandlingSettings {
+    /// Tell comic book archives from other zips
+    /// (`allow_comic_book_archive_detection`).
+    pub comic_book_detection: bool,
+    /// What counts as transparency (`file_has_transparency_strictness`):
+    /// 0, an alpha channel; 1, one that isn't all clear or all opaque; 2,
+    /// one a human might notice.
+    pub transparency_strictness: u8,
+    /// Leave files' permissions alone (`do_not_do_chmod_mode`).
+    pub do_not_chmod: bool,
+}
+
+impl Default for FileHandlingSettings {
+    fn default() -> Self {
+        Self {
+            comic_book_detection: true,
+            transparency_strictness: 2,
+            do_not_chmod: false,
+        }
+    }
+}
+
+impl Setting for FileHandlingSettings {
+    const KEY: &'static str = "file_handling";
+}
+
+impl Setting for hydrus_core::pages::SortSettings {
+    const KEY: &'static str = "sorts";
+}
+
+/// How the GUI opens pages.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct PageSettings {
+    /// Open files in a new duplicate filter page on all my files, not the
+    /// page's domain (`open_files_to_duplicate_filter_uses_all_my_files`).
+    pub duplicate_filter_uses_all_my_files: bool,
+}
+
+impl Default for PageSettings {
+    fn default() -> Self {
+        Self {
+            duplicate_filter_uses_all_my_files: true,
+        }
+    }
+}
+
+impl Setting for PageSettings {
+    const KEY: &'static str = "pages";
+}
+
+/// How the thumbnail grid spaces its thumbnails: each is drawn with a
+/// border this many pixels wide, and this many pixels of margin around it
+/// (`thumbnail_border`, `thumbnail_margin`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ThumbnailLayout {
+    pub border: u32,
+    pub margin: u32,
+}
+
+impl Default for ThumbnailLayout {
+    fn default() -> Self {
+        Self {
+            border: 1,
+            margin: 2,
+        }
+    }
+}
+
+impl Setting for ThumbnailLayout {
+    const KEY: &'static str = "thumbnail_layout";
+}
+
+impl Setting for hydrus_core::tag_summary::TagSummaries {
+    const KEY: &'static str = "tag_summaries";
+}
+
+/// New search pages' tag domain (`default_tag_service_search_page`), and
+/// the file domain a search moves to when it is set to every tag service
+/// while searching all known files (`default_local_location_context`).
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct SearchDefaults {
+    pub tag_service: hydrus_core::ServiceKey,
+    pub local_location: hydrus_core::search::context::LocationContext,
+}
+
+impl Default for SearchDefaults {
+    /// All known tags, and "my files".
+    fn default() -> Self {
+        use hydrus_core::service::builtin_keys;
+        Self {
+            tag_service: hydrus_core::ServiceKey::new(builtin_keys::COMBINED_TAG.to_vec()),
+            local_location: hydrus_core::search::context::LocationContext::single(
+                hydrus_core::ServiceKey::new(builtin_keys::MY_FILES.to_vec()),
+            ),
+        }
+    }
+}
+
+impl Setting for SearchDefaults {
+    const KEY: &'static str = "search_defaults";
 }
 
 /// Export folders.
@@ -134,6 +311,64 @@ impl Setting for hydrus_core::import_options::ImportOptionsManager {
     const KEY: &'static str = "import_options";
 }
 
+/// Saved searches, in the reference's stored order.
+#[derive(Debug, Clone, Default, PartialEq, Serialize, serde::Deserialize)]
+pub struct FavouriteSearches(pub Vec<hydrus_core::pages::FavouriteSearch>);
+
+impl Setting for FavouriteSearches {
+    const KEY: &'static str = "favourite_searches";
+}
+
+/// The desktop client's lock password.
+impl Setting for hydrus_core::lock::LockPassword {
+    const KEY: &'static str = "lock_password";
+}
+
+/// How tags are shown in the GUI.
+impl Setting for hydrus_core::tag_presentation::TagPresentation {
+    const KEY: &'static str = "tag_presentation";
+}
+
+/// The tag lists' colours by namespace.
+impl Setting for hydrus_core::tag_presentation::NamespaceColours {
+    const KEY: &'static str = "namespace_colours";
+}
+
+/// How the media viewer shows and zooms files.
+impl Setting for hydrus_core::media_viewer::MediaViewerSettings {
+    const KEY: &'static str = "media_viewer";
+}
+
+/// The system predicates last added from the system predicate editors.
+impl Setting for hydrus_core::search::recent::RecentPredicates {
+    const KEY: &'static str = "recent_predicates";
+}
+
+/// How ratings are drawn over thumbnails.
+impl Setting for hydrus_core::thumbnail::ThumbnailRatingSettings {
+    const KEY: &'static str = "thumbnail_ratings";
+}
+
+/// How a file's info lines read.
+impl Setting for hydrus_core::media_viewer::InfoLineSettings {
+    const KEY: &'static str = "info_lines";
+}
+
+/// Where the main window and the media viewer open, and how big.
+impl Setting for hydrus_core::windows::WindowSettings {
+    const KEY: &'static str = "windows";
+}
+
+/// The volume and mute the media viewer plays at.
+impl Setting for hydrus_core::media_viewer::AudioSettings {
+    const KEY: &'static str = "audio";
+}
+
+/// The media viewer's slideshows.
+impl Setting for hydrus_core::media_viewer::SlideshowSettings {
+    const KEY: &'static str = "slideshow";
+}
+
 /// GUGs and page parsers.
 impl Setting for hydrus_core::subscriptions::GalleryDefaults {
     const KEY: &'static str = "gallery_defaults";
@@ -145,6 +380,42 @@ impl Setting for hydrus_core::subscriptions::CheckerDefaults {
 
 impl Setting for hydrus_parse::Downloaders {
     const KEY: &'static str = "downloaders";
+}
+
+impl Setting for hydrus_core::pages::PageNameSettings {
+    const KEY: &'static str = "page_names";
+}
+
+impl Setting for hydrus_core::pages::DownloaderPageSettings {
+    const KEY: &'static str = "downloader_pages";
+}
+
+/// What the daemon (`hydrus serve`) running on the store last said of its
+/// Client API, for the desktop client to show: and which process it was.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub struct ClientApiStatus {
+    /// The daemon's process id.
+    pub pid: u32,
+    pub state: ClientApiState,
+}
+
+/// Whether the daemon's Client API is running.
+#[derive(Debug, Clone, Default, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum ClientApiState {
+    /// Not said yet.
+    #[default]
+    Starting,
+    /// Off, as its service has no port (as the reference leaves it).
+    Off,
+    /// Listening at this address.
+    Listening(String),
+    /// It couldn't start, as the reference says it (`Could not start
+    /// "client api": ...`); the rest of the daemon runs on.
+    Failed(String),
+}
+
+impl Setting for ClientApiStatus {
+    const KEY: &'static str = "client_api_status";
 }
 
 pub fn get<S: Setting>(conn: &Connection) -> Result<S> {

@@ -1,0 +1,112 @@
+// A list as the reference's lists are (its `BetterListCtrl`): titled
+// columns, clicked to sort by them (again to reverse), and rows selected
+// as hydrus-gui-model's list_selection says (click, ctrl+click,
+// shift+click), each drawn selected as the selection has it.
+
+import { ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// a column: its title, width, and whether it takes the room left
+export struct TableColumn {
+    title: string,
+    width: length,
+    stretch: bool,
+}
+
+export struct TableRow {
+    cells: [string],
+    selected: bool,
+}
+
+// a cell's width: its column's, or more for the one that stretches
+component Cell inherits Rectangle {
+    in property <TableColumn> column;
+    min-width: root.column.width;
+    preferred-width: root.column.width;
+    max-width: root.column.stretch ? 100000px : root.column.width;
+    horizontal-stretch: root.column.stretch ? 1 : 0;
+}
+
+export component ListTable inherits Rectangle {
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <int> sort-column: -1;
+    in property <bool> ascending: true;
+    in property <length> row-height: 22px;
+    // (a column clicked: sort by it, ascending unless it sorted so)
+    callback sort(int, bool);
+    // (the row shown, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    // (the delete key, the list having the keyboard)
+    callback delete-pressed();
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+
+    // (the keyboard, once a row is clicked)
+    keys := FocusScope {
+        width: 0px;
+        height: 0px;
+        key-pressed(event) => {
+            if (event.text == Key.Delete) {
+                root.delete-pressed();
+                return accept;
+            }
+            reject
+        }
+    }
+    VerticalLayout {
+        padding: 1px;
+        HorizontalLayout {
+            height: 24px;
+            for column[c] in root.columns: Cell {
+                column: column;
+                background: header-touch.has-hover ? Theme.hover : transparent;
+                Text {
+                    x: 4px;
+                    width: parent.width - 8px;
+                    vertical-alignment: center;
+                    text: column.title + (c == root.sort-column ? (root.ascending ? " ▲" : " ▼") : "");
+                    overflow: elide;
+                    color: Theme.text;
+                    font-weight: 700;
+                }
+                header-touch := TouchArea {
+                    clicked => { root.sort(c, c == root.sort-column ? !root.ascending : true); }
+                }
+            }
+        }
+        ScrollView {
+            VerticalLayout {
+                alignment: start;
+                for row[r] in root.rows: Rectangle {
+                    height: root.row-height;
+                    background: row.selected ? Theme.highlight : row-touch.has-hover ? Theme.hover : transparent;
+                    HorizontalLayout {
+                        for column[c] in root.columns: Cell {
+                            column: column;
+                            Text {
+                                x: 4px;
+                                width: parent.width - 8px;
+                                vertical-alignment: center;
+                                text: row.cells[c];
+                                overflow: elide;
+                                color: row.selected ? Theme.highlight-text : Theme.text;
+                            }
+                        }
+                    }
+                    row-touch := TouchArea {
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                keys.focus();
+                                root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                            }
+                        }
+                        double-clicked => { root.row-activated(r); }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -2,9 +2,9 @@
 """Record how the reference reads GUI sessions and the pages in them.
 
 Random downloader importers (URL pages, gallery searches and their pages,
-watchers and their pages), page managers of every page type hydrus-rs cares
-about, and session trees, built with the reference's classes. Each case
-keeps:
+watchers and their pages, and the "import" pages' local imports), page
+managers of every page type hydrus-rs cares about, and session trees, built
+with the reference's classes. Each case keeps:
 
 * `stored`: the serialised tuple as a database holds it
 * `facts`: the loaded object's fields, read with the reference's own
@@ -29,11 +29,13 @@ from hydrus.core import HydrusSerialisable
 from hydrus.client import ClientConstants as CC
 from hydrus.client import ClientLocation
 from hydrus.client.importing import ClientImportGallery
+from hydrus.client.importing import ClientImportLocal
 from hydrus.client.importing import ClientImporting
 from hydrus.client.importing import ClientImportSimpleURLs
 from hydrus.client.importing import ClientImportWatchers
 from hydrus.client.importing.options import ImportOptionsContainer
 from hydrus.client.importing.options import NoteImportOptions
+from hydrus.client.metadata import ClientMetadataMigration
 from hydrus.client.media import ClientMediaCollect
 from hydrus.client.media import ClientMediaSort
 from hydrus.client.search import ClientSearchFileSearchContext
@@ -320,6 +322,83 @@ def page_manager( i ):
     return page
 
 
+def duplicates_page( i ):
+    """A duplicates page (made after the others, so their random draws are
+    unchanged), with a potential-duplicates search, sort and group mode."""
+
+    from hydrus.client.duplicates import ClientPotentialDuplicatesSearchContext
+
+    page = base_page( rng.choice( [ 'duplicates', 'dupes' ] ), ClientGUIPagesCore.PAGE_TYPE_DUPLICATE_FILTER )
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( rng.choice( [ CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY, CC.LOCAL_FILE_SERVICE_KEY ] ) )
+
+    predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_TAG, tag ) for tag in S.some( S.TAGS ) ]
+
+    if len( predicates ) == 0:
+
+        predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_SYSTEM_EVERYTHING ) ]
+
+
+    search = ClientPotentialDuplicatesSearchContext.PotentialDuplicatesSearchContext( location_context = location_context, initial_predicates = predicates )
+
+    search.SetDupeSearchType( rng.choice( [ 0, 1, 2 ] ) )
+    search.SetPixelDupesPreference( rng.choice( [ 0, 1, 2 ] ) )
+    search.SetMaxHammingDistance( rng.choice( [ 0, 4, 8 ] ) )
+
+    page.SetVariable( 'synchronised', rng.random() < 0.7 )
+    page.SetVariable( 'potential_duplicates_search_context', search )
+    page.SetVariable( 'duplicate_pair_sort_type', rng.choice( [ 0, 1, 2, 3 ] ) )
+    page.SetVariable( 'duplicate_pair_sort_asc', rng.random() < 0.5 )
+    page.SetVariable( 'filter_group_mode', rng.random() < 0.5 )
+
+    return page
+
+
+# local imports ("import" pages)
+
+def hdd_import( i ):
+    """A local import as "import now" makes one (made after the others, so
+    their random draws are unchanged): its paths, some with tags to add,
+    sometimes with sidecars to read, deleting the files or not; then its
+    files worked on some way, and paused or not."""
+
+    paths = [ f'/home/someone/import {i}/{k}.png' for k in range( rng.randint( 0, 4 ) ) ]
+    paths_to_tags = { path : S.service_keys_to_tags() for path in paths if rng.random() < 0.5 }
+    routers = [ ClientMetadataMigration.SingleFileMetadataRouter() for _ in range( rng.choice( [ 0, 0, 1 ] ) ) ]
+
+    h = ClientImportLocal.HDDImport( paths = paths, import_options_container = import_options_container(), metadata_routers = routers, paths_to_additional_service_keys_to_tags = paths_to_tags, delete_after_success = rng.random() < 0.5 )
+
+    for f in h._file_seed_cache.GetFileSeeds():
+
+        f.source_time = S.maybe( S.when() )
+        f.status = rng.choice( S.STATUSES )
+        f.note = rng.choice( [ '', 'Source file does not exist!' ] )
+
+
+    h._paused = rng.random() < 0.3
+
+    return h
+
+
+def hdd_import_facts( h ):
+
+    return {
+        'file_seeds' : [ S.file_seed_facts( f ) for f in h._file_seed_cache.GetFileSeeds() ],
+        'import_options' : tuple_of( h._import_options_container ),
+        'metadata_routers' : len( h._metadata_routers ),
+        'delete_after_success' : h._delete_after_success,
+        'paused' : h._paused,
+    }
+
+
+def hdd_import_page( i ):
+
+    page = base_page( 'import', ClientGUIPagesCore.PAGE_TYPE_IMPORT_HDD )
+    page.SetVariable( 'hdd_import', hdd_import( i ) )
+
+    return page
+
+
 def page_manager_facts( page ):
 
     facts = { 'name' : page.GetPageName(), 'type' : page.GetType() }
@@ -328,6 +407,7 @@ def page_manager_facts( page ):
         'urls_import' : urls_import_facts,
         'multiple_gallery_import' : multiple_gallery_import_facts,
         'multiple_watcher_import' : multiple_watcher_import_facts,
+        'hdd_import' : hdd_import_facts,
     }
 
     variables = {}
@@ -353,9 +433,54 @@ def page_manager_facts( page ):
     return facts
 
 
+def locked_page( i ):
+    """A search page locked to a system:hash of its files, as "open in a new
+    page" makes one (made after the others, so their random draws are
+    unchanged), with what the hash follows set at random."""
+
+    hashes = tuple( bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 1, 4 ) ) )
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY )
+    predicates = [ ClientSearchPredicate.Predicate( ClientSearchPredicate.PREDICATE_TYPE_SYSTEM_HASH, ( hashes, 'sha256' ) ) ]
+    file_search_context = ClientSearchFileSearchContext.FileSearchContext( location_context = location_context, tag_context = ClientSearchTagContext.TagContext(), predicates = predicates )
+    file_search_context.SetComplete()
+
+    page = ClientGUIPageManager.CreatePageManagerQuery( 'files', file_search_context, start_system_hash_locked = True )
+    page.SetVariable( 'system_hash_locked_syncs_new', rng.random() < 0.5 )
+    page.SetVariable( 'system_hash_locked_syncs_removes', rng.random() < 0.5 )
+
+    return page
+
+
+def collected_page( i ):
+    """A search page collecting its files (made after the others, so their
+    random draws are unchanged): by some namespaces, and some unmatched
+    files collected or not."""
+
+    page = page_manager_query_for_collect()
+    namespaces = rng.sample( [ 'series', 'creator', 'title', 'page', 'chapter' ], rng.randint( 1, 3 ) )
+    rating_service_keys = [ bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 0, 2 ) ) ]
+    page.SetVariable( 'media_collect', ClientMediaCollect.MediaCollect( namespaces = namespaces, rating_service_keys = rating_service_keys, collect_unmatched = rng.random() < 0.5 ) )
+
+    return page
+
+
+def page_manager_query_for_collect():
+
+    location_context = ClientLocation.LocationContext.STATICCreateSimple( CC.COMBINED_LOCAL_FILE_DOMAINS_SERVICE_KEY )
+    file_search_context = ClientSearchFileSearchContext.FileSearchContext( location_context = location_context, tag_context = ClientSearchTagContext.TagContext(), predicates = [] )
+
+    return ClientGUIPageManager.CreatePageManagerQuery( 'files', file_search_context )
+
+
 # sessions
 
-def session( i ):
+def session( i, make_page = None ):
+
+    if make_page is None:
+
+        make_page = page_manager
+
 
     hashes_to_page_data = {}
 
@@ -366,7 +491,7 @@ def session( i ):
             return ClientGUISession.GUISessionContainerPageNotebook( rng.choice( [ 'pages', 'downloaders' ] ), [ page_container( depth + 1 ) for _ in range( rng.randint( 0, 3 ) ) ] )
 
 
-        page = page_manager( i * 100 + len( hashes_to_page_data ) )
+        page = make_page( i * 100 + len( hashes_to_page_data ) )
         hashes = [ bytes( rng.randrange( 256 ) for _ in range( 32 ) ) for _ in range( rng.randint( 0, 3 ) ) ]
 
         page_data = ClientGUISession.GUISessionPageData( page, hashes )
@@ -428,6 +553,13 @@ def main():
         'page_managers' : cases( page_manager, page_manager_facts, 12 ),
         'sessions' : [ session( i ) for i in range( 4 ) ],
     }
+
+    fixture[ 'duplicates_pages' ] = cases( duplicates_page, page_manager_facts, 6 )
+    fixture[ 'locked_pages' ] = cases( locked_page, page_manager_facts, 4 )
+    fixture[ 'collected_pages' ] = cases( collected_page, page_manager_facts, 4 )
+    fixture[ 'hdd_imports' ] = cases( hdd_import, hdd_import_facts, 8 )
+    fixture[ 'hdd_import_pages' ] = cases( hdd_import_page, page_manager_facts, 3 )
+    fixture[ 'hdd_import_sessions' ] = [ session( i, make_page = hdd_import_page ) for i in range( 3 ) ]
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )

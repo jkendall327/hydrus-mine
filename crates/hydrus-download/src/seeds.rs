@@ -208,9 +208,30 @@ impl From<std::io::Error> for Stop {
     }
 }
 
+/// How a file is fetched (`DownloadAndImportRawFile`'s arguments).
+#[derive(Default)]
+struct FileFetch<'a> {
+    /// The referral to send, over the seed's own.
+    forced_referral_url: Option<&'a str>,
+    /// The page it was found on, whose site's bandwidth it counts against.
+    spawning_url: Option<&'a str>,
+    override_bandwidth_after: Option<u64>,
+}
+
 /// Network failures as `WorkOnURL` treats them: some statuses end the seed
-/// as vetoed, the rest are for the queue to wait out.
-fn network(e: NetError) -> Stop {
+/// as vetoed, the rest as an error.
+fn network(e: NetError, job: &Job) -> Stop {
+    // (what the reference's status hook says of it)
+    job.set_stage(match &e {
+        NetError::Status { kind, .. } => match kind {
+            StatusKind::NotFound => "404",
+            StatusKind::InsufficientCredentials => "403",
+            StatusKind::Censorship => "451 censorship!",
+            _ => "error!",
+        },
+        NetError::Cancelled => "cancelled!",
+        _ => "error!",
+    });
     match &e {
         NetError::Status {
             kind: StatusKind::NotFound,
@@ -224,7 +245,7 @@ fn network(e: NetError) -> Stop {
             kind: StatusKind::Censorship,
             ..
         } => Stop::Veto("site reports http status code 451: Unavailable For Legal Reasons".into()),
-        NetError::Cancelled => Stop::Veto("Cancelled!".into()),
+        NetError::Cancelled => Stop::Veto(job.cancelled_note()),
         _ => Stop::Failed(WorkError::Network(e)),
     }
 }
@@ -232,28 +253,36 @@ fn network(e: NetError) -> Stop {
 impl Downloader {
     /// Work on a URL seed: find and import its file(s) and write what was
     /// learned. Updates `seed` (the caller saves it); whether anything
-    /// substantial (network or import) was done. A network failure the
-    /// queue should wait out comes back as [`WorkError::Network`], with the
-    /// seed marked as an error.
+    /// substantial (network or import) was done. As in the reference, a
+    /// failure only ends this seed (vetoed or an error) and its queue
+    /// carries on; a site that keeps failing is paused by the network
+    /// engine instead.
     pub async fn work_on_url(
         &self,
         seed: &mut FileSeed,
         options: &FullImportOptions,
         job: &Job,
-    ) -> Result<bool, WorkError> {
+    ) -> bool {
         let mut did_work = false;
         let outcome = self.work(seed, options, job, &mut did_work).await;
         match outcome {
             Ok(()) => {}
+            Err(Stop::Veto(note)) if note == "403" && self.had_login(&seed.data) => set_status(
+                seed,
+                SeedStatus::Vetoed,
+                "403 (hydrus logged in to this site with a login script, which hydrus-rs doesn't run: its cookies may need refreshing)".into(),
+            ),
             Err(Stop::Veto(note)) => set_status(seed, SeedStatus::Vetoed, note),
             Err(Stop::Error(note)) => set_status(seed, SeedStatus::Error, note),
-            Err(Stop::Failed(WorkError::Network(e))) => {
+            Err(Stop::Failed(e)) => {
                 set_status(seed, SeedStatus::Error, e.to_string());
-                return Err(WorkError::Network(e));
+                // (a moment's pause before the next, as the reference has)
+                if matches!(e, WorkError::Network(_)) {
+                    tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+                }
             }
-            Err(Stop::Failed(e)) => set_status(seed, SeedStatus::Error, e.to_string()),
         }
-        Ok(did_work)
+        did_work
     }
 
     async fn work(
@@ -300,7 +329,13 @@ impl Downloader {
             self.check_tags_veto(seed, options)?;
             *did_work = true;
             let file_url = seed.data.clone();
-            self.download_and_import(seed, &file_url, options, job, None)
+            // (it counts against the page it was found on too)
+            let spawning = seed.referral_url.clone();
+            let how = FileFetch {
+                spawning_url: spawning.as_deref(),
+                ..FileFetch::default()
+            };
+            self.download_and_import(seed, &file_url, options, job, how)
                 .await?;
         }
         *did_work |= self.write_content_updates(seed, options)?;
@@ -331,7 +366,11 @@ impl Downloader {
         request
             .additional_headers
             .clone_from(&seed.meta.request_headers);
-        let response = self.net.fetch(&request, job).await.map_err(network)?;
+        let response = self
+            .net
+            .fetch(&request, job)
+            .await
+            .map_err(|e| network(e, job))?;
         let text = response.text();
         let actual = response.url.clone();
         let url_for_child_referral = actual.clone();
@@ -350,7 +389,7 @@ impl Downloader {
         };
         let mut context = ParsingContext::new();
         context.insert("post_url".into(), post_url);
-        context.insert("url".into(), url_to_fetch);
+        context.insert("url".into(), url_to_fetch.clone());
         let posts = match parser.parse(&mut context, &text) {
             Ok(posts) => posts,
             Err(ParseFailure::Veto(reason)) => return Err(Stop::Veto(format!("veto: {reason}"))),
@@ -374,7 +413,20 @@ impl Downloader {
                 self.check_tags_veto(seed, options)?;
                 let (_, should_download_file) = self.predict(seed, options, Some(&file_url))?;
                 if should_download_file {
-                    self.download_and_import(seed, &file_url, options, job, None)
+                    // the post page is its referral, and it counts against
+                    // the post's site too; by default it waits for bandwidth
+                    // only a few seconds after the post
+                    let override_after = self
+                        .net
+                        .bandwidth_settings()
+                        .override_on_file_urls_from_posts
+                        .then_some(3);
+                    let how = FileFetch {
+                        forced_referral_url: Some(&url_for_child_referral),
+                        spawning_url: Some(&url_to_fetch),
+                        override_bandwidth_after: override_after,
+                    };
+                    self.download_and_import(seed, &file_url, options, job, how)
                         .await?;
                 }
             }
@@ -427,6 +479,13 @@ impl Downloader {
         }
     }
 
+    /// Whether the reference logged in to `url`'s site with a login script.
+    fn had_login(&self, url: &str) -> bool {
+        self.store
+            .read(hydrus_store::settings::get::<hydrus_store::network::LoginDomains>)
+            .is_ok_and(|logins| logins.covers(url))
+    }
+
     fn scratch_dir(&self) -> std::io::Result<std::path::PathBuf> {
         let dir = self.store.dir().join("tmp");
         std::fs::create_dir_all(&dir)?;
@@ -457,7 +516,11 @@ impl Downloader {
         let result = self.importer.import_path(path, &file_options)?;
         if let Some(message) = result.raised {
             // the reference's import raised, before the seed took the hash
-            return Err(Stop::Error(message));
+            return Err(if result.status == hydrus_import::ImportStatus::Vetoed {
+                Stop::Veto(message)
+            } else {
+                Stop::Error(message)
+            });
         }
         set_status(seed, seed_status(result.status), result.note);
         if let Some(hash) = result.hash {
@@ -473,8 +536,13 @@ impl Downloader {
         file_url: &str,
         options: &FullImportOptions,
         job: &Job,
-        forced_referral_url: Option<&str>,
+        how: FileFetch<'_>,
     ) -> Result<(), Stop> {
+        let FileFetch {
+            forced_referral_url,
+            spawning_url,
+            override_bandwidth_after,
+        } = how;
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
         seed_mut(seed).add_primary_urls(classes, [file_url.to_owned()]);
@@ -494,7 +562,15 @@ impl Downloader {
             .additional_headers
             .clone_from(&seed.meta.request_headers);
         request.destination = Some(temp.path().to_path_buf());
-        let response = self.net.fetch(&request, job).await.map_err(network)?;
+        request
+            .bandwidth_urls
+            .extend(spawning_url.map(str::to_owned));
+        request.override_bandwidth_after = override_bandwidth_after;
+        let response = self
+            .net
+            .fetch(&request, job)
+            .await
+            .map_err(|e| network(e, job))?;
         if url_to_fetch != file_url {
             seed_mut(seed).add_primary_urls(classes, [url_to_fetch.clone()]);
         }
@@ -530,6 +606,7 @@ impl Downloader {
             && response.server.as_deref() == Some("cloudflare")
             && (source_time - modified).abs() > 86400 * 2
         {
+            seed.meta.cloudflare_last_modified = Some(modified);
             last_modified = None;
         }
         seed_mut(seed).set_source_time_if_sensible(last_modified);

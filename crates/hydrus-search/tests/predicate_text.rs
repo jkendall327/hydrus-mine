@@ -46,6 +46,7 @@ fn context(fixture: &Value) -> TextContext {
                 other => panic!("unknown canvas {other}"),
             })
             .collect(),
+        presentation: None,
     }
 }
 
@@ -154,4 +155,44 @@ fn api_searches_are_written_as_the_reference_writes_them() {
         assert_eq!(ours, expected, "{}", case["tags"]);
     }
     assert!(checked > 30, "{checked}");
+}
+
+/// The predicates the reference's system predicate editors make
+/// (`oracle/record_system_predicate_editors.py`), as it stores them, are
+/// read and written as its own: among them those its parser has no words
+/// for ("≠" ratios, durations within an amount either side).
+#[test]
+fn predicates_the_reference_s_editors_make_are_read_and_written_as_its_own() {
+    let fixture = hydrus_testkit::fixture_json("system_predicate_editors.json");
+    let context = context(&fixture);
+    let scales = |key: &ServiceKey| {
+        context
+            .services
+            .iter()
+            .find(|s| s.key == *key)
+            .and_then(|s| s.stars)
+    };
+    let mut report = String::new();
+    let mut checked = 0;
+    for case in fixture["stored"].as_array().unwrap() {
+        let text = case["text"].as_str().unwrap();
+        let stored = hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+            &case["serialised"].to_string(),
+        )
+        .unwrap();
+        match hydrus_legacy::objects::predicates::predicate_with_scales(&stored, &scales) {
+            Ok(predicate) => {
+                let ours = predicate_text(&predicate, &context);
+                // (a size in terabytes, which the reference can't write)
+                let unwritable = text.starts_with("error:") && ours.ends_with("TB");
+                if ours != text && !unwritable {
+                    report.push_str(&format!("{text}\n    written {ours}\n"));
+                }
+                checked += 1;
+            }
+            Err(e) => report.push_str(&format!("{text}\n    could not decode: {e}\n")),
+        }
+    }
+    assert!(report.is_empty(), "{report}");
+    assert!(checked > 200, "{checked}");
 }

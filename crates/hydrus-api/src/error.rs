@@ -142,7 +142,14 @@ impl IntoResponse for ApiError {
         });
         (
             status,
-            [(axum::http::header::CONTENT_TYPE, "application/json")],
+            [
+                (axum::http::header::CONTENT_TYPE, "application/json"),
+                (
+                    axum::http::header::CACHE_CONTROL,
+                    crate::request::BODY_CACHE_CONTROL,
+                ),
+                (axum::http::header::CONTENT_DISPOSITION, "inline"),
+            ],
             body.to_string(),
         )
             .into_response()

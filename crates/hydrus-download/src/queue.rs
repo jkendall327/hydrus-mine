@@ -1,9 +1,10 @@
 //! Running URL queues: each works through its file seeds in order, one at
 //! a time, as a reference "urls downloader" page does.
 //!
-//! A network failure pauses the queue's file work for the client's
-//! downloader network error delay (90 minutes by default), as the
-//! reference's pages do, rather than burning through the rest of the queue.
+//! A file that fails is marked as failed and the queue carries on, as in
+//! the reference; a gallery page or watcher check that fails on the
+//! network pauses the queue for the client's downloader network error
+//! delay (90 minutes by default), as the reference's pages do.
 
 use std::collections::{BTreeSet, HashMap};
 use std::sync::Arc;
@@ -12,15 +13,19 @@ use std::time::Duration;
 use parking_lot::Mutex;
 use tokio::sync::Notify;
 
+use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::{CallerType, ImportOptionsSlice};
-use hydrus_core::subscriptions::{CheckerDefaults, GalleryDefaults, SeedTime};
+use hydrus_core::network::NetworkContext;
+use hydrus_core::subscriptions::CheckerDefaults;
 use hydrus_core::url::UrlType;
 use hydrus_core::watchers::{CheckerStatus, WatcherState};
-use hydrus_net::Job;
+use hydrus_net::{BandwidthScope, Job};
 use hydrus_store::StoreError;
+use hydrus_store::live::{JobKind, JobLive, QueueLive};
 use hydrus_store::queues::{
     self, FileSeed, GallerySeed, GallerySeedMeta, NewGallerySeed, Queue, QueueKind, SeedStatus,
 };
+use hydrus_store::settings::Pauses;
 
 use crate::gallery::{QueueSink, set_gallery_status};
 use crate::seeds::new_url_seed;
@@ -42,8 +47,20 @@ pub struct UrlQueueStatus {
 struct Handle {
     wake: Notify,
     status: Mutex<UrlQueueStatus>,
-    job: Mutex<Option<Arc<Job>>>,
+    /// The file it is downloading.
+    file_job: Mutex<Option<Arc<Job>>>,
+    /// The gallery page (or watcher check) it is downloading.
+    gallery_job: Mutex<Option<Arc<Job>>>,
     running: Mutex<bool>,
+}
+
+impl Handle {
+    fn job(&self, kind: JobKind) -> &Mutex<Option<Arc<Job>>> {
+        match kind {
+            JobKind::File => &self.file_job,
+            JobKind::Gallery => &self.gallery_job,
+        }
+    }
 }
 
 /// Runs the store's URL queues.
@@ -54,16 +71,35 @@ pub struct QueueRunner {
     started: std::sync::atomic::AtomicBool,
     handles: Mutex<HashMap<i64, Arc<Handle>>>,
     /// Seconds to wait after a network failure.
-    network_error_delay: u64,
+    network_error_delay: std::sync::atomic::AtomicU64,
 }
 
 impl QueueRunner {
+    fn network_error_delay(&self) -> u64 {
+        self.network_error_delay
+            .load(std::sync::atomic::Ordering::Relaxed)
+    }
+
+    /// Pick up changed network and downloader options (the downloader's,
+    /// its network engine's, and the wait after a network error); whether
+    /// they had changed.
+    pub fn reload_settings(&self) -> Result<bool, WorkError> {
+        let changed = self.downloader.reload_settings()?;
+        self.network_error_delay.store(
+            self.downloader
+                .network_settings()
+                .downloader_network_error_delay,
+            std::sync::atomic::Ordering::Relaxed,
+        );
+        Ok(changed)
+    }
+
     pub fn new(downloader: Arc<Downloader>, network_error_delay: u64) -> Arc<Self> {
         Arc::new(Self {
             downloader,
             started: std::sync::atomic::AtomicBool::new(false),
             handles: Mutex::default(),
-            network_error_delay,
+            network_error_delay: std::sync::atomic::AtomicU64::new(network_error_delay),
         })
     }
 
@@ -82,7 +118,7 @@ impl QueueRunner {
         for queue in all {
             if matches!(
                 queue.kind,
-                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery
+                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
             ) {
                 self.wake(queue.id);
             }
@@ -116,6 +152,51 @@ impl QueueRunner {
         handle.wake.notify_one();
     }
 
+    /// Look at a queue another process changed (nudged): woken if it is
+    /// one this runs (URL lists, gallery searches and watchers), a URL
+    /// list taking the URLs typed into its page first.
+    pub fn nudged(self: &Arc<Self>, queue: i64) {
+        let store = &self.downloader.store;
+        let kind = store
+            .read(|conn| queues::queue(conn, queue))
+            .ok()
+            .flatten()
+            .map(|q| q.kind);
+        if !matches!(
+            kind,
+            Some(
+                QueueKind::Urls | QueueKind::Watcher | QueueKind::Gallery | QueueKind::LocalImport
+            )
+        ) {
+            return;
+        }
+        if kind == Some(QueueKind::Urls) {
+            match store.write(move |ctx| queues::take_url_requests(ctx.conn(), queue)) {
+                Ok(typed) if !typed.is_empty() => {
+                    // (as the page's URL box takes them, `_PendURLs`: full
+                    // URLs only, encoded)
+                    let collapse = store
+                        .snapshot()
+                        .url_classes
+                        .settings()
+                        .collapse_leading_slashes;
+                    let urls: Vec<String> = typed
+                        .iter()
+                        .map(|url| url.trim())
+                        .filter(|url| hydrus_core::url::functions::check_full_url(url).is_ok())
+                        .map(|url| hydrus_core::url::ensure_url_is_encoded(url, true, collapse))
+                        .collect();
+                    if let Err(e) = self.pend_urls(queue, &urls, &BTreeSet::new(), &[]) {
+                        tracing::error!(queue, "adding a page's URLs: {e}");
+                    }
+                }
+                Ok(_) => {}
+                Err(e) => tracing::error!(queue, "reading a page's URLs: {e}"),
+            }
+        }
+        self.wake(queue);
+    }
+
     pub fn status(&self, queue: i64) -> UrlQueueStatus {
         self.handles
             .lock()
@@ -124,13 +205,39 @@ impl QueueRunner {
             .unwrap_or_default()
     }
 
-    /// Stop what a queue is downloading now.
-    pub fn cancel_current(&self, queue: i64) {
+    /// Stop a queue's current download of this kind, as its page's cancel
+    /// button does.
+    pub fn cancel(&self, queue: i64, kind: JobKind) {
         if let Some(handle) = self.handles.lock().get(&queue)
-            && let Some(job) = handle.job.lock().as_ref()
+            && let Some(job) = handle.job(kind).lock().as_ref()
         {
-            job.cancel();
+            job.cancel_because("Cancelled by user.");
         }
+    }
+
+    /// What each running queue is doing now, for its page.
+    pub fn live(&self) -> Vec<(i64, QueueLive)> {
+        let job_live = |job: &Mutex<Option<Arc<Job>>>| job.lock().as_ref().map(|job| live(job));
+        let mut out: Vec<(i64, QueueLive)> = self
+            .handles
+            .lock()
+            .iter()
+            .filter(|(_, handle)| *handle.running.lock())
+            .map(|(&queue, handle)| {
+                let status = handle.status.lock().clone();
+                (
+                    queue,
+                    QueueLive {
+                        files_status: status.files_status,
+                        gallery_status: String::new(),
+                        file_job: job_live(&handle.file_job),
+                        gallery_job: job_live(&handle.gallery_job),
+                    },
+                )
+            })
+            .collect();
+        out.sort_by_key(|(queue, _)| *queue);
+        out
     }
 
     /// The URL queue a URL should go to (`GetOrMakeURLImportPage`): the one
@@ -224,6 +331,52 @@ impl QueueRunner {
         Ok(added)
     }
 
+    /// Download missing or damaged files again from their URLs, as the
+    /// reference's integrity checks call `ImportURL(url, "missing files
+    /// redownloader")`: each URL, cleaned and normalised as `_ImportURL`
+    /// does, goes to the URL queue of that name. A URL that isn't a full
+    /// URL, or that a parser should read but none can, is left out (the
+    /// reference shows its error). Returns how many were added.
+    pub fn redownload(self: &Arc<Self>, urls: &[String]) -> Result<usize, StoreError> {
+        if urls.is_empty() {
+            return Ok(0);
+        }
+        let snapshot = self.downloader.store.snapshot();
+        let classes = &snapshot.url_classes;
+        let collapse = classes.settings().collapse_leading_slashes;
+        let mut cleaned = Vec::new();
+        for url in urls {
+            if hydrus_core::url::functions::check_full_url(url).is_err() {
+                tracing::warn!(url, "a missing file's URL could not be parsed at all");
+                continue;
+            }
+            let url = hydrus_core::url::ensure_url_is_encoded(url, true, collapse);
+            let Ok(url) = classes.normalise(&url, true) else {
+                continue;
+            };
+            let capability = classes.parse_capability(&url);
+            if matches!(
+                capability.url_type,
+                UrlType::Gallery | UrlType::Post | UrlType::Watchable
+            ) && let Err(reason) = &capability.parser
+            {
+                tracing::warn!(
+                    url,
+                    "This URL was recognised as a \"{}\" but it cannot be parsed: {reason}",
+                    capability.match_name
+                );
+                continue;
+            }
+            cleaned.push(url);
+        }
+        let queue = self.url_queue_for(
+            Some(hydrus_import::maintenance::REDOWNLOAD_PAGE_NAME),
+            None,
+            None,
+        )?;
+        self.pend_urls(queue.id, &cleaned, &BTreeSet::new(), &[])
+    }
+
     /// Watch a thread (`MultipleWatcherImport.AddURL` on the page from
     /// `GetOrMakeMultipleWatcherPage`): a new watcher on the watcher page
     /// with this page key, else this name, else any, preferring pages with
@@ -299,16 +452,7 @@ impl QueueRunner {
 
     /// Check a watcher's thread now (`WatcherImport.CheckNow`).
     pub fn check_watcher_now(self: &Arc<Self>, queue: i64) -> Result<(), StoreError> {
-        let store = &self.downloader.store;
-        let Some(q) = store.read(|conn| queues::queue(conn, queue))? else {
-            return Ok(());
-        };
-        let Some(mut state) = watcher_state(&q) else {
-            return Ok(());
-        };
-        let times = seed_times(&store.read(|conn| queues::file_seeds(conn, queue))?);
-        state.check_now(&times, now());
-        save_watcher_state(store, queue, &state)?;
+        hydrus_store::watchers::check_now(&self.downloader.store, queue, now())?;
         self.wake(queue);
         Ok(())
     }
@@ -317,8 +461,8 @@ impl QueueRunner {
     /// next check.
     async fn check_watcher(&self, queue: &Queue, mut state: WatcherState, handle: &Handle) {
         let store = &self.downloader.store;
-        let job = Job::new();
-        *handle.job.lock() = Some(Arc::clone(&job));
+        let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
+        *handle.gallery_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "checking".into();
         let new_seed = NewGallerySeed {
             url: state.url.clone(),
@@ -344,11 +488,11 @@ impl QueueRunner {
         let mut seed = match seed {
             Ok(Some(seed)) => seed,
             Ok(None) => {
-                *handle.job.lock() = None;
+                *handle.gallery_job.lock() = None;
                 return;
             }
             Err(e) => {
-                *handle.job.lock() = None;
+                *handle.gallery_job.lock() = None;
                 tracing::error!(queue_id, "adding a watcher's check: {e}");
                 return;
             }
@@ -362,7 +506,7 @@ impl QueueRunner {
             .downloader
             .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
-        *handle.job.lock() = None;
+        *handle.gallery_job.lock() = None;
         match result {
             Ok(outcome) => {
                 if let Some(title) = outcome.title {
@@ -381,7 +525,7 @@ impl QueueRunner {
                 }
             }
             Err(WorkError::Network(e)) => {
-                state.delay(self.network_error_delay as i64, &e.to_string(), now());
+                state.delay(self.network_error_delay() as i64, &e.to_string(), now());
                 set_gallery_status(&mut seed, SeedStatus::Error, e.to_string());
             }
             Err(e) => set_gallery_status(&mut seed, SeedStatus::Error, e.to_string()),
@@ -435,6 +579,10 @@ impl QueueRunner {
                     return;
                 }
             };
+            // (the global pause switches, looked at on each pass)
+            let pauses = store
+                .read(hydrus_store::settings::get::<Pauses>)
+                .unwrap_or_default();
             let delayed_until = handle.status.lock().delayed_until;
             if let Some(until) = delayed_until {
                 let wait = until - now();
@@ -461,7 +609,7 @@ impl QueueRunner {
                         }
                     }
                 }
-                if state.check_due(now()) {
+                if state.check_due(now()) && pauses.watchers_run() && !queue.page_closed {
                     self.check_watcher(&queue, state, handle).await;
                     continue;
                 }
@@ -472,7 +620,13 @@ impl QueueRunner {
             let over_limit = search
                 .as_ref()
                 .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
-            if queue.kind != QueueKind::Watcher && !queue.gallery_paused && !over_limit {
+            // (a closed page's queue waits: "page is closed")
+            if queue.kind != QueueKind::Watcher
+                && !queue.gallery_paused
+                && !queue.page_closed
+                && !over_limit
+                && pauses.galleries_run()
+            {
                 match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
                     Ok(Some(gallery_seed)) => {
                         self.work_on_gallery_seed(gallery_seed, search, handle)
@@ -490,7 +644,11 @@ impl QueueRunner {
             let files_blocked = watcher
                 .as_ref()
                 .is_some_and(|w| !w.can_do_network_work(now()));
-            let next = if queue.files_paused || files_blocked {
+            let next = if queue.files_paused
+                || queue.page_closed
+                || files_blocked
+                || !pauses.files_run()
+            {
                 None
             } else {
                 match store.read(|conn| queues::next_file_seed(conn, queue_id)) {
@@ -512,6 +670,15 @@ impl QueueRunner {
                     let due = w.next_check_time.max(w.no_work_until) + 1;
                     wait = (due - now()).clamp(1, 600);
                 }
+                // while paused globally, look again soon: the switch may be
+                // flipped from the command line
+                if pauses.paged_importers
+                    || pauses.file_queues
+                    || pauses.gallery_searches
+                    || pauses.watcher_checkers
+                {
+                    wait = wait.min(30);
+                }
                 let _ =
                     tokio::time::timeout(Duration::from_secs(wait as u64), handle.wake.notified())
                         .await;
@@ -525,8 +692,6 @@ impl QueueRunner {
     }
 
     /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
-    /// queue.
-    /// `_WorkOnGallery`: one gallery page, its file seeds going to the same
     /// queue, up to a gallery search's file limit.
     async fn work_on_gallery_seed(
         &self,
@@ -534,8 +699,9 @@ impl QueueRunner {
         mut search: Option<GallerySearch>,
         handle: &Handle,
     ) {
-        let job = Job::new();
-        *handle.job.lock() = Some(Arc::clone(&job));
+        // (only URL and gallery queues read gallery pages here)
+        let job = Job::scoped(bandwidth_scope(QueueKind::Gallery, seed.queue_id));
+        *handle.gallery_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "reading a gallery page".into();
         let queue = seed.queue_id;
         let mut sink = QueueSink {
@@ -550,7 +716,7 @@ impl QueueRunner {
             .downloader
             .work_on_gallery_url(&mut seed, &mut seen, &mut sink, &job)
             .await;
-        *handle.job.lock() = None;
+        *handle.gallery_job.lock() = None;
         let mut pause_gallery = false;
         match result {
             Ok(outcome) => {
@@ -581,8 +747,9 @@ impl QueueRunner {
         }
     }
 
-    /// Start gallery searches (see [`create_gallery_searches`]) and set
-    /// them working.
+    /// Start gallery searches (see
+    /// [`hydrus_store::gallery::create_gallery_searches`]) and set them
+    /// working.
     pub fn search_gallery(
         self: &Arc<Self>,
         page_name: Option<&str>,
@@ -591,19 +758,24 @@ impl QueueRunner {
         queries: &[String],
         file_limit: Option<Option<u64>>,
     ) -> Result<Vec<Queue>, GallerySearchError> {
-        let made = create_gallery_searches(
-            &self.downloader.store,
-            &self.downloader.definitions(),
+        let how = hydrus_store::gallery::NewSearches {
             page_name,
             gug_key,
             gug_name,
-            queries,
             file_limit,
+            ..Default::default()
+        };
+        let made = hydrus_store::gallery::create_gallery_searches(
+            &self.downloader.store,
+            &self.downloader.definitions(),
+            &how,
+            queries,
+            now(),
         )?;
-        for queue in &made {
+        for queue in &made.queues {
             self.wake(queue.id);
         }
-        Ok(made)
+        Ok(made.queues)
     }
 
     /// Start working on queues made elsewhere (say, by the command line)
@@ -632,7 +804,7 @@ impl QueueRunner {
 
     /// `_DelayWork`: wait out a network failure.
     fn delay(&self, handle: &Handle, e: &hydrus_net::NetError) {
-        let until = now() + self.network_error_delay as i64;
+        let until = now() + self.network_error_delay() as i64;
         let mut status = handle.status.lock();
         status.delayed_until = Some(until);
         status.files_status = format!("{e} - waiting to retry");
@@ -643,10 +815,10 @@ impl QueueRunner {
         let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
             .chain(seed.referral_url.as_deref())
             .collect();
-        let caller = if queue.kind == QueueKind::Watcher {
-            CallerType::WatcherUrls
-        } else {
-            CallerType::PostUrls
+        let caller = match queue.kind {
+            QueueKind::Watcher => CallerType::WatcherUrls,
+            QueueKind::LocalImport => CallerType::LocalImport,
+            _ => CallerType::PostUrls,
         };
         let options = match self
             .downloader
@@ -658,22 +830,29 @@ impl QueueRunner {
                 return false;
             }
         };
-        let job = Job::new();
-        *handle.job.lock() = Some(Arc::clone(&job));
+        // (`CheckImporterCanDoFileWorkBecauseLocationsProblem`: the files
+        // pause, and the seed waits)
+        if let Err(e) = options.locations.check_ready_to_import() {
+            let id = queue.id;
+            if let Err(e) = self
+                .downloader
+                .store
+                .write(move |ctx| queues::set_paused(ctx.conn(), id, Some(true), None))
+            {
+                tracing::error!("pausing an import queue: {e}");
+            }
+            tracing::warn!(queue = %queue.name, "{e} The queue's files are paused.");
+            handle.status.lock().files_status = e.into();
+            return false;
+        }
+        if let Some(local) = queues::LocalImport::of(queue) {
+            return self.work_on_path_seed(seed, options, local, handle).await;
+        }
+        let job = Job::scoped(bandwidth_scope(queue.kind, queue.id));
+        *handle.file_job.lock() = Some(Arc::clone(&job));
         handle.status.lock().files_status = "working".into();
-        let result = self.downloader.work_on_url(&mut seed, &options, &job).await;
-        *handle.job.lock() = None;
-        let did_work = match result {
-            Ok(did_work) => did_work,
-            Err(WorkError::Network(e)) => {
-                self.delay(handle, &e);
-                false
-            }
-            Err(e) => {
-                crate::seeds::set_status(&mut seed, SeedStatus::Error, e.to_string());
-                false
-            }
-        };
+        let did_work = self.downloader.work_on_url(&mut seed, &options, &job).await;
+        *handle.file_job.lock() = None;
         if let Err(e) = self
             .downloader
             .store
@@ -685,20 +864,68 @@ impl QueueRunner {
     }
 }
 
+impl QueueRunner {
+    /// `HDDImport._WorkOnFiles`: import a local import's file from its
+    /// path, then delete it if the import says to (to the recycle bin, if
+    /// the options say) once it is in the database.
+    async fn work_on_path_seed(
+        &self,
+        mut seed: FileSeed,
+        options: crate::FullImportOptions,
+        local: queues::LocalImport,
+        handle: &Handle,
+    ) -> bool {
+        handle.status.lock().files_status = "importing".into();
+        let downloader = Arc::clone(&self.downloader);
+        let worked = tokio::task::spawn_blocking(move || {
+            let folders: hydrus_store::settings::FolderSettings = downloader
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            if let Err(e) = downloader.import_path_seed(
+                &mut seed,
+                &options,
+                folders.copy_import_files_to_temp_dir,
+            ) {
+                tracing::error!(path = %seed.data, "importing a file: {e}");
+            }
+            if local.delete_after_success
+                && seed.status.is_successful()
+                && let Err(e) = hydrus_store::paths::delete_or_recycle(
+                    &seed.data,
+                    folders.delete_to_recycle_bin,
+                )
+            {
+                tracing::error!(path = %seed.data, "deleting an imported file: {e}");
+            }
+            downloader
+                .store
+                .write(move |ctx| queues::update_file_seed(ctx.conn(), &seed))
+        })
+        .await;
+        handle.status.lock().files_status.clear();
+        match worked {
+            Ok(Ok(())) => true,
+            Ok(Err(e)) => {
+                tracing::error!("saving a file seed: {e}");
+                true
+            }
+            Err(e) => {
+                tracing::error!("importing a file: {e}");
+                false
+            }
+        }
+    }
+}
+
 /// A random 32-byte token (the reference's `HydrusData.GenerateKey`).
 fn rand_token() -> [u8; 32] {
     rand::random()
 }
 
-/// The name of a new watcher page (the reference's).
-pub const DEFAULT_WATCHER_PAGE_NAME: &str = "watcher";
-
+use hydrus_store::watchers::seed_times;
 /// A watcher queue's state.
-pub fn watcher_state(queue: &Queue) -> Option<WatcherState> {
-    (queue.kind == QueueKind::Watcher)
-        .then(|| serde_json::from_value(queue.extra.clone()).ok())
-        .flatten()
-}
+pub use hydrus_store::watchers::{DEFAULT_WATCHER_PAGE_NAME, watcher_state};
 
 fn save_watcher_state(
     store: &hydrus_store::Store,
@@ -709,18 +936,7 @@ fn save_watcher_state(
     store.write(move |ctx| queues::set_queue_extra(ctx.conn(), queue, &extra))
 }
 
-fn seed_times(seeds: &[FileSeed]) -> Vec<SeedTime> {
-    seeds
-        .iter()
-        .map(|s| SeedTime {
-            source_time: s.source_time,
-            created: s.created,
-        })
-        .collect()
-}
-
-/// The name of a new gallery downloader page.
-pub const DEFAULT_GALLERY_PAGE_NAME: &str = "gallery";
+pub use hydrus_store::gallery::{DEFAULT_GALLERY_PAGE_NAME, GallerySearchError};
 
 pub use hydrus_core::gallery::GallerySearch;
 
@@ -731,93 +947,36 @@ pub fn gallery_search(queue: &Queue) -> Option<GallerySearch> {
         .flatten()
 }
 
-/// Why gallery searches could not start.
-#[derive(Debug, thiserror::Error)]
-pub enum GallerySearchError {
-    #[error("Could not find a Gallery URL Generator (Downloader) for \"{0}\"!")]
-    NoDownloader(String),
-    #[error("{0}")]
-    Gug(String),
-    #[error(transparent)]
-    Store(#[from] StoreError),
+/// What a queue's requests count against, as the reference's importers make
+/// their network jobs: the downloader page (a URL queue, a gallery search)
+/// or the watcher, whose gallery pages wait their turn per site with the
+/// rest of their kind.
+fn bandwidth_scope(kind: QueueKind, queue: i64) -> BandwidthScope {
+    let key = format!("{queue:016x}");
+    match kind {
+        QueueKind::Watcher => BandwidthScope {
+            contexts: vec![NetworkContext::watcher_page(key)],
+            override_after: None,
+            gallery_token: Some(GalleryTokenKind::Watcher),
+        },
+        _ => BandwidthScope {
+            contexts: vec![NetworkContext::downloader_page(key)],
+            override_after: None,
+            gallery_token: Some(GalleryTokenKind::DownloadPage),
+        },
+    }
 }
 
-/// Make gallery searches (`MultipleGalleryImport.PendQueries`): one queue
-/// per query on the named gallery page, reading the GUG's result pages until
-/// the file limit (`None`: the client's default).
-pub fn create_gallery_searches(
-    store: &hydrus_store::Store,
-    definitions: &hydrus_parse::Downloaders,
-    page_name: Option<&str>,
-    gug_key: &str,
-    gug_name: &str,
-    queries: &[String],
-    file_limit: Option<Option<u64>>,
-) -> Result<Vec<Queue>, GallerySearchError> {
-    let gug = definitions
-        .gugs
-        .get(gug_key, gug_name)
-        .ok_or_else(|| GallerySearchError::NoDownloader(gug_name.to_owned()))?;
-    let snapshot = store.snapshot();
-    let classes = &snapshot.url_classes;
-    let options = hydrus_core::url::GugOptions {
-        percent_twenty_is_space: false,
-        collapse_leading_slashes: classes.settings().collapse_leading_slashes,
-    };
-    let defaults: GalleryDefaults = store.read(hydrus_store::settings::get)?;
-    let file_limit = file_limit.unwrap_or(defaults.file_limit);
-    let page_name = page_name.unwrap_or(DEFAULT_GALLERY_PAGE_NAME).to_owned();
-    let mut made = Vec::new();
-    for query in queries {
-        let urls = definitions
-            .gugs
-            .gallery_urls(gug, query, options)
-            .map_err(|e| GallerySearchError::Gug(e.to_string()))?;
-        if urls.is_empty() {
-            return Err(GallerySearchError::Gug(format!(
-                "The Gallery URL Generator \"{}\" did not produce any URLs!",
-                gug.name()
-            )));
-        }
-        let run_token = hex::encode(rand_token());
-        let mut seen = BTreeSet::new();
-        let seeds: Vec<NewGallerySeed> = urls
-            .into_iter()
-            .map(|url| classes.normalise(&url, true).unwrap_or(url))
-            .filter(|url| seen.insert(url.clone()))
-            .map(|url| NewGallerySeed {
-                url,
-                can_generate_more_pages: true,
-                referral_url: None,
-                meta: GallerySeedMeta {
-                    run_token: run_token.clone(),
-                    ..GallerySeedMeta::default()
-                },
-            })
-            .collect();
-        let search = GallerySearch {
-            query: query.clone(),
-            source_name: gug.name().to_owned(),
-            file_limit,
-            num_new_urls_found: 0,
-            num_urls_found: 0,
-        };
-        let extra = serde_json::to_value(&search).expect("plain data serialises");
-        let name = page_name.clone();
-        let queue = store.write(move |ctx| {
-            let id = queues::create_queue(
-                ctx.conn(),
-                QueueKind::Gallery,
-                &name,
-                None,
-                &ImportOptionsSlice::default(),
-                now(),
-            )?;
-            queues::set_queue_extra(ctx.conn(), id, &extra)?;
-            queues::add_gallery_seeds(ctx.conn(), id, &seeds, None, now())?;
-            queues::queue(ctx.conn(), id).map(|q| q.expect("just made"))
-        })?;
-        made.push(queue);
+/// A download as the client shows it (`NetworkJob.GetStatus`).
+pub(crate) fn live(job: &Job) -> JobLive {
+    let state = job.state();
+    JobLive {
+        url: state.url,
+        status: state.status,
+        speed: state.speed,
+        bytes_read: state.bytes_read,
+        bytes_to_read: state.bytes_total,
+        done: state.done,
+        error: state.error,
     }
-    Ok(made)
 }

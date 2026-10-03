@@ -37,10 +37,12 @@
 //! second size or ratio predicate replace the first), and tags are always
 //! searched as displayed, in every file domain.
 
+mod collect;
 mod context;
 mod dupes;
 mod leaf;
 mod numbers;
+mod page_sort;
 mod plan;
 mod similar;
 mod sort;
@@ -138,6 +140,53 @@ pub fn sort_files(
         .into_iter()
         .map(HashId)
         .collect())
+}
+
+/// Sort a page's `files` (in the order it shows them) as the reference's
+/// pages sort (`MediaList.Sort`): by the `fallback` sort first, then by
+/// `sort`, each stably; files with no value take the page's defaults (no
+/// views as 0, no time as -1, the inbox before the archive). Sorts by
+/// system sort types, by namespaces' tags, and by rating.
+pub fn sort_page_files(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    files: &[HashId],
+    sort: &hydrus_core::pages::PageSort,
+    fallback: Option<&hydrus_core::pages::PageSort>,
+    clock: &Clock,
+) -> Result<Vec<HashId>> {
+    let env = context::Env::new(conn, snapshot, search, clock, context::Strategy::Auto)?;
+    let mut order: Vec<u32> = files.iter().map(|h| h.0).collect();
+    for sort in fallback.into_iter().chain([sort]) {
+        order = page_sort::sort_page(&env, &order, sort)?;
+    }
+    Ok(order.into_iter().map(HashId).collect())
+}
+
+/// Collect a page's `files` (in the order it shows them) by `collect`, as
+/// the reference's pages collect (`MediaList.Collect`), and sort the files
+/// and collections that make as [`sort_page_files`] does, each collection's
+/// files among themselves.
+#[allow(clippy::too_many_arguments)]
+pub fn collect_page_files(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    search: &FileSearchContext,
+    files: &[HashId],
+    collect: &hydrus_core::pages::PageCollect,
+    sort: &hydrus_core::pages::PageSort,
+    fallback: Option<&hydrus_core::pages::PageSort>,
+    clock: &Clock,
+) -> Result<Vec<hydrus_core::pages::PageMedia>> {
+    let env = context::Env::new(conn, snapshot, search, clock, context::Strategy::Auto)?;
+    let current: Vec<hydrus_core::ServiceId> = search
+        .location
+        .current()
+        .iter()
+        .filter_map(|key| snapshot.services.by_key(key).ok().map(|s| s.id))
+        .collect();
+    collect::collect_and_sort(&env, &current, files, collect, sort, fallback)
 }
 
 fn search_with_strategy(

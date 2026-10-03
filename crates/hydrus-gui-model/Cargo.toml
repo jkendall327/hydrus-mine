@@ -1,0 +1,27 @@
+[package]
+name = "hydrus-gui-model"
+description = "The GUI's workings without its windows: what hydrus-gui shows and does, as plain Rust, so it builds and tests without Slint"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+publish = false
+
+[dependencies]
+hydrus-core.workspace = true
+hydrus-store.workspace = true
+hydrus-search.workspace = true
+hydrus-duplicates.workspace = true
+hydrus-media.workspace = true
+hydrus-import.workspace = true
+rusqlite.workspace = true
+anyhow.workspace = true
+
+[dev-dependencies]
+hydrus-legacy.workspace = true
+hydrus-testkit.workspace = true
+serde_json.workspace = true
+tempfile.workspace = true
+
+[lints]
+workspace = true

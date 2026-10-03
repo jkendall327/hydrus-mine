@@ -1,0 +1,166 @@
+{
+ "import_columns": [
+  "name",
+  "path",
+  "paused",
+  "check period"
+ ],
+ "export_columns": [
+  "name",
+  "path",
+  "type",
+  "query",
+  "period",
+  "phrase",
+  "recent error?"
+ ],
+ "import_folders": [
+  {
+   "folder": {
+    "name": "inbox drop",
+    "path": "/home/me/drop",
+    "paused": false,
+    "check_regularly": true,
+    "period": 3600
+   },
+   "row": [
+    "inbox drop",
+    "/home/me/drop",
+    "",
+    "1 hour"
+   ]
+  },
+  {
+   "folder": {
+    "name": "Archive scans",
+    "path": "/mnt/scans",
+    "paused": true,
+    "check_regularly": true,
+    "period": 273600
+   },
+   "row": [
+    "Archive scans",
+    "/mnt/scans",
+    "yes",
+    "3 days 4 hours"
+   ]
+  },
+  {
+   "folder": {
+    "name": "manual only",
+    "path": "/home/me/manual",
+    "paused": false,
+    "check_regularly": false,
+    "period": 300
+   },
+   "row": [
+    "manual only",
+    "/home/me/manual",
+    "",
+    "not checking regularly"
+   ]
+  }
+ ],
+ "export_folders": [
+  {
+   "folder": {
+    "name": "favourites",
+    "path": "/home/me/export",
+    "type": "regular",
+    "delete": false,
+    "tags": [
+     "character:samus aran",
+     "system:archive"
+    ],
+    "run_regularly": true,
+    "period": 86400,
+    "phrase": "{hash}",
+    "run_now": false,
+    "last_error": ""
+   },
+   "row": [
+    "favourites",
+    "/home/me/export",
+    "regular",
+    "system:archive, character:samus aran",
+    "1 day",
+    "{hash}",
+    ""
+   ]
+  },
+  {
+   "folder": {
+    "name": "Mirror",
+    "path": "/mnt/mirror",
+    "type": "synchronise",
+    "delete": false,
+    "tags": [
+     "blue eyes",
+     "-red hair"
+    ],
+    "run_regularly": true,
+    "period": 604800,
+    "phrase": "{hash} {tags}",
+    "run_now": true,
+    "last_error": ""
+   },
+   "row": [
+    "Mirror",
+    "/mnt/mirror",
+    "synchronise",
+    "blue eyes, -red hair",
+    "7 days (running after dialog ok)",
+    "{hash} {tags}",
+    ""
+   ]
+  },
+  {
+   "folder": {
+    "name": "clear out",
+    "path": "/tmp/out",
+    "type": "regular",
+    "delete": true,
+    "tags": [
+     "system:inbox"
+    ],
+    "run_regularly": false,
+    "period": 3600,
+    "phrase": "{hash}",
+    "run_now": false,
+    "last_error": "could not write to /tmp/out"
+   },
+   "row": [
+    "clear out",
+    "/tmp/out",
+    "regular and deleting from the client!",
+    "system:inbox",
+    "not running regularly",
+    "{hash}",
+    "could not write to /tmp/out"
+   ]
+  },
+  {
+   "folder": {
+    "name": "nothing",
+    "path": "",
+    "type": "regular",
+    "delete": false,
+    "tags": [],
+    "run_regularly": false,
+    "period": 86400,
+    "phrase": "{hash}",
+    "run_now": true,
+    "last_error": ""
+   },
+   "row": [
+    "nothing",
+    "",
+    "regular",
+    "",
+    "not running regularly (running after dialog ok)",
+    "{hash}",
+    ""
+   ]
+  }
+ ]
+}

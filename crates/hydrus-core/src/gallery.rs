@@ -2,7 +2,7 @@
 //! reading a downloader's result pages for one query.
 
 /// A gallery search's state (`GalleryImport`), kept as its queue's extra.
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
 pub struct GallerySearch {
     pub query: String,
     /// The downloader's name.

@@ -1,8 +1,9 @@
 //! Subscriptions against a local booru with a tag search: the first sync
 //! stops at the initial file limit, a later one catches up on new uploads
 //! and stops once it sees what it found before, the files are downloaded
-//! with the query's own tags added, and a missing downloader pauses the
-//! subscription.
+//! with the query's own tags added, a missing downloader pauses the
+//! subscription, and a subscription shows what it does in a popup, which
+//! can cancel it.
 
 use std::collections::{BTreeSet, HashMap};
 use std::sync::Arc;
@@ -50,6 +51,8 @@ struct Site {
     /// Post ids per tag, oldest first.
     tags: Mutex<HashMap<String, Vec<usize>>>,
     hits: Mutex<HashMap<String, usize>>,
+    /// Searches wait for this, if set.
+    hold: Mutex<Option<Arc<tokio::sync::Notify>>>,
 }
 
 impl Site {
@@ -71,6 +74,10 @@ async fn search(
         .lock()
         .entry(format!("search/{tag}/{page}"))
         .or_default() += 1;
+    let hold = site.hold.lock().clone();
+    if let Some(hold) = hold {
+        hold.notified().await;
+    }
     let mut posts = site.tags.lock().get(&tag).cloned().unwrap_or_default();
     posts.reverse();
     let start = (page - 1) * PER_PAGE;
@@ -264,7 +271,16 @@ async fn setup() -> Setup {
             hydrus_store::settings::set(ctx.conn(), &downloaders)
         })
         .unwrap();
-    let net = Arc::new(NetEngine::new(Arc::clone(&store), NetOptions::default()).unwrap());
+    let net = Arc::new(
+        NetEngine::new(
+            Arc::clone(&store),
+            NetOptions {
+                obey_bandwidth: false,
+                ..NetOptions::default()
+            },
+        )
+        .unwrap(),
+    );
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
     let downloader = Arc::new(Downloader::new(Arc::clone(&store), net, importer).unwrap());
     Setup {
@@ -273,6 +289,24 @@ async fn setup() -> Setup {
         site,
         _dir: dir,
     }
+}
+
+/// A popup showing: its text, and its files' label and number.
+type Shown = (Option<String>, Option<(String, usize)>);
+
+fn popups_shown(store: &Store) -> Vec<Shown> {
+    let now = hydrus_core::time::TimestampMs::now().millis() / 1000;
+    store
+        .read(|conn| hydrus_store::popups::all(conn, now))
+        .unwrap()
+        .into_iter()
+        .map(|job| {
+            let files = job
+                .files
+                .map(|(hashes, label)| (label.unwrap_or_default(), hashes.len()));
+            (job.status_text_1, files)
+        })
+        .collect()
 }
 
 fn post_ids(store: &Store, queue: i64) -> Vec<(usize, SeedStatus)> {
@@ -370,6 +404,12 @@ async fn a_subscription_syncs_catches_up_and_downloads() {
             "{hash}"
         );
     }
+    // and its new files are offered in a popup, labelled with the
+    // subscription's name (its queries publish together by default)
+    assert_eq!(
+        popups_shown(&s.store),
+        [(None, Some(("blue eyes".to_owned(), 4)))]
+    );
 
     // new uploads: the next check gets just those, and stops once it has
     // seen most of what it found before
@@ -390,6 +430,11 @@ async fn a_subscription_syncs_catches_up_and_downloads() {
     assert_eq!(
         post_ids(&s.store, queue),
         [(4, ok), (5, ok), (6, ok), (7, ok), (8, ok), (9, ok)]
+    );
+    // (the next files join the popup with the same label)
+    assert_eq!(
+        popups_shown(&s.store),
+        [(None, Some(("blue eyes".to_owned(), 6)))]
     );
     let second = pages(&s.store);
     assert_eq!(second.len(), 4, "{second:?}");
@@ -474,6 +519,11 @@ async fn a_subscription_without_its_downloader_pauses() {
             "The subscription \"orphan\" could not find a Gallery URL Generator for \"gone\"! The sub has paused!"
         ]
     );
+    // which the user is shown
+    assert_eq!(
+        popups_shown(&s.store),
+        [(Some(report.notices[0].clone()), None)]
+    );
     let sub = s
         .store
         .read(|conn| subs::subscription(conn, id))
@@ -481,4 +531,258 @@ async fn a_subscription_without_its_downloader_pauses() {
         .unwrap();
     assert!(sub.settings.paused);
     assert_eq!(s.downloader.next_work_time(&sub).unwrap(), None);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_stops_when_its_bandwidth_runs_out() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_core::network::{CONTEXT_SUBSCRIPTION, NetworkContext};
+    use hydrus_store::bandwidth::BandwidthSettings;
+
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=7);
+    // seven requests a day per subscription query: two gallery pages of
+    // three, then a post and its file per download (no waits between
+    // gallery pages)
+    let mut bandwidth = BandwidthSettings {
+        gallery_page_wait_subscriptions: 0,
+        ..BandwidthSettings::default()
+    };
+    for (context, rules) in &mut bandwidth.rules {
+        if *context == NetworkContext::default_of_kind(CONTEXT_SUBSCRIPTION) {
+            *rules = Rules::new([Rule::new(BandwidthType::Requests, Some(86_400), 7)]);
+        }
+    }
+    s.store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &bandwidth))
+        .unwrap();
+    let net = Arc::new(NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap());
+    let importer = FileImporter::new(Arc::clone(&s.store), MediaTools::new());
+    let downloader = Downloader::new(Arc::clone(&s.store), net, importer).unwrap();
+
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        initial_file_limit: Some(4),
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = downloader.run_subscription(id, &Job::new()).await.unwrap();
+    assert_eq!(report.new_urls, 4, "{report:?}");
+    // two pages and two downloads use six: there isn't room for another
+    // request and a megabyte, as the subscription asks before each file
+    let ok = SeedStatus::SuccessfulAndNew;
+    let unknown = SeedStatus::Unknown;
+    assert_eq!(
+        post_ids(&s.store, queue),
+        [(4, ok), (5, ok), (6, unknown), (7, unknown)]
+    );
+    // and the subscription comes back when there is bandwidth, not at once
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    let next = downloader.next_work_time(&sub).unwrap().unwrap();
+    assert!(next > now + 30, "{next} vs {now}");
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn subscriptions_wait_while_paused_globally() {
+    use hydrus_store::settings::Pauses;
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=3);
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    // hydrus's "pause subscriptions", and its "pause all new network
+    // traffic", each stop them
+    for pauses in [
+        Pauses {
+            subscriptions: true,
+            ..Pauses::default()
+        },
+        Pauses {
+            network_traffic: true,
+            ..Pauses::default()
+        },
+    ] {
+        s.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+            .unwrap();
+        let report = s
+            .downloader
+            .run_subscription(id, &Job::new())
+            .await
+            .unwrap();
+        assert_eq!(report.new_urls, 0);
+        assert!(post_ids(&s.store, queue).is_empty());
+    }
+    s.store
+        .write(|ctx| hydrus_store::settings::set(ctx.conn(), &Pauses::default()))
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    assert_eq!(report.new_urls, 3);
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_with_no_import_destination_waits_out_its_error_delay() {
+    use hydrus_core::import_options::{ImportOptionsSlice, LocationOptions, NO_IMPORT_DESTINATION};
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=2);
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        import_options: ImportOptionsSlice {
+            locations: Some(LocationOptions {
+                destinations: Vec::new(),
+                ..LocationOptions::default()
+            }),
+            ..ImportOptionsSlice::default()
+        },
+        ..SubscriptionSettings::default()
+    };
+    let state = QueryState::new("blue_eyes");
+    let (id, queue) = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "nowhere", &settings)?.unwrap();
+            let queue = subs::add_query(ctx.conn(), id, &state, 0)?;
+            Ok((id, queue))
+        })
+        .unwrap();
+    let report = s
+        .downloader
+        .run_subscription(id, &Job::new())
+        .await
+        .unwrap();
+    // the search still runs; the files wait
+    assert_eq!(report.new_urls, 2);
+    let unknown = SeedStatus::Unknown;
+    assert_eq!(post_ids(&s.store, queue), [(1, unknown), (2, unknown)]);
+    assert_eq!(
+        report.notices,
+        [format!(
+            "The subscription \"nowhere\" encountered an error when trying to sync: {NO_IMPORT_DESTINATION}"
+        )]
+    );
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_secs() as i64;
+    // (subscription_other_error_delay: 36 hours by default)
+    let wait = sub.settings.no_work_until - now;
+    assert!((129_500..=129_600).contains(&wait), "{wait}");
+    assert_eq!(
+        sub.settings.no_work_until_reason,
+        format!("error: {NO_IMPORT_DESTINATION}")
+    );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn a_subscription_shows_what_it_does_in_a_popup_which_can_cancel_it() {
+    use hydrus_store::popups;
+    let s = setup().await;
+    s.site.upload("blue_eyes", 1..=2);
+    let hold = Arc::new(tokio::sync::Notify::new());
+    *s.site.hold.lock() = Some(Arc::clone(&hold));
+    let settings = SubscriptionSettings {
+        gug_key: GUG_KEY.into(),
+        gug_name: GUG_NAME.into(),
+        ..SubscriptionSettings::default()
+    };
+    assert!(settings.show_a_popup_while_working, "(by default)");
+    let id = s
+        .store
+        .write(move |ctx| {
+            let id = subs::create_subscription(ctx.conn(), "blue eyes", &settings)?.unwrap();
+            subs::add_query(ctx.conn(), id, &QueryState::new("blue_eyes"), 0)?;
+            Ok(id)
+        })
+        .unwrap();
+    let downloader = Arc::clone(&s.downloader);
+    let run = tokio::spawn(async move { downloader.run_subscription(id, &Job::new()).await });
+
+    // while it waits for its first gallery page: what it is doing, and the
+    // page's download (written four times a second)
+    for _ in 0..500 {
+        if s.site.hits.lock().contains_key("search/blue_eyes/1") {
+            break;
+        }
+        tokio::time::sleep(std::time::Duration::from_millis(20)).await;
+    }
+    tokio::time::sleep(std::time::Duration::from_millis(700)).await;
+    let now = || hydrus_core::time::TimestampMs::now().millis() / 1000;
+    let shown = s.store.read(|conn| popups::all(conn, now())).unwrap();
+    assert_eq!(shown.len(), 1, "{shown:?}");
+    let popup = &shown[0];
+    assert_eq!(
+        popup.status_title.as_deref(),
+        Some("subscriptions - blue eyes")
+    );
+    assert_eq!(
+        popup.status_text_1.as_deref(),
+        Some("synchronising (0/1) \"blue_eyes\": downloading gallery page")
+    );
+    assert_eq!(popup.popup_gauge_1, Some((0, 1)));
+    assert!(popup.cancellable && !popup.done);
+    let download = popup.network_job.as_ref().expect("the page's download");
+    assert!(
+        download.url.ends_with("/search/blue_eyes/1"),
+        "{download:?}"
+    );
+
+    // the client cancels it: it stops once the page is read, for a while
+    let key = popup.key;
+    s.store
+        .write(move |ctx| popups::update(ctx.conn(), &key, now(), popups::Job::cancel))
+        .unwrap();
+    tokio::time::sleep(std::time::Duration::from_millis(700)).await;
+    hold.notify_one();
+    let report = run.await.unwrap().unwrap();
+    assert_eq!((report.new_urls, report.files_worked), (0, 0), "{report:?}");
+    let sub = s
+        .store
+        .read(|conn| subs::subscription(conn, id))
+        .unwrap()
+        .unwrap();
+    assert_eq!(
+        sub.settings.no_work_until_reason,
+        "gallery parsing cancelled, likely by user"
+    );
+    assert!(sub.settings.no_work_until > now());
+    // and its popup goes
+    assert!(popups_shown(&s.store).is_empty());
 }

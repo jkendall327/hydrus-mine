@@ -16,7 +16,9 @@ use hydrus_core::ServiceId;
 
 /// Each entry upgrades the schema by one version. Never edit an entry once it
 /// has shipped; append a new one.
-const MIGRATIONS: &[&str] = &[V1, V2, V3, V4, V5, V6, V7, V8];
+const MIGRATIONS: &[&str] = &[
+    V1, V2, V3, V4, V5, V6, V7, V8, V9, V10, V11, V12, V13, V14, V15,
+];
 
 /// The schema version this build writes.
 pub const SCHEMA_VERSION: u32 = MIGRATIONS.len() as u32;
@@ -59,6 +61,32 @@ CREATE TABLE page_files (
     -- hash ids in order, 4 bytes each, little-endian
     hash_ids BLOB NOT NULL
 ) STRICT;
+";
+
+/// Bandwidth usage per network context (`bandwidth.rs`), so limits over
+/// days hold across restarts.
+const V9: &str = r"
+CREATE TABLE bandwidth_usage (
+    context_kind INTEGER NOT NULL,
+    context_data TEXT NOT NULL,
+    -- hydrus_core::bandwidth::Tracker (JSON)
+    tracker TEXT NOT NULL,
+    PRIMARY KEY (context_kind, context_data)
+) STRICT;
+";
+
+/// The file maintenance queue (`file_maintenance.rs`): jobs per file, as
+/// the reference queues them (`file_maintenance_jobs` in its caches db).
+const V10: &str = r"
+CREATE TABLE file_maintenance_jobs (
+    hash_id INTEGER NOT NULL,
+    -- ClientFilesMaintenance.REGENERATE_FILE_DATA_JOB_*
+    job_type INTEGER NOT NULL,
+    -- in seconds: the job runs once this has passed
+    time_can_start INTEGER NOT NULL,
+    PRIMARY KEY (hash_id, job_type)
+) STRICT;
+CREATE INDEX file_maintenance_jobs_due ON file_maintenance_jobs (job_type, time_can_start);
 ";
 
 /// Duplicates auto-resolution rules (`duplicates/auto.rs`): each rule, the
@@ -621,6 +649,89 @@ CREATE VIRTUAL TABLE cache_note_fts USING fts5 (
 );
 ";
 
+/// The GUI's pages as the Client API sees them (`sessions.rs`): each
+/// session's top notebook key and the page it shows, each page's selected
+/// files, what the API asks of the open GUI's pages, and the GUI's open
+/// media viewers.
+const V11: &str = r"
+ALTER TABLE sessions ADD COLUMN top_key BLOB;
+UPDATE sessions SET top_key = randomblob(32);
+-- the page shown: the deepest on the way to it (NULL: each notebook's first)
+ALTER TABLE sessions ADD COLUMN shown BLOB;
+
+-- hash ids in order, 4 bytes each, little-endian
+ALTER TABLE page_files ADD COLUMN selected BLOB NOT NULL DEFAULT X'';
+
+CREATE TABLE page_commands (
+    id INTEGER PRIMARY KEY,
+    page_key BLOB NOT NULL,
+    -- 'focus', 'add_files' or 'refresh'
+    command TEXT NOT NULL,
+    -- for 'add_files': hash ids in order, 4 bytes each, little-endian
+    hash_ids BLOB NOT NULL DEFAULT X''
+) STRICT;
+
+CREATE TABLE media_viewers (
+    position INTEGER PRIMARY KEY,
+    canvas_key BLOB NOT NULL,
+    canvas_type INTEGER NOT NULL,
+    -- the file shown, if any
+    hash_id INTEGER
+) STRICT;
+";
+
+/// Import queues changed by another process (the desktop client, the
+/// command line), for the daemon to look at now (`queues.rs`).
+const V12: &str = r"
+CREATE TABLE queue_nudges (
+    queue_id INTEGER NOT NULL
+) STRICT;
+";
+
+/// Downloader pages over their queues (`queues.rs`): a queue whose page
+/// was closed waits (until the page is reopened, or the queue goes with
+/// it), and URLs typed into a page, for the daemon to add as hydrus does.
+const V13: &str = r"
+ALTER TABLE import_queues ADD COLUMN page_closed INTEGER NOT NULL DEFAULT 0;
+
+CREATE TABLE queue_url_requests (
+    request_id INTEGER PRIMARY KEY,
+    queue_id INTEGER NOT NULL,
+    -- the URLs, one a line
+    urls TEXT NOT NULL
+) STRICT;
+";
+
+/// What the daemon's queues are doing now, for their pages (`live.rs`):
+/// each one's status and current downloads, which the daemon keeps up to
+/// date and clears as it starts and stops; and downloads another process
+/// asked it to cancel.
+const V14: &str = r"
+CREATE TABLE queue_live (
+    queue_id INTEGER PRIMARY KEY,
+    -- a live::QueueLive, as JSON
+    live TEXT NOT NULL
+) STRICT;
+
+CREATE TABLE queue_job_cancels (
+    queue_id INTEGER NOT NULL,
+    -- 0: its file download, 1: its gallery page's
+    kind INTEGER NOT NULL,
+    PRIMARY KEY (queue_id, kind)
+) STRICT;
+";
+
+/// Popup messages (`popups.rs`): jobs the daemon and the Client API show
+/// the user, oldest first, until the user dismisses them.
+const V15: &str = r"
+CREATE TABLE popups (
+    seq INTEGER PRIMARY KEY,
+    key BLOB NOT NULL UNIQUE,
+    -- a popups::Job, as JSON
+    job TEXT NOT NULL
+) STRICT;
+";
+
 /// Open-time connection setup shared by the writer and readers.
 pub(crate) fn configure(conn: &Connection) -> Result<()> {
     conn.execute_batch(
@@ -630,7 +741,8 @@ pub(crate) fn configure(conn: &Connection) -> Result<()> {
          PRAGMA temp_store = MEMORY;
          PRAGMA cache_size = -262144;
          PRAGMA mmap_size = 268435456;
-         PRAGMA busy_timeout = 30000;",
+         PRAGMA busy_timeout = 30000;
+         PRAGMA journal_size_limit = 134217728;",
     )?;
     rusqlite::vtab::array::load_module(conn)?;
     Ok(())

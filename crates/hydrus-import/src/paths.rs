@@ -8,6 +8,7 @@ use std::io;
 use std::path::{Component, Path, PathBuf};
 
 use hydrus_core::sort::human_sort;
+pub use hydrus_store::paths::{delete_or_recycle, delete_path};
 
 /// `os.path.normpath`, lexically.
 fn normpath(path: &Path) -> PathBuf {
@@ -44,6 +45,25 @@ fn comparable_sidecar_prefix(path: &str) -> String {
     }
 }
 
+/// `PopulateComparableSidecarPrefixes`: note the prefixes sidecars of
+/// `paths` would have (each that isn't itself sidecar-like's).
+pub fn add_sidecar_prefixes<'a>(
+    paths: impl IntoIterator<Item = &'a str>,
+    prefixes: &mut HashSet<String>,
+) {
+    for path in paths {
+        if !has_sidecar_ext(path) {
+            prefixes.insert(comparable_sidecar_prefix(path));
+        }
+    }
+}
+
+/// `LooksLikeSidecarPath`: a `.txt`, `.json` or `.xml` whose name before
+/// its first dot is one of `prefixes`.
+pub fn looks_like_sidecar(path: &str, prefixes: &HashSet<String>) -> bool {
+    has_sidecar_ext(path) && prefixes.contains(&comparable_sidecar_prefix(path))
+}
+
 /// `GetAllFilePaths`: the files under `root` (or `root` itself if it is a
 /// file), in human order, split into files and the sidecars beside them (a
 /// `.txt`, `.json` or `.xml` whose name before its first dot is also some
@@ -51,6 +71,17 @@ fn comparable_sidecar_prefix(path: &str) -> String {
 pub fn all_file_paths(
     root: &str,
     search_subdirectories: bool,
+) -> io::Result<(Vec<String>, Vec<String>)> {
+    all_file_paths_noting(root, search_subdirectories, &mut HashSet::new())
+}
+
+/// [`all_file_paths`], noting the prefixes its files give sidecars in
+/// `prefixes` and taking those already there into account (as the
+/// reference's import window does across all it is given).
+pub fn all_file_paths_noting(
+    root: &str,
+    search_subdirectories: bool,
+    prefixes: &mut HashSet<String>,
 ) -> io::Result<(Vec<String>, Vec<String>)> {
     let mut all = Vec::new();
     // (path, the directories above it, to stop following links back up)
@@ -87,14 +118,10 @@ pub fn all_file_paths(
         jobs = next;
     }
     human_sort(&mut all);
-    let prefixes: HashSet<String> = all
-        .iter()
-        .filter(|p| !has_sidecar_ext(p))
-        .map(|p| comparable_sidecar_prefix(p))
-        .collect();
+    add_sidecar_prefixes(all.iter().map(String::as_str), prefixes);
     let (sidecars, files) = all
         .into_iter()
-        .partition(|p| has_sidecar_ext(p) && prefixes.contains(&comparable_sidecar_prefix(p)));
+        .partition(|p| looks_like_sidecar(p, prefixes));
     Ok((files, sidecars))
 }
 
@@ -177,7 +204,7 @@ fn move_file(source: &str, dest: &str) -> io::Result<()> {
     if std::fs::rename(source, dest).is_ok() {
         return Ok(());
     }
-    std::fs::copy(source, dest)?;
+    hydrus_store::paths::copy_file(source, dest)?;
     if let Ok(meta) = std::fs::metadata(source)
         && let Ok(modified) = meta.modified()
     {
@@ -229,36 +256,6 @@ pub fn merge_file(source: &str, dest: &str) -> io::Result<bool> {
     Ok(true)
 }
 
-/// `HydrusPaths.DeletePath`: delete a file (a link itself, not its target)
-/// for good; nothing if it isn't there.
-pub fn delete_path(path: &str) -> io::Result<()> {
-    match std::fs::symlink_metadata(path) {
-        Err(e) if e.kind() == io::ErrorKind::NotFound => Ok(()),
-        Err(e) => Err(e),
-        Ok(meta) if meta.is_dir() => std::fs::remove_dir_all(path),
-        Ok(_) => std::fs::remove_file(path),
-    }
-}
-
-/// `ClientPaths.DeletePath`: to the recycle bin if asked (falling back to
-/// deleting for good, as the reference does when recycling fails), else
-/// for good.
-pub fn delete_or_recycle(path: &str, recycle: bool) -> io::Result<()> {
-    if !recycle {
-        return delete_path(path);
-    }
-    if std::fs::symlink_metadata(path).is_err() {
-        return Ok(());
-    }
-    match trash::delete(path) {
-        Ok(()) => Ok(()),
-        Err(e) => {
-            tracing::warn!("could not recycle {path:?} ({e}); deleting it instead");
-            delete_path(path)
-        }
-    }
-}
-
 /// `MirrorFile`: copy `source` to `dest` (keeping its modified time)
 /// unless `dest` already has the same size and modified second. Whether a
 /// copy happened.
@@ -296,7 +293,7 @@ pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
             let _ = std::fs::set_permissions(dest, permissions);
         }
     }
-    std::fs::copy(source, dest)?;
+    hydrus_store::paths::copy_file(source, dest)?;
     if let Ok(modified) = source_meta.modified() {
         let _ = std::fs::File::options()
             .write(true)
@@ -306,15 +303,35 @@ pub fn mirror_file(source: &str, dest: &str) -> io::Result<bool> {
     Ok(true)
 }
 
+/// `PROCESS_UMASK`'s bits among 0666: read from a new file asked for 0666,
+/// rather than by setting the umask, which other threads could see.
+#[cfg(unix)]
+fn umask() -> u32 {
+    use std::os::unix::fs::PermissionsExt;
+    static UMASK: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
+    *UMASK.get_or_init(|| {
+        tempfile::Builder::new()
+            .permissions(std::fs::Permissions::from_mode(0o666))
+            .tempfile()
+            .and_then(|f| f.as_file().metadata())
+            .map_or(0o022, |m| !m.permissions().mode() & 0o666)
+    })
+}
+
 /// `TryToGiveFileNicePermissionBits`: make sure the owner can read and
-/// write the file and others can read it (0644).
-pub fn give_nice_permission_bits(path: &str) {
+/// write the file and others can read it (0644, less what the umask
+/// withholds); nothing in "do not chmod" mode.
+pub fn give_nice_permission_bits(path: impl AsRef<Path>) {
+    let path = path.as_ref();
+    if hydrus_store::paths::do_not_chmod() {
+        return;
+    }
     #[cfg(unix)]
     {
         use std::os::unix::fs::PermissionsExt;
         if let Ok(meta) = std::fs::metadata(path) {
             let bits = meta.permissions().mode();
-            let desired = 0o644;
+            let desired = 0o644 & !umask();
             if bits & desired != desired {
                 let _ =
                     std::fs::set_permissions(path, std::fs::Permissions::from_mode(bits | desired));
@@ -575,6 +592,27 @@ pub fn elide_filename(
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[cfg(target_os = "linux")]
+    #[test]
+    fn nice_permission_bits_keep_to_the_umask() {
+        use std::os::unix::fs::PermissionsExt;
+        let status = std::fs::read_to_string("/proc/self/status").unwrap();
+        let reported = status
+            .lines()
+            .find_map(|l| l.strip_prefix("Umask:"))
+            .map(|v| u32::from_str_radix(v.trim(), 8).unwrap())
+            .unwrap();
+        assert_eq!(umask(), reported & 0o666);
+
+        let dir = tempfile::tempdir().unwrap();
+        let file = dir.path().join("file");
+        std::fs::write(&file, b"").unwrap();
+        std::fs::set_permissions(&file, std::fs::Permissions::from_mode(0o200)).unwrap();
+        give_nice_permission_bits(&file);
+        let mode = std::fs::metadata(&file).unwrap().permissions().mode() & 0o777;
+        assert_eq!(mode, 0o200 | (0o644 & !reported), "umask {reported:o}");
+    }
 
     #[test]
     fn sidecars_are_told_apart_from_files() {

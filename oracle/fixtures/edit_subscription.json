@@ -1,0 +1,849 @@
+{
+ "now": 1700000000,
+ "opened": [
+  {
+   "name": "artist one",
+   "delay": "no recent errors",
+   "downloader": "not found: example tag search",
+   "initial_file_limit": 100,
+   "periodic_file_limit": 100,
+   "random_sample": false,
+   "paused": false,
+   "show_a_popup_while_working": true,
+   "publish_files_to_popup_button": true,
+   "publish_files_to_page": false,
+   "publish_label_override": null,
+   "merge_query_publish_events": true
+  },
+  {
+   "name": "Empty sub",
+   "delay": "no recent errors",
+   "downloader": "not found: example tag search",
+   "initial_file_limit": 100,
+   "periodic_file_limit": 100,
+   "random_sample": false,
+   "paused": false,
+   "show_a_popup_while_working": true,
+   "publish_files_to_popup_button": true,
+   "publish_files_to_page": false,
+   "publish_label_override": null,
+   "merge_query_publish_events": true
+  },
+  {
+   "name": "paused and delayed",
+   "delay": "delayed--retrying in 2 hours because: network error: could not connect",
+   "downloader": "not found: other search",
+   "initial_file_limit": 100,
+   "periodic_file_limit": 100,
+   "random_sample": false,
+   "paused": true,
+   "show_a_popup_while_working": true,
+   "publish_files_to_popup_button": true,
+   "publish_files_to_page": false,
+   "publish_label_override": null,
+   "merge_query_publish_events": true
+  },
+  {
+   "name": "no downloader",
+   "delay": "no recent errors",
+   "downloader": "no downloader set",
+   "initial_file_limit": 100,
+   "periodic_file_limit": 100,
+   "random_sample": false,
+   "paused": false,
+   "show_a_popup_while_working": true,
+   "publish_files_to_popup_button": true,
+   "publish_files_to_page": false,
+   "publish_label_override": null,
+   "merge_query_publish_events": true
+  }
+ ],
+ "steps": [
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "Blue_Eyes\nfresh query\nFresh Query\n\n  quiet artist  \n",
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "I pulled 4 texts from the clipboard.\n\nThese are new:\n\nFresh Query\nfresh query\n\nThis is already working in the subscription: \"blue_eyes\"\n\nThis is already in the subscription but is DEAD: \"quiet artist\"\n\nWould you like to add the new queries and revive the DEAD?",
+     "yeses": [
+      "do it",
+      "add the new, but do not revive the DEAD"
+     ],
+     "no": "hold off",
+     "answer": 1
+    }
+   ],
+   "queries": [
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": true,
+     "check_now": false,
+     "dead": true
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "blue_eyes\nred_hair",
+   "asked": [
+    {
+     "kind": "information",
+     "message": "I pulled 2 texts from the clipboard.\n\nThey are all already working in the subscription:\n\nblue_eyes\nreds (red_hair)\n\nSo there are no actions to take."
+    }
+   ],
+   "queries": [
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": true,
+     "check_now": false,
+     "dead": true
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "\n  \n",
+   "asked": [
+    {
+     "kind": "warning",
+     "message": "The clipboard did not seem to have anything in it!"
+    }
+   ],
+   "queries": [
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": true,
+     "check_now": false,
+     "dead": true
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "another one",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "I pulled one text from the clipboard. It is new: \"another one\"\n\nWould you like to add these new queries?",
+     "yes": "do it",
+     "no": "hold off",
+     "answer": false
+    }
+   ],
+   "queries": [
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": true,
+     "check_now": false,
+     "dead": true
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "another one",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "I pulled one text from the clipboard. It is new: \"another one\"\n\nWould you like to add these new queries?",
+     "yes": "do it",
+     "no": "hold off",
+     "answer": true
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": true,
+     "check_now": false,
+     "dead": true
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "check now",
+   "rows": [
+    "quiet artist"
+   ],
+   "clipboard": null,
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 1 selected queries, 1 are DEAD. Do you want to check these?",
+     "choices": [
+      "yes, resurrect the DEAD queries",
+      "no, leave them DEAD"
+     ],
+     "answer": 0
+    },
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 1 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes, check them",
+      "no, leave them alone"
+     ],
+     "answer": 0
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "check now",
+   "rows": [
+    "blue_eyes",
+    "red_hair",
+    "quiet artist"
+   ],
+   "clipboard": null,
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 3 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes check paused queries",
+      "no just what is currently unpaused"
+     ],
+     "answer": 1
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": true,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "pause/play",
+   "rows": [
+    "blue_eyes",
+    "red_hair"
+   ],
+   "clipboard": null,
+   "asked": [],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": true,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "check now",
+   "rows": [
+    "blue_eyes",
+    "red_hair"
+   ],
+   "clipboard": null,
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Check which?",
+     "message": "Of the 2 selected queries, 1 are paused. Do you want to unpause and check them?",
+     "choices": [
+      "yes check paused queries",
+      "no just what is currently unpaused"
+     ],
+     "answer": null
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": true,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "paste queries",
+   "rows": [],
+   "clipboard": "quiet artist\nyet another",
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "I pulled 2 texts from the clipboard.\n\nThis is new: \"yet another\"\n\nThis is already working in the subscription: \"quiet artist\"\n\nWould you like to add these new queries?",
+     "yes": "do it",
+     "no": "hold off",
+     "answer": true
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": true,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "yet another",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "delete",
+   "rows": [
+    "fresh query",
+    "Fresh Query"
+   ],
+   "clipboard": null,
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Remove all selected?",
+     "yes": "yes",
+     "no": "no",
+     "answer": false
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": true,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "Fresh Query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "fresh query",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "yet another",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  },
+  {
+   "do": "delete",
+   "rows": [
+    "fresh query",
+    "Fresh Query"
+   ],
+   "clipboard": null,
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Remove all selected?",
+     "yes": "yes",
+     "no": "no",
+     "answer": true
+    }
+   ],
+   "queries": [
+    {
+     "text": "another one",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "blue_eyes",
+     "paused": true,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "brand new",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "quiet artist",
+     "paused": false,
+     "check_now": true,
+     "dead": false
+    },
+    {
+     "text": "red_hair",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    },
+    {
+     "text": "yet another",
+     "paused": false,
+     "check_now": false,
+     "dead": false
+    }
+   ],
+   "delay": "no recent errors"
+  }
+ ],
+ "edits": {
+  "name": "artist one, renamed",
+  "paused": true,
+  "initial_file_limit": 50,
+  "periodic_file_limit": 25,
+  "random_sample": true,
+  "show_a_popup_while_working": false,
+  "publish_files_to_popup_button": false,
+  "publish_files_to_page": true,
+  "publish_label_override": "my label",
+  "merge_query_publish_events": false
+ },
+ "value": {
+  "name": "artist one, renamed",
+  "paused": true,
+  "initial_file_limit": 50,
+  "periodic_file_limit": 25,
+  "random_sample": true,
+  "show_a_popup_while_working": false,
+  "publish_files_to_popup_button": false,
+  "publish_files_to_page": true,
+  "publish_label_override": "my label",
+  "merge_query_publish_events": false,
+  "no_work_until": 0,
+  "no_work_until_reason": "",
+  "queries": [
+   {
+    "text": "another one",
+    "paused": false,
+    "check_now": false,
+    "dead": false
+   },
+   {
+    "text": "blue_eyes",
+    "paused": true,
+    "check_now": true,
+    "dead": false
+   },
+   {
+    "text": "brand new",
+    "paused": false,
+    "check_now": false,
+    "dead": false
+   },
+   {
+    "text": "quiet artist",
+    "paused": false,
+    "check_now": true,
+    "dead": false
+   },
+   {
+    "text": "red_hair",
+    "paused": false,
+    "check_now": false,
+    "dead": false
+   },
+   {
+    "text": "yet another",
+    "paused": false,
+    "check_now": false,
+    "dead": false
+   }
+  ]
+ }
+}

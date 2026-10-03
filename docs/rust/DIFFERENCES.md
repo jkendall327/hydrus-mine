@@ -67,6 +67,22 @@ without its subdomains, a domain regex, query parameters in another order
 and a name that only matches case-folded, searched through the Client API
 and tested in memory.
 
+## Media (`hydrus-media`)
+
+- **Values from ffmpeg depend on your ffmpeg.** Video and audio (frames,
+  durations) and PSDs are read through ffmpeg, as hydrus reads them, and
+  different ffmpeg versions and builds give slightly different thumbnails
+  and durations, for hydrus too. The parity tests compare these values
+  with the ffmpeg the fixtures were recorded with (Ubuntu 24.04's 6.1, on
+  x86-64); anywhere else they only report them.
+- **AVIF, HEIF and JPEG XL images are decoded by ffmpeg** rather than the
+  Python libraries hydrus uses, so their pixels can differ slightly, and
+  what works depends on the ffmpeg: 6.1 can't read HEIF images at all
+  (they get the default thumbnail) and drops AVIF transparency. Newer
+  ffmpeg (9 at least) reads both, and gives an image's transparency as a
+  separate stream, which we merge back. XMP inside AVIF and HEIF images
+  isn't looked for yet, so those files don't get the XMP flag at import.
+
 ## File lifecycle (`hydrus-store::content`)
 
 Checked by the property tests in `crates/hydrus-store/src/content/tests.rs`
@@ -86,6 +102,11 @@ conformance runner, which skips exactly the recorded fields listed in
   record leaves the cache reporting the combined-local-media deletion and
   "deleted from anywhere" membership that the database no longer has. We
   have no such cache and report what the reference reports after a restart.
+- **The trash is emptied whether or not you are busy.** Hydrus skips its
+  hourly trash maintenance while you are using the client, unless
+  "maintain the trash in normal time" is on (it is by default). `hydrus
+  serve` has no user to be busy, so it always runs it, with your maximum
+  trash age and size; the switch isn't carried over.
 
 ## Duplicates (`hydrus-store::duplicates`)
 
@@ -140,6 +161,219 @@ search.
 - **When one search finds two files of the same duplicate group at different
   distances, the pair gets the smaller.** The reference records whichever
   its tree walk reached first.
+
+## The client and the daemon (`hydrus-gui`, `hydrus serve`)
+
+- **The work runs in a separate process.** Downloads, subscriptions,
+  import and export folders, maintenance and the Client API run in `hydrus
+  serve`, which the client starts while none runs (DECISIONS.md,
+  2026-10-01). So a daemon started on its own runs on after the client
+  closes; the client's own one gets 20 seconds to finish what it is doing
+  before it is killed (the reference waits for its jobs as it closes).
+  `crates/hydrus-gui/src/daemon.rs` and `crates/hydrus-cli/tests/serve.rs`
+  check the starting and stopping.
+- **`/manage_pages` answers from the store**, where the client keeps its
+  pages (the last session, the page shown and each page's files and
+  selection) as they change, within half a second; what the endpoints ask
+  of a page (focusing it, adding files, refreshing it) the client does the
+  next time it looks, after the answer. With the client closed they answer
+  from the session it will open with: added files join it, a focused page
+  is the one it opens on, and refreshing waits until the page is open
+  again. The recorded `pages` scenario (`oracle/recordings/pages.json`)
+  replays in `crates/hydrus-api/tests/conformance.rs` (with the client
+  closed), and `crates/hydrus-api/tests/pages.rs` and the session test in
+  `crates/hydrus-gui/tests/gui/session.rs` cover the rest.
+- **Page keys last.** The reference makes new keys for its pages (and its
+  top notebook) each time it starts; ours are kept with the session, so a
+  tool can keep one.
+- **Refreshing a page of pages refreshes the pages in it.** The
+  reference fails with a server error (notebooks have no `RefreshQuery`).
+- **The client opens on the page it showed last**, or the one
+  `focus_page` asked for while it was closed. The reference opens each
+  notebook on its first page.
+- **A page's selected files are listed in the page's order**
+  (`hash_ids_selected`); the reference's order is its selection set's.
+- **A page's state is always "normal"** (`page_state` 0): our searches
+  finish before the page is shown again, so it is never seen searching.
+- **One client at a time on a store**, as the reference allows one client
+  on its database; a second says the store is already open.
+
+## Pages (`hydrus-gui`)
+
+- **The "edit favourite search" dialog's search is typed**, not the
+  reference's whole autocomplete: a predicate typed and entered is added
+  (as the page's search box adds what is typed), a double-click removes
+  one, and the domains it searches are shown but not changed there; its
+  sort and collect show as text beside "save sort" and "save collect", not
+  as the page's controls. To change those, load the search into a page,
+  change it there, and save it again. Its questions ("Remove all
+  selected?", "already exists! Do you want to overwrite it?") are asked in
+  the dialog rather than in a window of their own, and the list sorts
+  names casefolded as lowercase (Python's casefold differs only for a few
+  letters, such as "ß", which we fold to "ss" as it does).
+
+- **System predicate editors type dates** ("2011-06-04", and "13:05") where
+  the reference's have a calendar and a time box, and a viewing time is
+  kept to the second (the reference keeps its milliseconds, though it
+  never shows them; one stored by hydrus comes across to the nearest
+  second). A file size in terabytes, which the reference's editor offers
+  but can't write out ("error:cannot render this predicate"), is written
+  "200TB"; neither parser takes "TB". Their radio buttons are drop-downs
+  (as are the like/dislike and star controls of "system:rating"), and an
+  editor's rows don't wrap: a narrow window scrolls sideways. A filetype
+  group partly ticked shows unticked (Qt's tree shows it part-ticked).
+  "system:hash"'s forced clean-up doesn't ask "You sure?" first, and what
+  the reference warns of in a dialog is said under the panels.
+  "Paste image!" takes a file's path from the clipboard, not image data.
+  A recent predicate is forgotten with a "forget" button where the
+  reference has a trash icon.
+
+- **Thumbnails on a scaled screen are resampled to its pixels** (area
+  when shrinking, Lanczos when growing, as the reference resizes
+  thumbnails), where the reference has Qt scale them as it draws. Slint's
+  software renderer scales images by picking the nearest pixels, which
+  made them blocky, so we never let it scale one. A selected thumbnail's
+  border is at least 2 pixels wide (in the accent colour), so a selection
+  shows with a thin or no border; the reference's is the border's width,
+  with the cell in its selected colour.
+
+- **A numerical rating's "3/5" over a thumbnail is measured in our font,
+  roughly**: the reference sizes its box and places the stars after it by
+  Qt's measure of the text in its font. We estimate the text's width
+  (each character six tenths of the font's size), so a box with a "3/5"
+  in it may be a pixel or two wider or narrower than the reference's;
+  everything else in the ratings' layout is the reference's to the
+  pixel.
+
+- **The status bar has the page's and the network's parts only**: the
+  reference's idle, busy-threads, CPU-busy and database parts aren't
+  there (the daemon is never idle, and its threads and database aren't
+  the client's). The network part counts what the daemon reads, which
+  may run without the client; what it read before the client opened
+  isn't counted, as the reference's session starts with it. The main
+  window is titled "hydrus-rs", where the reference's is "main" with Qt's
+  "hydrus client 688" after it.
+
+- **The menu bar is drawn by hydrus-rs** (Slint's own can't be built from
+  a list of entries), so it is the same on every system: macOS's isn't at
+  the top of the screen, and menus stay inside the window. Hydrus's entries
+  that hydrus-rs can't do yet are greyed out rather than left out, and a
+  greyed tick box shows unticked whatever hydrus had. Left out: help >
+  debug (hydrus's own debugging tools) and "about Qt"; the services menu's
+  "administrate", for repository admins; the database menu's backup
+  entries as hydrus has them for a database across several locations;
+  sessions > "append backup" (hydrus-rs keeps no session backups, so
+  saving over one keeps no backup of it either); and the
+  undo menu's undo, redo and search history, which hydrus-rs doesn't keep.
+  Hydrus's menu entries describe themselves in the status bar as the
+  pointer passes; ours don't yet, and the history's latest page isn't in
+  bold. Saving a session asks its name and its questions in one dialog,
+  and says a name can't be had over the name box, where the reference
+  shows a message box first; and "clear and load" isn't there yet.
+- **The options window has only the options hydrus-rs honours** (so far
+  those on twenty pages; the others, and pages with none, aren't there:
+  on the connection page, the CA bundle and curl_cffi test; on the
+  downloading page, the default download source, the
+  number of subscriptions syncing at once and the failed-imports limit; on
+  the maintenance page, idle time and shutdown, repository, sibling,
+  deferred delete and idle work settings; on the duplicates page, the
+  preparation tab's notification and the filter's colours; on the file
+  viewing statistics page, the filters' own switches and the menus'
+  stats; most of the gui page; on the importing page, dropped URLs and
+  the work slots; and on the media playback page, the preview's zoom,
+  re-centring, the checkerboard, animations, mpv, Qt's player and the
+  system settings; on the file sort/collect page, the namespace sorts'
+  list and the default collect's tag service; on the tag sort page, the
+  manage tags dialogs' sorts (ours sort as the media viewer's list) and
+  the namespace grouping list; on the ratings page, the example
+  rating service's dropdown, the clickable examples, and the preview
+  window's and dialogs' sizes; and on the thumbnails page, fading, the blurhash fallback, focusing on ctrl- and shift-selection,
+  key navigation's scrolling, the scroll rate, the background image and
+  the rendering tech). It opens on its first page,
+  rather than "gui" or the page last open; options' tooltips aren't shown;
+  a box's title is a heading over its options rather than a frame around
+  them; a sort's type is a dropdown of the types a page's sort control
+  lists, where the reference's is a button opening a menu of them, and a
+  collect's choices are checkboxes under its label, with its unmatched
+  files' choice, where the reference's are a dropdown and a cog menu; and a time behind a button in the reference (the downloaders'
+  waits after errors) shows its fields in place. Its search suggests only
+  the options it has, and their boxes (the reference's also suggests other
+  text on its pages, such as units and dropdowns' choices), and is always
+  at the top (the reference's "Put the options search bar at the" isn't
+  an option yet); two options with the same label each go to their own
+  row (the reference's both go to the last). The checker options editor
+  has no help button, and raises a time below its least value to it when
+  "apply" is pressed, where the reference's does as the focus leaves the
+  time (the same, as pressing "apply" takes the focus).
+
+- **The page chooser takes the top row's digits too.** The reference takes
+  only the number pad's; Slint doesn't tell them apart.
+- **A closed URL downloader page's downloads wait** until it is reopened
+  (Ctrl+U), and are deleted with it after the hour or when the client
+  closes (or, after a crash, when it next opens). The reference's closed
+  page imports on out of sight until it is destroyed; ours stops, as the
+  close question's "This page is still importing." suggests, and a daemon
+  left running without the client doesn't work on a page nobody can see.
+  `crates/hydrus-cli/tests/serve.rs` and `crates/hydrus-gui/tests/gui/session.rs`
+  check it.
+- **A download's progress reaches its page within about three quarters
+  of a second**: the daemon keeps what its queues are doing in the store
+  four times a second, and the page looks twice a second. The reference's
+  page reads its importer directly. The line itself is the reference's
+  (`NetworkJobControl`, recorded for 337 jobs in
+  `oracle/fixtures/import_status.json`), less its cog and error menus.
+- **A URL downloader page shows every file its queue imported or found
+  already in the database**, the reference's default presentation; a
+  page's own presentation options (new files only, say) aren't applied
+  yet, and the page has no sort or collect controls yet: its files are in
+  the queue's order.
+- **A gallery or watcher downloader page's list has no right-click
+  menu** (copy queries, file and search logs, presentation), and
+  dragging across rows doesn't select them: click, ctrl+click and
+  shift+click do. A watcher page has no import options buttons yet
+  (the page's options, from hydrus, are given to new watchers), so
+  "update selected with current options" only differs on a watcher's
+  checker options there, and on a gallery page's search's file limit.
+  The "highlighted" boxes don't show a search's or watcher's own file
+  limit or import options. Its
+  downloader list is flat (the reference nests a site's downloaders and
+  greys out ones that can't work), and its searches' import options and
+  file limits can't be edited from the page yet. Its columns are as
+  narrow as the reference's, which shows the status columns as single
+  characters; their widths are fixed, but for the first, which takes
+  the room left.
+
+## The media viewer (`hydrus-gui`)
+
+- **The top hover frame's drag button shows the file in your file
+  browser instead.** The reference's lets you drag the file out to other
+  programs (a chat, a web page); Slint can't start a drag out of its
+  window, so the button in that place shows the file, selected, in
+  Explorer, Finder or your desktop's file manager (its FileManager1 D-Bus
+  service, as the reference's show-in-file-manager package uses, or else
+  the folder opened), from where it can be dragged. For the same reason
+  the open menus offer "in file browser" whether or not hydrus's advanced
+  mode is on (the reference offers it only in advanced mode). Dragging
+  out for real is jkendall327/hydrus-mine#26.
+
+## The duplicate filter (`hydrus-gui`, `hydrus-duplicates::statements`)
+
+Its comparison statements are checked by
+`crates/hydrus-duplicates/tests/comparison_statements.rs` against the
+reference's (`oracle/dump_comparison_statements.py`).
+
+- **A batch is fetched in one read and committed in one transaction.** The
+  reference searches the potential pairs in throttled fragments, re-reads
+  the whole search space after every commit, and commits four decisions per
+  round trip; that is most of why it is slow.
+- **Going back undoes exactly what the decision did.** The reference, going
+  back, forgets that the first file was to be merged or deleted twice (a
+  typo for the second file), so a later pair with the second file can still
+  be skipped as dealt with.
+- **A batch's first pair is skipped if it can't be shown**, as every later
+  pair is. The reference shows it.
+- **"software/source metadata" is listed.** The reference makes the
+  statement but looks it up by another name, so never shows it.
 
 ## Duplicates auto-resolution (`hydrus-duplicates`)
 
@@ -201,9 +435,10 @@ deleted), migrated from the reference's database before its run; by
   (they are reported). The reference saves a folder each time it checks it,
   so a folder in use is at the current version.
 - **Progress is saved after every file**, rather than every ten minutes.
-- **No popups or pages.** Without a GUI, "show a popup while working" and
-  "publish files to a page or popup button" do nothing; what a check found
-  and imported is logged.
+- **Nothing is published to a page.** The files a check imports are
+  offered in a popup ("publish files to a popup button"), and its work and
+  errors are shown in popups, as the reference's are; "publish files to a
+  page" does nothing yet.
 - **Changes from the command line are noticed within a minute** (the
   reference is told of changes by its dialogs).
 - **Among tags whose human-sort keys are equal** (e.g. `straße` and
@@ -223,7 +458,46 @@ deletes its files from the client, migrated from the reference's database.
   option, applies those rules), as when psutil can't tell.
 - **Searches with "OR" as the search type** run as "AND" (every predicate
   must match); the reference's export folder dialog doesn't offer "OR".
-- **No popups.** What a run exported and removed is logged.
+- **What a run exported and removed is logged**, as well as shown in its
+  popup while it works.
+
+- **Where the filesystem ignores case, a moved sidecar keeps the
+  lower-case spelling** (`a.png.txt`): both spellings seem to exist there,
+  and we take them in the order sidecars are read. The reference, written
+  for Linux, takes them in its set's order, so either may win.
+
+## Local imports (`hydrus-download::queue`)
+
+Checked by `crates/hydrus-download/tests/local_import.rs`.
+
+- **A local import (the reference's "import" page, `HDDImport`) is an
+  import queue the daemon works**, as it does a URL downloader page's: its
+  files are imported in order from their paths, each with its modified
+  time as its source time, a missing one vetoed ("Source file does not
+  exist!"), and, if the import says, each one in the database afterwards
+  deleted (to the recycle bin, if the options say). Its sidecars (the
+  reference's metadata routers) aren't supported yet, nor is its page's
+  import options button; the tags to add to each file (from an "import"
+  page carried over from hydrus) are added as a downloader's are.
+
+Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
+`oracle/fixtures/local_import_dialog.json`) and
+`crates/hydrus-gui/tests/gui/import_files.rs`.
+
+- **The "review files to import" window parses its paths as the
+  reference's does** (the same rows, order, filetypes, sizes, progress
+  text and files to import, folders with and without their subfolders,
+  sidecars and `Thumbs.db` set aside), but **it has no file or folder
+  picker**: paths are typed or pasted into a box over its list, or dropped
+  on it or the main window. Its "add tags/urls with the import >>" button
+  is greyed out (no filename tagging or sidecar options yet), so "import
+  now" is the only way in, with the default import options.
+- **There is one review window at a time**: files dropped on the main
+  window while it is open join its list, where the reference opens a
+  second window.
+- **Dropping files is not checked by eye**: the test drives the drop
+  handler itself, since the X server the GUI is checked under has no
+  drag source.
 
 ## Network requests (`hydrus-net`)
 
@@ -240,6 +514,11 @@ deletes its files from the client, migrated from the reference's database.
   speaks HTTP/1.1 and asks for what it has installed.
 - **Redirect targets are encoded by the URL parser** rather than by
   `requests`' `requote_uri`; both percent-encode what a URL can't contain.
+- **Changed network options apply within a second.** The reference reads
+  its options as it goes; the daemon reads the store's network and
+  downloader options and bandwidth rules again each second, and uses them
+  from then on (new requests use new timeouts, proxies and HTTPS checks,
+  and the new job limits; a request already going keeps its slot).
 
 ## Downloading (`hydrus-download`)
 
@@ -248,25 +527,48 @@ deletes its files from the client, migrated from the reference's database.
 - **Oversized downloads are refused when imported**, not while downloading:
   the reference stops a download as soon as it passes the file filtering
   options' size limits.
-- **Only the default bandwidth rules apply** (one request a second per site,
-  five overall); rules you set yourself are not migrated yet.
+- **Bandwidth rules and usage are the reference's**, checked against its
+  own classes (`oracle/dump_bandwidth.py`), and migrated. Two differences:
+  a subscription that has files to get but not quite the bandwidth to start
+  is looked at again a minute later at the soonest (the reference's
+  "waiting estimate" can be zero then, and its loop would retry at once),
+  and the usage of the last minute before a crash is lost (it is saved
+  every minute and on stopping).
 - **Watchers are grouped by page name only.** A watchable URL sent by
   `/add_urls/add_url` starts a watcher on the named watcher "page" (by
   default "watcher") as the reference's does, but there are no pages to
   show yet, and a check that errors pauses the watcher without the
   reference's five-second status display.
-- **Subscription messages go to the log** (and the subscription runner's
-  status) rather than popups, until there is a GUI; so do new files a
-  subscription would publish to a popup button or page.
-- **Subscriptions follow the default per-site pacing.** The reference's
-  bandwidth rules for subscriptions, and its "go ahead anyway after 30
-  seconds" for subscription requests, don't apply yet.
-- **A subscription stops getting files from a site after three connection
-  failures in ten minutes** (the reference's defaults) and tries again an
-  hour later. The reference counts those failures across the whole client;
-  we count them within one subscription's run.
+- **A pause switched from the command line takes up to half a minute** to
+  reach a running `hydrus serve` (it looks again that often while paused);
+  the reference's menu switches act at once.
+- **Nothing is published to a page.** A subscription's popup while it
+  works, its messages, and the new files it publishes to a popup button
+  are shown as the reference shows them (and the messages logged). In its
+  popup, the download it is doing has no stop button of its own (the
+  popup's cancel stops the subscription where the reference's would), and
+  goes when the download ends rather than ten seconds later.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
+- **The manage subscriptions dialog is a first pass.** It lists the
+  subscriptions and can delete, pause/resume, scrub delays, check
+  queries now and select by query text. It has no "add", "edit", "reset",
+  "retry", "merge", "separate", "deduplicate", "lowercase",
+  "export"/"import"/"duplicate", "overwrite downloader/checker options" or
+  import options buttons yet. It doesn't reckon bandwidth waits (the
+  error/delay column is empty unless the subscription is delayed). It
+  doesn't pause subscriptions while open, as the reference does: "apply"
+  writes only what the dialog changed, so a subscription the daemon ran
+  meanwhile keeps what the run found, unless the dialog changed the same
+  query.
+- **Subscriptions run one at a time**, as with the reference's default
+  `max_simultaneous_subscriptions`; a higher setting comes across but
+  isn't used yet.
+- **Import options that run a program on each imported file are kept but
+  not run yet.** The migration warns where they are set (which defaults,
+  subscriptions, import folders or downloader pages).
+- **There is no browser impersonation** (the reference's optional
+  `curl_cffi` connections); requests are always plain ones.
 
 ## URL classes
 
@@ -312,19 +614,39 @@ Byte ranges are checked by the `file_ranges` conformance scenario, renders by
   asked for (80 by default) unless it is over 100; only a lossless encoder is
   available to us, so every WebP render is what the reference gives for a
   quality over 100. PNG and JPEG renders decode to exactly the reference's
-  pixels.
-- **Ugoiras are not rendered yet** (a 400 says so).
+  pixels. The same goes for ugoiras rendered as animated WebP; as APNG
+  (their default), their frames and timings are exactly the reference's
+  (`oracle/fixtures/ugoira_render.json`).
+- **A ugoira frame without a duration takes the default (125ms)** when its
+  timings (in a note) are fewer than its frames; the reference fails with
+  a 500.
 
 ## Popups (`/manage_popups/*`)
 
 Checked by the `popups` conformance scenario.
 
-- **Every popup is in view**, and a dismissed one leaves the list at once
-  (the reference's GUI shows a limited number, and clears dismissed popups
-  on its next refresh, within a second or so).
-- **Only popups made through the API are listed.** The reference also lists
-  its own jobs (downloads, maintenance, errors) as popups; hydrus-rs logs
-  those instead, so far.
+- **The popups are the store's**, so the daemon's Client API and the
+  client share them: the client shows the oldest ten ("in view", as
+  `only_in_view` lists them), whether or not it is open, and a dismissed
+  popup leaves the list at once (the reference's GUI clears dismissed
+  popups on its next refresh, within a second or so).
+- **The daemon's own popups are, so far, subscriptions', import folders'
+  and export folders'**: their work as it goes, messages, errors and new
+  files. The reference also shows other jobs at work as popups (downloads
+  from the menu, maintenance, database jobs); hydrus-rs doesn't yet.
+- **Popups outlive the daemon, unless their work does**: those for work
+  going on are forgotten when the daemon stops or starts (as the work has
+  stopped), but messages and finished work stay until dismissed. The
+  reference's popups all go when it closes.
+- **A popup's `network_job`** says its URL, status, speed, bytes read and to
+  read, whether it is done and whether it failed, as the reference's does;
+  hydrus-rs's network jobs don't say whether they are waiting on a
+  connection error, the domain, the server's bandwidth or the engine, so
+  those read `false`, `true`, `false` and `false` (as for a job that
+  isn't), and `total_data_used` is what this request has read.
+- **An error's "traceback" is its text**, and its title is "Exception", as
+  the reference titles the errors it raises itself: hydrus-rs has no
+  Python traceback to show.
 
 ## Repositories (`/manage_services/*`)
 

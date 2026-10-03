@@ -17,18 +17,21 @@ use std::path::{Path, PathBuf};
 use rusqlite::{Connection, OpenFlags, OptionalExtension, params};
 
 use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
-use hydrus_core::{ServiceId, ServiceKey, ServiceType, SubtagId};
+use hydrus_core::{ServiceId, ServiceKey, ServiceType};
 
 use crate::error::{Result, StoreError};
 use crate::network::{self, Cookie, CustomHeader, NetworkContext};
 use crate::services::{self, ServiceKind};
-use crate::{counts, master, queues, schema, subscriptions};
+use crate::{queues, schema, subscriptions};
 
+mod backfill;
 mod decode;
 
+pub use backfill::fill_downloader_page_state;
 pub use decode::auto_resolution_rule;
 
 pub use decode::decode_input;
+pub use decode::stored_duplicates_page;
 
 /// Reference schema version this importer understands.
 pub const SUPPORTED_REFERENCE_VERSION: u32 = 688;
@@ -55,9 +58,14 @@ pub struct ImportInput {
     pub downloader_pages: Vec<DownloaderPageInput>,
     /// The session the reference opens with, as a tree of pages.
     pub session: Option<SessionInput>,
+    /// The other saved sessions, kept to load later.
+    pub other_sessions: Vec<SessionInput>,
     /// Duplicates auto-resolution rules, by the reference's rule id (their
     /// pair statuses are copied during the import).
     pub auto_resolution_rules: Vec<(i64, crate::duplicates::auto::Rule)>,
+    /// Each network context's bandwidth usage so far (the rules are a
+    /// setting).
+    pub bandwidth_usage: Vec<(NetworkContext, hydrus_core::bandwidth::Tracker)>,
     /// Things that could not be converted (they are still kept verbatim).
     pub warnings: Vec<String>,
 }
@@ -89,7 +97,17 @@ pub struct SubscriptionInput {
 pub struct DownloaderPageInput {
     pub name: String,
     pub queues: Vec<PageQueueInput>,
+    /// A gallery or watcher page's own state, and the queue it shows (of
+    /// `queues`).
+    pub state: Option<hydrus_core::pages::DownloaderPageState>,
+    pub highlighted: Option<usize>,
 }
+
+/// A downloader page's queues as made, and its own state.
+type MadePage = (
+    Vec<i64>,
+    Option<Box<hydrus_core::pages::DownloaderPageState>>,
+);
 
 /// A session's tree of pages.
 #[derive(Debug, Clone, PartialEq)]
@@ -116,11 +134,17 @@ pub enum PageInputContent {
         search: hydrus_core::search::context::FileSearchContext,
         synchronised: bool,
         sort: Option<hydrus_core::pages::PageSort>,
+        lock: Option<hydrus_core::pages::HashLock>,
+        collect: Option<hydrus_core::pages::PageCollect>,
     },
     /// Showing the queues of `downloader_pages[index]`.
     Downloader {
         kind: hydrus_core::pages::DownloaderKind,
         index: usize,
+        sort: Option<hydrus_core::pages::PageSort>,
+    },
+    Duplicates {
+        duplicates: hydrus_core::pages::DuplicatesPage,
         sort: Option<hydrus_core::pages::PageSort>,
     },
     Other {
@@ -151,6 +175,8 @@ pub enum PageQueueState {
     /// Its next check is timed when imported, from its files, as the
     /// reference times it when the page starts.
     Watcher(hydrus_core::watchers::WatcherState),
+    /// An "import" page's files, from disk.
+    LocalImport(crate::queues::LocalImport),
 }
 
 /// One Client API access key, as stored natively.
@@ -221,14 +247,32 @@ pub fn import(source_dir: &Path, dest: &Path, input: &ImportInput) -> Result<Imp
     let _ = std::fs::remove_file(&scratch);
     let result = import_into(source_dir, &scratch, input);
     match result {
-        Ok(report) => {
+        Ok(mut report) => {
             std::fs::rename(&scratch, dest)?;
+            copy_mpv_conf(source_dir, dest, &mut report);
             Ok(report)
         }
         Err(e) => {
             let _ = std::fs::remove_file(&scratch);
             Err(e)
         }
+    }
+}
+
+/// The reference's mpv settings (`mpv.conf` in its database directory),
+/// which the desktop client's player loads from the store's directory.
+fn copy_mpv_conf(source_dir: &Path, dest: &Path, report: &mut ImportReport) {
+    let source = source_dir.join("mpv.conf");
+    let Some(target) = dest.parent().map(|dir| dir.join("mpv.conf")) else {
+        return;
+    };
+    if !source.exists() || target.exists() {
+        return;
+    }
+    if let Err(e) = std::fs::copy(&source, &target) {
+        report.warnings.push(format!(
+            "mpv.conf could not be copied, so video plays with hydrus's default mpv settings: {e}"
+        ));
     }
 }
 
@@ -304,6 +348,12 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
         &source_dir.join("client.mappings.db"),
         "src_mappings",
     )?;
+    // (only its file maintenance queue is copied; the rest is caches)
+    let caches = source_dir.join("client.caches.db");
+    let has_caches = caches.exists();
+    if has_caches {
+        attach_read_only(&conn, &caches, "src_caches")?;
+    }
 
     let version: u32 = conn.query_row("SELECT version FROM src.version", [], |r| r.get(0))?;
     if version != SUPPORTED_REFERENCE_VERSION {
@@ -338,10 +388,16 @@ fn import_into(source_dir: &Path, scratch: &Path, input: &ImportInput) -> Result
     copier.session(input, &page_queues)?;
     copier.import_folders(input)?;
     copier.auto_resolution(input)?;
+    if has_caches {
+        copier.file_maintenance()?;
+    }
     copier.derived()?;
     tx.commit()?;
 
     conn.execute_batch("DETACH src; DETACH src_master; DETACH src_mappings;")?;
+    if has_caches {
+        conn.execute_batch("DETACH src_caches;")?;
+    }
     if SourceFingerprint::take(source_dir)? != fingerprint {
         return Err(StoreError::Invalid(
             "the source database changed while it was being imported; close hydrus and try again"
@@ -712,6 +768,24 @@ impl Copier<'_> {
         Ok(())
     }
 
+    /// The file maintenance jobs the reference had queued (`file_maintenance.rs`).
+    fn file_maintenance(&mut self) -> Result<()> {
+        let exists: bool = self.conn.query_row(
+            "SELECT EXISTS (SELECT 1 FROM src_caches.sqlite_master WHERE name = 'file_maintenance_jobs')",
+            [],
+            |r| r.get(0),
+        )?;
+        if exists {
+            self.copy(
+                "file_maintenance_jobs",
+                "INSERT OR IGNORE INTO file_maintenance_jobs (hash_id, job_type, time_can_start)
+                 SELECT hash_id, job_type, time_can_start FROM src_caches.file_maintenance_jobs
+                 WHERE job_type BETWEEN 0 AND 26",
+            )?;
+        }
+        Ok(())
+    }
+
     fn duplicates(&mut self) -> Result<()> {
         let pairs = [
             (
@@ -840,6 +914,12 @@ impl Copier<'_> {
             .rows
             .entry("network_cookies".into())
             .or_default() += input.cookies.len() as u64;
+        crate::bandwidth::save_usage(self.conn, &input.bandwidth_usage)?;
+        *self
+            .report
+            .rows
+            .entry("bandwidth_usage".into())
+            .or_default() += input.bandwidth_usage.len() as u64;
         Ok(())
     }
 
@@ -983,7 +1063,7 @@ impl Copier<'_> {
 
     /// Downloader pages' queues, with their files and gallery pages; each
     /// page's queue ids.
-    fn downloader_pages(&mut self, input: &ImportInput) -> Result<Vec<Vec<i64>>> {
+    fn downloader_pages(&mut self, input: &ImportInput) -> Result<Vec<MadePage>> {
         let url_classes = input
             .settings
             .get(<hydrus_core::url::UrlClassSettings as crate::settings::Setting>::KEY)
@@ -1001,6 +1081,7 @@ impl Copier<'_> {
                     PageQueueState::Urls => queues::QueueKind::Urls,
                     PageQueueState::Gallery(_) => queues::QueueKind::Gallery,
                     PageQueueState::Watcher(_) => queues::QueueKind::Watcher,
+                    PageQueueState::LocalImport(_) => queues::QueueKind::LocalImport,
                 };
                 let id = queues::create_queue(
                     self.conn,
@@ -1028,6 +1109,7 @@ impl Copier<'_> {
                 let extra = match &q.state {
                     PageQueueState::Urls => None,
                     PageQueueState::Gallery(search) => Some(serde_json::to_value(search)),
+                    PageQueueState::LocalImport(settings) => Some(serde_json::to_value(settings)),
                     PageQueueState::Watcher(state) => {
                         let mut state = state.clone();
                         let times: Vec<_> = files
@@ -1048,7 +1130,12 @@ impl Copier<'_> {
                 counts[0] += 1;
                 ids.push(id);
             }
-            page_queues.push(ids);
+            // (the queue it shows, as made)
+            let state = page.state.clone().map(|mut state| {
+                state.highlighted = page.highlighted.and_then(|i| ids.get(i).copied());
+                Box::new(state)
+            });
+            page_queues.push((ids, state));
         }
         for (table, n) in ["import_queues", "file_seeds", "gallery_seeds"]
             .into_iter()
@@ -1061,12 +1148,12 @@ impl Copier<'_> {
 
     /// The session's pages, saved as the one the GUI opens with, and the
     /// files each showed.
-    fn session(&mut self, input: &ImportInput, page_queues: &[Vec<i64>]) -> Result<()> {
+    fn session(&mut self, input: &ImportInput, page_queues: &[MadePage]) -> Result<()> {
         use hydrus_core::pages::{Page, PageContent, PageKey, Session};
 
         fn convert(
             page: &PageInput,
-            page_queues: &[Vec<i64>],
+            page_queues: &[MadePage],
             files: &mut Vec<(PageKey, Vec<hydrus_core::Sha256>)>,
         ) -> Page {
             let key = PageKey::random();
@@ -1084,14 +1171,26 @@ impl Copier<'_> {
                     search,
                     synchronised,
                     sort,
+                    lock,
+                    collect,
                 } => PageContent::Search {
                     search: search.clone(),
                     synchronised: *synchronised,
                     sort: sort.clone(),
+                    lock: *lock,
+                    collect: collect.clone(),
                 },
-                PageInputContent::Downloader { kind, index, sort } => PageContent::Downloader {
-                    kind: *kind,
-                    queues: page_queues.get(*index).cloned().unwrap_or_default(),
+                PageInputContent::Downloader { kind, index, sort } => {
+                    let (queues, state) = page_queues.get(*index).cloned().unwrap_or_default();
+                    PageContent::Downloader {
+                        kind: *kind,
+                        queues,
+                        sort: sort.clone(),
+                        page: state,
+                    }
+                }
+                PageInputContent::Duplicates { duplicates, sort } => PageContent::Duplicates {
+                    duplicates: duplicates.clone(),
                     sort: sort.clone(),
                 },
                 PageInputContent::Other {
@@ -1111,34 +1210,39 @@ impl Copier<'_> {
             }
         }
 
-        let Some(session) = &input.session else {
-            return Ok(());
-        };
-        let mut files = Vec::new();
-        let pages = session
-            .pages
-            .iter()
-            .map(|p| convert(p, page_queues, &mut files))
-            .collect();
-        let all: Vec<hydrus_core::Sha256> =
-            files.iter().flat_map(|(_, h)| h.iter().copied()).collect();
-        let ids = crate::master::hash_ids(self.conn, &all)?;
-        for (key, hashes) in &files {
-            let hash_ids: Vec<hydrus_core::HashId> =
-                hashes.iter().filter_map(|h| ids.get(h).copied()).collect();
-            crate::sessions::set_page_files(self.conn, key, &hash_ids)?;
-        }
         let now = std::time::SystemTime::now()
             .duration_since(std::time::UNIX_EPOCH)
             .map_or(0, |d| d.as_secs() as i64);
-        // what the reference opened with is what we open with
-        let session = Session {
-            name: crate::sessions::LAST_SESSION.to_owned(),
-            pages,
-        };
-        crate::sessions::save(self.conn, &session, now)?;
-        *self.report.rows.entry("sessions".into()).or_default() += 1;
-        *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
+        // what the reference opened with is what we open with; the other
+        // sessions are kept by their names
+        let sessions = input
+            .session
+            .iter()
+            .map(|s| (crate::sessions::LAST_SESSION, s))
+            .chain(input.other_sessions.iter().map(|s| (s.name.as_str(), s)));
+        for (name, session) in sessions {
+            let mut files = Vec::new();
+            let pages = session
+                .pages
+                .iter()
+                .map(|p| convert(p, page_queues, &mut files))
+                .collect();
+            let all: Vec<hydrus_core::Sha256> =
+                files.iter().flat_map(|(_, h)| h.iter().copied()).collect();
+            let ids = crate::master::hash_ids(self.conn, &all)?;
+            for (key, hashes) in &files {
+                let hash_ids: Vec<hydrus_core::HashId> =
+                    hashes.iter().filter_map(|h| ids.get(h).copied()).collect();
+                crate::sessions::set_page_files(self.conn, key, &hash_ids)?;
+            }
+            let session = Session {
+                name: name.to_owned(),
+                pages,
+            };
+            crate::sessions::save(self.conn, &session, now)?;
+            *self.report.rows.entry("sessions".into()).or_default() += 1;
+            *self.report.rows.entry("page_files".into()).or_default() += files.len() as u64;
+        }
         Ok(())
     }
 
@@ -1245,20 +1349,7 @@ impl Copier<'_> {
     }
 
     fn derived(&mut self) -> Result<()> {
-        // autocomplete word index and integer values for every subtag
-        let mut stmt = self.conn.prepare("SELECT subtag_id, subtag FROM subtags")?;
-        let rows = stmt.query_map([], |r| {
-            Ok((r.get::<_, SubtagId>(0)?, r.get::<_, String>(1)?))
-        })?;
-        for row in rows {
-            let (id, subtag) = row?;
-            master::index_subtag(self.conn, id, &subtag)?;
-        }
-        self.conn.execute_batch(
-            "INSERT INTO cache_note_fts (rowid, note) SELECT note_id, note FROM notes",
-        )?;
-        counts::rebuild_all(self.conn)?;
-        Ok(())
+        crate::maintenance::rebuild_caches(self.conn)
     }
 }
 
@@ -1294,6 +1385,105 @@ pub(crate) mod tests {
         let dest = dest_dir.path().join("hydrus.db");
         import_legacy(source.path(), &dest).unwrap();
         (source, dest_dir, dest)
+    }
+
+    #[test]
+    fn the_global_pause_switches_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let pauses: crate::settings::Pauses =
+            serde_json::from_value(input.settings["pauses"].clone()).unwrap();
+        // the fixture's client had all new network traffic paused
+        assert_eq!(
+            pauses,
+            crate::settings::Pauses {
+                network_traffic: true,
+                ..crate::settings::Pauses::default()
+            }
+        );
+        assert!(!pauses.subscriptions_run());
+        assert!(pauses.files_run() && pauses.galleries_run() && pauses.watchers_run());
+    }
+
+    #[test]
+    fn import_options_that_run_programs_are_reported() {
+        use hydrus_core::import_options::{ExternalProgramsOptions, ImportOptionsSlice};
+        let runs = ImportOptionsSlice {
+            external_programs: Some(ExternalProgramsOptions {
+                stored: Some("[...]".into()),
+            }),
+            ..ImportOptionsSlice::default()
+        };
+        let source = legacy_fixture("basic");
+        let mut input =
+            decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        assert!(
+            decode::external_program_users(&input).is_empty(),
+            "none in the fixture"
+        );
+        input.import_folders.push(ImportFolderInput {
+            name: "inbox".into(),
+            settings: hydrus_parse::folders::ImportFolderSettings::default(),
+            options: runs,
+            paused: false,
+            file_seeds: Vec::new(),
+        });
+        assert_eq!(
+            decode::external_program_users(&input),
+            ["import folder \"inbox\""]
+        );
+    }
+
+    #[test]
+    fn the_network_options_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let network: crate::network::NetworkSettings =
+            serde_json::from_value(input.settings["network"].clone()).unwrap();
+        // the fixture's client kept hydrus's defaults
+        assert_eq!(network, crate::network::NetworkSettings::default());
+    }
+
+    #[test]
+    fn the_trash_limits_come_across() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let trash: crate::trash::TrashSettings =
+            serde_json::from_value(input.settings["trash"].clone()).unwrap();
+        assert_eq!(trash, crate::trash::TrashSettings::default());
+    }
+
+    #[test]
+    fn a_default_install_keeps_the_default_bandwidth_rules() {
+        let source = legacy_fixture("basic");
+        let input = decode_input(&hydrus_legacy::LegacyDb::open(source.path()).unwrap()).unwrap();
+        let stored: crate::bandwidth::BandwidthSettings =
+            serde_json::from_value(input.settings["bandwidth"].clone()).unwrap();
+        let sorted = |mut v: Vec<(NetworkContext, hydrus_core::bandwidth::Rules)>| {
+            v.sort_by(|a, b| a.0.cmp(&b.0));
+            v
+        };
+        let defaults = crate::bandwidth::BandwidthSettings::default();
+        assert_eq!(sorted(stored.rules.clone()), sorted(defaults.rules.clone()));
+        assert_eq!(
+            stored,
+            BandwidthSettingsOrdered::with_rules(defaults, stored.rules.clone())
+        );
+        // a fresh install has used no bandwidth yet
+        assert!(input.bandwidth_usage.is_empty());
+    }
+
+    /// `settings` with `rules` in place of its own (to compare the rest).
+    struct BandwidthSettingsOrdered;
+
+    impl BandwidthSettingsOrdered {
+        fn with_rules(
+            mut settings: crate::bandwidth::BandwidthSettings,
+            rules: Vec<(NetworkContext, hydrus_core::bandwidth::Rules)>,
+        ) -> crate::bandwidth::BandwidthSettings {
+            settings.rules = rules;
+            settings
+        }
     }
 
     #[test]
@@ -1388,7 +1578,72 @@ pub(crate) mod tests {
         );
         assert_eq!(
             input.settings["thumbnails"],
-            serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100})
+            serde_json::json!({"bounding_width": 150, "bounding_height": 125, "scale": "down_only", "dpr_percent": 100, "video_percentage_in": 35})
+        );
+        // the fixture's favourite search
+        let favourites: crate::settings::FavouriteSearches =
+            serde_json::from_value(input.settings["favourite_searches"].clone()).unwrap();
+        let [favourite] = &favourites.0[..] else {
+            panic!("{favourites:?}");
+        };
+        assert_eq!(
+            (favourite.folder.as_deref(), favourite.name.as_str()),
+            (Some("example search"), "inbox filter")
+        );
+        assert!(favourite.synchronised);
+        assert_eq!(favourite.search.predicates.len(), 3);
+        assert_eq!(
+            favourite
+                .search
+                .location
+                .current()
+                .iter()
+                .collect::<Vec<_>>(),
+            [&hydrus_core::ServiceKey::new(b"local files".to_vec())]
+        );
+        assert_eq!(
+            favourite.sort,
+            Some(hydrus_core::pages::PageSort {
+                by: hydrus_core::pages::PageSortBy::System(0),
+                ascending: false
+            })
+        );
+        // the reference's defaults
+        assert_eq!(
+            input.settings["file_maintenance"],
+            serde_json::to_value(crate::file_maintenance::FileMaintenanceSettings::default())
+                .unwrap()
+        );
+        assert_eq!(
+            input.settings["tag_presentation"],
+            serde_json::to_value(hydrus_core::tag_presentation::TagPresentation::default())
+                .unwrap()
+        );
+        assert_eq!(
+            input.settings["tag_display_filters"],
+            serde_json::to_value(crate::tag_display::TagDisplayFilters::default()).unwrap()
+        );
+        assert_eq!(
+            input.settings["delete_lock"],
+            serde_json::json!({
+                "archived": false,
+                "reinbox_after_archive_delete": false,
+                "reinbox_after_duplicate_filter": false,
+                "reinbox_in_auto_resolution": false
+            })
+        );
+        assert_eq!(
+            input.settings["file_handling"],
+            serde_json::json!({"comic_book_detection": true, "transparency_strictness": 2, "do_not_chmod": false})
+        );
+        assert_eq!(
+            input.settings["pages"],
+            serde_json::json!({"duplicate_filter_uses_all_my_files": true})
+        );
+        // the reference's default: no collecting
+        assert_eq!(
+            input.settings["sorts"]["default_collect"],
+            serde_json::json!({"namespaces": [], "ratings": [], "collect_unmatched": true})
         );
         // recorded, counting the media viewer and the Client API
         assert_eq!(
@@ -1665,6 +1920,141 @@ mod network_tests {
         }
     }
 
+    /// The other saved sessions come across under their names, with their
+    /// downloader pages kept but making no queues (the reference only runs
+    /// them while the session is open).
+    #[test]
+    fn other_saved_sessions_come_across_without_running_their_downloaders() {
+        use hydrus_core::pages::PageContent;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["sessions"].as_array().unwrap();
+        let downloader_pages = |session: &serde_json::Value| -> usize {
+            session["facts"]["pages"]
+                .as_object()
+                .unwrap()
+                .values()
+                .filter(|p| {
+                    let v = &p["page"]["variables"];
+                    [
+                        "urls_import",
+                        "multiple_gallery_import",
+                        "multiple_watcher_import",
+                    ]
+                    .iter()
+                    .any(|k| v.get(*k).is_some())
+                })
+                .count()
+        };
+        let busiest = sessions.iter().max_by_key(|s| downloader_pages(s)).unwrap();
+        assert!(downloader_pages(busiest) > 0);
+        plant_session(source.path(), "my downloads", &[busiest]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+
+        let conn = Connection::open(&dest).unwrap();
+        let names: Vec<String> = crate::sessions::names(&conn)
+            .unwrap()
+            .into_iter()
+            .map(|(n, _)| n)
+            .collect();
+        assert!(names.contains(&"my downloads".to_owned()), "{names:?}");
+        assert!(names.contains(&crate::sessions::LAST_SESSION.to_owned()));
+        let kept = crate::sessions::load(&conn, "my downloads")
+            .unwrap()
+            .unwrap();
+        let mut hashes = Vec::new();
+        page_hashes(&busiest["facts"]["tree"], &mut hashes);
+        let pages = kept.all_pages();
+        let leaves: Vec<_> = pages
+            .iter()
+            .filter(|p| !matches!(p.content, PageContent::Pages(_)))
+            .collect();
+        assert_eq!(leaves.len(), hashes.len(), "every page comes across");
+        assert!(
+            leaves
+                .iter()
+                .all(|p| !matches!(p.content, PageContent::Downloader { .. }))
+        );
+        let stored = leaves
+            .iter()
+            .filter(|p| matches!(p.content, PageContent::Other { .. }))
+            .count();
+        assert!(stored >= downloader_pages(busiest));
+        // and no queues: the fixture's own last session has none
+        let queues: i64 = conn
+            .query_row(
+                "SELECT count(*) FROM import_queues WHERE kind IN ('urls', 'gallery', 'watcher')",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert_eq!(queues, 0);
+    }
+
+    /// When hydrus opens with a named session, that one is ours (with its
+    /// downloaders), and hydrus's own "last session" is kept under another
+    /// name rather than replacing it.
+    #[test]
+    fn a_named_startup_session_keeps_hydrus_s_last_session_apart() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let busiest = recorded["sessions"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .max_by_key(|s| s["page_data"].as_object().unwrap().len())
+            .unwrap();
+        plant_session(source.path(), "my downloads", &[busiest]);
+        {
+            let conn = Connection::open(source.path().join("client.db")).unwrap();
+            let yaml: String = conn
+                .query_row("SELECT options FROM options", [], |r| r.get(0))
+                .unwrap();
+            let yaml = yaml.replace(
+                "default_gui_session: last session\n",
+                "default_gui_session: my downloads\n",
+            );
+            conn.execute("UPDATE options SET options = ?1", [&yaml])
+                .unwrap();
+        }
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(source.path(), &dest).unwrap();
+        let conn = Connection::open(&dest).unwrap();
+        let names: Vec<String> = crate::sessions::names(&conn)
+            .unwrap()
+            .into_iter()
+            .map(|(n, _)| n)
+            .collect();
+        assert_eq!(
+            names,
+            ["exit session", "last session", "last session (from hydrus)"],
+            "the named one is what we open with"
+        );
+        let ours = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let mut hashes = Vec::new();
+        page_hashes(&busiest["facts"]["tree"], &mut hashes);
+        let leaves = ours
+            .all_pages()
+            .into_iter()
+            .filter(|p| !matches!(p.content, hydrus_core::pages::PageContent::Pages(_)))
+            .count();
+        assert_eq!(leaves, hashes.len(), "ours is the planted one");
+        let queues: i64 = conn
+            .query_row(
+                "SELECT count(*) FROM import_queues WHERE kind IN ('urls', 'gallery', 'watcher')",
+                [],
+                |r| r.get(0),
+            )
+            .unwrap();
+        assert!(queues > 0, "the session opened with runs its downloaders");
+    }
+
     /// A session made by the reference (`oracle/dump_gui_sessions.py`)
     /// planted in a reference database as its last session (over an older
     /// save of it): each downloader page's work comes over as queues named
@@ -1868,10 +2258,265 @@ mod network_tests {
         }
     }
 
+    /// A session of "import" pages made by the reference planted as its
+    /// last session: each page's local import comes over as a queue the
+    /// daemon works, named after its page, in the session's order, with its
+    /// files (their tags to add among them), whether it is paused, its
+    /// import options and whether to delete the files, on an import page;
+    /// sidecars, which import pages don't read yet, are warned of.
+    #[test]
+    fn imports_local_import_pages_from_the_last_session() {
+        use crate::queues::{LocalImport, QueueKind};
+        use hydrus_core::pages::{DownloaderKind, PageContent};
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["hdd_import_sessions"].as_array().unwrap();
+        let chosen = sessions
+            .iter()
+            .max_by_key(|s| s["page_data"].as_object().unwrap().len())
+            .unwrap();
+        plant_last_session(source.path(), &[chosen]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+
+        let mut hashes = Vec::new();
+        page_hashes(&chosen["facts"]["tree"], &mut hashes);
+        let imports: Vec<&serde_json::Value> = hashes
+            .iter()
+            .map(|h| &chosen["facts"]["pages"][h]["page"]["variables"]["hdd_import"])
+            .collect();
+        assert!(imports.len() >= 3);
+        // (one warning for each page with sidecars)
+        let with_sidecars = imports
+            .iter()
+            .filter(|i| i["metadata_routers"] != 0)
+            .count();
+        assert!(with_sidecars > 0);
+        assert_eq!(
+            report.warnings.len(),
+            with_sidecars,
+            "{:?}",
+            report.warnings
+        );
+        assert!(
+            report.warnings.iter().all(|w| w.contains("reads sidecars")),
+            "{:?}",
+            report.warnings
+        );
+
+        let conn = Connection::open(&dest).unwrap();
+        let made: Vec<_> = crate::queues::queues(&conn, None)
+            .unwrap()
+            .into_iter()
+            .filter(|q| q.kind == QueueKind::LocalImport)
+            .collect();
+        assert_eq!(made.len(), imports.len());
+        let options = |value: &serde_json::Value| {
+            hydrus_legacy::objects::import_options::slice(
+                &hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(
+                    &value.to_string(),
+                )
+                .unwrap(),
+            )
+            .unwrap()
+        };
+        let mut tagged = 0;
+        for (queue, facts) in made.iter().zip(&imports) {
+            assert_eq!(queue.name, "import");
+            assert_eq!(queue.files_paused, facts["paused"]);
+            assert!(!queue.gallery_paused);
+            assert_eq!(queue.options, options(&facts["import_options"]));
+            assert_eq!(
+                LocalImport::of(queue),
+                Some(LocalImport {
+                    delete_after_success: facts["delete_after_success"].as_bool().unwrap()
+                })
+            );
+            let files: Vec<_> = crate::queues::file_seeds(&conn, queue.id)
+                .unwrap()
+                .iter()
+                .map(file_seed_facts)
+                .collect();
+            assert_eq!(serde_json::json!(files), facts["file_seeds"]);
+            tagged += files
+                .iter()
+                .filter(|f| f["additional"] != serde_json::json!({}))
+                .count();
+        }
+        assert!(tagged > 0, "some files have tags to add");
+
+        // each on an import page, in the session's order
+        let session = crate::sessions::load(&conn, crate::sessions::LAST_SESSION)
+            .unwrap()
+            .unwrap();
+        let shown: Vec<Vec<i64>> = session
+            .all_pages()
+            .into_iter()
+            .filter_map(|p| match &p.content {
+                PageContent::Downloader {
+                    kind: DownloaderKind::Local,
+                    queues,
+                    page: None,
+                    ..
+                } => Some(queues.clone()),
+                _ => None,
+            })
+            .collect();
+        let ids: Vec<Vec<i64>> = made.iter().map(|q| vec![q.id]).collect();
+        assert_eq!(shown, ids);
+    }
+
+    /// A store imported before gallery and watcher pages kept their own
+    /// state gets it back from the sessions the import kept, page by page
+    /// (by name and searches or threads, wherever the page now is), once.
+    #[test]
+    fn downloader_pages_own_state_comes_back_for_earlier_imports() {
+        use hydrus_core::pages::{Page, PageContent};
+        // (pages as an earlier import left them, moved about since: each
+        // notebook's reversed, without their own state)
+        fn strip(pages: &mut [Page]) {
+            pages.reverse();
+            for page in pages {
+                match &mut page.content {
+                    PageContent::Pages(children) => strip(children),
+                    PageContent::Downloader { page: own, .. } => *own = None,
+                    _ => {}
+                }
+            }
+        }
+        fn rename(pages: &mut [Page], key: hydrus_core::pages::PageKey) {
+            for page in pages {
+                if page.key == key {
+                    page.name.push_str(" (renamed)");
+                }
+                if let PageContent::Pages(children) = &mut page.content {
+                    rename(children, key);
+                }
+            }
+        }
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let recorded = hydrus_testkit::fixture_json("gui_sessions.json");
+        let sessions = recorded["sessions"].as_array().unwrap();
+        // (the session with the most watcher pages, one showing a watcher,
+        // over an older save)
+        let watchers = |s: &serde_json::Value| -> Vec<serde_json::Value> {
+            s["facts"]["pages"]
+                .as_object()
+                .unwrap()
+                .values()
+                .filter_map(|p| p["page"]["variables"].get("multiple_watcher_import"))
+                .cloned()
+                .collect()
+        };
+        let chosen = sessions
+            .iter()
+            .filter(|s| {
+                watchers(s)
+                    .iter()
+                    .any(|m| m["highlighted"].as_str().is_some_and(|u| !u.is_empty()))
+            })
+            .max_by_key(|s| watchers(s).len())
+            .unwrap();
+        assert!(watchers(chosen).len() > 1);
+        let older = sessions.iter().find(|s| !std::ptr::eq(*s, chosen)).unwrap();
+        plant_last_session(source.path(), &[older, chosen]);
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        import_legacy(source.path(), &dest).unwrap();
+        let conn = Connection::open(&dest).unwrap();
+        let load = |conn: &Connection| {
+            crate::sessions::load(conn, crate::sessions::LAST_SESSION)
+                .unwrap()
+                .unwrap()
+        };
+        let states = |session: &hydrus_core::pages::Session| -> Vec<_> {
+            session
+                .all_pages()
+                .into_iter()
+                .filter_map(|p| match &p.content {
+                    PageContent::Downloader { page, .. } => Some((p.name.clone(), page.clone())),
+                    _ => None,
+                })
+                .collect()
+        };
+        let imported = load(&conn);
+        let expected = states(&imported);
+        assert!(
+            expected
+                .iter()
+                .any(|(_, s)| s.as_ref().is_some_and(|s| s.highlighted.is_some()))
+        );
+
+        // as an earlier import left it: no page state, its pages moved
+        // about, and one renamed since
+        let mut earlier = imported.clone();
+        strip(&mut earlier.pages);
+        let renamed = earlier
+            .all_pages()
+            .into_iter()
+            .find(|p| {
+                matches!(
+                    p.content,
+                    PageContent::Downloader {
+                        kind: hydrus_core::pages::DownloaderKind::Watchers,
+                        ..
+                    }
+                )
+            })
+            .unwrap()
+            .key;
+        rename(&mut earlier.pages, renamed);
+        crate::sessions::save(&conn, &earlier, 1).unwrap();
+        // (not filled yet)
+        conn.execute(
+            "DELETE FROM settings WHERE key = 'downloader_page_state_filled'",
+            [],
+        )
+        .unwrap();
+
+        let filled = fill_downloader_page_state(&conn, 2).unwrap();
+        let after = load(&conn);
+        let after_states: std::collections::HashMap<_, _> = after
+            .all_pages()
+            .into_iter()
+            .filter_map(|p| match &p.content {
+                PageContent::Downloader { page, .. } => Some((p.key, page.clone())),
+                _ => None,
+            })
+            .collect();
+        let mut checked = 0;
+        for page in imported.all_pages() {
+            let PageContent::Downloader { page: state, .. } = &page.content else {
+                continue;
+            };
+            if page.key == renamed {
+                assert_eq!(
+                    after_states[&page.key], None,
+                    "renamed: no longer the same page"
+                );
+            } else {
+                assert_eq!(&after_states[&page.key], state, "{}", page.name);
+                checked += usize::from(state.is_some());
+            }
+        }
+        assert_eq!(filled, checked);
+        assert!(filled > 0);
+        // once only
+        crate::sessions::save(&conn, &earlier, 3).unwrap();
+        assert_eq!(fill_downloader_page_state(&conn, 4).unwrap(), 0);
+    }
+
     /// Plant sessions recorded by the reference as a reference database's
     /// "last session", each saved after the one before (so the last one is
     /// the one it opens with), with the files their pages show.
     fn plant_last_session(source: &Path, sessions: &[&serde_json::Value]) {
+        plant_session(source, "last session", sessions);
+    }
+
+    /// Plant `sessions` (saves of the reference's, oldest first) as saves of
+    /// the session `name`.
+    fn plant_session(source: &Path, name: &str, sessions: &[&serde_json::Value]) {
         let conn = Connection::open(source.join("client.db")).unwrap();
         // (the fixture's client saved its own last session when it closed)
         let latest: i64 = conn
@@ -1895,8 +2540,8 @@ mod network_tests {
             }
             let container = &session["container"];
             conn.execute(
-                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, 'last session', ?, ?, ?)",
-                params![container[2].as_i64(), timestamp, container[3].to_string()],
+                "INSERT INTO json_dumps_named (dump_type, dump_name, version, timestamp_ms, dump) VALUES (104, ?, ?, ?, ?)",
+                params![name, container[2].as_i64(), timestamp, container[3].to_string()],
             )
             .unwrap();
             for (hash, stored) in session["page_data"].as_object().unwrap() {
@@ -1912,6 +2557,21 @@ mod network_tests {
                 .unwrap();
             }
         }
+    }
+
+    /// The reference's mpv settings come over beside the store.
+    #[test]
+    fn copies_the_mpv_conf() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        std::fs::write(source.path().join("mpv.conf"), "loop-file=no\n").unwrap();
+        let dest_dir = tempfile::tempdir().unwrap();
+        let dest = dest_dir.path().join("hydrus.db");
+        let report = import_legacy(source.path(), &dest).unwrap();
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
+        assert_eq!(
+            std::fs::read_to_string(dest_dir.path().join("mpv.conf")).unwrap(),
+            "loop-file=no\n"
+        );
     }
 
     /// A session with a search page comes over with its search, sort and
@@ -2009,9 +2669,32 @@ mod network_tests {
                         page.name
                     );
                 }
-                PageContent::Downloader { queues: ids, .. } => {
+                PageContent::Downloader {
+                    queues: ids,
+                    page: state,
+                    ..
+                } => {
                     for id in ids {
                         assert_eq!(Some(*id), queues.next());
+                    }
+                    let variables = &p["variables"];
+                    if let Some(m) = variables.get("multiple_watcher_import") {
+                        // the watcher it showed, by its thread
+                        let state = state.as_ref().expect("a watcher page's own state");
+                        assert!(state.checker.is_some());
+                        let shown = state.highlighted.map(|id| {
+                            assert!(ids.contains(&id));
+                            let queue = crate::queues::queue(conn, id).unwrap().unwrap();
+                            serde_json::from_value::<hydrus_core::watchers::WatcherState>(
+                                queue.extra,
+                            )
+                            .unwrap()
+                            .url
+                        });
+                        let expected = m["highlighted"].as_str().filter(|u| !u.is_empty());
+                        assert_eq!(shown.as_deref(), expected, "{}", page.name);
+                    } else if variables.get("urls_import").is_some() {
+                        assert!(state.is_none());
                     }
                 }
                 other => panic!("{other:?}"),

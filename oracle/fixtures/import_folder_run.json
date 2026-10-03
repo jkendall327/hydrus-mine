@@ -1,6 +1,28 @@
 {
+ "broken_popups": [
+  {
+   "dismissed": false,
+   "done": true,
+   "files": null,
+   "had_error": false,
+   "text_1": "The import folder \"drop box\" encountered an exception! It has been paused!",
+   "text_2": null,
+   "title": null,
+   "traceback": false
+  },
+  {
+   "dismissed": false,
+   "done": true,
+   "files": null,
+   "had_error": false,
+   "text_1": "Path \"/tmp/hydrus_import_folder_j0yxza9h/in (gone)\" does not seem to exist, or is not a directory.",
+   "text_2": null,
+   "title": "Exception",
+   "traceback": true
+  }
+ ],
  "dupe": "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
- "folder": "/tmp/hydrus_import_folder_9q28rfla/in",
+ "folder": "/tmp/hydrus_import_folder_j0yxza9h/in",
  "in_after": {
   "notes.txt": 43,
   "recent.png": 10637
@@ -15,19 +37,19 @@
     "current": {
      "616c6c206c6f63616c2066696c6573": {
       "name": "hydrus local file storage",
-      "time_imported": 1790755621,
+      "time_imported": 1790918467,
       "type": 15,
       "type_pretty": "virtual combined local file domain"
      },
      "616c6c206c6f63616c206d65646961": {
       "name": "combined local file domains",
-      "time_imported": 1790755621,
+      "time_imported": 1790918467,
       "type": 21,
       "type_pretty": "virtual combined local media domain"
      },
      "6c6f63616c2066696c6573": {
       "name": "my files",
-      "time_imported": 1790755621,
+      "time_imported": 1790918467,
       "type": 2,
       "type_pretty": "local file domain"
      }
@@ -153,19 +175,19 @@
     "current": {
      "616c6c206c6f63616c2066696c6573": {
       "name": "hydrus local file storage",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 15,
       "type_pretty": "virtual combined local file domain"
      },
      "616c6c206c6f63616c206d65646961": {
       "name": "combined local file domains",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 21,
       "type_pretty": "virtual combined local media domain"
      },
      "6c6f63616c2066696c6573": {
       "name": "my files",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 2,
       "type_pretty": "local file domain"
      }
@@ -298,19 +320,19 @@
     "current": {
      "616c6c206c6f63616c2066696c6573": {
       "name": "hydrus local file storage",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 15,
       "type_pretty": "virtual combined local file domain"
      },
      "616c6c206c6f63616c206d65646961": {
       "name": "combined local file domains",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 21,
       "type_pretty": "virtual combined local media domain"
      },
      "6c6f63616c2066696c6573": {
       "name": "my files",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 2,
       "type_pretty": "local file domain"
      }
@@ -452,19 +474,19 @@
     "current": {
      "616c6c206c6f63616c2066696c6573": {
       "name": "hydrus local file storage",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 15,
       "type_pretty": "virtual combined local file domain"
      },
      "616c6c206c6f63616c206d65646961": {
       "name": "combined local file domains",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 21,
       "type_pretty": "virtual combined local media domain"
      },
      "6c6f63616c2066696c6573": {
       "name": "my files",
-      "time_imported": 1790755626,
+      "time_imported": 1790918472,
       "type": 2,
       "type_pretty": "local file domain"
      }
@@ -594,19 +616,19 @@
     "current": {
      "616c6c206c6f63616c2066696c6573": {
       "name": "hydrus local file storage",
-      "time_imported": 1790755627,
+      "time_imported": 1790918472,
       "type": 15,
       "type_pretty": "virtual combined local file domain"
      },
      "616c6c206c6f63616c206d65646961": {
       "name": "combined local file domains",
-      "time_imported": 1790755627,
+      "time_imported": 1790918472,
       "type": 21,
       "type_pretty": "virtual combined local media domain"
      },
      "6c6f63616c2066696c6573": {
       "name": "my files",
-      "time_imported": 1790755627,
+      "time_imported": 1790918472,
       "type": 2,
       "type_pretty": "local file domain"
      }
@@ -724,7 +746,7 @@
    "width": 160
   }
  ],
- "moved": "/tmp/hydrus_import_folder_9q28rfla/moved",
+ "moved": "/tmp/hydrus_import_folder_j0yxza9h/moved",
  "moved_after": {
   "a.png": 8076,
   "a.png.json": 126,
@@ -737,6 +759,36 @@
   "c.png.txt": 12,
   "d.bmp": 76854
  },
+ "popups": [
+  {
+   "dismissed": true,
+   "done": true,
+   "files": null,
+   "had_error": false,
+   "text_1": "importing: 4/6",
+   "text_2": null,
+   "title": "import folder - drop box",
+   "traceback": false
+  },
+  {
+   "dismissed": false,
+   "done": true,
+   "files": [
+    [
+     "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13",
+     "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511",
+     "997d86c5cfcda3ba9e0612511436d8897255bb98e289e24d7bfda8e53f8a19da",
+     "e6fc343a8256954a180ff713e3392101b2fe7e86b45d8f44a07aaa256d499674"
+    ],
+    "drop box"
+   ],
+   "had_error": false,
+   "text_1": null,
+   "text_2": null,
+   "title": null,
+   "traceback": false
+  }
+ ],
  "seeds": [
   [
    "notes.txt",

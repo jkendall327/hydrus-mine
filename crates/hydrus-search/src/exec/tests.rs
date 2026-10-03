@@ -28,7 +28,7 @@ use super::tags::{NamespacePattern, SubtagPattern};
 use super::{Clock, search_with_strategy};
 use crate::context::{FileSearchContext, LocationContext, TagContext};
 use crate::filetype::FiletypeSet;
-use crate::number::{Comparison, NumberOp};
+use crate::number::{Comparison, NumberOp, RatioOp};
 use crate::predicate::{
     FileHashes, FileProperty, NamespaceFilter, NumericProperty, Predicate, SystemPredicate,
     UrlRule, Wildcard,
@@ -325,6 +325,19 @@ impl Model {
             SystemPredicate::NoteName { name, has } => {
                 m.notes.iter().any(|(n, _)| n == name) == *has
             }
+            SystemPredicate::Ratio { op, width, height } => {
+                let Some((w, h)) = info.and_then(|i| Some((i.width?, i.height?))) else {
+                    return false;
+                };
+                if h == 0 || *height == 0 {
+                    return false;
+                }
+                ratio_matches(
+                    *op,
+                    f64::from(w) / f64::from(h),
+                    *width as f64 / *height as f64,
+                )
+            }
             other => panic!("model does not know {other:?}"),
         }
     }
@@ -343,6 +356,19 @@ impl Model {
             })
             .map(|m| m.hash_id)
             .collect()
+    }
+}
+
+/// A file's width:height against a ratio test's, as the reference's SQL
+/// compares them (exactly, for = and ≠).
+#[allow(clippy::float_cmp)]
+fn ratio_matches(op: RatioOp, file: f64, wanted: f64) -> bool {
+    match op {
+        RatioOp::Equal => file == wanted,
+        RatioOp::NotEqual => file != wanted,
+        RatioOp::WiderThan => file > wanted,
+        RatioOp::TallerThan => file < wanted,
+        RatioOp::Approx => file > wanted * 0.85 && file < wanted * 1.15,
     }
 }
 
@@ -719,6 +745,54 @@ fn limits_apply_after_sorting() {
 }
 
 #[test]
+fn a_page_s_fallback_sort_orders_its_sort_s_ties() {
+    let store = &SHARED.store;
+    let search = FileSearchContext {
+        location: LocationContext::single(key(builtin_keys::MY_FILES)),
+        predicates: vec![Predicate::System(SystemPredicate::Everything)],
+        tags: TagContext::default(),
+    };
+    let files = run(
+        store,
+        &search,
+        FileSort {
+            by: SortBy::ImportTime,
+            order: SortOrder::Ascending,
+        },
+        Planner::Auto,
+    );
+    let snapshot = store.snapshot();
+    let system = |by: SortBy, ascending| hydrus_core::pages::PageSort {
+        by: hydrus_core::pages::PageSortBy::System(i64::from(by.code())),
+        ascending,
+    };
+    let sort = |files: &[HashId], by, fallback: Option<&hydrus_core::pages::PageSort>| {
+        store
+            .read(|conn| {
+                Ok(super::sort_page_files(
+                    conn,
+                    &snapshot,
+                    &search,
+                    files,
+                    &system(by, true),
+                    fallback,
+                    &Clock::system(),
+                ))
+            })
+            .unwrap()
+            .unwrap()
+    };
+    // by type, the largest files first among each type's
+    let largest_first = system(SortBy::FileSize, false);
+    let by_size = sort(&files, SortBy::FileSize, None);
+    let mut largest = by_size.clone();
+    largest.reverse();
+    let with_fallback = sort(&files, SortBy::Mime, Some(&largest_first));
+    assert_eq!(with_fallback, sort(&largest, SortBy::Mime, None));
+    assert_ne!(with_fallback, sort(&files, SortBy::Mime, None));
+}
+
+#[test]
 fn import_time_sorts_agree_whether_probed_or_from_the_cached_order() {
     for location in [
         LocationContext::default(),
@@ -801,4 +875,154 @@ fn constructed_predicates_without_text_syntax_work() {
         ],
         ..FileSearchContext::default()
     });
+    // a ratio other than one (which the reference's editor makes, and its
+    // parser can't): what "=" doesn't find, of the files with dimensions
+    let ratio = |op| FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Ratio {
+            op,
+            width: 1,
+            height: 1,
+        })],
+        ..FileSearchContext::default()
+    };
+    check(ratio(RatioOp::NotEqual));
+    check(ratio(RatioOp::Equal));
+    let mut both = run(&SHARED.store, &ratio(RatioOp::Equal), sort, Planner::Auto);
+    let other = run(
+        &SHARED.store,
+        &ratio(RatioOp::NotEqual),
+        sort,
+        Planner::Auto,
+    );
+    assert!(both.iter().all(|f| !other.contains(f)));
+    both.extend(other);
+    both.sort_unstable();
+    let with_dimensions = MODEL.search(&FileSearchContext {
+        predicates: vec![Predicate::System(SystemPredicate::Number {
+            property: NumericProperty::Width,
+            test: crate::NumberTest::new(NumberOp::Greater, 0),
+        })],
+        ..FileSearchContext::default()
+    });
+    assert_eq!(both, with_dimensions);
+}
+
+/// Pages collect their files and sort the files and collections as the
+/// reference's do, against `oracle/fixtures/media_collect.json` (made by
+/// `oracle/record_media_collect.py`): by namespaces and ratings, unmatched
+/// files collected or single, under every sort but random both ways.
+#[test]
+fn pages_collect_as_the_reference_s_pages_collect() {
+    use hydrus_core::pages::{PageCollect, PageMedia, PageSort, PageSortBy};
+    let recorded = hydrus_testkit::fixture_json("media_collect.json");
+    let store = &SHARED.store;
+    let snapshot = store.snapshot();
+    let unhex = |text: &str| -> Vec<u8> {
+        (0..text.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&text[i..i + 2], 16).unwrap())
+            .collect()
+    };
+    let id_of = |hex: &str| -> HashId {
+        store
+            .read(|c| hydrus_store::master::hash_id(c, &hex.parse().unwrap()))
+            .unwrap()
+            .unwrap()
+    };
+    let search = FileSearchContext {
+        location: LocationContext::single(key(&unhex(recorded["service_key"].as_str().unwrap()))),
+        predicates: Vec::new(),
+        tags: TagContext::default(),
+    };
+    let files: Vec<HashId> = recorded["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|h| id_of(h.as_str().unwrap()))
+        .collect();
+    let fallback = PageSort {
+        by: PageSortBy::System(2),
+        ascending: true,
+    };
+    let mut checked = 0;
+    let mut wrong = Vec::new();
+    for case in recorded["cases"].as_array().unwrap() {
+        let c = &case["collect"];
+        let collect = PageCollect {
+            namespaces: c["namespaces"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|n| n.as_str().unwrap().to_owned())
+                .collect(),
+            ratings: c["ratings"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|r| key(&unhex(r.as_str().unwrap())))
+                .collect(),
+            collect_unmatched: c["collect_unmatched"].as_bool().unwrap(),
+        };
+        for s in case["sorts"].as_array().unwrap() {
+            let sort = &s["sort"];
+            let data = &sort["data"];
+            let sort = PageSort {
+                by: match sort["type"].as_str().unwrap() {
+                    "system" => PageSortBy::System(data.as_i64().unwrap()),
+                    "namespaces" => PageSortBy::Namespaces {
+                        namespaces: data["namespaces"]
+                            .as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|n| n.as_str().unwrap().to_owned())
+                            .collect(),
+                        tag_display_type: data["tag_display_type"].as_i64().unwrap(),
+                    },
+                    _ => PageSortBy::Rating(key(&unhex(data.as_str().unwrap()))),
+                },
+                ascending: sort["order"] == 0,
+            };
+            let expected: Vec<PageMedia> = s["media"]
+                .as_array()
+                .unwrap()
+                .iter()
+                .map(|m| match m.as_str() {
+                    Some(h) => PageMedia::File(id_of(h)),
+                    None => PageMedia::Collection(
+                        m.as_array()
+                            .unwrap()
+                            .iter()
+                            .map(|h| id_of(h.as_str().unwrap()))
+                            .collect(),
+                    ),
+                })
+                .collect();
+            let ours = store
+                .read(|conn| {
+                    Ok(super::collect_page_files(
+                        conn,
+                        &snapshot,
+                        &search,
+                        &files,
+                        &collect,
+                        &sort,
+                        Some(&fallback),
+                        &Clock::system(),
+                    ))
+                })
+                .unwrap()
+                .unwrap();
+            if ours != expected {
+                wrong.push(format!("{c} {sort:?}"));
+            }
+            checked += 1;
+        }
+    }
+    assert!(
+        wrong.is_empty(),
+        "{} of {checked} differ:\n{}",
+        wrong.len(),
+        wrong[..wrong.len().min(25)].join("\n")
+    );
+    assert_eq!(checked, 10 * 64);
 }

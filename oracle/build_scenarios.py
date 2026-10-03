@@ -834,12 +834,65 @@ def services_scenarios():
 
 def page_scenarios():
 
+    h = [ BY_NAME[ f'jpeg_{i:02}.jpg' ] for i in range( 4 ) ]
+
+    # page keys are made anew each time the reference opens a page
+    def pages():
+
+        return random( get( '/manage_pages/get_pages' ), 'pages.page_key', 'pages.pages.*.page_key' )
+
+
+    def info( name, **params ):
+
+        return random( get( '/manage_pages/get_page_info', page_key = '{' + name + '}', **params ), 'page_info.page_key' )
+
+
+    def add( body ):
+
+        return post( '/manage_pages/add_files', body )
+
+
+    first = pages()
+    first[ 'capture' ] = { 'TOP' : 'pages.page_key', 'FILES' : 'pages.pages.0.page_key' }
+
     steps = [
-        get( '/manage_pages/get_pages' ),
+        first,
+        get( '/manage_pages/get_media_viewers' ),
+        info( 'FILES' ),
+        info( 'FILES', simple = False ),
+        info( 'TOP' ),
+        info( 'TOP', simple = False ),
+        get( '/manage_pages/get_page_info', page_key = 'ab' * 32 ),
+        get( '/manage_pages/get_page_info' ),
+        # files join the page at its end, in the order asked, once each
+        add( { 'page_key' : '{FILES}', 'hashes' : [ h[ 1 ], h[ 0 ], h[ 1 ] ] } ),
+        add( { 'page_key' : '{FILES}', 'hash' : h[ 2 ] } ),
+        add( { 'page_key' : '{FILES}', 'hashes' : [ h[ 0 ], h[ 3 ] ] } ),
+        add( { 'page_key' : '{FILES}', 'file_ids' : [ 1, 2 ] } ),
+        info( 'FILES' ),
+        info( 'FILES', simple = False ),
+        # what can't be added to
+        add( { 'page_key' : '{TOP}', 'hashes' : [ h[ 0 ] ] } ),
+        add( { 'page_key' : 'ab' * 32, 'hashes' : [ h[ 0 ] ] } ),
+        add( { 'hashes' : [ h[ 0 ] ] } ),
+        add( { 'page_key' : '{FILES}' } ),
+        add( { 'page_key' : '{FILES}', 'hashes' : [ 'ab' * 32 ] } ),
+        add( { 'page_key' : '{FILES}', 'file_ids' : [ 999999 ] } ),
+        info( 'FILES' ),
+        post( '/manage_pages/focus_page', { 'page_key' : '{FILES}' } ),
+        post( '/manage_pages/focus_page', { 'page_key' : '{TOP}' } ),
+        post( '/manage_pages/focus_page', { 'page_key' : 'ab' * 32 } ),
+        post( '/manage_pages/focus_page', {} ),
+        pages(),
+        # (searching again: nothing reads the page after)
+        post( '/manage_pages/refresh_page', { 'page_key' : '{FILES}' } ),
+        post( '/manage_pages/refresh_page', { 'page_key' : 'ab' * 32 } ),
+        post( '/manage_pages/refresh_page', {} ),
+        post( '/manage_pages/refresh_page', { 'page_key' : '{TOP}' } ),
         get( '/manage_pages/get_media_viewers' ),
     ]
 
-    return scenario( 'pages', 'the session\'s pages', steps, read_only = False )
+    return scenario( 'pages', 'the session\'s pages, adding files to one, focusing and refreshing', steps, read_only = False )
 
 
 def popup_scenarios():

@@ -195,22 +195,24 @@ fn image_summaries_and_verdicts_match() {
         let (a, b) = (pair["a"].as_str().unwrap(), pair["b"].as_str().unwrap());
         let (va, ta) = &summaries[a];
         let (vb, tb) = &summaries[b];
-        let simple = visual::similar_simple(va, vb);
-        let expected_simple = (
-            pair["simple"][0].as_bool().unwrap(),
-            pair["simple"][1].as_u64().unwrap() as u8,
-        );
+        let verdict = |v: visual::Verdict| (v.similar, v.result, v.statement.to_owned());
+        let recorded = |v: &Value| {
+            (
+                v[0].as_bool().unwrap(),
+                v[1].as_u64().unwrap() as u8,
+                v[2].as_str().unwrap().to_owned(),
+            )
+        };
+        let simple = verdict(visual::similar_simple(va, vb));
+        let expected_simple = recorded(&pair["simple"]);
         if simple != expected_simple {
             report.push_str(&format!(
                 "{a} / {b}: simple {simple:?}, reference {expected_simple:?}\n"
             ));
         }
         if let Some(regional) = pair.get("regional") {
-            let ours = visual::similar_regional(ta, tb);
-            let theirs = (
-                regional[0].as_bool().unwrap(),
-                regional[1].as_u64().unwrap() as u8,
-            );
+            let ours = verdict(visual::similar_regional(ta, tb));
+            let theirs = recorded(regional);
             verdicts[usize::from(ours == theirs)] += 1;
             if ours != theirs {
                 let (largest, pull) = visual::edge_map_raw(ta, tb);

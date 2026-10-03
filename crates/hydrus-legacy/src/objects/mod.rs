@@ -28,6 +28,7 @@
 //! | [`LegacyOptions`] (the YAML `options` table) | — | — |
 
 pub mod auto_resolution;
+pub mod bandwidth;
 mod client_api;
 mod client_options;
 pub mod domain;
@@ -40,6 +41,7 @@ pub mod import_options;
 pub mod legacy_import_options;
 mod legacy_options;
 mod location;
+pub mod logins;
 pub mod parsers;
 pub mod predicates;
 mod services;
@@ -49,10 +51,11 @@ mod sort;
 pub mod subscriptions;
 mod tag_display;
 mod tag_filter;
+pub mod tag_summary;
 pub(crate) mod util;
 
 pub use client_api::{ApiPermission, ApiPermissions, ClientApiManager};
-pub use client_options::ClientOptions;
+pub use client_options::{ClientOptions, recent_predicates};
 pub use duplicates::{ArchiveSync, DuplicateMergeOptions, MergeAction, NoteImportOptions};
 pub use favourites::{FavouriteSearch, FavouriteSearchManager, FileSearchContext, SearchType};
 pub use legacy_options::{LegacyOptions, YamlValue};

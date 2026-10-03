@@ -4,13 +4,18 @@
 //! written in: typed ids, content hashes, file types, services, tags and the
 //! enumerations that are part of the persisted format and the Client API.
 
+pub mod bandwidth;
 pub mod casefold;
 pub mod content;
+pub mod duplicates;
 pub mod gallery;
 pub mod hash;
 pub mod ids;
 pub mod import_options;
+pub mod lock;
+pub mod media_viewer;
 pub mod mime;
+pub mod network;
 pub mod notes;
 pub mod numbers;
 pub mod pages;
@@ -23,10 +28,14 @@ pub mod sort;
 pub mod subscriptions;
 pub mod tag;
 pub mod tag_filter;
+pub mod tag_presentation;
+pub mod tag_sort;
+pub mod tag_summary;
 pub mod thumbnail;
 pub mod time;
 pub mod url;
 pub mod watchers;
+pub mod windows;
 
 pub use content::{
     CanvasType, ContentStatus, ContentType, ContentUpdateAction, DuplicateType, TimestampType,

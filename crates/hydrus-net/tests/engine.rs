@@ -84,6 +84,7 @@ async fn flaky(State(s): State<Arc<Server>>, Path(kind): Path<String>) -> Respon
             .body(Body::from("slow down"))
             .unwrap(),
         "404" => (StatusCode::NOT_FOUND, "not here").into_response(),
+        "500" => (StatusCode::INTERNAL_SERVER_ERROR, "broken").into_response(),
         _ => (StatusCode::OK, format!("ok after {n}")).into_response(),
     }
 }
@@ -118,6 +119,10 @@ async fn redirect_loop(Path(n): Path<u32>) -> Response {
         .unwrap()
 }
 
+async fn whole_uri(uri: axum::http::Uri) -> String {
+    uri.to_string()
+}
+
 async fn slow() -> &'static str {
     tokio::time::sleep(std::time::Duration::from_secs(30)).await;
     "late"
@@ -141,6 +146,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         .route("/file.png", get(ranged))
         .route("/loop/{n}", get(redirect_loop))
         .route("/slow", get(slow))
+        .route("/uri", get(whole_uri))
         .with_state(Arc::clone(&server));
     let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
     let base = format!("http://{}", listener.local_addr().unwrap());
@@ -162,8 +168,7 @@ async fn setup(make_classes: impl FnOnce(&str) -> Vec<UrlClass>) -> Setup {
         serverside_bandwidth_wait_time: 0,
         network_timeout: 2,
         // the local test server takes requests as fast as they come
-        domain_requests_per_second: 0,
-        global_requests_per_second: 0,
+        obey_bandwidth: false,
         ..NetOptions::default()
     };
     Setup {
@@ -204,12 +209,13 @@ async fn sends_the_clients_headers() {
                 Some(Approval::Approved),
                 None,
             )?;
+            // (denied headers are simply left out)
             network::set_header(
                 ctx.conn(),
                 &NetworkContext::global(),
-                "X-Pending",
+                "X-Denied",
                 Some("no"),
-                Some(Approval::Pending),
+                Some(Approval::Denied),
                 None,
             )
         })
@@ -229,7 +235,7 @@ async fn sends_the_clients_headers() {
     ] {
         assert!(text.contains(expected), "{expected} missing from\n{text}");
     }
-    assert!(!text.contains("x-pending"), "{text}");
+    assert!(!text.contains("x-denied"), "{text}");
 }
 
 #[tokio::test]
@@ -311,6 +317,44 @@ async fn statuses_become_errors_or_retries() {
 }
 
 #[tokio::test]
+async fn a_job_ends_as_the_references_do_and_has_a_speed() {
+    let s = setup(|_| Vec::new()).await;
+    // done, with what it read in the last second as its speed
+    let job = Job::new();
+    let request = Request::get(format!("{}/file.png", s.base));
+    s.engine.fetch(&request, &job).await.unwrap();
+    let state = job.state();
+    assert_eq!(state.status, "done!");
+    assert!(state.done && !state.error);
+    assert_eq!(state.bytes_read, 1000);
+    assert_eq!(state.speed, 1000, "read within the last second");
+    // an error status as the server gave it
+    let failing = Request::get(format!("{}/flaky/404", s.base));
+    assert!(s.engine.fetch(&failing, &job).await.is_err());
+    let state = job.state();
+    assert_eq!(state.status, "404 - Not Found");
+    assert!(state.done && state.error);
+    // the same job working again isn't in error until it fails
+    s.engine.fetch(&request, &job).await.unwrap();
+    assert!(!job.state().error);
+    // cancelled
+    let job = Job::new();
+    let slow = Request::get(format!("{}/slow", s.base));
+    let cancelling = Arc::clone(&job);
+    tokio::spawn(async move {
+        tokio::time::sleep(std::time::Duration::from_millis(200)).await;
+        cancelling.cancel();
+    });
+    assert!(matches!(
+        s.engine.fetch(&slow, &job).await,
+        Err(NetError::Cancelled)
+    ));
+    let state = job.state();
+    assert_eq!(state.status, "Cancelled!");
+    assert!(state.done && state.error);
+}
+
+#[tokio::test]
 async fn resumes_files_with_ranged_requests() {
     let s = setup(|_| Vec::new()).await;
     let dir = tempfile::tempdir().unwrap();
@@ -365,16 +409,13 @@ async fn cancels() {
 }
 
 #[tokio::test]
-async fn paces_requests_to_a_site() {
+async fn bandwidth_rules_space_out_requests_and_count_their_data() {
+    use hydrus_core::bandwidth::{BandwidthType, Rule, Rules};
+    use hydrus_store::bandwidth::BandwidthSettings;
+
     let s = setup(|_| Vec::new()).await;
-    let engine = NetEngine::new(
-        Arc::clone(&s.store),
-        NetOptions {
-            domain_requests_per_second: 4,
-            ..NetOptions::default()
-        },
-    )
-    .unwrap();
+    // the reference's default rules: one request a second to a domain
+    let engine = NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap();
     let started = std::time::Instant::now();
     for _ in 0..3 {
         engine
@@ -382,10 +423,230 @@ async fn paces_requests_to_a_site() {
             .await
             .unwrap();
     }
-    // three requests at four a second: two gaps of a quarter second
+    // three calendar seconds: at least one whole second between the first
+    // and the third
     assert!(
-        started.elapsed() >= std::time::Duration::from_millis(500),
+        started.elapsed() >= std::time::Duration::from_secs(1),
         "{:?}",
         started.elapsed()
     );
+    engine.save_bandwidth().unwrap();
+
+    // a tiny daily data cap on this domain: used up already
+    let url = format!("{}/echo", s.base);
+    let site = NetEngine::contexts_for(&url)[1].clone();
+    assert_eq!(site.kind, hydrus_core::network::CONTEXT_DOMAIN);
+    let mut settings = BandwidthSettings::default();
+    settings.rules.push((
+        site.clone(),
+        Rules::new([Rule::new(BandwidthType::Data, Some(86_400), 10)]),
+    ));
+    s.store
+        .write_and_refresh(move |ctx| hydrus_store::settings::set(ctx.conn(), &settings))
+        .unwrap();
+    // (a new engine carries on from the usage kept)
+    let engine = NetEngine::new(Arc::clone(&s.store), NetOptions::default()).unwrap();
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let waited = tokio::time::timeout(
+        std::time::Duration::from_secs(3),
+        engine.fetch(&request, &job),
+    )
+    .await;
+    assert!(waited.is_err(), "it waited for tomorrow");
+    let status = job.state().status;
+    assert!(status.starts_with("bandwidth free in "), "{status}");
+    assert!(status.contains(&site.to_human_string()), "{status}");
+    // a request told to wait at most a second goes anyway
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.override_bandwidth_after = Some(1);
+    engine.fetch(&request, &Job::new()).await.unwrap();
+}
+
+#[tokio::test]
+async fn nothing_goes_out_while_all_new_network_traffic_is_paused() {
+    use hydrus_store::settings::Pauses;
+    let s = setup(|_| Vec::new()).await;
+    let set = |network_traffic| {
+        let pauses = Pauses {
+            network_traffic,
+            ..Pauses::default()
+        };
+        s.store
+            .write(move |ctx| hydrus_store::settings::set(ctx.conn(), &pauses))
+            .unwrap();
+    };
+    set(true);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let fetch = s.engine.fetch(&request, &job);
+    tokio::pin!(fetch);
+    assert!(
+        tokio::time::timeout(std::time::Duration::from_secs(1), &mut fetch)
+            .await
+            .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "all new network traffic is paused\u{2026}"
+    );
+    // switched off (as by the command line): it goes within a couple of
+    // seconds
+    set(false);
+    tokio::time::timeout(std::time::Duration::from_secs(5), fetch)
+        .await
+        .expect("it went")
+        .unwrap();
+}
+
+#[tokio::test]
+async fn a_domain_with_several_serious_errors_waits() {
+    let s = setup(|_| Vec::new()).await;
+    let fetch = |path: &str| {
+        let request = Request::get(format!("{}/flaky/{path}", s.base));
+        let engine = &s.engine;
+        async move { engine.fetch(&request, &Job::new()).await }
+    };
+    // a missing file is the file's problem, not the site's
+    for _ in 0..5 {
+        assert!(fetch("404").await.is_err());
+    }
+    assert!(s.engine.domain_ok(&s.base));
+    for _ in 0..3 {
+        match fetch("500").await {
+            Err(NetError::Status {
+                kind: StatusKind::Server,
+                ..
+            }) => {}
+            other => panic!("{other:?}"),
+        }
+    }
+    assert!(
+        !s.engine.domain_ok(&s.base),
+        "three server errors in ten minutes"
+    );
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "This domain has had several serious errors recently. Waiting a bit."
+    );
+    // a one-shot request goes anyway
+    let mut request = Request::get(format!("{}/echo", s.base));
+    request.one_shot = true;
+    s.engine.fetch(&request, &Job::new()).await.unwrap();
+}
+
+#[tokio::test]
+async fn requests_go_through_the_clients_proxy() {
+    let s = setup(|_| Vec::new()).await;
+    // the test server is the proxy too: a proxied request asks it for the
+    // whole URL
+    let engine = NetEngine::new(
+        Arc::clone(&s.store),
+        NetOptions {
+            http_proxy: Some(s.base.clone()),
+            no_proxy: Some("127.0.0.1".into()),
+            obey_bandwidth: false,
+            ..NetOptions::default()
+        },
+    )
+    .unwrap();
+    let fetch = |url: String| {
+        let engine = &engine;
+        async move {
+            engine
+                .fetch(&Request::get(url), &Job::new())
+                .await
+                .unwrap()
+                .text()
+        }
+    };
+    assert_eq!(
+        fetch("http://booru.invalid/uri".into()).await,
+        "http://booru.invalid/uri"
+    );
+    // hosts in no_proxy are asked directly
+    assert_eq!(fetch(format!("{}/uri", s.base)).await, "/uri");
+}
+
+#[tokio::test]
+async fn requests_wait_a_little_after_the_computer_wakes() {
+    let s = setup(|_| Vec::new()).await;
+    let now = std::time::SystemTime::now()
+        .duration_since(std::time::UNIX_EPOCH)
+        .unwrap()
+        .as_millis() as i64;
+    // checked a minute and more ago, and now: the computer slept
+    s.engine.sleep_check_at(now - 61_000);
+    s.engine.sleep_check_at(now);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    assert!(
+        tokio::time::timeout(
+            std::time::Duration::from_secs(1),
+            s.engine.fetch(&request, &job)
+        )
+        .await
+        .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "looks like computer just woke up, waiting a bit"
+    );
+    // the wake delay (15 s) passed
+    s.engine.sleep_check_at(now + 16_000);
+    s.engine.fetch(&request, &Job::new()).await.unwrap();
+}
+
+#[tokio::test]
+async fn a_header_awaiting_approval_holds_its_requests() {
+    let s = setup(|_| Vec::new()).await;
+    let set = |approval| {
+        s.store
+            .write(move |ctx| {
+                network::set_header(
+                    ctx.conn(),
+                    &NetworkContext::global(),
+                    "X-New",
+                    Some("yes"),
+                    Some(approval),
+                    None,
+                )
+            })
+            .unwrap();
+    };
+    set(Approval::Pending);
+    let job = Job::new();
+    let request = Request::get(format!("{}/echo", s.base));
+    let fetch = s.engine.fetch(&request, &job);
+    tokio::pin!(fetch);
+    assert!(
+        tokio::time::timeout(std::time::Duration::from_secs(1), &mut fetch)
+            .await
+            .is_err(),
+        "it waited"
+    );
+    assert_eq!(
+        job.state().status,
+        "waiting for the custom header \"X-New\" to be approved\u{2026}"
+    );
+    set(Approval::Approved);
+    let text = tokio::time::timeout(std::time::Duration::from_secs(10), fetch)
+        .await
+        .expect("it went")
+        .unwrap()
+        .text();
+    assert!(text.contains("x-new: yes"), "{text}");
 }

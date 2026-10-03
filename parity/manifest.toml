@@ -231,23 +231,25 @@ status = "done"
 
 [[api]]
 path = "/manage_pages/add_files"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_pages/focus_page"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_pages/get_media_viewers"
-status = "todo"
+status = "partial"
+notes = "lists the media viewer; the archive/delete and duplicate filters are not listed yet"
 
 [[api]]
 path = "/manage_pages/get_page_info"
-status = "todo"
+status = "partial"
+notes = "a URL downloader page's importer is reported as the reference reports it; gallery and watcher pages' are reported empty until their pages show their queues"
 
 [[api]]
 path = "/manage_pages/get_pages"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_pages/new_page"
@@ -255,7 +257,7 @@ status = "todo"
 
 [[api]]
 path = "/manage_pages/refresh_page"
-status = "todo"
+status = "done"
 
 [[api]]
 path = "/manage_popups/add_popup"

@@ -17,13 +17,6 @@ use hydrus_core::HashId;
 
 use crate::error::Result;
 
-/// Size and resolution of a file, for ordering pairs.
-#[derive(Debug, Clone, Copy, Default)]
-pub(crate) struct FileShape {
-    pub size: u64,
-    pub pixels: u64,
-}
-
 /// A potential pair, by its groups and their kings.
 #[derive(Debug, Clone, Copy)]
 pub(crate) struct PairRow {
@@ -33,8 +26,10 @@ pub(crate) struct PairRow {
     pub distance: u32,
     /// Whether the kings are pixel duplicates (same pixel hash and width).
     pub pixel_duplicate: bool,
-    pub smaller_shape: FileShape,
-    pub larger_shape: FileShape,
+    /// The kings' sizes, for ordering pairs (0 for a king with no file
+    /// record).
+    pub smaller_size: u64,
+    pub larger_size: u64,
 }
 
 /// Record, in a write's transaction, that it changed potential pairs,
@@ -83,21 +78,15 @@ fn load(conn: &Connection) -> Result<Vec<PairRow>> {
         "SELECT gs.king_hash_id, gl.king_hash_id, p.distance,
                 fs.pixel_hash IS NOT NULL AND fs.pixel_hash = fl.pixel_hash AND fs.width = fl.width,
                 p.smaller_group_id, p.larger_group_id,
-                fs.size, coalesce(fs.width, 0) * coalesce(fs.height, 0),
-                fl.size, coalesce(fl.width, 0) * coalesce(fl.height, 0)
+                fs.size, fl.size
          FROM potential_pairs p
          JOIN dup_groups gs ON gs.group_id = p.smaller_group_id
          JOIN dup_groups gl ON gl.group_id = p.larger_group_id
          LEFT JOIN files fs ON fs.hash_id = gs.king_hash_id
          LEFT JOIN files fl ON fl.hash_id = gl.king_hash_id",
     )?;
-    // a king with no file record has no size or pixels
-    let shape = |r: &rusqlite::Row<'_>, at: usize| -> rusqlite::Result<FileShape> {
-        let non_negative = |v: Option<i64>| u64::try_from(v.unwrap_or(0)).unwrap_or(0);
-        Ok(FileShape {
-            size: non_negative(r.get(at)?),
-            pixels: non_negative(r.get(at + 1)?),
-        })
+    let size = |r: &rusqlite::Row<'_>, at: usize| -> rusqlite::Result<u64> {
+        Ok(u64::try_from(r.get::<_, Option<i64>>(at)?.unwrap_or(0)).unwrap_or(0))
     };
     let rows = stmt
         .query_map([], |r| {
@@ -107,8 +96,8 @@ fn load(conn: &Connection) -> Result<Vec<PairRow>> {
                 larger_king: r.get(1)?,
                 distance: r.get(2)?,
                 pixel_duplicate: r.get::<_, Option<bool>>(3)?.unwrap_or(false),
-                smaller_shape: shape(r, 6)?,
-                larger_shape: shape(r, 8)?,
+                smaller_size: size(r, 6)?,
+                larger_size: size(r, 7)?,
             })
         })?
         .collect::<rusqlite::Result<_>>()?;

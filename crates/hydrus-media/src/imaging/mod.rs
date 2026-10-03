@@ -19,6 +19,7 @@ pub(crate) mod cvx;
 pub(crate) mod decode;
 pub(crate) mod exif;
 pub(crate) mod icc;
+pub(crate) mod metadata;
 pub(crate) mod pil;
 pub(crate) mod resample;
 
@@ -135,14 +136,52 @@ impl Raster {
     }
 }
 
-/// The alpha-plane test behind [`Raster::has_useful_alpha`]: enough pixels
-/// (a circumference's worth, or 0.5% of the image) are neither nearly opaque
-/// nor nearly clear.
+/// What counts as transparency (`HAS_TRANSPARENCY_STRICTNESS_*`).
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum TransparencyStrictness {
+    /// Any alpha channel.
+    ChannelPresence = 0,
+    /// An alpha channel that isn't all clear or all opaque.
+    NotBlackOrWhite = 1,
+    /// An alpha channel a human might notice (the default).
+    Human = 2,
+}
+
+/// `CURRENT_HAS_TRANSPARENCY_STRICTNESS_LEVEL`, which, as in the
+/// reference, holds for the whole process.
+static STRICTNESS: std::sync::atomic::AtomicU8 =
+    std::sync::atomic::AtomicU8::new(TransparencyStrictness::Human as u8);
+
+/// Choose what counts as transparency (`file_has_transparency_strictness`).
+pub fn set_transparency_strictness(level: TransparencyStrictness) {
+    STRICTNESS.store(level as u8, std::sync::atomic::Ordering::Relaxed);
+}
+
+/// The alpha-plane test behind [`Raster::has_useful_alpha`]
+/// (`NumPyImageHasUsefulAlphaChannel`, given an alpha channel), at the
+/// strictness chosen: by default, enough pixels (a circumference's worth,
+/// or 0.5% of the image) are neither nearly opaque nor nearly clear.
 pub(crate) fn alpha_is_useful<'a>(
     alpha: impl IntoIterator<Item = impl std::borrow::Borrow<u8> + 'a>,
     width: u32,
     height: u32,
 ) -> bool {
+    match STRICTNESS.load(std::sync::atomic::Ordering::Relaxed) {
+        0 => return true,
+        1 => {
+            let (mut all_clear, mut all_opaque) = (true, true);
+            for a in alpha {
+                let a = *a.borrow();
+                all_clear &= a == 0;
+                all_opaque &= a == 255;
+                if !all_clear && !all_opaque {
+                    return true;
+                }
+            }
+            return false;
+        }
+        _ => {}
+    }
     let (w, h) = (u64::from(width), u64::from(height));
     let circumference = 2 * (w + h);
     let weight = ((w * h) / 200).max(1);

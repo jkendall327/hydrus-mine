@@ -1,6 +1,6 @@
 //! File relationships: duplicates, alternates and potential pairs.
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use axum::extract::State;
@@ -8,12 +8,11 @@ use serde_json::{Map, Value as Json, json};
 
 use hydrus_core::service::builtin_keys;
 use hydrus_core::{DuplicateType, HashId, ServiceId, ServiceKey, Sha256};
-use hydrus_search::{
-    FileSearchContext, LocationContext, SearchError, TagContext, parse_api_search,
-};
+use hydrus_search::{FileSearchContext, LocationContext, TagContext, parse_api_search};
+use hydrus_store::delete_lock::Reinbox;
 use hydrus_store::duplicates::{
-    self, DuplicateFilterSettings, DuplicateMergeSettings, FileFilter, FileScope, PairDecision,
-    PairOrder, PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
+    self, DuplicateFilterSettings, DuplicateMergeSettings, FileScope, PairDecision, PairOrder,
+    PairRelationship, PairSearchKind, PairSelection, PixelDuplicates, PotentialsSearch,
     RelationshipWriter,
 };
 use hydrus_store::{Snapshot, master, settings};
@@ -23,11 +22,11 @@ use crate::AppState;
 use crate::auth::Permission;
 use crate::domains::{FileDomain, parse_file_domain, parse_tag_service};
 use crate::error::{ApiError, ApiResult};
-use crate::file_filter::PotentialsFileSearch;
 use crate::params::Params;
 use crate::request::{ApiRequest, ApiResponse};
 use crate::routes::files::parse_hashes;
 use crate::routes::search::search_error;
+use hydrus_duplicates::potentials::PotentialsQuery;
 
 fn scope_of(snapshot: &Snapshot, domain: FileDomain) -> FileScope {
     if domain.is_all_known_files(&snapshot.services) {
@@ -163,32 +162,10 @@ fn code_param<T>(
 }
 
 /// A parsed potential-duplicates search.
-struct ParsedPotentials {
-    scope: FileScope,
-    kind: PairSearchKind,
-    pixel_duplicates: PixelDuplicates,
-    max_hamming_distance: u32,
-    search_1: PotentialsFileSearch,
-    search_2: PotentialsFileSearch,
-}
-
-/// The files a potential-duplicates search's file searches found (`None`:
-/// every file).
-struct Matched {
-    one: Option<HashSet<HashId>>,
-    two: Option<HashSet<HashId>>,
-}
+/// A potentials search, parsed from a request.
+struct ParsedPotentials(PotentialsQuery);
 
 impl ParsedPotentials {
-    fn run_searches(&self, conn: &Connection, snapshot: &Snapshot) -> Result<Matched, SearchError> {
-        let one = self.search_1.run(conn, snapshot)?;
-        let two = match self.kind {
-            PairSearchKind::BothFilesMatchDifferentSearches => self.search_2.run(conn, snapshot)?,
-            _ => None,
-        };
-        Ok(Matched { one, two })
-    }
-
     /// Run `f` on the search, inside one read. A bad file search is a 400.
     fn with_search<T>(
         &self,
@@ -197,37 +174,8 @@ impl ParsedPotentials {
         f: impl FnOnce(&Connection, &PotentialsSearch<'_>) -> hydrus_store::Result<T>,
     ) -> ApiResult<T> {
         app.store
-            .read(|conn| {
-                let matched = match self.run_searches(conn, snapshot) {
-                    Ok(m) => m,
-                    Err(e) => return Ok(Err(e)),
-                };
-                let one = matched.one.as_ref().map(in_set);
-                let two = matched.two.as_ref().map(in_set);
-                let search = PotentialsSearch {
-                    scope: self.scope.clone(),
-                    kind: self.kind,
-                    pixel_duplicates: self.pixel_duplicates,
-                    max_hamming_distance: self.max_hamming_distance,
-                    search_1: one.as_ref().map(|f| f as &FileFilter<'_>),
-                    search_2: two.as_ref().map(|f| f as &FileFilter<'_>),
-                };
-                f(conn, &search).map(Ok)
-            })?
+            .read(|conn| self.0.with_search(conn, snapshot, |search| f(conn, search)))?
             .map_err(search_error)
-    }
-}
-
-/// A filter answering from a search's results.
-fn in_set(
-    set: &HashSet<HashId>,
-) -> impl Fn(&Connection, &[HashId]) -> hydrus_store::Result<HashSet<HashId>> + '_ {
-    move |_, candidates| {
-        Ok(candidates
-            .iter()
-            .copied()
-            .filter(|h| set.contains(h))
-            .collect())
     }
 }
 
@@ -268,11 +216,11 @@ fn parse_potentials(snapshot: &Snapshot, params: &Params) -> ApiResult<ParsedPot
                 parse_api_search(&list).map_err(|e| ApiError::bad_request(e.to_string()))?
             }
         };
-        searches.push(PotentialsFileSearch(FileSearchContext {
+        searches.push(FileSearchContext {
             location: location.clone(),
             tags: TagContext::new(tag_service, true, true),
             predicates,
-        }));
+        });
     }
     let search_2 = searches.pop().expect("two searches");
     let search_1 = searches.pop().expect("two searches");
@@ -301,14 +249,14 @@ fn parse_potentials(snapshot: &Snapshot, params: &Params) -> ApiResult<ParsedPot
         )?;
     let max_hamming_distance =
         code_param(params, "max_hamming_distance", 4, |c| u32::try_from(c).ok())?;
-    Ok(ParsedPotentials {
+    Ok(ParsedPotentials(PotentialsQuery {
         scope,
         kind,
         pixel_duplicates,
         max_hamming_distance,
         search_1,
         search_2,
-    })
+    }))
 }
 
 pub async fn get_potentials_count(
@@ -375,6 +323,9 @@ pub async fn get_potential_pairs(
                 };
                 let pairs =
                     duplicates::select_pairs(conn, &snapshot, search, order, ascending, selection)?;
+                let scores = settings::get::<DuplicateFilterSettings>(conn)?.scores;
+                let pairs =
+                    hydrus_duplicates::statements::ab_order(conn, &snapshot, pairs, &scores)?;
                 let ids: Vec<HashId> = pairs.iter().flat_map(|&(a, b)| [a, b]).collect();
                 let hashes = master::hashes(conn, &ids)?;
                 Ok(pairs
@@ -548,6 +499,12 @@ pub async fn set_file_relationships(
                         delete_a: row.delete_a,
                         delete_b: row.delete_b,
                         deletion_reason: "From Client API (duplicates processing).",
+                        // (only the merge path inboxes, as in the reference)
+                        reinbox: if row.merge {
+                            Reinbox::AfterDuplicateFilter
+                        } else {
+                            Reinbox::Never
+                        },
                     },
                 )?;
             }

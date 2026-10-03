@@ -15,36 +15,7 @@ use hydrus_core::url::psl;
 
 use crate::error::{Result, StoreError};
 
-/// `CC.NETWORK_CONTEXT_GLOBAL`.
-pub const CONTEXT_GLOBAL: i64 = 0;
-/// `CC.NETWORK_CONTEXT_DOMAIN`.
-pub const CONTEXT_DOMAIN: i64 = 2;
-
-/// What a network rule applies to.
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct NetworkContext {
-    /// `CC.NETWORK_CONTEXT_*`.
-    pub kind: i64,
-    /// The domain for domain contexts; empty for the global context; hex for
-    /// contexts keyed by bytes.
-    pub data: String,
-}
-
-impl NetworkContext {
-    pub fn global() -> Self {
-        Self {
-            kind: CONTEXT_GLOBAL,
-            data: String::new(),
-        }
-    }
-
-    pub fn domain(domain: impl Into<String>) -> Self {
-        Self {
-            kind: CONTEXT_DOMAIN,
-            data: domain.into(),
-        }
-    }
-}
+pub use hydrus_core::network::{CONTEXT_DOMAIN, CONTEXT_GLOBAL, NetworkContext};
 
 /// A cookie, as Python's cookie jar keeps it.
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -484,5 +455,109 @@ mod tests {
             (new.approval, new.reason.as_str()),
             (Approval::Approved, "Set by Client API")
         );
+    }
+}
+
+/// The client options for talking to websites and pacing the downloaders,
+/// under the reference's names.
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct NetworkSettings {
+    /// Seconds to wait for a connection (`network_timeout`).
+    pub network_timeout: u64,
+    pub connection_error_wait_time: u64,
+    pub serverside_bandwidth_wait_time: u64,
+    /// `max_connection_attempts_allowed`.
+    pub max_connection_attempts: u32,
+    /// `max_request_attempts_allowed_get`.
+    pub max_get_attempts: u32,
+    /// `max_network_jobs`.
+    pub max_jobs: usize,
+    /// `max_network_jobs_per_domain`.
+    pub max_jobs_per_domain: usize,
+    /// `verify_regular_https`.
+    pub verify_https: bool,
+    /// `domain_network_infrastructure_error_number` and `_time_delta`.
+    pub domain_error_number: usize,
+    pub domain_error_window: i64,
+    pub http_proxy: Option<String>,
+    pub https_proxy: Option<String>,
+    pub no_proxy: Option<String>,
+    /// Seconds a downloader queue waits after a gallery page or watcher
+    /// check fails on the network.
+    pub downloader_network_error_delay: u64,
+    pub subscription_network_error_delay: i64,
+    pub subscription_other_error_delay: i64,
+    pub process_subs_in_random_order: bool,
+    pub max_simultaneous_subscriptions: u32,
+    /// `replace_percent_twenty_with_space_in_gug_input`.
+    pub gug_percent_twenty_is_space: bool,
+    /// Seconds requests wait after the computer wakes from sleep.
+    pub wake_delay_period: u64,
+}
+
+impl Default for NetworkSettings {
+    fn default() -> Self {
+        Self {
+            network_timeout: 10,
+            connection_error_wait_time: 15,
+            serverside_bandwidth_wait_time: 60,
+            max_connection_attempts: 5,
+            max_get_attempts: 5,
+            max_jobs: 15,
+            max_jobs_per_domain: 3,
+            verify_https: true,
+            domain_error_number: 3,
+            domain_error_window: 600,
+            http_proxy: None,
+            https_proxy: None,
+            no_proxy: Some("127.0.0.1".into()),
+            downloader_network_error_delay: 90 * 60,
+            subscription_network_error_delay: 12 * 3600,
+            subscription_other_error_delay: 36 * 3600,
+            process_subs_in_random_order: true,
+            max_simultaneous_subscriptions: 1,
+            gug_percent_twenty_is_space: false,
+            wake_delay_period: 15,
+        }
+    }
+}
+
+impl crate::settings::Setting for NetworkSettings {
+    const KEY: &'static str = "network";
+}
+
+/// The domains the reference logged in to with a login script (which
+/// hydrus-rs doesn't run), so a refusal from one can say why.
+#[derive(Debug, Clone, Default, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+pub struct LoginDomains(pub Vec<String>);
+
+impl crate::settings::Setting for LoginDomains {
+    const KEY: &'static str = "login_domains";
+}
+
+impl LoginDomains {
+    /// Whether `url`'s domain, or one it is under, had a login.
+    pub fn covers(&self, url: &str) -> bool {
+        let Ok(domain) = hydrus_core::url::url_domain(url) else {
+            return false;
+        };
+        psl::all_applicable_domains(&domain)
+            .iter()
+            .any(|d| self.0.iter().any(|login| login == d))
+    }
+}
+
+#[cfg(test)]
+mod login_tests {
+    use super::LoginDomains;
+
+    #[test]
+    fn a_login_covers_its_domain_and_subdomains() {
+        let logins = LoginDomains(vec!["example.com".into()]);
+        assert!(logins.covers("https://example.com/post/1"));
+        assert!(logins.covers("https://img.example.com/file.jpg"));
+        assert!(!logins.covers("https://other.com/post/1"));
+        assert!(!logins.covers("not a url"));
     }
 }

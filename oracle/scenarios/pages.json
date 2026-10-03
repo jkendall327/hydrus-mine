@@ -1,6 +1,6 @@
 {
  "name": "pages",
- "description": "the session's pages",
+ "description": "the session's pages, adding files to one, focusing and refreshing",
  "fixture": "basic",
  "read_only": false,
  "steps": [
@@ -9,7 +9,337 @@
    "path": "/manage_pages/get_pages",
    "query": [],
    "key": "full",
+   "compare": "exact",
+   "random": [
+    "pages.page_key",
+    "pages.pages.*.page_key"
+   ],
+   "capture": {
+    "TOP": "pages.page_key",
+    "FILES": "pages.pages.0.page_key"
+   }
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_media_viewers",
+   "query": [],
+   "key": "full",
    "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{FILES}"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{FILES}"
+    ],
+    [
+     "simple",
+     "false"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{TOP}"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{TOP}"
+    ],
+    [
+     "simple",
+     "false"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "abababababababababababababababababababababababababababababababab"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [],
+   "key": "full",
+   "compare": "exact"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "hashes": [
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "hash": "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+     "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "file_ids": [
+     1,
+     2
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{FILES}"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{FILES}"
+    ],
+    [
+     "simple",
+     "false"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{TOP}",
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "abababababababababababababababababababababababababababababababab",
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "hashes": [
+     "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "hashes": [
+     "abababababababababababababababababababababababababababababababab"
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/add_files",
+   "json": {
+    "page_key": "{FILES}",
+    "file_ids": [
+     999999
+    ]
+   },
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_page_info",
+   "query": [
+    [
+     "page_key",
+     "{FILES}"
+    ]
+   ],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "page_info.page_key"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/focus_page",
+   "json": {
+    "page_key": "{FILES}"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/focus_page",
+   "json": {
+    "page_key": "{TOP}"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/focus_page",
+   "json": {
+    "page_key": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/focus_page",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "GET",
+   "path": "/manage_pages/get_pages",
+   "query": [],
+   "key": "full",
+   "compare": "exact",
+   "random": [
+    "pages.page_key",
+    "pages.pages.*.page_key"
+   ]
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/refresh_page",
+   "json": {
+    "page_key": "{FILES}"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/refresh_page",
+   "json": {
+    "page_key": "abababababababababababababababababababababababababababababababab"
+   },
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/refresh_page",
+   "json": {},
+   "key": "full"
+  },
+  {
+   "method": "POST",
+   "path": "/manage_pages/refresh_page",
+   "json": {
+    "page_key": "{TOP}"
+   },
+   "key": "full"
   },
   {
    "method": "GET",

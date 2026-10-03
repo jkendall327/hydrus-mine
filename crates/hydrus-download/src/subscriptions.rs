@@ -11,37 +11,32 @@
 //! import options, and the query's own tags are added to them.
 
 use std::collections::{BTreeSet, HashMap, VecDeque};
-use std::time::{Duration, Instant};
+use std::time::Duration;
 
 use rand::seq::{IndexedRandom as _, SliceRandom as _};
 
+use hydrus_core::Sha256;
+use hydrus_core::bandwidth::GalleryTokenKind;
 use hydrus_core::import_options::CallerType;
-use hydrus_core::numbers::human_int;
+use hydrus_core::network::NetworkContext;
+use hydrus_core::numbers::{human_int, value_range};
 use hydrus_core::subscriptions::{
-    FileLogEntry, SeedTime, compact_file_log, compact_gallery_log, num_master_file_seeds,
+    FileLogEntry, SeedTime, SubscriptionSettings, compact_file_log, compact_gallery_log,
+    num_master_file_seeds,
 };
 use hydrus_core::url::{AnyGug, GugOptions, UrlClasses};
-use hydrus_net::{Job, NetError};
+use hydrus_net::{BandwidthScope, Job, NetError};
 use hydrus_store::queues::{
     self, FileSeed, GallerySeedMeta, NewFileSeed, NewGallerySeed, SeedStatus,
 };
+use hydrus_store::settings::Pauses;
 use hydrus_store::subscriptions::{self as store_subs, Subscription, SubscriptionQuery};
 
 use crate::gallery::{KnownSeeds, PageSink, PageTaken, set_gallery_status};
-use crate::{Downloader, WorkError, now};
+use crate::{Downloader, WorkError, now, popups};
 
-/// `subscription_network_error_delay`: seconds to wait after a network error.
-pub const NETWORK_ERROR_DELAY: i64 = 12 * 3600;
-/// `subscription_other_error_delay`.
-pub const OTHER_ERROR_DELAY: i64 = 36 * 3600;
-/// `subscription_file_error_cancel_threshold`.
-const FILE_ERROR_CANCEL_THRESHOLD: u32 = 5;
 /// `WE_HIT_OLD_GROUND_THRESHOLD`.
 const CAUGHT_UP_RUN: u64 = 5;
-/// `domain_network_infrastructure_error_number` in
-/// `domain_network_infrastructure_error_time_delta` seconds.
-const DOMAIN_ERRORS: usize = 3;
-const DOMAIN_ERROR_WINDOW: Duration = Duration::from_secs(600);
 
 /// What a subscription run did, and what a person should hear about.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
@@ -74,36 +69,6 @@ impl From<WorkError> for RunStop {
 impl From<hydrus_store::StoreError> for RunStop {
     fn from(e: hydrus_store::StoreError) -> Self {
         RunStop::Failed(e.to_string())
-    }
-}
-
-/// Recent connection failures per domain (`DomainOK`).
-#[derive(Debug, Default)]
-pub(crate) struct DomainErrors(HashMap<String, VecDeque<Instant>>);
-
-impl DomainErrors {
-    fn domain(url: &str) -> String {
-        hydrus_core::url::url_domain(url).unwrap_or_default()
-    }
-
-    fn report(&mut self, url: &str) {
-        self.0
-            .entry(Self::domain(url))
-            .or_default()
-            .push_back(Instant::now());
-    }
-
-    fn ok(&mut self, url: &str) -> bool {
-        let Some(errors) = self.0.get_mut(&Self::domain(url)) else {
-            return true;
-        };
-        while errors
-            .front()
-            .is_some_and(|t| t.elapsed() > DOMAIN_ERROR_WINDOW)
-        {
-            errors.pop_front();
-        }
-        errors.len() < DOMAIN_ERRORS
     }
 }
 
@@ -263,7 +228,75 @@ fn human_name(sub: &Subscription, query: &SubscriptionQuery) -> String {
     }
 }
 
+/// What the files a query presents are published as (`_GetPublishingLabel`):
+/// the subscription's name, or the label it is given instead, and the
+/// query's, unless its queries publish together.
+fn publishing_label(name: &str, settings: &SubscriptionSettings, query: &str) -> String {
+    let label = settings.publish_label_override.as_deref().unwrap_or(name);
+    if settings.merge_query_publish_events {
+        label.to_owned()
+    } else {
+        format!("{label}: {query}")
+    }
+}
+
+/// What a subscription query's requests count against (the reference's
+/// `NetworkJobSubscription`, keyed by subscription and query): they wait at
+/// most half a minute for bandwidth, the subscription itself having asked
+/// first; gallery pages take subscription turns per site.
+fn query_scope(sub: &Subscription, query: &SubscriptionQuery) -> BandwidthScope {
+    BandwidthScope {
+        contexts: vec![NetworkContext::subscription(
+            &sub.name,
+            query.state.human_name(),
+        )],
+        override_after: Some(30),
+        gallery_token: Some(GalleryTokenKind::Subscription),
+    }
+}
+
+/// The contexts a query's file downloads count against, by its next file
+/// (`_GetExampleNetworkContexts`).
+fn query_contexts(
+    sub: &Subscription,
+    query: &SubscriptionQuery,
+    example_url: Option<&str>,
+) -> Vec<NetworkContext> {
+    let mut contexts = example_url.map_or_else(
+        || vec![NetworkContext::global()],
+        hydrus_net::NetEngine::contexts_for,
+    );
+    contexts.extend(query_scope(sub, query).contexts);
+    contexts
+}
+
+/// How far ahead a subscription asks for bandwidth before working on a
+/// query's files (`SUBSCRIPTION_BANDWIDTH_OK_WINDOW`): rules over this many
+/// seconds or less don't stop it.
+const BANDWIDTH_OK_WINDOW: u64 = 90;
+
 impl Downloader {
+    /// Whether the query's next file has bandwidth (`FileBandwidthOK`).
+    fn file_bandwidth_ok(
+        &self,
+        sub: &Subscription,
+        query: &SubscriptionQuery,
+        example_url: Option<&str>,
+    ) -> bool {
+        self.net.can_do_work(
+            &query_contexts(sub, query, example_url),
+            BANDWIDTH_OK_WINDOW,
+        )
+    }
+
+    /// Whether subscriptions are paused globally (`pause_subs_sync`, or all
+    /// new network traffic).
+    fn subscriptions_paused(&self) -> bool {
+        self.store
+            .read(hydrus_store::settings::get::<Pauses>)
+            .is_ok_and(|p| !p.subscriptions_run())
+    }
+
     fn has_file_work(&self, queue: i64) -> Result<bool, WorkError> {
         Ok(self
             .store
@@ -296,7 +329,19 @@ impl Downloader {
                 q.state.next_check_time
             };
             if file_work {
-                time = 0;
+                // when its next file has bandwidth (at least a minute on,
+                // when a rule is all but used up but not over)
+                let next = self
+                    .store
+                    .read(|conn| queues::next_file_seed(conn, q.queue_id))?;
+                let example = next.as_ref().map(|s| s.data.as_str());
+                time = if self.file_bandwidth_ok(sub, q, example) {
+                    0
+                } else {
+                    let contexts = query_contexts(sub, q, example);
+                    let wait = self.net.waiting_estimate(&contexts).max(60);
+                    now().saturating_add(i64::try_from(wait).unwrap_or(i64::MAX))
+                };
             }
             earliest = Some(earliest.map_or(time, |e| e.min(time)));
         }
@@ -306,34 +351,62 @@ impl Downloader {
     /// Run a subscription once (`Subscription.Sync`): sync every query that
     /// is due, then download what the queries have found. Its settings and
     /// queries are saved as it goes.
-    pub async fn run_subscription(&self, id: i64, job: &Job) -> Result<RunReport, WorkError> {
+    pub async fn run_subscription(
+        &self,
+        id: i64,
+        job: &std::sync::Arc<Job>,
+    ) -> Result<RunReport, WorkError> {
         let mut report = RunReport::default();
         let Some(mut sub) = self.store.read(|conn| store_subs::subscription(conn, id))? else {
             return Ok(report);
         };
-        if sub.settings.paused || now() < sub.settings.no_work_until {
+        if sub.settings.paused || now() < sub.settings.no_work_until || self.subscriptions_paused()
+        {
             return Ok(report);
         }
         let started_with = sub.settings.clone();
-        let mut errors = DomainErrors::default();
+        // what it shows while it works (`Sync`'s job status), with the
+        // download it is doing
+        let popup =
+            popups::Working::new(self.store(), format!("subscriptions - {}", sub.name), true);
+        popup.set_network_job(Some(std::sync::Arc::clone(job)));
+        popup.keep_up();
         let result = async {
+            if self.due_queries(&sub)?.is_empty() && !self.any_file_work(&sub)? {
+                return Ok(());
+            }
+            if sub.settings.show_a_popup_while_working {
+                popup.show();
+            }
             loop {
                 let due = self.due_queries(&sub)?;
-                if due.is_empty() || sub.settings.paused || now() < sub.settings.no_work_until {
+                if due.is_empty()
+                    || sub.settings.paused
+                    || now() < sub.settings.no_work_until
+                    || self.subscriptions_paused()
+                {
                     break;
                 }
-                self.sync_queries(&mut sub, due, job, &mut report).await?;
+                self.sync_queries(&mut sub, due, job, &mut report, &popup)
+                    .await?;
             }
-            self.work_on_queries_files(&mut sub, job, &mut errors, &mut report)
+            self.full_options(CallerType::Subscription, &sub.settings.import_options, &[])?
+                .locations
+                .check_ready_to_import()
+                .map_err(|e| RunStop::Failed(e.into()))?;
+            self.work_on_queries_files(&mut sub, job, &mut report, &popup)
                 .await
         }
         .await;
         match result {
             Ok(()) | Err(RunStop::Stop) => {}
             Err(RunStop::Network(e)) => {
+                popup.set_text(Some(
+                    "Encountered a network error, will retry again later".into(),
+                ));
                 delay(
                     &mut sub,
-                    NETWORK_ERROR_DELAY,
+                    self.network.read().subscription_network_error_delay,
                     &format!("network error: {e}"),
                 );
             }
@@ -342,7 +415,11 @@ impl Downloader {
                     "The subscription \"{}\" encountered an error when trying to sync: {e}",
                     sub.name
                 ));
-                delay(&mut sub, OTHER_ERROR_DELAY, &format!("error: {e}"));
+                delay(
+                    &mut sub,
+                    self.network.read().subscription_other_error_delay,
+                    &format!("error: {e}"),
+                );
             }
         }
         // save what the run changed, keeping changes made meanwhile (say, a
@@ -366,8 +443,16 @@ impl Downloader {
             }
             store_subs::set_subscription_settings(ctx.conn(), sub_id, s)
         })?;
+        // (a popup with files stays for them)
+        popup.set_network_job(None);
+        if popup.has_files() {
+            popup.finish();
+        } else {
+            popup.finish_and_dismiss();
+        }
         for notice in &report.notices {
             tracing::warn!("{notice}");
+            popups::show_text(self.store(), notice.clone());
         }
         Ok(report)
     }
@@ -384,8 +469,7 @@ impl Downloader {
             .into_iter()
             .filter(|q| !q.state.paused && q.state.is_sync_due(t))
             .collect();
-        // (process_subs_in_random_order)
-        queries.shuffle(&mut rand::rng());
+        self.order_queries(&mut queries);
         Ok(queries)
     }
 
@@ -395,6 +479,7 @@ impl Downloader {
         queries: Vec<SubscriptionQuery>,
         job: &Job,
         report: &mut RunReport,
+        popup: &popups::Working,
     ) -> Result<(), RunStop> {
         let definitions = self.definitions();
         let Some(gug) = definitions
@@ -420,9 +505,24 @@ impl Downloader {
         // keep up with a renamed or re-keyed GUG
         gug.key().clone_into(&mut sub.settings.gug_key);
         gug.name().clone_into(&mut sub.settings.gug_name);
-        for mut query in queries {
+        let count = queries.len();
+        for (i, mut query) in queries.into_iter().enumerate() {
+            let mut prefix = format!("synchronising ({})", value_range(i as u64, count as u64));
+            let name = query.state.human_name();
+            if name != sub.name {
+                prefix.push_str(&format!(" \"{name}\""));
+            }
+            popup.set_gauge(Some((i as i64, count as i64)));
             let result = self
-                .sync_query(sub, &definitions.gugs, &gug, &mut query, job, report)
+                .sync_query(
+                    sub,
+                    &definitions.gugs,
+                    &gug,
+                    &mut query,
+                    job,
+                    report,
+                    (popup, &prefix),
+                )
                 .await;
             let (queue, state) = (query.queue_id, query.state.clone());
             self.store
@@ -437,7 +537,7 @@ impl Downloader {
     fn gug_functional(&self, gugs: &hydrus_core::url::Gugs, gug: &AnyGug) -> Result<(), String> {
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
-        let options = gug_options(classes);
+        let options = gug_options(classes, self.network.read().gug_percent_twenty_is_space);
         let examples: Vec<String> = match gug {
             AnyGug::Single(g) => vec![
                 g.example_url(options)
@@ -465,7 +565,8 @@ impl Downloader {
         Ok(())
     }
 
-    /// `_SyncQuery`.
+    /// `_SyncQuery`, saying what it does in the popup after the prefix.
+    #[allow(clippy::too_many_arguments)]
     async fn sync_query(
         &self,
         sub: &mut Subscription,
@@ -474,10 +575,12 @@ impl Downloader {
         query: &mut SubscriptionQuery,
         job: &Job,
         report: &mut RunReport,
+        (popup, prefix): (&popups::Working, &str),
     ) -> Result<(), RunStop> {
         if query.state.paused {
             return Ok(());
         }
+        job.set_scope(query_scope(sub, query));
         let queue = query.queue_id;
         let snapshot = self.store.snapshot();
         let classes = &snapshot.url_classes;
@@ -508,8 +611,13 @@ impl Downloader {
         };
         drop(history);
 
+        popup.set_text(Some(prefix.to_owned()));
         let urls = gugs
-            .gallery_urls(gug, &query.state.query_text, gug_options(classes))
+            .gallery_urls(
+                gug,
+                &query.state.query_text,
+                gug_options(classes, self.network.read().gug_percent_twenty_is_space),
+            )
             .map_err(|e| RunStop::Failed(e.to_string()))?;
         if urls.is_empty() {
             sub.settings.paused = true;
@@ -541,7 +649,7 @@ impl Downloader {
         let mut stop_reason = "unknown stop reason".to_owned();
         let outcome: Result<(), RunStop> = async {
             loop {
-                if job.is_cancelled() {
+                if job.is_cancelled() || popup.is_cancelled() {
                     stop_reason = "gallery parsing cancelled, likely by user".into();
                     delay(sub, 600, &stop_reason);
                     return Err(RunStop::Stop);
@@ -561,10 +669,13 @@ impl Downloader {
                         .write(move |ctx| queues::update_gallery_seed(ctx.conn(), &seed))?;
                     continue;
                 }
-                job.set_status_text(format!(
+                let checking = format!(
                     "found {} new urls, checking next page",
                     human_int(sink.total_new)
-                ));
+                );
+                popup.set_text(Some(format!("{prefix}: {checking}")));
+                popup.follow_stage(1, format!("{prefix}: "));
+                job.set_status_text(checking);
                 let result = self
                     .work_on_gallery_url(&mut seed, &mut seen, &mut sink, job)
                     .await;
@@ -594,6 +705,7 @@ impl Downloader {
             Ok(())
         }
         .await;
+        popup.stop_following();
         // pages not read this time are vetoed with the reason
         let reason = stop_reason.clone();
         self.store.write(move |ctx| {
@@ -688,39 +800,95 @@ impl Downloader {
         &self,
         sub: &mut Subscription,
         job: &Job,
-        errors: &mut DomainErrors,
         report: &mut RunReport,
+        popup: &popups::Working,
     ) -> Result<(), RunStop> {
-        let mut queries: Vec<SubscriptionQuery> = self
-            .store
-            .read(|conn| store_subs::queries(conn, sub.id))?
-            .into_iter()
-            .filter(|q| !q.state.paused)
-            .collect();
-        queries.shuffle(&mut rand::rng());
-        let mut error_count = 0;
-        for query in queries {
-            if !self.has_file_work(query.queue_id)? {
-                continue;
+        let mut queries = Vec::new();
+        for query in self.store.read(|conn| store_subs::queries(conn, sub.id))? {
+            if !query.state.paused && self.has_file_work(query.queue_id)? {
+                queries.push(query);
             }
-            self.work_on_query_files(sub, &query, job, errors, &mut error_count, report)
-                .await?;
         }
-        Ok(())
+        self.order_queries(&mut queries);
+        let count = queries.len();
+        let mut result = Ok(());
+        for (i, query) in queries.iter().enumerate() {
+            let name = query.state.human_name();
+            let mut text = format!("syncing files ({})", value_range(i as u64, count as u64));
+            if name != sub.name {
+                text.push_str(&format!(" \"{name}\""));
+            }
+            popup.set_text(Some(text));
+            popup.set_gauge(Some((i as i64, count as i64)));
+            result = self
+                .work_on_query_files(sub, query, job, report, popup)
+                .await;
+            if result.is_err() {
+                break;
+            }
+        }
+        // (DeleteFiles, DeleteStatusText, DeleteGauge)
+        popup.stop_following();
+        popup.set_files(Vec::new(), "");
+        popup.set_text(None);
+        popup.set_text_2(None);
+        popup.set_gauge(None);
+        popup.set_gauge_2(None);
+        result
     }
 
-    /// `_WorkOnQueryFiles`.
+    /// Whether any of its queries has files to work on
+    /// (`_WorkOnQueriesFilesCanDoWork`).
+    fn any_file_work(&self, sub: &Subscription) -> Result<bool, RunStop> {
+        for query in self.store.read(|conn| store_subs::queries(conn, sub.id))? {
+            if !query.state.paused && self.has_file_work(query.queue_id)? {
+                return Ok(true);
+            }
+        }
+        Ok(false)
+    }
+
+    /// `_WorkOnQueryFiles`: and however it stops, the files it presents
+    /// are published, as the reference does at its end (`finally`).
     async fn work_on_query_files(
         &self,
         sub: &mut Subscription,
         query: &SubscriptionQuery,
         job: &Job,
-        errors: &mut DomainErrors,
-        error_count: &mut u32,
         report: &mut RunReport,
+        popup: &popups::Working,
+    ) -> Result<(), RunStop> {
+        let mut presented = Vec::new();
+        let result = self
+            .query_files(sub, query, job, report, (popup, &mut presented))
+            .await;
+        if sub.settings.publish_files_to_popup_button {
+            let label = publishing_label(&sub.name, &sub.settings, query.state.human_name());
+            popups::publish_presented(self.store(), &label, presented);
+        }
+        result
+    }
+
+    async fn query_files(
+        &self,
+        sub: &mut Subscription,
+        query: &SubscriptionQuery,
+        job: &Job,
+        report: &mut RunReport,
+        (popup, presented): (&popups::Working, &mut Vec<Sha256>),
     ) -> Result<(), RunStop> {
         let queue = query.queue_id;
         let name = human_name(sub, query);
+        // (the files' count from where this sync starts: 1/3 rather than
+        // 4001/4003)
+        let counts = |conn: &rusqlite::Connection| -> hydrus_store::Result<(u64, u64)> {
+            let counts = queues::file_seed_counts(conn, queue)?;
+            let total: usize = counts.values().sum();
+            let unknown = counts.get(&SeedStatus::Unknown).copied().unwrap_or(0);
+            Ok(((total - unknown) as u64, total as u64))
+        };
+        let (done_before, _) = self.store.read(counts)?;
+        job.set_scope(query_scope(sub, query));
         let mut done_work = false;
         loop {
             let Some(mut seed) = self
@@ -729,20 +897,38 @@ impl Downloader {
             else {
                 break;
             };
-            if job.is_cancelled() {
+            if job.is_cancelled() || popup.is_cancelled() {
                 delay(sub, 300, "recently cancelled");
                 return Err(RunStop::Stop);
             }
-            if sub.settings.paused || now() < sub.settings.no_work_until {
+            if sub.settings.paused
+                || now() < sub.settings.no_work_until
+                || self.subscriptions_paused()
+            {
                 return Err(RunStop::Stop);
             }
-            if !errors.ok(&seed.data) {
+            if !self.net.domain_ok(&seed.data) {
                 if done_work {
+                    popup.set_text_2(Some("domain had errors, will try again later".into()));
                     delay(sub, 3600, "domain errors, will try again later");
                 }
                 return Err(RunStop::Stop);
             }
+            // out of bandwidth: stop the subscription's file work until
+            // there is some (it is scheduled for then)
+            if !self.file_bandwidth_ok(sub, query, Some(&seed.data)) {
+                if done_work {
+                    let text = "no more bandwidth to download files, will do some more later";
+                    popup.set_text_2(Some(text.into()));
+                    job.set_status_text(text);
+                }
+                return Err(RunStop::Stop);
+            }
             job.set_status_text(format!("{name}: downloading files"));
+            let (done, total) = self.store.read(counts)?;
+            let (done, total) = (done - done_before, total - done_before);
+            popup.set_gauge_2(Some((done as i64, total as i64)));
+            popup.follow_stage(2, format!("files {}: ", value_range(done, total)));
             let lookup: Vec<&str> = std::iter::once(seed.data.as_str())
                 .chain(seed.referral_url.as_deref())
                 .collect();
@@ -751,31 +937,20 @@ impl Downloader {
                 &sub.settings.import_options,
                 &lookup,
             )?;
-            match self.work_on_url(&mut seed, &options, job).await {
-                Ok(_) => {}
-                Err(WorkError::Network(e)) => {
-                    // (the seed is marked as an error)
-                    errors.report(&seed.data);
-                    tracing::info!("subscription \"{}\": {e}", sub.name);
-                    tokio::time::sleep(Duration::from_secs(3)).await;
-                }
-                Err(e) => {
-                    crate::seeds::set_status(&mut seed, SeedStatus::Error, e.to_string());
-                    *error_count += 1;
-                    if *error_count >= FILE_ERROR_CANCEL_THRESHOLD {
-                        let saved = seed.clone();
-                        self.store
-                            .write(move |ctx| queues::update_file_seed(ctx.conn(), &saved))?;
-                        return Err(RunStop::Failed(format!(
-                            "The subscription {} encountered several errors when downloading files, so it abandoned its sync.",
-                            sub.name
-                        )));
-                    }
-                }
-            }
+            // (as in the reference, a file's failure is the file's: it
+            // doesn't count towards abandoning the sync)
+            self.work_on_url(&mut seed, &options, job).await;
             if let Err(e) = self.write_query_tags(&seed, &query.state.tag_import_options) {
                 tracing::error!("adding a query's tags: {e}");
             }
+            if let Some(hash) = popups::presented_file(self.store(), &seed, &options.presentation)
+                && !presented.contains(&hash)
+            {
+                presented.push(hash);
+            }
+            // (and the files so far, under the query's name; none, the
+            // last query's go, having outstayed their welcome)
+            popup.set_files(presented.clone(), &human_name(sub, query));
             let saved = seed.clone();
             self.store
                 .write(move |ctx| queues::update_file_seed(ctx.conn(), &saved))?;
@@ -783,6 +958,17 @@ impl Downloader {
             done_work = true;
         }
         Ok(())
+    }
+}
+
+impl Downloader {
+    /// `_GetQueryHeadersForProcessing`'s order: random, or by name.
+    fn order_queries(&self, queries: &mut [SubscriptionQuery]) {
+        if self.network.read().process_subs_in_random_order {
+            queries.shuffle(&mut rand::rng());
+        } else {
+            queries.sort_by_cached_key(|q| q.state.human_name().to_owned());
+        }
     }
 }
 
@@ -796,10 +982,9 @@ fn delay(sub: &mut Subscription, seconds: i64, reason: &str) {
         .clone_into(&mut sub.settings.no_work_until_reason);
 }
 
-fn gug_options(classes: &UrlClasses) -> GugOptions {
+fn gug_options(classes: &UrlClasses, percent_twenty_is_space: bool) -> GugOptions {
     GugOptions {
-        // (replace_percent_twenty_with_space_in_gug_input, off by default)
-        percent_twenty_is_space: false,
+        percent_twenty_is_space,
         collapse_leading_slashes: classes.settings().collapse_leading_slashes,
     }
 }
@@ -874,6 +1059,11 @@ impl SubscriptionRunner {
 
     /// The subscription to run now, else how long to wait for one.
     fn next(&self) -> Result<Result<Subscription, Duration>, WorkError> {
+        // (paused globally: look again soon, it may be switched from the
+        // command line)
+        if self.downloader.subscriptions_paused() {
+            return Ok(Err(Duration::from_secs(30)));
+        }
         let subs = self.downloader.store.read(store_subs::subscriptions)?;
         let t = now();
         let mut ready = Vec::new();
@@ -888,9 +1078,15 @@ impl SubscriptionRunner {
                 soonest = Some(soonest.map_or(when, |s| s.min(when)));
             }
         }
-        // (process_subs_in_random_order)
-        if let Some(sub) = ready.choose(&mut rand::rng()) {
-            return Ok(Ok(sub.clone()));
+        let next = if self.downloader.network.read().process_subs_in_random_order {
+            ready.choose(&mut rand::rng()).cloned()
+        } else {
+            ready
+                .into_iter()
+                .min_by_key(|sub| hydrus_core::sort::human_sort_key(&sub.name))
+        };
+        if let Some(sub) = next {
+            return Ok(Ok(sub));
         }
         // (look again every few minutes: subscriptions may be changed by
         // other processes, such as the command line)
@@ -927,5 +1123,22 @@ impl SubscriptionRunner {
             };
             let _ = tokio::time::timeout(wait, self.wake.notified()).await;
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn presented_files_are_labelled_as_the_reference_labels_them() {
+        let mut settings = SubscriptionSettings::default();
+        assert_eq!(publishing_label("sub", &settings, "query"), "sub");
+        settings.merge_query_publish_events = false;
+        assert_eq!(publishing_label("sub", &settings, "query"), "sub: query");
+        settings.publish_label_override = Some("art".into());
+        assert_eq!(publishing_label("sub", &settings, "query"), "art: query");
+        settings.merge_query_publish_events = true;
+        assert_eq!(publishing_label("sub", &settings, "query"), "art");
     }
 }

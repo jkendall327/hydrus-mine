@@ -1,0 +1,265 @@
+{
+ "cases": [
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": true,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1:page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "chapter:٣",
+    "character:samus aran": "character:samus aran",
+    "creator:_under_score_": "creator:_under_score_",
+    "emotion:😀😀️!": "emotion:😀😀️!",
+    "meta:☀️ sunny": "meta:☀️ sunny",
+    "namespace:sub:tag": "namespace:sub:tag",
+    "page:1": "page:1",
+    "page:²": "page:²",
+    "page:½": "page:½",
+    "series:metroid_prime": "series:metroid_prime",
+    "volume:１２": "volume:１２",
+    "x:a、b": "x:a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": false,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1:page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "chapter:٣",
+    "character:samus aran": "samus aran",
+    "creator:_under_score_": "_under_score_",
+    "emotion:😀😀️!": "😀😀️!",
+    "meta:☀️ sunny": "☀️ sunny",
+    "namespace:sub:tag": "sub:tag",
+    "page:1": "page:1",
+    "page:²": "²",
+    "page:½": "½",
+    "series:metroid_prime": "metroid_prime",
+    "volume:１２": "volume:１２",
+    "x:a、b": "a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": false,
+    "show_number_namespaces": false,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "chapter:٣",
+    "character:samus aran": "samus aran",
+    "creator:_under_score_": "_under_score_",
+    "emotion:😀😀️!": "😀😀️!",
+    "meta:☀️ sunny": "☀️ sunny",
+    "namespace:sub:tag": "sub:tag",
+    "page:1": "page:1",
+    "page:²": "²",
+    "page:½": "½",
+    "series:metroid_prime": "metroid_prime",
+    "volume:１２": "volume:１２",
+    "x:a、b": "a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": false,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": false
+   },
+   "rendered": {
+    "1:page": "1:page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "٣",
+    "character:samus aran": "samus aran",
+    "creator:_under_score_": "_under_score_",
+    "emotion:😀😀️!": "😀😀️!",
+    "meta:☀️ sunny": "☀️ sunny",
+    "namespace:sub:tag": "sub:tag",
+    "page:1": "1",
+    "page:²": "²",
+    "page:½": "½",
+    "series:metroid_prime": "metroid_prime",
+    "volume:１２": "１２",
+    "x:a、b": "a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": false,
+    "show_number_namespaces": false,
+    "show_subtag_number_namespaces": false
+   },
+   "rendered": {
+    "1:page": "page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "٣",
+    "character:samus aran": "samus aran",
+    "creator:_under_score_": "_under_score_",
+    "emotion:😀😀️!": "😀😀️!",
+    "meta:☀️ sunny": "☀️ sunny",
+    "namespace:sub:tag": "sub:tag",
+    "page:1": "1",
+    "page:²": "²",
+    "page:½": "½",
+    "series:metroid_prime": "metroid_prime",
+    "volume:１２": "１２",
+    "x:a、b": "a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": " - ",
+    "replace_emojis": false,
+    "replace_underscores": false,
+    "show_namespaces": true,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1 - page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "chapter - ٣",
+    "character:samus aran": "character - samus aran",
+    "creator:_under_score_": "creator - _under_score_",
+    "emotion:😀😀️!": "emotion - 😀😀️!",
+    "meta:☀️ sunny": "meta - ☀️ sunny",
+    "namespace:sub:tag": "namespace - sub:tag",
+    "page:1": "page - 1",
+    "page:²": "page - ²",
+    "page:½": "page - ½",
+    "series:metroid_prime": "series - metroid_prime",
+    "volume:１２": "volume - １２",
+    "x:a、b": "x - a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": false,
+    "replace_underscores": true,
+    "show_namespaces": true,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1:page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue eyes",
+    "chapter:٣": "chapter:٣",
+    "character:samus aran": "character:samus aran",
+    "creator:_under_score_": "creator: under score ",
+    "emotion:😀😀️!": "emotion:😀😀️!",
+    "meta:☀️ sunny": "meta:☀️ sunny",
+    "namespace:sub:tag": "namespace:sub:tag",
+    "page:1": "page:1",
+    "page:²": "page:²",
+    "page:½": "page:½",
+    "series:metroid_prime": "series:metroid prime",
+    "volume:１２": "volume:１２",
+    "x:a、b": "x:a、b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": ":",
+    "replace_emojis": true,
+    "replace_underscores": false,
+    "show_namespaces": true,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1:page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue_eyes",
+    "chapter:٣": "chapter:٣",
+    "character:samus aran": "character:samus aran",
+    "creator:_under_score_": "creator:_under_score_",
+    "emotion:😀😀️!": "emotion:□!",
+    "meta:☀️ sunny": "meta:□ sunny",
+    "namespace:sub:tag": "namespace:sub:tag",
+    "page:1": "page:1",
+    "page:²": "page:²",
+    "page:½": "page:½",
+    "series:metroid_prime": "series:metroid_prime",
+    "volume:１２": "volume:１２",
+    "x:a、b": "x:a□b"
+   }
+  },
+  {
+   "options": {
+    "namespace_connector": "→",
+    "replace_emojis": true,
+    "replace_underscores": true,
+    "show_namespaces": false,
+    "show_number_namespaces": true,
+    "show_subtag_number_namespaces": true
+   },
+   "rendered": {
+    "1:page": "1→page",
+    "2024": "2024",
+    ":smile:": "smile:",
+    "blue eyes": "blue eyes",
+    "blue_eyes": "blue eyes",
+    "chapter:٣": "chapter→٣",
+    "character:samus aran": "samus aran",
+    "creator:_under_score_": " under score ",
+    "emotion:😀😀️!": "😀😀️!",
+    "meta:☀️ sunny": "☀️ sunny",
+    "namespace:sub:tag": "sub:tag",
+    "page:1": "page→1",
+    "page:²": "²",
+    "page:½": "½",
+    "series:metroid_prime": "metroid prime",
+    "volume:１２": "volume→１２",
+    "x:a、b": "a、b"
+   }
+  }
+ ]
+}

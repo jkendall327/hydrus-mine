@@ -1,0 +1,1032 @@
+{
+ "collected_by_series": [
+  {
+   "files": [
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726",
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c",
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "collection",
+     "x": 2,
+     "y": 109
+    },
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - metroid, the legend of zelda",
+     "x": -57,
+     "y": 2
+    },
+    {
+     "text": "3",
+     "x": 19,
+     "y": 109
+    }
+   ]
+  },
+  {
+   "files": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7",
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "collection",
+     "x": 2,
+     "y": 109
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - the legend of zelda - a test image: with colons",
+     "x": -111,
+     "y": 2
+    },
+    {
+     "text": "p2-11",
+     "x": 115,
+     "y": 113
+    },
+    {
+     "text": "2",
+     "x": 19,
+     "y": 109
+    }
+   ]
+  },
+  {
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a",
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c",
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125",
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a",
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf",
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428",
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6",
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "inbox",
+     "x": 116,
+     "y": 1
+    },
+    {
+     "name": "collection",
+     "x": 2,
+     "y": 109
+    },
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist - metroid",
+     "x": -6,
+     "y": 2
+    },
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    },
+    {
+     "text": "9",
+     "x": 19,
+     "y": 109
+    }
+   ]
+  },
+  {
+   "files": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b",
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b",
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b",
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c",
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147",
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189",
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c",
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134",
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f",
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b",
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea",
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f",
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29",
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5",
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2",
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3",
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c",
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341",
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457",
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173",
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68",
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "icons": [
+    {
+     "name": "notes",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "trash",
+     "x": 116,
+     "y": 1
+    },
+    {
+     "name": "inbox",
+     "x": 98,
+     "y": 1
+    },
+    {
+     "name": "collection",
+     "x": 2,
+     "y": 109
+    },
+    {
+     "name": "sound",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist, someone else - a test image: with colons",
+     "x": -104,
+     "y": 2
+    },
+    {
+     "text": "v3-c2-p1-11",
+     "x": 77,
+     "y": 113
+    },
+    {
+     "text": "22",
+     "x": 19,
+     "y": 109
+    }
+   ]
+  }
+ ],
+ "files": [
+  {
+   "files": [
+    "03d67e1677d7723a590c345fb438c585cc818ffdad77cd8f2824f8c9e85e276b"
+   ],
+   "icons": [
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "188065ebd4fa0d045f9bd0f295460da811572454ed5a075d9b6373a79ebb8147"
+   ],
+   "icons": [
+    {
+     "name": "notes",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "sound",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist",
+     "x": 23,
+     "y": 2
+    },
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "65131efb3aae7bf341ae655277f26961a60f64953126f17f95cda4a4a8ab2f7b"
+   ],
+   "icons": [
+    {
+     "name": "notes",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "inbox",
+     "x": 116,
+     "y": 1
+    },
+    {
+     "name": "sound",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "v3-p10",
+     "x": 108,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "5dd3019b5f7f5e020c79a3d97b4688b2523d4027dc876b02f3b3125476a1f96a"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "01310d25cceed29dac584b96a0d17162da836adf1a76585f3d69509682387e5b"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "c94cd34198a91b08beb2301c71e7db54598f2d654939cb0c66fcfa4aab6d15ce"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - the legend of zelda",
+     "x": -30,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "9e59cd59d1d3585732bf6b038aaca3416d3d769b47edf1843bfbb734f6f919f3"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "a test image: with colons",
+     "x": 0,
+     "y": 2
+    },
+    {
+     "text": "p2-11",
+     "x": 115,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "f2c50dce971a8ee47c043cbd4d88da21eedb03a54e0723496a3d99f4c2858cd8"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "2cbda044ca25552a905b7100902b1abb5d6c3035d290c56da33b4b219727f726"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - metroid, the legend of zelda",
+     "x": -57,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "fc313cfd3f8cd2fee155ff16c85a4e7c8d9b15c1458e63e04fe8a109850f7077"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "663b00b150a909c587ababe0cff31f6e0bbf399059f53d3c0e8829b489eea3ea"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "92c602271b43fc0aeddf3f2328e645152e3b3a010fa4096b8e18bc2ac3b24ae5"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "v3",
+     "x": 135,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "a4d4f5f391c94942e38d89472fed0fc63cf097e3ee05bc40642bcd036407cdaf"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "8590b7ade74880e1affba4e7730d9e70376b6806f426371766c7e877cf6bbc7c"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist - metroid",
+     "x": -6,
+     "y": 2
+    },
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "9f3f4aed09bdb9fbb4ea41dfa91e3f43300d688bcdc55cd37df3dbb20cc62f7c"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else",
+     "x": 34,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "ba408cebd8481517e808a5f7351c604805284fbb5fc1cd90b1b3b80ceac8f457"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "a test image: with colons",
+     "x": 0,
+     "y": 2
+    },
+    {
+     "text": "p11",
+     "x": 127,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "12855f6f0eb87e5f09146e73211364202a517766c651b83d65a2539bdb80887c"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "bdc0a7dad4000a210576140fd54e1430858cee0fa344c77de64b2bc4107ea8cc"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - metroid, the legend of zelda",
+     "x": -57,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "39175d281c889f076d785e7fed391e5ef45a72e73d88057f383961a7b82effa7"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "the legend of zelda - a test image: with colons",
+     "x": -64,
+     "y": 2
+    },
+    {
+     "text": "p2-11",
+     "x": 115,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "b9305226e8af61936d3612b18637e398616428a1ea57972546a4d933e9074341"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "91a19eb1167b92e84e5a43c0e89987d57e55195a88d819788f4f49303d63ea29"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "f77ee600c9a2900b010e3b9d37b06256698eea725b28704401a36efbe64c74f6"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "a1bfa38c420fc82c7bed25ef2970777322cfec7dd637af8b205654f5bfd68a5a"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist - metroid",
+     "x": -6,
+     "y": 2
+    },
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "d101e8e138c4b0b0acaedaa8dec27f434779878d7df8da0af075e50d67483b68"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "v3-p1-10",
+     "x": 96,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "580f1700573ed99142dbe8f46e9b07ec105ed7b000647ee05bce66d0bbd98134"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "a test image: with colons",
+     "x": 0,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "9073bbc7b7603d76bafa63bc8a761e90595a6e9636be21756b8d37e41477797f"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "32002891c900905a81d5130622d2646548d0e0583279027f0b08e662d931247c"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "someone else - metroid, the legend of zelda",
+     "x": -57,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "4c2d377ce766608102991601179f499dcc248a20843448455acfabdbbe125189"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "a test image: with colons",
+     "x": 0,
+     "y": 2
+    },
+    {
+     "text": "p2-11",
+     "x": 115,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "509dd094c72d20b2ddcf5d4bb379a7b17eb240d0437f13b2e1ff7d8f8e70787c"
+   ],
+   "icons": [
+    {
+     "name": "inbox",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "c2",
+     "x": 135,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "9a24263a60956fbea3764b7581812726813bfc0dbec415a9129c37032a2544c2"
+   ],
+   "icons": [],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  },
+  {
+   "files": [
+    "d10bb4d3e8799f9273143654461cd8f869512ced7d38297e01be31324a8dc428"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "inbox",
+     "x": 116,
+     "y": 1
+    },
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "bcbb48201e57c2f79ff2e0e74628d66707887eb2dc1331ba7859652b94ed2173"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "sound",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "anonymous artist",
+     "x": 23,
+     "y": 2
+    },
+    {
+     "text": "p3",
+     "x": 134,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "0518da1419a8af5634e6fc6e0c9906ac72a764533d6dde55b669df80d069d86b"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "v3-p10",
+     "x": 108,
+     "y": 113
+    }
+   ]
+  },
+  {
+   "files": [
+    "986c606d464af2a177030189dc08d015c1558e74c726438e511d60ea24989125"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    },
+    {
+     "name": "play",
+     "x": 2,
+     "y": 2
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": [
+    {
+     "text": "metroid",
+     "x": 52,
+     "y": 2
+    }
+   ]
+  },
+  {
+   "files": [
+    "644a8577a079192dd6f9a3f1ae483e4c586d00d1d42436613a4de585a738ba6f"
+   ],
+   "icons": [
+    {
+     "name": "trash",
+     "x": 134,
+     "y": 1
+    }
+   ],
+   "ratings": [],
+   "size": [
+    152,
+    127
+   ],
+   "texts": []
+  }
+ ],
+ "thumbnail_border": 1
+}

@@ -40,10 +40,13 @@ use tower::ServiceExt as _;
 mod common;
 
 fn repo_root() -> PathBuf {
+    // (not canonicalised: on Windows that gives a `\\?\` path, which
+    // doesn't take the `/`s the recordings join paths with)
     Path::new(env!("CARGO_MANIFEST_DIR"))
-        .join("../..")
-        .canonicalize()
+        .ancestors()
+        .nth(2)
         .unwrap()
+        .to_owned()
 }
 
 fn media_dir() -> PathBuf {
@@ -77,9 +80,21 @@ fn substitute(value: &Json, media: &str, variables: &HashMap<String, String>) ->
     }
 }
 
+/// A path under the database or media directory, placeholder first and with
+/// `/` separators: the recordings were made on Linux, and on Windows the
+/// reference (like us) joins paths with `\`.
+fn unsubstitute_path(s: &str, db_dir: &str, media: &str) -> String {
+    let s = s.replace(db_dir, "{DB_DIR}").replace(media, "{MEDIA}");
+    if std::path::MAIN_SEPARATOR != '/' && (s.starts_with("{DB_DIR}") || s.starts_with("{MEDIA}")) {
+        s.replace(std::path::MAIN_SEPARATOR, "/")
+    } else {
+        s
+    }
+}
+
 fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
     match value {
-        Json::String(s) => Json::String(s.replace(db_dir, "{DB_DIR}").replace(media, "{MEDIA}")),
+        Json::String(s) => Json::String(unsubstitute_path(&s, db_dir, media)),
         Json::Array(items) => Json::Array(
             items
                 .into_iter()
@@ -90,7 +105,7 @@ fn unsubstitute(value: Json, db_dir: &str, media: &str) -> Json {
             map.into_iter()
                 .map(|(k, v)| {
                     (
-                        k.replace(db_dir, "{DB_DIR}"),
+                        unsubstitute_path(&k, db_dir, media),
                         unsubstitute(v, db_dir, media),
                     )
                 })

@@ -1,0 +1,350 @@
+// The reference's "input predicate" dialog (`FleshOutPredicatePanel`),
+// opened by a system predicate offered without a value
+// (`src/predicate_editors.rs` has what each holds): a note, its pages'
+// tabs when it has several, the page's ready-made buttons, and its panels,
+// each a row of fields (some with a second line under it) and an "ok"
+// button.
+
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// A row of the filetype tree: a group (`option` -1, with its filetypes
+// shown if `expanded`) or one of its filetypes.
+export struct EditorTreeRow {
+    text: string,
+    ticked: bool,
+    group: int,
+    option: int,
+    shown: bool,
+    expanded: bool,
+}
+
+// One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
+// number, 4 a line of text, 5 several lines, 6 the filetype tree, 7 a
+// button; on the panel's first line (0) or its second (1).
+export struct EditorField {
+    kind: int,
+    text: string,
+    placeholder: string,
+    options: [string],
+    chosen: int,
+    ticked: [bool],
+    value: int,
+    minimum: int,
+    maximum: int,
+    before: string,
+    after: string,
+    shown: bool,
+    enabled: bool,
+    // a choice's width, to fit its longest option
+    width: length,
+    rows: [EditorTreeRow],
+    line: int,
+}
+
+export struct EditorPanel {
+    fields: [EditorField],
+    two-lines: bool,
+}
+
+// A field, if it is shown on this line (else nothing, taking no room).
+component FieldView {
+    in property <EditorField> field;
+    in property <bool> here;
+    callback chose(int);
+    callback ticked(int, bool);
+    callback number-edited(int);
+    callback text-edited(string);
+    callback accepted();
+    callback pressed();
+    callback tree-ticked(int, int, bool);
+    callback expanded(int, bool);
+
+    // (hidden, it takes no room, and only what is typed into takes the
+    // room spare)
+    max-width: root.here ? 100000px : 0px;
+    horizontal-stretch: root.field.kind == 4 || root.field.kind == 5 ? 1 : 0;
+
+    // (an `if` straight under a component's root would give it no size)
+    VerticalLayout {
+    if root.here: VerticalLayout {
+        alignment: center;
+        padding-right: 6px;
+        if root.field.kind == 0: Text {
+            vertical-alignment: center;
+            text: root.field.text;
+            wrap: word-wrap;
+            max-width: 900px;
+            color: Theme.text;
+        }
+        if root.field.kind == 1: ComboBox {
+            horizontal-stretch: 0;
+            width: root.field.width;
+            model: root.field.options;
+            current-index: root.field.chosen;
+            enabled: root.field.enabled;
+            selected => { root.chose(self.current-index); }
+        }
+        if root.field.kind == 2: VerticalLayout {
+            for option[o] in root.field.options: CheckBox {
+                min-height: 24px;
+                text: option;
+                checked: root.field.ticked[o];
+                enabled: root.field.enabled;
+                toggled => { root.ticked(o, self.checked); }
+            }
+        }
+        if root.field.kind == 3: HorizontalLayout {
+            spacing: 2px;
+            if root.field.before != "": Text {
+                vertical-alignment: center;
+                text: root.field.before;
+                color: Theme.text;
+            }
+            SpinBox {
+                horizontal-stretch: 0;
+                width: 84px;
+                minimum: root.field.minimum;
+                maximum: root.field.maximum;
+                value: root.field.value;
+                enabled: root.field.enabled;
+                edited(value) => { root.number-edited(value); }
+            }
+            if root.field.after != "": Text {
+                vertical-alignment: center;
+                text: root.field.after;
+                color: Theme.text;
+            }
+        }
+        if root.field.kind == 4: LineEdit {
+            min-width: 160px;
+            text: root.field.text;
+            placeholder-text: root.field.placeholder;
+            enabled: root.field.enabled;
+            edited(text) => { root.text-edited(text); }
+            accepted => { root.accepted(); }
+        }
+        if root.field.kind == 5: TextEdit {
+            min-width: 240px;
+            min-height: 84px;
+            text: root.field.text;
+            placeholder-text: root.field.placeholder;
+            enabled: root.field.enabled;
+            edited(text) => { root.text-edited(text); }
+        }
+        if root.field.kind == 6: VerticalLayout {
+            for row in root.field.rows: VerticalLayout {
+                // (a collapsed group's filetypes take no room)
+                if row.shown: HorizontalLayout {
+                    padding-left: row.option < 0 ? 0px : 32px;
+                    spacing: 2px;
+                    if row.option < 0: Button {
+                        width: 28px;
+                        text: row.expanded ? "▾" : "▸";
+                        clicked => { root.expanded(row.group, !row.expanded); }
+                    }
+                    CheckBox {
+                        min-height: 24px;
+                        text: row.text;
+                        checked: row.ticked;
+                        toggled => { root.tree-ticked(row.group, row.option, self.checked); }
+                    }
+                }
+            }
+        }
+        if root.field.kind == 7: Button {
+            text: root.field.text;
+            enabled: root.field.enabled;
+            clicked => { root.pressed(); }
+        }
+    }
+    }
+}
+
+export component PredicateEditorWindow inherits Window {
+    title: "input predicate";
+    preferred-width: 1020px;
+    background: Theme.window;
+    in property <string> note;
+    // the pages' names (none with one page), and the one shown
+    in property <[string]> pages;
+    in property <int> page;
+    // the shown page's ready-made buttons, two to a row for file
+    // properties
+    in property <[string]> buttons;
+    in property <bool> two-columns;
+    in property <[EditorPanel]> panels;
+    in property <string> error;
+    // the shown page's recent predicates, each a button adding it with
+    // one beside it forgetting it
+    in property <[string]> recent;
+    callback page-chosen(int);
+    callback button-clicked(int);
+    callback recent-clicked(int);
+    callback recent-forgotten(int);
+    // (panel, field, option)
+    callback chose(int, int, int);
+    // (panel, field, option, ticked)
+    callback ticked(int, int, int, bool);
+    // (panel, field, value)
+    callback number-edited(int, int, int);
+    // (panel, field, text)
+    callback text-edited(int, int, string);
+    // (panel, field)
+    callback pressed(int, int);
+    // (panel, field, group, filetype or -1, ticked)
+    callback tree-ticked(int, int, int, int, bool);
+    // (panel, field, group, expanded)
+    callback expanded(int, int, int, bool);
+    callback ok(int);
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.note != "": Text {
+                text: root.note;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            if root.pages.length > 1: HorizontalLayout {
+                spacing: 2px;
+                alignment: start;
+                for name[i] in root.pages: Button {
+                    text: name;
+                    checkable: true;
+                    checked: i == root.page;
+                    clicked => { root.page-chosen(i); }
+                }
+            }
+            ScrollView {
+                min-height: 120px;
+                preferred-height: 420px;
+                VerticalLayout {
+                    alignment: start;
+                    spacing: 4px;
+                    if root.recent.length > 0: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 2px;
+                            Text {
+                                text: "recent";
+                                color: Theme.muted;
+                            }
+                            for label[i] in root.recent: HorizontalLayout {
+                                spacing: 2px;
+                                Button {
+                                    horizontal-stretch: 1;
+                                    text: label;
+                                    clicked => { root.recent-clicked(i); }
+                                }
+                                Button {
+                                    text: "forget";
+                                    clicked => { root.recent-forgotten(i); }
+                                }
+                            }
+                        }
+                    }
+                    if !root.two-columns: VerticalLayout {
+                        spacing: 2px;
+                        for label[i] in root.buttons: Button {
+                            text: label;
+                            clicked => { root.button-clicked(i); }
+                        }
+                    }
+                    if root.two-columns: VerticalLayout {
+                        spacing: 2px;
+                        for row in (root.buttons.length + 1) / 2: HorizontalLayout {
+                            spacing: 2px;
+                            Button {
+                                horizontal-stretch: 1;
+                                text: root.buttons[row * 2];
+                                clicked => { root.button-clicked(row * 2); }
+                            }
+                            if row * 2 + 1 < root.buttons.length: Button {
+                                horizontal-stretch: 1;
+                                text: root.buttons[row * 2 + 1];
+                                clicked => { root.button-clicked(row * 2 + 1); }
+                            }
+                        }
+                    }
+                    for panel[p] in root.panels: Rectangle {
+                        border-width: 1px;
+                        border-color: Theme.border;
+                        VerticalLayout {
+                            padding: 4px;
+                            spacing: 4px;
+                            HorizontalLayout {
+                                for field[f] in panel.fields: FieldView {
+                                    field: field;
+                                    here: field.shown && field.line == 0;
+                                    chose(option) => { root.chose(p, f, option); }
+                                    ticked(option, on) => { root.ticked(p, f, option, on); }
+                                    number-edited(value) => { root.number-edited(p, f, value); }
+                                    text-edited(text) => { root.text-edited(p, f, text); }
+                                    accepted => { root.ok(p); }
+                                    pressed => { root.pressed(p, f); }
+                                    tree-ticked(group, option, on) => { root.tree-ticked(p, f, group, option, on); }
+                                    expanded(group, on) => { root.expanded(p, f, group, on); }
+                                }
+                                Rectangle { horizontal-stretch: 1; }
+                                if !panel.two-lines: VerticalLayout {
+                                    alignment: center;
+                                    Button {
+                                        text: "ok";
+                                        clicked => { root.ok(p); }
+                                    }
+                                }
+                            }
+                            if panel.two-lines: HorizontalLayout {
+                                for field[f] in panel.fields: FieldView {
+                                    field: field;
+                                    here: field.shown && field.line == 1;
+                                    chose(option) => { root.chose(p, f, option); }
+                                    ticked(option, on) => { root.ticked(p, f, option, on); }
+                                    number-edited(value) => { root.number-edited(p, f, value); }
+                                    text-edited(text) => { root.text-edited(p, f, text); }
+                                    accepted => { root.ok(p); }
+                                    pressed => { root.pressed(p, f); }
+                                    tree-ticked(group, option, on) => { root.tree-ticked(p, f, group, option, on); }
+                                    expanded(group, on) => { root.expanded(p, f, group, on); }
+                                }
+                                Rectangle { horizontal-stretch: 1; }
+                                VerticalLayout {
+                                    alignment: center;
+                                    Button {
+                                        text: "ok";
+                                        clicked => { root.ok(p); }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if root.error != "": Text {
+                text: root.error;
+                wrap: word-wrap;
+                color: Theme.error;
+            }
+            HorizontalLayout {
+                alignment: end;
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

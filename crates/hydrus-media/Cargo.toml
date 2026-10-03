@@ -39,6 +39,7 @@ hex.workspace = true
 base64.workspace = true
 serde.workspace = true
 rayon.workspace = true
+hydrus-testkit.workspace = true
 
 [lints]
 workspace = true

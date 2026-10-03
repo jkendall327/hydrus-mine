@@ -5,7 +5,7 @@
 //! name, a page type and a dictionary of variables, among them the
 //! downloader a downloader page runs: a URL page's importer (28), a gallery
 //! page's (20) with its gallery searches (68), or a watcher page's (64) with
-//! its watchers (17).
+//! its watchers (17), or an "import" page's local import (9).
 //!
 //! Only the versions a current client writes are read: the session a client
 //! opens with is saved again every few minutes, so it is always current.
@@ -13,9 +13,10 @@
 use hydrus_core::import_options::ImportOptionsSlice;
 use hydrus_core::subscriptions::CheckerOptions;
 
+use super::auto_resolution::PotentialsSearch;
 use super::domain::expect;
 use super::favourites::FileSearchContext;
-use super::sort::MediaSort;
+use super::sort::{MediaCollect, MediaSort};
 use super::subscriptions::{
     LegacyFileSeed, LegacyGallerySeed, checker_options, file_seed_cache, gallery_seed_log,
     service_keys_to_tags,
@@ -37,6 +38,7 @@ const GALLERY_IMPORT: SerialisableType = SerialisableType(68);
 const MULTIPLE_GALLERY_IMPORT: SerialisableType = SerialisableType(20);
 const WATCHER_IMPORT: SerialisableType = SerialisableType(17);
 const MULTIPLE_WATCHER_IMPORT: SerialisableType = SerialisableType(64);
+const HDD_IMPORT: SerialisableType = SerialisableType(9);
 
 /// `ClientGUIPagesCore.PAGE_TYPE_*`.
 pub mod page_type {
@@ -100,6 +102,8 @@ pub struct LegacyPage {
     pub page_type: i64,
     /// How the page sorts its files, if it could be read.
     pub sort: Option<MediaSort>,
+    /// How the page collects its files, if it could be read.
+    pub collect: Option<MediaCollect>,
     pub content: PageContent,
 }
 
@@ -110,9 +114,23 @@ pub enum PageContent {
     Urls(LegacyUrlsImport),
     Gallery(LegacyMultipleGalleryImport),
     Watchers(LegacyMultipleWatcherImport),
-    /// A page whose state isn't read here (a duplicates page, a simple
-    /// downloader...).
+    Duplicates(LegacyDuplicatesPage),
+    LocalImport(LegacyHddImport),
+    /// A page whose state isn't read here (a simple downloader, a
+    /// petitions page...).
     Other,
+}
+
+/// A duplicates page's filtering settings.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacyDuplicatesPage {
+    pub search: PotentialsSearch,
+    /// Whether the page's searches run as their predicates change.
+    pub synchronised: bool,
+    /// `DUPE_PAIR_SORT_*`.
+    pub sort_type: i64,
+    pub sort_ascending: bool,
+    pub group_mode: bool,
 }
 
 /// A search page's search.
@@ -122,6 +140,19 @@ pub struct LegacyQueryPage {
     /// Whether the page searches as its predicates change (unsynchronised,
     /// it keeps its files until searched again).
     pub synchronised: bool,
+    /// Whether the search is locked to its `system:hash`
+    /// (`system_hash_locked`).
+    pub hash_locked: bool,
+    /// Whether that hash takes in files added to the page and lets go of
+    /// those removed from it (kept while unlocked).
+    pub lock_syncs: LegacyHashLock,
+}
+
+/// A search page's `system_hash_locked_syncs_new` and `_syncs_removes`.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct LegacyHashLock {
+    pub syncs_new: bool,
+    pub syncs_removes: bool,
 }
 
 /// A URL page's importer (`URLsImport`).
@@ -130,6 +161,19 @@ pub struct LegacyUrlsImport {
     pub file_seeds: Vec<LegacyFileSeed>,
     pub gallery_seeds: Vec<LegacyGallerySeed>,
     pub import_options: ImportOptionsSlice,
+    pub paused: bool,
+}
+
+/// An "import" page's local import (`HDDImport`): its files, by path, each
+/// with the tags to add to it.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacyHddImport {
+    pub file_seeds: Vec<LegacyFileSeed>,
+    pub import_options: ImportOptionsSlice,
+    /// How many sidecar routers it reads its files' metadata with (they
+    /// aren't read here).
+    pub metadata_routers: usize,
+    pub delete_after_success: bool,
     pub paused: bool,
 }
 
@@ -287,13 +331,19 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         Some(Meta::Object(object)) => Ok(object.as_ref()),
         _ => Err(malformed(k, format!("the page has no {wanted}"))),
     };
+    let flag = |name: &str, default: bool| match variable(name) {
+        Some(Meta::Json(value)) => boolean(k, value, name),
+        _ => Ok(default),
+    };
     let content = match page_type {
         page_type::QUERY => PageContent::Query(LegacyQueryPage {
             search: FileSearchContext::from_object(object_variable("file_search_context")?)?,
-            // the reference's default for a page that predates the option
-            synchronised: match variable("synchronised") {
-                Some(Meta::Json(value)) => boolean(k, value, "synchronised")?,
-                _ => true,
+            // the reference's defaults for a page that predates the options
+            synchronised: flag("synchronised", true)?,
+            hash_locked: flag("system_hash_locked", false)?,
+            lock_syncs: LegacyHashLock {
+                syncs_new: flag("system_hash_locked_syncs_new", true)?,
+                syncs_removes: flag("system_hash_locked_syncs_removes", true)?,
             },
         }),
         page_type::URLS => PageContent::Urls(urls_import(object_variable("urls_import")?)?),
@@ -303,16 +353,38 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         page_type::WATCHER => PageContent::Watchers(multiple_watcher_import(object_variable(
             "multiple_watcher_import",
         )?)?),
+        page_type::IMPORT_FROM_DISK => {
+            PageContent::LocalImport(hdd_import(object_variable("hdd_import")?)?)
+        }
+        page_type::DUPLICATE_FILTER => {
+            PageContent::Duplicates(LegacyDuplicatesPage {
+                search: PotentialsSearch::from_object(object_variable(
+                    "potential_duplicates_search_context",
+                )?)?,
+                // the reference's defaults for a page that predates them
+                synchronised: flag("synchronised", true)?,
+                sort_type: match variable("duplicate_pair_sort_type") {
+                    Some(Meta::Json(value)) => int(k, value, "pair sort")?,
+                    _ => 0,
+                },
+                sort_ascending: flag("duplicate_pair_sort_asc", false)?,
+                group_mode: flag("filter_group_mode", false)?,
+            })
+        }
         _ => PageContent::Other,
     };
     // a sort that can't be read is not worth losing the page over
     let sort = object_variable("media_sort")
         .ok()
         .and_then(|object| MediaSort::from_object(object).ok());
+    let collect = object_variable("media_collect")
+        .ok()
+        .and_then(|object| MediaCollect::from_object(object).ok());
     Ok(LegacyPage {
         name,
         page_type,
         sort,
+        collect,
         content,
     })
 }
@@ -339,6 +411,27 @@ pub fn urls_import(object: &SerialisableObject) -> DecodeResult<LegacyUrlsImport
         gallery_seeds: gallery_seeds(k, gallery_log)?,
         file_seeds: file_seeds(k, file_seed_cache)?,
         import_options: import_options(k, options)?,
+        paused: boolean(k, paused, "paused")?,
+    })
+}
+
+/// Decode an "import" page's local import.
+pub fn hdd_import(object: &SerialisableObject) -> DecodeResult<LegacyHddImport> {
+    let k = HDD_IMPORT;
+    expect(object, k, &[4])?;
+    let info = object.info();
+    let [
+        file_seed_cache,
+        options,
+        routers,
+        delete_after_success,
+        paused,
+    ] = tuple::<5>(k, &info, "local import")?;
+    Ok(LegacyHddImport {
+        file_seeds: file_seeds(k, file_seed_cache)?,
+        import_options: import_options(k, options)?,
+        metadata_routers: objects(k, routers, "metadata routers")?.len(),
+        delete_after_success: boolean(k, delete_after_success, "delete after success")?,
         paused: boolean(k, paused, "paused")?,
     })
 }

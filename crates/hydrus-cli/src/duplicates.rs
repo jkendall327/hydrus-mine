@@ -113,6 +113,7 @@ pub fn run(dir: &Path, action: Action) -> Result<()> {
             Ok(())
         }
         Action::Run => {
+            let _lock = crate::lock_store(dir, "a duplicates run")?;
             let clock = hydrus_search::Clock::system();
             let mut total = hydrus_duplicates::WorkDone::default();
             loop {

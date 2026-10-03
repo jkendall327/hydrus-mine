@@ -1,0 +1,439 @@
+// The options window (file > options, `src/options.rs`), as the
+// reference's "manage options" dialog: its pages listed on the left, the
+// page chosen on the right, each option its label then its control, in
+// the page's titled boxes. Changes wait for "apply"; "cancel" (or escape)
+// forgets them.
+
+import { Button, CheckBox, ComboBox, LineEdit, ListView, ScrollView, SpinBox, StandardListView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// a field of a time: its value, largest value, and the unit after it
+export struct DurationField {
+    value: int,
+    maximum: int,
+    label: string,
+}
+
+export struct OptionRow {
+    // 0 a box's title, 1 a checkbox, 2 a number, 3 a number that may be
+    // none, 4 a number with a fraction (typed), 5 a dropdown, 6 text, 7
+    // text that may be none, 8 a time (its fields), 9 a number per a time,
+    // 10 a file sort (its type and order), 11 a collect (its choices), 12
+    // a tag sort (its type, order and grouping), 13 checker options (a
+    // button, `text`, opening their editor)
+    kind: int,
+    label: string,
+    // how many boxes it is in
+    depth: int,
+    checked: bool,
+    number: int,
+    minimum: int,
+    maximum: int,
+    is-none: bool,
+    none-phrase: string,
+    unit: string,
+    text: string,
+    items: [string],
+    index: int,
+    fields: [DurationField],
+    // (a rate's text between its number and its time)
+    per: string,
+    // gone to from the search: highlighted, as the reference's
+    found: bool,
+    // (10, a file sort: its types are `items`, the type `index`; then its
+    // orders, and the one chosen. 11, a collect: its label is `text`, its
+    // choices `items`, each checked or not; then the choices for files
+    // matching none of it, as orders)
+    orders: [string],
+    order-index: int,
+    checks: [bool],
+    // (12, a tag sort: its types, orders as a sort's; then its groupings,
+    // the one chosen, and whether its type groups)
+    groups: [string],
+    group-index: int,
+    grouped: bool,
+}
+
+// a whole number typed in a small box
+export component NumberField inherits LineEdit {
+    in property <int> number;
+    callback number-edited(int);
+    width: 64px;
+    input-type: InputType.number;
+    text: root.number;
+    edited(text) => { root.number-edited(round(text.to-float())); }
+}
+
+// a time's fields, each its number then its unit
+export component TimeFields {
+    in property <[DurationField]> fields;
+    callback edited(int, int);
+    HorizontalLayout {
+        spacing: 6px;
+        alignment: start;
+        for field[f] in root.fields: HorizontalLayout {
+            spacing: 3px;
+            NumberField {
+                number: field.value;
+                number-edited(n) => { root.edited(f, n); }
+            }
+            Text {
+                text: field.label;
+                vertical-alignment: center;
+            }
+        }
+    }
+}
+
+export component OptionsWindow inherits Window {
+    title: "manage options";
+    preferred-width: 900px;
+    preferred-height: 640px;
+    background: Theme.window;
+
+    in property <[StandardListViewItem]> pages;
+    in-out property <int> page;
+    in property <[OptionRow]> rows;
+    // the search box: its placeholder, text, what it suggests (at most
+    // `shown` at once), and the one picked by the arrows (-1 for none)
+    in property <string> search-placeholder;
+    in property <int> shown: 10;
+    in-out property <string> search-text;
+    in property <[string]> matches;
+    in-out property <int> match-highlighted: -1;
+    callback search-edited(string);
+    callback search-chosen(int);
+    callback move-match(int);
+
+    callback page-chosen(int);
+    // (each by the option's place among the page's rows)
+    callback check-toggled(int, bool);
+    callback number-edited(int, int);
+    callback none-toggled(int, bool);
+    callback text-edited(int, string);
+    callback choice-chosen(int, int);
+    // (a sort's type, or its order, by its place in the row's lists)
+    callback sort-chosen(int, int);
+    callback order-chosen(int, int);
+    // (a collect's choice checked or not; its unmatched files' choice)
+    callback collect-toggled(int, int, bool);
+    // (a tag sort's type, order or grouping: the row, which, the choice)
+    callback tag-sort-chosen(int, int, int);
+    callback unmatched-chosen(int, int);
+    // (a time's field: the row, the field, its value)
+    callback field-edited(int, int, int);
+    // (checker options' button clicked)
+    callback checker-clicked(int);
+    callback apply();
+    callback cancel();
+
+    forward-focus: search;
+    keys := FocusScope {
+        // (the suggestions take the arrows, enter and escape while shown)
+        capture-key-pressed(event) => {
+            if (root.matches.length == 0) {
+                return reject;
+            }
+            if (event.text == Key.UpArrow) {
+                root.move-match(-1);
+                return accept;
+            }
+            if (event.text == Key.DownArrow) {
+                root.move-match(1);
+                return accept;
+            }
+            if (event.text == Key.Return) {
+                root.search-chosen(max(0, root.match-highlighted));
+                return accept;
+            }
+            if (event.text == Key.Escape) {
+                root.search-text = "";
+                root.search-edited("");
+                return accept;
+            }
+            reject
+        }
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            search := LineEdit {
+                placeholder-text: root.search-placeholder;
+                text <=> root.search-text;
+                edited(text) => { root.search-edited(text); }
+            }
+            HorizontalLayout {
+                spacing: 8px;
+                vertical-stretch: 1;
+                // (as the reference's 28 characters)
+                page-list := StandardListView {
+                    width: 200px;
+                    model: root.pages;
+                    current-item <=> root.page;
+                    current-item-changed(i) => { root.page-chosen(i); }
+                    // (a page gone to from the search brought into view)
+                    property <int> shown-page: root.page;
+                    changed shown-page => {
+                        let height = self.content-height / max(1, root.pages.length);
+                        let top = self.shown-page * height;
+                        if (top < -self.content-y) {
+                            self.content-y = -top;
+                        } else if (top + height > -self.content-y + self.visible-height) {
+                            self.content-y = -(top + height - self.visible-height);
+                        }
+                    }
+                }
+                ScrollView {
+                    horizontal-stretch: 1;
+                    VerticalLayout {
+                        padding: 4px;
+                        spacing: 4px;
+                        alignment: start;
+                        for row[i] in root.rows: VerticalLayout {
+                            padding-left: row.depth * 16px;
+                            spacing: 2px;
+                          HorizontalLayout {
+                            spacing: 8px;
+                            min-height: 26px;
+                            if row.kind == 0: Text {
+                                text: row.label;
+                                font-weight: 700;
+                                vertical-alignment: center;
+                                horizontal-alignment: center;
+                                horizontal-stretch: 1;
+                            }
+                            if row.kind != 0: Rectangle {
+                                horizontal-stretch: 1;
+                                // (the reference's search highlight)
+                                background: row.found ? #eaea007b : transparent;
+                                VerticalLayout {
+                                    Text {
+                                        text: row.label;
+                                        vertical-alignment: center;
+                                        wrap: word-wrap;
+                                    }
+                                }
+                            }
+                            if row.kind == 1: HorizontalLayout {
+                                width: 260px;
+                                CheckBox {
+                                    checked: row.checked;
+                                    toggled => { root.check-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 2: HorizontalLayout {
+                                width: 260px;
+                                SpinBox {
+                                    minimum: row.minimum;
+                                    maximum: row.maximum;
+                                    value: row.number;
+                                    edited(value) => { root.number-edited(i, value); }
+                                }
+                            }
+                            if row.kind == 3: HorizontalLayout {
+                                width: 260px;
+                                spacing: 4px;
+                                SpinBox {
+                                    // (room for the longest none phrase)
+                                    width: 100px;
+                                    minimum: row.minimum;
+                                    maximum: row.maximum;
+                                    value: row.number;
+                                    enabled: !none-box.checked;
+                                    edited(value) => { root.number-edited(i, value); }
+                                }
+                                if row.unit != "": Text {
+                                    text: row.unit;
+                                    vertical-alignment: center;
+                                }
+                                none-box := CheckBox {
+                                    text: row.none-phrase;
+                                    checked: row.is-none;
+                                    toggled => { root.none-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 4 || row.kind == 6: LineEdit {
+                                width: 260px;
+                                text: row.text;
+                                edited(text) => { root.text-edited(i, text); }
+                            }
+                            if row.kind == 7: HorizontalLayout {
+                                width: 260px;
+                                spacing: 4px;
+                                LineEdit {
+                                    width: 170px;
+                                    text: row.text;
+                                    enabled: !text-none.checked;
+                                    edited(text) => { root.text-edited(i, text); }
+                                }
+                                text-none := CheckBox {
+                                    text: row.none-phrase;
+                                    checked: row.is-none;
+                                    toggled => { root.none-toggled(i, self.checked); }
+                                }
+                            }
+                            if row.kind == 13: HorizontalLayout {
+                                width: 260px;
+                                Button {
+                                    text: row.text;
+                                    clicked => { root.checker-clicked(i); }
+                                }
+                            }
+                            if row.kind == 5: ComboBox {
+                                width: 260px;
+                                model: row.items;
+                                current-index: row.index;
+                                selected => { root.choice-chosen(i, self.current-index); }
+                            }
+                            if row.kind == 10: VerticalLayout {
+                                width: 260px;
+                                spacing: 2px;
+                                ComboBox {
+                                    model: row.items;
+                                    current-index: row.index;
+                                    selected => { root.sort-chosen(i, self.current-index); }
+                                }
+                                ComboBox {
+                                    model: row.orders;
+                                    current-index: row.order-index;
+                                    selected => { root.order-chosen(i, self.current-index); }
+                                }
+                            }
+                            if row.kind == 12: VerticalLayout {
+                                width: 260px;
+                                spacing: 2px;
+                                ComboBox {
+                                    model: row.items;
+                                    current-index: row.index;
+                                    selected => { root.tag-sort-chosen(i, 0, self.current-index); }
+                                }
+                                ComboBox {
+                                    model: row.orders;
+                                    current-index: row.order-index;
+                                    selected => { root.tag-sort-chosen(i, 1, self.current-index); }
+                                }
+                                if row.grouped: ComboBox {
+                                    model: row.groups;
+                                    current-index: row.group-index;
+                                    selected => { root.tag-sort-chosen(i, 2, self.current-index); }
+                                }
+                            }
+                            if row.kind == 11: VerticalLayout {
+                                width: 260px;
+                                spacing: 2px;
+                                Text {
+                                    text: row.text;
+                                    vertical-alignment: center;
+                                    min-height: 26px;
+                                }
+                                for name[c] in row.items: CheckBox {
+                                    text: name;
+                                    checked: row.checks[c];
+                                    toggled => { root.collect-toggled(i, c, self.checked); }
+                                }
+                                Text {
+                                    text: "unmatched files:";
+                                    vertical-alignment: center;
+                                    min-height: 26px;
+                                }
+                                ComboBox {
+                                    model: row.orders;
+                                    current-index: row.order-index;
+                                    selected => { root.unmatched-chosen(i, self.current-index); }
+                                }
+                            }
+                          }
+                            // (a time or a rate: its fields under its label)
+                            if row.kind == 8: HorizontalLayout {
+                                padding-left: 16px;
+                                alignment: start;
+                                TimeFields {
+                                    fields: row.fields;
+                                    edited(f, value) => { root.field-edited(i, f, value); }
+                                }
+                            }
+                            if row.kind == 9: HorizontalLayout {
+                                padding-left: 16px;
+                                spacing: 6px;
+                                alignment: start;
+                                NumberField {
+                                    number: row.number;
+                                    number-edited(n) => { root.number-edited(i, n); }
+                                }
+                                Text {
+                                    text: row.per;
+                                    vertical-alignment: center;
+                                }
+                                TimeFields {
+                                    fields: row.fields;
+                                    edited(f, value) => { root.field-edited(i, f, value); }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "apply";
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+        if root.matches.length > 0: Rectangle {
+            x: search.x;
+            y: search.y + search.height + 2px;
+            width: search.width;
+            height: min(root.matches.length, root.shown) * 24px + 4px;
+            background: Theme.panel;
+            border-width: 1px;
+            border-color: Theme.border;
+            suggestions := ListView {
+                x: 2px;
+                y: 2px;
+                width: parent.width - 4px;
+                height: parent.height - 4px;
+                // (the arrows' pick kept in view)
+                property <int> picked: root.match-highlighted;
+                changed picked => {
+                    if (self.picked >= 0) {
+                        let top = self.picked * 24px;
+                        if (top < -self.content-y) {
+                            self.content-y = -top;
+                        } else if (top + 24px > -self.content-y + self.visible-height) {
+                            self.content-y = -(top + 24px - self.visible-height);
+                        }
+                    }
+                }
+                for text[i] in root.matches: Rectangle {
+                    height: 24px;
+                    background: i == root.match-highlighted ? Theme.highlight
+                        : pick.has-hover ? Theme.hover : transparent;
+                    Text {
+                        x: 4px;
+                        width: parent.width - 8px;
+                        text: text;
+                        color: i == root.match-highlighted ? Theme.highlight-text : Theme.text;
+                        vertical-alignment: center;
+                        overflow: elide;
+                    }
+                    pick := TouchArea {
+                        clicked => { root.search-chosen(i); }
+                    }
+                }
+            }
+        }
+    }
+}

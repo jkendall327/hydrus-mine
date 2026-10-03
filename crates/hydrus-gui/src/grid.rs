@@ -1,16 +1,23 @@
 //! The thumbnail grid's rows, made as the grid scrolls to them: the grid is
-//! a list of rows (so only the visible ones exist), and a row's thumbnails
-//! are decoded when the grid first asks for it, then kept.
+//! a list of rows (so only the visible ones exist). A row's thumbnails are
+//! decoded off the UI thread when the grid first asks for them, shown as
+//! they arrive ([`ThumbnailRows::receive`]), then kept.
 
 use std::cell::{Cell, RefCell};
-use std::collections::HashMap;
+use std::collections::{BTreeSet, HashMap};
 use std::rc::Rc;
+use std::time::Duration;
 
-use slint::{Model, ModelNotify, ModelRc, ModelTracker, VecModel};
+use slint::{Model, ModelNotify, ModelRc, ModelTracker, SharedString, VecModel};
 
 use hydrus_core::HashId;
 
-use crate::{SearchPage, Thumbnail, ThumbnailRow};
+use hydrus_core::thumbnail::ThumbnailRatingSettings;
+
+use crate::thumbnail_icons::{self, IconFacts, Ratings};
+use crate::thumbnail_ratings::{self, Look};
+use crate::thumbnails::ThumbnailLoader;
+use crate::{RatingShape, SearchPage, ThumbBox, ThumbIcon, ThumbRating, Thumbnail, ThumbnailRow};
 
 /// Decoded thumbnails kept; past this, the cache starts afresh.
 const CACHED: usize = 4000;
@@ -19,6 +26,27 @@ pub struct ThumbnailRows {
     page: RefCell<Rc<RefCell<SearchPage>>>,
     columns: Cell<usize>,
     cache: RefCell<HashMap<HashId, slint::Image>>,
+    loader: ThumbnailLoader,
+    /// The window's scale factor, which thumbnails are decoded for.
+    scale: Cell<f32>,
+    /// How many times the thumbnail settings have changed: thumbnails
+    /// decoded under earlier ones are let go.
+    generation: Cell<u64>,
+    /// Thumbnails asked for and not yet decoded, with where the grid last
+    /// showed each file.
+    pending: RefCell<HashMap<HashId, usize>>,
+    /// A thumbnail's border, width and height (the border included), for
+    /// the icons over it.
+    cell: Cell<(i32, i32, i32)>,
+    /// What the icons over each file's thumbnail say, and its ratings,
+    /// read as its row is first shown (and again after the files change).
+    icon_facts: RefCell<HashMap<HashId, (IconFacts, Ratings)>>,
+    /// How ratings are drawn over thumbnails (the options').
+    rating_settings: Cell<ThumbnailRatingSettings>,
+    /// The tag summaries drawn over thumbnails, and what each file's (or
+    /// collection's) say, read as its row is first shown.
+    summaries: RefCell<hydrus_core::tag_summary::TagSummaries>,
+    banners: RefCell<HashMap<HashId, (SharedString, SharedString)>>,
     notify: ModelNotify,
 }
 
@@ -27,18 +55,85 @@ impl std::fmt::Debug for ThumbnailRows {
         f.debug_struct("ThumbnailRows")
             .field("columns", &self.columns.get())
             .field("cached", &self.cache.borrow().len())
+            .field("pending", &self.pending.borrow().len())
             .finish_non_exhaustive()
     }
 }
 
 impl ThumbnailRows {
     pub fn new(page: Rc<RefCell<SearchPage>>) -> Self {
+        let workers = std::thread::available_parallelism().map_or(2, |n| n.get().min(4));
+        let loader = ThumbnailLoader::new(page.borrow().store(), workers);
         Self {
             page: RefCell::new(page),
             columns: Cell::new(1),
             cache: RefCell::default(),
+            loader,
+            scale: Cell::new(1.0),
+            generation: Cell::new(0),
+            pending: RefCell::default(),
+            cell: Cell::new((1, 152, 127)),
+            icon_facts: RefCell::default(),
+            rating_settings: Cell::new(ThumbnailRatingSettings::default()),
+            summaries: RefCell::default(),
+            banners: RefCell::default(),
             notify: ModelNotify::default(),
         }
+    }
+
+    /// Show the thumbnails decoded since last asked; how many.
+    pub fn receive(&self) -> usize {
+        let mut received = Vec::new();
+        while let Some(result) = self.loader.try_receive() {
+            received.push(result);
+        }
+        self.show(received)
+    }
+
+    /// Wait for every thumbnail asked for (for tests: the window's event
+    /// loop otherwise collects them as they come).
+    pub fn wait(&self) {
+        while !self.pending.borrow().is_empty() {
+            let Some(result) = self.loader.receive_timeout(Duration::from_secs(30)) else {
+                return;
+            };
+            self.show(vec![result]);
+        }
+    }
+
+    fn show(&self, received: Vec<crate::thumbnails::Loaded>) -> usize {
+        let count = received.len();
+        let mut rows = BTreeSet::new();
+        {
+            let mut cache = self.cache.borrow_mut();
+            let mut pending = self.pending.borrow_mut();
+            for (id, scale, generation, pixels) in received {
+                // (decoded for a scale the window has since left, or under
+                // thumbnail settings since changed)
+                if scale.to_bits() != self.scale.get().to_bits()
+                    || generation != self.generation.get()
+                {
+                    continue;
+                }
+                if cache.len() >= CACHED {
+                    cache.clear();
+                }
+                cache.insert(
+                    id,
+                    pixels
+                        .map(crate::thumbnails::Pixels::image)
+                        .unwrap_or_default(),
+                );
+                if let Some(index) = pending.remove(&id) {
+                    rows.insert(index / self.columns.get());
+                }
+            }
+        }
+        let row_count = self.row_count();
+        for row in rows.into_iter().filter(|&row| row < row_count) {
+            self.notify.row_changed(row);
+        }
+        count
     }
 
     /// The grid's width changed how many thumbnails fit in a row.
@@ -50,6 +145,26 @@ impl ThumbnailRows {
         }
     }
 
+    /// The window's scale factor: thumbnails are decoded to show pixel for
+    /// pixel at it, so a new one decodes them again.
+    pub fn set_scale(&self, scale: f32) {
+        if scale > 0.0 && scale.to_bits() != self.scale.get().to_bits() {
+            self.scale.set(scale);
+            self.cache.borrow_mut().clear();
+            self.pending.borrow_mut().clear();
+            self.notify.reset();
+        }
+    }
+
+    /// The thumbnail settings changed (their size, say): every thumbnail is
+    /// decoded again.
+    pub fn thumbnails_changed(&self) {
+        self.generation.set(self.generation.get() + 1);
+        self.cache.borrow_mut().clear();
+        self.pending.borrow_mut().clear();
+        self.notify.reset();
+    }
+
     /// How many thumbnails have been decoded (and are kept).
     pub fn cached(&self) -> usize {
         self.cache.borrow().len()
@@ -58,12 +173,152 @@ impl ThumbnailRows {
     /// Show another page's files.
     pub fn set_page(&self, page: Rc<RefCell<SearchPage>>) {
         *self.page.borrow_mut() = page;
+        self.icon_facts.borrow_mut().clear();
+        self.banners.borrow_mut().clear();
         self.notify.reset();
     }
 
     /// The page's files changed.
     pub fn reset(&self) {
+        self.icon_facts.borrow_mut().clear();
+        self.banners.borrow_mut().clear();
         self.notify.reset();
+    }
+
+    /// A thumbnail's border, and its width and height with it.
+    pub fn set_cell(&self, border: i32, width: i32, height: i32) {
+        if self.cell.get() != (border, width, height) {
+            self.cell.set((border, width, height));
+            self.notify.reset();
+        }
+    }
+
+    /// Some files were changed (archived or rated, say): their icons and
+    /// ratings are read again.
+    pub fn forget_files(&self) {
+        self.icon_facts.borrow_mut().clear();
+        for row in 0..self.row_count() {
+            self.notify.row_changed(row);
+        }
+    }
+
+    /// How ratings are drawn over thumbnails (the options').
+    pub fn set_rating_settings(&self, settings: ThumbnailRatingSettings) {
+        if self.rating_settings.get() != settings {
+            self.rating_settings.set(settings);
+            self.notify.reset();
+        }
+    }
+
+    /// The tag summaries drawn over thumbnails (the options').
+    pub fn set_summaries(&self, summaries: hydrus_core::tag_summary::TagSummaries) {
+        if *self.summaries.borrow() != summaries {
+            *self.summaries.borrow_mut() = summaries;
+            self.banners.borrow_mut().clear();
+            self.notify.reset();
+        }
+    }
+
+    /// What the tag banners over `item` (a file or a collection) on `page`
+    /// say.
+    fn banners(&self, page: &SearchPage, item: HashId) -> (SharedString, SharedString) {
+        if let Some(known) = self.banners.borrow().get(&item) {
+            return known.clone();
+        }
+        let files = page
+            .collection(item)
+            .map_or_else(|| vec![item], <[HashId]>::to_vec);
+        let (top, bottom) =
+            thumbnail_icons::banners(page.store(), &files, &self.summaries.borrow());
+        let made = (SharedString::from(top), SharedString::from(bottom));
+        self.banners.borrow_mut().insert(item, made.clone());
+        made
+    }
+
+    /// The icons and ratings over each of `items` (files or collections)
+    /// on `page`, as the reference draws them.
+    fn icons(&self, page: &SearchPage, items: &[HashId]) -> Vec<Overlay> {
+        let members = |item: HashId| -> Vec<HashId> {
+            page.collection(item)
+                .map_or_else(|| vec![item], <[HashId]>::to_vec)
+        };
+        let missing: Vec<HashId> = {
+            let known = self.icon_facts.borrow();
+            items
+                .iter()
+                .flat_map(|&item| members(item))
+                .filter(|id| !known.contains_key(id))
+                .collect()
+        };
+        if !missing.is_empty() {
+            let read = thumbnail_icons::facts_and_ratings(page.store(), &missing);
+            self.icon_facts.borrow_mut().extend(read);
+        }
+        let known = self.icon_facts.borrow();
+        let (border, width, height) = self.cell.get();
+        let services = page.store().snapshot().services.clone();
+        let settings = self.rating_settings.get();
+        items
+            .iter()
+            .map(|&item| {
+                let files = members(item);
+                let collection = page.collection(item).is_some();
+                let facts = if collection {
+                    let of: Vec<IconFacts> = files
+                        .iter()
+                        .filter_map(|id| known.get(id).map(|(f, _)| f.clone()))
+                        .collect();
+                    IconFacts::of_collection(&of)
+                } else {
+                    known.get(&item).map(|(f, _)| f.clone()).unwrap_or_default()
+                };
+                // (a collection's ratings are its first file's, as the
+                // reference's are)
+                let rated = files
+                    .first()
+                    .and_then(|first| known.get(first))
+                    .map(|(_, r)| r.clone())
+                    .unwrap_or_default();
+                let controls = crate::ratings::controls_of(&services, &rated);
+                let layout = thumbnail_ratings::layout(
+                    &services,
+                    &controls,
+                    &settings,
+                    width,
+                    border,
+                    &text_width,
+                );
+                let icons = thumbnail_icons::placed(
+                    &facts,
+                    collection,
+                    border,
+                    width,
+                    height,
+                    layout.top_right_y,
+                )
+                .into_iter()
+                .map(|p| ThumbIcon {
+                    kind: p.icon.code(),
+                    x: p.x as f32,
+                    y: p.y as f32,
+                })
+                .collect();
+                Overlay {
+                    icons,
+                    ratings: layout.drawn.iter().map(thumb_rating).collect(),
+                    boxes: layout
+                        .boxes
+                        .iter()
+                        .map(|b| ThumbBox {
+                            x: b.x as f32,
+                            y: b.y as f32,
+                            width: b.width as f32,
+                            height: b.height as f32,
+                        })
+                        .collect(),
+                }
+            })
+            .collect()
     }
 
     /// The file at `index` changed (e.g. its selection).
@@ -71,21 +326,29 @@ impl ThumbnailRows {
         self.notify.row_changed(index / self.columns.get());
     }
 
-    fn image(&self, page: &SearchPage, id: HashId) -> slint::Image {
+    /// The files selected changed from `before` to `after` (by index):
+    /// the rows whose files' selection changed are drawn again.
+    pub fn selection_changed(&self, before: &BTreeSet<usize>, after: &BTreeSet<usize>) {
+        let columns = self.columns.get();
+        let rows: BTreeSet<usize> = before
+            .symmetric_difference(after)
+            .map(|i| i / columns)
+            .collect();
+        for row in rows {
+            self.notify.row_changed(row);
+        }
+    }
+
+    /// The file's thumbnail if decoded; otherwise a blank, and it is asked for.
+    fn image(&self, id: HashId, index: usize) -> slint::Image {
         if let Some(image) = self.cache.borrow().get(&id) {
             return image.clone();
         }
-        let image = page
-            .thumbnail(id)
-            .as_ref()
-            .map(crate::image)
-            .unwrap_or_default();
-        let mut cache = self.cache.borrow_mut();
-        if cache.len() >= CACHED {
-            cache.clear();
+        if self.pending.borrow_mut().insert(id, index).is_none() {
+            self.loader
+                .request(id, self.scale.get(), self.generation.get());
         }
-        cache.insert(id, image.clone());
-        image
+        slint::Image::default()
     }
 }
 
@@ -111,10 +374,26 @@ impl Model for ThumbnailRows {
             return None;
         }
         let end = (start + columns).min(results.len());
+        let overlays = self.icons(&page, &results[start..end]);
         let thumbnails: Vec<Thumbnail> = (start..end)
-            .map(|i| Thumbnail {
-                image: self.image(&page, results[i]),
-                selected: page.selected() == Some(i),
+            .zip(overlays)
+            .map(|(i, overlay)| {
+                let (top, bottom) = self.banners(&page, results[i]);
+                (i, overlay, top, bottom)
+            })
+            .map(|(i, overlay, top, bottom)| Thumbnail {
+                icons: ModelRc::new(VecModel::from(overlay.icons)),
+                ratings: ModelRc::new(VecModel::from(overlay.ratings)),
+                rating_boxes: ModelRc::new(VecModel::from(overlay.boxes)),
+                top,
+                bottom,
+                image: self.image(results[i], i),
+                selected: page.is_selected(i),
+                files: page
+                    .collection(results[i])
+                    .map_or_else(SharedString::new, |files| {
+                        hydrus_core::numbers::human_int(files.len() as u64).into()
+                    }),
             })
             .collect();
         Some(ThumbnailRow {
@@ -126,4 +405,79 @@ impl Model for ThumbnailRows {
     fn model_tracker(&self) -> &dyn ModelTracker {
         &self.notify
     }
+}
+
+/// What is drawn over a thumbnail: its icons, and its ratings over their
+/// boxes.
+struct Overlay {
+    icons: Vec<ThumbIcon>,
+    ratings: Vec<ThumbRating>,
+    boxes: Vec<ThumbBox>,
+}
+
+/// How wide a rating's "stars/of" is at a pixel size: the reference
+/// measures it in its font; this guesses at the grid's (digits and "/"
+/// about six tenths of the size wide).
+fn text_width(text: &str, pixel_size: i32) -> i32 {
+    let chars = i32::try_from(text.chars().count()).unwrap_or(i32::MAX);
+    (chars * pixel_size * 6 + 9) / 10
+}
+
+/// A rating as the grid draws it.
+fn thumb_rating(drawn: &thumbnail_ratings::Drawn) -> ThumbRating {
+    let colour =
+        |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
+    let mut out = ThumbRating {
+        x: drawn.x as f32,
+        y: drawn.y as f32,
+        ..ThumbRating::default()
+    };
+    let text = match &drawn.look {
+        Look::Shapes {
+            path,
+            first,
+            size,
+            step,
+            shapes,
+            text,
+        } => {
+            out.kind = 0;
+            out.path = (*path).into();
+            out.first = *first as f32;
+            out.size = *size as f32;
+            out.step = *step as f32;
+            out.outline = crate::ratings::outline_width(f64::from(*size)) as f32;
+            let shapes: Vec<RatingShape> = shapes
+                .iter()
+                .map(|s| RatingShape {
+                    pen: colour(s.pen),
+                    brush: colour(s.brush),
+                })
+                .collect();
+            out.shapes = ModelRc::new(VecModel::from(shapes));
+            text.as_ref()
+        }
+        Look::Counter {
+            width,
+            height,
+            colours,
+            text,
+        } => {
+            out.kind = 1;
+            out.width = *width as f32;
+            out.height = *height as f32;
+            out.pen = colour(colours.pen);
+            out.brush = colour(colours.brush);
+            out.text_height = (*height - 1) as f32;
+            Some(text)
+        }
+    };
+    if let Some(text) = text {
+        out.text = text.text.as_str().into();
+        out.text_x = text.x as f32;
+        out.text_y = text.y as f32;
+        out.text_width = text.width as f32;
+        out.text_size = text.pixel_size as f32;
+    }
+    out
 }

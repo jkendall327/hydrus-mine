@@ -3,7 +3,7 @@
 
 use std::collections::BTreeSet;
 
-use hydrus_core::numbers::human_int;
+use hydrus_core::numbers::{human_bytes, resolution_text};
 use hydrus_core::{Mime, ServiceId};
 use hydrus_store::services::ServiceRegistry;
 
@@ -20,14 +20,17 @@ pub struct FileImportOptions {
     pub max_gif_size: Option<u64>,
     pub min_resolution: Option<(u32, u32)>,
     pub max_resolution: Option<(u32, u32)>,
-    /// Local file domains to import into; empty means the first one ("my files").
-    pub destinations: Vec<ServiceId>,
+    /// Local file domains to import into: `None` is the first one ("my
+    /// files"), and none at all blocks new files, as in the reference.
+    pub destinations: Option<Vec<ServiceId>>,
     /// Archive new files instead of putting them in the inbox.
     pub automatically_archive: bool,
     /// Add files already in the client to the destinations too.
     pub destinations_for_already_in_db: bool,
     /// Archive files already in the client (with `automatically_archive`).
     pub archive_already_in_db: bool,
+    /// Import JPEGs and PNGs of more than Pillow's pixel limit.
+    pub allow_decompression_bombs: bool,
 }
 
 impl Default for FileImportOptions {
@@ -40,10 +43,11 @@ impl Default for FileImportOptions {
             max_gif_size: None,
             min_resolution: None,
             max_resolution: None,
-            destinations: Vec::new(),
+            destinations: None,
             automatically_archive: false,
             destinations_for_already_in_db: false,
             archive_already_in_db: true,
+            allow_decompression_bombs: true,
         }
     }
 }
@@ -90,19 +94,22 @@ impl FileImportOptions {
             max_gif_size: filtering.max_gif_size,
             min_resolution: filtering.min_resolution,
             max_resolution: filtering.max_resolution,
-            destinations,
+            destinations: Some(destinations),
             automatically_archive: locations.automatically_archive,
             destinations_for_already_in_db: locations.destinations_for_already_in_db,
             archive_already_in_db: locations.archive_already_in_db,
+            allow_decompression_bombs: filtering.allow_decompression_bombs,
         }
     }
 
-    /// The local file domains new files go to.
-    pub fn destinations(&self, services: &ServiceRegistry) -> Vec<ServiceId> {
-        if self.destinations.is_empty() {
-            crate::local_domains(services).into_iter().take(1).collect()
-        } else {
-            self.destinations.clone()
+    /// The local file domains new files go to, or the reference's error
+    /// when there are none (the reference drops destinations that no longer
+    /// exist before `CheckReadyToImport`).
+    pub fn destinations(&self, services: &ServiceRegistry) -> Result<Vec<ServiceId>, &'static str> {
+        match &self.destinations {
+            None => Ok(crate::local_domains(services).into_iter().take(1).collect()),
+            Some(d) if d.is_empty() => Err(hydrus_core::import_options::NO_IMPORT_DESTINATION),
+            Some(d) => Ok(d.clone()),
         }
     }
 
@@ -193,49 +200,7 @@ impl FileImportOptions {
 
 fn resolution(width: Option<u32>, height: Option<u32>) -> String {
     match (width, height) {
-        (Some(w), Some(h)) => format!("{}x{}", human_int(u64::from(w)), human_int(u64::from(h))),
+        (Some(w), Some(h)) => resolution_text(u64::from(w), u64::from(h)),
         _ => "no resolution".into(),
-    }
-}
-
-/// Sizes as the reference words them: `512B`, `237KB`, `1.5MB`.
-pub fn human_bytes(size: u64) -> String {
-    if size < 1024 {
-        return format!("{}B", human_int(size));
-    }
-    let mut value = size as f64;
-    let mut suffix = 0;
-    while value >= 1024.0 && suffix < 5 {
-        value /= 1024.0;
-        suffix += 1;
-    }
-    // three significant figures, keeping every integer digit
-    let decimals = if value >= 100.0 {
-        0
-    } else if value >= 10.0 {
-        1
-    } else {
-        2
-    };
-    let text = format!("{value:.decimals$}");
-    let text = if text.contains('.') {
-        text.trim_end_matches('0').trim_end_matches('.').to_owned()
-    } else {
-        text
-    };
-    format!("{text}{}B", ["", "K", "M", "G", "T", "P"][suffix])
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn bytes_read_like_the_reference() {
-        assert_eq!(human_bytes(512), "512B");
-        assert_eq!(human_bytes(1024), "1KB");
-        assert_eq!(human_bytes(1536), "1.5KB");
-        assert_eq!(human_bytes(237 * 1024), "237KB");
-        assert_eq!(human_bytes(10 * 1024 * 1024 + 300 * 1024), "10.3MB");
     }
 }

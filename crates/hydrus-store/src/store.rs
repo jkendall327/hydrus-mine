@@ -26,6 +26,48 @@ use hydrus_core::url::{UrlClassSettings, UrlClasses};
 /// Name of the database file inside a store directory.
 pub const DB_FILE_NAME: &str = "hydrus.db";
 
+/// The lock file `hydrus serve` holds in a store directory while it runs
+/// (and the commands doing its work hold while they do it).
+pub const SERVE_LOCK_FILE: &str = "serve.lock";
+
+/// The lock file the desktop client holds in a store directory while it is
+/// open.
+pub const GUI_LOCK_FILE: &str = "gui.lock";
+
+/// Take the lock in `name`, in the store directory `dir`: `None` if another
+/// process holds it. It is let go when the file returned is dropped (or the
+/// process ends, however it ends).
+fn lock(dir: &Path, name: &str) -> std::io::Result<Option<std::fs::File>> {
+    let file = std::fs::OpenOptions::new()
+        .create(true)
+        .truncate(false)
+        .write(true)
+        .open(dir.join(name))?;
+    match file.try_lock() {
+        Ok(()) => Ok(Some(file)),
+        Err(std::fs::TryLockError::WouldBlock) => Ok(None),
+        Err(std::fs::TryLockError::Error(e)) => Err(e),
+    }
+}
+
+/// Take the lock `hydrus serve` holds while it runs on the store in `dir`
+/// (see [`lock`]).
+pub fn lock_serving(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, SERVE_LOCK_FILE)
+}
+
+/// Take the lock the desktop client holds while it is open on the store in
+/// `dir` (see [`lock`]).
+pub fn lock_gui(dir: &Path) -> std::io::Result<Option<std::fs::File>> {
+    lock(dir, GUI_LOCK_FILE)
+}
+
+/// Whether the desktop client is open on the store in `dir`.
+pub fn gui_open(dir: &Path) -> bool {
+    // (the lock is let go at once, if it was free)
+    matches!(lock_gui(dir), Ok(None))
+}
+
 /// Immutable view of the in-memory state.
 #[derive(Debug, Default)]
 pub struct Snapshot {
@@ -173,6 +215,12 @@ impl Store {
         f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
     ) -> Result<R> {
         self.db.write(f)
+    }
+
+    /// Load the in-memory snapshot again (another process changed what it
+    /// holds: the thumbnail settings, say).
+    pub fn refresh(&self) -> Result<()> {
+        self.write_and_refresh(|_| Ok(()))
     }
 
     /// Run a write that changes services or tag relations, republishing the

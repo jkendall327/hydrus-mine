@@ -15,7 +15,6 @@ use hydrus_store::Store;
 pub mod auth;
 pub mod domains;
 pub mod error;
-pub mod file_filter;
 pub mod location;
 pub mod media_json;
 pub mod params;
@@ -44,8 +43,6 @@ pub struct AppState {
     pub locked: std::sync::atomic::AtomicBool,
     /// Holds the database paused while it is locked.
     pub paused: parking_lot::Mutex<Option<hydrus_store::Paused>>,
-    /// Popup messages (`/manage_popups/*`).
-    pub popups: popups::Popups,
     /// When the access keys were last read from the database.
     pub keys_read: parking_lot::Mutex<std::time::Instant>,
     /// Identifies this run of the client (`/client_info`).
@@ -58,21 +55,24 @@ impl AppState {
         let access = store.read(AccessRegistry::load)?;
         let importer =
             hydrus_import::FileImporter::new(Arc::clone(&store), hydrus_media::MediaTools::new());
-        let downloads =
-            hydrus_net::NetEngine::new(Arc::clone(&store), hydrus_net::NetOptions::default())
+        let network: hydrus_store::network::NetworkSettings =
+            store.read(hydrus_store::settings::get)?;
+        let downloads = hydrus_net::NetEngine::new(
+            Arc::clone(&store),
+            hydrus_net::NetOptions::from_settings(&network),
+        )
+        .map_err(|e| tracing::error!(error = %e, "the network engine could not start"))
+        .ok()
+        .and_then(|net| {
+            hydrus_download::Downloader::new(Arc::clone(&store), Arc::new(net), importer.clone())
                 .ok()
-                .and_then(|net| {
-                    hydrus_download::Downloader::new(
-                        Arc::clone(&store),
-                        Arc::new(net),
-                        importer.clone(),
-                    )
-                    .ok()
-                })
-                .map(|downloader| {
-                    // the reference's default `downloader_network_error_delay`
-                    hydrus_download::QueueRunner::new(Arc::new(downloader), 90 * 60)
-                });
+        })
+        .map(|downloader| {
+            hydrus_download::QueueRunner::new(
+                Arc::new(downloader),
+                network.downloader_network_error_delay,
+            )
+        });
         let subscriptions = downloads.as_ref().map(|runner| {
             hydrus_download::subscriptions::SubscriptionRunner::new(Arc::clone(runner.downloader()))
         });
@@ -84,7 +84,6 @@ impl AppState {
             subscriptions,
             locked: std::sync::atomic::AtomicBool::new(false),
             paused: parking_lot::Mutex::new(None),
-            popups: popups::Popups::default(),
             keys_read: parking_lot::Mutex::new(std::time::Instant::now()),
             boot_id: rand::random(),
             boot_time_ms: hydrus_core::time::TimestampMs::now().millis(),
@@ -127,8 +126,8 @@ impl AppState {
 pub fn router(state: Arc<AppState>) -> Router {
     use axum::routing::post;
     use routes::{
-        access, add_files, add_tags, database, files, metadata, network, popups, relationships,
-        search, services, tags, urls,
+        access, add_files, add_tags, database, files, metadata, network, pages, popups,
+        relationships, search, services, tags, urls,
     };
     Router::new()
         .route("/api_version", get(access::api_version))
@@ -267,6 +266,15 @@ pub fn router(state: Arc<AppState>) -> Router {
             post(popups::call_user_callable),
         )
         .route("/manage_popups/get_popups", get(popups::get_popups))
+        .route("/manage_pages/get_pages", get(pages::get_pages))
+        .route("/manage_pages/get_page_info", get(pages::get_page_info))
+        .route(
+            "/manage_pages/get_media_viewers",
+            get(pages::get_media_viewers),
+        )
+        .route("/manage_pages/add_files", post(pages::add_files))
+        .route("/manage_pages/focus_page", post(pages::focus_page))
+        .route("/manage_pages/refresh_page", post(pages::refresh_page))
         .route("/manage_database/mr_bones", get(database::mr_bones))
         .route(
             "/manage_database/get_client_options",

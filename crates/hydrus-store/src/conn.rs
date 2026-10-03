@@ -27,6 +27,61 @@ const MAX_BATCH_JOBS: usize = 256;
 /// Upper bound on how long a batch keeps absorbing queued writes.
 const MAX_BATCH_TIME: Duration = Duration::from_millis(200);
 
+/// How often the writer checkpoints the write-ahead log after a commit,
+/// and how often it empties it (the reference's
+/// `WAL_PASSIVE_CHECKPOINT_PERIOD` and `WAL_TRUNCATE_CHECKPOINT_PERIOD`).
+const PASSIVE_CHECKPOINT_PERIOD: Duration = Duration::from_secs(300);
+const TRUNCATE_CHECKPOINT_PERIOD: Duration = Duration::from_secs(900);
+/// How often the query planner's statistics are brought up to date as the
+/// tables grow (for the reference's periodic re-analysis).
+const OPTIMIZE_PERIOD: Duration = Duration::from_secs(3600);
+
+/// The writer's database upkeep, done between batches.
+struct Upkeep {
+    checkpointed: Instant,
+    truncated: Instant,
+    optimized: Instant,
+}
+
+impl Upkeep {
+    fn new(now: Instant) -> Self {
+        Self {
+            checkpointed: now,
+            truncated: now,
+            optimized: now,
+        }
+    }
+
+    fn after_commit(&mut self, conn: &Connection, now: Instant) {
+        if now.duration_since(self.checkpointed) >= PASSIVE_CHECKPOINT_PERIOD {
+            let mode = if now.duration_since(self.truncated) >= TRUNCATE_CHECKPOINT_PERIOD {
+                self.truncated = now;
+                "TRUNCATE"
+            } else {
+                "PASSIVE"
+            };
+            if let Err(e) =
+                conn.query_row(&format!("PRAGMA wal_checkpoint({mode})"), [], |_| Ok(()))
+            {
+                tracing::warn!(error = %e, "checkpointing the write-ahead log failed");
+            }
+            self.checkpointed = now;
+        }
+        if now.duration_since(self.optimized) >= OPTIMIZE_PERIOD {
+            optimize(conn);
+            self.optimized = now;
+        }
+    }
+}
+
+/// `PRAGMA optimize`, kept quick: it analyzes the tables whose statistics
+/// have gone stale, from a sample.
+fn optimize(conn: &Connection) {
+    if let Err(e) = conn.execute_batch("PRAGMA analysis_limit = 1000; PRAGMA optimize;") {
+        tracing::warn!(error = %e, "optimizing the database failed");
+    }
+}
+
 /// Work to run after the batch containing a write has committed.
 pub(crate) type Effect = Box<dyn FnOnce() + Send>;
 
@@ -312,6 +367,7 @@ impl Drop for PooledReader<'_> {
 }
 
 fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
+    let mut upkeep = Upkeep::new(Instant::now());
     // a barrier job that arrived while a batch was open waits for the next one
     let mut carried: Option<Job> = None;
     while let Some(first) = carried.take().or_else(|| jobs.recv().ok()) {
@@ -376,7 +432,10 @@ fn writer_loop(conn: &Connection, jobs: &Receiver<Job>) {
             }
             (outcome.reply)(commit_error.clone());
         }
+        upkeep.after_commit(conn, Instant::now());
     }
+    // closing: as SQLite advises before a connection closes
+    optimize(conn);
 }
 
 /// Run one job inside its own savepoint.
@@ -399,6 +458,35 @@ fn run_job(conn: &Connection, job: WriteJob) -> JobOutcome {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn the_writer_empties_the_log_every_quarter_hour() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("hydrus.db");
+        let db = Db::open(&path, 1).unwrap();
+        db.write(|ctx| {
+            ctx.conn()
+                .execute("INSERT INTO texts (text) VALUES ('something')", [])?;
+            Ok(())
+        })
+        .unwrap();
+        let wal = dir.path().join("hydrus.db-wal");
+        assert!(std::fs::metadata(&wal).unwrap().len() > 0);
+        let conn = Connection::open(&path).unwrap();
+        schema::configure(&conn).unwrap();
+        let limit: i64 = conn
+            .query_row("PRAGMA journal_size_limit", [], |r| r.get(0))
+            .unwrap();
+        assert_eq!(limit, 128 * 1024 * 1024);
+
+        let now = Instant::now();
+        let mut upkeep = Upkeep::new(now);
+        upkeep.after_commit(&conn, now + Duration::from_secs(10));
+        assert!(std::fs::metadata(&wal).unwrap().len() > 0, "too soon");
+        upkeep.after_commit(&conn, now + TRUNCATE_CHECKPOINT_PERIOD);
+        assert_eq!(std::fs::metadata(&wal).unwrap().len(), 0, "emptied");
+        drop(db);
+    }
 
     fn temp_db() -> (tempfile::TempDir, Db) {
         let dir = tempfile::tempdir().unwrap();

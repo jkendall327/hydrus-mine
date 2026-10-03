@@ -6,6 +6,8 @@ on:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
   pull_request:
     paths: ['crates/**', 'xtask/**', 'oracle/**', 'parity/**', 'Cargo.toml', 'Cargo.lock', 'rust-toolchain.toml', '.github/workflows/rust.yml']
+  # (from the Actions tab)
+  workflow_dispatch:
 
 concurrency:
   group: rust-${{ github.ref }}
@@ -35,3 +37,31 @@ jobs:
         run: cargo test --workspace --locked
       - name: parity ratchet
         run: cargo xtask ratchet --check
+
+  # hydrus-rs should build and pass its tests on Windows and macOS too; the
+  # Linux job above is the full check (lints and the parity ratchet).
+  other-platforms:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: '1.94'
+      - uses: Swatinem/rust-cache@v2
+        with:
+          # their cold builds are long: keep what a failed run built
+          cache-on-failure: true
+      - name: install ffmpeg (Windows)
+        if: runner.os == 'Windows'
+        run: choco install ffmpeg -y --no-progress
+      - name: install ffmpeg (macOS)
+        if: runner.os == 'macOS'
+        run: brew install ffmpeg
+      - name: build
+        run: cargo build --workspace --all-targets --locked
+      - name: test
+        run: cargo test --workspace --locked --no-fail-fast

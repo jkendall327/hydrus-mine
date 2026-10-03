@@ -1,0 +1,240 @@
+// The "review files to import" window (file > import files, or files
+// dropped on the main window; `src/local_import.rs`), as the reference's
+// `ReviewLocalFileImports`: the paths given, each parsed (#, path,
+// filetype, size), a box to add more, the parsing's progress with its pause
+// and stop buttons, whether to delete the originals, and "import now".
+
+import { Button, CheckBox, LineEdit, ListView, ProgressIndicator } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+// a row of the list: its cells (#, path, filetype, size), whether it is
+// selected, and whether parsing found a problem with it
+export struct ImportRow {
+    cells: [string],
+    selected: bool,
+    problem: bool,
+}
+
+// the list's column widths, as the reference's (#, then the path taking
+// the rest, then filetype and size)
+component Cells inherits HorizontalLayout {
+    in property <[string]> cells;
+    in property <bool> bold;
+    in property <color> colour: Theme.text;
+    spacing: 6px;
+    padding-left: 4px;
+    padding-right: 4px;
+    Text {
+        width: 40px;
+        text: root.cells[0];
+        font-weight: root.bold ? 700 : 400;
+        color: root.colour;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+    }
+    Text {
+        horizontal-stretch: 1;
+        text: root.cells[1];
+        font-weight: root.bold ? 700 : 400;
+        color: root.colour;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    Text {
+        width: 190px;
+        text: root.cells[2];
+        font-weight: root.bold ? 700 : 400;
+        color: root.colour;
+        overflow: elide;
+        vertical-alignment: center;
+    }
+    Text {
+        width: 70px;
+        text: root.cells[3];
+        font-weight: root.bold ? 700 : 400;
+        color: root.colour;
+        horizontal-alignment: right;
+        vertical-alignment: center;
+    }
+}
+
+export component ReviewImportsWindow inherits Window {
+    title: "review files to import";
+    preferred-width: 820px;
+    preferred-height: 560px;
+    background: Theme.window;
+
+    in property <[ImportRow]> rows;
+    in property <string> progress;
+    in property <float> fraction;
+    // parsing left to do (the pause and stop buttons), and paused
+    in property <bool> working;
+    in property <bool> paused;
+    in property <bool> can-import;
+    in property <bool> any-selected;
+    in-out property <bool> search-subdirectories: true;
+    in-out property <bool> delete-after-success;
+    // "Remove all selected?", while asked
+    in-out property <bool> asking-remove;
+
+    // a path typed or pasted (as the reference's "add files" and "add
+    // folder" pick them)
+    callback path-entered(string);
+    // a click on a row, with ctrl or shift held
+    callback row-clicked(int, bool, bool);
+    callback remove-files();
+    callback pause-play();
+    callback stop();
+    callback subdirectories-toggled(bool);
+    callback delete-toggled(bool);
+    callback import-now();
+    callback cancel();
+
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                root.cancel();
+                return accept;
+            }
+            if (event.text == Key.Delete && root.any-selected) {
+                root.asking-remove = true;
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            Rectangle {
+                vertical-stretch: 1;
+                border-width: 1px;
+                border-color: Theme.border;
+                background: Theme.panel;
+                VerticalLayout {
+                    padding: 1px;
+                    Rectangle {
+                        height: 24px;
+                        background: Theme.window;
+                        Cells {
+                            cells: ["#", "path", "filetype", "size"];
+                            bold: true;
+                        }
+                    }
+                    ListView {
+                        vertical-stretch: 1;
+                        for row[i] in root.rows: Rectangle {
+                            height: 22px;
+                            background: row.selected ? Theme.highlight : transparent;
+                            Cells {
+                                cells: row.cells;
+                                colour: row.selected ? Theme.highlight-text : Theme.text;
+                            }
+                            TouchArea {
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                        keys.focus();
+                                        root.row-clicked(i, event.modifiers.control, event.modifiers.shift);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                LineEdit {
+                    horizontal-stretch: 1;
+                    placeholder-text: "a file or folder to add (or drop them on the window)";
+                    accepted(text) => {
+                        root.path-entered(text);
+                        self.text = "";
+                    }
+                }
+                CheckBox {
+                    text: "search subdirectories";
+                    checked <=> root.search-subdirectories;
+                    toggled => { root.subdirectories-toggled(self.checked); }
+                }
+                Button {
+                    text: "remove files";
+                    enabled: root.any-selected;
+                    clicked => { root.asking-remove = true; }
+                }
+            }
+            if root.asking-remove: HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Text {
+                    text: "Remove all selected?";
+                    vertical-alignment: center;
+                }
+                Button {
+                    text: "yes";
+                    clicked => {
+                        root.asking-remove = false;
+                        root.remove-files();
+                    }
+                }
+                Button {
+                    text: "no";
+                    clicked => { root.asking-remove = false; }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    spacing: 2px;
+                    Text {
+                        text: root.progress;
+                        overflow: elide;
+                    }
+                    ProgressIndicator {
+                        progress: root.fraction;
+                    }
+                }
+                Button {
+                    icon: root.paused ? @image-url("../../../static/play.png") : @image-url("../../../static/pause.png");
+                    enabled: root.working;
+                    clicked => { root.pause-play(); }
+                }
+                Button {
+                    icon: @image-url("../../../static/stop.png");
+                    enabled: root.working;
+                    clicked => { root.stop(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                // (the reference's warning, in its warning colour)
+                if root.delete-after-success: Text {
+                    text: "YOUR ORIGINAL FILES WILL BE DELETED";
+                    color: #c00000;
+                    font-weight: 700;
+                    vertical-alignment: center;
+                }
+                CheckBox {
+                    text: "delete original files after successful import";
+                    checked <=> root.delete-after-success;
+                    toggled => { root.delete-toggled(self.checked); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "import now";
+                    enabled: root.can-import;
+                    clicked => { root.import-now(); }
+                }
+                // (tags and sidecars with the import aren't done yet)
+                Button {
+                    text: "add tags/urls with the import >>";
+                    enabled: false;
+                }
+            }
+        }
+    }
+}

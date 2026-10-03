@@ -15,6 +15,7 @@ use hydrus_core::{ContentStatus, HashId, ServiceId, ServiceKey, TagId};
 
 use super::write::{PairRelationship, RelationshipWriter};
 use crate::content::{ContentWriter, FileTime, MappingAction};
+use crate::delete_lock::{DeleteLock, Reinbox};
 use crate::error::Result;
 use crate::media::{self, MediaResult, Rating};
 use crate::services::ServiceKind;
@@ -60,6 +61,17 @@ pub struct TagMerge {
     pub filter: TagFilter,
 }
 
+/// Which incoming notes merge, and under what names (the note options'
+/// name whitelist, then its renames: by name, else all to one).
+#[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
+#[serde(default)]
+pub struct NoteNames {
+    /// If any, only notes with these names.
+    pub whitelist: Vec<String>,
+    pub all_override: Option<String>,
+    pub overrides: Vec<(String, String)>,
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
 pub struct RatingMerge {
     pub service: ServiceKey,
@@ -75,6 +87,8 @@ pub struct MergeOptions {
     pub notes: Option<MergeAction>,
     /// How incoming notes join a file's existing notes.
     pub note_merge: Option<NoteMerge>,
+    /// Which incoming notes join, and under what names.
+    pub note_names: NoteNames,
     pub archive: ArchiveSync,
     pub urls: Option<SyncAction>,
     pub file_modified: Option<SyncAction>,
@@ -117,6 +131,7 @@ impl Default for DuplicateMergeSettings {
                 extend_existing: true,
                 conflict: NoteConflict::Rename,
             }),
+            note_names: NoteNames::default(),
             archive: ArchiveSync::Always,
             urls: Some(sync),
             file_modified: Some(sync),
@@ -154,6 +169,9 @@ pub struct PairDecision<'o> {
     pub delete_b: bool,
     /// Recorded as the reason for deleting a file.
     pub deletion_reason: &'o str,
+    /// Whether an archived file it deletes is inboxed first, with the delete
+    /// lock on (so that it can go for good).
+    pub reinbox: Reinbox,
 }
 
 /// Carry out a decision: merge metadata, delete files, then set the
@@ -176,8 +194,13 @@ pub fn apply_decision(w: &mut ContentWriter<'_>, decision: &PairDecision<'_>) ->
         merge(w, options, &pair, [decision.delete_a, decision.delete_b])?;
     }
     let combined_local = w.roles().combined_local_media;
+    let lock: DeleteLock = crate::settings::get(w.conn())?;
     for (media, delete) in [(ma, decision.delete_a), (mb, decision.delete_b)] {
         if delete && media.is_current_in(combined_local) {
+            // (archived as it was before the merge, as in the reference)
+            if !media.inbox && decision.reinbox.applies(&lock) {
+                w.inbox(&[media.hash_id])?;
+            }
             w.delete_files(
                 combined_local,
                 &[media.hash_id],
@@ -357,9 +380,18 @@ fn merge(
                 .iter()
                 .map(|(k, v)| (k.clone(), v.clone()))
                 .collect();
-            options
-                .note_merge
-                .map_or_else(BTreeMap::new, |m| m.merge(existing, &incoming))
+            // (`GetUpdateeNamesToNotes`: whitelisted, renamed, then merged)
+            options.note_merge.map_or_else(BTreeMap::new, |m| {
+                hydrus_core::import_options::NoteImportOptions {
+                    get_notes: true,
+                    extend_existing_note_if_possible: m.extend_existing,
+                    conflict: m.conflict,
+                    name_whitelist: options.note_names.whitelist.clone(),
+                    all_name_override: options.note_names.all_override.clone(),
+                    name_overrides: options.note_names.overrides.clone(),
+                }
+                .updates(existing, &incoming)
+            })
         };
         let for_a = merged_into(&first, &second);
         let for_b = (action == MergeAction::TwoWay).then(|| merged_into(&second, &first));
@@ -460,4 +492,84 @@ fn sync_urls(
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use hydrus_core::notes::{NoteConflict, NoteMerge};
+
+    use super::*;
+    use crate::import::tests::import_basic;
+    use crate::store::Store;
+
+    /// Notes merge through the options' name whitelist and renames, as the
+    /// reference's note import options take them.
+    #[test]
+    fn only_whitelisted_notes_merge_under_their_new_names() {
+        let (_source, dest_dir, _db) = import_basic();
+        let store = Store::open(dest_dir.path()).unwrap();
+        let files: Vec<HashId> = store
+            .read(|c| {
+                Ok(
+                    c.prepare("SELECT hash_id FROM files ORDER BY hash_id LIMIT 2")?
+                        .query_map([], |r| r.get(0))?
+                        .collect::<rusqlite::Result<_>>()?,
+                )
+            })
+            .unwrap();
+        let (a, b) = (files[0], files[1]);
+        let options = MergeOptions {
+            notes: Some(MergeAction::Copy),
+            note_merge: Some(NoteMerge {
+                extend_existing: true,
+                conflict: NoteConflict::Rename,
+            }),
+            note_names: NoteNames {
+                whitelist: vec!["comment".into(), "source".into()],
+                all_override: None,
+                overrides: vec![("comment".into(), "from the duplicate".into())],
+            },
+            ..MergeOptions::default()
+        };
+        store
+            .write_content(move |w| {
+                for name in ["comment", "source", "translation"] {
+                    w.set_note(b, name, &format!("{name} text"))?;
+                }
+                apply_decision(
+                    w,
+                    &PairDecision {
+                        relationship: PairRelationship::Better,
+                        a,
+                        b,
+                        merge: Some(&options),
+                        delete_a: false,
+                        delete_b: false,
+                        deletion_reason: "",
+                        reinbox: Reinbox::Never,
+                    },
+                )
+            })
+            .unwrap();
+        let notes = store
+            .read(|c| {
+                Ok(media::load(c, &store.snapshot().services, None, &[a])?
+                    .results
+                    .remove(0)
+                    .notes)
+            })
+            .unwrap();
+        let mine: Vec<(&str, &str)> = notes
+            .iter()
+            .map(|(n, t)| (n.as_str(), t.as_str()))
+            .filter(|(_, t)| t.ends_with(" text"))
+            .collect();
+        assert_eq!(
+            mine,
+            [
+                ("from the duplicate", "comment text"),
+                ("source", "source text")
+            ]
+        );
+    }
 }

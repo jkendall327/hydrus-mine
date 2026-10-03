@@ -166,6 +166,9 @@ pub enum RatioOp {
     TallerThan,
     /// Within ±15% of the given ratio.
     Approx,
+    /// Any other ratio. The reference's editor makes this; its text parser
+    /// has no syntax for it.
+    NotEqual,
 }
 
 impl RatioOp {
@@ -176,6 +179,7 @@ impl RatioOp {
             RatioOp::WiderThan => "wider than",
             RatioOp::TallerThan => "taller than",
             RatioOp::Approx => "\u{2248}",
+            RatioOp::NotEqual => "\u{2260}",
         }
     }
 }

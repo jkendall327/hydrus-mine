@@ -109,7 +109,12 @@ fn imports_match_what_the_reference_records() {
             want["pixel_hash"].as_str().map(str::to_owned),
             "{file}"
         );
-        if let Some(thumbnail) = want["thumbnail"].as_object() {
+        // (a video's frames come from ffmpeg, which decodes differently
+        // between versions)
+        let from_ffmpeg = hydrus_media::mimes::is_video(info.mime);
+        if let Some(thumbnail) = want["thumbnail"].as_object()
+            && (!from_ffmpeg || hydrus_testkit::recording_ffmpeg())
+        {
             assert_eq!(
                 info.blurhash.as_deref(),
                 thumbnail["blurhash"].as_str(),
@@ -214,7 +219,7 @@ fn rules_veto_and_bad_files_error() {
     assert_eq!(vetoed.status, ImportStatus::Vetoed);
     assert_eq!(
         vetoed.note,
-        "File was 104KB but the upper limit in the File Filtering Import Options is 1KB."
+        "File was 104 KB but the upper limit in the File Filtering Import Options is 1 KB."
     );
 
     let junk = w
@@ -223,4 +228,174 @@ fn rules_veto_and_bad_files_error() {
         .unwrap();
     assert_eq!(junk.status, ImportStatus::Error, "{}", junk.note);
     assert!(!junk.note.is_empty());
+}
+
+#[test]
+fn a_missing_thumbnail_is_made_again_from_its_file() {
+    let w = world();
+    let options = FileImportOptions::default();
+    let hash = w
+        .importer
+        .import_path(&media_dir().join("png_rgba.png"), &options)
+        .unwrap()
+        .hash
+        .unwrap();
+    let path = w.store.snapshot().storage.thumbnail_path(&hash).unwrap();
+    let original = std::fs::read(&path).unwrap();
+    std::fs::remove_file(&path).unwrap();
+
+    let made = w.importer.regenerate_thumbnail(&w.load(&hash)).unwrap();
+    assert_eq!(made.as_deref(), Some(path.as_path()));
+    assert_eq!(
+        std::fs::read(&path).unwrap(),
+        original,
+        "the same thumbnail"
+    );
+
+    // a file that is no longer stored can't give one
+    std::fs::remove_file(&path).unwrap();
+    let id = w.id(&hash);
+    w.store
+        .write_content(move |c| {
+            let storage = c.roles().local_file_storage;
+            c.delete_files(storage, &[id], None)
+        })
+        .unwrap();
+    assert!(w.importer.regenerate_thumbnail(&w.load(&hash)).is_err());
+    assert!(!path.exists());
+}
+
+#[test]
+fn imports_record_xmp_iptc_and_software_flags() {
+    let w = world();
+    let options = FileImportOptions::default();
+    let dir = hydrus_testkit::fixture_path("metadata");
+    for (file, flag) in [
+        ("jpeg_xmp.jpg", FileFlags::XMP),
+        ("jpeg_iptc_keywords.jpg", FileFlags::IPTC),
+        ("png_creator.png", FileFlags::SOFTWARE_SOURCE),
+    ] {
+        let hash = w
+            .importer
+            .import_path(&dir.join(file), &options)
+            .unwrap()
+            .hash
+            .unwrap();
+        let flags = w.load(&hash).info.unwrap().flags;
+        assert!(flags.has(flag), "{file}: {flags:?}");
+    }
+}
+
+#[test]
+fn a_failed_copy_into_storage_pauses_the_importers() {
+    use hydrus_store::settings::{FolderSettings, Pauses};
+    let w = world();
+    let path = media_dir().join("png_rgb.png");
+    let hash = hydrus_media::hash_file(&path).unwrap().sha256;
+    let dest = w
+        .store
+        .snapshot()
+        .storage
+        .file_path(&hash, hydrus_core::Mime::ImagePng)
+        .unwrap();
+    // a file where its folder should be
+    let folder = dest.parent().unwrap();
+    std::fs::create_dir_all(folder.parent().unwrap()).unwrap();
+    std::fs::write(folder, b"in the way").unwrap();
+
+    let result = w.importer.import_path(&path, &FileImportOptions::default());
+    let error = result.unwrap_err().to_string();
+    assert!(error.contains("failed"), "{error}");
+    let (pauses, folders): (Pauses, FolderSettings) = w
+        .store
+        .read(|c| {
+            Ok((
+                hydrus_store::settings::get(c)?,
+                hydrus_store::settings::get(c)?,
+            ))
+        })
+        .unwrap();
+    assert!(pauses.subscriptions && pauses.file_queues, "{pauses:?}");
+    assert!(folders.pause_import_folders);
+    assert!(!pauses.network_traffic, "only the importers");
+}
+
+#[test]
+fn decompression_bombs_are_vetoed_when_the_options_say_so() {
+    // a PNG claiming 20000x20000 pixels, past Pillow's limit
+    let chunk = |kind: &[u8], body: &[u8]| {
+        let mut out = (body.len() as u32).to_be_bytes().to_vec();
+        out.extend_from_slice(kind);
+        out.extend_from_slice(body);
+        let mut crc_input = kind.to_vec();
+        crc_input.extend_from_slice(body);
+        out.extend_from_slice(&crc32(&crc_input).to_be_bytes());
+        out
+    };
+    let mut ihdr = 20000u32.to_be_bytes().to_vec();
+    ihdr.extend_from_slice(&20000u32.to_be_bytes());
+    ihdr.extend_from_slice(&[8, 2, 0, 0, 0]);
+    let mut png = b"\x89PNG\r\n\x1a\n".to_vec();
+    png.extend(chunk(b"IHDR", &ihdr));
+    png.extend(chunk(
+        b"IDAT",
+        &[0x78, 0x9c, 0x03, 0x00, 0x00, 0x00, 0x00, 0x01],
+    ));
+    png.extend(chunk(b"IEND", b""));
+    let w = world();
+    let options = FileImportOptions {
+        allow_decompression_bombs: false,
+        ..FileImportOptions::default()
+    };
+    let result = w.importer.import_bytes(&png, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::Vetoed);
+    assert_eq!(result.note, "Image seems to be a Decompression Bomb!");
+}
+
+/// CRC-32 (IEEE), as PNG chunks carry.
+fn crc32(data: &[u8]) -> u32 {
+    let mut crc = 0xFFFF_FFFFu32;
+    for &byte in data {
+        crc ^= u32::from(byte);
+        for _ in 0..8 {
+            crc = if crc & 1 != 0 {
+                (crc >> 1) ^ 0xEDB8_8320
+            } else {
+                crc >> 1
+            };
+        }
+    }
+    !crc
+}
+
+#[test]
+fn a_new_file_with_no_import_destination_is_vetoed() {
+    use hydrus_core::import_options::{CallerType, ImportOptionsManager, NO_IMPORT_DESTINATION};
+    let w = world();
+    let path = media_dir().join("png_rgb.png");
+    // options whose only destination has since been deleted
+    let mut full = ImportOptionsManager::default().full(CallerType::ClientApi, None, &[]);
+    full.locations.destinations = vec!["ab".repeat(32)];
+    let options = FileImportOptions::from_full(&full, &w.store.snapshot().services);
+    let result = w.importer.import_path(&path, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::Vetoed);
+    assert_eq!(result.note, NO_IMPORT_DESTINATION);
+    assert_eq!(result.raised.as_deref(), Some(NO_IMPORT_DESTINATION));
+    let hash = result.hash.unwrap();
+    let stored = w
+        .store
+        .snapshot()
+        .storage
+        .file_path(&hash, result.mime.unwrap());
+    assert!(!stored.unwrap().exists(), "nothing reaches storage");
+
+    // with somewhere to go, it imports
+    let result = w
+        .importer
+        .import_path(&path, &FileImportOptions::default())
+        .unwrap();
+    assert_eq!(result.status, ImportStatus::SuccessfulAndNew);
+    // and a file the client has is only "already in db", as in the reference
+    let result = w.importer.import_path(&path, &options).unwrap();
+    assert_eq!(result.status, ImportStatus::SuccessfulButRedundant);
 }

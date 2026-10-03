@@ -11,6 +11,7 @@ use std::collections::{BTreeMap, BTreeSet};
 use rusqlite::{Connection, OptionalExtension, Row, params};
 use serde::{Deserialize, Serialize};
 
+use hydrus_core::HashId;
 use hydrus_core::import_options::ImportOptionsSlice;
 
 use crate::error::{Result, StoreError};
@@ -25,6 +26,9 @@ pub enum QueueKind {
     Subscription,
     /// An import folder (its settings are the queue's extra).
     ImportFolder,
+    /// Files imported from disk (the reference's "import" page,
+    /// `HDDImport`; its [`LocalImport`] settings are the queue's extra).
+    LocalImport,
 }
 
 impl QueueKind {
@@ -35,6 +39,7 @@ impl QueueKind {
             QueueKind::Watcher => "watcher",
             QueueKind::Subscription => "subscription",
             QueueKind::ImportFolder => "import_folder",
+            QueueKind::LocalImport => "local_import",
         }
     }
 
@@ -45,6 +50,7 @@ impl QueueKind {
             "watcher" => QueueKind::Watcher,
             "subscription" => QueueKind::Subscription,
             "import_folder" => QueueKind::ImportFolder,
+            "local_import" => QueueKind::LocalImport,
             _ => return None,
         })
     }
@@ -60,6 +66,9 @@ pub struct Queue {
     pub created: i64,
     pub files_paused: bool,
     pub gallery_paused: bool,
+    /// Its page was closed: it waits until the page is reopened (the
+    /// reference's "page is closed"), or goes with it.
+    pub page_closed: bool,
     /// This importer's own import options.
     pub options: ImportOptionsSlice,
     /// What else its kind keeps.
@@ -109,6 +118,115 @@ impl SeedStatus {
     }
 }
 
+/// Seeds by status.
+pub type StatusCounts = BTreeMap<SeedStatus, usize>;
+
+fn count(counts: &StatusCounts, status: SeedStatus) -> usize {
+    counts.get(&status).copied().unwrap_or(0)
+}
+
+fn human(n: usize) -> String {
+    hydrus_core::numbers::human_int(n as u64)
+}
+
+/// `processed/total`, as the reference writes a value of a range
+/// (`ValueRangeToPrettyString`).
+pub fn value_range_text(value: usize, range: usize) -> String {
+    hydrus_core::numbers::value_range(value as u64, range as u64)
+}
+
+/// How many of a file log's seeds are done, of how many
+/// (`FileSeedCacheStatus.GetValueRange`): all but those not yet tried.
+pub fn file_log_value_range(counts: &StatusCounts) -> (usize, usize) {
+    let total: usize = counts.values().sum();
+    (total - count(counts, SeedStatus::Unknown), total)
+}
+
+/// A file log's status in full, as the reference writes it
+/// (`FileSeedCacheStatus.GetStatusText`): "5 successful (2 already in db),
+/// 1 failed".
+pub fn file_log_status(counts: &StatusCounts) -> String {
+    let new = count(counts, SeedStatus::SuccessfulAndNew);
+    let redundant = count(counts, SeedStatus::SuccessfulButRedundant);
+    let mut parts = Vec::new();
+    if new + redundant > 0 {
+        let mut part = format!("{} successful", human(new + redundant));
+        if new == 0 {
+            part.push_str(" (all already in db)");
+        } else if redundant > 0 {
+            part.push_str(&format!(" ({} already in db)", human(redundant)));
+        }
+        parts.push(part);
+    }
+    for (status, what) in [
+        (SeedStatus::Vetoed, "ignored"),
+        (SeedStatus::Deleted, "previously deleted"),
+        (SeedStatus::Error, "failed"),
+        (SeedStatus::Skipped, "skipped"),
+    ] {
+        let n = count(counts, status);
+        if n > 0 {
+            parts.push(format!("{} {what}", human(n)));
+        }
+    }
+    parts.join(", ")
+}
+
+/// A file log's status in short (`GetStatusText(simple = True)`): "6/10 -
+/// 2Ign1F", with the new and the previously deleted as the options say.
+pub fn file_log_short_status(counts: &StatusCounts, show_new: bool, show_deleted: bool) -> String {
+    let (processed, total) = file_log_value_range(counts);
+    if total == 0 {
+        return String::new();
+    }
+    let mut text = if count(counts, SeedStatus::Unknown) > 0 {
+        value_range_text(processed, total)
+    } else {
+        human(processed)
+    };
+    let new = count(counts, SeedStatus::SuccessfulAndNew);
+    if show_new && new > 0 {
+        text.push_str(&format!(" - {}N", human(new)));
+    }
+    let mut short = String::new();
+    for (status, mark, shown) in [
+        (SeedStatus::Vetoed, "Ign", true),
+        (SeedStatus::Deleted, "D", show_deleted),
+        (SeedStatus::Error, "F", true),
+        (SeedStatus::Skipped, "S", true),
+    ] {
+        let n = count(counts, status);
+        if shown && n > 0 {
+            short.push_str(&format!("{}{mark}", human(n)));
+        }
+    }
+    if !short.is_empty() {
+        text.push_str(&format!(" - {short}"));
+    }
+    text
+}
+
+/// A search (gallery) log's status, and how many of its pages are done of
+/// how many (`GenerateGallerySeedLogStatus`): "1 successful, 2 pending".
+pub fn search_log_status(counts: &StatusCounts) -> (String, (usize, usize)) {
+    let mut parts = Vec::new();
+    for (status, what) in [
+        (SeedStatus::SuccessfulAndNew, "successful"),
+        (SeedStatus::Vetoed, "ignored"),
+        (SeedStatus::Error, "failed"),
+        (SeedStatus::Skipped, "skipped"),
+        (SeedStatus::Unknown, "pending"),
+    ] {
+        let n = count(counts, status);
+        if n > 0 {
+            parts.push(format!("{} {what}", human(n)));
+        }
+    }
+    let total: usize = counts.values().sum();
+    let unknown = count(counts, SeedStatus::Unknown);
+    (parts.join(", "), (total - unknown, total))
+}
+
 /// What a file seed is.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum SeedType {
@@ -140,6 +258,10 @@ pub struct FileSeedMeta {
     /// `(hash type, hex)`, the first of each type.
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub hashes: Vec<(String, String)>,
+    /// A Cloudflare cache's `Last-Modified` too far from the source time to
+    /// be it (seconds), kept as the file's cloudflare.com time.
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub cloudflare_last_modified: Option<i64>,
 }
 
 impl FileSeedMeta {
@@ -266,8 +388,8 @@ fn status(code: i64) -> Result<SeedStatus> {
 
 // queues -----------------------------------------------------------------------
 
-const QUEUE_COLUMNS: &str =
-    "queue_id, kind, name, page_key, created, files_paused, gallery_paused, options, extra";
+const QUEUE_COLUMNS: &str = "queue_id, kind, name, page_key, created, files_paused, gallery_paused, \
+     options, extra, page_closed";
 
 fn queue_from_row(row: &Row<'_>) -> rusqlite::Result<(Queue, String, String)> {
     let kind: String = row.get(1)?;
@@ -280,6 +402,7 @@ fn queue_from_row(row: &Row<'_>) -> rusqlite::Result<(Queue, String, String)> {
             created: row.get(4)?,
             files_paused: row.get(5)?,
             gallery_paused: row.get(6)?,
+            page_closed: row.get(9)?,
             options: ImportOptionsSlice::default(),
             extra: serde_json::Value::Null,
         },
@@ -292,6 +415,33 @@ fn finish_queue((mut queue, options, extra): (Queue, String, String)) -> Result<
     queue.options = parse(&options, "queue import options")?;
     queue.extra = parse(&extra, "queue settings")?;
     Ok(queue)
+}
+
+/// Tell whichever process runs the queues (the daemon) that a queue was
+/// made or changed (seeds added, paused or resumed, deleted), so it looks
+/// at it now rather than when it next would.
+pub fn nudge(conn: &Connection, queue: i64) -> Result<()> {
+    conn.execute("INSERT INTO queue_nudges (queue_id) VALUES (?)", [queue])?;
+    Ok(())
+}
+
+/// Whether any queue has been nudged (a cheap read, before taking them).
+pub fn any_nudged(conn: &Connection) -> Result<bool> {
+    Ok(
+        conn.query_row("SELECT EXISTS (SELECT 1 FROM queue_nudges)", [], |r| {
+            r.get(0)
+        })?,
+    )
+}
+
+/// The queues nudged since last time, each once, taken off the list.
+pub fn take_nudges(conn: &Connection) -> Result<Vec<i64>> {
+    let nudged: Vec<i64> = conn
+        .prepare("SELECT DISTINCT queue_id FROM queue_nudges ORDER BY queue_id")?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    conn.execute("DELETE FROM queue_nudges", [])?;
+    Ok(nudged)
 }
 
 /// Make a queue.
@@ -308,6 +458,57 @@ pub fn create_queue(
     )?
     .execute(params![kind.as_str(), name, page_key, now, json(options)])?;
     Ok(conn.last_insert_rowid())
+}
+
+/// A local import's settings (`HDDImport`'s), kept as its queue's extra.
+#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(default)]
+pub struct LocalImport {
+    /// Delete each file (to the recycle bin, if the options say) once it
+    /// is imported or found already in the database.
+    pub delete_after_success: bool,
+}
+
+impl LocalImport {
+    /// A queue's, if it is a local import.
+    pub fn of(queue: &Queue) -> Option<Self> {
+        (queue.kind == QueueKind::LocalImport)
+            .then(|| serde_json::from_value(queue.extra.clone()).unwrap_or_default())
+    }
+}
+
+/// Make a local import of `paths`, each a path seed with its modified time
+/// (seconds) as its source time, in order (`HDDImport.__init__`); its id.
+pub fn create_local_import(
+    conn: &Connection,
+    page_key: Option<&[u8]>,
+    options: &ImportOptionsSlice,
+    paths: &[(String, Option<i64>)],
+    settings: LocalImport,
+    now: i64,
+) -> Result<i64> {
+    let id = create_queue(
+        conn,
+        QueueKind::LocalImport,
+        "import",
+        page_key,
+        options,
+        now,
+    )?;
+    set_queue_extra(conn, id, &serde_json::to_value(settings)?)?;
+    let seeds: Vec<NewFileSeed> = paths
+        .iter()
+        .map(|(path, modified)| NewFileSeed {
+            seed_type: SeedType::Path,
+            data: path.clone(),
+            data_for_comparison: path.clone(),
+            source_time: *modified,
+            referral_url: None,
+            meta: FileSeedMeta::default(),
+        })
+        .collect();
+    add_file_seeds(conn, id, &seeds, false, now)?;
+    Ok(id)
 }
 
 pub fn queue(conn: &Connection, id: i64) -> Result<Option<Queue>> {
@@ -327,6 +528,17 @@ pub fn queues(conn: &Connection, kind: Option<QueueKind>) -> Result<Vec<Queue>> 
     ))?;
     let rows = stmt
         .query_map([kind.map(QueueKind::as_str)], queue_from_row)?
+        .collect::<rusqlite::Result<Vec<_>>>()?;
+    rows.into_iter().map(finish_queue).collect()
+}
+
+/// The queues a page made (those with its key), oldest first.
+pub fn queues_with_page_key(conn: &Connection, page_key: &[u8]) -> Result<Vec<Queue>> {
+    let mut stmt = conn.prepare_cached(&format!(
+        "SELECT {QUEUE_COLUMNS} FROM import_queues WHERE page_key = ? ORDER BY queue_id"
+    ))?;
+    let rows = stmt
+        .query_map([page_key], queue_from_row)?
         .collect::<rusqlite::Result<Vec<_>>>()?;
     rows.into_iter().map(finish_queue).collect()
 }
@@ -381,7 +593,99 @@ pub fn rename_queue(conn: &Connection, id: i64, name: &str) -> Result<()> {
 }
 
 /// Delete a queue and its seeds.
+/// Close or reopen a queue's page (see [`Queue::page_closed`]).
+pub fn set_page_closed(conn: &Connection, id: i64, closed: bool) -> Result<()> {
+    conn.execute(
+        "UPDATE import_queues SET page_closed = ? WHERE queue_id = ?",
+        params![closed, id],
+    )?;
+    nudge(conn, id)
+}
+
+/// Delete the queues of pages closed and not reopened (as the reference's
+/// closed pages go once the client closes): how many there were.
+pub fn delete_closed_queues(conn: &Connection) -> Result<usize> {
+    let closed: Vec<i64> = conn
+        .prepare("SELECT queue_id FROM import_queues WHERE page_closed = 1")?
+        .query_map([], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    for &id in &closed {
+        delete_queue(conn, id)?;
+    }
+    Ok(closed.len())
+}
+
+/// Hand URLs typed into a URL queue's page to whoever runs the queues (the
+/// daemon), to add as the reference adds them (`PendURLs`).
+pub fn request_urls(conn: &Connection, queue: i64, urls: &[String]) -> Result<()> {
+    conn.execute(
+        "INSERT INTO queue_url_requests (queue_id, urls) VALUES (?, ?)",
+        params![queue, urls.join("\n")],
+    )?;
+    nudge(conn, queue)
+}
+
+/// The URLs handed to a queue (see [`request_urls`]), in order, taken.
+pub fn take_url_requests(conn: &Connection, queue: i64) -> Result<Vec<String>> {
+    let lines: Vec<String> = conn
+        .prepare("SELECT urls FROM queue_url_requests WHERE queue_id = ? ORDER BY request_id")?
+        .query_map([queue], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    conn.execute("DELETE FROM queue_url_requests WHERE queue_id = ?", [queue])?;
+    Ok(lines
+        .iter()
+        .flat_map(|urls| urls.lines().map(str::to_owned))
+        .collect())
+}
+
+/// The files a queue's page shows, in the queue's order: those its seeds
+/// imported, or found already in the database (`FileSeed.ShouldPresent`,
+/// with the reference's default presentation, all files).
+pub fn presented_files(conn: &Connection, queue: i64) -> Result<Vec<HashId>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT metadata FROM file_seeds WHERE queue_id = ? AND status IN (1, 2, 9)
+         ORDER BY position",
+    )?;
+    let metas: Vec<String> = stmt
+        .query_map([queue], |r| r.get(0))?
+        .collect::<rusqlite::Result<_>>()?;
+    let mut hashes = Vec::new();
+    for meta in metas {
+        let meta: FileSeedMeta = parse(&meta, "file seed metadata")?;
+        if let Some(hash) = meta
+            .hashes
+            .iter()
+            .find(|(kind, _)| kind == "sha256")
+            .and_then(|(_, hex)| hex.parse::<hydrus_core::Sha256>().ok())
+        {
+            hashes.push(hash);
+        }
+    }
+    let ids = crate::master::hash_ids(conn, &hashes)?;
+    let mut seen = std::collections::HashSet::new();
+    Ok(hashes
+        .iter()
+        .filter_map(|h| ids.get(h).copied())
+        .filter(|id| seen.insert(*id))
+        .collect())
+}
+
+/// Seeds of a queue's search log (gallery pages) by status.
+pub fn gallery_seed_counts(conn: &Connection, queue: i64) -> Result<StatusCounts> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT status, COUNT(*) FROM gallery_seeds WHERE queue_id = ? GROUP BY status",
+    )?;
+    let rows = stmt.query_map([queue], |r| Ok((r.get::<_, i64>(0)?, r.get::<_, i64>(1)?)))?;
+    let mut counts = StatusCounts::new();
+    for row in rows {
+        let (code, n) = row?;
+        *counts.entry(status(code)?).or_default() += usize::try_from(n).unwrap_or(0);
+    }
+    Ok(counts)
+}
+
 pub fn delete_queue(conn: &Connection, id: i64) -> Result<()> {
+    conn.execute("DELETE FROM queue_url_requests WHERE queue_id = ?", [id])?;
     conn.prepare_cached("DELETE FROM file_seeds WHERE queue_id = ?")?
         .execute([id])?;
     conn.prepare_cached("DELETE FROM gallery_seeds WHERE queue_id = ?")?
@@ -838,6 +1142,7 @@ mod tests {
 
     fn conn() -> Connection {
         let mut conn = Connection::open_in_memory().unwrap();
+        crate::schema::configure(&conn).unwrap();
         crate::schema::migrate(&mut conn).unwrap();
         conn
     }
@@ -851,6 +1156,111 @@ mod tests {
             referral_url: None,
             meta: FileSeedMeta::default(),
         }
+    }
+
+    #[test]
+    fn nudges_are_taken_once_each() {
+        let conn = conn();
+        assert!(!any_nudged(&conn).unwrap());
+        for queue in [3, 1, 3] {
+            nudge(&conn, queue).unwrap();
+        }
+        assert!(any_nudged(&conn).unwrap());
+        assert_eq!(take_nudges(&conn).unwrap(), [1, 3]);
+        assert!(!any_nudged(&conn).unwrap());
+        assert!(take_nudges(&conn).unwrap().is_empty());
+    }
+
+    #[test]
+    fn a_pages_queue_waits_while_closed_and_goes_with_it() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let kept = create_queue(&conn, QueueKind::Urls, "kept", None, &opts, 0).unwrap();
+        let closed = create_queue(&conn, QueueKind::Urls, "closed", None, &opts, 0).unwrap();
+        add_file_seeds(&conn, closed, &[seed("https://a.example/1")], false, 0).unwrap();
+        request_urls(&conn, closed, &["https://a.example/2".into()]).unwrap();
+        set_page_closed(&conn, closed, true).unwrap();
+        // (nudged, for the daemon to stop its work now)
+        assert_eq!(take_nudges(&conn).unwrap(), [closed]);
+        assert!(queue(&conn, closed).unwrap().unwrap().page_closed);
+        assert!(!queue(&conn, kept).unwrap().unwrap().page_closed);
+        // reopened, it runs again
+        set_page_closed(&conn, closed, false).unwrap();
+        assert!(!queue(&conn, closed).unwrap().unwrap().page_closed);
+        // closed for good: it and everything of it go
+        set_page_closed(&conn, closed, true).unwrap();
+        assert_eq!(delete_closed_queues(&conn).unwrap(), 1);
+        assert!(queue(&conn, closed).unwrap().is_none());
+        assert!(file_seeds(&conn, closed).unwrap().is_empty());
+        assert!(take_url_requests(&conn, closed).unwrap().is_empty());
+        assert!(queue(&conn, kept).unwrap().is_some());
+    }
+
+    #[test]
+    fn urls_typed_into_a_page_are_handed_over_once_in_order() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let a = create_queue(&conn, QueueKind::Urls, "a", None, &opts, 0).unwrap();
+        let b = create_queue(&conn, QueueKind::Urls, "b", None, &opts, 0).unwrap();
+        request_urls(
+            &conn,
+            a,
+            &["https://x.example/1".into(), "https://x.example/2".into()],
+        )
+        .unwrap();
+        request_urls(&conn, b, &["https://y.example/1".into()]).unwrap();
+        request_urls(&conn, a, &["https://x.example/3".into()]).unwrap();
+        assert_eq!(take_nudges(&conn).unwrap(), [a, b]);
+        assert_eq!(
+            take_url_requests(&conn, a).unwrap(),
+            [
+                "https://x.example/1",
+                "https://x.example/2",
+                "https://x.example/3"
+            ]
+        );
+        assert!(take_url_requests(&conn, a).unwrap().is_empty());
+        assert_eq!(
+            take_url_requests(&conn, b).unwrap(),
+            ["https://y.example/1"]
+        );
+    }
+
+    #[test]
+    fn a_queues_page_shows_the_files_its_seeds_brought_in_order() {
+        let conn = conn();
+        let opts = ImportOptionsSlice::default();
+        let q = create_queue(&conn, QueueKind::Urls, "q", None, &opts, 0).unwrap();
+        let hash = |n: u8| hydrus_core::Sha256::from_slice(&[n; 32]).unwrap();
+        let ids: Vec<HashId> = (1..=3)
+            .map(|n| crate::master::intern_hash(&conn, &hash(n)).unwrap())
+            .collect();
+        let urls = [
+            "https://a.example/1",
+            "https://a.example/2",
+            "https://a.example/3",
+            "https://a.example/4",
+            "https://a.example/5",
+        ];
+        let seeds: Vec<NewFileSeed> = urls.iter().map(|u| seed(u)).collect();
+        add_file_seeds(&conn, q, &seeds, false, 0).unwrap();
+        let mut stored = file_seeds(&conn, q).unwrap();
+        // new, failed (with a hash), already in db (the first file again),
+        // already in db, and not tried yet
+        for (seed, (status, file)) in stored.iter_mut().zip([
+            (SeedStatus::SuccessfulAndNew, Some(2)),
+            (SeedStatus::Error, Some(3)),
+            (SeedStatus::SuccessfulButRedundant, Some(2)),
+            (SeedStatus::SuccessfulButRedundant, Some(1)),
+            (SeedStatus::Unknown, None),
+        ]) {
+            seed.status = status;
+            if let Some(n) = file {
+                seed.meta.set_hash("sha256", hash(n).to_hex());
+            }
+            update_file_seed(&conn, seed).unwrap();
+        }
+        assert_eq!(presented_files(&conn, q).unwrap(), [ids[1], ids[0]]);
     }
 
     #[test]

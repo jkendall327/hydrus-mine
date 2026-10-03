@@ -251,7 +251,19 @@ impl<E: Into<WorkError>> From<E> for GalleryStop {
     }
 }
 
-fn gallery_network(e: NetError) -> GalleryStop {
+fn gallery_network(e: NetError, job: &Job) -> GalleryStop {
+    // (what the reference's status hook says of it)
+    job.set_stage(match &e {
+        NetError::Status { kind, .. } => match kind {
+            StatusKind::NotFound => "404",
+            StatusKind::InsufficientCredentials => "403",
+            StatusKind::BadRequest => "400",
+            StatusKind::Censorship => "451 censorship!",
+            _ => "error!",
+        },
+        NetError::Cancelled => "cancelled!",
+        _ => "error!",
+    });
     let gone = |note: &str| GalleryStop::Veto(note.to_owned(), true);
     match &e {
         NetError::Status { kind, .. } => match kind {
@@ -264,7 +276,7 @@ fn gallery_network(e: NetError) -> GalleryStop {
             ),
             _ => GalleryStop::Failed(WorkError::Network(e)),
         },
-        NetError::Cancelled => GalleryStop::Veto("Cancelled!".into(), false),
+        NetError::Cancelled => GalleryStop::Veto(job.cancelled_note(), false),
         _ => GalleryStop::Failed(WorkError::Network(e)),
     }
 }
@@ -332,6 +344,10 @@ impl Downloader {
         seen.insert(url_to_fetch.clone());
         job.set_status_text("downloading gallery page");
         let mut request = Request::get(url_to_fetch.clone());
+        // gallery pages wait their turn per site, and for bandwidth at most
+        // half a minute
+        request.gallery_page = true;
+        request.override_bandwidth_after = Some(30);
         request.referral_url.clone_from(&seed.referral_url);
         request
             .additional_headers
@@ -340,7 +356,7 @@ impl Downloader {
             .net
             .fetch(&request, job)
             .await
-            .map_err(gallery_network)?;
+            .map_err(|e| gallery_network(e, job))?;
         let text = response.text();
         let actual = response.url.clone();
         let url_for_child_referral = actual.clone();

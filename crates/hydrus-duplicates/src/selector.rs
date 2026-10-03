@@ -4,6 +4,7 @@
 
 use hydrus_core::{HashId, Mime};
 use hydrus_media::jpeg::JpegQuality;
+use hydrus_media::visual::Verdict;
 use hydrus_search::Clock;
 use hydrus_search::media::{self, FileFacts};
 use hydrus_store::duplicates::auto::{Comparator, LookingAt, OneFileTest, PairTest};
@@ -13,11 +14,21 @@ pub trait FileContent {
     /// The jpeg's encoding quality (unreadable: no quality, not
     /// progressive).
     fn jpeg_quality(&mut self, file: HashId) -> JpegQuality;
+    /// The quick comparison of two images, and the detailed one if the
+    /// quick one passes (and both can be read); none if either can't be
+    /// read.
+    fn visual_comparison(&mut self, a: HashId, b: HashId) -> Option<(Verdict, Option<Verdict>)>;
+
     /// How confident the regional comparison is that two images are
     /// visual duplicates (`VISUAL_DUPLICATES_RESULT_*`); none if either
     /// can't be read or they fail the simple comparison first, which the
     /// reference counts as a failed test whatever the threshold.
-    fn visual_confidence(&mut self, a: HashId, b: HashId) -> Option<u8>;
+    fn visual_confidence(&mut self, a: HashId, b: HashId) -> Option<u8> {
+        match self.visual_comparison(a, b)? {
+            (simple, Some(regional)) if simple.similar => Some(regional.result),
+            _ => None,
+        }
+    }
 }
 
 /// One file of a pair.

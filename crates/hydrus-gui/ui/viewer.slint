@@ -1,6 +1,79 @@
-// The media viewer's window: one file, fitted to the window. Right and left
-// (or page down and up, or the mouse wheel) move through the page's files;
-// escape closes it.
+// The media viewer's window: one file, at its default zoom (fitted to the
+// window, by default). Right and left (or down and up, page down and up,
+// or the mouse wheel) move through the page's files, home and end to the
+// first and last; space pauses and plays video, and ctrl+b and ctrl+n go a
+// frame back or on; f switches fullscreen; escape, enter, a middle click
+// or a double-click closes it. As the reference's default shortcuts have
+// it, z switches between 100% and fitting the window, + and - (or ctrl and
+// the mouse wheel) zoom in and out, and shift and the arrow keys (or
+// dragging) move the file. Under a file that plays, its scanbar shows how
+// far through it is: a click or drag on it seeks there, and ctrl and left
+// or right seek back 2.5 seconds or on 5. Beside the scanbar of a file
+// with sound, its volume control: ctrl+g (or a click on it) mutes and
+// unmutes everything, and with the pointer on it the volume and the
+// viewer's own mute show above it. F3 manages the file's tags. F7 archives
+// the file and shift+F7 returns it to the inbox; delete deletes it (asking
+// first: enter or escape answers) and shift+delete undeletes it. With the
+// pointer over the window's left fifth, the file's tags show there, as the
+// reference's tags hover frame does; with it near the top middle, the
+// reference's top hover frame: the file's place in the list, buttons to
+// archive, delete and undelete it, its zoom and buttons to zoom, to switch
+// fullscreen, to open it externally or show it in the file browser (where
+// the reference has a button to drag it out), and to close the viewer; and
+// the file's info line. A right-click opens the viewer's menu, whose
+// slideshow submenu may ask for a period to type.
+
+import { LineEdit } from "std-widgets.slint";
+import { ListText } from "theme.slint";
+import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
+
+// one shape of a rating control, its outline and fill
+export struct RatingShape {
+    pen: color,
+    brush: color,
+}
+
+// a note on the file shown
+export struct NoteRow {
+    name: string,
+    text: string,
+}
+
+// a rating service's control for the file shown
+export struct RatingRow {
+    // 0 like/dislike, 1 numerical, 2 inc/dec
+    kind: int,
+    // the shape's outline, as SVG path commands in a 12x12 box
+    shape: string,
+    // each shape's colours, left to right
+    shapes: [RatingShape],
+    // between a numerical rating's stars
+    pad: length,
+    // an inc/dec rating's value, and its colours
+    text: string,
+    pen: color,
+    brush: color,
+}
+
+// a button of the top hover frame: the reference's icon for it
+component HoverButton inherits Rectangle {
+    in property <image> icon;
+    callback clicked();
+    width: 24px;
+    height: 24px;
+    border-radius: 3px;
+    background: touch.pressed ? #ffffff40 : touch.has-hover ? #ffffff24 : transparent;
+    Image {
+        x: (parent.width - self.width) / 2;
+        y: (parent.height - self.height) / 2;
+        width: 16px;
+        height: 16px;
+        source: root.icon;
+    }
+    touch := TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
 
 export component MediaViewerWindow inherits Window {
     title: root.caption;
@@ -10,42 +83,1109 @@ export component MediaViewerWindow inherits Window {
 
     in property <image> media;
     in property <string> caption;
+    // the file's tags, for the hover frame
+    in property <[ListText]> tags;
+    // the file's notes, for the right hover frame under the ratings, shown
+    // while the pointer is over it
+    in property <[NoteRow]> notes;
+    out property <bool> notes-showing: root.notes.length > 0 && pointer.has-hover
+        && pointer.mouse-x >= notes-box.x
+        && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
+    // the file's info line, for the top hover frame, which shows with the
+    // pointer over it or near it, in the window's middle three fifths
+    in property <string> info-line;
+    out property <bool> info-showing: top-frame.has-hover || (pointer.has-hover
+        && pointer.mouse-y <= top-box.preferred-height + 20px
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8);
+    // the file's state, for the frame's buttons: in the inbox (archive,
+    // else re-inbox), in the trash (delete completely), here and not
+    // trashed (send to trash), deleted from a local file domain (undelete)
+    in property <bool> file-inbox;
+    in property <bool> file-trashed;
+    in property <bool> file-local;
+    in property <bool> file-undeletable;
+    // the zoom, as the reference writes it ("100%"); empty for a file that
+    // doesn't zoom
+    in property <string> zoom-text;
+    callback show-in-file-browser();
+    // the file's ratings, for the top-right hover frame, as the reference
+    // draws them
+    in property <[RatingRow]> ratings;
+    in property <length> rating-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> rating-outline: 1px;
+    out property <bool> ratings-showing: root.ratings.length > 0 && (ratings-frame.has-hover
+        || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
+            && pointer.mouse-y <= ratings-box.preferred-height + 20px));
+    out property <bool> tags-showing: pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+
+    // a question to answer (a deletion): enter is yes, escape no
+    in property <string> question;
+    // a slideshow period being asked for (the custom interval): enter
+    // starts it, escape doesn't
+    in-out property <bool> period-asked;
+    callback period-answered(bool, string);
+    // something said (a period that didn't read), until enter or escape
+    in-out property <string> warning;
+    // the keys back to the window, once a box that took them is gone
+    public function refocus() {
+        keys.focus();
+    }
+
+    // where the file is drawn: its box at its zoom
+    in property <length> media-x;
+    in property <length> media-y;
+    in property <length> media-width: root.width;
+    in property <length> media-height: root.height;
+    // the still drawn sharply over it, once rendered (see still.rs)
+    in property <image> sharp;
+    in property <bool> sharp-shown;
+    in property <bool> sharp-opaque: true;
+    in property <length> sharp-x;
+    in property <length> sharp-y;
+    in property <length> sharp-width;
+    in property <length> sharp-height;
+    // the scanbar under a file mpv plays: the nub's place (0 to 1), and
+    // how far through it is as text
+    in property <bool> scanbar-shown;
+    in property <float> scanbar-progress;
+    in property <string> scanbar-text;
+    // the volume control at the scanbar's right, for a file mpv plays with
+    // sound: the global mute, and the viewer's own and its volume (0 to 100)
+    in property <bool> volume-shown;
+    in property <bool> global-muted;
+    in property <bool> viewer-muted;
+    in property <int> volume;
+    // whether the volume control is open (the scanbar stays full meanwhile,
+    // as the reference's controls bar does while its popup shows)
+    in-out property <bool> volume-open;
+    callback flip-global-mute();
+    callback flip-viewer-mute();
+    callback volume-changed(int);
+    // the volumes or mutes were changed elsewhere (ctrl+g in the main window)
+    callback audio-changed();
+    // f: between fullscreen and the window it was
+    callback toggle-fullscreen();
+    // the right-click menu (`src/viewer_menu.rs`): asked for, then shown,
+    // its rows' ids chosen
+    in property <ThumbnailMenu> context-menu;
+    callback context-menu-requested();
+    callback menu-chosen(int);
+    // home and end: the first file and the last
+    callback first();
+    callback last();
+    // a frame back (-1) or on (1)
+    callback frame-step(int);
+    // ctrl+r: the file leaves the viewer (and its page); ctrl+e: it opens
+    // as the OS opens it
+    callback remove-from-view();
+    callback open-externally();
+    // ctrl+c: the file onto the clipboard, as a file
+    callback copy-file();
+    // the volume a point on the volume control's track (`top` to `top` +
+    // `track`, loudest at the top) sets
+    pure function volume-at(y: length, top: length, track: length) -> int {
+        return max(0, min(100, round((top + track - y) / track * 100)));
+    }
+    // the bar at its full size near the pointer (as the reference's
+    // animation bar pops in), else a thin line
+    property <length> bar-top: root.media-y + root.media-height - 20px;
+    out property <bool> bar-near: pointer.has-hover
+        && pointer.mouse-x >= root.media-x - 50px && pointer.mouse-x <= root.media-x + root.media-width + 50px
+        && pointer.mouse-y >= root.bar-top - 100px && pointer.mouse-y <= root.bar-top + 40px;
+    // where a drag last was
+    property <length> drag-x;
+    property <length> drag-y;
 
     callback next();
     callback previous();
     callback close-requested();
+    callback toggle-pause();
+    callback archive();
+    callback inbox();
+    callback delete();
+    callback undelete();
+    callback answer(bool);
+    callback manage-tags();
+    // zoom in (1), out (-1) or switch (0), about the pointer if it is over
+    // the window
+    callback zoom(int, bool, length, length);
+    callback pan(int, int);
+    callback drag(length, length);
+    callback canvas-resized(length, length);
+    // a rating control clicked: its row, left (else right), and how far
+    // along it
+    callback rating-clicked(int, bool, float);
+    // seek to where a click on the scanbar at x, along a bar this wide,
+    // goes; and seek a step back (-1) or forward (1), in milliseconds
+    callback scan(length, length);
+    // a drag on the scanbar starts and ends (playing pauses while it lasts)
+    callback scan-started();
+    callback scan-ended();
+    callback seek-delta(int, int);
+
+    changed width => { root.canvas-resized(self.width, self.height); }
+    changed height => { root.canvas-resized(self.width, self.height); }
 
     forward-focus: keys;
     keys := FocusScope {
         key-pressed(event) => {
-            if (event.text == Key.RightArrow || event.text == Key.PageDown) {
+            if (root.warning != "") {
+                if (event.text == Key.Return || event.text == Key.Escape) {
+                    root.warning = "";
+                }
+                return accept;
+            }
+            if (root.question != "") {
+                if (event.text == Key.Return) {
+                    root.answer(true);
+                } else if (event.text == Key.Escape) {
+                    root.answer(false);
+                }
+                return accept;
+            }
+            if (event.text == Key.F3) {
+                root.manage-tags();
+                return accept;
+            }
+            // as the reference's global shortcuts have it
+            if (event.modifiers.control && (event.text == "g" || event.text == "G")) {
+                root.flip-global-mute();
+                return accept;
+            }
+            if ((event.text == "f" || event.text == "F") && !event.modifiers.control && !event.modifiers.alt) {
+                root.toggle-fullscreen();
+                return accept;
+            }
+            if (event.text == Key.F7) {
+                if (event.modifiers.shift) {
+                    root.inbox();
+                } else {
+                    root.archive();
+                }
+                return accept;
+            }
+            if (event.text == Key.Delete) {
+                if (event.modifiers.shift) {
+                    root.undelete();
+                } else {
+                    root.delete();
+                }
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.LeftArrow) {
+                root.seek-delta(-1, 2500);
+                return accept;
+            }
+            if (event.modifiers.control && event.text == Key.RightArrow) {
+                root.seek-delta(1, 5000);
+                return accept;
+            }
+            if (event.modifiers.shift) {
+                if (event.text == Key.UpArrow) {
+                    root.pan(0, -1);
+                    return accept;
+                }
+                if (event.text == Key.DownArrow) {
+                    root.pan(0, 1);
+                    return accept;
+                }
+                if (event.text == Key.LeftArrow) {
+                    root.pan(-1, 0);
+                    return accept;
+                }
+                if (event.text == Key.RightArrow) {
+                    root.pan(1, 0);
+                    return accept;
+                }
+            }
+            if ((event.text == "z" || event.text == "Z") && !event.modifiers.control && !event.modifiers.alt) {
+                root.zoom(0, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "+") {
+                root.zoom(1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.text == "-") {
+                root.zoom(-1, pointer.has-hover, pointer.mouse-x, pointer.mouse-y);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "r" || event.text == "R")) {
+                root.remove-from-view();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "e" || event.text == "E")) {
+                root.open-externally();
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "c" || event.text == "C")) {
+                root.copy-file();
+                return accept;
+            }
+            // ctrl+b and ctrl+n: a frame back or on, in a file with a scanbar
+            if (event.modifiers.control && (event.text == "b" || event.text == "B")) {
+                root.frame-step(-1);
+                return accept;
+            }
+            if (event.modifiers.control && (event.text == "n" || event.text == "N")) {
+                root.frame-step(1);
+                return accept;
+            }
+            if (event.text == Key.RightArrow || event.text == Key.DownArrow || event.text == Key.PageDown) {
                 root.next();
                 return accept;
             }
-            if (event.text == Key.LeftArrow || event.text == Key.PageUp) {
+            if (event.text == Key.LeftArrow || event.text == Key.UpArrow || event.text == Key.PageUp) {
                 root.previous();
                 return accept;
             }
-            if (event.text == Key.Escape) {
+            if (event.text == Key.Home) {
+                root.first();
+                return accept;
+            }
+            if (event.text == Key.End) {
+                root.last();
+                return accept;
+            }
+            if (event.text == " ") {
+                root.toggle-pause();
+                return accept;
+            }
+            if (event.text == Key.Escape || event.text == Key.Return) {
                 root.close-requested();
                 return accept;
             }
             reject
         }
+        // (beneath the rest, so a right-click on the file reaches the
+        // pointer's area, which asks for the menu and shows it here)
+        viewer-menu := ContextMenuArea {
+            x: 0;
+            y: 0;
+            width: root.width;
+            height: root.height;
+            Menu {
+                if root.context-menu.info-is-menu: Menu {
+                    title: root.context-menu.info-title;
+                    for row in root.context-menu.info-before: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.info-sub-title != "": Menu {
+                        title: root.context-menu.info-sub-title;
+                        for row in root.context-menu.info-sub: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.info-after: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.views: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.views-sub-title != "": Menu {
+                        title: root.context-menu.views-sub-title;
+                        for row in root.context-menu.views-sub: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                }
+                if root.context-menu.info-title != "" && !root.context-menu.info-is-menu: MenuItem {
+                    title: root.context-menu.info-title;
+                    activated => { root.menu-chosen(root.context-menu.info-title-id); }
+                }
+                MenuSeparator { }
+                if root.context-menu.zoom-title != "": Menu {
+                    title: root.context-menu.zoom-title;
+                    for row in root.context-menu.zoom: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                for row in root.context-menu.head: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                if root.context-menu.slideshow-title != "": Menu {
+                    title: root.context-menu.slideshow-title;
+                    for row in root.context-menu.slideshow.g1: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g2: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g3: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.slideshow.g4: MenuItem {
+                        title: row.label;
+                        checkable: row.checkable;
+                        checked: row.checked;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                MenuSeparator { }
+                if root.context-menu.has-select: Menu {
+                    title: "select";
+                    for row in root.context-menu.select.g1: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g2: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g3: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g4: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g5: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.select.g6: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                if root.context-menu.has-remove: Menu {
+                    title: "remove";
+                    for row in root.context-menu.remove.g1: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g2: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g3: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g4: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g5: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.remove.g6: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                if root.context-menu.has-rearrange: Menu {
+                    title: "rearrange";
+                    for row in root.context-menu.rearrange: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-volume: Menu {
+                    title: "volume";
+                    for row in root.context-menu.volume.g1: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.volume.g2: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.volume.g3: MenuItem {
+                        title: row.label;
+                        enabled: row.id >= 0;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.dismiss: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.filter: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                for row in root.context-menu.delete: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                if root.context-menu.delete-title != "": Menu {
+                    title: root.context-menu.delete-title;
+                    for row in root.context-menu.delete-menu: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                for row in root.context-menu.trash: MenuItem {
+                    title: row.label;
+                    activated => { root.menu-chosen(row.id); }
+                }
+                MenuSeparator { }
+                if root.context-menu.manage.length > 0: Menu {
+                    title: "manage";
+                    for row in root.context-menu.manage: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-urls: Menu {
+                    title: "urls";
+                    Menu {
+                        title: "open in browser";
+                        for row in root.context-menu.urls-visit.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-visit.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    if root.context-menu.has-url-pages: Menu {
+                        title: "open in a new page";
+                        for row in root.context-menu.urls-pages.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-pages.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    Menu {
+                        title: "copy";
+                        for row in root.context-menu.urls-copy.g1: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g2: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g3: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g4: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g5: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                        MenuSeparator { }
+                        for row in root.context-menu.urls-copy.g6: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                }
+                if root.context-menu.has-open: Menu {
+                    title: "open";
+                    for row in root.context-menu.open-a: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.open-similar-title != "": Menu {
+                        title: root.context-menu.open-similar-title;
+                        for row in root.context-menu.open-similar: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.open-b: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                if root.context-menu.has-share: Menu {
+                    title: "share";
+                    for row in root.context-menu.share-a: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.share-hashes-title != "": Menu {
+                        title: root.context-menu.share-hashes-title;
+                        for row in root.context-menu.share-hashes: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.share-b: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    MenuSeparator { }
+                    for row in root.context-menu.share-c: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                    if root.context-menu.share-hash-title != "": Menu {
+                        title: root.context-menu.share-hash-title;
+                        for row in root.context-menu.share-hash: MenuItem {
+                            title: row.label;
+                            activated => { root.menu-chosen(row.id); }
+                        }
+                    }
+                    for row in root.context-menu.share-d: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+                MenuSeparator { }
+                if root.context-menu.player-title != "": Menu {
+                    title: root.context-menu.player-title;
+                    for row in root.context-menu.player: MenuItem {
+                        title: row.label;
+                        activated => { root.menu-chosen(row.id); }
+                    }
+                }
+            }
+        }
         Image {
-            width: 100%;
-            height: 100%;
+            x: root.media-x;
+            y: root.media-y;
+            width: root.media-width;
+            height: root.media-height;
             source: root.media;
+            visible: !root.sharp-shown || root.sharp-opaque;
             image-fit: contain;
         }
-        TouchArea {
+        if root.sharp-shown: Image {
+            x: root.sharp-x;
+            y: root.sharp-y;
+            width: root.sharp-width;
+            height: root.sharp-height;
+            source: root.sharp;
+            image-fit: fill;
+        }
+        pointer := TouchArea {
+            pointer-event(event) => {
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                    root.drag-x = self.mouse-x;
+                    root.drag-y = self.mouse-y;
+                }
+                // as the reference's default: a middle click closes it
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.middle) {
+                    root.close-requested();
+                }
+                // and a right click shows the menu
+                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
+                    root.context-menu-requested();
+                    viewer-menu.show({ x: self.mouse-x, y: self.mouse-y });
+                }
+            }
+            // as is a (left) double-click, as the reference's default
+            double-clicked => { root.close-requested(); }
+            moved => {
+                root.drag(self.mouse-x - root.drag-x, self.mouse-y - root.drag-y);
+                root.drag-x = self.mouse-x;
+                root.drag-y = self.mouse-y;
+            }
             scroll-event(event) => {
+                if (event.modifiers.control) {
+                    if (event.delta-y > 0) {
+                        root.zoom(1, true, self.mouse-x, self.mouse-y);
+                    } else if (event.delta-y < 0) {
+                        root.zoom(-1, true, self.mouse-x, self.mouse-y);
+                    }
+                    return accept;
+                }
                 if (event.delta-y < 0) {
                     root.next();
                 } else if (event.delta-y > 0) {
                     root.previous();
                 }
                 accept
+            }
+        }
+        if root.scanbar-shown: bar := Rectangle {
+            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
+            x: root.media-x;
+            width: root.media-width - (root.volume-shown ? 24px : 0px);
+            height: self.full ? 20px : 5px;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            Rectangle {
+                x: floor((parent.width - 10px) * root.scanbar-progress / 1px) * 1px;
+                width: 10px;
+                background: #b0b0b0;
+            }
+            if bar.full: Text {
+                x: bar.width - self.width - 3px;
+                height: bar.height;
+                vertical-alignment: center;
+                text: root.scanbar-text;
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            scrub := TouchArea {
+                pointer-event(event) => {
+                    if (event.button == PointerEventButton.left) {
+                        if (event.kind == PointerEventKind.down) {
+                            root.scan-started();
+                            root.scan(self.mouse-x, self.width);
+                        } else if (event.kind == PointerEventKind.up) {
+                            root.scan-ended();
+                        }
+                    }
+                }
+                moved => {
+                    root.scan(self.mouse-x, self.width);
+                }
+            }
+        }
+        // the reference's `VolumeControl`: the global mute, and with the
+        // pointer on it, above it the volume (`VolumeSlider`) and the
+        // viewer's own mute (`AudioMuteButton`); its bottom row stays put
+        if root.scanbar-shown && root.volume-shown: volume-box := Rectangle {
+            property <bool> open: volume-area.has-hover || volume-area.pressed;
+            changed open => { root.volume-open = self.open; }
+            property <length> line: 20px;
+            property <length> track-top: 10px;
+            property <length> track: 100px;
+            // the volume and the viewer's mute, above the global mute
+            property <length> popup: self.track + 2 * self.track-top + self.line;
+            width: 24px;
+            height: self.open ? self.popup + self.line : root.bar-near ? self.line : 5px;
+            x: root.media-x + root.media-width - self.width;
+            y: root.media-y + root.media-height - self.height;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            if volume-box.open: Rectangle {
+                x: (volume-box.width - self.width) / 2;
+                y: volume-box.track-top;
+                width: 4px;
+                height: volume-box.track;
+                background: #606060;
+            }
+            if volume-box.open: Rectangle {
+                x: 4px;
+                y: volume-box.track-top + volume-box.track * (1 - root.volume / 100) - 3px;
+                width: volume-box.width - 8px;
+                height: 6px;
+                background: #b0b0b0;
+            }
+            if volume-box.open: Text {
+                y: volume-box.popup - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.viewer-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            if volume-box.height >= volume-box.line: Text {
+                y: volume-box.height - volume-box.line;
+                width: volume-box.width;
+                height: volume-box.line;
+                horizontal-alignment: center;
+                vertical-alignment: center;
+                text: root.global-muted ? "🔇" : "🔊";
+                color: #f0f0f0;
+                font-size: 11px;
+            }
+            volume-area := TouchArea {
+                pointer-event(event) => {
+                    if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
+                        if (self.mouse-y >= volume-box.height - volume-box.line) {
+                            root.flip-global-mute();
+                        } else if (volume-box.open && self.mouse-y >= volume-box.popup - volume-box.line) {
+                            root.flip-viewer-mute();
+                        } else if (volume-box.open) {
+                            root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
+                        }
+                    }
+                }
+                moved => {
+                    if (self.pressed && volume-box.open && self.pressed-y < volume-box.popup - volume-box.line) {
+                        root.volume-changed(root.volume-at(self.mouse-y, volume-box.track-top, volume-box.track));
+                    }
+                }
+            }
+        }
+        if root.question != "": Rectangle {
+            width: min(root.width - 40px, 420px);
+            height: 90px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: root.question;
+                    color: #f0f0f0;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "enter: yes, escape: no";
+                    color: #a0a0a0;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+        if root.period-asked: Rectangle {
+            width: min(root.width - 40px, 360px);
+            height: 96px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: "Enter the interval, in seconds.";
+                    color: #f0f0f0;
+                    horizontal-alignment: center;
+                }
+                FocusScope {
+                    capture-key-pressed(event) => {
+                        if (event.text == Key.Escape) {
+                            root.period-answered(false, "");
+                            return accept;
+                        }
+                        return reject;
+                    }
+                    LineEdit {
+                        text: "15.0";
+                        init => {
+                            self.focus();
+                            self.select-all();
+                        }
+                        accepted(text) => {
+                            root.period-answered(true, text);
+                        }
+                    }
+                }
+            }
+        }
+        if root.warning != "": Rectangle {
+            width: min(root.width - 40px, 420px);
+            height: 70px;
+            background: #303030;
+            border-width: 1px;
+            border-color: #606060;
+            border-radius: 4px;
+            VerticalLayout {
+                padding: 12px;
+                spacing: 8px;
+                Text {
+                    text: root.warning;
+                    color: #f0f0f0;
+                    wrap: word-wrap;
+                    horizontal-alignment: center;
+                }
+                Text {
+                    text: "enter or escape: ok";
+                    color: #a0a0a0;
+                    horizontal-alignment: center;
+                }
+            }
+        }
+        // the top hover frame (`CanvasHoverFrameTop`): its place in the
+        // list on the left, the file's buttons in the middle, the zoom and
+        // the viewer's on the right, and the info line under them
+        top-frame := TouchArea {
+            x: root.width * 0.2;
+            y: 0;
+            width: root.width * 0.6;
+            height: top-box.preferred-height;
+            visible: root.info-showing;
+            top-box := Rectangle {
+                background: #202020e8;
+                VerticalLayout {
+                    padding: 4px;
+                    spacing: 2px;
+                    HorizontalLayout {
+                        spacing: 2px;
+                        Text {
+                            horizontal-stretch: 1;
+                            text: root.caption;
+                            color: #f0f0f0;
+                            vertical-alignment: center;
+                            overflow: elide;
+                        }
+                        HoverButton {
+                            icon: root.file-inbox ? @image-url("../../../static/archive.png") : @image-url("../../../static/to_inbox.png");
+                            clicked => {
+                                if (root.file-inbox) {
+                                    root.archive();
+                                } else {
+                                    root.inbox();
+                                }
+                            }
+                        }
+                        // (send to trash, or from the trash delete completely)
+                        if root.file-trashed || root.file-local: HoverButton {
+                            icon: root.file-trashed ? @image-url("../../../static/delete.png") : @image-url("../../../static/trash.png");
+                            clicked => { root.delete(); }
+                        }
+                        if root.file-undeletable: HoverButton {
+                            icon: @image-url("../../../static/undelete.png");
+                            clicked => { root.undelete(); }
+                        }
+                        HorizontalLayout {
+                            horizontal-stretch: 1;
+                            alignment: end;
+                            spacing: 2px;
+                            Text {
+                                text: root.zoom-text;
+                                color: #f0f0f0;
+                                vertical-alignment: center;
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_in.png");
+                                clicked => { root.zoom(1, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_out.png");
+                                clicked => { root.zoom(-1, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/zoom_switch.png");
+                                clicked => { root.zoom(0, false, 0, 0); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/fullscreen_switch.svg");
+                                clicked => { root.toggle-fullscreen(); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/open_externally.png");
+                                clicked => { root.open-externally(); }
+                            }
+                            // (in the place of the reference's button to drag
+                            // the file out, which Slint can't do)
+                            HoverButton {
+                                icon: @image-url("../../../static/drag.png");
+                                clicked => { root.show-in-file-browser(); }
+                            }
+                            HoverButton {
+                                icon: @image-url("../../../static/stop.png");
+                                clicked => { root.close-requested(); }
+                            }
+                        }
+                    }
+                    if root.info-line != "": Text {
+                        text: root.info-line;
+                        color: #f0f0f0;
+                        horizontal-alignment: center;
+                        overflow: elide;
+                    }
+                }
+            }
+        }
+        // (nothing in it takes the pointer, so the area below keeps it)
+        notes-box := Rectangle {
+            x: root.width * 0.8;
+            y: root.ratings.length > 0 ? ratings-box.preferred-height + 4px : 0;
+            width: root.width * 0.2;
+            height: min(notes-layout.preferred-height, root.height - self.y);
+            background: #202020e8;
+            clip: true;
+            visible: root.notes-showing;
+            notes-layout := VerticalLayout {
+                padding: 6px;
+                spacing: 8px;
+                alignment: start;
+                for note in root.notes: VerticalLayout {
+                    spacing: 2px;
+                    Text {
+                        text: note.name;
+                        color: #f0f0f0;
+                        font-weight: 700;
+                        horizontal-alignment: center;
+                        wrap: word-wrap;
+                    }
+                    Text {
+                        text: note.text;
+                        color: #e0e0e0;
+                        wrap: word-wrap;
+                    }
+                }
+            }
+        }
+        ratings-frame := TouchArea {
+            x: root.width - ratings-box.preferred-width;
+            y: 0;
+            width: ratings-box.preferred-width;
+            height: ratings-box.preferred-height;
+            visible: root.ratings-showing;
+            ratings-box := Rectangle {
+                background: #202020e8;
+                VerticalLayout {
+                    padding: 6px;
+                    spacing: 4px;
+                    alignment: start;
+                    for row[i] in root.ratings: HorizontalLayout {
+                        alignment: end;
+                        Rectangle {
+                            width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                            height: row.kind == 2 ? root.incdec-height : root.rating-size;
+                            if row.kind == 2: Rectangle {
+                                border-width: 1px;
+                                border-color: row.pen;
+                                background: row.brush;
+                                Text {
+                                    x: 0;
+                                    width: parent.width - 2px;
+                                    height: parent.height;
+                                    horizontal-alignment: right;
+                                    vertical-alignment: center;
+                                    text: row.text;
+                                    color: #000000;
+                                    font-size: max(root.incdec-height - 1px, 6px);
+                                }
+                            }
+                            for star[k] in row.shapes: Path {
+                                x: k * (root.rating-size + row.pad);
+                                y: 0;
+                                width: root.rating-size;
+                                height: root.rating-size;
+                                viewbox-width: 12;
+                                viewbox-height: 12;
+                                commands: row.shape;
+                                fill: star.brush;
+                                stroke: star.pen;
+                                stroke-width: root.rating-outline;
+                            }
+                            TouchArea {
+                                pointer-event(event) => {
+                                    if (event.kind == PointerEventKind.down) {
+                                        if (event.button == PointerEventButton.left) {
+                                            root.rating-clicked(i, true, self.mouse-x / self.width);
+                                        } else if (event.button == PointerEventButton.right) {
+                                            root.rating-clicked(i, false, 0);
+                                        }
+                                    }
+                                }
+                                moved => {
+                                    // (dragging along stars sets them)
+                                    if (row.kind == 1) {
+                                        root.rating-clicked(i, true, self.mouse-x / self.width);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // (nothing in it takes the pointer, so the area above keeps it)
+        if root.tags-showing: Rectangle {
+            x: 0;
+            y: 0;
+            width: root.width * 0.2;
+            height: root.height;
+            background: #202020e8;
+            clip: true;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 2px;
+                alignment: start;
+                for tag in root.tags: Text {
+                    text: tag.text;
+                    color: tag.colour;
+                    overflow: elide;
+                }
             }
         }
     }
