@@ -3567,6 +3567,63 @@
    "0": "paused",
    "1": "semi-automatic",
    "2": "fully automatic"
+  },
+  "add_comparator": {
+   "title": "Which type of comparator?",
+   "choices": [
+    [
+     "test A or B using search terms",
+     "A comparator that tests one file at a time using system predicates."
+    ],
+    [
+     "test A or B using other file info",
+     "A comparator that tests one file at a time using a special routine."
+    ],
+    [
+     "test A against B using file info",
+     "A comparator that performs a number test on the width, filesize, etc.. of A vs B."
+    ],
+    [
+     "test if A and B are visual duplicates",
+     "A comparator that examines the differences in the images' shape and colour to determine if they are visual duplicates."
+    ],
+    [
+     "A and B have the same filetype",
+     "A comparator that tests if the two files share the same filetype."
+    ],
+    [
+     "A and B have different filetypes",
+     "A comparator that tests if the two files have different filetype."
+    ],
+    [
+     "A has clearly better jpeg quality than B",
+     "A comparator that tests if A has a non-trivially higher apparent jpeg quality than B. The difference corresponds to about one label-step of quality as you see in the duplicate filter. If either file is not a jpeg, it fails."
+    ],
+    [
+     "A has same or better metadata flags to B",
+     "Easy one-shot comparator that wants to preserve rich metadata in A. If B has a \"has_x\" flag, A must have it too. The flags tested are: EXIF, XMP, IPTC, software/source, human-readable. The actual contents are not compared, only the presence."
+    ],
+    [
+     "A has ICC Profile if B does",
+     "Easy one-shot comparator that wants to keep ICC Profiles in A. If B has an ICC Profile, A must have one too. The actual contents are not compared, only the presence."
+    ],
+    [
+     "A and B have the same \"has exif\" value",
+     "A comparator that tests if the two files either both have or both do not have some amount of EXIF data."
+    ],
+    [
+     "A and B have the same \"has icc profile\" value",
+     "A comparator that tests if the two files either both have or both do not have some amount of ICC Profile data."
+    ],
+    [
+     "OR Comparator",
+     "A comparator that tests an OR of several sub-comparators."
+    ],
+    [
+     "AND Comparator",
+     "A comparator that tests an AND of several sub-comparators. Use when you need to mix several different comparators within an OR."
+    ]
+   ]
   }
  }
 }

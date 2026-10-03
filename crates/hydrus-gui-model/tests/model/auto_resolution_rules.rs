@@ -50,3 +50,30 @@ fn rules_rows_and_comparators_are_the_references() {
         );
     }
 }
+
+#[test]
+fn add_offers_the_references_comparators() {
+    use hydrus_gui_model::auto_resolution_rules::comparator_choices;
+    let offered = &recorded()["choices"]["add_comparator"];
+    assert_eq!(offered["title"], "Which type of comparator?");
+    let ours: Vec<Json> = comparator_choices()
+        .into_iter()
+        .map(|(label, description, _)| json!([label, description]))
+        .collect();
+    assert_eq!(Json::Array(ours), offered["choices"]);
+}
+
+#[test]
+fn a_new_rule_searches_as_the_references_add_does() {
+    use hydrus_core::duplicates::{PairSearchKind, PixelDuplicates};
+    use hydrus_gui_model::auto_resolution_rules::{new_rule, rule_search_summary};
+    let suggested = hydrus_store::duplicates::auto::suggested_rules();
+    let rule = new_rule(&suggested[4]);
+    assert_eq!(rule.name, "new rule");
+    assert_eq!(rule.search.kind, PairSearchKind::BothFilesMatchOneSearch);
+    assert_eq!(rule.search.pixel_duplicates, PixelDuplicates::Allowed);
+    assert_eq!(
+        rule_search_summary(&rule.search, &TextContext::default()),
+        "both files matching [system:filetype is image, system:height > 128, system:width > 128], max search distance: 0"
+    );
+}

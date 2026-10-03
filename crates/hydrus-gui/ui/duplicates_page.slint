@@ -251,9 +251,9 @@ export component DuplicatesSidebar inherits VerticalLayout {
                         enabled: false;
                     }
                     Button {
-                        // (not in hydrus-rs yet)
                         text: "edit rules";
-                        enabled: false;
+                        enabled: !root.data.asking;
+                        clicked => { root.action("edit rules", 0, false, false); }
                     }
                 }
             }

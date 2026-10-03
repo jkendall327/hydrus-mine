@@ -1,0 +1,632 @@
+// The duplicates auto-resolution rules editor (the reference's "edit
+// rules" dialog, `EditDuplicatesAutoResolutionRulesPanel`, its rule editor
+// `EditDuplicatesAutoResolutionRulePanel`, and the comparator editors; the
+// workings are hydrus-gui-model's `auto_resolution_rules`, bound by
+// `src/auto_resolution_rules_window.rs`).
+
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+component Row inherits HorizontalLayout {
+    in property <string> label;
+    spacing: 6px;
+    Label {
+        text: root.label;
+        horizontal-stretch: 1;
+    }
+    @children
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    height: 28px;
+    min-width: label.preferred-width + 20px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+// a list of comparators (`EditComparatorList`): their summaries, and add
+// (of a kind chosen), edit and delete
+export component ComparatorList inherits VerticalLayout {
+    in property <[string]> rows;
+    in property <int> selected: -1;
+    in property <[string]> kinds;
+    in-out property <int> kind;
+    callback clicked(int);
+    callback add();
+    callback edit();
+    callback delete();
+    spacing: 4px;
+    Rectangle {
+        min-height: 140px;
+        vertical-stretch: 1;
+        border-width: 1px;
+        border-color: Theme.border;
+        ScrollView {
+            VerticalLayout {
+                alignment: start;
+                for row[i] in root.rows: Rectangle {
+                    height: 24px;
+                    background: i == root.selected ? Theme.highlight : transparent;
+                    Text {
+                        x: 4px;
+                        width: parent.width - 8px;
+                        text: row;
+                        overflow: elide;
+                        vertical-alignment: center;
+                        color: i == root.selected ? Theme.highlight-text : Theme.text;
+                    }
+                    TouchArea {
+                        clicked => { root.clicked(i); }
+                        double-clicked => {
+                            root.clicked(i);
+                            root.edit();
+                        }
+                    }
+                }
+            }
+        }
+    }
+    HorizontalLayout {
+        spacing: 4px;
+        ComboBox {
+            horizontal-stretch: 1;
+            model: root.kinds;
+            current-index <=> root.kind;
+        }
+        Button {
+            text: "add";
+            clicked => { root.add(); }
+        }
+        Button {
+            text: "edit";
+            enabled: root.selected >= 0;
+            clicked => { root.edit(); }
+        }
+        Button {
+            text: "delete";
+            enabled: root.selected >= 0;
+            clicked => { root.delete(); }
+        }
+    }
+}
+
+// "edit rules"
+export component AutoResolutionRulesWindow inherits Window {
+    title: "edit rules";
+    preferred-width: 1100px;
+    preferred-height: 560px;
+    background: Theme.window;
+    in property <string> warning;
+    in property <string> note;
+    in property <[TableRow]> rows;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    // "add suggested"'s list of the suggestions, while it is open
+    in property <[string]> suggestions;
+    in property <bool> choosing-suggested;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback add-suggested();
+    callback suggested-chosen(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Label {
+            text: root.warning;
+            horizontal-alignment: center;
+            color: Theme.error;
+        }
+        Label {
+            text: root.note;
+            horizontal-alignment: center;
+        }
+        ListTable {
+            vertical-stretch: 1;
+            columns: [
+                { title: "name", width: 180px },
+                { title: "search", width: 260px, stretch: true },
+                { title: "comparison", width: 220px },
+                { title: "action", width: 200px },
+                { title: "progress", width: 120px },
+                { title: "operation", width: 120px },
+            ];
+            rows: root.rows;
+            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+            row-activated(row) => { root.edit(); }
+        }
+        if root.choosing-suggested: Rectangle {
+            border-width: 1px;
+            border-color: Theme.border;
+            background: Theme.panel;
+            VerticalLayout {
+                padding: 8px;
+                spacing: 4px;
+                Text {
+                    text: "Select which to add";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                for name[i] in root.suggestions: Button {
+                    text: name;
+                    clicked => { root.suggested-chosen(i); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.suggested-chosen(-1); }
+                }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            Button {
+                text: "add suggested";
+                clicked => { root.add-suggested(); }
+            }
+            Button {
+                text: "add";
+                clicked => { root.add(); }
+            }
+            Button {
+                text: "edit";
+                enabled: root.one-selected;
+                clicked => { root.edit(); }
+            }
+            Button {
+                text: "delete";
+                enabled: root.any-selected;
+                clicked => { root.delete(); }
+            }
+            Rectangle { horizontal-stretch: 1; }
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
+
+// a rule's editor ("edit rule", or "edit duplicates auto-resolution rule")
+export component AutoResolutionRuleWindow inherits Window {
+    in property <string> window-title: "edit rule";
+    title: root.window-title;
+    preferred-width: 900px;
+    preferred-height: 700px;
+    background: Theme.window;
+    in-out property <string> name;
+    in-out property <bool> paused;
+    in-out property <int> operation;
+    in property <[string]> operation-choices;
+    in-out property <bool> no-pending-limit;
+    in-out property <int> pending-limit;
+    in-out property <int> tab;
+    // search
+    in property <string> search-text;
+    in property <[string]> pair-search-choices;
+    in-out property <int> pair-search;
+    in-out property <string> search-1;
+    in-out property <string> search-2;
+    in property <string> location;
+    in property <[string]> pixel-choices;
+    in-out property <int> pixel;
+    in-out property <int> distance;
+    // comparison
+    in property <string> comparison-text;
+    in property <[string]> comparators;
+    in property <int> comparator-selected: -1;
+    in property <[string]> comparator-kinds;
+    in-out property <int> comparator-kind;
+    // action
+    in property <string> action-text;
+    in property <[string]> action-choices;
+    in-out property <int> action;
+    in-out property <bool> delete-a;
+    in-out property <bool> delete-b;
+    in-out property <bool> default-merge;
+    // what is wrong
+    in property <string> errors;
+    callback changed();
+    callback comparator-clicked(int);
+    callback comparator-add();
+    callback comparator-edit();
+    callback comparator-delete();
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Row {
+            label: "name: ";
+            LineEdit {
+                horizontal-stretch: 3;
+                text <=> root.name;
+                edited => { root.changed(); }
+            }
+        }
+        Row {
+            label: "paused: ";
+            CheckBox {
+                checked <=> root.paused;
+                toggled => { root.changed(); }
+            }
+        }
+        Row {
+            label: "operation: ";
+            ComboBox {
+                horizontal-stretch: 3;
+                model: root.operation-choices;
+                current-index <=> root.operation;
+                selected => { root.changed(); }
+            }
+        }
+        Row {
+            label: "max pending pairs (semi-automatic only): ";
+            CheckBox {
+                text: "no limit";
+                enabled: root.operation == 0;
+                checked <=> root.no-pending-limit;
+                toggled => { root.changed(); }
+            }
+            SpinBox {
+                enabled: root.operation == 0 && !root.no-pending-limit;
+                minimum: 1;
+                maximum: 1000000;
+                value <=> root.pending-limit;
+                edited => { root.changed(); }
+            }
+        }
+        HorizontalLayout {
+            alignment: start;
+            Tab {
+                text: "search";
+                current: root.tab == 0;
+                clicked => { root.tab = 0; }
+            }
+            Tab {
+                text: "comparison";
+                current: root.tab == 1;
+                clicked => { root.tab = 1; }
+            }
+            Tab {
+                text: "action";
+                current: root.tab == 2;
+                clicked => { root.tab = 2; }
+            }
+        }
+        if root.tab == 0: VerticalLayout {
+            spacing: 6px;
+            vertical-stretch: 1;
+            Label {
+                text: root.search-text;
+                horizontal-alignment: center;
+            }
+            Text {
+                text: "potential duplicate pairs search";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            ComboBox {
+                model: root.pair-search-choices;
+                current-index <=> root.pair-search;
+                selected => { root.changed(); }
+            }
+            Label { text: "in " + root.location + "; a search term a line (tags, or system predicates as the Client API takes them):"; }
+            HorizontalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                TextEdit {
+                    text <=> root.search-1;
+                    edited => { root.changed(); }
+                }
+                if root.pair-search == 2: TextEdit {
+                    text <=> root.search-2;
+                    edited => { root.changed(); }
+                }
+            }
+            Row {
+                label: "maximum search distance of pair: ";
+                SpinBox {
+                    enabled: root.pixel != 0;
+                    minimum: 0;
+                    maximum: 64;
+                    step-size: 2;
+                    value <=> root.distance;
+                    edited => { root.changed(); }
+                }
+            }
+            ComboBox {
+                model: root.pixel-choices;
+                current-index <=> root.pixel;
+                selected => { root.changed(); }
+            }
+        }
+        if root.tab == 1: VerticalLayout {
+            spacing: 6px;
+            vertical-stretch: 1;
+            Label {
+                text: root.comparison-text;
+                horizontal-alignment: center;
+            }
+            Text {
+                text: "pair comparison and selection";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            ComparatorList {
+                vertical-stretch: 1;
+                rows: root.comparators;
+                selected: root.comparator-selected;
+                kinds: root.comparator-kinds;
+                kind <=> root.comparator-kind;
+                clicked(i) => { root.comparator-clicked(i); }
+                add => { root.comparator-add(); }
+                edit => { root.comparator-edit(); }
+                delete => { root.comparator-delete(); }
+            }
+        }
+        if root.tab == 2: VerticalLayout {
+            spacing: 6px;
+            alignment: start;
+            Label {
+                text: root.action-text;
+                horizontal-alignment: center;
+            }
+            Text {
+                text: "pair actions";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Row {
+                label: "action: ";
+                ComboBox {
+                    horizontal-stretch: 2;
+                    model: root.action-choices;
+                    current-index <=> root.action;
+                    selected => { root.changed(); }
+                }
+            }
+            Row {
+                label: "delete A: ";
+                CheckBox {
+                    checked <=> root.delete-a;
+                    toggled => { root.changed(); }
+                }
+            }
+            Row {
+                label: "delete B: ";
+                CheckBox {
+                    checked <=> root.delete-b;
+                    toggled => { root.changed(); }
+                }
+            }
+            Row {
+                label: "use default content merge options for action: ";
+                CheckBox {
+                    checked <=> root.default-merge;
+                    toggled => { root.changed(); }
+                }
+            }
+        }
+        if root.errors != "": Label {
+            text: root.errors;
+            color: Theme.error;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
+
+// a comparator's editor; its `kind` says which fields show: "search",
+// "hardcoded", "relative", "visual" or "list" (an OR's or AND's)
+export component ComparatorWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 640px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <string> kind;
+    in property <string> summary;
+    // a one-file comparator's file, and test or search
+    in property <[string]> looking-choices;
+    in-out property <int> looking;
+    in property <[string]> test-choices;
+    in-out property <int> test;
+    in-out property <string> predicates;
+    // a relative comparator's
+    in property <[string]> property-choices;
+    in-out property <int> property;
+    in property <[string]> operator-choices;
+    in-out property <int> operator;
+    in property <bool> approximate;
+    in property <string> range-label;
+    in-out property <int> range;
+    in-out property <string> multiplier;
+    in property <string> delta-label;
+    in-out property <int> delta;
+    in property <string> warning;
+    // a visual duplicates comparator's
+    in property <[string]> visual-choices;
+    in-out property <int> visual;
+    // an OR's or AND's
+    in property <[string]> subs;
+    in property <int> sub-selected: -1;
+    in property <[string]> sub-kinds;
+    in-out property <int> sub-kind;
+    in property <string> errors;
+    callback changed();
+    callback sub-clicked(int);
+    callback sub-add();
+    callback sub-edit();
+    callback sub-delete();
+    callback apply();
+    callback cancel();
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        if root.kind == "search" || root.kind == "hardcoded": ComboBox {
+            model: root.looking-choices;
+            current-index <=> root.looking;
+            selected => { root.changed(); }
+        }
+        if root.kind == "hardcoded": ComboBox {
+            model: root.test-choices;
+            current-index <=> root.test;
+            selected => { root.changed(); }
+        }
+        if root.kind == "search": VerticalLayout {
+            spacing: 4px;
+            vertical-stretch: 1;
+            Text {
+                text: "metadata conditional";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Label { text: "a search term a line (tags, or system predicates as the Client API takes them):"; }
+            TextEdit {
+                vertical-stretch: 1;
+                text <=> root.predicates;
+                edited => { root.changed(); }
+            }
+        }
+        if root.kind == "relative": VerticalLayout {
+            spacing: 6px;
+            alignment: start;
+            ComboBox {
+                model: root.property-choices;
+                current-index <=> root.property;
+                selected => { root.changed(); }
+            }
+            if root.warning != "": Label {
+                text: root.warning;
+                color: Theme.error;
+            }
+            Row {
+                label: "operator: ";
+                ComboBox {
+                    horizontal-stretch: 2;
+                    model: root.operator-choices;
+                    current-index <=> root.operator;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.approximate: Row {
+                label: root.range-label;
+                SpinBox {
+                    minimum: 0;
+                    maximum: 100000000;
+                    value <=> root.range;
+                    edited => { root.changed(); }
+                }
+            }
+            Row {
+                label: "multiplier (optional): ";
+                LineEdit {
+                    text <=> root.multiplier;
+                    edited => { root.changed(); }
+                }
+            }
+            Row {
+                label: root.delta-label;
+                SpinBox {
+                    minimum: -100000000;
+                    maximum: 100000000;
+                    value <=> root.delta;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.kind == "visual": Row {
+            label: "A and B are at least ";
+            ComboBox {
+                horizontal-stretch: 2;
+                model: root.visual-choices;
+                current-index <=> root.visual;
+                selected => { root.changed(); }
+            }
+        }
+        if root.kind == "list": ComparatorList {
+            vertical-stretch: 1;
+            rows: root.subs;
+            selected: root.sub-selected;
+            kinds: root.sub-kinds;
+            kind <=> root.sub-kind;
+            clicked(i) => { root.sub-clicked(i); }
+            add => { root.sub-add(); }
+            edit => { root.sub-edit(); }
+            delete => { root.sub-delete(); }
+        }
+        // (the room left, above the summary, unless a list takes it)
+        if root.kind != "list" && root.kind != "search": Rectangle { vertical-stretch: 1; }
+        Label {
+            text: root.summary;
+            color: Theme.muted;
+        }
+        if root.errors != "": Label {
+            text: root.errors;
+            color: Theme.error;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

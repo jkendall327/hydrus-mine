@@ -22,6 +22,7 @@ pub use ui::*;
 
 mod animation;
 mod archive_delete_window;
+mod auto_resolution_rules_window;
 mod checker_options_window;
 pub mod daemon;
 mod drops;
@@ -135,12 +136,12 @@ pub(crate) use bind_zoom;
 // names here)
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
-    archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, file_log, filename_tagging, folders,
-    import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
-    manage_tags, media_actions, options, page_chooser, predicate_editors, ratings, scanbar,
-    search_log, selection, session_saving, sort, status, subscriptions_dialog, subscriptions_list,
-    thumbnail_icons, thumbnail_ratings,
+    archive_delete, audio, auto_resolution_rules, autocomplete, checker_options, collect, domains,
+    duplicate_filter, duplicates_page, edit_subscription, favourites, file_log, filename_tagging,
+    folders, import_options_editor, importer_menu, info_lines, list_selection, local_import,
+    main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors, ratings,
+    scanbar, search_log, selection, session_saving, sort, status, subscriptions_dialog,
+    subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -172,6 +173,8 @@ pub struct Bound {
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     /// The import and export folders dialogs while they are open.
     pub folders: folders_window::Slots,
+    /// The duplicates auto-resolution rules editor's windows.
+    pub auto_resolution: auto_resolution_rules_window::Slots,
     /// An importer's file log while one is open.
     pub file_log: Rc<RefCell<Option<FileLogWindow>>>,
     /// The archive/delete filter while one is open.
@@ -2483,6 +2486,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_page,
         review_imports,
         filename_tagging,
+        auto_resolution: duplicates.rules_editor.clone(),
         locations,
         favourites: favourite_dialogs,
         predicate_editor,

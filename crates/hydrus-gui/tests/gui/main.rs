@@ -6,6 +6,7 @@ mod common;
 
 mod animation;
 mod archive_delete;
+mod auto_resolution_rules;
 mod collect;
 mod downloader_lists;
 mod duplicate_filter;

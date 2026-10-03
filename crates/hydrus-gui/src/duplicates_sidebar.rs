@@ -46,6 +46,8 @@ struct State {
 #[derive(Default)]
 pub(crate) struct Sidebar {
     state: RefCell<State>,
+    /// The auto-resolution rules editor's windows.
+    pub(crate) rules_editor: crate::auto_resolution_rules_window::Slots,
 }
 
 impl Sidebar {
@@ -209,6 +211,15 @@ impl Sidebar {
                 let targets = self.reset_targets();
                 if !targets.is_empty() {
                     self.state.borrow_mut().asking = Some(Asking::Reset(which, targets));
+                }
+            }
+            "edit rules" => {
+                if let Err(e) = crate::auto_resolution_rules_window::open(
+                    &store,
+                    &self.rules_editor,
+                    Rc::new(|| {}),
+                ) {
+                    eprintln!("could not open the rules: {e}");
                 }
             }
             "rule" => {

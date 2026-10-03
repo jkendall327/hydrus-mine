@@ -387,3 +387,292 @@ pub fn row(rule: &Rule, progress: &str, context: &TextContext) -> [String; 6] {
         operation_text(rule),
     ]
 }
+
+/// The "edit rules" dialog's warning, and its note on order.
+pub const RULES_WARNING: &str = "THIS IS AN ADVANCED SYSTEM. READ THE HELP DOCUMENTATION. DO NOT CREATE A NEW RULE WITHOUT UNDERSTANDING AND PREVIEWING WHAT IT WILL DO";
+pub const RULES_ORDER_NOTE: &str = "Rules are worked on in smart alphabetical name order, so if you have overlapping test domains and want to force precedence, try naming them \"1 - \" and \"2 - \" etc..";
+
+/// A rule as the dialog holds it, with its id in the store if it is
+/// there yet.
+#[derive(Debug, Clone)]
+pub struct RuleEdit {
+    pub id: Option<i64>,
+    pub rule: Rule,
+}
+
+impl crate::folders::Name for RuleEdit {
+    fn name(&self) -> &str {
+        &self.rule.name
+    }
+
+    fn set_name(&mut self, name: String) {
+        self.rule.name = name;
+    }
+}
+
+/// The rule "add" starts from (`_Add`): "new rule", searching both files
+/// of pairs among images over 128x128 in all my files, pixel duplicates
+/// allowed at distance 0; no comparators, "better", semi-automatic.
+/// `like` is a suggested rule whose search is that (the reference's
+/// "pixel-perfect pairs").
+pub fn new_rule(like: &Rule) -> Rule {
+    let mut search = like.search.clone();
+    search.kind = PairSearchKind::BothFilesMatchOneSearch;
+    search.pixel_duplicates = PixelDuplicates::Allowed;
+    search.max_hamming_distance = 0;
+    Rule {
+        name: "new rule".into(),
+        paused: false,
+        mode: OperationMode::SemiAutomatic,
+        max_pending_pairs: Some(500),
+        search,
+        comparators: Vec::new(),
+        action: RuleAction::Better,
+        delete_a: false,
+        delete_b: false,
+        custom_merge: None,
+    }
+}
+
+/// The search tab's choices: what pairs match, in order, and pixel
+/// duplicates.
+pub const PAIR_SEARCH_CHOICES: [(&str, PairSearchKind); 3] = [
+    (
+        "at least one file matches the search",
+        PairSearchKind::OneFileMatchesOneSearch,
+    ),
+    (
+        "both files match the search",
+        PairSearchKind::BothFilesMatchOneSearch,
+    ),
+    (
+        "the two files match different searches",
+        PairSearchKind::BothFilesMatchDifferentSearches,
+    ),
+];
+
+pub const PIXEL_CHOICES: [(&str, PixelDuplicates); 3] = [
+    ("must be pixel dupes", PixelDuplicates::Required),
+    ("can be pixel dupes", PixelDuplicates::Allowed),
+    ("must not be pixel dupes", PixelDuplicates::Excluded),
+];
+
+/// The tabs' texts.
+pub const SEARCH_TEXT: &str = "First we have to find some duplicate pairs to test. This can be system:everything if you like, but it is best to narrow it down if you can.\n\nIt is a good idea to keep a \"system:filetype is image\" in here to ensure you do not include some PSD files by accident etc..";
+pub const COMPARISON_TEXT: &str = "Now, for each pair that matches our search, we need to determine if their differences (or similarities!) are clear enough that we can confidently make an automatic decision. The pairs are also unordered, so if we are setting one file to be a better duplicate of the other, we also need to define which is the A (usually the better) and the B (usually the worse).\n\nThe client will test the incoming pair both ways around ([1,2] and [2,1]) against these rules, and if they fit either way, that \"AB\" pair order is set and the action is applied. If the pair cannot fit into the rules either way, the test is considered failed and no changes are made. If there are no rules, all pairs will be actioned--but remember you need at least one clear A- or B-defining rule for a \"better/worse duplicates\" action.";
+pub const ACTION_TEXT: &str = "And now we have pairs to action, what should we do?\n\nNote that in the auto-resolution filter, \"always archive both\" will be treated as \"if one is archived, archive the other\".";
+
+/// What "add" in a comparator list offers ("Which type of comparator?"):
+/// each choice's label and description, and the comparator it starts.
+pub fn comparator_choices() -> Vec<(String, &'static str, Comparator)> {
+    let mut out: Vec<(String, &'static str, Comparator)> = vec![
+        (
+            "test A or B using search terms".into(),
+            "A comparator that tests one file at a time using system predicates.",
+            Comparator::OneFileMetadata {
+                looking_at: LookingAt::A,
+                predicates: Vec::new(),
+            },
+        ),
+        (
+            "test A or B using other file info".into(),
+            "A comparator that tests one file at a time using a special routine.",
+            Comparator::OneFileHardcoded {
+                looking_at: LookingAt::A,
+                test: OneFileTest::JpegIsProgressive,
+            },
+        ),
+        (
+            "test A against B using file info".into(),
+            "A comparator that performs a number test on the width, filesize, etc.. of A vs B.",
+            Comparator::RelativeFileInfo {
+                property: Comparable::Size,
+                test: NumberTest {
+                    op: NumberOp::Greater,
+                    value: 1,
+                },
+                multiplier: 1.0,
+                delta: 0,
+            },
+        ),
+        (
+            "test if A and B are visual duplicates".into(),
+            "A comparator that examines the differences in the images' shape and colour to determine if they are visual duplicates.",
+            Comparator::VisualDuplicates { confidence: 85 },
+        ),
+    ];
+    let pairs: [(PairTest, &'static str); 7] = [
+        (
+            PairTest::FiletypeSame,
+            "A comparator that tests if the two files share the same filetype.",
+        ),
+        (
+            PairTest::FiletypeDiffers,
+            "A comparator that tests if the two files have different filetype.",
+        ),
+        (
+            PairTest::AHasClearlyBetterJpegQuality,
+            "A comparator that tests if A has a non-trivially higher apparent jpeg quality than B. The difference corresponds to about one label-step of quality as you see in the duplicate filter. If either file is not a jpeg, it fails.",
+        ),
+        (
+            PairTest::AHasSameOrBetterMetadataFlags,
+            "Easy one-shot comparator that wants to preserve rich metadata in A. If B has a \"has_x\" flag, A must have it too. The flags tested are: EXIF, XMP, IPTC, software/source, human-readable. The actual contents are not compared, only the presence.",
+        ),
+        (
+            PairTest::AHasIccProfileIfBDoes,
+            "Easy one-shot comparator that wants to keep ICC Profiles in A. If B has an ICC Profile, A must have one too. The actual contents are not compared, only the presence.",
+        ),
+        (
+            PairTest::HasExifSame,
+            "A comparator that tests if the two files either both have or both do not have some amount of EXIF data.",
+        ),
+        (
+            PairTest::HasIccProfileSame,
+            "A comparator that tests if the two files either both have or both do not have some amount of ICC Profile data.",
+        ),
+    ];
+    let context = TextContext::default();
+    for (test, description) in pairs {
+        let comparator = Comparator::Pair(test);
+        out.push((
+            comparator_summary(&comparator, &context),
+            description,
+            comparator,
+        ));
+    }
+    out.push((
+        "OR Comparator".into(),
+        "A comparator that tests an OR of several sub-comparators.",
+        Comparator::Or(Vec::new()),
+    ));
+    out.push((
+        "AND Comparator".into(),
+        "A comparator that tests an AND of several sub-comparators. Use when you need to mix several different comparators within an OR.",
+        Comparator::And(Vec::new()),
+    ));
+    out
+}
+
+/// The looking-at choices of a one-file comparator, in order: the search
+/// one's wording, or the hardcoded one's.
+pub fn looking_choices(search: bool) -> [(&'static str, LookingAt); 3] {
+    if search {
+        [
+            ("A will match these", LookingAt::A),
+            ("B will match these", LookingAt::B),
+            ("either will match these", LookingAt::Either),
+        ]
+    } else {
+        [
+            ("A will match", LookingAt::A),
+            ("B will match", LookingAt::B),
+            ("either will match", LookingAt::Either),
+        ]
+    }
+}
+
+/// The one-file hardcoded tests, in order.
+pub const ONE_FILE_TESTS: [(&str, OneFileTest); 2] = [
+    ("is a progressive jpeg", OneFileTest::JpegIsProgressive),
+    (
+        "is a non-progressive jpeg",
+        OneFileTest::JpegIsNotProgressive,
+    ),
+];
+
+/// The properties a relative comparator can test, in the reference's
+/// order.
+pub const PROPERTIES: [Comparable; 14] = [
+    Comparable::Size,
+    Comparable::Width,
+    Comparable::Height,
+    Comparable::NumPixels,
+    Comparable::Ratio,
+    Comparable::Duration,
+    Comparable::Framerate,
+    Comparable::NumFrames,
+    Comparable::NumTags,
+    Comparable::NumUrls,
+    Comparable::ImportTime,
+    Comparable::ModifiedTime,
+    Comparable::LastViewedTime,
+    Comparable::ArchivedTime,
+];
+
+/// The operators offered for a property (the reference's panel for its
+/// kind), approximate ones with a default range.
+pub fn operator_choices(property: Comparable) -> Vec<NumberOp> {
+    use NumberOp as O;
+    let time = matches!(
+        property,
+        Comparable::ImportTime
+            | Comparable::ModifiedTime
+            | Comparable::LastViewedTime
+            | Comparable::ArchivedTime
+    );
+    let mut ops = vec![O::Less, O::Greater];
+    match property {
+        Comparable::Framerate => {
+            ops.push(O::ApproxAbsolute { tolerance: 1 });
+            ops.push(O::ApproxPercent { percent: 5 });
+            return ops;
+        }
+        _ => ops.extend([O::LessOrEqual, O::GreaterOrEqual, O::Equal, O::NotEqual]),
+    }
+    if time {
+        ops.push(O::ApproxAbsolute { tolerance: 60_000 });
+    } else if property == Comparable::Duration {
+        ops.push(O::ApproxAbsolute { tolerance: 1000 });
+        ops.push(O::ApproxPercent { percent: 5 });
+    } else if property == Comparable::Ratio {
+        ops.push(O::ApproxPercent { percent: 5 });
+    } else {
+        ops.push(O::ApproxAbsolute { tolerance: 1 });
+        ops.push(O::ApproxPercent { percent: 5 });
+    }
+    ops
+}
+
+/// Whether two operators are the same kind (ignoring their ranges).
+pub fn same_operator(a: NumberOp, b: NumberOp) -> bool {
+    std::mem::discriminant(&a) == std::mem::discriminant(&b)
+}
+
+/// An operator as its choice shows it, for a property.
+pub fn operator_label(op: NumberOp, property: Comparable) -> String {
+    let words = operator_text(op, property);
+    match op {
+        NumberOp::ApproxPercent { .. } => format!("{words} (within a percentage)"),
+        NumberOp::ApproxAbsolute { .. } => format!("{words} (within a range)"),
+        _ => words.to_owned(),
+    }
+}
+
+/// Predicates as lines of text, as the search box shows them.
+pub fn predicate_lines(
+    predicates: &[hydrus_core::search::predicate::Predicate],
+    context: &TextContext,
+) -> String {
+    predicates
+        .iter()
+        .map(|p| predicate_text(p, context))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// Predicates typed a line each (as the Client API's search reads tags
+/// and system predicates), or what is wrong.
+pub fn parse_predicate_lines(
+    text: &str,
+) -> Result<Vec<hydrus_core::search::predicate::Predicate>, String> {
+    let lines: Vec<serde_json::Value> = text
+        .lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .map(|l| serde_json::Value::String(l.to_owned()))
+        .collect();
+    if lines.is_empty() {
+        return Ok(Vec::new());
+    }
+    hydrus_search::parse_api_search(&serde_json::Value::Array(lines)).map_err(|e| e.to_string())
+}

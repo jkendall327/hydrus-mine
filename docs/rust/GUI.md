@@ -903,6 +903,25 @@ and resets the selected (or every) rule's search, tests or denials,
 asking first. What the tabs say is as
 `oracle/record_duplicates_preparation.py` and
 `oracle/record_auto_resolution_rows.py` recorded the reference's.
+
+"edit rules" opens the reference's "edit rules" dialog
+(`src/auto_resolution_rules_window.rs`,
+`hydrus-gui-model/src/auto_resolution_rules.rs`): the rules with their
+search, comparison, action, progress and operation, its warning, and
+"add suggested" (the reference's suggested rules), "add", "edit" and
+"delete" (asking first); "apply" writes them (a changed rule starting its
+work over, as the reference's does). The rule editor sets the name,
+paused, operation and most pending pairs, and has tabs for the search
+(which pairs, the searches typed a term a line, the distance and pixel
+duplicates), the comparison (the comparators, added by kind and edited
+in their own editors: a search for A, B or either; A or B's progressive
+jpeg test; a relative test of a file property with its operator,
+multiplier and delta; a pair test; visual duplicates; and OR and AND
+lists of comparators, each edited in an editor of its own) and the
+action (which, deleting A or B, and default or custom merge options).
+"apply" refuses a "better" rule whose comparators can't tell A from B,
+with the reference's words. What they say is as
+`oracle/record_auto_resolution_summaries.py` recorded the reference's.
 `crates/hydrus-gui/tests/gui/search_page.rs` drives the page and
 `tests/gui/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
@@ -916,8 +935,8 @@ copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, a
 download's cog and error menus (bandwidth rules, the last error); in
-the duplicates page, editing its search, editing auto-resolution rules
-and reviewing their actions, and quick and dirty processing; in the duplicate filter, the custom action,
+the duplicates page, editing its search, reviewing auto-resolution
+rules' actions, and quick and dirty processing; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and
 reviewing auto-resolution's pending
 pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its

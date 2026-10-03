@@ -19,6 +19,11 @@ and the editor's choices (`choices`): the operation modes, the actions it
 offers, the comparator types "add" offers (label and description), and
 the visual duplicates confidences.
 
+It also writes the suggested rules' stored tuples, in order, to
+`crates/hydrus-store/src/duplicates/suggested_rules.json`, which
+hydrus-store reads for "add suggested" (the reference builds them in
+`GetDefaultRuleSuggestions`).
+
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_auto_resolution_summaries.py
        (writes fixtures/auto_resolution_summaries.json)
 """
@@ -32,6 +37,7 @@ HERE = os.path.dirname( os.path.abspath( __file__ ) )
 sys.path.insert( 0, HERE )
 
 OUT = os.path.join( HERE, 'fixtures', 'auto_resolution_summaries.json' )
+SUGGESTED_OUT = os.path.join( HERE, '..', 'crates', 'hydrus-store', 'src', 'duplicates', 'suggested_rules.json' )
 
 
 def more_comparators():
@@ -147,8 +153,39 @@ def record( session ):
             } )
 
 
+        # what a comparator list's "add" offers, its question answered by
+        # cancelling
+        from hydrus.core import HydrusExceptions
+        from hydrus.client.gui import ClientGUIDialogsQuick
+
+        offered = []
+
+        def select( win, title, choice_tuples, **kwargs ):
+
+            offered.append( { 'title' : title, 'choices' : [ [ c[ 0 ], c[ 2 ] ] for c in choice_tuples ] } )
+
+            raise HydrusExceptions.CancelledException()
+
+
+        real_select = ClientGUIDialogsQuick.SelectFromListButtons
+        ClientGUIDialogsQuick.SelectFromListButtons = select
+
+        try:
+
+            G.EditComparatorList( gui )._AddComparator()
+
+        except HydrusExceptions.VetoException:
+
+            pass
+
+        finally:
+
+            ClientGUIDialogsQuick.SelectFromListButtons = real_select
+
+
         choices = {
             'operation_modes' : { str( k ) : v for ( k, v ) in AR.duplicates_auto_resolution_rule_operation_mode_str_lookup.items() },
+            'add_comparator' : offered[ 0 ],
         }
 
         return { 'suggested' : suggested, 'rules' : out, 'choices' : choices }
@@ -203,7 +240,15 @@ def main():
         f.write( '\n' )
 
 
-    print( f'wrote {OUT}: {len( result[ "rules" ] )} rules' )
+    suggested = [ r[ 'stored' ] for r in result[ 'rules' ] if r[ 'row' ][ 0 ] in result[ 'suggested' ] ]
+
+    with open( SUGGESTED_OUT, 'w' ) as f:
+
+        json.dump( suggested, f, indent = 1, ensure_ascii = False )
+        f.write( '\n' )
+
+
+    print( f'wrote {OUT}: {len( result[ "rules" ] )} rules; {SUGGESTED_OUT}: {len( suggested )}' )
 
 
 if __name__ == '__main__':

@@ -670,3 +670,48 @@ pub fn reset_file_search_progress(conn: &Connection, hash_id: HashId) -> Result<
     )?;
     Ok(())
 }
+
+/// The reference's suggested rules ("add suggested": `GetDefaultRule
+/// Suggestions`), in order, read from their stored form
+/// (`suggested_rules.json`, written by
+/// `oracle/record_auto_resolution_summaries.py`).
+pub fn suggested_rules() -> Vec<Rule> {
+    let stored: Vec<serde_json::Value> = serde_json::from_str(include_str!("suggested_rules.json"))
+        .expect("the suggestions are JSON");
+    stored
+        .iter()
+        .filter_map(|tuple| {
+            let object =
+                hydrus_legacy::serialisable::SerialisableObject::from_tuple_str(&tuple.to_string())
+                    .ok()?;
+            let legacy =
+                hydrus_legacy::objects::auto_resolution::AutoResolutionRule::from_object(&object)
+                    .ok()?;
+            crate::import::auto_resolution_rule(&legacy, &|_| None).ok()
+        })
+        .collect()
+}
+
+#[cfg(test)]
+mod tests {
+    #[test]
+    fn the_references_suggested_rules_are_all_read() {
+        let names: Vec<String> = super::suggested_rules()
+            .into_iter()
+            .map(|r| r.name)
+            .collect();
+        assert_eq!(
+            names,
+            [
+                "pixel-perfect jpegs vs pngs",
+                "pixel-perfect gifs vs pngs",
+                "pixel-perfect jpegs vs pngs - except when png is smaller",
+                "pixel-perfect gifs vs pngs - except when png is smaller",
+                "pixel-perfect pairs",
+                "visually similar pairs",
+                "visually similar pairs - only earlier imports",
+                "near-perfect jpegs vs pngs"
+            ]
+        );
+    }
+}

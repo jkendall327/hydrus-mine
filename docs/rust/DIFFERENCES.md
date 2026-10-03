@@ -585,9 +585,17 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   its idle and normal time switches say (it has no idle time of its own).
   The tab's name always hides the percentage once over 99% done (the
   reference's option for it isn't kept). The auto-resolution tab can't
-  edit rules or review their actions yet, and a rule's status can't say
+  review rules' actions yet, and a rule's status can't say
   which rule `hydrus serve` is working on ("searching", "resolving"): it
   says "working".
+- **The auto-resolution rule editor** takes its searches as terms typed
+  a line each (as the Client API reads them), in the rule's location
+  (which isn't changed there), where the reference has search
+  autocompletes with a location button and a live count of pairs. It has
+  no "preview" tab, nor import/export/duplicate of rules or comparators,
+  and custom merge options start from the client's for the action and
+  aren't edited there. A relative comparator's time delta and range are
+  in milliseconds, where the reference has a time widget.
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
