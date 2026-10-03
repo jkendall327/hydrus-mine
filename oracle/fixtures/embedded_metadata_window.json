@@ -1,0 +1,238 @@
+{
+  "basics": "one file\nall modified times:\n  local: yesterday\n  sources:\n    example.com: today",
+  "cases": [
+    {
+      "name": "empty",
+      "boxes": [
+        {
+          "title": "basics",
+          "visible": true
+        },
+        {
+          "title": "EXIF",
+          "visible": false
+        },
+        {
+          "title": "XMP",
+          "visible": false
+        },
+        {
+          "title": "IPTC",
+          "visible": false
+        },
+        {
+          "title": "human-readable text",
+          "visible": false
+        },
+        {
+          "title": "extra info",
+          "visible": false
+        }
+      ],
+      "instruction": "Double-click a row to copy its value to clipboard.",
+      "xmp": "",
+      "iptc": "",
+      "text": "",
+      "readonly": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "name": "png",
+      "boxes": [
+        {
+          "title": "basics",
+          "visible": true
+        },
+        {
+          "title": "EXIF",
+          "visible": true
+        },
+        {
+          "title": "XMP",
+          "visible": true
+        },
+        {
+          "title": "IPTC",
+          "visible": true
+        },
+        {
+          "title": "human-readable text",
+          "visible": true
+        },
+        {
+          "title": "extra info",
+          "visible": true
+        }
+      ],
+      "instruction": "Double-click a row to copy its value to clipboard.\nNote that while PNGs can store EXIF data, it is not a well-defined standard. Hydrus does not apply EXIF Orientation (rotation) metadata to PNGs.",
+      "xmp": "source:\n    camera",
+      "iptc": "(2, 5):\n    title",
+      "text": "a caption",
+      "readonly": [
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "name": "non-local",
+      "boxes": [
+        {
+          "title": "basics",
+          "visible": true
+        },
+        {
+          "title": "EXIF",
+          "visible": false
+        },
+        {
+          "title": "XMP",
+          "visible": false
+        },
+        {
+          "title": "IPTC",
+          "visible": false
+        },
+        {
+          "title": "human-readable text",
+          "visible": true
+        },
+        {
+          "title": "extra info",
+          "visible": false
+        }
+      ],
+      "instruction": "Double-click a row to copy its value to clipboard.",
+      "xmp": "",
+      "iptc": "",
+      "text": "This file is not local to this computer!",
+      "readonly": [
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "reads_embedded": {
+    "pdf": true,
+    "jpeg": true,
+    "png": true,
+    "webp": true,
+    "tiff": true,
+    "mp3": false
+  },
+  "list_rows": [
+    [
+      "271",
+      "Make",
+      "Camera[null]Maker[null]",
+      "Camera\u0000Maker\u0000"
+    ],
+    [
+      "37510",
+      "UserComment",
+      "17B: 41534349490000006120636f6d6d656e74",
+      "41534349490000006120636f6d6d656e74"
+    ],
+    [
+      "65000",
+      "Unknown",
+      "Stra\u00dfe",
+      "Stra\u00dfe"
+    ],
+    [
+      "65001",
+      "Unknown",
+      "STRASSE",
+      "STRASSE"
+    ],
+    [
+      "282",
+      "XResolution",
+      "300.0",
+      "300.0"
+    ]
+  ],
+  "sort_orders": [
+    {
+      "column": 0,
+      "ascending": true,
+      "order": [
+        0,
+        4,
+        1,
+        2,
+        3
+      ]
+    },
+    {
+      "column": 0,
+      "ascending": false,
+      "order": [
+        3,
+        2,
+        1,
+        4,
+        0
+      ]
+    },
+    {
+      "column": 1,
+      "ascending": true,
+      "order": [
+        0,
+        1,
+        4,
+        2,
+        3
+      ]
+    },
+    {
+      "column": 1,
+      "ascending": false,
+      "order": [
+        3,
+        2,
+        4,
+        1,
+        0
+      ]
+    },
+    {
+      "column": 2,
+      "ascending": true,
+      "order": [
+        4,
+        1,
+        0,
+        2,
+        3
+      ]
+    },
+    {
+      "column": 2,
+      "ascending": false,
+      "order": [
+        3,
+        2,
+        0,
+        1,
+        4
+      ]
+    }
+  ],
+  "pdf": {
+    "pdf_text.pdf": "Author: hydrus-rs\nTitle: Oracle Test",
+    "pdf_empty_title.pdf": null,
+    "pdf_keywords_only.pdf": "Keywords: tag, another",
+    "pdf_image.pdf": null,
+    "pdf_encrypted_owner.pdf": "Author: someone",
+    "pdf_encrypted_user.pdf": null,
+    "../metadata/embedded_malformed.pdf": null,
+    "../metadata/embedded_pdf_fields.pdf": "Author: A User\nTitle: Unicode title \u03a9\nSubject: A subject\nKeywords: one, two"
+  },
+  "non_local_worker_text": "This file is not local to this computer!"
+}

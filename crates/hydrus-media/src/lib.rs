@@ -47,7 +47,7 @@ pub use error::MediaError;
 pub use ffmpeg::Ffmpeg;
 pub use hashes::{FileHashes, hash_bytes, hash_file};
 pub use imaging::embedded::{
-    EmbeddedMetadata, embedded_metadata, looks_at as embedded_metadata_looks_at,
+    EmbeddedMetadata, ExifRow, embedded_metadata, looks_at as embedded_metadata_looks_at,
 };
 pub use imaging::{Raster, TransparencyStrictness, set_transparency_strictness};
 pub use phash::{BLANK_PERCEPTUAL_HASH, is_blank as is_blank_perceptual_hash, perceptual_hash};

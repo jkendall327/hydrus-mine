@@ -810,8 +810,17 @@ aren't carried over yet) or in a web browser; and share → copying the
 files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
-in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, manage's
+in the menu) and file ids. The single-file info menu's "show detailed
+embedded file metadata" opens Detailed File Metadata from the thumbnails or
+viewer. Its basics include every info line, with nested modified times indented;
+local file decoding runs in a worker while the window shows loading. The EXIF
+list selects and sorts normally, and double-click copies its raw value (plain
+hex for bytes, including original NULs in text). XMP, IPTC, human-readable text
+and extra info appear only when present; PNG EXIF includes the reference's
+orientation note. PDFs show Author, Title, Subject and Keywords. Non-local files
+show "This file is not local to this computer!" in human-readable text. Missing
+local files leave basics visible and show a read error.
+Not yet: clearing deletion records, manage's
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and

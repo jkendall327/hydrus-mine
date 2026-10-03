@@ -9,7 +9,7 @@ software/source (`HC.FILES_THAT_CAN_HAVE_*`), the reference's own worker
 and its window's own conversions (`ReviewFileEmbeddedMetadata`) give what
 each box shows:
 
-* `exif`: the EXIF rows, as the list shows them (id, label, value), in
+* `exif`: the EXIF rows, as the list shows them (id, label, value, raw clipboard value), in
   the order it sorts them (by id), or null for no EXIF box;
 * `xmp`, `iptc`: the XMP and IPTC boxes' text, or null for no box;
 * `text`: the "human-readable text" box's, or null;
@@ -359,7 +359,18 @@ def main():
 
                 datas.sort( key = lambda row: HydrusLists.ConvertTupleOfDatasToCasefolded( R.ReviewFileEmbeddedMetadata._ConvertEXIFToSortTuple( None, row ) ) )
 
-                exif = [ list( R.ReviewFileEmbeddedMetadata._ConvertEXIFToDataTuple( None, row ) ) for row in datas ]
+                exif = []
+                # Exercise the panel's actual copy callback, including raw NULs.
+                class Selected:
+                    def GetData(self, only_selected):
+                        return [row]
+                class Panel:
+                    _exif_listctrl = Selected()
+                copied = []
+                CG.client_controller.pub = lambda *args: copied.append(args[2])
+                for row in datas:
+                    R.ReviewFileEmbeddedMetadata._CopyRow(Panel())
+                    exif.append(list(R.ReviewFileEmbeddedMetadata._ConvertEXIFToDataTuple(None, row)) + [copied[-1]])
 
 
             def rendered( d, empty ):

@@ -19,6 +19,7 @@ pub mod domains;
 pub mod duplicate_filter;
 pub mod duplicates_page;
 pub mod edit_subscription;
+pub mod embedded_metadata;
 pub mod export_files;
 pub mod favourites;
 pub mod file_log;

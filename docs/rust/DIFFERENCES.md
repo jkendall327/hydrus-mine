@@ -892,3 +892,20 @@ the pairs separately to perform the ordinary automatic repairs. Already corrupt
 reference graph cycles are traversed safely, but do not raise its detailed
 pre-existing-loop warning. Tag display application editing, tag migration and
 manual background sibling/parent synchronization remain separate future work.
+
+## Detailed embedded file metadata (`hydrus-gui`, `hydrus-media`)
+
+The sections and raw EXIF clipboard values are checked against
+`oracle/dump_embedded_metadata.py`; the real panel's PNG note, visibility,
+read-only text, sorting and basics tree are recorded by
+`oracle/record_embedded_metadata_window.py`, including PDF document fields and
+non-local behavior.
+
+- HEIF, AVIF and JPEG XL embedded metadata is currently empty because the
+  existing image decoder does not open those formats as Pillow's plugins do.
+- Non-UTF-8 IPTC bytes are decoded lossily, rather than by the reference's
+  `NonFailingUnicodeDecode` charset guesses.
+- Malformed XMP that the XML parser rejects is empty where BeautifulSoup may
+  recover a partial tree.
+- A missing or unreadable local file shows its read error within the window;
+  the reference logs an exception while opening the window with basics alone.

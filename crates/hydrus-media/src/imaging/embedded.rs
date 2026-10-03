@@ -1,9 +1,10 @@
 //! What the reference's "show detailed embedded file metadata" window shows
-//! of an image (`ShowFileEmbeddedMetadata`, `ReviewFileEmbeddedMetadata`):
+//! of a file (`ShowFileEmbeddedMetadata`, `ReviewFileEmbeddedMetadata`):
 //! its EXIF rows, its XMP and IPTC rendered as text, its human-readable
 //! text, and extra rows (software, subsampling, colour, DPI, JFIF,
 //! compression), each as Pillow reads the file. Checked against
-//! `oracle/dump_embedded_metadata.py`.
+//! `oracle/dump_embedded_metadata.py`. PDFs reuse the document decoder for
+//! their Author, Title, Subject and Keywords fields.
 
 use hydrus_core::Mime;
 
@@ -13,11 +14,24 @@ use super::exif_tags::{GPS_TAGS, TAGS};
 use super::metadata;
 use super::pil::Format;
 
+/// An EXIF entry, separating the displayed value from the raw clipboard value.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ExifRow {
+    /// Numeric tag id, shown as decimal in the list.
+    pub id: u16,
+    /// Pillow's tag name, or "Unknown".
+    pub label: String,
+    /// Value shown, with byte lengths and visible NUL markers.
+    pub value: String,
+    /// Raw value copied: plain hex for bytes, unchanged text otherwise.
+    pub copy: String,
+}
+
 /// The window's boxes: each `None` when the reference leaves it out.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct EmbeddedMetadata {
     /// Each EXIF row (id, label, value), sorted by id as the list sorts.
-    pub exif: Option<Vec<[String; 3]>>,
+    pub exif: Option<Vec<ExifRow>>,
     pub xmp: Option<String>,
     pub iptc: Option<String>,
     /// The human-readable text box's.
@@ -79,9 +93,10 @@ const TEXT_MIMES: &[Mime] = &[
 
 /// Whether the reference reads a file of this type for the window at all.
 pub fn looks_at(mime: Mime) -> bool {
-    [EXIF_MIMES, XMP_MIMES, IPTC_MIMES, TEXT_MIMES]
-        .iter()
-        .any(|set| set.contains(&mime))
+    mime == Mime::ApplicationPdf
+        || [EXIF_MIMES, XMP_MIMES, IPTC_MIMES, TEXT_MIMES]
+            .iter()
+            .any(|set| set.contains(&mime))
 }
 
 /// `render_dict` over (key, value) rows: sorted by key, each "key:" and
@@ -565,6 +580,11 @@ fn tiff_info(data: &[u8]) -> Info {
 /// read, or a file it can't open.
 pub fn embedded_metadata(data: &[u8], mime: Mime, has_icc_profile: bool) -> EmbeddedMetadata {
     let mut out = EmbeddedMetadata::default();
+    if mime == Mime::ApplicationPdf {
+        out.text = crate::formats::pdf::Document::open(data.to_vec())
+            .and_then(|doc| doc.human_readable_metadata());
+        return out;
+    }
     if !looks_at(mime) {
         return out;
     }
@@ -605,7 +625,7 @@ pub fn embedded_metadata(data: &[u8], mime: Mime, has_icc_profile: bool) -> Embe
             }
         }
         if !rows.is_empty() {
-            let mut shown: Vec<([String; 3], (u16, String, String))> = rows
+            let mut shown: Vec<(ExifRow, (u16, String, String))> = rows
                 .into_iter()
                 .map(|(tag, value)| {
                     let label = TAGS
@@ -628,11 +648,15 @@ pub fn embedded_metadata(data: &[u8], mime: Mime, has_icc_profile: bool) -> Embe
                         }
                     };
                     (
-                        [
-                            tag.to_string(),
-                            label.unwrap_or("Unknown").to_owned(),
-                            shown,
-                        ],
+                        ExifRow {
+                            id: tag,
+                            label: label.unwrap_or("Unknown").to_owned(),
+                            value: shown,
+                            copy: match &value {
+                                PyValue::Bytes(bytes) => hex::encode(bytes),
+                                other => other.py_str(),
+                            },
+                        },
                         (
                             tag,
                             label.unwrap_or("zzz").to_lowercase(),

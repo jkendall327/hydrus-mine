@@ -15,6 +15,7 @@ mod downloader_lists;
 mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
+mod embedded_metadata;
 mod favourites;
 mod file_log;
 mod folders;

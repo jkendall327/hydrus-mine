@@ -1,0 +1,99 @@
+// Detailed embedded file metadata, bound by embedded_metadata_window.rs.
+import { Button, ScrollView, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+component Box inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    VerticalLayout {
+        padding: 8px;
+        spacing: 6px;
+        Text { text: root.title; color: Theme.text; font-weight: 700; }
+        @children
+    }
+}
+
+component TextBox inherits Box {
+    in property <string> text;
+    TextEdit { text: root.text; read-only: true; preferred-height: 160px; }
+}
+
+export component EmbeddedMetadataWindow inherits Window {
+    title: "Detailed File Metadata";
+    preferred-width: 780px;
+    preferred-height: 760px;
+    background: Theme.window;
+    in property <string> basics;
+    in property <bool> loading;
+    in property <string> error;
+    in property <bool> has-exif;
+    in property <string> instruction;
+    in property <[TableRow]> rows;
+    in property <int> sort-column: 0;
+    in property <bool> ascending: true;
+    in property <bool> has-xmp;
+    in property <string> xmp;
+    in property <bool> has-iptc;
+    in property <string> iptc;
+    in property <bool> has-text;
+    in property <string> text;
+    in property <[string]> extra;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback sort(int, bool);
+    callback dismissed();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 8px;
+        ScrollView {
+            VerticalLayout {
+                alignment: start;
+                spacing: 8px;
+                Box {
+                    title: "basics";
+                    Text { text: root.basics; color: Theme.text; wrap: word-wrap; }
+                }
+                if root.loading: Text { text: "Loading embedded metadata…"; color: Theme.text; }
+                if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
+                if root.has-exif: Box {
+                    title: "EXIF";
+                    Text {
+                        text: root.instruction;
+                        color: Theme.text;
+                        horizontal-alignment: center;
+                        wrap: word-wrap;
+                    }
+                    ListTable {
+                        preferred-height: 352px;
+                        columns: [
+                            { title: "id", width: 65px, stretch: false },
+                            { title: "label", width: 190px, stretch: false },
+                            { title: "value", width: 220px, stretch: true },
+                        ];
+                        rows: root.rows;
+                        sort-column: root.sort-column;
+                        ascending: root.ascending;
+                        row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                        row-activated(row) => { root.row-activated(row); }
+                        sort(column, ascending) => { root.sort(column, ascending); }
+                    }
+                }
+                if root.has-xmp: TextBox { title: "XMP"; text: root.xmp; }
+                if root.has-iptc: TextBox { title: "IPTC"; text: root.iptc; }
+                if root.has-text: TextBox { title: "human-readable text"; text: root.text; }
+                if root.extra.length > 0: Box {
+                    title: "extra info";
+                    for row in root.extra: Text { text: row; color: Theme.text; wrap: word-wrap; }
+                }
+            }
+        }
+        HorizontalLayout {
+            alignment: end;
+            Button { text: "close"; clicked => { root.dismissed(); } }
+        }
+    }
+}

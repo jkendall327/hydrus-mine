@@ -69,18 +69,12 @@ fn the_viewer_s_menu_is_the_reference_s() {
             // (and the window's template shows it as it is)
             assert_eq!(described(&Slots::new(&entries).entries()), ours);
             // the reference's, less what hydrus-rs doesn't have (its info's
-            // embedded metadata window too)
+            // detailed metadata included)
             let mut theirs = unescaped(case["menu"].as_array().unwrap());
             let mut info = theirs.remove(0);
             let mut theirs = pruned(&theirs);
             if let Some(entries) = info.get_mut("entries") {
-                let kept: Vec<Value> = entries
-                    .as_array()
-                    .unwrap()
-                    .iter()
-                    .filter(|e| *e != "show detailed embedded file metadata")
-                    .cloned()
-                    .collect();
+                let kept: Vec<Value> = entries.as_array().unwrap().clone();
                 *entries = Value::Array(tidy(kept));
             }
             theirs.insert(0, info);

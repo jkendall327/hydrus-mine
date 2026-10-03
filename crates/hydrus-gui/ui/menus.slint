@@ -51,6 +51,8 @@ export struct ThumbnailMenu {
     // the urls menu: manage, then, if there are URLs to offer, open in
     // browser, open in a new page, and copy
     has-urls: bool,
+    // the info menu's "show detailed embedded file metadata" (-1 for none)
+    info-metadata: int,
     urls-manage: int,
     has-url-lists: bool,
     urls-visit: MenuGroups,

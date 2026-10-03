@@ -67,6 +67,8 @@ pub enum Action {
     ManageTimes,
     /// Force the selected files' filetype (the file shown's).
     ForceFiletype,
+    /// The focused file's embedded metadata window.
+    EmbeddedMetadata,
     /// The selected files' URLs (the focused file's, in the viewer).
     ManageUrls,
     OpenInNewPage,
@@ -418,6 +420,9 @@ fn separate(entries: &mut Vec<Entry>) {
     }
 }
 
+/// The info menu's entry for the embedded metadata window.
+pub const EMBEDDED_METADATA: &str = "show detailed embedded file metadata";
+
 /// The selection's info, first in the menu: a submenu of `selected`'s
 /// types and size (and, for several, their duration), holding the
 /// `focused` file's info lines when one is selected, and how often they
@@ -459,8 +464,11 @@ pub fn info_menu(
             label += &format!(", {duration}");
         }
     } else if let Some(file) = focused {
-        // (the reference's "show detailed embedded file metadata" comes
-        // first, which hydrus-rs doesn't have yet)
+        entries.push(Entry::Item(
+            EMBEDDED_METADATA.into(),
+            Action::EmbeddedMetadata,
+        ));
+        entries.push(Entry::Separator);
         if let Ok(mut batch) =
             store.read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
             && let Some(media) = batch.results.pop()
@@ -1484,6 +1492,8 @@ fn items(entries: &[Entry]) -> Vec<SlotItem> {
 pub struct InfoSlots {
     pub title: String,
     pub is_menu: bool,
+    /// Whether it starts with the embedded metadata window's entry.
+    pub metadata: bool,
     pub before: Vec<String>,
     pub sub: Option<(String, Vec<String>)>,
     pub after: Vec<String>,
@@ -1518,6 +1528,11 @@ impl InfoSlots {
             ..Self::default()
         };
         let mut past_separator = false;
+        let mut inner = inner;
+        if let [Entry::Item(_, Action::EmbeddedMetadata), rest @ ..] = inner {
+            info.metadata = true;
+            inner = rest.strip_prefix(&[Entry::Separator]).unwrap_or(rest);
+        }
         for e in inner {
             match (e, past_separator) {
                 (Entry::Separator, _) => past_separator = true,
@@ -1542,7 +1557,15 @@ impl InfoSlots {
         let menu = |(title, lines): &(String, Vec<String>)| {
             Entry::Menu(title.clone(), lines.iter().map(label).collect())
         };
-        let mut inner: Vec<Entry> = self.before.iter().map(label).collect();
+        let mut inner: Vec<Entry> = Vec::new();
+        if self.metadata {
+            inner.push(Entry::Item(
+                EMBEDDED_METADATA.into(),
+                Action::EmbeddedMetadata,
+            ));
+            inner.push(Entry::Separator);
+        }
+        inner.extend(self.before.iter().map(label));
         inner.extend(self.sub.iter().map(menu));
         inner.extend(self.after.iter().map(label));
         separate(&mut inner);

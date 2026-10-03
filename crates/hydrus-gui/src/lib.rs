@@ -31,6 +31,7 @@ pub mod daemon;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
+mod embedded_metadata_window;
 pub mod export_files_window;
 pub mod favourites_window;
 mod file_log_window;
@@ -153,14 +154,14 @@ pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
     autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
-    duplicates_page, edit_subscription, export_files, favourites, file_log, filename_tagging,
-    filetype_tree, folders, force_filetype, import_options_editor, importer_menu, info_lines,
-    list_selection, local_import, main_menu, manage_tags, media_actions, merge_options_editor,
-    notes_editor, options, page_chooser, predicate_editors, ratings, ratings_editor, scanbar,
-    search_log, selection, session_saving, sidecar_editors, sidecars, simple_downloader, sort,
-    status, string_editors, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
-    tag_filter_editor, tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor,
-    urls_editor,
+    duplicates_page, edit_subscription, embedded_metadata, export_files, favourites, file_log,
+    filename_tagging, filetype_tree, folders, force_filetype, import_options_editor, importer_menu,
+    info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
+    merge_options_editor, notes_editor, options, page_chooser, predicate_editors, ratings,
+    ratings_editor, scanbar, search_log, selection, session_saving, sidecar_editors, sidecars,
+    simple_downloader, sort, status, string_editors, subscriptions_dedupe, subscriptions_dialog,
+    subscriptions_list, tag_filter_editor, tag_relationships, thumbnail_icons, thumbnail_ratings,
+    times_editor, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -191,6 +192,8 @@ pub struct Bound {
     pub force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>>,
     /// Manual file export dialog and sidecar editor.
     pub export_files: export_files_window::Slots,
+    /// The focused file's detailed metadata window while open.
+    pub embedded_metadata: Rc<RefCell<Option<EmbeddedMetadataWindow>>>,
     /// The manage urls dialog while one is open.
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
@@ -991,6 +994,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             ) {
                 Ok(window) => *manage_times.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage times: {e}"),
+            }
+        }
+    });
+    // The single-file info menu's detailed metadata window.
+    let embedded_metadata: Rc<RefCell<Option<EmbeddedMetadataWindow>>> = Rc::default();
+    let open_embedded_metadata: OpenOnFiles = Rc::new({
+        let slot = embedded_metadata.clone();
+        move |store, files, _| {
+            if let Some(&file) = files.first() {
+                match embedded_metadata_window::open(&store, file, &slot) {
+                    Ok(window) => *slot.borrow_mut() = Some(window),
+                    Err(e) => eprintln!("could not open detailed file metadata: {e}"),
+                }
             }
         }
     });
@@ -2277,6 +2293,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
         let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
@@ -2299,6 +2316,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_times: open_manage_times.clone(),
                 force_filetype: open_force_filetype.clone(),
                 export_files: open_export_files.clone(),
+                embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2318,6 +2336,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
         let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |index| {
             let page = page();
@@ -2347,6 +2366,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_times: open_manage_times.clone(),
                 force_filetype: open_force_filetype.clone(),
                 export_files: open_export_files.clone(),
+                embedded_metadata: open_embedded_metadata.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2581,6 +2601,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_times = open_manage_times.clone();
         let open_force_filetype = open_force_filetype.clone();
         let open_export_files = open_export_files.clone();
+        let open_embedded_metadata = open_embedded_metadata.clone();
         let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
@@ -2702,6 +2723,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         page.selected_files(),
                         files_changed.clone(),
                     );
+                }
+                Action::EmbeddedMetadata => {
+                    let page = page.borrow();
+                    if let Some(index) = page.focused() {
+                        open_embedded_metadata(
+                            page.store().clone(),
+                            vec![page.results()[index]],
+                            Rc::new(|| {}),
+                        );
+                    }
                 }
                 Action::ForceFiletype => {
                     let page = page.borrow();
@@ -2854,6 +2885,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         datetime_editor,
         force_filetype,
         export_files,
+        embedded_metadata,
         manage_urls,
         options,
         about,
@@ -3148,6 +3180,11 @@ fn thumbnail_menu_rows(
         },
         info_title: info.title.as_str().into(),
         info_is_menu: info.is_menu,
+        info_metadata: if info.metadata {
+            id(Action::EmbeddedMetadata, thumbnail_menu::EMBEDDED_METADATA)
+        } else {
+            -1
+        },
         info_before: labels(&info.before),
         info_sub_title: info_sub_title.into(),
         info_sub: labels(&info_sub),
@@ -3556,6 +3593,7 @@ struct ViewerHooks {
     manage_times: OpenOnFiles,
     force_filetype: OpenOnFiles,
     export_files: OpenOnFiles,
+    embedded_metadata: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3599,6 +3637,7 @@ fn open_viewer(
         manage_times,
         force_filetype,
         export_files,
+        embedded_metadata,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -4271,6 +4310,7 @@ fn open_viewer(
         let manage_times = manage_times.clone();
         let force_filetype = force_filetype.clone();
         let export_files = export_files.clone();
+        let embedded_metadata = embedded_metadata.clone();
         let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
@@ -4360,6 +4400,9 @@ fn open_viewer(
                 Action::ExportFiles => {
                     let store = model.borrow().store().clone();
                     export_files(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::EmbeddedMetadata => {
+                    embedded_metadata(model.borrow().store().clone(), vec![file], Rc::new(|| {}));
                 }
                 Action::ForceFiletype => {
                     let store = model.borrow().store().clone();

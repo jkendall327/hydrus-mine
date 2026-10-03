@@ -36,7 +36,7 @@ fn the_window_shows_what_the_reference_shows() {
         let data = std::fs::read(hydrus_testkit::fixture_path(name)).unwrap();
         let ours = embedded_metadata(&data, mime, theirs["has_icc"].as_bool().unwrap());
         let ours = json!({
-            "exif": ours.exif,
+            "exif": ours.exif.map(|rows| rows.into_iter().map(|r| json!([r.id.to_string(), r.label, r.value, r.copy])).collect::<Vec<_>>()),
             "xmp": ours.xmp,
             "iptc": ours.iptc,
             "text": ours.text,
@@ -59,4 +59,37 @@ fn the_window_shows_what_the_reference_shows() {
         problems.join("\n"),
         problems.len()
     );
+}
+
+#[test]
+fn pdf_document_fields_match_the_reference() {
+    let fixture = hydrus_testkit::fixture_json("embedded_metadata_window.json");
+    for (name, text) in fixture["pdf"].as_object().unwrap() {
+        let data = std::fs::read(hydrus_testkit::fixture_path(format!("media/{name}"))).unwrap();
+        let metadata = embedded_metadata(&data, Mime::ApplicationPdf, false);
+        assert_eq!(metadata.text.as_deref(), text.as_str(), "{name}");
+        assert!(
+            metadata.exif.is_none()
+                && metadata.xmp.is_none()
+                && metadata.iptc.is_none()
+                && metadata.extra.is_empty()
+        );
+    }
+}
+
+#[test]
+fn the_window_reads_only_the_reference_s_supported_types() {
+    let fixture = hydrus_testkit::fixture_json("embedded_metadata_window.json");
+    for (name, supported) in fixture["reads_embedded"].as_object().unwrap() {
+        let mime = Mime::ALL
+            .iter()
+            .copied()
+            .find(|mime| mime.human_name() == name)
+            .unwrap();
+        assert_eq!(
+            hydrus_media::embedded_metadata_looks_at(mime),
+            supported.as_bool().unwrap(),
+            "{name}"
+        );
+    }
 }

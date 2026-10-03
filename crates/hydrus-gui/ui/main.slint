@@ -30,6 +30,7 @@ export { ManageUrlsWindow } from "manage_urls.slint";
 export { ManageRatingsWindow } from "manage_ratings.slint";
 export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
 export { ExportFilesWindow } from "export_files.slint";
+export { EmbeddedMetadataWindow } from "embedded_metadata.slint";
 export { ForceFiletypeWindow } from "force_filetype.slint";
 export { TagFilterWindow } from "tag_filter.slint";
 export { MergeOptionsWindow } from "merge_options.slint";
@@ -1386,6 +1387,11 @@ export component MainWindow inherits Window {
                     Menu {
                         if root.thumbnail-menu.info-is-menu: Menu {
                             title: root.thumbnail-menu.info-title;
+                            if root.thumbnail-menu.info-metadata >= 0: MenuItem {
+                                title: "show detailed embedded file metadata";
+                                activated => { root.menu-chosen(root.thumbnail-menu.info-metadata); }
+                            }
+                            if root.thumbnail-menu.info-metadata >= 0: MenuSeparator { }
                             for row in root.thumbnail-menu.info-before: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }
