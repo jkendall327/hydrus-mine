@@ -1941,14 +1941,6 @@ impl SessionContext<'_> {
                 })
                 .collect(),
             PageContent::LocalImport(h) => {
-                if h.metadata_routers > 0 {
-                    self.input.warnings.push(format!(
-                        "Import page \"{}\" of session \"{name}\" reads sidecars for its files, \
-                         which hydrus-rs's import pages don't yet, so its files left to import \
-                         will be imported without them",
-                        page.name
-                    ));
-                }
                 vec![super::PageQueueInput {
                     options: h.import_options,
                     files_paused: h.paused,
@@ -1956,6 +1948,7 @@ impl SessionContext<'_> {
                     created: None,
                     state: super::PageQueueState::LocalImport(crate::queues::LocalImport {
                         delete_after_success: h.delete_after_success,
+                        routers: h.metadata_routers,
                     }),
                     file_seeds: h.file_seeds,
                     gallery_seeds: Vec::new(),

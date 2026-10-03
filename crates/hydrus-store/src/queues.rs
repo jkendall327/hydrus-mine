@@ -485,12 +485,14 @@ pub fn create_queue(
 }
 
 /// A local import's settings (`HDDImport`'s), kept as its queue's extra.
-#[derive(Debug, Clone, Copy, Default, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 #[serde(default)]
 pub struct LocalImport {
     /// Delete each file (to the recycle bin, if the options say) once it
-    /// is imported or found already in the database.
+    /// is imported or found already in the database, and its sidecars.
     pub delete_after_success: bool,
+    /// The sidecar routers each imported file's metadata is read with.
+    pub routers: Vec<hydrus_parse::sidecar::Router>,
 }
 
 impl LocalImport {

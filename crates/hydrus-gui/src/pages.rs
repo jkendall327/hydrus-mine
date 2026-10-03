@@ -918,6 +918,7 @@ impl Pages {
                             &tags,
                             hydrus_store::queues::LocalImport {
                                 delete_after_success,
+                                routers: Vec::new(),
                             },
                             now,
                         )?;

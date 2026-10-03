@@ -152,7 +152,8 @@ fn files_given_are_reviewed_then_imported() {
     assert_eq!(
         LocalImport::of(&made),
         Some(LocalImport {
-            delete_after_success: true
+            delete_after_success: true,
+            routers: Vec::new(),
         })
     );
     let seeds: Vec<(String, Option<i64>)> = store

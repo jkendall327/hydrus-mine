@@ -296,7 +296,7 @@ pub struct FolderRun {
     pub warnings: Vec<String>,
 }
 
-fn seed_hash(seed: &FileSeed) -> Option<Sha256> {
+pub(crate) fn seed_hash(seed: &FileSeed) -> Option<Sha256> {
     seed.meta
         .hash("sha256")
         .and_then(|h| hex::decode(h).ok())

@@ -3,8 +3,9 @@
 //! modified time as its source time; one already in the database found
 //! so; a missing one vetoed with the reference's note; and, if the import
 //! says, each file that is in the database afterwards deleted from where
-//! it was (only then). A file's tags to add (an "import" page carried over
-//! from hydrus has them) are added to it.
+//! it was (only then), with the sidecars its routers might read. A file's
+//! tags to add (an "import" page carried over from hydrus has them) are
+//! added to it, and its routers' metadata (a .txt sidecar's tags, here).
 
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
@@ -12,10 +13,12 @@ use std::sync::Arc;
 use std::time::Duration;
 
 use hydrus_core::import_options::ImportOptionsSlice;
+use hydrus_core::url::strings::{StringConverter, StringProcessor};
 use hydrus_download::{Downloader, QueueRunner};
 use hydrus_import::FileImporter;
 use hydrus_media::MediaTools;
 use hydrus_net::{NetEngine, NetOptions};
+use hydrus_parse::sidecar::{Exporter, Importer, Router, SidecarNaming, Source};
 use hydrus_store::queues::{self, LocalImport, SeedStatus};
 use hydrus_store::settings::FolderSettings;
 use hydrus_store::{Store, settings};
@@ -94,7 +97,29 @@ async fn a_local_import_imports_its_files() {
         .iter()
         .map(|p| (path_text(p), (*p != &gone).then_some(OLD_MTIME)))
         .collect();
+    // the bmp's tags in a .txt sidecar beside it, which a router reads
+    let sidecar = work.path().join("bmp_24.bmp.txt");
+    std::fs::write(&sidecar, "creator:samus\n").unwrap();
+    let my_tags = hex::encode(hydrus_core::service::builtin_keys::MY_TAGS);
+    let router = Router {
+        importers: vec![Importer {
+            source: Source::Txt {
+                naming: SidecarNaming {
+                    remove_actual_filename_ext: false,
+                    suffix: String::new(),
+                    filename_converter: StringConverter::default(),
+                },
+                separator: "\n".into(),
+            },
+            processor: StringProcessor::default(),
+        }],
+        processor: StringProcessor::default(),
+        exporter: Exporter::MediaTags {
+            service_key: my_tags.clone(),
+        },
+    };
     let create = |paths: Vec<(String, Option<i64>)>, delete: bool| {
+        let routers = vec![router.clone()];
         store
             .write(move |ctx| {
                 queues::create_local_import(
@@ -105,6 +130,7 @@ async fn a_local_import_imports_its_files() {
                     &queues::PathTags::new(),
                     LocalImport {
                         delete_after_success: delete,
+                        routers,
                     },
                     0,
                 )
@@ -116,7 +142,6 @@ async fn a_local_import_imports_its_files() {
     assert_eq!(queue.kind, queues::QueueKind::LocalImport);
     assert_eq!(queue.name, "import");
     // (the png with a tag to add to "my tags")
-    let my_tags = hex::encode(hydrus_core::service::builtin_keys::MY_TAGS);
     store
         .write({
             let my_tags = my_tags.clone();
@@ -160,14 +185,17 @@ async fn a_local_import_imports_its_files() {
             ),
         ]
     );
-    // the png with its tag, the bmp with none
+    // the png with its tag, the bmp with its sidecar's
     let snapshot = store.snapshot();
     let my_tags = snapshot
         .services
         .builtin(hydrus_core::service::builtin_keys::MY_TAGS)
         .unwrap()
         .id;
-    for (seed, expected) in seeds[..2].iter().zip([vec![], vec!["series:metroid"]]) {
+    for (seed, expected) in seeds[..2]
+        .iter()
+        .zip([vec!["creator:samus"], vec!["series:metroid"]])
+    {
         let hash: hydrus_core::Sha256 = seed.meta.hash("sha256").unwrap().parse().unwrap();
         let tags: Vec<String> = store
             .read(|conn| {
@@ -201,6 +229,8 @@ async fn a_local_import_imports_its_files() {
             seed.data
         );
     }
+
+    assert!(!sidecar.exists(), "the sidecar is deleted with its file");
 
     // the same file again, not to be deleted: already in the database, kept
     let again = place(work.path(), "bmp_24.bmp");

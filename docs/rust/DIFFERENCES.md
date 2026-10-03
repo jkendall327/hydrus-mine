@@ -496,13 +496,17 @@ Checked by `crates/hydrus-download/tests/local_import.rs`.
   files are imported in order from their paths, each with its modified
   time as its source time, a missing one vetoed ("Source file does not
   exist!"), and, if the import says, each one in the database afterwards
-  deleted (to the recycle bin, if the options say). Its sidecars (the
-  reference's metadata routers) aren't supported yet; the tags to add to each file (from an "import"
+  deleted (to the recycle bin, if the options say) with any sidecars its
+  routers might have read. Its metadata routers (sidecars) run on each
+  file once it is in the database, as an import folder's do (an error is
+  shown as the reference's: 'Trying to run metadata routing on the file
+  "..." threw an error!'); the tags to add to each file (from an "import"
   page carried over from hydrus) are added as a downloader's are.
 
 Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
 `oracle/fixtures/local_import_dialog.json`) and
-`crates/hydrus-gui/tests/gui/import_files.rs`.
+`crates/hydrus-gui/tests/gui/import_files.rs`; the routers and the
+deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 
 - **The "review files to import" window parses its paths as the
   reference's does** (the same rows, order, filetypes, sizes, progress

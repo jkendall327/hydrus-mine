@@ -134,7 +134,7 @@ fn hdd_facts(h: &LegacyHddImport, expected: &Json) -> Json {
     json!({
         "file_seeds": file_seeds,
         "import_options": same_options(&h.import_options, &expected["import_options"]),
-        "metadata_routers": h.metadata_routers,
+        "metadata_routers": h.metadata_routers.len(),
         "delete_after_success": h.delete_after_success,
         "paused": h.paused,
     })

@@ -2287,23 +2287,9 @@ mod network_tests {
             .map(|h| &chosen["facts"]["pages"][h]["page"]["variables"]["hdd_import"])
             .collect();
         assert!(imports.len() >= 3);
-        // (one warning for each page with sidecars)
-        let with_sidecars = imports
-            .iter()
-            .filter(|i| i["metadata_routers"] != 0)
-            .count();
-        assert!(with_sidecars > 0);
-        assert_eq!(
-            report.warnings.len(),
-            with_sidecars,
-            "{:?}",
-            report.warnings
-        );
-        assert!(
-            report.warnings.iter().all(|w| w.contains("reads sidecars")),
-            "{:?}",
-            report.warnings
-        );
+        // (its sidecar routers come along)
+        assert!(imports.iter().any(|i| i["metadata_routers"] != 0));
+        assert!(report.warnings.is_empty(), "{:?}", report.warnings);
 
         let conn = Connection::open(&dest).unwrap();
         let made: Vec<_> = crate::queues::queues(&conn, None)
@@ -2327,11 +2313,14 @@ mod network_tests {
             assert_eq!(queue.files_paused, facts["paused"]);
             assert!(!queue.gallery_paused);
             assert_eq!(queue.options, options(&facts["import_options"]));
+            let local = LocalImport::of(queue).unwrap();
             assert_eq!(
-                LocalImport::of(queue),
-                Some(LocalImport {
-                    delete_after_success: facts["delete_after_success"].as_bool().unwrap()
-                })
+                local.delete_after_success,
+                facts["delete_after_success"].as_bool().unwrap()
+            );
+            assert_eq!(
+                serde_json::json!(local.routers.len()),
+                facts["metadata_routers"]
             );
             let files: Vec<_> = crate::queues::file_seeds(&conn, queue.id)
                 .unwrap()

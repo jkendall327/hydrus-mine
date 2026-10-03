@@ -1548,7 +1548,8 @@ fn a_local_import_page_shows_and_controls_its_import() {
     assert_eq!(
         LocalImport::of(&made),
         Some(LocalImport {
-            delete_after_success: true
+            delete_after_success: true,
+            routers: Vec::new(),
         })
     );
     let made_seeds = store.read(move |c| queues::file_seeds(c, queue)).unwrap();

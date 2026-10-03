@@ -160,8 +160,8 @@ comes across with its search, pair sort and group mode, and launches the
 duplicate filter (a store imported before duplicates pages were read
 opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (a
 simple downloader...) are kept as they were stored. An "import" page that
-reads sidecars for its files is warned of: hydrus-rs's import pages don't
-read them yet, so its files left to import go in without them. Your other saved
+reads sidecars for its files keeps its routers, and its files left to
+import read them as they go in. Your other saved
 sessions come across under their names (hydrus's own "last session", if
 you opened with another, as "last session (from hydrus)"), for the page
 chooser's "sessions" button: their search and duplicates pages as above,

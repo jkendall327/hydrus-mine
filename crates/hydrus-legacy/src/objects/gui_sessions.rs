@@ -170,9 +170,8 @@ pub struct LegacyUrlsImport {
 pub struct LegacyHddImport {
     pub file_seeds: Vec<LegacyFileSeed>,
     pub import_options: ImportOptionsSlice,
-    /// How many sidecar routers it reads its files' metadata with (they
-    /// aren't read here).
-    pub metadata_routers: usize,
+    /// The sidecar routers it reads its files' metadata with.
+    pub metadata_routers: Vec<hydrus_parse::sidecar::Router>,
     pub delete_after_success: bool,
     pub paused: bool,
 }
@@ -430,7 +429,7 @@ pub fn hdd_import(object: &SerialisableObject) -> DecodeResult<LegacyHddImport> 
     Ok(LegacyHddImport {
         file_seeds: file_seeds(k, file_seed_cache)?,
         import_options: import_options(k, options)?,
-        metadata_routers: objects(k, routers, "metadata routers")?.len(),
+        metadata_routers: super::sidecars::routers(k, routers)?,
         delete_after_success: boolean(k, delete_after_success, "delete after success")?,
         paused: boolean(k, paused, "paused")?,
     })

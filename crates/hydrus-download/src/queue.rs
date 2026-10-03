@@ -953,14 +953,11 @@ impl QueueRunner {
             ) {
                 tracing::error!(path = %seed.data, "importing a file: {e}");
             }
-            if local.delete_after_success
-                && seed.status.is_successful()
-                && let Err(e) = hydrus_store::paths::delete_or_recycle(
-                    &seed.data,
-                    folders.delete_to_recycle_bin,
-                )
-            {
-                tracing::error!(path = %seed.data, "deleting an imported file: {e}");
+            if seed.status.is_successful() {
+                route_local_metadata(&downloader, &local.routers, &seed);
+                if local.delete_after_success {
+                    delete_imported(&downloader, &local.routers, &seed.data, folders);
+                }
             }
             downloader
                 .store
@@ -978,6 +975,70 @@ impl QueueRunner {
                 tracing::error!("importing a file: {e}");
                 false
             }
+        }
+    }
+}
+
+/// `HDDImport._WorkOnFiles`: an imported file's metadata, read by the
+/// import's routers (from its sidecars, mostly).
+fn route_local_metadata(
+    downloader: &Downloader,
+    routers: &[hydrus_parse::sidecar::Router],
+    seed: &FileSeed,
+) {
+    if routers.is_empty() {
+        return;
+    }
+    let Some(hash) = crate::folders::seed_hash(seed) else {
+        return;
+    };
+    let store = &downloader.store;
+    let Ok(Some(hash_id)) = store.read(|conn| hydrus_store::master::hash_id(conn, &hash)) else {
+        return;
+    };
+    let mut media = crate::folders::StoreMedia {
+        store,
+        hash_id,
+        now: now(),
+    };
+    for router in routers {
+        if let Err(e) = hydrus_parse::sidecar::work(router, &seed.data, &mut media) {
+            crate::popups::show_error(
+                store,
+                format!(
+                    "Trying to run metadata routing on the file \"{}\" threw an error!",
+                    seed.data
+                ),
+                e.to_string(),
+            );
+        }
+    }
+}
+
+/// `HDDImport._WorkOnFiles`'s "delete after success": the file, and any
+/// sidecars its routers might have read.
+fn delete_imported(
+    downloader: &Downloader,
+    routers: &[hydrus_parse::sidecar::Router],
+    path: &str,
+    folders: hydrus_store::settings::FolderSettings,
+) {
+    let mut paths = vec![path.to_owned()];
+    for router in routers {
+        for sidecar in router.possible_sidecar_paths(path) {
+            if !paths.contains(&sidecar) && std::path::Path::new(&sidecar).exists() {
+                paths.push(sidecar);
+            }
+        }
+    }
+    for path in paths {
+        if let Err(e) = hydrus_store::paths::delete_or_recycle(&path, folders.delete_to_recycle_bin)
+        {
+            crate::popups::show_error(
+                &downloader.store,
+                format!("While attempting to delete {path}, the following error occurred:"),
+                e.to_string(),
+            );
         }
     }
 }
