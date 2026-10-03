@@ -1,0 +1,5944 @@
+{
+ "cases": [
+  {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     []
+    ]
+   ],
+   "texts": [
+    "a,b,c",
+    "image 10, image 2",
+    "x",
+    ""
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [],
+      "selected": [],
+      "processed": [
+       "a,b,c",
+       "image 10, image 2",
+       "x",
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      null,
+      null
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [],
+      "selected": [],
+      "processed": [
+       "a,b,c",
+       "image 10, image 2",
+       "x",
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Splitter",
+      {
+       "separator": ", "
+      }
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "a",
+         "b",
+         "c"
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "separator": ", ",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "a,b,c"
+        ],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            83,
+            2,
+            [
+             ", ",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,c",
+       "image 10",
+       "image 2",
+       "x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Sorter",
+      {
+       "sort_type": "human sort",
+       "asc": true
+      }
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": null,
+        "texts": [
+         "a,b,c",
+         "image 10",
+         "image 2",
+         "x"
+        ],
+        "results": [
+         "x",
+         "image 10",
+         "image 2",
+         "a,b,c"
+        ]
+       },
+       "edited": {
+        "sort_type": "human sort",
+        "asc": true,
+        "regex": null,
+        "texts": [
+         "a,b,c",
+         "image 10",
+         "image 2",
+         "x"
+        ],
+        "results": [
+         "a,b,c",
+         "image 2",
+         "image 10",
+         "x"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            99,
+            1,
+            [
+             2,
+             true,
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)"
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,c",
+       "image 2",
+       "image 10",
+       "x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Joiner",
+      {
+       "joiner": " | "
+      }
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "joiner": "",
+        "tuple": null,
+        "summary": "joining all strings using \"\"",
+        "texts": [
+         "a,b,c",
+         "image 2",
+         "image 10",
+         "x"
+        ],
+        "results": [
+         "a,b,cimage 2image 10x"
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "joiner": " | ",
+        "tuple": null,
+        "summary": "joining all strings using \" | \"",
+        "texts": [
+         "a,b,c",
+         "image 2",
+         "image 10",
+         "x"
+        ],
+        "results": [
+         "a,b,c | image 2 | image 10 | x"
+        ],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            125,
+            2,
+            [
+             " | ",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,c | image 2 | image 10 | x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "text",
+      1
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,c | image 2 | image 10 | x"
+      ],
+      "example": "image 10, image 2",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "image 10",
+         "image 2"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "image 2",
+         "image 10"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "image 2 | image 10"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "q,r"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,c | image 2 | image 10 | x"
+      ],
+      "example": "q,r",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "q,r"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Selector/Slicer",
+      {
+       "select": "single",
+       "single": 1
+      }
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "select": "range",
+        "single": 0,
+        "start": null,
+        "end": null,
+        "summary": "selecting everything",
+        "texts": [
+         "a,b,c | image 2 | image 10 | x"
+        ],
+        "results": [
+         "a,b,c | image 2 | image 10 | x"
+        ]
+       },
+       "edited": {
+        "select": "single",
+        "single": 1,
+        "start": null,
+        "end": null,
+        "summary": "selecting the 2nd string",
+        "texts": [
+         "a,b,c | image 2 | image 10 | x"
+        ],
+        "results": []
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            100,
+            1,
+            [
+             1,
+             2
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \"",
+       "SELECT: selecting the 2nd string"
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "q,r",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "q,r"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            2
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Match",
+      {}
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "kind": "match",
+       "given": [
+        "q,r"
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \"",
+       "SELECT: selecting the 2nd string",
+       "MATCH: any number of characters, such as \"q,r\""
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "q,r",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "filter (1)",
+        [
+         "q,r"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "q,r"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Converter",
+      {}
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "kind": "converter",
+       "given": "q,r"
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \"",
+       "SELECT: selecting the 2nd string",
+       "MATCH: any number of characters, such as \"q,r\"",
+       "CONVERT: no string conversions"
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "q,r",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "filter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "no changes (1)",
+        [
+         "q,r"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "q,r"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [],
+            "example string"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Tag Filter",
+      {}
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "kind": "tag filter",
+       "given": [
+        "q,r"
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \", \"",
+       "SORT: sorting human sort (ascending)",
+       "JOIN: joining all strings using \" | \"",
+       "SELECT: selecting the 2nd string",
+       "MATCH: any number of characters, such as \"q,r\"",
+       "CONVERT: no string conversions",
+       "TAG FILTER: allowing all tags, such as q,r"
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "q,r",
+      "tabs": [
+       [
+        "splitter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "filter (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "no changes (1)",
+        [
+         "q,r"
+        ]
+       ],
+       [
+        "tag filter (1)",
+        [
+         "q,r"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ", ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            " | ",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            3,
+            "",
+            null,
+            null,
+            "q,r"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           55,
+           2,
+           [
+            [],
+            "example string"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           112,
+           1,
+           [
+            [
+             44,
+             1,
+             []
+            ],
+            "q,r"
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ",",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        99,
+        1,
+        [
+         2,
+         false,
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        100,
+        1,
+        [
+         0,
+         2
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        125,
+        2,
+        [
+         "-",
+         null
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "texts": [
+    "a,b,c",
+    "image 10, image 2",
+    "x",
+    ""
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [],
+      "processed": [
+       "x-image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "c",
+         "b",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "c-b-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       0
+      ],
+      "processed": [
+       "x-image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "c",
+         "b",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "c-b-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "separator": ""
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "a",
+         "b",
+         "c"
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "separator": "",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [],
+        "invalid": true
+       },
+       "veto": "Sorry, you have to have a value in the separator field!"
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       0
+      ],
+      "processed": [
+       "x-image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "c",
+         "b",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "c-b-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "separator": "\\"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "a",
+         "b",
+         "c"
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "separator": "\\",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "Error: Could not escape the splitter string. Wrong number of backslashes?"
+        ],
+        "invalid": true
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            83,
+            2,
+            [
+             "\\",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \"\\\"",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       0
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (0)",
+        [
+         "no results"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            "\\",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "separator": ",",
+       "max_splits": 1
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": "\\",
+        "max_splits": null,
+        "example": "a,b,c",
+        "results": [
+         "Error: Could not escape the splitter string. Wrong number of backslashes?"
+        ],
+        "invalid": true
+       },
+       "edited": {
+        "separator": ",",
+        "max_splits": 1,
+        "example": "a,b,c",
+        "results": [
+         "a",
+         "b,c"
+        ],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            83,
+            2,
+            [
+             ",",
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       0
+      ],
+      "processed": [
+       "x-image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting human sort (descending)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       "x-image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "regex": "\\d+"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": null,
+        "texts": [
+         "x",
+         "image 10",
+         "b,c",
+         "a",
+         " image 2"
+        ],
+        "results": [
+         "x",
+         "image 10",
+         "b,c",
+         "a",
+         " image 2"
+        ]
+       },
+       "edited": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": "\\d+",
+        "texts": [
+         "x",
+         "image 10",
+         "b,c",
+         "a",
+         " image 2"
+        ],
+        "results": [
+         "image 10 (regex: 10)",
+         " image 2 (regex: 2)",
+         "x (no regex match)",
+         "b,c (no regex match)",
+         "a (no regex match)"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            99,
+            1,
+            [
+             2,
+             false,
+             "\\d+"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting human sort (descending) (with regex)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       "image 10- image 2"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            "\\d+"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "regex": "("
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": "\\d+",
+        "texts": [
+         "image 10",
+         " image 2",
+         "x",
+         "b,c",
+         "a"
+        ],
+        "results": [
+         "image 10 (regex: 10)",
+         " image 2 (regex: 2)",
+         "x (no regex match)",
+         "b,c (no regex match)",
+         "a (no regex match)"
+        ]
+       },
+       "edited": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": "(",
+        "texts": [
+         "image 10",
+         " image 2",
+         "x",
+         "b,c",
+         "a"
+        ],
+        "results": [
+         "Error: missing ), unterminated subpattern at position 0"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            99,
+            1,
+            [
+             2,
+             false,
+             "("
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting human sort (descending) (with regex)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       "a-b,c"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "a-b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            2,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "sort_type": "reverse"
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": "(",
+        "texts": [
+         "a",
+         "b,c",
+         "image 10",
+         " image 2",
+         "x"
+        ],
+        "results": [
+         "Error: missing ), unterminated subpattern at position 0"
+        ]
+       },
+       "edited": {
+        "sort_type": "reverse",
+        "asc": false,
+        "regex": "(",
+        "texts": [
+         "a",
+         "b,c",
+         "image 10",
+         " image 2",
+         "x"
+        ],
+        "results": [
+         "x",
+         " image 2",
+         "image 10",
+         "b,c",
+         "a"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            99,
+            1,
+            [
+             3,
+             false,
+             "("
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       "x- image 2"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      2,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting the 1st string up to and including the 2nd string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       "x- image 2"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            0,
+            2
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "select": "range",
+       "start": -2,
+       "end": null
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "select": "range",
+        "single": 0,
+        "start": 0,
+        "end": 2,
+        "summary": "selecting the 1st string up to and including the 2nd string",
+        "texts": [
+         "x",
+         " image 2"
+        ],
+        "results": [
+         "x",
+         " image 2"
+        ]
+       },
+       "edited": {
+        "select": "range",
+        "single": 0,
+        "start": -2,
+        "end": null,
+        "summary": "selecting the 2nd from last string and onwards",
+        "texts": [
+         "x",
+         " image 2"
+        ],
+        "results": [
+         "x",
+         " image 2"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            100,
+            1,
+            [
+             -2,
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting the 2nd from last string and onwards",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       "b,c-a"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            -2,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "select": "single",
+       "single": -1
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "select": "range",
+        "single": -2,
+        "start": -2,
+        "end": null,
+        "summary": "selecting the 2nd from last string and onwards",
+        "texts": [
+         "b,c",
+         "a"
+        ],
+        "results": [
+         "b,c",
+         "a"
+        ]
+       },
+       "edited": {
+        "select": "single",
+        "single": -1,
+        "start": -2,
+        "end": null,
+        "summary": "selecting the last string",
+        "texts": [
+         "b,c",
+         "a"
+        ],
+        "results": [
+         "a"
+        ]
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            100,
+            1,
+            [
+             -1,
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SELECT: selecting the last string",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       "a"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            -1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "select": "range",
+       "start": 3,
+       "end": 1
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "select": "single",
+        "single": -1,
+        "start": -1,
+        "end": null,
+        "summary": "selecting the last string",
+        "texts": [
+         "a"
+        ],
+        "results": [
+         "a"
+        ]
+       },
+       "edited": {
+        "select": "range",
+        "single": -1,
+        "start": 3,
+        "end": 1,
+        "summary": "selecting nothing",
+        "texts": [
+         "a"
+        ],
+        "results": []
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            100,
+            1,
+            [
+             3,
+             1
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      null
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "select": "range",
+        "single": 3,
+        "start": 3,
+        "end": 1,
+        "summary": "selecting nothing",
+        "texts": [],
+        "results": []
+       }
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      3,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining all strings using \"-\""
+      ],
+      "selected": [
+       3
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c-a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "-",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "joiner": "\\n",
+       "tuple": 2
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "joiner": "-",
+        "tuple": null,
+        "summary": "joining all strings using \"-\"",
+        "texts": [
+         ""
+        ],
+        "results": [
+         ""
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "joiner": "\\n",
+        "tuple": 2,
+        "summary": "joining every 2 strings using \"\\n\"",
+        "texts": [
+         ""
+        ],
+        "results": [],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            125,
+            2,
+            [
+             "\\n",
+             2
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining every 2 strings using \"\\n\""
+      ],
+      "selected": [
+       3
+      ],
+      "processed": [],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "b,c\na"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "\\n",
+            2
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "joiner": "\\",
+       "tuple": null
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "joiner": "\\n",
+        "tuple": 2,
+        "summary": "joining every 2 strings using \"\\n\"",
+        "texts": [],
+        "results": [],
+        "invalid": false
+       },
+       "edited": {
+        "joiner": "\\",
+        "tuple": null,
+        "summary": "joining all strings using \"\\\"",
+        "texts": [],
+        "results": [
+         "Error: Could not escape the joiner string. Wrong number of backslashes?"
+        ],
+        "invalid": true
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            125,
+            2,
+            [
+             "\\",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining all strings using \"\\\""
+      ],
+      "selected": [
+       3
+      ],
+      "processed": [],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "\\",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {
+       "joiner": "+",
+       "tuple": 3
+      }
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "joiner": "\\",
+        "tuple": null,
+        "summary": "joining all strings using \"\\\"",
+        "texts": [],
+        "results": [
+         "Error: Could not escape the joiner string. Wrong number of backslashes?"
+        ],
+        "invalid": true
+       },
+       "edited": {
+        "joiner": "+",
+        "tuple": 3,
+        "summary": "joining every 3 strings using \"+\"",
+        "texts": [],
+        "results": [],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            125,
+            2,
+            [
+             "+",
+             3
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\", at most 1 times",
+       "SORT: sorting reverse (descending) (with regex)",
+       "SLICE: selecting nothing",
+       "JOIN: joining every 3 strings using \"+\""
+      ],
+      "selected": [
+       3
+      ],
+      "processed": [],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (2)",
+        [
+         "a",
+         "b,c"
+        ]
+       ],
+       [
+        "sorter (2)",
+        [
+         "b,c",
+         "a"
+        ]
+       ],
+       [
+        "joiner (0)",
+        [
+         "no results"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            3,
+            false,
+            "("
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            3,
+            1
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "+",
+            3
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ",",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        100,
+        1,
+        [
+         1,
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        125,
+        2,
+        [
+         "",
+         null
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        99,
+        1,
+        [
+         1,
+         true,
+         null
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "texts": [
+    "a,b,c",
+    "image 10, image 2",
+    "x",
+    ""
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\"",
+       "SORT: sorting strict lexicographic (ascending)"
+      ],
+      "selected": [],
+      "processed": [
+       "bcimage 10 image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      3,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\"",
+       "SORT: sorting strict lexicographic (ascending)"
+      ],
+      "selected": [
+       3
+      ],
+      "processed": [
+       "bcimage 10 image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "up"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SLICE: selecting the 2nd string and onwards",
+       "SORT: sorting strict lexicographic (ascending)",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       2
+      ],
+      "processed": [
+       " image 2bcimage 10x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      true
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SLICE: selecting the 2nd string and onwards",
+       "SORT: sorting strict lexicographic (ascending)",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       0,
+       2
+      ],
+      "processed": [
+       " image 2bcimage 10x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "up"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting strict lexicographic (ascending)",
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       0,
+       1
+      ],
+      "processed": [
+       "abcimage 10x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SLICE: selecting the 2nd string and onwards",
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting strict lexicographic (ascending)",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       1,
+       2
+      ],
+      "processed": [
+       " image 2image 10x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "abc"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\"",
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting strict lexicographic (ascending)"
+      ],
+      "selected": [
+       2,
+       3
+      ],
+      "processed": [
+       " image 2x",
+       "image 10"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ],
+       [
+        "sorter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "down"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\"",
+       "SORT: sorting strict lexicographic (ascending)",
+       "SPLIT: splitting by \",\""
+      ],
+      "selected": [
+       2,
+       3
+      ],
+      "processed": [
+       "image 10",
+       " image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "sorter (1)",
+        [
+         "a,b,c"
+        ]
+       ],
+       [
+        "splitter (3)",
+        [
+         "a",
+         "b",
+         "c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            true,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Remove 2 selected?"
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [],
+      "processed": [
+       "image 10, image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      0,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "SLICE: selecting the 2nd string and onwards",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       0
+      ],
+      "processed": [
+       "image 10, image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           100,
+           1,
+           [
+            1,
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Remove 1 selected?"
+      }
+     ],
+     "opened": [],
+     "state": {
+      "rows": [
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,cimage 10, image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [],
+      "processed": [
+       "a,b,cimage 10, image 2x"
+      ],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "joiner (1)",
+        [
+         "a,b,c"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     [
+      [
+       2,
+       [
+        51,
+        1,
+        [
+         2,
+         "z",
+         null,
+         null,
+         "z"
+        ]
+       ]
+      ],
+      [
+       2,
+       [
+        83,
+        2,
+        [
+         ",",
+         null
+        ]
+       ]
+      ]
+     ]
+    ]
+   ],
+   "texts": [
+    "a,b,c",
+    "image 10, image 2",
+    "x",
+    ""
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       "MATCH: any number of characters, matching regex \"z\", such as \"z\"",
+       "SPLIT: splitting by \",\""
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "a,b,c",
+      "tabs": [
+       [
+        "filter (0)",
+        [
+         "no results"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            2,
+            "z",
+            null,
+            null,
+            "z"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "example",
+      "zz,y"
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "MATCH: any number of characters, matching regex \"z\", such as \"z\"",
+       "SPLIT: splitting by \",\""
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "zz,y",
+      "tabs": [
+       [
+        "filter (1)",
+        [
+         "zz,y"
+        ]
+       ],
+       [
+        "splitter (2)",
+        [
+         "zz",
+         "y"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            2,
+            "z",
+            null,
+            null,
+            "z"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Joiner",
+      {}
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "joiner": "",
+        "tuple": null,
+        "summary": "joining all strings using \"\"",
+        "texts": [],
+        "results": [
+         ""
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "joiner": "",
+        "tuple": null,
+        "summary": "joining all strings using \"\"",
+        "texts": [],
+        "results": [
+         ""
+        ],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            125,
+            2,
+            [
+             "",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "MATCH: any number of characters, matching regex \"z\", such as \"z\"",
+       "SPLIT: splitting by \",\"",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [],
+      "processed": [
+       ""
+      ],
+      "example": "zz,y",
+      "tabs": [
+       [
+        "filter (1)",
+        [
+         "zz,y"
+        ]
+       ],
+       [
+        "splitter (2)",
+        [
+         "zz",
+         "y"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "zzy"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            2,
+            "z",
+            null,
+            null,
+            "z"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "click",
+      1,
+      false
+     ],
+     "said": [],
+     "opened": [],
+     "state": {
+      "rows": [
+       "MATCH: any number of characters, matching regex \"z\", such as \"z\"",
+       "SPLIT: splitting by \",\"",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "zz,y",
+      "tabs": [
+       [
+        "filter (1)",
+        [
+         "zz,y"
+        ]
+       ],
+       [
+        "splitter (2)",
+        [
+         "zz",
+         "y"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "zzy"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            2,
+            "z",
+            null,
+            null,
+            "z"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "edit",
+      {}
+     ],
+     "said": [
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "zz,y",
+        "results": [
+         "zz",
+         "y"
+        ],
+        "invalid": false
+       },
+       "edited": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "zz,y",
+        "results": [
+         "zz",
+         "y"
+        ],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            83,
+            2,
+            [
+             ",",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "MATCH: any number of characters, matching regex \"z\", such as \"z\"",
+       "SPLIT: splitting by \",\"",
+       "JOIN: joining all strings using \"\""
+      ],
+      "selected": [
+       1
+      ],
+      "processed": [
+       ""
+      ],
+      "example": "zz,y",
+      "tabs": [
+       [
+        "filter (1)",
+        [
+         "zz,y"
+        ]
+       ],
+       [
+        "splitter (2)",
+        [
+         "zz",
+         "y"
+        ]
+       ],
+       [
+        "joiner (1)",
+        [
+         "zzy"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           51,
+           1,
+           [
+            2,
+            "z",
+            null,
+            null,
+            "z"
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           125,
+           2,
+           [
+            "",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "processor": [
+    84,
+    1,
+    [
+     26,
+     3,
+     []
+    ]
+   ],
+   "texts": [],
+   "steps": [
+    {
+     "state": {
+      "rows": [],
+      "selected": [],
+      "processed": [],
+      "example": "",
+      "tabs": [],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        []
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Splitter",
+      {}
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "",
+        "results": [],
+        "invalid": false
+       },
+       "edited": {
+        "separator": ",",
+        "max_splits": null,
+        "example": "",
+        "results": [],
+        "invalid": false
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            83,
+            2,
+            [
+             ",",
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\""
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "",
+      "tabs": [
+       [
+        "splitter (0)",
+        [
+         "no results"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "String Sorter",
+      {
+       "sort_type": "strict lexicographic",
+       "asc": false
+      }
+     ],
+     "said": [
+      {
+       "select": "Which type of processing step?",
+       "choices": [
+        [
+         "String Match",
+         "An object that filters strings."
+        ],
+        [
+         "String Tag Filter",
+         "An object that filters strings using tag rules."
+        ],
+        [
+         "String Converter",
+         "An object that converts strings from one thing to another."
+        ],
+        [
+         "String Splitter",
+         "An object that breaks strings into smaller strings."
+        ],
+        [
+         "String Joiner",
+         "An object that concatenates strings together."
+        ],
+        [
+         "String Sorter",
+         "An object that sorts strings."
+        ],
+        [
+         "String Selector/Slicer",
+         "An object that filter-selects from the list of strings. Either absolute index position or a range."
+        ]
+       ]
+      },
+      {
+       "dialog": "edit processing step"
+      }
+     ],
+     "opened": [
+      {
+       "opened": {
+        "sort_type": "human sort",
+        "asc": false,
+        "regex": null,
+        "texts": [],
+        "results": []
+       },
+       "edited": {
+        "sort_type": "strict lexicographic",
+        "asc": false,
+        "regex": null,
+        "texts": [],
+        "results": []
+       },
+       "value": [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            99,
+            1,
+            [
+             1,
+             false,
+             null
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "rows": [
+       "SPLIT: splitting by \",\"",
+       "SORT: sorting strict lexicographic (descending)"
+      ],
+      "selected": [],
+      "processed": [],
+      "example": "",
+      "tabs": [
+       [
+        "splitter (0)",
+        [
+         "no results"
+        ]
+       ]
+      ],
+      "value": [
+       84,
+       1,
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           83,
+           2,
+           [
+            ",",
+            null
+           ]
+          ]
+         ],
+         [
+          2,
+          [
+           99,
+           1,
+           [
+            1,
+            false,
+            null
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

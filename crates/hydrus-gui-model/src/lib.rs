@@ -45,6 +45,7 @@ pub mod sidecar_editors;
 pub mod sidecars;
 pub mod sort;
 pub mod status;
+pub mod string_editors;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;

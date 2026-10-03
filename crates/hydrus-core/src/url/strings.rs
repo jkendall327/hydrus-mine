@@ -833,59 +833,131 @@ impl StringProcessor {
 
     /// Run the pipeline; an unsupported step is an error.
     pub fn process(&self, strings: Vec<String>) -> Result<Vec<String>, String> {
+        self.process_limited(strings, None, false)
+    }
+
+    /// `ProcessStrings( max_steps_allowed, no_slicing )`: the first
+    /// `max_steps` steps only, if given, and slices left out if
+    /// `no_slicing` (as the editors' single example does).
+    pub fn process_limited(
+        &self,
+        strings: Vec<String>,
+        max_steps: Option<usize>,
+        no_slicing: bool,
+    ) -> Result<Vec<String>, String> {
         let mut current = strings;
-        for step in &self.steps {
-            current = match step {
-                ProcessingStep::Convert(converter) => current
-                    .iter()
-                    .filter_map(|s| converter.convert(s).ok())
-                    .collect(),
-                ProcessingStep::Filter(m) => current.into_iter().filter(|s| m.matches(s)).collect(),
-                ProcessingStep::Split {
-                    separator,
-                    max_splits,
-                } => match unescape(separator) {
-                    Err(_) => Vec::new(),
-                    Ok(separator) if separator.is_empty() => Vec::new(),
-                    Ok(separator) => current
-                        .iter()
-                        .flat_map(|s| {
-                            let parts: Vec<String> = match max_splits {
-                                Some(n) => s.splitn(n + 1, &separator).map(str::to_owned).collect(),
-                                None => s.split(&separator).map(str::to_owned).collect(),
-                            };
-                            parts.into_iter().filter(|p| !p.is_empty())
-                        })
-                        .collect(),
-                },
-                ProcessingStep::Slice { start, end } => python_slice(&current, *start, *end),
-                ProcessingStep::Join { joiner, tuple_size } => match unescape(joiner) {
-                    Err(_) => current,
-                    Ok(joiner) => match tuple_size {
-                        None => vec![current.join(&joiner)],
-                        Some(0) => current,
-                        Some(n) => current
-                            .chunks(*n)
-                            .filter(|chunk| chunk.len() == *n)
-                            .map(|chunk| chunk.join(&joiner))
-                            .collect(),
-                    },
-                },
-                ProcessingStep::Sort {
-                    kind,
-                    ascending,
-                    regex,
-                } => sort_strings(&current, *kind, *ascending, regex.as_ref()).unwrap_or(current),
-                ProcessingStep::TagFilter(step) => filter_tags(&current, &step.filter),
-                ProcessingStep::Unsupported { type_id } => {
-                    return Err(format!(
-                        "string processing step type {type_id} is not supported yet"
-                    ));
-                }
-            };
+        for step in self.steps.iter().take(max_steps.unwrap_or(usize::MAX)) {
+            if no_slicing && matches!(step, ProcessingStep::Slice { .. }) {
+                continue;
+            }
+            current = step.apply(current)?;
         }
         Ok(current)
     }
+}
+
+impl ProcessingStep {
+    /// This step on some strings, as `ProcessStrings` runs it: a string a
+    /// converter or splitter fails on is dropped, and a joiner or sorter
+    /// that fails leaves the strings be. An unsupported step is an error.
+    pub fn apply(&self, current: Vec<String>) -> Result<Vec<String>, String> {
+        Ok(match self {
+            ProcessingStep::Convert(converter) => current
+                .iter()
+                .filter_map(|s| converter.convert(s).ok())
+                .collect(),
+            ProcessingStep::Filter(m) => current.into_iter().filter(|s| m.matches(s)).collect(),
+            ProcessingStep::Split {
+                separator,
+                max_splits,
+            } => current
+                .iter()
+                .flat_map(|s| split_text(separator, *max_splits, s).unwrap_or_default())
+                .collect(),
+            ProcessingStep::Slice { start, end } => slice_texts(*start, *end, &current),
+            ProcessingStep::Join { joiner, tuple_size } => {
+                join_texts(joiner, *tuple_size, &current).unwrap_or(current)
+            }
+            ProcessingStep::Sort {
+                kind,
+                ascending,
+                regex,
+            } => sort_strings(&current, *kind, *ascending, regex.as_ref()).unwrap_or(current),
+            ProcessingStep::TagFilter(step) => filter_tags(&current, &step.filter),
+            ProcessingStep::Unsupported { type_id } => {
+                return Err(format!(
+                    "string processing step type {type_id} is not supported yet"
+                ));
+            }
+        })
+    }
+}
+
+/// `StringSplitter.Split`: `text` split on the separator (with Python
+/// escapes), at most `max_splits` times, empty parts dropped; or the
+/// reference's error.
+pub fn split_text(
+    separator: &str,
+    max_splits: Option<usize>,
+    text: &str,
+) -> Result<Vec<String>, String> {
+    let separator = unescape(separator).map_err(|_| {
+        "Could not escape the splitter string. Wrong number of backslashes?".to_owned()
+    })?;
+    if separator.is_empty() {
+        return Err("Problem when splitting text: empty separator".to_owned());
+    }
+    let parts: Vec<&str> = match max_splits {
+        Some(n) => text.splitn(n + 1, &separator).collect(),
+        None => text.split(&separator).collect(),
+    };
+    Ok(parts
+        .into_iter()
+        .filter(|p| !p.is_empty())
+        .map(str::to_owned)
+        .collect())
+}
+
+/// `StringJoiner.Join`: all the texts joined with the joiner (with Python
+/// escapes), or each whole run of `tuple_size`; or the reference's error.
+pub fn join_texts(
+    joiner: &str,
+    tuple_size: Option<usize>,
+    texts: &[String],
+) -> Result<Vec<String>, String> {
+    let joiner = unescape(joiner).map_err(|_| {
+        "Could not escape the joiner string. Wrong number of backslashes?".to_owned()
+    })?;
+    Ok(match tuple_size {
+        None => vec![texts.join(&joiner)],
+        Some(0) => texts.to_vec(),
+        Some(n) => texts
+            .chunks(n)
+            .filter(|chunk| chunk.len() == n)
+            .map(|chunk| chunk.join(&joiner))
+            .collect(),
+    })
+}
+
+/// `StringSlicer.Slice`: a Python slice `[start:end]` of the texts.
+pub fn slice_texts(start: Option<i64>, end: Option<i64>, texts: &[String]) -> Vec<String> {
+    python_slice(texts, start, end)
+}
+
+/// `StringSorter.Sort`; an error (a regex that won't compile, unless the
+/// sort only reverses) where the reference's raises.
+pub fn sort_texts(
+    kind: SortKind,
+    ascending: bool,
+    regex: Option<&PyRegex>,
+    texts: &[String],
+) -> Result<Vec<String>, String> {
+    if kind != SortKind::Reverse
+        && let Some(Err(e)) = regex.map(PyRegex::regex)
+    {
+        return Err(e.to_owned());
+    }
+    sort_strings(texts, kind, ascending, regex).ok_or_else(|| "the regex failed".to_owned())
 }
 
 #[cfg(test)]
