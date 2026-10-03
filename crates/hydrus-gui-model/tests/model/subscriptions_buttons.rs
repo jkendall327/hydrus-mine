@@ -9,8 +9,9 @@ use serde_json::{Value as Json, json};
 use hydrus_core::subscriptions::{QueryState, SeedTime, SubscriptionSettings};
 use hydrus_gui_model::edit_subscription::RetryIgnored;
 use hydrus_gui_model::subscriptions_dialog::{
-    DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY, MERGE_QUESTION, RESET_QUESTION, SEPARATE_NAME,
-    SEPARATE_QUESTION, Separate, Subscriptions,
+    DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY, MERGE_QUESTION, Picked, RESET_QUESTION,
+    SEPARATE_CHOICES, SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION,
+    SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, picked,
 };
 use hydrus_store::queues::StatusCounts;
 
@@ -203,33 +204,76 @@ fn the_other_buttons_act_as_the_references() {
                 dialog.set_downloader_selected(now, "", name);
             }
             "separate" => {
+                let key = dialog.selected(now)[0];
+                let original = dialog.get(key).unwrap().clone();
                 let mut n = 0;
-                let how = if asked[0]["kind"] == "yes/yes/no" {
+                let mut how = Separate::Whole;
+                if asked[0]["kind"] == "yes/yes/no" {
                     assert_eq!(asked[0]["message"], SEPARATE_QUESTION, "{at}");
-                    let labels: Vec<&str> = Separate::CHOICES.iter().map(|c| c.1).collect();
-                    assert_eq!(
-                        asked[0]["yeses"].as_array().unwrap()[..2],
-                        json!(labels).as_array().unwrap()[..],
-                        "{at}"
-                    );
+                    assert_eq!(asked[0]["yeses"], json!(SEPARATE_CHOICES), "{at}");
                     n = 1;
-                    Separate::CHOICES[asked[0]["answer"].as_u64().unwrap() as usize].0
+                    how = match asked[0]["answer"].as_u64().unwrap() {
+                        0 => Separate::Half,
+                        1 => Separate::Whole,
+                        _ => {
+                            // the queries by name, none ticked
+                            let pick = &asked[1];
+                            assert_eq!(pick["title"], SEPARATE_PICK, "{at}");
+                            let names: Vec<&str> = original
+                                .queries
+                                .iter()
+                                .map(|q| q.state.human_name())
+                                .collect();
+                            assert_eq!(pick["choices"], json!(names), "{at}");
+                            assert_eq!(pick["checked"], json!([]), "{at}");
+                            let ticked: Vec<usize> = (0..names.len())
+                                .filter(|&i| {
+                                    pick["answer"] == "*"
+                                        || pick["answer"]
+                                            .as_array()
+                                            .unwrap()
+                                            .contains(&json!(names[i]))
+                                })
+                                .collect();
+                            n = 2;
+                            match picked(ticked.len(), names.len()) {
+                                Picked::All => Separate::Whole,
+                                Picked::Several => {
+                                    let q = &asked[2];
+                                    assert_eq!(q["message"], SEPARATE_MERGED_QUESTION, "{at}");
+                                    assert_eq!(q["yeses"], json!(SEPARATE_MERGED_CHOICES), "{at}");
+                                    assert_eq!(q["no"], "forget it", "{at}");
+                                    n = 3;
+                                    Separate::Part {
+                                        queries: ticked,
+                                        merged: q["answer"] == 0,
+                                    }
+                                }
+                                Picked::Few => Separate::Part {
+                                    queries: ticked,
+                                    merged: false,
+                                },
+                            }
+                        }
+                    };
+                }
+                // a name (but for halves), defaulting to the original's
+                let base = if how == Separate::Half {
+                    Some(String::new())
                 } else {
-                    Separate::Whole
+                    let message = if matches!(how, Separate::Part { merged: true, .. }) {
+                        SEPARATE_MERGED_NAME
+                    } else {
+                        SEPARATE_NAME
+                    };
+                    assert_eq!(asked[n]["message"], message, "{at}");
+                    assert_eq!(asked[n]["default"], original.name.as_str(), "{at}");
+                    asked[n]["answer"].as_str().map(str::to_owned)
                 };
-                let base = if how == Separate::Whole {
-                    assert_eq!(asked[n]["message"], SEPARATE_NAME, "{at}");
-                    let key = dialog.selected(now)[0];
-                    assert_eq!(
-                        asked[n]["default"],
-                        dialog.get(key).unwrap().name.as_str(),
-                        "{at}"
-                    );
-                    asked[n]["answer"].as_str().unwrap().to_owned()
-                } else {
-                    String::new()
-                };
-                dialog.separate(now, how, &base);
+                // (cancelled, nothing happens)
+                if let Some(base) = base {
+                    dialog.separate(now, &how, &base);
+                }
             }
             "merge" => {
                 assert_eq!(asked[0]["message"], MERGE_QUESTION, "{at}");

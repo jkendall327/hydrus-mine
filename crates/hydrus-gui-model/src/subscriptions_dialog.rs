@@ -480,22 +480,60 @@ pub const SEPARATE_NAME: &str =
     "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.";
 
 /// How "separate" breaks a subscription up.
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub enum Separate {
     /// The first half of its queries (by text) into "name (A)", the rest
     /// staying as "name (B)".
     Half,
     /// Each query its own subscription, "base: query".
     Whole,
+    /// Only these queries (by index) taken out: into one subscription
+    /// named "base" (`merged`), or each its own, "base: query"; the
+    /// subscription keeps the rest.
+    Part { queries: Vec<usize>, merged: bool },
 }
 
-impl Separate {
-    /// The answers to [`SEPARATE_QUESTION`] hydrus-rs offers (the
-    /// reference also offers "only extract some of the subscription").
-    pub const CHOICES: [(Self, &'static str); 2] = [
-        (Self::Half, "break it in half"),
-        (Self::Whole, "break it all into single-query subscriptions"),
-    ];
+/// The answers to [`SEPARATE_QUESTION`]: half, whole, and some.
+pub const SEPARATE_CHOICES: [&str; 3] = [
+    "break it in half",
+    "break it all into single-query subscriptions",
+    "only extract some of the subscription",
+];
+
+/// The list "only extract some" ticks the queries in (none ticked).
+pub const SEPARATE_PICK: &str = "select the queries to extract";
+
+/// What "only extract some" asks of more than one query ticked, and its
+/// answers (and "forget it").
+pub const SEPARATE_MERGED_QUESTION: &str = "Do you want the extracted queries to be a new merged subscription, or many subscriptions with only one query?";
+pub const SEPARATE_MERGED_CHOICES: [&str; 2] = [
+    "one new merged subscription",
+    "many subscriptions with only one query",
+];
+
+/// What "separate" asks for when the queries taken out make one
+/// subscription: its name.
+pub const SEPARATE_MERGED_NAME: &str = "Please enter the name for the new subscription.";
+
+/// What ticking `picked` of a subscription's `total` queries leads to.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Picked {
+    /// Every one: separated whole.
+    All,
+    /// Several: asks whether merged.
+    Several,
+    /// One, or none: each its own.
+    Few,
+}
+
+pub fn picked(picked: usize, total: usize) -> Picked {
+    if picked == total {
+        Picked::All
+    } else if picked > 1 {
+        Picked::Several
+    } else {
+        Picked::Few
+    }
 }
 
 impl Subscriptions {
@@ -617,7 +655,7 @@ impl Subscriptions {
     /// Break the one selected up (`Separate`), the new subscriptions
     /// named from `base` (for [`Separate::Whole`]) and selected; their
     /// keys.
-    pub fn separate(&mut self, now: i64, how: Separate, base: &str) -> Vec<u64> {
+    pub fn separate(&mut self, now: i64, how: &Separate, base: &str) -> Vec<u64> {
         let [key] = self.selected(now)[..] else {
             return Vec::new();
         };
@@ -660,6 +698,39 @@ impl Subscriptions {
                 let b = self.non_dupe_name(&format!("{} (B)", original.name), Some(key));
                 if let Some(s) = self.get_mut(key) {
                     s.name = b;
+                    s.queries = rest;
+                }
+                made.push(key);
+            }
+            Separate::Part { queries, merged } => {
+                let (taken, rest): (Vec<_>, Vec<_>) = original
+                    .queries
+                    .iter()
+                    .cloned()
+                    .enumerate()
+                    .partition(|(i, _)| queries.contains(i));
+                let mut taken: Vec<DialogQuery> = taken.into_iter().map(|(_, q)| q).collect();
+                let rest: Vec<DialogQuery> = rest.into_iter().map(|(_, q)| q).collect();
+                // (the new ones named as if the original had gone)
+                if *merged {
+                    // the last taken leads, as the reference merges the
+                    // others into it
+                    if let Some(last) = taken.pop() {
+                        taken.insert(0, last);
+                    }
+                    let name = self.non_dupe_name(base, Some(key));
+                    made.push(self.push(None, name, original.settings.clone(), taken));
+                } else {
+                    for q in taken {
+                        let name = format!("{base}: {}", q.state.human_name());
+                        let name = self.non_dupe_name(&name, Some(key));
+                        made.push(self.push(None, name, original.settings.clone(), vec![q]));
+                    }
+                }
+                // and the original's, after them
+                let name = self.non_dupe_name(&original.name, Some(key));
+                if let Some(s) = self.get_mut(key) {
+                    s.name = name;
                     s.queries = rest;
                 }
                 made.push(key);

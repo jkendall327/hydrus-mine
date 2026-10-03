@@ -50,6 +50,17 @@ EXTRA = [
             { 'text' : 'green', 'display' : 'Greens', 'seeds' : subs.seeds( 1, 4, DAY, 2 * DAY ) + subs.seeds( 1, 7, DAY, 3 * DAY ), 'last_check' : 2 * DAY, 'check_now' : False, 'paused' : False },
         ],
     },
+    {
+        'name' : 'many queries',
+        'gug' : 'example tag search',
+        'checker' : subs.ARTIST,
+        'paused' : False,
+        'delay' : None,
+        'queries' : [
+            { 'text' : text, 'display' : 'Beta Display' if text == 'beta' else None, 'seeds' : subs.seeds( 1, 1, DAY, DAY ), 'last_check' : DAY, 'check_now' : False, 'paused' : False }
+            for text in [ 'alpha', 'beta', 'gamma', 'delta', 'epsilon' ]
+        ],
+    },
 ]
 
 NEW_CHECKER = ( 2, 6 * HOUR, 3 * DAY, ( 1, 30 * DAY ) )
@@ -69,6 +80,15 @@ ACTIONS = [
     ( 'separate', [ 'merged' ], [ 0 ] ),
     ( 'separate', [ 'paused and delayed' ], [ 'pd' ] ),
     ( 'merge', [ 'pd: green', 'pd: yellow', 'Mixed Case' ], [ True, 0, None ] ),
+    # "only extract some": two, into one merged subscription (its name the
+    # original's, so the original is renamed), then two into one each
+    # ('*' ticks every query)
+    ( 'separate', [ 'many queries' ], [ 2, [ 'Beta Display', 'delta' ], 0, 'many queries' ] ),
+    ( 'separate', [ 'many queries (1)' ], [ 2, [ 'alpha', 'epsilon' ], 1, 'bits' ] ),
+    # two queries: no question, and the name cancelled: nothing happens
+    ( 'separate', [ 'many queries' ], [ None ] ),
+    # every query ticked: separated whole
+    ( 'separate', [ 'Mixed Case' ], [ 2, '*', 'mc' ] ),
 ]
 
 
@@ -185,6 +205,21 @@ def record( session ):
             return ( b'\x00' * 32, name )
 
 
+        def select_multiple( win, title, choice_tuples, **kwargs ):
+
+            answer = pop()
+
+            asked.append( { 'kind' : 'multiple', 'title' : title, 'choices' : [ t[0] for t in choice_tuples ], 'checked' : [ t[0] for t in choice_tuples if t[2] ], 'answer' : answer } )
+
+            if answer is None:
+
+                raise HydrusExceptions.CancelledException()
+
+
+            return [ t[1] for t in choice_tuples if answer == '*' or t[0] in answer ]
+
+
+        ClientGUIDialogsQuick.SelectMultipleFromList = select_multiple
         ClientGUIDialogsQuick.SelectFromListButtons = select_from_list_buttons
         ClientGUIDialogsQuick.SelectFromList = select_from_list
         ClientGUIDialogsQuick.GetYesNo = get_yes_no

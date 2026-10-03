@@ -60,9 +60,7 @@ and are tested against the reference. The work is the GUI over them.
 
 **Next**:
 
-1. The list's last buttons: "separate"'s "only extract some" (a
-   multiple choice, which the window's question panel can now ask as
-   "deduplicate" does), export/import/duplicate, and import options (after
+1. The list's last buttons: export/import/duplicate, and import options (after
    an import options editor exists).
 
 ## 2. Manage import folders / export folders

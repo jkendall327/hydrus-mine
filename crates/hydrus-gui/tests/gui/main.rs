@@ -45,6 +45,7 @@ mod status_bar;
 mod still;
 mod subscriptions;
 mod subscriptions_dedupe;
+mod subscriptions_separate;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_ratings;

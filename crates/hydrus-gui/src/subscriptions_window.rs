@@ -24,8 +24,9 @@ use crate::edit_subscription_window::Slots;
 use crate::subscriptions_dedupe::{Answer, Dedupe, Question};
 use crate::subscriptions_dialog::{
     CheckNow, Choice, DELETE_QUESTION, DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY,
-    MERGE_QUESTION, NOT_MERGEABLE, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_NAME,
-    SEPARATE_QUESTION, Separate, Subscriptions,
+    MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_CHOICES,
+    SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION, SEPARATE_NAME,
+    SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, picked,
 };
 use crate::subscriptions_list::ShortSummary;
 use crate::{SubscriptionsWindow, TableRow, Tick};
@@ -56,7 +57,12 @@ enum Asking {
         rest: Vec<Vec<u64>>,
     },
     SeparateHow,
-    SeparateName,
+    /// "only extract some": the queries ticked.
+    SeparatePick(Vec<bool>),
+    /// Whether the queries ticked make one subscription.
+    SeparateMerged(Vec<usize>),
+    /// The name for a separation, how it separates.
+    SeparateName(Separate),
     /// "deduplicate", its question, and the boxes ticked when it is a list
     /// of texts.
     Dedupe(Dedupe, Question, Vec<bool>),
@@ -309,7 +315,7 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
 
 /// Ask "separate"'s new subscriptions' base name, starting from the
 /// selected's name.
-fn ask_separate_name(open: &mut Open) {
+fn ask_separate_name(open: &mut Open, how: Separate) {
     let name = open
         .dialog
         .selection
@@ -317,7 +323,7 @@ fn ask_separate_name(open: &mut Open) {
         .and_then(|k| open.dialog.get(k))
         .map(|s| s.name.clone());
     *open.text.borrow_mut() = name;
-    open.asking = Some(Asking::SeparateName);
+    open.asking = Some(Asking::SeparateName(how));
 }
 
 /// Merge a group into its primary, named `name` (or its own name), and
@@ -426,14 +432,43 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             Choice {
                 title: "Are you sure?".into(),
                 message: SEPARATE_QUESTION.into(),
-                choices: Separate::CHOICES.iter().map(|c| c.1.to_owned()).collect(),
+                choices: SEPARATE_CHOICES
+                    .iter()
+                    .chain(&["forget it"])
+                    .map(|&c| c.to_owned())
+                    .collect(),
             },
             false,
         )),
-        Some(Asking::SeparateName) => Some((
+        Some(Asking::SeparatePick(_)) => Some((
+            Choice {
+                title: SEPARATE_PICK.into(),
+                message: String::new(),
+                choices: vec!["ok".into()],
+            },
+            false,
+        )),
+        Some(Asking::SeparateMerged(_)) => Some((
+            Choice {
+                title: "Are you sure?".into(),
+                message: SEPARATE_MERGED_QUESTION.into(),
+                choices: SEPARATE_MERGED_CHOICES
+                    .iter()
+                    .chain(&["forget it"])
+                    .map(|&c| c.to_owned())
+                    .collect(),
+            },
+            false,
+        )),
+        Some(Asking::SeparateName(how)) => Some((
             Choice {
                 title: "Enter text".into(),
-                message: SEPARATE_NAME.into(),
+                message: if matches!(how, Separate::Part { merged: true, .. }) {
+                    SEPARATE_MERGED_NAME
+                } else {
+                    SEPARATE_NAME
+                }
+                .into(),
                 choices: vec!["ok".into()],
             },
             true,
@@ -477,7 +512,26 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
         Some(Asking::Dedupe(_, question, _)) => Some((dedupe_choice(question), false)),
         _ => None,
     });
+    let names_of_selected: Vec<String> = dialog
+        .selection
+        .one()
+        .and_then(|k| dialog.get(k))
+        .map(|s| {
+            s.queries
+                .iter()
+                .map(|q| q.state.human_name().to_owned())
+                .collect()
+        })
+        .unwrap_or_default();
     let ticks: Vec<Tick> = match &open.asking {
+        Some(Asking::SeparatePick(ticked)) => names_of_selected
+            .iter()
+            .zip(ticked)
+            .map(|(label, &on): (&String, &bool)| Tick {
+                label: label.as_str().into(),
+                on,
+            })
+            .collect(),
         Some(Asking::Dedupe(_, Question::Multiple { choices, .. }, ticked)) => choices
             .iter()
             .zip(ticked)
@@ -796,15 +850,49 @@ pub(crate) fn open(
                     primary,
                     rest,
                 }) => merge_named(open, &group, primary, rest, Some(&text)),
-                Some(Asking::SeparateHow) => match Separate::CHOICES.get(index) {
-                    Some((Separate::Half, _)) => {
-                        open.dialog.separate(now(), Separate::Half, "");
+                Some(Asking::SeparateHow) => match index {
+                    0 => {
+                        open.dialog.separate(now(), &Separate::Half, "");
                     }
-                    Some((Separate::Whole, _)) => ask_separate_name(open),
-                    None => {}
+                    1 => ask_separate_name(open, Separate::Whole),
+                    2 => {
+                        let n = open
+                            .dialog
+                            .selection
+                            .one()
+                            .and_then(|k| open.dialog.get(k))
+                            .map_or(0, |s| s.queries.len());
+                        open.asking = Some(Asking::SeparatePick(vec![false; n]));
+                    }
+                    _ => {}
                 },
-                Some(Asking::SeparateName) => {
-                    open.dialog.separate(now(), Separate::Whole, &text);
+                Some(Asking::SeparatePick(ticked)) => {
+                    let queries: Vec<usize> = (0..ticked.len()).filter(|&i| ticked[i]).collect();
+                    match picked(queries.len(), ticked.len()) {
+                        Picked::All => ask_separate_name(open, Separate::Whole),
+                        Picked::Several => open.asking = Some(Asking::SeparateMerged(queries)),
+                        Picked::Few => ask_separate_name(
+                            open,
+                            Separate::Part {
+                                queries,
+                                merged: false,
+                            },
+                        ),
+                    }
+                }
+                Some(Asking::SeparateMerged(queries)) => {
+                    if index < SEPARATE_MERGED_CHOICES.len() {
+                        ask_separate_name(
+                            open,
+                            Separate::Part {
+                                queries,
+                                merged: index == 0,
+                            },
+                        );
+                    }
+                }
+                Some(Asking::SeparateName(how)) => {
+                    open.dialog.separate(now(), &how, &text);
                 }
                 Some(Asking::Delete) => {
                     if index == 0 {
@@ -894,9 +982,12 @@ pub(crate) fn open(
         let change = change.clone();
         move |index, on| {
             change(&|open| {
-                if let Some(Asking::Dedupe(_, _, ticked)) = &mut open.asking
-                    && let Some(tick) = usize::try_from(index).ok().and_then(|i| ticked.get_mut(i))
-                {
+                let Some(Asking::Dedupe(_, _, ticked) | Asking::SeparatePick(ticked)) =
+                    &mut open.asking
+                else {
+                    return;
+                };
+                if let Some(tick) = usize::try_from(index).ok().and_then(|i| ticked.get_mut(i)) {
                     *tick = on;
                 }
             });
@@ -919,7 +1010,7 @@ pub(crate) fn open(
                 if queries > 2 {
                     open.asking = Some(Asking::SeparateHow);
                 } else if queries == 2 {
-                    ask_separate_name(open);
+                    ask_separate_name(open, Separate::Whole);
                 }
             });
         }

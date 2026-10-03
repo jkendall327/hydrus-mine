@@ -566,8 +566,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   queries now and select by query text, add and edit subscriptions,
   merge, separate, lowercase, retry, reset, and overwrite downloader and
   checker options, and deduplicate. It has no "export"/"import"/"duplicate"
-  or import options (copy, paste, clear) buttons yet. "separate" can't extract only some
-  queries (the reference's third answer), and "merge" merges each group
+  or import options (copy, paste, clear) buttons yet. "merge" merges each group
   as its questions are answered (cancelling a later group's questions
   leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It

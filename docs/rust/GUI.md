@@ -151,7 +151,8 @@ any column and selected as the reference's lists select, and warns when
 subscriptions are paused from the network menu. Its buttons delete the
 selected (asking "Remove all selected?"), merge those sharing a
 downloader (asking which is primary and its new name), separate one (in
-half, or into a subscription a query, named "base: query"), lowercase
+half, into a subscription a query, named "base: query", or only some
+queries, ticked in a list, into one new subscription or one each), lowercase
 their queries' texts, deduplicate queries with the same text on the same
 downloader (asking, as the reference does, whether to match case, which
 downloader, which texts, ticked in a list, and which subscription keeps

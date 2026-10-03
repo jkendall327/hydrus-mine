@@ -55,6 +55,93 @@
      "paused": false
     }
    ]
+  },
+  {
+   "name": "many queries",
+   "gug": "example tag search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "alpha",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "beta",
+     "display": "Beta Display",
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "gamma",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "delta",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "epsilon",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
   }
  ],
  "start": {
@@ -190,6 +277,82 @@
       "last_check_time": 0,
       "next_check_time": 0,
       "files": {}
+     }
+    ]
+   },
+   {
+    "name": "many queries",
+    "gug": "example tag search",
+    "paused": false,
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "queries": [
+     {
+      "text": "alpha",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700000000,
+      "files": {
+       "1": 1
+      }
+     },
+     {
+      "text": "beta",
+      "display": "Beta Display",
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700000000,
+      "files": {
+       "1": 1
+      }
+     },
+     {
+      "text": "gamma",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700000000,
+      "files": {
+       "1": 1
+      }
+     },
+     {
+      "text": "delta",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700000000,
+      "files": {
+       "1": 1
+      }
+     },
+     {
+      "text": "epsilon",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700000000,
+      "files": {
+       "1": 1
+      }
      }
     ]
    },
@@ -421,6 +584,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "no downloader",
      "gug": "",
      "paused": false,
@@ -629,6 +868,82 @@
        "last_check_time": 0,
        "next_check_time": 0,
        "files": {}
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
       }
      ]
     },
@@ -850,6 +1165,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "no downloader",
      "gug": "",
      "paused": false,
@@ -1067,6 +1458,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "no downloader",
      "gug": "",
      "paused": false,
@@ -1277,6 +1744,82 @@
        "last_check_time": 0,
        "next_check_time": 0,
        "files": {}
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
       }
      ]
     },
@@ -1501,6 +2044,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "no downloader",
      "gug": "",
      "paused": false,
@@ -1714,6 +2333,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "no downloader",
      "gug": "other search",
      "paused": false,
@@ -1871,6 +2566,82 @@
        "files": {
         "4": 1,
         "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
        }
       }
      ]
@@ -2139,6 +2910,82 @@
      ]
     },
     {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
      "name": "merged",
      "gug": "example tag search",
      "paused": false,
@@ -2354,6 +3201,82 @@
        "files": {
         "4": 1,
         "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
        }
       }
      ]
@@ -2584,6 +3507,82 @@
        "files": {
         "4": 1,
         "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
        }
       }
      ]
@@ -2859,6 +3858,1552 @@
        "next_check_time": 0,
        "files": {}
       },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "many queries"
+   ],
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.",
+     "yeses": [
+      "break it in half",
+      "break it all into single-query subscriptions",
+      "only extract some of the subscription"
+     ],
+     "no": "forget it",
+     "answer": 2
+    },
+    {
+     "kind": "multiple",
+     "title": "select the queries to extract",
+     "choices": [
+      "alpha",
+      "Beta Display",
+      "gamma",
+      "delta",
+      "epsilon"
+     ],
+     "checked": [],
+     "answer": [
+      "Beta Display",
+      "delta"
+     ]
+    },
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Do you want the extracted queries to be a new merged subscription, or many subscriptions with only one query?",
+     "yeses": [
+      "one new merged subscription",
+      "many subscriptions with only one query"
+     ],
+     "no": "forget it",
+     "answer": 0
+    },
+    {
+     "kind": "text",
+     "message": "Please enter the name for the new subscription.",
+     "default": "many queries",
+     "answer": "many queries"
+    }
+   ],
+   "selected": [
+    "many queries",
+    "many queries (1)"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      },
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries (1)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "many queries (1)"
+   ],
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.",
+     "yeses": [
+      "break it in half",
+      "break it all into single-query subscriptions",
+      "only extract some of the subscription"
+     ],
+     "no": "forget it",
+     "answer": 2
+    },
+    {
+     "kind": "multiple",
+     "title": "select the queries to extract",
+     "choices": [
+      "alpha",
+      "gamma",
+      "epsilon"
+     ],
+     "checked": [],
+     "answer": [
+      "alpha",
+      "epsilon"
+     ]
+    },
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Do you want the extracted queries to be a new merged subscription, or many subscriptions with only one query?",
+     "yeses": [
+      "one new merged subscription",
+      "many subscriptions with only one query"
+     ],
+     "no": "forget it",
+     "answer": 1
+    },
+    {
+     "kind": "text",
+     "message": "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.",
+     "default": "many queries (1)",
+     "answer": "bits"
+    }
+   ],
+   "selected": [
+    "bits: alpha",
+    "bits: epsilon",
+    "many queries (1)"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      },
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "bits: alpha",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "bits: epsilon",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries (1)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "many queries"
+   ],
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.",
+     "default": "many queries",
+     "answer": null
+    }
+   ],
+   "selected": [
+    "many queries"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": true,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      },
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "bits: alpha",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "bits: epsilon",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries (1)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "Mixed Case"
+   ],
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.",
+     "yeses": [
+      "break it in half",
+      "break it all into single-query subscriptions",
+      "only extract some of the subscription"
+     ],
+     "no": "forget it",
+     "answer": 2
+    },
+    {
+     "kind": "multiple",
+     "title": "select the queries to extract",
+     "choices": [
+      "blue_sky",
+      "Greens",
+      "green",
+      "yellow"
+     ],
+     "checked": [],
+     "answer": "*"
+    },
+    {
+     "kind": "text",
+     "message": "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.",
+     "default": "Mixed Case",
+     "answer": "mc"
+    }
+   ],
+   "selected": [
+    "mc: Greens",
+    "mc: blue_sky",
+    "mc: green",
+    "mc: yellow"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": true,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "bits: alpha",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "alpha",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "bits: epsilon",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "epsilon",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "delta",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      },
+      {
+       "text": "beta",
+       "display": "Beta Display",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "many queries (1)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "gamma",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "mc: Greens",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "mc: blue_sky",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "mc: green",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "mc: yellow",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
       {
        "text": "yellow",
        "display": null,
