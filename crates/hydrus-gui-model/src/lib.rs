@@ -27,6 +27,7 @@ pub mod local_import;
 pub mod main_menu;
 pub mod manage_tags;
 pub mod media_actions;
+pub mod notes_editor;
 pub mod options;
 pub mod page_chooser;
 pub mod predicate_editors;

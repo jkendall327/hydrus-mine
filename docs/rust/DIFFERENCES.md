@@ -337,6 +337,13 @@ search.
   narrow as the reference's, which shows the status columns as single
   characters; their widths are fixed, but for the first, which takes
   the room left.
+- **The "manage notes" dialog** copies every note as JSON, the
+  reference's default; its cog menu's choices (copy just the note in
+  view, copy as plain text, where the text cursor starts) aren't there.
+  Its notices ("Copied 2 encoded notes!") show beside the buttons rather
+  than as a passing note over them, and the reference's shortcut to
+  apply it isn't bound. Double-clicking beside the tabs doesn't add a
+  note.
 
 ## The media viewer (`hydrus-gui`)
 

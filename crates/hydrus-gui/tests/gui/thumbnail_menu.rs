@@ -81,6 +81,8 @@ fn the_menu_is_the_reference_s() {
                 open,
                 share,
                 rearrange,
+                // (the basic fixture's files have no notes)
+                None,
             );
             let ours = described(&entries);
             let recorded_ours = as_recorded(&ours);

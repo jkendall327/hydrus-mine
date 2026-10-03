@@ -14,6 +14,7 @@ mod import_options_editor;
 mod importer_menu;
 mod local_import_dialog;
 mod main_menu;
+mod manage_notes;
 mod options_dialog;
 mod recent_predicates;
 mod search_log;

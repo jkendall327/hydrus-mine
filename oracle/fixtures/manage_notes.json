@@ -1,0 +1,1018 @@
+{
+ "cases": [
+  {
+   "notes": {},
+   "start_on": null,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        ""
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {},
+      "deletees": [],
+      "changed": false
+     }
+    },
+    {
+     "step": [
+      "type",
+      0,
+      "  hello\r\nworld  \n\n\n"
+     ],
+     "said": [],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "add",
+      "notes"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": ""
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        ""
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "type",
+      1,
+      "second"
+     ],
+     "said": [],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "add",
+      "notes"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": ""
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ],
+       [
+        "notes (2)",
+        ""
+       ]
+      ],
+      "current": 2,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "rename",
+      2,
+      "source"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": "notes (2)"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ],
+       [
+        "source",
+        ""
+       ]
+      ],
+      "current": 2,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "type",
+      2,
+      "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+     ],
+     "said": [],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ],
+       [
+        "source",
+        "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+       ]
+      ],
+      "current": 2,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second",
+       "source": "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "urls"
+     ],
+     "said": [
+      {
+       "notified": "Copied 3 URLs!"
+      }
+     ],
+     "clipboard": [
+      "https://example.com/a?b=1,\nhttp://x.org/\nhttps://y.net/z"
+     ],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ],
+       [
+        "source",
+        "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+       ]
+      ],
+      "current": 2,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second",
+       "source": "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notified": "Copied 3 encoded notes!"
+      }
+     ],
+     "clipboard": [
+      "{\"notes\": \"hello\\nworld\", \"notes (1)\": \"second\", \"source\": \"see https://example.com/a?b=1, and http://x.org/\\\"quoted\\\" or <https://y.net/z>.\"}"
+     ],
+     "state": {
+      "tabs": [
+       [
+        "notes",
+        "  hello\nworld  \n\n\n"
+       ],
+       [
+        "notes (1)",
+        "second"
+       ],
+       [
+        "source",
+        "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+       ]
+      ],
+      "current": 2,
+      "can_edit": true,
+      "notes": {
+       "notes": "hello\nworld",
+       "notes (1)": "second",
+       "source": "see https://example.com/a?b=1, and http://x.org/\"quoted\" or <https://y.net/z>."
+      },
+      "deletees": [],
+      "changed": true
+     }
+    }
+   ]
+  },
+  {
+   "notes": {
+    "b": "bee",
+    "a": "ay",
+    "c": "sea"
+   },
+   "start_on": "b",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       [
+        "a",
+        "ay"
+       ],
+       [
+        "b",
+        "bee"
+       ],
+       [
+        "c",
+        "sea"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "a": "ay",
+       "b": "bee",
+       "c": "sea"
+      },
+      "deletees": [],
+      "changed": false
+     }
+    },
+    {
+     "step": [
+      "rename",
+      1,
+      "a"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": "b"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "a",
+        "ay"
+       ],
+       [
+        "a (1)",
+        "bee"
+       ],
+       [
+        "c",
+        "sea"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "a": "ay",
+       "a (1)": "bee",
+       "c": "sea"
+      },
+      "deletees": [
+       "b"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "rename",
+      1,
+      "b"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": "a (1)"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "a",
+        "ay"
+       ],
+       [
+        "b",
+        "bee"
+       ],
+       [
+        "c",
+        "sea"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "a": "ay",
+       "b": "bee",
+       "c": "sea"
+      },
+      "deletees": [],
+      "changed": false
+     }
+    },
+    {
+     "step": [
+      "rename",
+      0,
+      "c"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": "a"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "c (1)",
+        "ay"
+       ],
+       [
+        "b",
+        "bee"
+       ],
+       [
+        "c",
+        "sea"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "c (1)": "ay",
+       "b": "bee",
+       "c": "sea"
+      },
+      "deletees": [
+       "a"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete this note?"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "c (1)",
+        "ay"
+       ],
+       [
+        "c",
+        "sea"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "c (1)": "ay",
+       "c": "sea"
+      },
+      "deletees": [
+       "a",
+       "b"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "type",
+      1,
+      ""
+     ],
+     "said": [],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "c (1)",
+        "ay"
+       ],
+       [
+        "c",
+        ""
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "c (1)": "ay"
+      },
+      "deletees": [
+       "a",
+       "b",
+       "c"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "select",
+      0
+     ],
+     "said": [],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "c (1)",
+        "ay"
+       ],
+       [
+        "c",
+        ""
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {
+       "c (1)": "ay"
+      },
+      "deletees": [
+       "a",
+       "b",
+       "c"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete this note?"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "c",
+        ""
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {},
+      "deletees": [
+       "a",
+       "b",
+       "c"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete this note?"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [],
+      "current": -1,
+      "can_edit": false,
+      "notes": {},
+      "deletees": [
+       "a",
+       "b",
+       "c"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "add",
+      "fresh"
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": ""
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "fresh",
+        ""
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {},
+      "deletees": [
+       "a",
+       "b",
+       "c"
+      ],
+      "changed": true
+     }
+    }
+   ]
+  },
+  {
+   "notes": {
+    "note": "some text",
+    "other": "other text"
+   },
+   "start_on": "other",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text"
+       ],
+       [
+        "other",
+        "other text"
+       ]
+      ],
+      "current": 1,
+      "can_edit": true,
+      "notes": {
+       "note": "some text",
+       "other": "other text"
+      },
+      "deletees": [],
+      "changed": false
+     }
+    },
+    {
+     "step": [
+      "paste",
+      "{\"note\": \"some text and more\", \"new\": \"brand new\", \"other\": \"different\"}"
+     ],
+     "said": [
+      {
+       "notified": "Pasted 3 new notes!"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ]
+      ],
+      "current": 3,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "paste",
+      "[[\"x\", \"y\"], 5, [\"note\", \"some text and more\"]]"
+     ],
+     "said": [
+      {
+       "notified": "Pasted 1 new notes!"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ],
+       [
+        "x",
+        "y"
+       ]
+      ],
+      "current": 4,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different",
+       "x": "y"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "paste",
+      "[[\"x\", \"y\", \"z\"]]"
+     ],
+     "said": [
+      {
+       "parse error": "Not a two-tuple!"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ],
+       [
+        "x",
+        "y"
+       ]
+      ],
+      "current": 4,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different",
+       "x": "y"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "paste",
+      "[[1, \"y\"]]"
+     ],
+     "said": [
+      {
+       "parse error": "Key not a string!"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ],
+       [
+        "x",
+        "y"
+       ]
+      ],
+      "current": 4,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different",
+       "x": "y"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "paste",
+      "not json"
+     ],
+     "said": [
+      {
+       "parse error": "Expecting value: line 1 column 1 (char 0)"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ],
+       [
+        "x",
+        "y"
+       ]
+      ],
+      "current": 4,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different",
+       "x": "y"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notified": "Copied 5 encoded notes!"
+      }
+     ],
+     "clipboard": [
+      "{\"note\": \"some text and more\", \"other\": \"other text\", \"new\": \"brand new\", \"other (1)\": \"different\", \"x\": \"y\"}"
+     ],
+     "state": {
+      "tabs": [
+       [
+        "note",
+        "some text and more"
+       ],
+       [
+        "other",
+        "other text"
+       ],
+       [
+        "new",
+        "brand new"
+       ],
+       [
+        "other (1)",
+        "different"
+       ],
+       [
+        "x",
+        "y"
+       ]
+      ],
+      "current": 4,
+      "can_edit": true,
+      "notes": {
+       "note": "some text and more",
+       "other": "other text",
+       "new": "brand new",
+       "other (1)": "different",
+       "x": "y"
+      },
+      "deletees": [],
+      "changed": true
+     }
+    }
+   ]
+  },
+  {
+   "notes": {
+    "only": "x"
+   },
+   "start_on": "missing",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       [
+        "only",
+        "x"
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {
+       "only": "x"
+      },
+      "deletees": [],
+      "changed": false
+     }
+    },
+    {
+     "step": [
+      "delete"
+     ],
+     "said": [
+      {
+       "asked": "Delete this note?"
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [],
+      "current": -1,
+      "can_edit": false,
+      "notes": {},
+      "deletees": [
+       "only"
+      ],
+      "changed": true
+     }
+    },
+    {
+     "step": [
+      "add",
+      ""
+     ],
+     "said": [
+      {
+       "asked": "Enter the name for the note.",
+       "default": ""
+      }
+     ],
+     "clipboard": [],
+     "state": {
+      "tabs": [
+       [
+        "",
+        ""
+       ]
+      ],
+      "current": 0,
+      "can_edit": true,
+      "notes": {},
+      "deletees": [
+       "only"
+      ],
+      "changed": true
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -231,9 +231,15 @@ pub fn viewer_menu(
         }
     }
     entries.push(Entry::Separator);
+    let notes = store
+        .read(|c| hydrus_store::media::notes(c, file))
+        .map_or(0, |n| n.len());
     entries.push(Entry::Menu(
         "manage".into(),
-        vec![Entry::Item("tags".into(), Action::ManageTags)],
+        vec![
+            Entry::Item("tags".into(), Action::ManageTags),
+            Entry::Item(crate::notes_editor::menu_label(notes), Action::ManageNotes),
+        ],
     ));
     // its urls, opening and sharing it (as the thumbnails' for it alone)
     // (with no selection, as `AddKnownURLsViewCopyMenu` is called here)

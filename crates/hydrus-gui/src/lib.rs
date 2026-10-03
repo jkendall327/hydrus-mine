@@ -40,6 +40,7 @@ mod import_options_window;
 mod import_window;
 mod importer_list_menu;
 mod locations_window;
+mod manage_notes_window;
 pub(crate) mod manage_tags_window;
 mod menu_bar;
 pub mod mpv;
@@ -139,8 +140,8 @@ pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_rules, autocomplete, checker_options, collect, domains,
     duplicate_filter, duplicates_page, edit_subscription, favourites, file_log, filename_tagging,
     folders, import_options_editor, importer_menu, info_lines, list_selection, local_import,
-    main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors, ratings,
-    scanbar, search_log, selection, session_saving, sort, status, subscriptions_dialog,
+    main_menu, manage_tags, media_actions, notes_editor, options, page_chooser, predicate_editors,
+    ratings, scanbar, search_log, selection, session_saving, sort, status, subscriptions_dialog,
     subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
@@ -158,6 +159,8 @@ pub struct Bound {
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// The manage notes dialog while one is open.
+    pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The checker options editor while one is open (from the options
@@ -887,6 +890,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     };
+    // a thumbnail's or the viewer's "manage > notes"
+    let manage_notes: Rc<RefCell<Option<ManageNotesWindow>>> = Rc::default();
+    let open_manage_notes: OpenManageNotes = Rc::new({
+        let manage_notes = manage_notes.clone();
+        move |store: Arc<hydrus_store::Store>, file: HashId, applied: Rc<dyn Fn()>| {
+            match manage_notes_window::open(&store, file, &manage_notes, applied) {
+                Ok(window) => *manage_notes.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open manage notes: {e}"),
+            }
+        }
+    });
     window.on_manage_tags_selected({
         let page = page.clone();
         let manage_tags = manage_tags.clone();
@@ -2005,6 +2019,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let viewer = viewer.clone();
         let viewing = viewing.clone();
         let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let open_manage_notes = open_manage_notes.clone();
+        let files_changed = files_changed.clone();
         move |index| {
             let page = page();
             let page = page.borrow();
@@ -2027,6 +2043,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 tags_changed: tags_changed.clone(),
                 files_changed: files_changed.clone(),
                 manage_tags: Rc::new(open_manage_tags.clone()),
+                manage_notes: open_manage_notes.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2226,6 +2243,12 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 &page.selected_items().into_iter().collect(),
                 page.focused().map(|i| page.results()[i]),
             );
+            // (the focused file's notes, counted in "manage")
+            let notes = page
+                .focused()
+                .map(|i| page.results()[i])
+                .and_then(|f| page.store().read(|c| hydrus_store::media::notes(c, f)).ok())
+                .map(|n| n.len());
             let entries = thumbnail_menu::menu(
                 &snapshot.services,
                 &files,
@@ -2235,6 +2258,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 open,
                 share,
                 rearrange,
+                notes,
             );
             let slots = thumbnail_menu::Slots::new(&entries);
             let mut actions = Vec::new();
@@ -2250,6 +2274,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let weak = window.as_weak();
         let change_pages = change_pages.clone();
         let shown = shown.clone();
+        let open_manage_notes = open_manage_notes.clone();
+        let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
             let (Some(window), Ok(id)) = (weak.upgrade(), usize::try_from(id)) else {
@@ -2335,6 +2361,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 ),
                 Action::Undelete => window.invoke_undelete_selected(),
                 Action::ManageTags => window.invoke_manage_tags_selected(),
+                Action::ManageNotes => {
+                    let page = page.borrow();
+                    if let Some(i) = page.focused() {
+                        let file = page.results()[i];
+                        open_manage_notes(page.store().clone(), file, files_changed.clone());
+                    }
+                }
                 _ => {
                     let page = page.borrow();
                     let menu = MenuTarget {
@@ -2474,6 +2507,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         rows,
         viewer,
         manage_tags,
+        manage_notes,
         options,
         checker_options,
         session_dialog,
@@ -3108,7 +3142,11 @@ impl Asked {
 /// Opens manage tags on files, calling the hook given once applied.
 type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;
 
-/// What a viewer tells its page of, and how it opens manage tags.
+/// Opens manage notes on a file, calling the hook given once applied.
+type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>)>;
+
+/// What a viewer tells its page of, and how it opens manage tags and
+/// notes.
 struct ViewerHooks {
     /// The viewer and the file it shows, for the Client API.
     viewing: Viewing,
@@ -3117,6 +3155,7 @@ struct ViewerHooks {
     /// A file was archived or rated, say: the thumbnails are drawn again.
     files_changed: Rc<dyn Fn()>,
     manage_tags: OpenManageTags,
+    manage_notes: OpenManageNotes,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3154,6 +3193,7 @@ fn open_viewer(
         tags_changed,
         files_changed,
         manage_tags,
+        manage_notes,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -3805,6 +3845,8 @@ fn open_viewer(
         let forced_mute = forced_mute.clone();
         let change_file = change_file.clone();
         let manage_tags_of = manage_tags_of.clone();
+        let manage_notes = manage_notes.clone();
+        let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
         let slideshow_settings = slideshow_settings.clone();
@@ -3874,6 +3916,10 @@ fn open_viewer(
                 Action::Inbox => change_file(media_actions::inbox, file),
                 Action::Undelete => change_file(media_actions::undelete, file),
                 Action::ManageTags => manage_tags_of(file),
+                Action::ManageNotes => {
+                    let store = model.borrow().store().clone();
+                    manage_notes(store, file, Rc::new(show.clone()));
+                }
                 Action::DeleteFrom(domain) => {
                     let name = model
                         .borrow()

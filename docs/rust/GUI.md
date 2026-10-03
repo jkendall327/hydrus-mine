@@ -691,8 +691,8 @@ one, to end, as the selection allows; alt and home, left, right or end do
 the same, and the order holds until the page sorts again); the
 archive/delete filter; archive and re-inbox;
 delete from each local file domain the selection is in (asking), delete
-trash physically, delete physically and undelete; manage → tags; and
-urls → open in browser, open in a new page, or copy the focused file's
+trash physically, delete physically and undelete; manage → tags and
+notes (below); and urls → open in browser, open in a new page, or copy the focused file's
 URLs (labelled by URL class, decoded as hydrus shows them, sorted), its
 recognised URLs or all of them, and the selection's URLs of each class or
 all of them (opening several asks first; "files with" a URL opens a "url
@@ -711,10 +711,28 @@ files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, the other manage entries,
+clearing deletion records, manage's ratings, times, force filetype,
+duplicates, maintenance and viewing stats,
 locations, urls → manage and force metadata refetch, open's custom
 similarity distance, and
-share's exporting and copying of bitmaps. Double-clicking a thumbnail opens the media viewer in its own
+share's exporting and copying of bitmaps.
+
+Manage → "notes" (or "notes (2)", counting the focused file's notes; in
+the viewer, the file shown's) opens the reference's "manage notes"
+dialog (`ui/manage_notes.slint`, `src/manage_notes_window.rs`,
+hydrus-gui-model's `notes_editor`, checked step by step against the
+reference's, `oracle/record_manage_notes.py`): a tab per note by name (a
+lone "notes" tab for a file with none), the note in view edited below.
+"add" asks a name ("Enter the name for the note.", numbered "name (1)"
+if a note has it), "edit current name" (or double-clicking a tab) asks
+a new one, and "delete current note" asks first. "copy" copies every
+note as the reference's JSON, "paste" merges JSON notes in as the
+reference does (extending a note a pasted one extends, renaming on a
+clash; text it can't read is said so), and "copy URLs" copies the URLs
+in the note in view. "apply" writes the notes (each cleaned, empty ones
+dropped) and deletes the ones gone; "cancel" with changes asks first.
+
+Double-clicking a thumbnail opens the media viewer in its own
 window on that file (fullscreen, as hydrus opens it by default, or as
 your hydrus frame for it says; f switches between fullscreen and the
 window it was, and its size and place are kept as it closes if you had
@@ -734,10 +752,10 @@ viewer, force mute or unmute just here and stop forcing, for as long as
 the viewer is open, and the volume, shown: a menu here can't hold the
 reference's slider); remove from view; archive or return to inbox;
 delete from each local file domain it is in (asking), delete physically
-now and undelete for a file in the trash; manage → tags; urls, open and
+now and undelete for a file in the trash; manage → tags and notes; urls, open and
 share, as the thumbnails' menu has them for the file alone; and the
 player ("This is a MPV Embed Player."). Not yet in it: locations, and
-manage's ratings, notes, times, force filetype and viewing stats. The
+manage's ratings, times, force filetype and viewing stats. The
 slideshow submenu (`AppendSlideshowMenu`, checked against the reference's
 as a slideshow starts, stops, resumes and shuffles,
 `oracle/record_slideshow.py`) starts a slideshow at one of your options'

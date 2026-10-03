@@ -59,6 +59,8 @@ pub enum Action {
     DeletePhysically,
     Undelete,
     ManageTags,
+    /// The focused file's notes.
+    ManageNotes,
     OpenInNewPage,
     /// Open a duplicates page searching for pairs among the selected files.
     OpenInDuplicateFilterPage,
@@ -883,6 +885,7 @@ pub fn menu(
     open: Vec<Entry>,
     share: Option<Entry>,
     rearrange: Option<Entry>,
+    notes: Option<usize>,
 ) -> Vec<Entry> {
     let Ok(roles) = DomainRoles::new(services) else {
         return vec![Entry::Item("refresh".into(), Action::Refresh)];
@@ -1089,7 +1092,13 @@ pub fn menu(
     if num_selected > 0 {
         entries.push(Entry::Menu(
             "manage".into(),
-            vec![Entry::Item("tags".into(), Action::ManageTags)],
+            vec![
+                Entry::Item("tags".into(), Action::ManageTags),
+                Entry::Item(
+                    crate::notes_editor::menu_label(notes.unwrap_or(0)),
+                    Action::ManageNotes,
+                ),
+            ],
         ));
         // (the reference's locations, which hydrus-rs doesn't have yet)
         entries.extend(urls);

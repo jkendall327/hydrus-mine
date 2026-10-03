@@ -1,0 +1,150 @@
+// The "manage notes" dialog for a file (the reference's
+// `EditFileNotesPanel`, opened by a thumbnail's or the viewer's "manage >
+// notes"; its workings are hydrus-gui-model's `notes_editor`, bound by
+// `src/manage_notes_window.rs`): a tab per note, the note in view edited
+// below, and buttons to add, rename and delete notes and to copy and paste
+// them.
+
+import { Button, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    callback double-clicked();
+    height: 28px;
+    min-width: label.preferred-width + 20px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+        double-clicked => { root.double-clicked(); }
+    }
+}
+
+export component ManageNotesWindow inherits Window {
+    in property <string> window-title: "manage notes";
+    title: root.window-title;
+    preferred-width: 640px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <[string]> names;
+    in property <int> current: -1;
+    // the note in view
+    in-out property <string> text;
+    in property <bool> can-edit;
+    // what the last copy or paste did ("Copied 2 encoded notes!")
+    in property <string> notice;
+    // a question or a name asked for
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    in property <bool> asking-wants-text;
+    in-out property <string> asking-text;
+    callback tab-chosen(int);
+    // double-clicking a tab renames it
+    callback tab-renamed(int);
+    callback text-edited();
+    callback add();
+    callback rename();
+    callback delete();
+    callback copy();
+    callback paste();
+    callback copy-urls();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        HorizontalLayout {
+            spacing: 0px;
+            alignment: start;
+            for name[i] in root.names: Tab {
+                text: name;
+                current: i == root.current;
+                clicked => { root.tab-chosen(i); }
+                double-clicked => { root.tab-renamed(i); }
+            }
+        }
+        TextEdit {
+            vertical-stretch: 1;
+            enabled: root.current >= 0 && !root.asking;
+            text <=> root.text;
+            edited => { root.text-edited(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            if root.notice != "": Text {
+                text: root.notice;
+                vertical-alignment: center;
+                color: Theme.text;
+            }
+            Button {
+                text: "add";
+                enabled: !root.asking;
+                clicked => { root.add(); }
+            }
+            Button {
+                text: "edit current name";
+                enabled: root.can-edit && !root.asking;
+                clicked => { root.rename(); }
+            }
+            Button {
+                text: "delete current note";
+                enabled: root.can-edit && !root.asking;
+                clicked => { root.delete(); }
+            }
+            Button {
+                text: "copy";
+                enabled: !root.asking;
+                clicked => { root.copy(); }
+            }
+            Button {
+                text: "paste";
+                enabled: !root.asking;
+                clicked => { root.paste(); }
+            }
+            Button {
+                text: "copy URLs";
+                enabled: !root.asking;
+                clicked => { root.copy-urls(); }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            wants-text: root.asking-wants-text;
+            text <=> root.asking-text;
+            chosen(index) => { root.chosen(index); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                enabled: !root.asking;
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

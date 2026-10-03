@@ -17,7 +17,7 @@ pub enum Kept {
 
 pub fn kept(label: &str) -> Kept {
     match label {
-        "manage" => Kept::Only(&["tags"]),
+        "manage" => Kept::Only(&["tags", "notes", "notes ("]),
         "open" => Kept::Only(&[
             "in a new page",
             "in a new duplicate filter page",

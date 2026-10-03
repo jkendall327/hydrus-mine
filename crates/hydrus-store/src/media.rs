@@ -280,6 +280,16 @@ pub fn inboxed(conn: &Connection, hash_ids: &[HashId]) -> Result<HashSet<HashId>
     Ok(rows.collect::<rusqlite::Result<_>>()?)
 }
 
+/// A file's notes, by name.
+pub fn notes(conn: &Connection, hash_id: HashId) -> Result<BTreeMap<String, String>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT label, note FROM file_notes JOIN labels USING (label_id) JOIN notes USING (note_id)
+         WHERE hash_id = ?1",
+    )?;
+    let rows = stmt.query_map([hash_id], |r| Ok((r.get(0)?, r.get(1)?)))?;
+    Ok(rows.collect::<rusqlite::Result<_>>()?)
+}
+
 /// Fill in each result's file properties.
 fn load_info(conn: &Connection, results: &mut [MediaResult]) -> Result<()> {
     let index: HashMap<HashId, usize> = results
