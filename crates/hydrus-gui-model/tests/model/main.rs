@@ -23,5 +23,6 @@ mod search_log;
 mod selection;
 mod session_saving;
 mod subscriptions_buttons;
+mod subscriptions_dedupe;
 mod subscriptions_list;
 mod thumbnail_ratings;

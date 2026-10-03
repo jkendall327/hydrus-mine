@@ -4,22 +4,30 @@
 // hydrus-rs has so far (add and edit open `edit_subscription.slint`), and
 // the questions they ask, held until "apply".
 
-import { Button, LineEdit } from "std-widgets.slint";
+import { Button, CheckBox, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 import { ListTable, TableColumn, TableRow } from "list_table.slint";
 
 // A question asked in a window (the reference's quick dialogs): its title
 // and message, and its answers as buttons (`SelectFromListButtons`, a
 // yes/no), or a text box to fill in (`EnterText`, whose first button is
-// "ok"). Escape or "cancel" closes it unanswered.
+// "ok"), or boxes to tick (`SelectMultipleFromList`). Escape or "cancel"
+// closes it unanswered.
+export struct Tick {
+    label: string,
+    on: bool,
+}
+
 export component Asking inherits Rectangle {
     in property <string> title;
     in property <string> message;
     in property <[string]> choices;
     in property <bool> wants-text;
     in-out property <string> text;
+    in property <[Tick]> ticks;
     callback chosen(int);
     callback cancelled();
+    callback ticked(int, bool);
     border-width: 1px;
     border-color: Theme.border;
     background: Theme.panel;
@@ -39,6 +47,11 @@ export component Asking inherits Rectangle {
         if root.wants-text: LineEdit {
             text <=> root.text;
             accepted => { root.chosen(0); }
+        }
+        for tick[i] in root.ticks: CheckBox {
+            text: tick.label;
+            checked: tick.on;
+            toggled => { root.ticked(i, self.checked); }
         }
         HorizontalLayout {
             spacing: 6px;
@@ -84,6 +97,8 @@ export component SubscriptionsWindow inherits Window {
     in property <[string]> asking-choices;
     in property <bool> asking-text;
     in-out property <string> asked-text;
+    in property <[Tick]> asking-ticks;
+    in property <bool> can-dedupe;
     callback sort(int, bool);
     // (row, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
@@ -103,8 +118,10 @@ export component SubscriptionsWindow inherits Window {
     callback overwrite-downloader();
     callback overwrite-checker();
     callback select-subscriptions();
+    callback deduplicate();
     callback chosen(int);
     callback cancelled();
+    callback ticked(int, bool);
     callback apply();
     callback cancel();
 
@@ -191,6 +208,11 @@ export component SubscriptionsWindow inherits Window {
                     enabled: root.can-lowercase && !root.asking;
                     clicked => { root.lowercase(); }
                 }
+                Button {
+                    text: "deduplicate";
+                    enabled: root.can-dedupe && !root.asking;
+                    clicked => { root.deduplicate(); }
+                }
                 Rectangle { width: 12px; }
                 Button {
                     text: "pause/resume";
@@ -248,8 +270,10 @@ export component SubscriptionsWindow inherits Window {
                 choices: root.asking-choices;
                 wants-text: root.asking-text;
                 text <=> root.asked-text;
+                ticks: root.asking-ticks;
                 chosen(index) => { root.chosen(index); }
                 cancelled => { root.cancelled(); }
+                ticked(index, on) => { root.ticked(index, on); }
             }
             HorizontalLayout {
                 alignment: end;

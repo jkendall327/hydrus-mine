@@ -71,7 +71,7 @@ fn row<'a>(rows: &'a [(Vec<String>, bool)], name: &str) -> &'a [String] {
 }
 
 /// The question asked: its title, message and choices.
-fn asked(dialog: &SubscriptionsWindow) -> (String, String, Vec<String>) {
+pub(crate) fn asked(dialog: &SubscriptionsWindow) -> (String, String, Vec<String>) {
     assert!(dialog.get_asking(), "a question is asked");
     let choices = dialog.get_asking_choices();
     (

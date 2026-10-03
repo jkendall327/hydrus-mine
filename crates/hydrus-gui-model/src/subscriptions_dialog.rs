@@ -335,7 +335,7 @@ impl Subscriptions {
         self.subscriptions.iter().find(|s| s.key == key)
     }
 
-    fn get_mut(&mut self, key: u64) -> Option<&mut DialogSubscription> {
+    pub(crate) fn get_mut(&mut self, key: u64) -> Option<&mut DialogSubscription> {
         self.subscriptions.iter_mut().find(|s| s.key == key)
     }
 

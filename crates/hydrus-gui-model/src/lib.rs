@@ -40,6 +40,7 @@ pub mod selection;
 pub mod session_saving;
 pub mod sort;
 pub mod status;
+pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
 pub mod thumbnail_icons;

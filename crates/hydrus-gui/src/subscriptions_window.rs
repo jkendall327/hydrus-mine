@@ -21,13 +21,14 @@ use hydrus_store::{queues, subscriptions};
 
 use crate::edit_subscription::{EditSubscription, LogChange, RetryIgnored};
 use crate::edit_subscription_window::Slots;
+use crate::subscriptions_dedupe::{Answer, Dedupe, Question};
 use crate::subscriptions_dialog::{
     CheckNow, Choice, DELETE_QUESTION, DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY,
     MERGE_QUESTION, NOT_MERGEABLE, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_NAME,
     SEPARATE_QUESTION, Separate, Subscriptions,
 };
 use crate::subscriptions_list::ShortSummary;
-use crate::{SubscriptionsWindow, TableRow};
+use crate::{SubscriptionsWindow, TableRow, Tick};
 
 /// What a question waits on.
 enum Asking {
@@ -56,6 +57,9 @@ enum Asking {
     },
     SeparateHow,
     SeparateName,
+    /// "deduplicate", its question, and the boxes ticked when it is a list
+    /// of texts.
+    Dedupe(Dedupe, Question, Vec<bool>),
 }
 
 /// What "overwrite downloader" says with no downloaders.
@@ -359,6 +363,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
     window.set_can_check_now(dialog.can_check_now(now));
     window.set_can_scrub_delays(dialog.can_scrub_delays(now));
     window.set_can_merge(dialog.can_merge(now));
+    window.set_can_dedupe(crate::subscriptions_dedupe::can_dedupe(dialog, now));
     window.set_can_separate(dialog.can_separate(now));
     window.set_can_lowercase(dialog.can_lowercase(now));
     window.set_can_reset(dialog.can_reset(now));
@@ -469,8 +474,21 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             },
             false,
         )),
+        Some(Asking::Dedupe(_, question, _)) => Some((dedupe_choice(question), false)),
         _ => None,
     });
+    let ticks: Vec<Tick> = match &open.asking {
+        Some(Asking::Dedupe(_, Question::Multiple { choices, .. }, ticked)) => choices
+            .iter()
+            .zip(ticked)
+            .map(|(label, &on): (&String, &bool)| Tick {
+                label: label.as_str().into(),
+                on,
+            })
+            .collect(),
+        _ => Vec::new(),
+    };
+    window.set_asking_ticks(ModelRc::new(VecModel::from(ticks)));
     if let Some(text) = open.text.borrow_mut().take() {
         window.set_asked_text(text.into());
     }
@@ -481,6 +499,55 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
         let choices: Vec<SharedString> = choice.choices.into_iter().map(Into::into).collect();
         window.set_asking_choices(ModelRc::new(VecModel::from(choices)));
         window.set_asking_text(wants_text);
+    }
+}
+
+/// A "deduplicate" question as the window's panel asks it.
+fn dedupe_choice(question: &Question) -> Choice {
+    let choice = |title: &str, message: &str, choices: &[&str]| Choice {
+        title: title.into(),
+        message: message.into(),
+        choices: choices.iter().map(|&c| c.to_owned()).collect(),
+    };
+    match question {
+        Question::Choice(choice) => choice.clone(),
+        Question::YesNo(message) => choice("Are you sure?", message, &["yes", "no"]),
+        Question::YesYesNo { message, yeses, no } => Choice {
+            title: "Are you sure?".into(),
+            message: message.clone(),
+            choices: yeses.iter().chain([no]).cloned().collect(),
+        },
+        Question::Multiple { title, .. } => choice(title, "", &["ok"]),
+        Question::Warning(message) => choice("Warning", message, &["ok"]),
+    }
+}
+
+/// A "deduplicate" question answered with the button at `index`.
+fn dedupe_answer(question: &Question, ticked: &[bool], index: usize) -> Answer {
+    match question {
+        Question::Choice(_) => Answer::Index(index),
+        Question::YesNo(_) => Answer::Yes(index == 0),
+        Question::YesYesNo { yeses, .. } if index < yeses.len() => Answer::Index(index),
+        Question::Multiple { choices, .. } => Answer::Texts(
+            choices
+                .iter()
+                .zip(ticked)
+                .filter(|(_, on): &(&String, &bool)| **on)
+                .map(|(c, _): (&String, &bool)| c.clone())
+                .collect(),
+        ),
+        _ => Answer::Cancel,
+    }
+}
+
+/// Ask `question` next, if there is one.
+fn ask_dedupe(open: &mut Open, dedupe: Dedupe, question: Option<Question>) {
+    if let Some(question) = question {
+        let ticked = match &question {
+            Question::Multiple { choices, .. } => vec![true; choices.len()],
+            _ => Vec::new(),
+        };
+        open.asking = Some(Asking::Dedupe(dedupe, question, ticked));
     }
 }
 
@@ -753,6 +820,11 @@ pub(crate) fn open(
                         open.asking = Some(Asking::Check(check));
                     }
                 }
+                Some(Asking::Dedupe(mut dedupe, question, ticked)) => {
+                    let answer = dedupe_answer(&question, &ticked, index);
+                    let next = dedupe.answer(&mut open.dialog, &answer);
+                    ask_dedupe(open, dedupe, next);
+                }
                 Some(Asking::Message(_)) | None => {}
             });
             // "add": a new subscription on the downloader chosen, with the
@@ -808,6 +880,27 @@ pub(crate) fn open(
     window.on_retry_failed({
         let change = change.clone();
         move || change(&|open| open.dialog.retry_failed_selected(now()))
+    });
+    window.on_deduplicate({
+        let change = change.clone();
+        move || {
+            change(&|open| {
+                let (dedupe, question) = Dedupe::start(&open.dialog, now());
+                ask_dedupe(open, dedupe, Some(question));
+            });
+        }
+    });
+    window.on_ticked({
+        let change = change.clone();
+        move |index, on| {
+            change(&|open| {
+                if let Some(Asking::Dedupe(_, _, ticked)) = &mut open.asking
+                    && let Some(tick) = usize::try_from(index).ok().and_then(|i| ticked.get_mut(i))
+                {
+                    *tick = on;
+                }
+            });
+        }
     });
     window.on_merge({
         let change = change.clone();

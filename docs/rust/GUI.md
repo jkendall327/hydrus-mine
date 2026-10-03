@@ -152,7 +152,11 @@ subscriptions are paused from the network menu. Its buttons delete the
 selected (asking "Remove all selected?"), merge those sharing a
 downloader (asking which is primary and its new name), separate one (in
 half, or into a subscription a query, named "base: query"), lowercase
-their queries' texts, pause or resume each, scrub their delays, check
+their queries' texts, deduplicate queries with the same text on the same
+downloader (asking, as the reference does, whether to match case, which
+downloader, which texts, ticked in a list, and which subscription keeps
+them, which keeps its query with the most files; the others lose theirs;
+`oracle/record_subscriptions_dedupe.py`), pause or resume each, scrub their delays, check
 their queries now (asking first, as the reference does, whether to
 unpause paused subscriptions, check DEAD queries, and unpause paused
 queries), retry their failed or ignored files, reset them (emptying their

@@ -143,8 +143,8 @@ pub use hydrus_gui_model::{
     favourites, file_log, filename_tagging, folders, import_options_editor, importer_menu,
     info_lines, list_selection, local_import, main_menu, manage_tags, media_actions, notes_editor,
     options, page_chooser, predicate_editors, ratings, scanbar, search_log, selection,
-    session_saving, sort, status, subscriptions_dialog, subscriptions_list, thumbnail_icons,
-    thumbnail_ratings,
+    session_saving, sort, status, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
+    thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};

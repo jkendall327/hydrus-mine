@@ -1,0 +1,1083 @@
+{
+ "now": 1700000000,
+ "subscriptions": [
+  {
+   "name": "sub a",
+   "gug": "example tag search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "blue",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "Red",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ],
+      [
+       1,
+       259200,
+       262800
+      ],
+      [
+       1,
+       345600,
+       349200
+      ],
+      [
+       1,
+       432000,
+       435600
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "green",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "only a",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  },
+  {
+   "name": "sub b",
+   "gug": "example tag search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "blue",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ],
+      [
+       1,
+       259200,
+       262800
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "red",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "yellow",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  },
+  {
+   "name": "sub c",
+   "gug": "example tag search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "Blue",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ],
+      [
+       1,
+       259200,
+       262800
+      ],
+      [
+       1,
+       345600,
+       349200
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "green",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ],
+      [
+       1,
+       259200,
+       262800
+      ],
+      [
+       1,
+       345600,
+       349200
+      ],
+      [
+       1,
+       432000,
+       435600
+      ],
+      [
+       1,
+       518400,
+       522000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "yellow",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  },
+  {
+   "name": "cats",
+   "gug": "other search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "cat",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "dog",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "cat",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ],
+      [
+       1,
+       259200,
+       262800
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "Cat",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  },
+  {
+   "name": "dogs",
+   "gug": "other search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "Dog",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  }
+ ],
+ "start": {
+  "answers": [],
+  "asked": [],
+  "can_dedupe": true,
+  "subscriptions": [
+   {
+    "name": "cats",
+    "gug": "other search",
+    "queries": [
+     [
+      "cat",
+      1
+     ],
+     [
+      "dog",
+      2
+     ],
+     [
+      "cat",
+      3
+     ],
+     [
+      "Cat",
+      2
+     ]
+    ]
+   },
+   {
+    "name": "dogs",
+    "gug": "other search",
+    "queries": [
+     [
+      "Dog",
+      1
+     ]
+    ]
+   },
+   {
+    "name": "sub a",
+    "gug": "example tag search",
+    "queries": [
+     [
+      "blue",
+      1
+     ],
+     [
+      "Red",
+      5
+     ],
+     [
+      "green",
+      2
+     ],
+     [
+      "only a",
+      1
+     ]
+    ]
+   },
+   {
+    "name": "sub b",
+    "gug": "example tag search",
+    "queries": [
+     [
+      "blue",
+      3
+     ],
+     [
+      "red",
+      1
+     ],
+     [
+      "yellow",
+      2
+     ]
+    ]
+   },
+   {
+    "name": "sub c",
+    "gug": "example tag search",
+    "queries": [
+     [
+      "Blue",
+      4
+     ],
+     [
+      "green",
+      6
+     ],
+     [
+      "yellow",
+      1
+     ]
+    ]
+   }
+  ]
+ },
+ "actions": [
+  {
+   "answers": [
+    "do a normal",
+    "example tag search",
+    "select which",
+    [
+     "blue",
+     "red",
+     "yellow"
+    ],
+    "sub a",
+    true,
+    "sub c"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Caseless or cased?",
+     "message": "Which kind of duplication are we going to do?",
+     "choices": [
+      "do a normal upper/lower case deduplication",
+      "only do exact text deduplication"
+     ],
+     "answer": "do a normal"
+    },
+    {
+     "kind": "choice",
+     "title": "Which downloader to work on?",
+     "message": "Multiple downloaders have duplicate queries. Which would you like to dedupe now?",
+     "choices": [
+      "other search (2 duplicates)",
+      "example tag search (4 duplicates)"
+     ],
+     "answer": "example tag search"
+    },
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "There are 4 duplicate query texts for the downloader \"example tag search\". Would you like to dedupe them all, or select which to do?",
+     "yeses": [
+      "do them all",
+      "select which to do"
+     ],
+     "no": "forget it",
+     "answer": "select which"
+    },
+    {
+     "kind": "multiple",
+     "title": "Select which query texts to dedupe",
+     "choices": [
+      "blue",
+      "green",
+      "red",
+      "yellow"
+     ],
+     "checked": [
+      "blue",
+      "green",
+      "red",
+      "yellow"
+     ],
+     "answer": [
+      "blue",
+      "red",
+      "yellow"
+     ]
+    },
+    {
+     "kind": "choice",
+     "title": "Which sub to retain the queries on?",
+     "message": "Which subscription is going to keep the queries? If the subscription cannot dedupe them all, you will be able to select another, to do the rest, in a moment.",
+     "choices": [
+      "sub a (has 2/3 duplicate queries)",
+      "sub b (has all duplicate queries)",
+      "sub c (has 2/3 duplicate queries)"
+     ],
+     "answer": "sub a"
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Dedupe was done. There are still 1 queries that can be deduped between other subscriptions. Want to do them now?",
+     "answer": true
+    },
+    {
+     "kind": "choice",
+     "title": "Which sub to retain the queries on?",
+     "message": "Which subscription is going to keep the queries? If the subscription cannot dedupe them all, you will be able to select another, to do the rest, in a moment.",
+     "choices": [
+      "sub b (has all duplicate queries)",
+      "sub c (has all duplicate queries)"
+     ],
+     "answer": "sub c"
+    }
+   ],
+   "can_dedupe": true,
+   "subscriptions": [
+    {
+     "name": "cats",
+     "gug": "other search",
+     "queries": [
+      [
+       "cat",
+       1
+      ],
+      [
+       "dog",
+       2
+      ],
+      [
+       "cat",
+       3
+      ],
+      [
+       "Cat",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "dogs",
+     "gug": "other search",
+     "queries": [
+      [
+       "Dog",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub a",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "Red",
+       5
+      ],
+      [
+       "green",
+       2
+      ],
+      [
+       "blue",
+       1
+      ],
+      [
+       "only a",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub b",
+     "gug": "example tag search",
+     "queries": []
+    },
+    {
+     "name": "sub c",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "green",
+       6
+      ],
+      [
+       "yellow",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "answers": [
+    "only do exact",
+    "other search",
+    true,
+    true
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Caseless or cased?",
+     "message": "Which kind of duplication are we going to do?",
+     "choices": [
+      "do a normal upper/lower case deduplication",
+      "only do exact text deduplication"
+     ],
+     "answer": "only do exact"
+    },
+    {
+     "kind": "choice",
+     "title": "Which downloader to work on?",
+     "message": "Multiple downloaders have duplicate queries. Which would you like to dedupe now?",
+     "choices": [
+      "other search (1 duplicates)",
+      "example tag search (1 duplicates)"
+     ],
+     "answer": "other search"
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "The downloader \"other search\" has a single duplicate query \"cat\". Is this ok to dedupe?",
+     "answer": true
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Subscription \"cats\" will now dedupe the queries within itself. Is this ok?",
+     "answer": true
+    }
+   ],
+   "can_dedupe": true,
+   "subscriptions": [
+    {
+     "name": "cats",
+     "gug": "other search",
+     "queries": [
+      [
+       "cat",
+       3
+      ],
+      [
+       "dog",
+       2
+      ],
+      [
+       "Cat",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "dogs",
+     "gug": "other search",
+     "queries": [
+      [
+       "Dog",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub a",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "Red",
+       5
+      ],
+      [
+       "green",
+       2
+      ],
+      [
+       "blue",
+       1
+      ],
+      [
+       "only a",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub b",
+     "gug": "example tag search",
+     "queries": []
+    },
+    {
+     "name": "sub c",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "green",
+       6
+      ],
+      [
+       "yellow",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "answers": [
+    null
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Caseless or cased?",
+     "message": "Which kind of duplication are we going to do?",
+     "choices": [
+      "do a normal upper/lower case deduplication",
+      "only do exact text deduplication"
+     ],
+     "answer": null
+    }
+   ],
+   "can_dedupe": true,
+   "subscriptions": [
+    {
+     "name": "cats",
+     "gug": "other search",
+     "queries": [
+      [
+       "cat",
+       3
+      ],
+      [
+       "dog",
+       2
+      ],
+      [
+       "Cat",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "dogs",
+     "gug": "other search",
+     "queries": [
+      [
+       "Dog",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub a",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "Red",
+       5
+      ],
+      [
+       "green",
+       2
+      ],
+      [
+       "blue",
+       1
+      ],
+      [
+       "only a",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub b",
+     "gug": "example tag search",
+     "queries": []
+    },
+    {
+     "name": "sub c",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "green",
+       6
+      ],
+      [
+       "yellow",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "answers": [
+    "do a normal",
+    "other search",
+    "do them all",
+    "cats"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Caseless or cased?",
+     "message": "Which kind of duplication are we going to do?",
+     "choices": [
+      "do a normal upper/lower case deduplication",
+      "only do exact text deduplication"
+     ],
+     "answer": "do a normal"
+    },
+    {
+     "kind": "choice",
+     "title": "Which downloader to work on?",
+     "message": "Multiple downloaders have duplicate queries. Which would you like to dedupe now?",
+     "choices": [
+      "other search (2 duplicates)",
+      "example tag search (1 duplicates)"
+     ],
+     "answer": "other search"
+    },
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "There are 2 duplicate query texts for the downloader \"other search\". Would you like to dedupe them all, or select which to do?",
+     "yeses": [
+      "do them all",
+      "select which to do"
+     ],
+     "no": "forget it",
+     "answer": "do them all"
+    },
+    {
+     "kind": "choice",
+     "title": "Which sub to retain the queries on?",
+     "message": "Which subscription is going to keep the queries? If the subscription cannot dedupe them all, you will be able to select another, to do the rest, in a moment.",
+     "choices": [
+      "cats (has all duplicate queries)",
+      "dogs (has 1/2 duplicate queries)"
+     ],
+     "answer": "cats"
+    }
+   ],
+   "can_dedupe": true,
+   "subscriptions": [
+    {
+     "name": "cats",
+     "gug": "other search",
+     "queries": [
+      [
+       "cat",
+       3
+      ],
+      [
+       "dog",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "dogs",
+     "gug": "other search",
+     "queries": []
+    },
+    {
+     "name": "sub a",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "Red",
+       5
+      ],
+      [
+       "green",
+       2
+      ],
+      [
+       "blue",
+       1
+      ],
+      [
+       "only a",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub b",
+     "gug": "example tag search",
+     "queries": []
+    },
+    {
+     "name": "sub c",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "green",
+       6
+      ],
+      [
+       "yellow",
+       1
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "answers": [
+    "do a normal",
+    "do them all",
+    "sub a",
+    true
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "Caseless or cased?",
+     "message": "Which kind of duplication are we going to do?",
+     "choices": [
+      "do a normal upper/lower case deduplication",
+      "only do exact text deduplication"
+     ],
+     "answer": "do a normal"
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "The downloader \"example tag search\" has a single duplicate query \"green\". Is this ok to dedupe?",
+     "answer": "do them all"
+    },
+    {
+     "kind": "choice",
+     "title": "Which sub to retain the queries on?",
+     "message": "Which subscription is going to keep the queries? If the subscription cannot dedupe them all, you will be able to select another, to do the rest, in a moment.",
+     "choices": [
+      "sub a (has all duplicate queries)",
+      "sub c (has all duplicate queries)"
+     ],
+     "answer": "sub a"
+    }
+   ],
+   "can_dedupe": false,
+   "subscriptions": [
+    {
+     "name": "cats",
+     "gug": "other search",
+     "queries": [
+      [
+       "cat",
+       3
+      ],
+      [
+       "dog",
+       2
+      ]
+     ]
+    },
+    {
+     "name": "dogs",
+     "gug": "other search",
+     "queries": []
+    },
+    {
+     "name": "sub a",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "Red",
+       5
+      ],
+      [
+       "green",
+       2
+      ],
+      [
+       "blue",
+       1
+      ],
+      [
+       "only a",
+       1
+      ]
+     ]
+    },
+    {
+     "name": "sub b",
+     "gug": "example tag search",
+     "queries": []
+    },
+    {
+     "name": "sub c",
+     "gug": "example tag search",
+     "queries": [
+      [
+       "yellow",
+       1
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}
