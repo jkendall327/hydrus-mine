@@ -1394,6 +1394,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let slots = services_editor.clone();
                 let change_pages = change_pages.clone();
                 let rows = rows.clone();
+                let tags_changed = tags_changed.clone();
+                let viewer = viewer.clone();
                 let weak = window.as_weak();
                 Rc::new(move || {
                     if slots.manage.borrow().is_some() {
@@ -1403,6 +1405,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         let pages = pages.clone();
                         let rows = rows.clone();
                         let change_pages = change_pages.clone();
+                        let tags_changed = tags_changed.clone();
+                        let viewer = viewer.clone();
                         let weak = weak.clone();
                         move || {
                             pages.borrow_mut().reload_settings();
@@ -1410,6 +1414,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                             change_pages(&|_| Ok(()));
                             if let Some(window) = weak.upgrade() {
                                 window.invoke_refresh_page();
+                            }
+                            tags_changed();
+                            if let Some(window) = viewer.borrow().as_ref() {
+                                window.invoke_refresh_tags();
                             }
                         }
                     });

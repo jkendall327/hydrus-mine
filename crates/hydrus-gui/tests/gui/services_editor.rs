@@ -1,6 +1,150 @@
 //! Actual staged add/edit/delete/cancel flows over a native store.
 use hydrus_gui::{MainWindow, Pages, bind, headless};
 use slint::{ComponentHandle as _, Model as _};
+
+#[test]
+fn deleting_relation_source_refreshes_open_viewer_and_locked_selection() {
+    use hydrus_core::{ServiceKey, Tag};
+    use hydrus_store::{master, services};
+
+    let (_dirs, store) = crate::subscriptions::store();
+    let target = store.snapshot().services.by_name("my tags").unwrap().id;
+    let (raw, ideal, parent) = store
+        .write_and_refresh(move |ctx| {
+            let conn = ctx.conn();
+            let source = services::insert(
+                conn,
+                &ServiceKey::new(vec![83; 32]),
+                "display source",
+                &services::ServiceKind::LocalTags,
+            )?;
+            let raw = master::intern_tag(conn, &Tag::new("lifecycle raw").unwrap())?;
+            let ideal = master::intern_tag(conn, &Tag::new("lifecycle ideal").unwrap())?;
+            let parent = master::intern_tag(conn, &Tag::new("lifecycle parent").unwrap())?;
+            conn.execute(
+                "INSERT INTO tag_siblings VALUES(?,0,?,?,NULL)",
+                rusqlite::params![source, raw, ideal],
+            )?;
+            conn.execute(
+                "INSERT INTO tag_parents VALUES(?,0,?,?,NULL)",
+                rusqlite::params![source, ideal, parent],
+            )?;
+            for kind in 0..2 {
+                conn.execute(
+                    "DELETE FROM tag_display_application WHERE display_service_id=? AND kind=?",
+                    rusqlite::params![target, kind],
+                )?;
+                conn.execute(
+                    "INSERT INTO tag_display_application VALUES(?,?,0,?)",
+                    rusqlite::params![target, kind, source],
+                )?;
+            }
+            hydrus_store::counts::rebuild_all(conn)?;
+            Ok((raw, ideal, parent))
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let page = bound.current.borrow().clone();
+    let files = page.borrow().results().to_vec();
+    let file = files[0];
+    store
+        .write_content(move |writer| {
+            writer.update_mappings(
+                target,
+                &hydrus_store::content::MappingAction::Add,
+                raw,
+                &[file],
+            )
+        })
+        .unwrap();
+    page.borrow_mut().select_files(&[file]);
+    page.borrow_mut().lock_search();
+    ui.invoke_refresh_page();
+    assert!(ui.get_search_locked());
+    assert!(
+        ui.get_tags()
+            .iter()
+            .any(|r| r.text.contains("lifecycle ideal"))
+    );
+    assert!(
+        ui.get_tags()
+            .iter()
+            .any(|r| r.text.contains("lifecycle parent"))
+    );
+    ui.invoke_thumbnail_activated(0);
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    assert!(
+        viewer
+            .get_tags()
+            .iter()
+            .any(|r| r.text == "lifecycle ideal")
+    );
+    assert!(
+        viewer
+            .get_tags()
+            .iter()
+            .any(|r| r.text == "lifecycle parent")
+    );
+
+    open(&ui);
+    let manage = bound
+        .services_editor
+        .manage
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let index = manage
+        .get_rows()
+        .iter()
+        .position(|r| r.cells.row_data(0).unwrap() == "display source")
+        .unwrap();
+    manage.invoke_row_clicked(i32::try_from(index).unwrap(), false, false);
+    manage.invoke_delete_clicked();
+    manage.invoke_answered(true);
+    // Staging the removal must leave both views on the committed graph.
+    assert!(
+        viewer
+            .get_tags()
+            .iter()
+            .any(|r| r.text == "lifecycle ideal")
+    );
+    manage.invoke_apply_clicked();
+    manage.invoke_answered(true);
+    assert!(bound.services_editor.manage.borrow().is_none());
+    let snapshot = store.snapshot();
+    assert!(snapshot.services.by_name("display source").is_none());
+    assert_eq!(snapshot.display.get(target).ideal(raw), raw);
+    assert!(snapshot.display.get(target).ancestors(ideal).is_empty());
+    assert!(snapshot.display.get(target).ancestors(parent).is_empty());
+    assert_eq!(page.borrow().results(), files);
+    assert_eq!(page.borrow().selected_files(), [file]);
+    assert!(ui.get_search_locked());
+    assert!(
+        ui.get_tags()
+            .iter()
+            .any(|r| r.text.contains("lifecycle raw"))
+    );
+    assert!(
+        !ui.get_tags()
+            .iter()
+            .any(|r| { r.text.contains("lifecycle ideal") || r.text.contains("lifecycle parent") })
+    );
+    assert!(viewer.get_tags().iter().any(|r| r.text == "lifecycle raw"));
+    assert!(
+        !viewer
+            .get_tags()
+            .iter()
+            .any(|r| { r.text == "lifecycle ideal" || r.text == "lifecycle parent" })
+    );
+    assert!(bound.viewer.borrow().is_some());
+    viewer.invoke_close_requested();
+}
+
 fn open(ui: &MainWindow) {
     let titles = ui.get_menu_titles();
     let index = titles.iter().position(|t| t.label == "services").unwrap();

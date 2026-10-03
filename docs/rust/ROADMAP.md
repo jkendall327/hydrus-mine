@@ -18,6 +18,7 @@ generator editors. Their behavior and recorded evidence are described in
 `GUI.md`; remaining differences are in `DIFFERENCES.md`. The metadata
 handover patch has been applied and removed. Store snapshot revisions also
 propagate service, URL-class and tag-graph edits to a running daemon.
+Service deletion also refreshes open viewer and locked-selection tags.
 
 The next breadth work, in the owner's existing order:
 
