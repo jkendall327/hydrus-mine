@@ -570,8 +570,11 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   it, as a clash with itself), and renaming a subscription to differ only
   in case doesn't add " (1)" (the reference counts its old name as
   taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
-- **The import and export folders dialogs** don't edit filename tagging
-  or sidecars yet (they show what is set, which is kept). Paths are typed, with no directory picker. An export folder's
+- **The import and export folders dialogs** don't edit sidecars yet
+  (they show what is set, which is kept). An import folder's filename
+  tagging is added for a tag service chosen from a list beside "add" (the
+  reference asks which in a dialog), and edited in the "filename tagging"
+  dialog's boxes (see "review files to import"). Paths are typed, with no directory picker. An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete, and its sidecars can't be tested on example files. They
   don't pause the folders while open, as the reference does.

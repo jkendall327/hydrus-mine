@@ -386,6 +386,13 @@ step, in a namespace). "apply" imports the files with their tags, as
 `oracle/record_filename_tagging.py` recorded the reference's dialog
 giving them.
 
+An import folder's dialog lists the tag services it tags files for by
+their paths, with "edit" and "delete" for each and "add" for another
+(refused, with the reference's warning, for one it has). "add" and
+"edit" open that dialog's boxes on one service's options alone ("edit
+filename tagging options"), with an example path from the folder and
+the tags it would get.
+
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and
 "waiting for new queries" with none) and lists them as the reference's

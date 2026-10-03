@@ -48,10 +48,17 @@ component Tab inherits Rectangle {
 }
 
 export component FilenameTaggingWindow inherits Window {
-    title: "filename tagging";
+    in property <string> window-title: "filename tagging";
+    title: root.window-title;
     preferred-width: 1000px;
     preferred-height: 760px;
     background: Theme.window;
+    // one tag service's options alone (`EditFilenameTaggingOptionPanel`,
+    // for an import folder): an example path and its tags in place of the
+    // tabs and the files, and no single tags or "#"
+    in property <bool> options-mode;
+    in-out property <string> example;
+    in property <string> example-tags;
     in property <[string]> services;
     in property <int> service-index;
     in property <[TableRow]> rows;
@@ -82,7 +89,7 @@ export component FilenameTaggingWindow inherits Window {
     VerticalLayout {
         padding: 10px;
         spacing: 6px;
-        HorizontalLayout {
+        if !root.options-mode: HorizontalLayout {
             spacing: 0px;
             alignment: start;
             for name[i] in root.services: Tab {
@@ -91,7 +98,19 @@ export component FilenameTaggingWindow inherits Window {
                 clicked => { root.service-chosen(i); }
             }
         }
-        ListTable {
+        if root.options-mode: VerticalLayout {
+            spacing: 4px;
+            LineEdit {
+                placeholder-text: "enter example path here";
+                text <=> root.example;
+                edited => { root.changed(); }
+            }
+            LineEdit {
+                read-only: true;
+                text: root.example-tags;
+            }
+        }
+        if !root.options-mode: ListTable {
             vertical-stretch: 1;
             columns: [
                 { title: "#", width: 40px },
@@ -128,7 +147,7 @@ export component FilenameTaggingWindow inherits Window {
                     edited => { root.changed(); }
                 }
             }
-            VerticalLayout {
+            if !root.options-mode: VerticalLayout {
                 spacing: 4px;
                 BoxTitle { text: "tags just for selected files"; }
                 Label { text: root.has-selection ? "a tag a line" : "(select files above)"; }
@@ -184,8 +203,8 @@ export component FilenameTaggingWindow inherits Window {
                     text <=> root.regexes;
                     edited => { root.changed(); }
                 }
-                BoxTitle { text: "#"; }
-                HorizontalLayout {
+                if !root.options-mode: BoxTitle { text: "#"; }
+                if !root.options-mode: HorizontalLayout {
                     spacing: 4px;
                     Label { text: "# base/step: "; }
                     SpinBox {
@@ -201,7 +220,7 @@ export component FilenameTaggingWindow inherits Window {
                         edited => { root.changed(); }
                     }
                 }
-                HorizontalLayout {
+                if !root.options-mode: HorizontalLayout {
                     spacing: 4px;
                     Label { text: "# namespace: "; }
                     LineEdit {

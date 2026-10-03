@@ -43,6 +43,8 @@ pub struct Slots {
     pub import_edit: Rc<RefCell<Option<ImportFolderWindow>>>,
     pub export_list: Rc<RefCell<Option<FoldersWindow>>>,
     pub export_edit: Rc<RefCell<Option<ExportFolderWindow>>>,
+    /// The filename tagging options editor.
+    pub filename_tagging: Rc<RefCell<Option<crate::FilenameTaggingWindow>>>,
     /// The import options editor.
     pub import_options: Rc<RefCell<Option<crate::ImportOptionsWindow>>>,
     /// An import folder's file log, and where it shows files.
@@ -58,6 +60,10 @@ impl std::fmt::Debug for Slots {
             .field("export_list", &self.export_list.borrow().is_some())
             .field("export_edit", &self.export_edit.borrow().is_some())
             .field("import_options", &self.import_options.borrow().is_some())
+            .field(
+                "filename_tagging",
+                &self.filename_tagging.borrow().is_some(),
+            )
             .field("log", &self.log.borrow().is_some())
             .field("open_files", &self.open_files)
             .finish()
@@ -550,6 +556,52 @@ fn read_import_fields(window: &ImportFolderWindow, folder: &mut ImportFolderEdit
     }
 }
 
+/// The real tag services: (key hex, name).
+fn tag_services(store: &Store) -> Vec<(String, String)> {
+    store
+        .snapshot()
+        .services
+        .all()
+        .filter(|s| s.service_type().is_real_tag_service())
+        .map(|s| (s.key.to_hex(), s.name.clone()))
+        .collect()
+}
+
+/// The folder's filename tagging list (its services' names), and the
+/// services that can be added.
+fn show_filename_tagging(window: &ImportFolderWindow, store: &Store, folder: &ImportFolderEdit) {
+    let services = tag_services(store);
+    let name = |key: &str| {
+        services
+            .iter()
+            .find(|(k, _)| k == key)
+            .map_or_else(|| "unknown service".to_owned(), |(_, n)| n.clone())
+    };
+    window.set_filename_tagging(strings(
+        folder
+            .settings
+            .filename_tagging
+            .iter()
+            .map(|(key, _)| name(key))
+            .collect(),
+    ));
+    window.set_tagging_choices(strings(services.into_iter().map(|(_, n)| n).collect()));
+}
+
+/// The first file in a folder, for an example path (the reference's
+/// sidecar test context's first example file).
+fn example_path(folder: &str) -> String {
+    let mut files: Vec<String> = std::fs::read_dir(folder)
+        .into_iter()
+        .flatten()
+        .flatten()
+        .filter(|e| e.path().is_file())
+        .map(|e| e.path().to_string_lossy().into_owned())
+        .collect();
+    files.sort();
+    files.into_iter().next().unwrap_or_default()
+}
+
 /// Open the edit import folder dialog on a folder; on "apply" (once it
 /// checks out) it gives the edited folder to `done`.
 fn open_import_folder(
@@ -599,18 +651,7 @@ fn open_import_folder(
         ACTION_CHOICES.iter().map(|&c| c.to_owned()).collect(),
     ));
     window.set_actions(action_rows(&folder));
-    let services = store.snapshot();
-    window.set_filename_tagging(strings(
-        s.filename_tagging
-            .iter()
-            .map(|(key, _)| {
-                hydrus_core::ServiceKey::from_hex(key)
-                    .ok()
-                    .and_then(|k| services.services.by_key(&k).ok().map(|s| s.name.clone()))
-                    .unwrap_or_else(|| "unknown service".into())
-            })
-            .collect(),
-    ));
+    show_filename_tagging(&window, store, &folder);
     window.set_sidecars(sidecars_label(s.routers.len()).into());
     let state = Rc::new(RefCell::new(ImportEdit {
         folder,
@@ -715,6 +756,126 @@ fn open_import_folder(
             close();
         }
     };
+    // its filename tagging: a tag service's options added (once a
+    // service), edited, or deleted
+    let edit_tagging = {
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let tagging_slot = slots.filename_tagging.clone();
+        move |key: String, options: hydrus_parse::folders::FilenameTagging| {
+            if tagging_slot.borrow().is_some() {
+                return;
+            }
+            let name = tag_services(&store)
+                .into_iter()
+                .find(|(k, _)| *k == key)
+                .map_or_else(|| "unknown service".to_owned(), |(_, n)| n);
+            let example = weak
+                .upgrade()
+                .map(|w| example_path(&w.get_path()))
+                .unwrap_or_default();
+            let done: Rc<dyn Fn(hydrus_parse::folders::FilenameTagging)> = {
+                let weak = weak.clone();
+                let state = state.clone();
+                let store = store.clone();
+                let key = key.clone();
+                Rc::new(move |options| {
+                    let mut state = state.borrow_mut();
+                    let list = &mut state.folder.settings.filename_tagging;
+                    match list.iter_mut().find(|(k, _)| *k == key) {
+                        Some(entry) => entry.1 = options,
+                        None => list.push((key.clone(), options)),
+                    }
+                    if let Some(window) = weak.upgrade() {
+                        show_filename_tagging(&window, &store, &state.folder);
+                    }
+                })
+            };
+            match crate::filename_tagging_window::open_options(
+                (key, name),
+                options,
+                example,
+                &tagging_slot,
+                done,
+            ) {
+                Ok(dialog) => *tagging_slot.borrow_mut() = Some(dialog),
+                Err(e) => eprintln!("could not open the filename tagging options: {e}"),
+            }
+        }
+    };
+    window.on_tagging_add({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let show = show.clone();
+        let edit_tagging = edit_tagging.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let services = tag_services(&store);
+            let Some((key, _)) = usize::try_from(window.get_tagging_choice())
+                .ok()
+                .and_then(|i| services.get(i))
+            else {
+                return;
+            };
+            let exists = state
+                .borrow()
+                .folder
+                .settings
+                .filename_tagging
+                .iter()
+                .any(|(k, _)| k == key);
+            if exists {
+                state.borrow_mut().asking = Some(Asking::Messages(
+                    vec![
+                        "You already have an entry for that service key! Please try editing it instead!"
+                            .into(),
+                    ],
+                    After::Nothing,
+                ));
+                show();
+                return;
+            }
+            edit_tagging(key.clone(), hydrus_parse::folders::FilenameTagging::default());
+        }
+    });
+    window.on_tagging_edit({
+        let state = state.clone();
+        move |i| {
+            let entry = usize::try_from(i).ok().and_then(|i| {
+                state
+                    .borrow()
+                    .folder
+                    .settings
+                    .filename_tagging
+                    .get(i)
+                    .cloned()
+            });
+            if let Some((key, options)) = entry {
+                edit_tagging(key, options);
+            }
+        }
+    });
+    window.on_tagging_delete({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        move |i| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let mut state = state.borrow_mut();
+            if let Ok(i) = usize::try_from(i)
+                && i < state.folder.settings.filename_tagging.len()
+            {
+                state.folder.settings.filename_tagging.remove(i);
+            }
+            show_filename_tagging(&window, &store, &state.folder);
+        }
+    });
     // its import options, in the editor (an import folder's defaults)
     window.on_edit_import_options({
         let weak = window.as_weak();

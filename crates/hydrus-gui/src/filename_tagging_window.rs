@@ -30,6 +30,8 @@ struct State {
     /// The selected files' single tags as their box last showed them.
     shown_single: Vec<String>,
     errors: Vec<String>,
+    /// One service's options alone: the example path whose tags are shown.
+    example: Option<String>,
 }
 
 impl State {
@@ -87,6 +89,10 @@ fn show_rows(window: &FilenameTaggingWindow, state: &State) {
         })
         .collect();
     window.set_rows(ModelRc::new(VecModel::from(rows)));
+    if let Some(example) = &state.example {
+        let tags: Vec<String> = tab.options.tags(example).into_iter().collect();
+        window.set_example_tags(tags.join(", ").into());
+    }
     window.set_has_selection(!state.selection.is_empty());
     window.set_errors(state.errors.join("\n").into());
 }
@@ -130,6 +136,9 @@ fn show(window: &FilenameTaggingWindow, state: &mut State) {
 
 /// Read the tab's two-way fields.
 fn read(window: &FilenameTaggingWindow, state: &mut State) {
+    if state.example.is_some() {
+        state.example = Some(example_path(&window.get_example()));
+    }
     let selected = state.selected();
     let typed_single = lines(&window.get_tags_selected());
     let added: Vec<String> = typed_single
@@ -149,7 +158,11 @@ fn read(window: &FilenameTaggingWindow, state: &mut State) {
     errors.extend(regex_errors);
     state.errors = errors;
     let tab = state.tab_mut();
-    tab.options.tags_for_all = lines(&window.get_tags_all()).into_iter().collect();
+    // (cleaned, as the reference's tag list keeps them)
+    tab.options.tags_for_all = lines(&window.get_tags_all())
+        .iter()
+        .filter_map(|t| hydrus_core::tag::clean_tag_checked(t))
+        .collect();
     if !selected.is_empty() {
         tab.add_single(&selected, &added);
         tab.remove_single(&selected, &removed);
@@ -164,6 +177,74 @@ fn read(window: &FilenameTaggingWindow, state: &mut State) {
         .clone_into(&mut tab.number_namespace);
 }
 
+/// An example path as typed: without the quotes round it or a leading
+/// "file:///" (`ScheduleRefreshTags`).
+fn example_path(text: &str) -> String {
+    let text = text.trim();
+    let text = text
+        .strip_prefix('"')
+        .and_then(|t| t.strip_suffix('"'))
+        .unwrap_or(text);
+    text.strip_prefix("file:///")
+        .map_or_else(|| text.to_owned(), |rest| format!("/{rest}"))
+}
+
+/// Open the dialog on one tag service's filename tagging options alone
+/// ("edit filename tagging options", for an import folder), showing the
+/// tags of `example`; "apply" gives the options to `done`.
+pub(crate) fn open_options(
+    service: (String, String),
+    options: hydrus_parse::folders::FilenameTagging,
+    example: String,
+    slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
+    done: Rc<dyn Fn(hydrus_parse::folders::FilenameTagging)>,
+) -> Result<FilenameTaggingWindow, String> {
+    let (window, state) = build(vec![service], Vec::new(), slot, Rc::new(|_| {}))?;
+    window.set_window_title("edit filename tagging options".into());
+    window.set_options_mode(true);
+    window.set_example(example.as_str().into());
+    {
+        let mut state = state.borrow_mut();
+        state.example = Some(example);
+        let misc = std::array::from_fn(|i| {
+            if i == 0 {
+                (
+                    options.add_filename.is_some(),
+                    options
+                        .add_filename
+                        .clone()
+                        .unwrap_or_else(|| "filename".into()),
+                )
+            } else {
+                let index = DIRECTORIES[i - 1].1;
+                let set = options.directories.iter().find(|(d, _)| *d == index);
+                (
+                    set.is_some(),
+                    set.map(|(_, n)| n.clone()).unwrap_or_default(),
+                )
+            }
+        });
+        state.misc[0] = misc;
+        state.tab_mut().options = options;
+        show(&window, &mut state);
+    }
+    window.on_apply({
+        let state = state.clone();
+        let slot = slot.clone();
+        let weak = window.as_weak();
+        move || {
+            let options = state.borrow().tab().options.clone();
+            if let Some(window) = weak.upgrade() {
+                let _ = window.hide();
+            }
+            slot.borrow_mut().take();
+            done(options);
+        }
+    });
+    window.show().map_err(|e| e.to_string())?;
+    Ok(window)
+}
+
 /// Open the dialog on `paths` for the real tag services (`(key hex,
 /// name)`); "apply" gives the tags for each path to `done`. It forgets
 /// itself from `slot` when closed.
@@ -173,6 +254,18 @@ pub(crate) fn open(
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
     done: Rc<dyn Fn(PathTags)>,
 ) -> Result<FilenameTaggingWindow, String> {
+    let (window, _) = build(services, paths, slot, done)?;
+    window.show().map_err(|e| e.to_string())?;
+    Ok(window)
+}
+
+/// The dialog, bound but not shown, and its state.
+fn build(
+    services: Vec<(String, String)>,
+    paths: Vec<String>,
+    slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
+    done: Rc<dyn Fn(PathTags)>,
+) -> Result<(FilenameTaggingWindow, Rc<RefCell<State>>), String> {
     let window = FilenameTaggingWindow::new().map_err(|e| e.to_string())?;
     // (the reference's defaults: the filename's namespace "filename")
     let misc: [(bool, String); 7] = std::array::from_fn(|i| {
@@ -197,6 +290,7 @@ pub(crate) fn open(
         selection: ListSelection::default(),
         shown_single: Vec::new(),
         errors: Vec::new(),
+        example: None,
     }));
     if state.borrow().services.is_empty() {
         return Err("there are no tag services".into());
@@ -346,6 +440,5 @@ pub(crate) fn open(
         }
     });
     show(&window, &mut state.borrow_mut());
-    window.show().map_err(|e| e.to_string())?;
-    Ok(window)
+    Ok((window, state))
 }

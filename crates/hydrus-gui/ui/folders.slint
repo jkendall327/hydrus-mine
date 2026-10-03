@@ -219,6 +219,12 @@ export component ImportFolderWindow inherits Window {
     in-out property <bool> publish-page;
     in property <string> cached-paths;
     in property <bool> has-file-log;
+    // the tag services filename tagging can be added for
+    in property <[string]> tagging-choices;
+    in-out property <int> tagging-choice;
+    callback tagging-add();
+    callback tagging-edit(int);
+    callback tagging-delete(int);
     // its import options' editor
     callback edit-import-options();
     // the cached paths' file log
@@ -369,10 +375,37 @@ export component ImportFolderWindow inherits Window {
                     Group {
                         title: "metadata import";
                         Label { text: "filename tagging:"; }
-                        for line in root.filename-tagging: Label { text: line; }
+                        for line[i] in root.filename-tagging: HorizontalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: line;
+                                horizontal-stretch: 1;
+                                vertical-alignment: center;
+                            }
+                            Button {
+                                text: "edit";
+                                clicked => { root.tagging-edit(i); }
+                            }
+                            Button {
+                                text: "delete";
+                                clicked => { root.tagging-delete(i); }
+                            }
+                        }
                         if root.filename-tagging.length == 0: Label {
                             text: "(none)";
                             color: Theme.muted;
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            ComboBox {
+                                horizontal-stretch: 1;
+                                model: root.tagging-choices;
+                                current-index <=> root.tagging-choice;
+                            }
+                            Button {
+                                text: "add";
+                                clicked => { root.tagging-add(); }
+                            }
                         }
                         Label { text: "sidecar importing:"; }
                         Label { text: root.sidecars; }

@@ -298,3 +298,90 @@ fn export_folders_are_added_edited_and_written() {
         hydrus_parse::folders::ExportType::Synchronise
     );
 }
+
+#[test]
+fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let watched = tempfile::tempdir().unwrap();
+    let example = watched.path().join("pic 1.jpg");
+    std::fs::write(&example, b"x").unwrap();
+    open(&ui, "manage import folders\u{2026}");
+    let list = import_list(&bound);
+    list.invoke_add();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.set_path(watched.path().to_string_lossy().into_owned().into());
+    let choices: Vec<String> = (0..edit.get_tagging_choices().row_count())
+        .map(|i| edit.get_tagging_choices().row_data(i).unwrap().to_string())
+        .collect();
+    let mine = choices.iter().position(|c| c == "my tags").unwrap();
+    edit.set_tagging_choice(i32::try_from(mine).unwrap());
+    edit.invoke_tagging_add();
+    let dialog = || {
+        bound
+            .folders
+            .filename_tagging
+            .borrow()
+            .as_ref()
+            .expect("it opens")
+            .clone_strong()
+    };
+    assert_eq!(dialog().get_window_title(), "edit filename tagging options");
+    assert!(dialog().get_options_mode());
+    assert_eq!(dialog().get_example(), example.to_string_lossy().as_ref());
+    dialog().set_tags_all("Imported".into());
+    dialog().invoke_changed();
+    dialog().invoke_misc_toggled(0, true);
+    assert_eq!(dialog().get_example_tags(), "filename:pic 1, imported");
+    dialog().invoke_apply();
+    assert!(bound.folders.filename_tagging.borrow().is_none());
+    let listed = |w: &hydrus_gui::ImportFolderWindow| -> Vec<String> {
+        (0..w.get_filename_tagging().row_count())
+            .map(|i| w.get_filename_tagging().row_data(i).unwrap().to_string())
+            .collect()
+    };
+    assert_eq!(listed(&edit), ["my tags"]);
+    // the same service again: refused
+    edit.invoke_tagging_add();
+    assert_eq!(
+        edit.get_asking_message(),
+        "You already have an entry for that service key! Please try editing it instead!"
+    );
+    edit.invoke_chosen(0);
+    // edited: what it had
+    edit.invoke_tagging_edit(0);
+    assert_eq!(dialog().get_tags_all(), "imported");
+    dialog().invoke_cancel();
+    // written with the folder
+    edit.invoke_apply();
+    list.invoke_apply();
+    let folder = store
+        .read(import_folders::import_folders)
+        .unwrap()
+        .remove(0);
+    let (_, tagging) = &folder.settings.filename_tagging[0];
+    assert_eq!(tagging.add_filename.as_deref(), Some("filename"));
+    assert!(tagging.tags_for_all.contains("imported"));
+    // and deleted
+    open(&ui, "manage import folders\u{2026}");
+    let list = import_list(&bound);
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_edit();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.invoke_tagging_delete(0);
+    assert!(listed(&edit).is_empty());
+}
