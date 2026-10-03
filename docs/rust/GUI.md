@@ -916,7 +916,12 @@ the duplicate filter: its own window, showing one file of a pair at a time
 reference's comparison statements and score (`hydrus-duplicates`'s port,
 the slow ones, jpeg quality and visual duplicates, made off the UI thread)
 and the decisions: this is better (deleting the other or not), same
-quality, alternates, not related, skip, go back. As in the reference, a
+quality, alternates, not related, a custom action, skip, go back. A
+custom action asks which decision, then (for "this is better", "same
+quality", or "alternates" in advanced mode) its merge options in the
+merge options editor, for that decision alone, then which files to
+delete ("delete neither", "delete this one", "delete the other", "delete
+both" or "forget it"), as the reference's does. As in the reference, a
 left click on the file is "better, delete the other", a right click
 "alternates", a middle click goes back and up skips; video, audio and
 animations play as in the media viewer, and the next three pairs' files
@@ -1032,11 +1037,9 @@ copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, a
 download's cog and error menus (bandwidth rules, the last error); in
-the duplicates page, editing its search, reviewing auto-resolution
-rules' actions, and quick and dirty processing; in the duplicate filter, the custom action,
-deleting from the filter, the hover frames, and
-reviewing auto-resolution's pending
-pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its
+the duplicates page, editing its search and quick and dirty processing;
+in the duplicate filter, deleting from the filter and the hover frames;
+the viewer's other zoom shortcuts (fill, max, the zoom menu), its
 zoom and pan locks, and "open externally" for the file types shown with
 that button (their thumbnail fills the window instead).
 

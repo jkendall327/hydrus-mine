@@ -17,7 +17,8 @@ use hydrus_duplicates::statements::{self, FAST_KEYS, SLOW_KEYS, Statement};
 use hydrus_media::Raster;
 use hydrus_search::media::FileFacts;
 use hydrus_store::Store;
-use hydrus_store::duplicates::ComparisonScores;
+use hydrus_store::duplicates::merge::MergeOptions;
+use hydrus_store::duplicates::{ComparisonScores, PairRelationship};
 
 use crate::duplicate_filter::{Decision, DuplicateFilter, Step};
 use crate::playback::Playback;
@@ -36,7 +37,35 @@ enum Asking {
     Close,
     /// Nothing more to do: close.
     Done,
+    /// A custom action's decision.
+    CustomType,
+    /// A custom action's deletions.
+    CustomDelete,
 }
+
+/// A custom action's decisions, as its question lists them (sorted, as the
+/// reference's select dialog sorts them).
+const CUSTOM_TYPES: [(&str, PairRelationship); 4] = [
+    ("alternates", PairRelationship::Alternate),
+    (
+        "not related/false positive",
+        PairRelationship::FalsePositive,
+    ),
+    ("same quality", PairRelationship::SameQuality),
+    ("this is a better duplicate", PairRelationship::Better),
+];
+
+/// A custom action's deletion question's answers, then "forget it".
+const CUSTOM_DELETES: [(&str, bool, bool); 4] = [
+    ("delete neither", false, false),
+    ("delete this one", true, false),
+    ("delete the other", false, true),
+    ("delete both", true, true),
+];
+
+/// A custom action under way: the pair it is for, its decision and its own
+/// merge options, if edited.
+type Custom = ((HashId, HashId), PairRelationship, Option<MergeOptions>);
 
 struct SlowRequest {
     pair: (HashId, HashId),
@@ -140,6 +169,10 @@ struct State {
     animator: Rc<crate::animation::Animator>,
     /// The file shown's zoom and position.
     zoomed: crate::zoom::Zoomed,
+    /// A custom action under way.
+    custom: Option<Custom>,
+    /// Its merge options' editor, while open.
+    merge_options: crate::merge_options_window::Slot,
 }
 
 impl State {
@@ -365,6 +398,8 @@ pub(crate) fn open_filter(
         playback: Playback::new(model_dir.join("mpv.conf")),
         animator: crate::animation::Animator::new(),
         zoomed,
+        custom: None,
+        merge_options: Rc::default(),
     }));
 
     // ask for the slow statements of the pair shown, if not yet asked
@@ -445,7 +480,26 @@ pub(crate) fn open_filter(
 
     window.on_decide({
         let update = update.clone();
+        let weak = window.as_weak();
+        let state = state.clone();
         move |action| {
+            // "custom action": its decision asked first
+            if action == "custom" {
+                let Some(window) = weak.upgrade() else { return };
+                let mut state = state.borrow_mut();
+                if state.asking == Asking::Nothing && state.model.current().is_some() {
+                    let mut answers: Vec<&str> = CUSTOM_TYPES.iter().map(|t| t.0).collect();
+                    answers.push("cancel");
+                    ask(
+                        &window,
+                        &mut state,
+                        Asking::CustomType,
+                        "select duplicate type",
+                        &answers,
+                    );
+                }
+                return;
+            }
             update(&|state| {
                 if state.asking != Asking::Nothing {
                     return None;
@@ -493,6 +547,9 @@ pub(crate) fn open_filter(
         let state = state.clone();
         move || {
             collect.stop();
+            if let Some(editor) = state.borrow().merge_options.borrow_mut().take() {
+                let _ = editor.hide();
+            }
             state.borrow().playback.close();
             state.borrow().animator.stop();
             if let Some(window) = weak.upgrade() {
@@ -505,6 +562,29 @@ pub(crate) fn open_filter(
             }
         }
     };
+    // a custom action's deletions asked, if its pair is still shown
+    let ask_delete: Rc<dyn Fn()> = {
+        let weak = window.as_weak();
+        let state = state.clone();
+        Rc::new(move || {
+            let Some(window) = weak.upgrade() else { return };
+            let mut state = state.borrow_mut();
+            let pair = state.custom.as_ref().map(|c| c.0);
+            if pair.is_none() || pair != state.model.current() || state.asking != Asking::Nothing {
+                state.custom = None;
+                return;
+            }
+            let mut answers: Vec<&str> = CUSTOM_DELETES.iter().map(|d| d.0).collect();
+            answers.push("forget it");
+            ask(
+                &window,
+                &mut state,
+                Asking::CustomDelete,
+                "Delete any of the files?",
+                &answers,
+            );
+        })
+    };
     window.on_answer({
         let update = update.clone();
         let state = state.clone();
@@ -512,6 +592,77 @@ pub(crate) fn open_filter(
         move |answer| {
             let asking = state.borrow().asking;
             match (asking, answer) {
+                (Asking::CustomType, i) => {
+                    let chosen = usize::try_from(i).ok().and_then(|i| CUSTOM_TYPES.get(i));
+                    update(&|_| Some(Ok(Step::Showing)));
+                    let Some(&(_, relationship)) = chosen else {
+                        return;
+                    };
+                    let (store, pair) = {
+                        let state = state.borrow();
+                        (state.model.store().clone(), state.model.current())
+                    };
+                    let Some(pair) = pair else { return };
+                    let advanced = store
+                        .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                        .unwrap_or_default()
+                        .0;
+                    let merges = matches!(
+                        relationship,
+                        PairRelationship::Better | PairRelationship::SameQuality
+                    ) || (advanced && relationship == PairRelationship::Alternate);
+                    state.borrow_mut().custom = Some((pair, relationship, None));
+                    if !merges {
+                        ask_delete();
+                        return;
+                    }
+                    // its merge options, for this decision alone
+                    let client: hydrus_store::duplicates::DuplicateMergeSettings =
+                        store.read(hydrus_store::settings::get).unwrap_or_default();
+                    let options = client
+                        .for_relationship(relationship)
+                        .cloned()
+                        .unwrap_or_default();
+                    let applied: Rc<dyn Fn(MergeOptions)> = {
+                        let state = state.clone();
+                        let ask_delete = ask_delete.clone();
+                        Rc::new(move |options| {
+                            if let Some(custom) = &mut state.borrow_mut().custom {
+                                custom.2 = Some(options);
+                            }
+                            ask_delete();
+                        })
+                    };
+                    let slot = state.borrow().merge_options.clone();
+                    match crate::merge_options_window::open(
+                        &store,
+                        relationship,
+                        &options,
+                        true,
+                        &slot,
+                        applied,
+                    ) {
+                        Ok(editor) => *slot.borrow_mut() = Some(editor),
+                        Err(e) => eprintln!("could not open the merge options: {e}"),
+                    }
+                }
+                (Asking::CustomDelete, i) => {
+                    let delete = usize::try_from(i).ok().and_then(|i| CUSTOM_DELETES.get(i));
+                    let custom = state.borrow_mut().custom.take();
+                    match (delete, custom) {
+                        (Some(&(_, delete_a, delete_b)), Some((_, relationship, merge))) => {
+                            update(&|state| {
+                                Some(state.model.decide_custom(
+                                    relationship,
+                                    delete_a,
+                                    delete_b,
+                                    merge.clone(),
+                                ))
+                            });
+                        }
+                        _ => update(&|_| Some(Ok(Step::Showing))),
+                    }
+                }
                 (Asking::Commit, 0) => update(&|state| Some(state.model.commit())),
                 (Asking::Commit, _) => update(&|state| {
                     state.model.back();

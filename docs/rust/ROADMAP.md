@@ -109,8 +109,8 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   in the media viewer, and its selected pairs in a new page. The merge
   options editor is done (`src/merge_options_window.rs`, recorded by
   `oracle/record_merge_options_editor.py`), for a rule's custom merge
-  options and the page's defaults. **Next**: the rules' searches'
-  locations; the duplicate filter's "custom action".
+  options and the page's defaults, and the duplicate filter's "custom
+  action". **Next**: the rules' searches' locations.
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.
 

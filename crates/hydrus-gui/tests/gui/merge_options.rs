@@ -1,7 +1,8 @@
 //! The duplicate metadata merge options editor: the duplicates page's
 //! defaults edited (a tag service taken out, one added through its action
 //! and the tag filter editor, a sync changed) and written, and a rule's
-//! custom merge options edited in it. What the editor says and does at each
+//! custom merge options edited in it, and the duplicate filter's custom
+//! action merging by options of its own. What the editor says and does at each
 //! step is tested against the reference's in hydrus-gui-model's tests.
 
 use std::sync::Arc;
@@ -222,4 +223,93 @@ fn a_rules_custom_merge_options_are_edited() {
         custom.archive,
         hydrus_store::duplicates::merge::ArchiveSync::IfEither
     );
+}
+
+#[test]
+fn the_duplicate_filters_custom_action_merges_by_its_own_options() {
+    let _windows = headless::init();
+    let (_dir, store) = store_with_pairs();
+    duplicates_page(&store);
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    ui.invoke_launch_filter();
+    let filter = bound
+        .filter
+        .borrow()
+        .as_ref()
+        .map(slint::ComponentHandle::clone_strong)
+        .expect("the filter opened");
+    let answers = |filter: &hydrus_gui::DuplicateFilterWindow| {
+        let answers = filter.get_answers();
+        (0..answers.row_count())
+            .map(|i| answers.row_data(i).unwrap().to_string())
+            .collect::<Vec<_>>()
+    };
+    // which decision
+    filter.invoke_decide("custom".into());
+    assert_eq!(filter.get_question(), "select duplicate type");
+    assert_eq!(
+        answers(&filter),
+        [
+            "alternates",
+            "not related/false positive",
+            "same quality",
+            "this is a better duplicate",
+            "cancel"
+        ]
+    );
+    filter.invoke_answer(3);
+    // its merge options, for this decision alone: archive neither
+    let editor = last_opened().expect("the merge options open");
+    assert!(editor.get_syncs_enabled());
+    editor.set_archive_index(0);
+    editor.invoke_choice_changed();
+    editor.invoke_apply();
+    // which to delete
+    assert_eq!(filter.get_question(), "Delete any of the files?");
+    assert_eq!(
+        answers(&filter),
+        [
+            "delete neither",
+            "delete this one",
+            "delete the other",
+            "delete both",
+            "forget it"
+        ]
+    );
+    filter.invoke_answer(0);
+    assert!(
+        filter.get_index_text().contains("1 decision"),
+        "{}",
+        filter.get_index_text()
+    );
+    // committed on closing: the files kept in the inbox, where the
+    // client's options for "this is better" archive both
+    let inbox_before: usize = store
+        .read(|c| {
+            let ids: Vec<hydrus_core::HashId> = c
+                .prepare("SELECT hash_id FROM hashes")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            Ok(hydrus_store::media::inboxed(c, &ids)?.len())
+        })
+        .unwrap();
+    assert!(inbox_before >= 2);
+    filter.invoke_close_requested();
+    filter.invoke_answer(0);
+    assert!(bound.filter.borrow().is_none());
+    let inbox_after: usize = store
+        .read(|c| {
+            let ids: Vec<hydrus_core::HashId> = c
+                .prepare("SELECT hash_id FROM hashes")?
+                .query_map([], |r| r.get(0))?
+                .collect::<rusqlite::Result<_>>()?;
+            Ok(hydrus_store::media::inboxed(c, &ids)?.len())
+        })
+        .unwrap();
+    assert_eq!(inbox_after, inbox_before);
+    let groups: i64 = store
+        .read(|c| Ok(c.query_row("SELECT COUNT(*) FROM dup_group_members", [], |r| r.get(0))?))
+        .unwrap();
+    assert!(groups > 0, "the pair is set as duplicates");
 }

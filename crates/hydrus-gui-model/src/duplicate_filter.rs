@@ -22,8 +22,8 @@ use hydrus_store::Store;
 use hydrus_store::delete_lock::Reinbox;
 use hydrus_store::duplicates::auto::{Rule, RuleAction};
 use hydrus_store::duplicates::{
-    self, ComparisonScores, DuplicateFilterSettings, DuplicateMergeSettings, PairDecision,
-    PairOrder, PairRelationship, PairSelection,
+    self, ComparisonScores, DuplicateFilterSettings, DuplicateMergeSettings, MergeOptions,
+    PairDecision, PairOrder, PairRelationship, PairSelection,
 };
 
 /// What the user decided about a pair (the reference's
@@ -77,12 +77,14 @@ impl Decision {
     };
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Decided {
     /// The file shown when it was decided.
     a: HashId,
     b: HashId,
     decision: Decision,
+    /// A custom action's own merge options, in place of the client's.
+    merge: Option<MergeOptions>,
 }
 
 /// Where the filter is after a step.
@@ -430,6 +432,7 @@ impl DuplicateFilter {
                 a,
                 b,
                 decision: Decision::AutoSkip,
+                merge: None,
             });
             self.index += 1;
         }
@@ -525,7 +528,39 @@ impl DuplicateFilter {
             Decision::Review { .. } => self.batch[self.index],
             _ => (a, b),
         };
-        self.decisions.push(Decided { a, b, decision });
+        self.decisions.push(Decided {
+            a,
+            b,
+            decision,
+            merge: None,
+        });
+        self.index += 1;
+        self.next()
+    }
+
+    /// A custom action on the pair shown (`_DoCustomAction`): the file
+    /// shown is A, merged by `merge` if given, else as the client's
+    /// options for the relationship say.
+    pub fn decide_custom(
+        &mut self,
+        relationship: PairRelationship,
+        delete_a: bool,
+        delete_b: bool,
+        merge: Option<MergeOptions>,
+    ) -> anyhow::Result<Step> {
+        let Some((a, b)) = self.current() else {
+            return Ok(Step::Finished);
+        };
+        self.decisions.push(Decided {
+            a,
+            b,
+            decision: Decision::Relationship {
+                relationship,
+                delete_a,
+                delete_b,
+            },
+            merge,
+        });
         self.index += 1;
         self.next()
     }
@@ -564,8 +599,8 @@ impl DuplicateFilter {
         let work: Vec<Decided> = self
             .decisions
             .iter()
-            .copied()
             .filter(|d| matches!(d.decision, Decision::Relationship { .. }))
+            .cloned()
             .collect();
         let merge_settings: DuplicateMergeSettings =
             self.store.read(hydrus_store::settings::get)?;
@@ -595,9 +630,10 @@ impl DuplicateFilter {
                 else {
                     continue;
                 };
-                let merge = match relationship {
-                    PairRelationship::Alternate if !merge_alternates => None,
-                    _ => merge_settings.for_relationship(relationship),
+                let merge = match (&d.merge, relationship) {
+                    (Some(custom), _) => Some(custom),
+                    (None, PairRelationship::Alternate) if !merge_alternates => None,
+                    (None, _) => merge_settings.for_relationship(relationship),
                 };
                 let reason = deletion_reason(relationship, delete_a, delete_b);
                 duplicates::apply_decision(

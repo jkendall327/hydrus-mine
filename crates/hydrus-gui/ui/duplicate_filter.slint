@@ -240,6 +240,10 @@ export component DuplicateFilterWindow inherits Window {
                         clicked => { root.decide("false-positive"); }
                     }
                     Choice {
+                        text: "custom action";
+                        clicked => { root.decide("custom"); }
+                    }
+                    Choice {
                         text: "skip";
                         clicked => { root.decide("skip"); }
                     }
