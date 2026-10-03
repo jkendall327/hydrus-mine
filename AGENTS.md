@@ -117,6 +117,13 @@ box. Each one is a commit that passes CI on its own.
   Give each worktree a distinct `RUSTC_WORKSPACE_WRAPPER` path as well:
   Cargo then separates workspace artifacts while sharing third-party
   dependencies, avoiding reuse of another branch's modified libraries.
+  `cargo clippy` replaces that setting with its own driver: give each
+  worktree a copied `cargo-clippy` frontend beside a distinct
+  `clippy-driver` path, and put that directory first on `PATH`. The
+  frontend uses its own executable directory to find the driver; merely
+  symlinking the frontend resolves back to the shared toolchain. The
+  driver itself can be a symlink to the installed one. Without this,
+  a narrower Clippy invocation can reuse another branch's dependencies.
 
 ## Things that have bitten before
 
