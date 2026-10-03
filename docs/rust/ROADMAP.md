@@ -7,58 +7,32 @@ partway, say exactly where.
 
 The owner's current priority (2026-10) is **breadth**: get every major
 area of the client working in a first pass, rather than perfecting each
-corner before moving on. The subscriptions dialog, the import and export
-folders, the duplicates page's tabs and the downloader pages' leftovers
-have had their first pass. Next, in the owner's order (2026-10-03), the
-screens not started yet:
+corner before moving on. The subscriptions dialog, import/export folders,
+duplicates tabs, about window and simple downloader page have had their
+first pass.
 
-1. The about window (help > about). **Done.**
-2. The simple downloader page. **Done**: its engine (a
-   `simple_downloader` queue, `hydrus-download`'s `run_simple_jobs`), the
-   formulae (`hydrus-parse::simple`, the reference's defaults, imported
-   from its options), and the page (pages > download > new simple
-   downloader page, or the page chooser), carried over from hydrus's
-   sessions. Its "edit formulae" list now saves named HTML/JSON formulae
-   through the reusable formula editor (rules, parsing tests and string
-   processing). **Left**: formula import/export and nested/zipper/context/
-   static editing, plus the test panel's fetch and multiple-example controls.
-3. The media manage dialogs. **First pass done**: URLs, ratings, times,
-   force filetype, detailed embedded metadata, and share > export files
-   (previews, worker progress/cancel, sidecars and confirmed trash).
-4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Done**: staged management of local file/tag/rating services with guarded deletion and rating configuration. **Next**: remote repositories/IPFS/account administration, Client API service configuration, live rating previews and review bulk maintenance.
-5. Tag siblings and parents. **First pass done**: service editors, staged
-   add/delete/rescind, automatic conflict/cycle repair, remembered workspace
-   filters, clipboard/.txt import/export, and atomic graph/count refresh.
-   **Left**: write autocomplete and asynchronous list loading, default service
-   tabs, repository permission/reason suggestions; tags > display/search,
-   migrate tags, sibling/parent sync.
-6. The downloader definition editors. **Done**: URL class and single/nested
-   gallery URL generator lists/rule editors, native Apply/cancel persistence
-   and live examples. **Next**: page/content parsers, URL class links, logins
-   and serialized downloader import/export.
+The first parallel slate (2026-10-03) adds detailed embedded metadata,
+manual file export, local service review/management, tag sibling/parent
+editors, HTML/JSON formula editors, and URL class/single/nested gallery
+generator editors. Their behavior and recorded evidence are described in
+`GUI.md`; remaining differences are in `DIFFERENCES.md`. The metadata
+handover patch has been applied and removed. Store snapshot revisions also
+propagate service, URL-class and tag-graph edits to a running daemon.
 
-Then the gaps listed under "Later", and the half-done items below.
+The next breadth work, in the owner's existing order:
 
-### Detailed embedded file metadata
+1. **Services**: remote repositories/IPFS/account administration, Client API
+   service configuration, live rating previews and review bulk maintenance.
+2. **Tags**: display/search configuration, migration and sibling/parent sync.
+   Existing relationship editors still need write autocomplete, asynchronous
+   loading, default service tabs and repository permission/reason suggestions.
+3. **Downloader definitions**: page/content parser editors, URL class links,
+   logins and serialized downloader import/export. The reusable formula editor
+   can support the parser work; nested/zipper/context/static editing, formula
+   import/export and fetch/multiple-example test controls remain.
 
-**Done**: info > "show detailed embedded file metadata" in thumbnails and the
-viewer opens "Detailed File Metadata". Basics renders the full info tree;
-a worker reads the local file and fills the conditional EXIF, XMP, IPTC,
-human-readable text and extra sections. EXIF uses ListTable's selection and
-sorting, and double-click copies raw values (bytes as plain hex and text with
-its original NULs). PNG EXIF carries the reference's orientation note. PDFs use
-the existing PDF decoder for Author, Title, Subject and Keywords. Non-local
-files show the reference's message; read errors preserve basics. Closing or
-superseding a request cannot publish into another window.
-
-Evidence: `oracle/dump_embedded_metadata.py` records the media corpus and
-metadata samples including the reference's raw EXIF copy callback;
-`oracle/record_embedded_metadata_window.py` records the live panel's visibility,
-PNG note, read-only sections, nested basics, EXIF sorting, non-local worker and
-PDF fields, with empty, encrypted and malformed PDFs. Fixture-backed model and
-GUI tests replay the values and menu actions; the GUI test saves
-`embedded_metadata.png`. Existing HEIF/AVIF/JXL, IPTC charset and malformed-XMP
-decoder differences are in DIFFERENCES.md.
+Then the gaps listed under "Later", and the half-done items below. Review
+the first parallel slate before starting another one.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
