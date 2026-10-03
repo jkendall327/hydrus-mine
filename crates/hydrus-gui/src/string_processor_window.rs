@@ -1,8 +1,8 @@
 //! The string processor editor, bound (`ui/string_processor.slint`):
 //! hydrus-gui-model's [`ProcessorEditor`] in a window, and the editors of
 //! its steps: a splitter, joiner, selector/slicer or sorter in a step
-//! window, a tag filter in the tag filter editor. A match or converter is
-//! added as made, and not edited yet.
+//! window, as is a string match; a tag filter in the tag filter editor. A
+//! converter is added as made, and not edited yet.
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -14,8 +14,8 @@ use hydrus_core::url::strings::{ProcessingStep, StringProcessor, TagFilterStep};
 use hydrus_store::Store;
 
 use crate::string_editors::{
-    ADD_CHOICES, ADD_TITLE, JoinerEditor, ProcessorEditor, SORT_TYPES, STEP_TITLE, SlicerEditor,
-    SorterEditor, SplitterEditor,
+    ADD_CHOICES, ADD_TITLE, CHARACTER_SETS, JoinerEditor, MatchEditor, ProcessorEditor, SORT_TYPES,
+    STEP_TITLE, SlicerEditor, SorterEditor, SplitterEditor,
 };
 use crate::{StringProcessorWindow, StringStepWindow, TableRow};
 
@@ -329,6 +329,7 @@ enum StepEditor {
     Joiner(JoinerEditor),
     Slicer(SlicerEditor),
     Sorter(SorterEditor),
+    Match(MatchEditor),
 }
 
 impl StepEditor {
@@ -338,6 +339,7 @@ impl StepEditor {
             StepEditor::Joiner(e) => Ok(e.value()),
             StepEditor::Slicer(e) => Ok(e.value()),
             StepEditor::Sorter(e) => Ok(e.value()),
+            StepEditor::Match(e) => e.value().map(ProcessingStep::Filter),
         }
     }
 }
@@ -394,6 +396,29 @@ fn show_step(window: &StringStepWindow, editor: &StepEditor) {
             window.set_results(rows(e.results(), none));
             window.set_invalid(false);
         }
+        StepEditor::Match(e) => {
+            window.set_kind(4);
+            window.set_match_type(int(e.match_type));
+            window.set_fixed(e.fixed.as_str().into());
+            window.set_match_regex(e.regex.as_str().into());
+            let set = CHARACTER_SETS.iter().position(|(f, _)| *f == e.flexible);
+            window.set_character_set(int(set.unwrap_or(0)));
+            window.set_min_on(e.min_chars.is_some());
+            window.set_min_chars(int(e.min_chars.unwrap_or(16)));
+            window.set_max_on(e.max_chars.is_some());
+            window.set_max_chars(int(e.max_chars.unwrap_or(64)));
+            window.set_match_example(e.example.as_str().into());
+            let shown = e.shown();
+            window.set_show_fixed(shown.fixed);
+            window.set_show_match_regex(shown.regex);
+            window.set_show_character_set(shown.flexible);
+            window.set_show_limits(shown.limits);
+            let (text, ok) = e.test_result().unwrap_or_default();
+            window.set_test_result(text.into());
+            window.set_test_ok(ok);
+            window.set_summary(SharedString::new());
+            window.set_invalid(false);
+        }
     }
 }
 
@@ -423,6 +448,19 @@ fn read_step(window: &StringStepWindow, editor: &mut StepEditor) {
             e.regex = window
                 .get_regex_on()
                 .then(|| window.get_regex().to_string());
+        }
+        StepEditor::Match(e) => {
+            e.fixed = window.get_fixed().to_string();
+            e.regex = window.get_match_regex().to_string();
+            let set = usize::try_from(window.get_character_set()).unwrap_or(0);
+            e.flexible = CHARACTER_SETS.get(set).map_or(e.flexible, |(f, _)| *f);
+            e.min_chars = count(window.get_min_on(), window.get_min_chars());
+            e.max_chars = count(window.get_max_on(), window.get_max_chars());
+            e.example = window.get_match_example().to_string();
+            let match_type = usize::try_from(window.get_match_type()).unwrap_or(0);
+            if match_type != e.match_type {
+                e.set_type(match_type);
+            }
         }
     }
 }
@@ -468,6 +506,7 @@ fn open_step(
                 .map(hydrus_core::url::strings::PyRegex::pattern),
             editor.example_texts_for(&step),
         )),
+        ProcessingStep::Filter(string_match) => StepEditor::Match(MatchEditor::new(string_match)),
         ProcessingStep::TagFilter(tag_filter) => {
             if slots.tag_filter.borrow().is_some() {
                 return;
@@ -496,7 +535,7 @@ fn open_step(
             }
             return;
         }
-        // (a match or converter: added as made; their editors are to come)
+        // (a converter: added as made; its editor is to come)
         _ => {
             if index.is_none() {
                 put(None, step);

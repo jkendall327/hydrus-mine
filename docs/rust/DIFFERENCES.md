@@ -613,11 +613,13 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The string processor editor** has no starting strings to test with
   from the sidecar editors (the reference takes them from its example
   files; the single example can be typed), and no import, export or
-  paste buttons. A match or converter step is added as made and can't be
-  edited yet; a tag filter step is edited in the tag filter editor
-  without the reference's example tag test. "add" lists its kinds'
-  descriptions in its question. A sorter's error for a regex that won't
-  compile is in hydrus-rs's words, not Python's.
+  paste buttons. A converter step is added as made and can't be edited
+  yet; a tag filter step is edited in the tag filter editor without the
+  reference's example tag test. "add" lists its kinds' descriptions in
+  its question. A sorter's or match's error for a regex that won't
+  compile is in hydrus-rs's words, not Python's ("That regex did not
+  work! ..."); the match editor's regex box has no menu of favourite
+  regexes.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
   reference asks which in a dialog), and edited in the "filename tagging"

@@ -325,9 +325,12 @@ edit (or a double-click); and the test results, the starting strings and
 those strings processed, and a single example through each step but the
 slicers, a tab each ("splitter (3)"). A splitter, joiner, selector/slicer
 or sorter is edited in a step window (its fields, summary and results,
-and "apply" refusing a splitter with no separator); a tag filter in the
-tag filter editor. What they show at each step is as
-`oracle/record_string_processor_editor.py` recorded the reference's.
+and "apply" refusing a splitter with no separator), as is a string match
+(its type, fixed text, character set or regex, its limits and example,
+whether the example matches and why not, and "apply" refusing one it
+fails); a tag filter in the tag filter editor. What they show at each
+step is as `oracle/record_string_processor_editor.py` and
+`oracle/record_string_match_editor.py` recorded the reference's.
 
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as

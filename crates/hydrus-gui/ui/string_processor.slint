@@ -209,7 +209,8 @@ export component StringProcessorWindow inherits Window {
     }
 }
 
-// A splitter (kind 0), joiner (1), selector/slicer (2) or sorter (3).
+// A splitter (kind 0), joiner (1), selector/slicer (2), sorter (3) or
+// string match (4).
 export component StringStepWindow inherits Window {
     in property <string> window-title: "edit processing step";
     title: root.window-title;
@@ -238,6 +239,22 @@ export component StringStepWindow inherits Window {
     in-out property <bool> ascending;
     in-out property <bool> regex-on;
     in-out property <string> regex: "\\d+";
+    // match
+    in-out property <int> match-type;
+    in-out property <string> fixed;
+    in-out property <string> match-regex;
+    in-out property <int> character-set;
+    in-out property <bool> min-on;
+    in-out property <int> min-chars: 16;
+    in-out property <bool> max-on;
+    in-out property <int> max-chars: 64;
+    in-out property <string> match-example;
+    in property <bool> show-fixed;
+    in property <bool> show-match-regex;
+    in property <bool> show-character-set;
+    in property <bool> show-limits;
+    in property <string> test-result;
+    in property <bool> test-ok;
     in property <string> summary;
     in property <bool> invalid;
     in property <[TableRow]> texts;
@@ -404,6 +421,102 @@ export component StringStepWindow inherits Window {
                 }
             }
         }
+        if root.kind == 4: Box {
+            title: "string match";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "match type: "; }
+                ComboBox {
+                    model: ["any characters", "fixed characters", "character set", "regex"];
+                    current-index <=> root.match-type;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-fixed: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "fixed text: "; }
+                LineEdit {
+                    text <=> root.fixed;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-match-regex: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "regex: "; }
+                LineEdit {
+                    text <=> root.match-regex;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-character-set: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "character set: "; }
+                ComboBox {
+                    model: [
+                        "alphabetic characters (a-zA-Z)",
+                        "alphanumeric characters (a-zA-Z0-9)",
+                        "numeric characters (0-9)",
+                        "hexadecimal characters (0-9a-fA-F)",
+                        "base64 characters (a-zA-z0-9+/ with = padding)",
+                        "base64url characters (a-zA-z0-9-_ optionally with = padding)",
+                        "base64 characters (url encoded) (a-zA-z0-9 %2B %2F with %3D padding)",
+                    ];
+                    current-index <=> root.character-set;
+                    selected => { root.changed(); }
+                }
+            }
+            if root.show-limits: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "minimum allowed number of characters: "; }
+                CheckBox {
+                    text: "no limit";
+                    checked: !root.min-on;
+                    toggled => {
+                        root.min-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.min-on;
+                    minimum: 1;
+                    maximum: 65535;
+                    value <=> root.min-chars;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-limits: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "maximum allowed number of characters: "; }
+                CheckBox {
+                    text: "no limit";
+                    checked: !root.max-on;
+                    toggled => {
+                        root.max-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.max-on;
+                    minimum: 1;
+                    maximum: 65535;
+                    value <=> root.max-chars;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.show-limits: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "example string: "; }
+                LineEdit {
+                    text <=> root.match-example;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.test-result != "": Label {
+                text: root.test-result;
+                wrap: word-wrap;
+                color: root.test-ok ? Theme.text : Theme.error;
+            }
+        }
         if root.summary != "": Label {
             text: root.summary;
             horizontal-alignment: center;
@@ -412,7 +525,8 @@ export component StringStepWindow inherits Window {
             text: "(invalid)";
             color: Theme.error;
         }
-        Box {
+        if root.kind == 4: Rectangle { vertical-stretch: 1; }
+        if root.kind != 4: Box {
             vertical-stretch: 1;
             title: "test results";
             if root.kind == 0: HorizontalLayout {

@@ -6,8 +6,8 @@
 //! sorter and selector/slicer.
 
 use hydrus_core::url::strings::{
-    ProcessingStep, PyRegex, SortKind, StringConverter, StringMatch, StringProcessor,
-    TagFilterStep, join_texts, slice_texts, sort_texts, split_text,
+    FlexibleMatch, MatchKind, ProcessingStep, PyRegex, SortKind, StringConverter, StringMatch,
+    StringProcessor, TagFilterStep, join_texts, slice_texts, sort_texts, split_text,
 };
 
 /// What a step's results show when there are none (`NO_RESULTS_TEXT`).
@@ -549,5 +549,163 @@ impl SorterEditor {
                 Err(_) => s,
             })
             .collect()
+    }
+}
+
+/// A match editor's types, in its order (`STRING_MATCH_*`).
+pub const MATCH_TYPES: [&str; 4] = [
+    "any characters",
+    "fixed characters",
+    "character set",
+    "regex",
+];
+
+/// A match editor's character sets, in its order.
+pub const CHARACTER_SETS: [(FlexibleMatch, &str); 7] = [
+    (FlexibleMatch::Alpha, "alphabetic characters (a-zA-Z)"),
+    (
+        FlexibleMatch::Alphanumeric,
+        "alphanumeric characters (a-zA-Z0-9)",
+    ),
+    (FlexibleMatch::Numeric, "numeric characters (0-9)"),
+    (FlexibleMatch::Hex, "hexadecimal characters (0-9a-fA-F)"),
+    (
+        FlexibleMatch::Base64,
+        "base64 characters (a-zA-z0-9+/ with = padding)",
+    ),
+    (
+        FlexibleMatch::Base64Url,
+        "base64url characters (a-zA-z0-9-_ optionally with = padding)",
+    ),
+    (
+        FlexibleMatch::Base64UrlEncoded,
+        "base64 characters (url encoded) (a-zA-z0-9 %2B %2F with %3D padding)",
+    ),
+];
+
+/// A string match's editor (`EditStringMatchPanel`).
+#[derive(Debug, Clone, PartialEq)]
+pub struct MatchEditor {
+    /// An index into [`MATCH_TYPES`].
+    pub match_type: usize,
+    pub fixed: String,
+    pub regex: String,
+    pub flexible: FlexibleMatch,
+    /// "no limit" for none.
+    pub min_chars: Option<usize>,
+    pub max_chars: Option<usize>,
+    pub example: String,
+}
+
+/// Which of a match editor's rows show.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct MatchShown {
+    pub fixed: bool,
+    pub regex: bool,
+    pub flexible: bool,
+    /// The limits and the example string.
+    pub limits: bool,
+}
+
+impl MatchEditor {
+    pub fn new(string_match: &StringMatch) -> Self {
+        let mut editor = Self {
+            match_type: 0,
+            fixed: String::new(),
+            regex: String::new(),
+            flexible: FlexibleMatch::Alpha,
+            min_chars: string_match.min_chars,
+            max_chars: string_match.max_chars,
+            example: string_match.example.clone(),
+        };
+        editor.match_type = match &string_match.kind {
+            MatchKind::Any => 0,
+            MatchKind::Fixed(fixed) => {
+                editor.fixed.clone_from(fixed);
+                1
+            }
+            MatchKind::Flexible(flexible) => {
+                editor.flexible = *flexible;
+                2
+            }
+            MatchKind::Regex(regex) => {
+                regex.pattern().clone_into(&mut editor.regex);
+                3
+            }
+        };
+        editor.fill();
+        editor
+    }
+
+    /// A type chosen.
+    pub fn set_type(&mut self, match_type: usize) {
+        self.match_type = match_type.min(MATCH_TYPES.len() - 1);
+        self.fill();
+    }
+
+    /// A fixed text or regex left empty takes the example, as the
+    /// reference's does when its type is shown.
+    fn fill(&mut self) {
+        match self.match_type {
+            1 if self.fixed.is_empty() => self.fixed.clone_from(&self.example),
+            3 if self.regex.is_empty() => self.regex.clone_from(&self.example),
+            _ => {}
+        }
+    }
+
+    pub fn shown(&self) -> MatchShown {
+        MatchShown {
+            fixed: self.match_type == 1,
+            regex: self.match_type == 3,
+            flexible: self.match_type == 2,
+            limits: self.match_type != 1,
+        }
+    }
+
+    /// The match as the boxes say (`_GetValue`): a fixed match has no
+    /// limits, and its text as its example.
+    pub fn current(&self) -> StringMatch {
+        let kind = match self.match_type {
+            1 => MatchKind::Fixed(self.fixed.clone()),
+            2 => MatchKind::Flexible(self.flexible),
+            3 => MatchKind::Regex(PyRegex::new(self.regex.clone())),
+            _ => MatchKind::Any,
+        };
+        if self.match_type == 1 {
+            StringMatch {
+                kind,
+                min_chars: None,
+                max_chars: None,
+                example: self.fixed.clone(),
+            }
+        } else {
+            StringMatch {
+                kind,
+                min_chars: self.min_chars,
+                max_chars: self.max_chars,
+                example: self.example.clone(),
+            }
+        }
+    }
+
+    /// Whether the example matches ("Example matches ok!", or "Example
+    /// does not match - " and why); nothing for a fixed match.
+    pub fn test_result(&self) -> Option<(String, bool)> {
+        if self.match_type == 1 {
+            return None;
+        }
+        Some(match self.current().test(&self.example) {
+            Ok(()) => ("Example matches ok!".to_owned(), true),
+            Err(reason) => (format!("Example does not match - {reason}"), false),
+        })
+    }
+
+    /// "ok": the match, or why not.
+    pub fn value(&self) -> Result<StringMatch, String> {
+        let current = self.current();
+        current
+            .test(&current.example)
+            .map(|()| current.clone())
+            .map_err(|_| "Please enter an example text that matches the given rules!".to_owned())
     }
 }

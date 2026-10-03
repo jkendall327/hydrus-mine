@@ -133,6 +133,19 @@ impl FlexibleMatch {
         });
         &all[self as usize]
     }
+
+    /// Why a string fails it (`Test`'s words).
+    fn fail_reason(self) -> &'static str {
+        match self {
+            FlexibleMatch::Alpha => " had non-alpha characters",
+            FlexibleMatch::Alphanumeric => " had non-alphanumeric characters",
+            FlexibleMatch::Numeric => " had non-numeric characters",
+            FlexibleMatch::Hex => " had non-hex characters",
+            FlexibleMatch::Base64 => " had non-base64 characters",
+            FlexibleMatch::Base64Url => " had non-base64url characters",
+            FlexibleMatch::Base64UrlEncoded => " had non-base64 (url-encoded) characters",
+        }
+    }
 }
 
 /// What a [`StringMatch`] tests for.
@@ -176,21 +189,49 @@ impl StringMatch {
     }
 
     pub fn matches(&self, text: &str) -> bool {
+        self.test(text).is_ok()
+    }
+
+    /// `Test`: why `text` doesn't match, in the reference's words ("\"ab\"
+    /// had fewer than 3 characters").
+    pub fn test(&self, text: &str) -> Result<(), String> {
         let len = text.chars().count();
-        if self.min_chars.is_some_and(|min| len < min)
-            || self.max_chars.is_some_and(|max| len > max)
-        {
-            return false;
+        let shown = format!("\"{text}\"");
+        if let Some(min) = self.min_chars.filter(|&min| len < min) {
+            return Err(format!(
+                "{shown} had fewer than {} characters",
+                crate::numbers::human_int(min as u64)
+            ));
+        }
+        if let Some(max) = self.max_chars.filter(|&max| len > max) {
+            return Err(format!(
+                "{shown} had more than {} characters",
+                crate::numbers::human_int(max as u64)
+            ));
         }
         // regexes see the text on one line, trimmed
         let flattened = || -> String { text.lines().collect::<String>().trim().to_owned() };
         match &self.kind {
-            MatchKind::Any => true,
-            MatchKind::Fixed(fixed) => text == fixed,
-            MatchKind::Flexible(flexible) => flexible.regex().is_match(&flattened()),
-            MatchKind::Regex(regex) => regex
-                .regex()
-                .is_ok_and(|r| r.is_match(&flattened()).unwrap_or(false)),
+            MatchKind::Any => Ok(()),
+            MatchKind::Fixed(fixed) if text == fixed => Ok(()),
+            MatchKind::Fixed(fixed) => Err(format!("{shown} did not exactly match \"{fixed}\"")),
+            MatchKind::Flexible(flexible) => {
+                if flexible.regex().is_match(&flattened()) {
+                    Ok(())
+                } else {
+                    Err(format!("{shown}{}", flexible.fail_reason()))
+                }
+            }
+            MatchKind::Regex(regex) => {
+                let compiled = regex
+                    .regex()
+                    .map_err(|e| format!("That regex did not work! {e}"))?;
+                match compiled.is_match(&flattened()) {
+                    Ok(true) => Ok(()),
+                    Ok(false) => Err(format!("{shown} did not match \"{}\"", regex.pattern())),
+                    Err(e) => Err(format!("That regex did not work! {e}")),
+                }
+            }
         }
     }
 }

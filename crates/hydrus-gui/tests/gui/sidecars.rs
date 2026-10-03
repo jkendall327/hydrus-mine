@@ -323,6 +323,38 @@ fn a_routers_processing_is_edited_in_the_string_processor_editor() {
     step.invoke_apply();
     editor.invoke_tab_chosen(1);
     assert_eq!(table(&editor.get_tab_rows()), ["c", "b", "a"]);
+    // a match added: a regex its example must match
+    editor.invoke_add();
+    editor.invoke_chosen(0);
+    let step = strings.step.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(step.get_kind(), 4);
+    assert_eq!(step.get_test_result(), "Example matches ok!");
+    step.set_match_type(3);
+    step.invoke_changed();
+    // (the regex takes the example)
+    assert!(step.get_show_match_regex());
+    assert_eq!(step.get_match_regex(), step.get_match_example());
+    step.set_match_regex("\\d".into());
+    step.invoke_changed();
+    assert!(!step.get_test_ok());
+    assert!(
+        step.get_test_result()
+            .starts_with("Example does not match - ")
+    );
+    step.invoke_apply();
+    assert_eq!(
+        step.get_veto(),
+        "Please enter an example text that matches the given rules!"
+    );
+    step.set_match_example("a1".into());
+    step.invoke_changed();
+    assert_eq!(step.get_test_result(), "Example matches ok!");
+    step.invoke_apply();
+    let added = table(&editor.get_steps());
+    assert!(added[2].starts_with("MATCH: "), "{added:?}");
+    editor.invoke_row_clicked(2, false, false);
+    editor.invoke_delete();
+    editor.invoke_chosen(0);
     // a joiner added and taken out again, asking first
     editor.invoke_add();
     editor.invoke_chosen(4);
