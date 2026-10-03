@@ -143,6 +143,87 @@ def checker( t ):
     return CheckerImportOptions.CheckerOptions( intended_files_per_check = intended, never_faster_than = faster, never_slower_than = slower, death_file_velocity = death )
 
 
+def make_subscription( case ):
+    """A subscription as `case` describes it (with the time held at `NOW`):
+    the subscription, its query headers, their log containers by name, and
+    each query's case with its state after the sync."""
+
+    from hydrus.client.importing import ClientImportFileSeeds
+    from hydrus.client.importing import ClientImportSubscriptionQuery
+    from hydrus.client.importing import ClientImportSubscriptions
+
+    options = checker( case[ 'checker' ] )
+
+    subscription = ClientImportSubscriptions.Subscription( case[ 'name' ], gug_key_and_name = ( os.urandom( 32 ), case[ 'gug' ] ) )
+
+    subscription.SetCheckerOptions( options )
+
+    headers = []
+    containers = {}
+    queries = []
+
+    for q in case[ 'queries' ]:
+
+        header = ClientImportSubscriptionQuery.SubscriptionQueryHeader()
+
+        header.SetQueryText( q[ 'text' ] )
+        header.SetDisplayName( q[ 'display' ] )
+
+        container = ClientImportSubscriptionQuery.SubscriptionQueryLogContainer( header.GetQueryLogContainerName() )
+
+        cache = ClientImportFileSeeds.FileSeedCache()
+
+        file_seeds = []
+
+        for ( i, ( status, found_ago, posted_ago ) ) in enumerate( q[ 'seeds' ] ):
+
+            file_seed = ClientImportFileSeeds.FileSeed( ClientImportFileSeeds.FILE_SEED_TYPE_URL, f'https://example.com/{q[ "text" ]}/{i}' )
+
+            file_seed.status = status
+            file_seed.created = NOW - found_ago
+            file_seed.modified = file_seed.created
+            file_seed.source_time = None if posted_ago is None else NOW - posted_ago
+
+            file_seeds.append( file_seed )
+
+
+        cache.AddFileSeeds( file_seeds )
+
+        container.SetFileSeedCache( cache )
+
+        header.SetLastCheckTime( 0 if q[ 'last_check' ] is None else NOW - q[ 'last_check' ] )
+        header.SetCheckNow( q[ 'check_now' ] )
+        header.SetPaused( q[ 'paused' ] )
+
+        header.SyncToQueryLogContainer( options, container )
+
+        headers.append( header )
+        containers[ header.GetQueryLogContainerName() ] = container
+
+        queries.append( {
+            'query' : q,
+            'after_sync' : {
+                'dead' : header.IsDead(),
+                'paused' : header.IsPaused(),
+                'next_check_time' : header.GetNextCheckTime(),
+            },
+        } )
+
+
+    subscription.SetQueryHeaders( headers )
+    subscription.SetPaused( case[ 'paused' ] )
+
+    if case[ 'delay' ] is not None:
+
+        ( from_now, reason ) = case[ 'delay' ]
+
+        subscription._no_work_until = NOW + from_now
+        subscription._no_work_until_reason = reason
+
+
+    return ( subscription, headers, containers, queries )
+
+
 def record( session ):
 
     controller = session.controller
@@ -213,72 +294,7 @@ def record( session ):
 
             for case in SUBSCRIPTIONS:
 
-                options = checker( case[ 'checker' ] )
-
-                subscription = ClientImportSubscriptions.Subscription( case[ 'name' ], gug_key_and_name = ( os.urandom( 32 ), case[ 'gug' ] ) )
-
-                subscription.SetCheckerOptions( options )
-
-                headers = []
-                queries = []
-
-                for q in case[ 'queries' ]:
-
-                    header = ClientImportSubscriptionQuery.SubscriptionQueryHeader()
-
-                    header.SetQueryText( q[ 'text' ] )
-                    header.SetDisplayName( q[ 'display' ] )
-
-                    container = ClientImportSubscriptionQuery.SubscriptionQueryLogContainer( header.GetQueryLogContainerName() )
-
-                    cache = ClientImportFileSeeds.FileSeedCache()
-
-                    file_seeds = []
-
-                    for ( i, ( status, found_ago, posted_ago ) ) in enumerate( q[ 'seeds' ] ):
-
-                        file_seed = ClientImportFileSeeds.FileSeed( ClientImportFileSeeds.FILE_SEED_TYPE_URL, f'https://example.com/{q[ "text" ]}/{i}' )
-
-                        file_seed.status = status
-                        file_seed.created = NOW - found_ago
-                        file_seed.modified = file_seed.created
-                        file_seed.source_time = None if posted_ago is None else NOW - posted_ago
-
-                        file_seeds.append( file_seed )
-
-
-                    cache.AddFileSeeds( file_seeds )
-
-                    container.SetFileSeedCache( cache )
-
-                    header.SetLastCheckTime( 0 if q[ 'last_check' ] is None else NOW - q[ 'last_check' ] )
-                    header.SetCheckNow( q[ 'check_now' ] )
-                    header.SetPaused( q[ 'paused' ] )
-
-                    header.SyncToQueryLogContainer( options, container )
-
-                    headers.append( header )
-
-                    queries.append( {
-                        'query' : q,
-                        'after_sync' : {
-                            'dead' : header.IsDead(),
-                            'paused' : header.IsPaused(),
-                            'next_check_time' : header.GetNextCheckTime(),
-                        },
-                    } )
-
-
-                subscription.SetQueryHeaders( headers )
-                subscription.SetPaused( case[ 'paused' ] )
-
-                if case[ 'delay' ] is not None:
-
-                    ( from_now, reason ) = case[ 'delay' ]
-
-                    subscription._no_work_until = NOW + from_now
-                    subscription._no_work_until_reason = reason
-
+                ( subscription, headers, containers, queries ) = make_subscription( case )
 
                 row = ClientGUISubscriptions.EditSubscriptionsPanel._ConvertSubscriptionToDisplayTuple( None, subscription )
 
