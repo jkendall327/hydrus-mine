@@ -814,7 +814,21 @@ clearing deletion records, manage's
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and
-share's exporting and copying of bitmaps.
+share's copying of bitmaps.
+
+Share → "export files" opens a manual export window for the selected local
+thumbnails or the viewer's file (`ui/export_files.slint`,
+`src/export_files_window.rs`, `hydrus-gui-model::export_files`). It previews
+number, filetype and destination using the export folders' filename machinery,
+adds ` (1)` suffixes for selected files whose names collide, remembers the
+export phrase and destination, and removes selected rows after asking. The
+existing sidecar routers editor supplies tags, notes, URLs and timestamps.
+Copies overwrite existing destinations; links are optional. Export runs on a
+worker with progress and cancellation between files. Trashing asks the
+reference's confirmation and disables links; "export and close" asks "Export
+as shown?" and closes after success. `oracle/record_export_files.py` records
+the reference panel's previews, removal and confirmations, and its export
+worker's collision filenames and overwritten file contents.
 
 Manage → "notes" (or "notes (2)", counting the focused file's notes; in
 the viewer, the file shown's) opens the reference's "manage notes"

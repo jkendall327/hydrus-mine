@@ -1,0 +1,77 @@
+// Review selected files' manual export destinations, then export on a worker.
+import { Button, CheckBox, LineEdit, ProgressIndicator } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+export component ExportFilesWindow inherits Window {
+    title: "export files";
+    preferred-width: 880px;
+    preferred-height: 610px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in-out property <string> destination;
+    in-out property <string> phrase;
+    in-out property <bool> trash;
+    in-out property <bool> symlinks;
+    in property <string> sidecars: "no sidecars";
+    in property <string> status;
+    in property <bool> working;
+    in property <float> progress;
+    in property <bool> asking;
+    in property <string> question;
+    callback update();
+    callback browse();
+    callback open-location();
+    callback row-clicked(int, bool, bool);
+    callback remove();
+    callback edit-sidecars();
+    callback export(bool);
+    callback answer(int);
+    callback cancel();
+    callback dismissed();
+    VerticalLayout {
+        padding: 12px;
+        spacing: 9px;
+        Text { text: "files to export"; color: Theme.text; font-weight: 700; }
+        ListTable {
+            columns: [ {title: "#", width: 50px}, {title: "filetype", width: 135px}, {title: "path", width: 610px} ];
+            rows: root.rows;
+            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+        }
+        HorizontalLayout {
+            Button { text: "remove selected"; enabled: !root.working && !root.asking; clicked => { root.remove(); } }
+            Rectangle { horizontal-stretch: 1; }
+        }
+        Text { text: "export path"; color: Theme.text; font-weight: 700; }
+        HorizontalLayout {
+            LineEdit { text <=> root.destination; enabled: !root.working && !root.asking; accepted => { root.update(); } }
+            Button { text: "browse…"; enabled: !root.working && !root.asking; clicked => { root.browse(); } }
+            Button { text: "open this location"; clicked => { root.open-location(); } }
+        }
+        Text { text: "filenames"; color: Theme.text; font-weight: 700; }
+        HorizontalLayout {
+            LineEdit { text <=> root.phrase; enabled: !root.working && !root.asking; accepted => { root.update(); } }
+            Button { text: "update"; enabled: !root.working && !root.asking; clicked => { root.update(); } }
+        }
+        Text { text: "{hash}   {file_id}   {#}   {tags}   {nn tags}   [namespace]   (tag)"; color: Theme.text; }
+        CheckBox { text: "trash files in hydrus client after export"; checked <=> root.trash; enabled: !root.working && !root.asking; toggled => { if root.trash { root.symlinks = false; } } }
+        CheckBox { text: "EXPERIMENTAL: export symlinks"; checked <=> root.symlinks; enabled: !root.working && !root.trash; }
+        Button { text: root.sidecars; enabled: !root.working && !root.asking; clicked => { root.edit-sidecars(); } }
+        Text { text: root.status; color: Theme.text; wrap: word-wrap; }
+        if root.working: ProgressIndicator { progress: root.progress; }
+        HorizontalLayout {
+            Rectangle { horizontal-stretch: 1; }
+            Button { text: "close"; enabled: !root.working && !root.asking; clicked => { root.dismissed(); } }
+            Button { text: "cancel export"; enabled: root.working; clicked => { root.cancel(); } }
+            Button { text: "export and close"; enabled: !root.working && !root.asking; clicked => { root.export(true); } }
+            Button { text: "export"; enabled: !root.working && !root.asking; clicked => { root.export(false); } }
+        }
+    }
+    if root.asking: Asking {
+        title: "Are you sure?";
+        message: root.question;
+        choices: ["yes", "no"];
+        chosen(i) => { root.answer(i); }
+        cancelled => { root.answer(1); }
+    }
+}

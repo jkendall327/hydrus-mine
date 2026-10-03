@@ -69,4 +69,5 @@ mod volume;
 mod watcher_checker;
 mod zoom;
 
+mod export_files;
 mod services_review;

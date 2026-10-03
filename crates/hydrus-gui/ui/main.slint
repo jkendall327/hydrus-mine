@@ -28,6 +28,7 @@ export { ManageNotesWindow } from "manage_notes.slint";
 export { ManageUrlsWindow } from "manage_urls.slint";
 export { ManageRatingsWindow } from "manage_ratings.slint";
 export { DateTimeEditorWindow, ManageTimesWindow, TimeRow } from "manage_times.slint";
+export { ExportFilesWindow } from "export_files.slint";
 export { ForceFiletypeWindow } from "force_filetype.slint";
 export { TagFilterWindow } from "tag_filter.slint";
 export { MergeOptionsWindow } from "merge_options.slint";
@@ -1648,6 +1649,11 @@ export component MainWindow inherits Window {
                         }
                         if root.thumbnail-menu.has-share: Menu {
                             title: "share";
+                            for row in root.thumbnail-menu.share-export: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.thumbnail-menu.share-export.length > 0: MenuSeparator { }
                             for row in root.thumbnail-menu.share-a: MenuItem {
                                 title: row.label;
                                 activated => { root.menu-chosen(row.id); }

@@ -82,6 +82,8 @@ pub enum Action {
     OpenInFileBrowser,
     /// Copy the entry's text (a label's).
     Copy,
+    /// Export the selected local files to a chosen folder.
+    ExportFiles,
     /// Copy the selected local files themselves (as files a file manager
     /// pastes), or their paths, hashes of a kind, or ids.
     CopyFiles,
@@ -308,8 +310,10 @@ pub fn share_menu(
         !(of.is_empty() || of.len() == 1 && focused.is_some_and(|f| of.contains(&f)))
     };
     let mut entries = Vec::new();
-    // (the reference's "export files" first, which hydrus-rs doesn't have
-    // yet)
+    if !local.is_empty() {
+        entries.push(Entry::Item("export files".into(), Action::ExportFiles));
+        entries.push(Entry::Separator);
+    }
     if more_than_focused(&local) {
         entries.push(Entry::Item("copy files".into(), Action::CopyFiles));
         entries.push(Entry::Item("copy paths".into(), Action::CopyPaths));
@@ -1399,6 +1403,8 @@ impl OpenSlots {
 /// focused file's path, copy hash submenu and file id.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct ShareSlots {
+    /// Manual export before the copying groups.
+    pub export: Option<SlotItem>,
     pub a: Vec<SlotItem>,
     pub hashes: Option<(String, Vec<SlotItem>)>,
     pub b: Vec<SlotItem>,
@@ -1411,7 +1417,17 @@ impl ShareSlots {
     fn new(inner: &[Entry]) -> Self {
         let mut share = Self::default();
         let mut past_separator = false;
+        let mut export_separator = false;
         for e in inner {
+            if let Entry::Item(label, Action::ExportFiles) = e {
+                share.export = Some((label.clone(), Action::ExportFiles));
+                export_separator = true;
+                continue;
+            }
+            if export_separator && matches!(e, Entry::Separator) {
+                export_separator = false;
+                continue;
+            }
             match (e, past_separator) {
                 (Entry::Separator, _) => past_separator = true,
                 (Entry::Item(label, action), false) if share.hashes.is_none() => {
@@ -1437,7 +1453,9 @@ impl ShareSlots {
         let menu = |(title, items): &(String, Vec<SlotItem>)| {
             Entry::Menu(title.clone(), items.iter().map(item).collect())
         };
-        let mut inner: Vec<Entry> = self.a.iter().map(item).collect();
+        let mut inner: Vec<Entry> = self.export.iter().map(item).collect();
+        separate(&mut inner);
+        inner.extend(self.a.iter().map(item));
         inner.extend(self.hashes.iter().map(menu));
         inner.extend(self.b.iter().map(item));
         separate(&mut inner);

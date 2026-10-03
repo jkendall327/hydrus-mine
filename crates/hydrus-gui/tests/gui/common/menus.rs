@@ -38,6 +38,7 @@ pub fn kept(label: &str) -> Kept {
         "share" => Kept::Only(&[
             "copy files",
             "copy file",
+            "export files",
             "copy paths",
             "copy hashes",
             "copy file ids",

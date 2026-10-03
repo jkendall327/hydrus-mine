@@ -843,3 +843,30 @@ Checked by the `popups` conformance scenario.
   an int, so the reference stores `true` as one star).
 
 - **Service review** currently uses a service dropdown in place of the reference's nested local/remote/type tabs. It shows native counts, id/key controls and refresh. The long service descriptions, Client API account controls, repository/IPFS administration, tag migration and bulk clear/undelete maintenance actions remain unavailable and are described in the window.
+
+## Manual file exports
+
+Manual export uses the scheduled export folders' filename and sidecar code.
+The preview paths, selected-name collision suffixes, removal question and
+trash/export-and-close confirmations match `oracle/fixtures/export_files.json`,
+as do filenames and copied bytes from the real reference export worker.
+For data safety, a failed or cancelled run never trashes any source files;
+the reference can trash the successfully copied prefix after an error. Paths
+are checked by components and canonical subfolders, and existing symlinks,
+exports into managed file storage and overwriting a source pathname are
+rejected. Copies replace destinations atomically through a sibling temporary file;
+existing hardlinks are detached so other directory entries retain their bytes.
+Existing sidecars are detached before routing for the same reason.
+
+The window displays filename examples as text; it does not yet offer the
+reference's interactive pattern-example menu or selected-files tags sidebar.
+"Export and close" closes the review window (the reference's quit-afterwards
+flag also closes its review frame, not the whole client). Cancellation completes
+an in-flight copy before stopping between files. Progress is in the review
+window rather than a separate popup job. Removing rows refreshes filenames
+immediately; the reference retains cached paths until the phrase or directory
+changes.
+
+The imported export phrase and filename limits are reused. Legacy manual export
+destination, trash preference and default sidecar routes are not yet mapped
+into the new manual settings; choices made in this window are persisted.

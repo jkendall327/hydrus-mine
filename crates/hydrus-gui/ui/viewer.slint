@@ -695,7 +695,12 @@ export component MediaViewerWindow inherits Window {
                 }
                 if root.context-menu.has-share: Menu {
                     title: "share";
-                    for row in root.context-menu.share-a: MenuItem {
+                    for row in root.context-menu.share-export: MenuItem {
+                                title: row.label;
+                                activated => { root.menu-chosen(row.id); }
+                            }
+                            if root.context-menu.share-export.length > 0: MenuSeparator { }
+                            for row in root.context-menu.share-a: MenuItem {
                         title: row.label;
                         activated => { root.menu-chosen(row.id); }
                     }

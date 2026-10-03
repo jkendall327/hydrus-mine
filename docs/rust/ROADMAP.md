@@ -22,7 +22,8 @@ screens not started yet:
    parser editors need too, so it comes with item 6).
 3. The rest of the media "manage" dialogs: the embedded metadata window,
    and share > export files. **Done**: URLs (urls > manage), ratings
-   (manage > ratings), times (manage > times), force filetype.
+   (manage > ratings), times (manage > times), force filetype, and share >
+   export files (previews, worker progress/cancel, sidecars and confirmed trash).
    **Half done**: the embedded metadata window (see "Handover: the
    embedded metadata window" below).
 4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Next**: manage local services; remote repositories/IPFS/account administration and bulk maintenance remain subsequent work.
@@ -85,7 +86,7 @@ decoder doesn't open them as pillow-heif/pillow-jxl do).
    non-UTF-8 IPTC decoded lossily rather than by `NonFailingUnicodeDecode`;
    malformed XMP shown as empty where BeautifulSoup would recover).
 
-Then share > export files, and items 4 to 6.
+Manual export files is now done; then items 4 to 6.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
