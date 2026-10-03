@@ -617,9 +617,9 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   a line each (as the Client API reads them), in the rule's location
   (which isn't changed there), where the reference has search
   autocompletes with a location button and a live count of pairs. It has
-  no import/export/duplicate of rules or comparators,
-  and custom merge options start from the client's for the action and
-  aren't edited there. A relative comparator's time delta and range are
+  no import/export/duplicate of rules or comparators, and its custom
+  merge options are edited in their own window (the reference embeds
+  the editor). A relative comparator's time delta and range are
   in milliseconds, where the reference has a time widget.
 - **The file log window** can't yet import new sources, export them to
   a png, search for the selected URLs, or do its advanced entries (these
@@ -635,6 +635,9 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   presentation's location is all my files or all local files. It has no
   copy, paste or favourites buttons, and always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
+- **The merge options editor** asks its select dialogs as a row of
+  buttons (no service or action preselected), and edits the note merge
+  settings in a box of its own rather than a dialog.
 - **The tag filter editor** has no favourites box (import, export, load,
   save, delete; the client has no favourite tag filters yet, nor the
   serialised filter the reference copies), nor advanced mode's "show

@@ -265,6 +265,8 @@ export component AutoResolutionRuleWindow inherits Window {
     in-out property <bool> delete-a;
     in-out property <bool> delete-b;
     in-out property <bool> default-merge;
+    // "edit custom merge options" clicked
+    callback edit-merge();
     // what is wrong
     in property <string> errors;
     callback changed();
@@ -471,6 +473,11 @@ export component AutoResolutionRuleWindow inherits Window {
                 CheckBox {
                     checked <=> root.default-merge;
                     toggled => { root.changed(); }
+                }
+                Button {
+                    text: "edit custom merge options";
+                    enabled: !root.default-merge;
+                    clicked => { root.edit-merge(); }
                 }
             }
         }

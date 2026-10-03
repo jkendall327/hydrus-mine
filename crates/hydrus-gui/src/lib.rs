@@ -45,6 +45,7 @@ mod locations_window;
 mod manage_notes_window;
 pub(crate) mod manage_tags_window;
 mod menu_bar;
+pub mod merge_options_window;
 pub mod mpv;
 mod options_window;
 mod page;
@@ -144,10 +145,10 @@ pub use hydrus_gui_model::{
     autocomplete, checker_options, collect, domains, duplicate_filter, duplicates_page,
     edit_subscription, favourites, file_log, filename_tagging, filetype_tree, folders,
     import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
-    manage_tags, media_actions, notes_editor, options, page_chooser, predicate_editors, ratings,
-    scanbar, search_log, selection, session_saving, sort, status, subscriptions_dedupe,
-    subscriptions_dialog, subscriptions_list, tag_filter_editor, thumbnail_icons,
-    thumbnail_ratings,
+    manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
+    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sort, status,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};

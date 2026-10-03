@@ -106,12 +106,11 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   tab is done (`src/auto_resolution_preview_window.rs`), its pairs
   opening in the duplicate filter. "Review actions" opens its pending
   pairs in the duplicate filter, to approve or deny, and its other pairs
-  in the media viewer, and its selected pairs in a new page. The merge options
-  editor's workings are done (`hydrus-gui-model`'s
-  `merge_options_editor`, recorded by
-  `oracle/record_merge_options_editor.py`). **Next**: its window, opened
-  for a rule's custom merge options and the page's default merge options;
-  and the rules' searches' locations.
+  in the media viewer, and its selected pairs in a new page. The merge
+  options editor is done (`src/merge_options_window.rs`, recorded by
+  `oracle/record_merge_options_editor.py`), for a rule's custom merge
+  options and the page's defaults. **Next**: the rules' searches'
+  locations; the duplicate filter's "custom action".
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.
 

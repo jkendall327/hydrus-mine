@@ -29,6 +29,7 @@ mod media_actions;
 mod media_shortcuts;
 mod media_sort;
 mod menu_bar;
+mod merge_options;
 mod mpv;
 mod options_window;
 mod page_scroll;

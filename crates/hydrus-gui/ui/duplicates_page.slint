@@ -26,6 +26,8 @@ export struct DuplicatesData {
     // the auto-resolution tab
     rules-during-idle: bool,
     rules-during-active: bool,
+    // advanced mode: alternates' merge options can be edited too
+    advanced: bool,
     any-rule-selected: bool,
     // a question waiting on an answer
     asking: bool,
@@ -170,6 +172,26 @@ export component DuplicatesSidebar inherits VerticalLayout {
                 padding: 6px;
                 spacing: 6px;
                 alignment: start;
+                merge-menu := ContextMenuArea {
+                    Menu {
+                        MenuItem {
+                            title: "edit duplicate metadata merge options for 'this is better'";
+                            activated => { root.action("merge options", 0, false, false); }
+                        }
+                        MenuItem {
+                            title: "edit duplicate metadata merge options for 'same quality'";
+                            activated => { root.action("merge options", 1, false, false); }
+                        }
+                        if root.data.advanced: MenuItem {
+                            title: "edit duplicate metadata merge options for 'alternates' (advanced!)";
+                            activated => { root.action("merge options", 2, false, false); }
+                        }
+                    }
+                    Button {
+                        text: "edit default duplicate metadata merge options";
+                        clicked => { merge-menu.show({ x: 0px, y: self.height }); }
+                    }
+                }
                 Label { text: root.note; }
                 Button {
                     text: "launch the filter";

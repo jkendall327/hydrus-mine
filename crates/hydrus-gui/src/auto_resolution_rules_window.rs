@@ -40,6 +40,8 @@ pub struct Slots {
     /// The comparator editors open, innermost last, each with its own
     /// number.
     pub comparators: ComparatorStack,
+    /// A rule's custom merge options' editor.
+    pub merge_options: crate::merge_options_window::Slot,
     /// The duplicate filter opened from the preview's lists.
     pub preview_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 }
@@ -50,6 +52,7 @@ impl std::fmt::Debug for Slots {
             .field("list", &self.list.borrow().is_some())
             .field("rule", &self.rule.borrow().is_some())
             .field("comparators", &self.comparators.borrow().len())
+            .field("merge_options", &self.merge_options.borrow().is_some())
             .field("preview_filter", &self.preview_filter.borrow().is_some())
             .finish()
     }
@@ -545,6 +548,9 @@ struct RuleState {
     context: TextContext,
     errors: Vec<String>,
     selected: Option<usize>,
+    /// The decision the custom merge options are for: they start again
+    /// from the client's when the action changes (`_UpdateActionControls`).
+    merge_for: Option<hydrus_store::duplicates::PairRelationship>,
 }
 
 fn show_rule(window: &AutoResolutionRuleWindow, state: &RuleState, fields: bool) {
@@ -664,13 +670,16 @@ fn read_rule(window: &AutoResolutionRuleWindow, store: &Store, state: &mut RuleS
     }
     rule.delete_a = window.get_delete_a();
     rule.delete_b = window.get_delete_b();
+    let decision = relationship(rule.action);
     if window.get_default_merge() {
         rule.custom_merge = None;
-    } else if rule.custom_merge.is_none() {
+        state.merge_for = None;
+    } else if rule.custom_merge.is_none() || state.merge_for != Some(decision) {
         // (the client's options for the action, to start from)
         let client: hydrus_store::duplicates::DuplicateMergeSettings =
             store.read(hydrus_store::settings::get).unwrap_or_default();
-        rule.custom_merge = client.for_relationship(relationship(rule.action)).cloned();
+        rule.custom_merge = client.for_relationship(decision).cloned();
+        state.merge_for = Some(decision);
     }
 }
 
@@ -719,11 +728,16 @@ fn open_rule(
         })
         .collect();
     window.set_location(location.join(", ").into());
+    let merge_for = rule
+        .custom_merge
+        .is_some()
+        .then(|| relationship(rule.action));
     let state = Rc::new(RefCell::new(RuleState {
         rule,
         context: text_context(store),
         errors: Vec::new(),
         selected: None,
+        merge_for,
     }));
     let close = {
         let weak = window.as_weak();
@@ -746,6 +760,36 @@ fn open_rule(
             let mut state = state.borrow_mut();
             read_rule(&window, &store, &mut state);
             show_rule(&window, &state, false);
+        }
+    });
+    // the custom merge options, in their editor
+    window.on_edit_merge({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slot = slots.merge_options.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let (decision, options) = {
+                let mut state = state.borrow_mut();
+                read_rule(&window, &store, &mut state);
+                let Some(options) = state.rule.custom_merge.clone() else {
+                    return;
+                };
+                (relationship(state.rule.action), options)
+            };
+            let applied: Rc<dyn Fn(hydrus_store::duplicates::merge::MergeOptions)> = {
+                let state = state.clone();
+                Rc::new(move |options| state.borrow_mut().rule.custom_merge = Some(options))
+            };
+            match crate::merge_options_window::open(
+                &store, decision, &options, false, &slot, applied,
+            ) {
+                Ok(editor) => *slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the merge options: {e}"),
+            }
         }
     });
     window.on_comparator_clicked({

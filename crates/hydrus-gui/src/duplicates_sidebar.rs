@@ -14,7 +14,9 @@ use std::sync::Arc;
 use slint::{ModelRc, SharedString, VecModel};
 
 use hydrus_store::Store;
+use hydrus_store::duplicates::PairRelationship;
 use hydrus_store::duplicates::auto::{self, AutoResolutionSettings, PairStatus, Rule};
+use hydrus_store::duplicates::merge::{DuplicateMergeSettings, MergeOptions};
 use hydrus_store::settings;
 use hydrus_store::similar::{self, SimilarFilesSettings};
 
@@ -57,6 +59,8 @@ pub(crate) struct Sidebar {
     pub(crate) open_viewer: RefCell<Option<crate::auto_resolution_review_window::OpenViewer>>,
     /// Opens files in a new page (set as the main window is bound).
     pub(crate) open_files: RefCell<Option<crate::auto_resolution_review_window::OpenFiles>>,
+    /// The default merge options' editor, while it is open.
+    pub(crate) merge_options: crate::merge_options_window::Slot,
 }
 
 impl Sidebar {
@@ -154,6 +158,10 @@ impl Sidebar {
             search_during_active: similar_settings.during_active,
             rules_during_idle: auto_settings.during_idle,
             rules_during_active: auto_settings.during_active,
+            advanced: store
+                .read(settings::get::<settings::AdvancedMode>)
+                .unwrap_or_default()
+                .0,
             any_rule_selected: !state.selection.is_empty(),
             asking: state.asking.is_some(),
             asking_title: title.into(),
@@ -252,6 +260,43 @@ impl Sidebar {
                     ) {
                         eprintln!("could not open the review: {e}");
                     }
+                }
+            }
+            "merge options" => {
+                let relationship = match n {
+                    0 => PairRelationship::Better,
+                    1 => PairRelationship::SameQuality,
+                    _ => PairRelationship::Alternate,
+                };
+                let current: DuplicateMergeSettings = store.read(settings::get).unwrap_or_default();
+                let options = current
+                    .for_relationship(relationship)
+                    .cloned()
+                    .unwrap_or_default();
+                let applied: Rc<dyn Fn(MergeOptions)> = {
+                    let store = store.clone();
+                    Rc::new(move |options| {
+                        write(&store, move |conn| {
+                            let mut s: DuplicateMergeSettings = settings::get(conn)?;
+                            match relationship {
+                                PairRelationship::Better => s.better = options,
+                                PairRelationship::SameQuality => s.same_quality = options,
+                                _ => s.alternate = options,
+                            }
+                            settings::set(conn, &s)
+                        });
+                    })
+                };
+                match crate::merge_options_window::open(
+                    &store,
+                    relationship,
+                    &options,
+                    false,
+                    &self.merge_options,
+                    applied,
+                ) {
+                    Ok(window) => *self.merge_options.borrow_mut() = Some(window),
+                    Err(e) => eprintln!("could not open the merge options: {e}"),
                 }
             }
             "edit rules" => {

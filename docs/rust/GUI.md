@@ -943,7 +943,18 @@ match" to "speculative", or set exactly), names the tab "preparation (60%
 done)" while there is work left, starts and stops working hard, and from
 its cog menu switches the search on in idle and normal time and deletes
 every potential pair to search again (asking first). Filtering launches
-the duplicate filter. Auto-resolution lists the rules with their progress
+the duplicate filter, and its "edit default duplicate metadata merge
+options" menu edits the client's merge options for "this is better",
+"same quality" and, in advanced mode, "alternates", in the reference's
+editor (`ui/merge_options.slint`, `src/merge_options_window.rs`,
+`hydrus-gui-model/src/merge_options_editor.rs`): the tag services whose
+tags move or copy (each through a tag filter, edited in the tag filter
+editor) and the rating services whose ratings do, added by service and
+then action ("this is better" alone asks one), edited and deleted (asking
+first); whether archived status, file modified times, known urls and
+notes sync; and the note merge settings. What it says and asks at each
+step is as `oracle/record_merge_options_editor.py` recorded the
+reference's. Auto-resolution lists the rules with their progress
 ("5 to search, 2 still to test, 3 pairs resolved") and status, pauses and
 plays the selected, switches auto-resolution on in idle and normal time,
 and resets the selected (or every) rule's search, tests or denials,
@@ -965,7 +976,9 @@ in their own editors: a search for A, B or either; A or B's progressive
 jpeg test; a relative test of a file property with its operator,
 multiplier and delta; a pair test; visual duplicates; and OR and AND
 lists of comparators, each edited in an editor of its own) and the
-action (which, deleting A or B, and default or custom merge options).
+action (which, deleting A or B, and default or custom merge options,
+starting from the client's for the action and edited in the merge options
+editor).
 "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
