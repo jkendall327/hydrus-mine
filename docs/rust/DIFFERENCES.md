@@ -595,12 +595,13 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   a png, search for the selected URLs, or do its advanced entries (these
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
-  again doesn't offer to clear its deletion record. It opens from
-  downloader pages, not yet from an import folder or a subscription's
-  query.
+  again doesn't offer to clear its deletion record.
 - **The search log window** can't yet export URLs to a png, import new
-  URLs, or export the selected page objects (greyed out); it opens from
-  downloader pages, not yet from a subscription's query.
+  URLs, or export the selected page objects (greyed out).
+- **A subscription query's logs**, opened from the query editor, change
+  the query at once; the reference edits a copy that the dialogs'
+  "apply" keeps or "cancel" drops. A query added in the dialog has no
+  logs to open until it is applied. Likewise an import folder's file log.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

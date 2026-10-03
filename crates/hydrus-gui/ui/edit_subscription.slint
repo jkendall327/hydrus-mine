@@ -98,6 +98,10 @@ export component EditSubscriptionWindow inherits Window {
     in property <string> query-status;
     in property <string> query-file-log;
     in property <string> query-search-log;
+    // the query has a queue (and so its logs) yet
+    in property <bool> query-has-logs;
+    // its file log's window, or (true) its search log's
+    callback query-log(bool);
     callback sort(int, bool);
     // (row, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
@@ -390,8 +394,32 @@ export component EditSubscriptionWindow inherits Window {
                 }
                 Group {
                     title: "history";
-                    Label { text: root.query-file-log; }
-                    Label { text: root.query-search-log; }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Label {
+                            text: root.query-file-log;
+                            horizontal-stretch: 1;
+                            vertical-alignment: center;
+                        }
+                        Button {
+                            text: "file log";
+                            enabled: root.query-has-logs;
+                            clicked => { root.query-log(false); }
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Label {
+                            text: root.query-search-log;
+                            horizontal-stretch: 1;
+                            vertical-alignment: center;
+                        }
+                        Button {
+                            text: "search log";
+                            enabled: root.query-has-logs;
+                            clicked => { root.query-log(true); }
+                        }
+                    }
                 }
                 Rectangle { vertical-stretch: 1; }
                 HorizontalLayout {

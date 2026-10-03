@@ -218,6 +218,9 @@ export component ImportFolderWindow inherits Window {
     in-out property <bool> publish-popup-button;
     in-out property <bool> publish-page;
     in property <string> cached-paths;
+    in property <bool> has-file-log;
+    // the cached paths' file log
+    callback file-log();
     in property <string> import-options;
     in property <[string]> action-choices;
     in-out property <[FolderActionRow]> actions;
@@ -325,7 +328,15 @@ export component ImportFolderWindow inherits Window {
                                 text: "review currently cached import paths: ";
                                 horizontal-stretch: 1;
                             }
-                            Label { text: root.cached-paths; }
+                            Label {
+                                text: root.cached-paths;
+                                vertical-alignment: center;
+                            }
+                            Button {
+                                text: "file log";
+                                enabled: root.has-file-log;
+                                clicked => { root.file-log(); }
+                            }
                         }
                     }
                     Button {

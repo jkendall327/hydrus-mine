@@ -190,6 +190,24 @@ fn the_dialog_edits_a_subscription_and_the_list_writes_it() {
     dialog.invoke_chosen(0);
     assert_eq!(names(&dialog), ["blue eyes", "Newbie (new one)"]);
 
+    // a query's logs, from its editor (a new query has none yet)
+    click(&dialog, "Newbie (new one)");
+    dialog.invoke_edit_query();
+    assert!(!dialog.get_query_has_logs());
+    dialog.invoke_query_cancel();
+    click(&dialog, "blue eyes");
+    dialog.invoke_edit_query();
+    assert!(dialog.get_query_has_logs());
+    dialog.invoke_query_log(false);
+    let log = bound.folders.log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(log.get_window_title(), "file log");
+    assert!(log.get_rows().row_count() > 0);
+    dialog.invoke_query_log(true);
+    let log = bound.folders.log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(log.get_window_title(), "search log");
+    log.invoke_close_window();
+    dialog.invoke_query_cancel();
+
     // renamed, applied: back in the list
     dialog.set_name("renamed".into());
     dialog.set_publish_page(true);

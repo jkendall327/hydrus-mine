@@ -181,6 +181,14 @@ fn import_folders_are_added_edited_and_written() {
         .unwrap()
         .clone_strong();
     assert_eq!(edit.get_name(), "import folder (1)");
+    // its cached paths' file log
+    assert!(edit.get_has_file_log());
+    edit.invoke_file_log();
+    let log = bound.folders.log.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(log.get_window_title(), "file log");
+    assert_eq!(log.get_rows().row_count(), 0);
+    log.invoke_close_window();
+    assert!(bound.folders.log.borrow().is_none());
     edit.set_name("second".into());
     edit.invoke_apply();
     list.invoke_row_clicked(0, false, false);

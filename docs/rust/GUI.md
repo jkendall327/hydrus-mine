@@ -207,6 +207,10 @@ log's menu: deleting entries of each status (asking first), restarting a
 search whose last page failed, and copying every URL. Changes nudge the
 downloader to work the queue again. As `oracle/record_search_log.py`
 recorded the reference's.
+The subscription query editor's "history" box has "file log" and
+"search log" buttons for the query's logs (its search log is read only,
+as the reference's is), and the edit import folder dialog a "file log"
+button for its cached import paths.
 
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,

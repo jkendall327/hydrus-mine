@@ -137,6 +137,7 @@ fn show_editor(window: &EditSubscriptionWindow, store: &Store, open: &Open, edit
         .and_then(|q| q.query.queue)
         .and_then(|queue| store.read(|c| queues::gallery_seed_counts(c, queue)).ok())
         .unwrap_or_default();
+    window.set_query_has_logs(query.and_then(|q| q.query.queue).is_some());
     window.set_query_file_log(queues::file_log_status(&files).into());
     window.set_query_search_log(queues::search_log_status(&searches).0.into());
 }
@@ -218,11 +219,14 @@ fn clipboard_text() -> Result<String, String> {
     crate::from_clipboard()
 }
 
-/// Where the dialog is opened from: the window's slot, and the checker
-/// options editor's.
+/// Where the dialog is opened from: the window's slot, the checker
+/// options editor's, and a query's log window's (and where it shows
+/// files).
 pub(crate) struct Slots {
     pub edit: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     pub checker: Rc<RefCell<Option<CheckerOptionsWindow>>>,
+    pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
+    pub open_files: crate::file_log_window::OpenFiles,
 }
 
 /// Open the dialog on a subscription; on "apply" it gives the edited
@@ -276,6 +280,39 @@ pub(crate) fn open(
             }
         })
     };
+    // the edited query's logs, opened on its queue (changes made there are
+    // made at once)
+    window.on_query_log({
+        let state = state.clone();
+        let store = store.clone();
+        let log = slots.log.clone();
+        let open_files = slots.open_files.clone();
+        move |search| {
+            let queue = {
+                let open = state.borrow();
+                open.editing
+                    .as_ref()
+                    .and_then(|e| e.key)
+                    .and_then(|k| open.dialog.get(k))
+                    .and_then(|q| q.query.queue)
+            };
+            let Some(queue) = queue else {
+                return;
+            };
+            if let Some(old) = log.borrow_mut().take() {
+                let _ = old.hide();
+            }
+            let opened = if search {
+                crate::search_log_window::open(&store, queue, &log)
+            } else {
+                crate::file_log_window::open(&store, queue, &log, &open_files.0)
+            };
+            match opened {
+                Ok(window) => *log.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the log: {e}"),
+            }
+        }
+    });
     window.on_sort({
         let change = change.clone();
         move |column, ascending| {

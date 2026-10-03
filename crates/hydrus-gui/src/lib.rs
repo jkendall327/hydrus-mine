@@ -741,12 +741,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
     });
     let filter: Rc<RefCell<Option<DuplicateFilterWindow>>> = Rc::default();
-    // the page's importer's file log, its files shown in new pages
+    // logs' files, shown in new pages
+    let open_files = file_log_window::OpenFiles({
+        let change_pages = change_pages.clone();
+        Rc::new(move |files| {
+            let location = hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS.to_vec(),
+            ));
+            change_pages(&|pages| {
+                pages.open_files(location.clone(), files.clone(), None, None);
+                Ok(())
+            });
+        })
+    });
+    // the page's importer's file log
     let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();
     let file_log = file_log_slot.clone();
     window.on_open_file_log({
         let page = page.clone();
-        let change_pages = change_pages.clone();
+        let open_files = open_files.clone();
         let file_log = file_log.clone();
         move || {
             let page = page();
@@ -757,21 +770,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             if let Some(old) = file_log.borrow_mut().take() {
                 let _ = old.hide();
             }
-            let open_files: Rc<dyn Fn(Vec<hydrus_core::HashId>)> = {
-                let change_pages = change_pages.clone();
-                Rc::new(move |files| {
-                    let location =
-                        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
-                            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
-                                .to_vec(),
-                        ));
-                    change_pages(&|pages| {
-                        pages.open_files(location.clone(), files.clone(), None, None);
-                        Ok(())
-                    });
-                })
-            };
-            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
+            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files.0) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
             }
@@ -1029,7 +1028,10 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
-    let folders = folders_window::Slots::default();
+    let folders = folders_window::Slots {
+        open_files: open_files.clone(),
+        ..folders_window::Slots::default()
+    };
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -1089,6 +1091,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let slot = subscriptions.clone();
                 let edit_slot = edit_subscription.clone();
                 let checker_slot = checker_options.clone();
+                let log_slot = folders.log.clone();
+                let open_files = open_files.clone();
                 Rc::new(move || {
                     if slot.borrow().is_some() {
                         return;
@@ -1097,6 +1101,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let slots = edit_subscription_window::Slots {
                         edit: edit_slot.clone(),
                         checker: checker_slot.clone(),
+                        log: log_slot.clone(),
+                        open_files: open_files.clone(),
                     };
                     match subscriptions_window::open(&store, &slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),

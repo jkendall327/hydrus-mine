@@ -64,6 +64,23 @@ impl State {
     }
 }
 
+/// Showing files in a new page, as a log window's "open ... in a new
+/// page" does; it does nothing until the main window gives it a way.
+#[derive(Clone)]
+pub struct OpenFiles(pub Rc<dyn Fn(Vec<HashId>)>);
+
+impl std::fmt::Debug for OpenFiles {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.write_str("OpenFiles")
+    }
+}
+
+impl Default for OpenFiles {
+    fn default() -> Self {
+        Self(Rc::new(|_| {}))
+    }
+}
+
 /// A change to the store.
 type StoreChange = Box<dyn FnOnce(&rusqlite::Connection) -> hydrus_store::Result<()> + Send>;
 

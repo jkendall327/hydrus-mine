@@ -43,6 +43,9 @@ pub struct Slots {
     pub import_edit: Rc<RefCell<Option<ImportFolderWindow>>>,
     pub export_list: Rc<RefCell<Option<FoldersWindow>>>,
     pub export_edit: Rc<RefCell<Option<ExportFolderWindow>>>,
+    /// An import folder's file log, and where it shows files.
+    pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
+    pub open_files: crate::file_log_window::OpenFiles,
 }
 
 impl std::fmt::Debug for Slots {
@@ -52,6 +55,8 @@ impl std::fmt::Debug for Slots {
             .field("import_edit", &self.import_edit.borrow().is_some())
             .field("export_list", &self.export_list.borrow().is_some())
             .field("export_edit", &self.export_edit.borrow().is_some())
+            .field("log", &self.log.borrow().is_some())
+            .field("open_files", &self.open_files)
             .finish()
     }
 }
@@ -346,7 +351,7 @@ pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
                     });
                 })
             };
-            match open_import_folder(&store, folder, &slots.import_edit, &done) {
+            match open_import_folder(&store, folder, &slots, &done) {
                 Ok(window) => *slots.import_edit.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the import folder: {e}"),
             }
@@ -540,10 +545,27 @@ fn read_import_fields(window: &ImportFolderWindow, folder: &mut ImportFolderEdit
 fn open_import_folder(
     store: &Arc<Store>,
     folder: ImportFolderEdit,
-    slot: &Rc<RefCell<Option<ImportFolderWindow>>>,
+    slots: &Slots,
     done: &Rc<dyn Fn(ImportFolderEdit)>,
 ) -> Result<ImportFolderWindow, String> {
+    let slot = &slots.import_edit;
     let window = ImportFolderWindow::new().map_err(|e| e.to_string())?;
+    // its file log (a new folder has none yet)
+    window.set_has_file_log(folder.id.is_some());
+    if let Some(queue) = folder.id {
+        let store = store.clone();
+        let log = slots.log.clone();
+        let open_files = slots.open_files.clone();
+        window.on_file_log(move || {
+            if let Some(old) = log.borrow_mut().take() {
+                let _ = old.hide();
+            }
+            match crate::file_log_window::open(&store, queue, &log, &open_files.0) {
+                Ok(window) => *log.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the file log: {e}"),
+            }
+        });
+    }
     let s = &folder.settings;
     window.set_name(folder.name.clone().into());
     window.set_path(s.path.clone().into());
