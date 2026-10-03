@@ -8,6 +8,7 @@ mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;
 mod datetime_editor;
+mod downloader_definitions;
 mod duplicates_page;
 mod edit_subscription;
 mod embedded_metadata;

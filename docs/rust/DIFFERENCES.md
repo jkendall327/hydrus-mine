@@ -749,6 +749,23 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **There is no browser impersonation** (the reference's optional
   `curl_cffi` connections); requests are always plain ones.
 
+## Downloader definition editors
+
+- URL classes and single/nested gallery URL generators have native lists and
+  rule editors. Their duplicate button creates new keys and unique names.
+  Domain lists and regex lists use one rule per line, and nested generators
+  select members with checkboxes. Definition import/export, page/content parser
+  editors, URL class links and login editors remain follow-up work.
+- Invalid example details use the native URL rules' error wording. The
+  reference retains stale referral/next-page examples after a match failure;
+  the native editor clears all derived output. A changed list asks before
+  cancelling; cancelling an individual child editor discards its draft.
+  Association notices appear inline, and dependent-generator deletion
+  confirmations are combined into one question before deleting the selection.
+- Gallery paging rejects invalid index/delta input on Apply. Delta is 1 to
+  65536, as the reference's spin box allows. The native editor exposes zero
+  based path indices or a query parameter name directly.
+
 ## URL classes
 
 - **A URL missing a required query parameter is reported by that

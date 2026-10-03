@@ -171,6 +171,8 @@ pub enum Command {
     Options,
     /// Open the manage subscriptions dialog.
     ManageSubscriptions,
+    /// Manage URL classes (true) or gallery URL generators (false).
+    ManageDownloaderDefinitions(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -841,8 +843,14 @@ fn network_menu(facts: &Facts) -> Entry {
                         ],
                     ),
                     SEP,
-                    todo(dots("gallery url generators")),
-                    todo(dots("url classes")),
+                    item(
+                        dots("gallery url generators"),
+                        Command::ManageDownloaderDefinitions(false),
+                    ),
+                    item(
+                        dots("url classes"),
+                        Command::ManageDownloaderDefinitions(true),
+                    ),
                     todo(dots("parsers")),
                     SEP,
                     todo(dots("url class links")),

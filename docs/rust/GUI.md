@@ -1225,6 +1225,31 @@ the viewer's other zoom shortcuts (fill, max, the zoom menu), its
 zoom and pan locks, and "open externally" for the file types shown with
 that button (their thumbnail fills the window instead).
 
+### Downloader definitions
+
+Network > downloaders > url classes opens the native class list. Add, edit,
+duplicate and delete are staged until Apply. The list sorts and supports
+Ctrl/Shift selection; its URL test selects the matching class in the current
+draft. Class editors expose domain and regex masks, subdomain handling, ordered
+path component matches/defaults, query parameter matches/defaults/ephemeral
+values and their string processors, single-value matches, header overrides,
+normalization flags, API and referral converters, and gallery page indices.
+The example shows matching, stored/request URLs, API/referral URLs and the next
+page. Invalid examples and defaults keep the editor open. Applying refreshes
+URL matching immediately; cancelling leaves the native settings unchanged.
+
+Network > downloaders > gallery url generators has single and nested lists,
+with add/edit/duplicate/delete, template and replacement controls, search term
+separator, initial/example searches, raw/request URL previews and matched
+classes. Nested generators select existing single generators; missing members
+are reported in the list and repaired on Apply, as in the reference. Deleting
+a generator used by a nested one asks before removing it. Parser and URL link
+settings are preserved when saving these lists.
+
+Recorded by `oracle/record_downloader_definitions.py`; replayed by model and
+GUI `downloader_definitions` tests, including real native-store reopen and
+cancel checks.
+
 ## Size
 
 The reference GUI (`hydrus/client/gui`) is 225 files, about 179k lines of

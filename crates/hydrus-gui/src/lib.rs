@@ -28,6 +28,7 @@ mod auto_resolution_review_window;
 mod auto_resolution_rules_window;
 mod checker_options_window;
 pub mod daemon;
+pub mod downloader_definitions_window;
 mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
@@ -154,6 +155,7 @@ pub(crate) use bind_zoom;
 // (the workings without the windows, in their own crate, under their
 // names here)
 pub use grid::ThumbnailRows;
+pub use hydrus_gui_model::downloader_definitions;
 pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
     autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
@@ -215,6 +217,8 @@ pub struct Bound {
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// URL class and gallery URL generator definition editors.
+    pub downloader_definitions: downloader_definitions_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
@@ -1225,6 +1229,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
+    let downloader_definitions = downloader_definitions_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1311,6 +1316,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            manage_downloader_definitions: {
+                let pages = pages.clone();
+                let slots = downloader_definitions.clone();
+                Rc::new(move |classes| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = downloader_definitions_window::open(&store, &slots, classes) {
+                        eprintln!("could not open downloader definitions: {e}");
                     }
                 })
             },
@@ -2952,6 +2967,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         checker_options,
         session_dialog,
         subscriptions,
+        downloader_definitions,
         edit_subscription,
         folders,
         simple_formulae,

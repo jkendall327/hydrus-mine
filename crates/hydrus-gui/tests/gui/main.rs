@@ -11,6 +11,7 @@ mod auto_resolution_preview;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod collect;
+mod downloader_definitions;
 mod downloader_lists;
 mod duplicate_filter;
 mod duplicates_page;

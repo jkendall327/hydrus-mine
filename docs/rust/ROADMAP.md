@@ -32,8 +32,10 @@ screens not started yet:
    **Left**: write autocomplete and asynchronous list loading, default service
    tabs, repository permission/reason suggestions; tags > display/search,
    migrate tags, sibling/parent sync.
-6. The downloader definition editors: URL classes, parsers, gallery URL
-   generators, URL class links, logins, import/export downloaders.
+6. The downloader definition editors. **Done**: URL class and single/nested
+   gallery URL generator lists/rule editors, native Apply/cancel persistence
+   and live examples. **Next**: page/content parsers, URL class links, logins
+   and serialized downloader import/export.
 
 Then the gaps listed under "Later", and the half-done items below.
 
