@@ -129,8 +129,11 @@ shared with the system:filetype editor; `hydrus-gui-model`'s
 
 **Next**:
 
-- The tag filter editor for "get tags" filters and the blacklist, and a tags
-  input with autocomplete for additional tags and the whitelist.
+- The tag filter editor for "get tags" filters and the blacklist: its
+  workings are done (`hydrus-gui-model`'s `tag_filter_editor`, recorded
+  by `oracle/record_tag_filter_editor.py`); its window, and opening it
+  from the import options editor, are next. Then a tags input with
+  autocomplete for additional tags and the whitelist.
 - The subscriptions list's import options row (copy, paste and clear
   of the selected subscriptions' options): copying and pasting want the
   reference's serialised import options container (hydrus-legacy reads

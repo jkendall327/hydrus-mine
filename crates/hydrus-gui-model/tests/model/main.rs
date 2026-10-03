@@ -26,4 +26,5 @@ mod session_saving;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;
+mod tag_filter_editor;
 mod thumbnail_ratings;

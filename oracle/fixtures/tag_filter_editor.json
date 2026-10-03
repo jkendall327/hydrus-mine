@@ -1,0 +1,2980 @@
+{
+ "namespaces": [
+  "",
+  "character",
+  "creator",
+  "series"
+ ],
+ "test_default": "Enter a tag here to test if it passes the current filter:",
+ "test_blacklist_default": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):",
+ "cases": [
+  {
+   "rules": [],
+   "blacklist_only": false,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        ":"
+       ],
+       "global": [
+        true,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [],
+      "advanced_whitelist": [],
+      "except_input_enabled": false,
+      "redundant": "",
+      "current": "current filter: allowing all tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [],
+      "permitted": "allowing all tags",
+      "filter_string": "all tags",
+      "blacklist_string": "no blacklist set"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "blue eyes"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        ":"
+       ],
+       "global": [
+        true,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [],
+      "advanced_whitelist": [],
+      "except_input_enabled": false,
+      "redundant": "",
+      "current": "current filter: allowing all tags",
+      "test": "tag passes!",
+      "test_colour": "HydrusValid",
+      "rules": [],
+      "permitted": "allowing all tags",
+      "filter_string": "all tags",
+      "blacklist_string": "no blacklist set"
+     }
+    },
+    {
+     "step": [
+      "white_global",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ""
+       ],
+       "global": [
+        true,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags",
+      "test": "tag passes!",
+      "test_colour": "HydrusValid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags",
+      "filter_string": "all unnamespaced tags",
+      "blacklist_string": "blacklisting on namespaced tags"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "blue eyes\ncreator:x\nseries:y"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ""
+       ],
+       "global": [
+        true,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags",
+      "test": "1 pass, 2 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags",
+      "filter_string": "all unnamespaced tags",
+      "blacklist_string": "blacklisting on namespaced tags"
+     }
+    },
+    {
+     "step": [
+      "white_ns",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        "creator:"
+       ],
+       "global": [
+        true,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":"
+      ],
+      "advanced_whitelist": [
+       "creator:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags and 'creator' tags",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and 'creator' tags",
+      "filter_string": "all unnamespaced tags and 'creator' tags",
+      "blacklist_string": "blacklisting on namespaced tags except 'creator' tags"
+     }
+    },
+    {
+     "step": [
+      "white_add",
+      [
+       "Series:*",
+       "character:samus aran"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        "character:samus aran",
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        true,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":"
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "test": "all pass!",
+      "test_colour": "HydrusValid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "filter_string": "all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on namespaced tags except character:samus aran, 'creator' tags, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_add",
+      [
+       "creator:"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        "character:samus aran",
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        true,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":"
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "test": "all pass!",
+      "test_colour": "HydrusValid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "filter_string": "all unnamespaced tags and character:samus aran, 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on namespaced tags except character:samus aran, 'creator' tags, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_global",
+      0
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:samus aran",
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing character:samus aran, 'creator' tags, 'series' tags",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing character:samus aran, 'creator' tags, 'series' tags",
+      "filter_string": "only adding character:samus aran, 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on any tags except character:samus aran, 'creator' tags, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "blue eyes"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:samus aran",
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing character:samus aran, 'creator' tags, 'series' tags",
+      "test": "tag blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing character:samus aran, 'creator' tags, 'series' tags",
+      "filter_string": "only adding character:samus aran, 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on any tags except character:samus aran, 'creator' tags, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_remove",
+      [
+       "creator:"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:samus aran",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing character:samus aran, 'series' tags",
+      "test": "tag blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing character:samus aran, 'series' tags",
+      "filter_string": "only adding character:samus aran, 'series' tags",
+      "blacklist_string": "blacklisting on any tags except character:samus aran, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_global",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "character:samus aran",
+        "series:"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ""
+      ],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all namespaced tags and character:samus aran, 'series' tags",
+      "test": "tag blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all namespaced tags and character:samus aran, 'series' tags",
+      "filter_string": "all namespaced tags and character:samus aran, 'series' tags",
+      "blacklist_string": "blacklisting on unnamespaced tags except character:samus aran, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_global",
+      0
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        ":",
+        "character:samus aran",
+        "series:"
+       ],
+       "global": [
+        true,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [],
+      "advanced_whitelist": [
+       "character:samus aran",
+       "series:"
+      ],
+      "except_input_enabled": false,
+      "redundant": "",
+      "current": "current filter: allowing all tags",
+      "test": "tag passes!",
+      "test_colour": "HydrusValid",
+      "rules": [
+       [
+        "character:samus aran",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags",
+      "filter_string": "all tags",
+      "blacklist_string": "no blacklist set"
+     }
+    }
+   ]
+  },
+  {
+   "rules": [],
+   "blacklist_only": false,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        ":"
+       ],
+       "global": [
+        true,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [],
+      "advanced_whitelist": [],
+      "except_input_enabled": false,
+      "redundant": "",
+      "current": "current filter: allowing all tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [],
+      "permitted": "allowing all tags",
+      "filter_string": "all tags",
+      "blacklist_string": "no blacklist set"
+     }
+    },
+    {
+     "step": [
+      "black_ns",
+      0
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "character:"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all tags except 'character' tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "character:",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags",
+      "filter_string": "all tags except 'character' tags",
+      "blacklist_string": "blacklisting on 'character' tags"
+     }
+    },
+    {
+     "step": [
+      "black_add",
+      [
+       "goblin",
+       "  ORC  ",
+       "goblin"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:",
+        "goblin",
+        "orc"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "character:",
+       "goblin",
+       "orc"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all tags except 'character' tags, goblin, orc",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, goblin, orc",
+      "filter_string": "all tags except 'character' tags, goblin, orc",
+      "blacklist_string": "blacklisting on 'character' tags, goblin, orc"
+     }
+    },
+    {
+     "step": [
+      "black_add",
+      [
+       "character:"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "character:",
+        "goblin",
+        "orc"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "character:",
+       "goblin",
+       "orc"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all tags except 'character' tags, goblin, orc",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, goblin, orc",
+      "filter_string": "all tags except 'character' tags, goblin, orc",
+      "blacklist_string": "blacklisting on 'character' tags, goblin, orc"
+     }
+    },
+    {
+     "step": [
+      "black_global",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "character:",
+        "goblin",
+        "orc"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "character:",
+       "goblin",
+       "orc"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags while still disallowing 'character' tags, goblin, orc",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags while still disallowing 'character' tags, goblin, orc",
+      "filter_string": "all unnamespaced tags while still filtering out 'character' tags, goblin, orc",
+      "blacklist_string": "blacklisting on namespaced tags, 'character' tags, goblin, orc"
+     }
+    },
+    {
+     "step": [
+      "black_add",
+      [
+       "creator:bob"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "character:",
+        "creator:bob",
+        "goblin",
+        "orc"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "character:",
+       "creator:bob",
+       "goblin",
+       "orc"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "creator:bob is already blocked by a broader rule!",
+      "current": "current filter: allowing all unnamespaced tags while still disallowing 'character' tags, creator:bob, goblin, orc",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags while still disallowing 'character' tags, creator:bob, goblin, orc",
+      "filter_string": "all unnamespaced tags while still filtering out 'character' tags, creator:bob, goblin, orc",
+      "blacklist_string": "blacklisting on namespaced tags, 'character' tags, creator:bob, goblin, orc"
+     }
+    },
+    {
+     "step": [
+      "black_remove",
+      [
+       "goblin"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "character:",
+        "creator:bob",
+        "orc"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        true,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "character:",
+       "creator:bob",
+       "orc"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags while still disallowing 'character' tags, creator:bob, orc",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags while still disallowing 'character' tags, creator:bob, orc",
+      "filter_string": "all unnamespaced tags while still filtering out 'character' tags, creator:bob, orc",
+      "blacklist_string": "blacklisting on namespaced tags, 'character' tags, creator:bob, orc"
+     }
+    },
+    {
+     "step": [
+      "adv_white_add",
+      [
+       "series:metroid",
+       "series:metroid",
+       "*:*"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "character:",
+       "creator:bob",
+       "orc"
+      ],
+      "advanced_whitelist": [
+       "series:metroid",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "The tags\n\nseries:metroid\nseries:metroid\n\nare already permitted by a broader rule!",
+      "current": "current filter: allowing all tags except 'character' tags, creator:bob, orc while still allowing series:metroid",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, creator:bob, orc while still allowing series:metroid",
+      "filter_string": "all tags except 'character' tags, creator:bob, orc while still allowing series:metroid",
+      "blacklist_string": "blacklisting on 'character' tags, creator:bob, orc except series:metroid"
+     }
+    },
+    {
+     "step": [
+      "adv_white_add",
+      [
+       "blue eyes"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "character:",
+       "creator:bob",
+       "orc"
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "blue eyes is already permitted by a broader rule!",
+      "current": "current filter: allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "filter_string": "all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on 'character' tags, creator:bob, orc except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "series:metroid\nseries:zelda\norc"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "character:",
+       "creator:bob",
+       "orc"
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "filter_string": "all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on 'character' tags, creator:bob, orc except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "adv_white_delete",
+      [
+       "series:metroid"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "character:",
+       "creator:bob",
+       "orc"
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "character:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "black"
+       ],
+       [
+        "orc",
+        "black"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "filter_string": "all tags except 'character' tags, creator:bob, orc while still allowing blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on 'character' tags, creator:bob, orc except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "block_everything"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "blue eyes",
+        "series:metroid"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing blue eyes, series:metroid",
+      "test": "1 pass, 2 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing blue eyes, series:metroid",
+      "filter_string": "only adding blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on any tags except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "adv_black_delete",
+      [
+       ":"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "blue eyes",
+        "series:metroid"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ""
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all namespaced tags and blue eyes, series:metroid",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all namespaced tags and blue eyes, series:metroid",
+      "filter_string": "all namespaced tags and blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on unnamespaced tags except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "adv_black_add",
+      [
+       "*"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "blue eyes",
+        "series:metroid"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ""
+      ],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all namespaced tags and blue eyes, series:metroid",
+      "test": "2 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all namespaced tags and blue eyes, series:metroid",
+      "filter_string": "all namespaced tags and blue eyes, series:metroid",
+      "blacklist_string": "blacklisting on unnamespaced tags except blue eyes, series:metroid"
+     }
+    },
+    {
+     "step": [
+      "black_global",
+      0
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "",
+        ":",
+        "blue eyes",
+        "series:metroid"
+       ],
+       "global": [
+        true,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [],
+      "advanced_whitelist": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "except_input_enabled": false,
+      "redundant": "",
+      "current": "current filter: allowing all tags",
+      "test": "all pass!",
+      "test_colour": "HydrusValid",
+      "rules": [
+       [
+        "blue eyes",
+        "white"
+       ],
+       [
+        "series:metroid",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all tags",
+      "filter_string": "all tags",
+      "blacklist_string": "no blacklist set"
+     }
+    }
+   ]
+  },
+  {
+   "rules": [
+    [
+     ":",
+     "black"
+    ],
+    [
+     "goblin",
+     "black"
+    ],
+    [
+     "creator:bob",
+     "white"
+    ]
+   ],
+   "blacklist_only": false,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "advanced",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "goblin"
+      ],
+      "advanced_whitelist": [
+       "creator:bob"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags and creator:bob while still disallowing goblin",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "white"
+       ],
+       [
+        "goblin",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and creator:bob while still disallowing goblin",
+      "filter_string": "all unnamespaced tags and creator:bob while still filtering out goblin",
+      "blacklist_string": "blacklisting on namespaced tags, goblin except creator:bob"
+     }
+    },
+    {
+     "step": [
+      "adv_black_add",
+      [
+       "creator:**"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "advanced",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "creator:",
+       "goblin"
+      ],
+      "advanced_whitelist": [
+       "creator:bob"
+      ],
+      "except_input_enabled": true,
+      "redundant": "'creator' tags is already blocked by a broader rule!",
+      "current": "current filter: allowing all unnamespaced tags and creator:bob while still disallowing 'creator' tags, goblin",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "white"
+       ],
+       [
+        "goblin",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and creator:bob while still disallowing 'creator' tags, goblin",
+      "filter_string": "all unnamespaced tags and creator:bob while still filtering out 'creator' tags, goblin",
+      "blacklist_string": "blacklisting on namespaced tags, 'creator' tags, goblin except creator:bob"
+     }
+    },
+    {
+     "step": [
+      "adv_black_delete",
+      [
+       "goblin"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "advanced",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "creator:"
+      ],
+      "advanced_whitelist": [
+       "creator:bob"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: allowing all unnamespaced tags and creator:bob while still disallowing 'creator' tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:",
+        "black"
+       ],
+       [
+        "creator:bob",
+        "white"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags and creator:bob while still disallowing 'creator' tags",
+      "filter_string": "all unnamespaced tags and creator:bob while still filtering out 'creator' tags",
+      "blacklist_string": "blacklisting on namespaced tags, 'creator' tags except creator:bob"
+     }
+    }
+   ]
+  },
+  {
+   "rules": [
+    [
+     "goblin",
+     "black"
+    ]
+   ],
+   "blacklist_only": true,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       "blacklist"
+      ],
+      "tab": "blacklist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "goblin"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "goblin"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "blacklisting on goblin",
+      "test": "Enter a tag here to test if it passes the blacklist (siblings tested, unnamespaced rules match namespaced tags):",
+      "test_colour": "",
+      "rules": [
+       [
+        "goblin",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except goblin",
+      "filter_string": "all tags except goblin",
+      "blacklist_string": "blacklisting on goblin"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "goblin"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "blacklist"
+      ],
+      "tab": "blacklist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "goblin"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "goblin"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "blacklisting on goblin",
+      "test": "tag blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "goblin",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except goblin",
+      "filter_string": "all tags except goblin",
+      "blacklist_string": "blacklisting on goblin"
+     }
+    },
+    {
+     "step": [
+      "test",
+      "character:goblin\norc"
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "blacklist"
+      ],
+      "tab": "blacklist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "goblin"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "goblin"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "blacklisting on goblin",
+      "test": "1 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "goblin",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except goblin",
+      "filter_string": "all tags except goblin",
+      "blacklist_string": "blacklisting on goblin"
+     }
+    },
+    {
+     "step": [
+      "black_ns",
+      2
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "blacklist"
+      ],
+      "tab": "blacklist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "goblin",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "advanced_blacklist": [
+       "goblin",
+       "series:"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "blacklisting on goblin, 'series' tags",
+      "test": "1 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "series:",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all tags except goblin, 'series' tags",
+      "filter_string": "all tags except goblin, 'series' tags",
+      "blacklist_string": "blacklisting on goblin, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "black_global",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "blacklist"
+      ],
+      "tab": "blacklist",
+      "whitelist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple whitelist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "blacklist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        ":",
+        "goblin",
+        "series:"
+       ],
+       "global": [
+        false,
+        true
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       ":",
+       "goblin",
+       "series:"
+      ],
+      "advanced_whitelist": [],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "blacklisting on namespaced tags, goblin, 'series' tags",
+      "test": "1 pass, 1 blocked!",
+      "test_colour": "HydrusInvalid",
+      "rules": [
+       [
+        ":",
+        "black"
+       ],
+       [
+        "goblin",
+        "black"
+       ],
+       [
+        "series:",
+        "black"
+       ]
+      ],
+      "permitted": "allowing all unnamespaced tags while still disallowing goblin, 'series' tags",
+      "filter_string": "all unnamespaced tags while still filtering out goblin, 'series' tags",
+      "blacklist_string": "blacklisting on namespaced tags, goblin, 'series' tags"
+     }
+    }
+   ]
+  },
+  {
+   "rules": [
+    [
+     "",
+     "black"
+    ],
+    [
+     ":",
+     "black"
+    ],
+    [
+     "creator:",
+     "white"
+    ],
+    [
+     "series:",
+     "white"
+    ]
+   ],
+   "blacklist_only": false,
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing 'creator' tags, 'series' tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing 'creator' tags, 'series' tags",
+      "filter_string": "only adding 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on any tags except 'creator' tags, 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_ns",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing 'series' tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing 'series' tags",
+      "filter_string": "only adding 'series' tags",
+      "blacklist_string": "blacklisting on any tags except 'series' tags"
+     }
+    },
+    {
+     "step": [
+      "white_ns",
+      1
+     ],
+     "said": [],
+     "state": {
+      "tabs": [
+       "whitelist",
+       "blacklist",
+       "advanced"
+      ],
+      "tab": "whitelist",
+      "whitelist": {
+       "enabled": true,
+       "error": "",
+       "list": [
+        "creator:",
+        "series:"
+       ],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        true,
+        true
+       ],
+       "namespaces_enabled": true
+      },
+      "blacklist": {
+       "enabled": false,
+       "error": "The filter is currently more complicated than a simple blacklist, so it cannot be shown here.",
+       "list": [],
+       "global": [
+        false,
+        false
+       ],
+       "namespaces": [
+        false,
+        false,
+        false
+       ],
+       "namespaces_enabled": false
+      },
+      "advanced_blacklist": [
+       "",
+       ":"
+      ],
+      "advanced_whitelist": [
+       "creator:",
+       "series:"
+      ],
+      "except_input_enabled": true,
+      "redundant": "",
+      "current": "current filter: only allowing 'creator' tags, 'series' tags",
+      "test": "Enter a tag here to test if it passes the current filter:",
+      "test_colour": "",
+      "rules": [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "creator:",
+        "white"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ],
+      "permitted": "only allowing 'creator' tags, 'series' tags",
+      "filter_string": "only adding 'creator' tags, 'series' tags",
+      "blacklist_string": "blacklisting on any tags except 'creator' tags, 'series' tags"
+     }
+    }
+   ]
+  }
+ ]
+}

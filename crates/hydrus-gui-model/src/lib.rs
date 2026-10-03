@@ -45,5 +45,6 @@ pub mod status;
 pub mod subscriptions_dedupe;
 pub mod subscriptions_dialog;
 pub mod subscriptions_list;
+pub mod tag_filter_editor;
 pub mod thumbnail_icons;
 pub mod thumbnail_ratings;
