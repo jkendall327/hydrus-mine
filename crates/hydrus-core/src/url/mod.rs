@@ -15,6 +15,7 @@ pub mod gug;
 pub mod psl;
 pub mod pyurl;
 pub mod registry;
+pub mod string_descriptions;
 pub mod strings;
 
 pub use class::{DomainMask, UrlClass, UrlClassError, UrlParameter, UrlType};

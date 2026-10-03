@@ -623,11 +623,50 @@ pub enum ProcessingStep {
     /// Clean the strings as tags, keep those the filter allows (with
     /// unnamespaced rules applying to namespaced tags too) and sort them
     /// in human order (`StringTagFilter`).
-    TagFilter(crate::tag_filter::TagFilter),
+    TagFilter(TagFilterStep),
     /// A step hydrus-rs doesn't run, kept as the reference's type id.
     Unsupported {
         type_id: u16,
     },
+}
+
+/// A [`ProcessingStep::TagFilter`]'s filter and its example tag.
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(from = "TagFilterStepStored")]
+pub struct TagFilterStep {
+    pub filter: crate::tag_filter::TagFilter,
+    pub example: String,
+}
+
+impl TagFilterStep {
+    /// The reference's example, "blue eyes".
+    pub fn new(filter: crate::tag_filter::TagFilter) -> Self {
+        Self {
+            filter,
+            example: "blue eyes".to_owned(),
+        }
+    }
+}
+
+/// A tag filter step as stored: with its example, or (as hydrus-rs first
+/// stored it) the filter alone.
+#[derive(Deserialize)]
+#[serde(untagged)]
+enum TagFilterStepStored {
+    Whole {
+        filter: crate::tag_filter::TagFilter,
+        example: String,
+    },
+    FilterAlone(crate::tag_filter::TagFilter),
+}
+
+impl From<TagFilterStepStored> for TagFilterStep {
+    fn from(stored: TagFilterStepStored) -> Self {
+        match stored {
+            TagFilterStepStored::Whole { filter, example } => Self { filter, example },
+            TagFilterStepStored::FilterAlone(filter) => Self::new(filter),
+        }
+    }
 }
 
 /// How a [`ProcessingStep::Sort`] orders (`CONTENT_PARSER_SORT_TYPE_*`).
@@ -755,9 +794,18 @@ fn python_slice<T: Clone>(items: &[T], start: Option<i64>, end: Option<i64>) -> 
 }
 
 impl StringProcessor {
-    /// Whether it has any steps (`MakesChanges`).
+    /// Whether any step makes changes (`MakesChanges`): a converter with
+    /// conversions, a match that isn't any number of anything, a slice
+    /// with an index, and every other step.
     pub fn makes_changes(&self) -> bool {
-        !self.steps.is_empty()
+        self.steps.iter().any(|step| match step {
+            ProcessingStep::Convert(c) => !c.conversions.is_empty(),
+            ProcessingStep::Filter(m) => {
+                m.min_chars.is_some() || m.max_chars.is_some() || m.kind != MatchKind::Any
+            }
+            ProcessingStep::Slice { start, end } => start.is_some() || end.is_some(),
+            _ => true,
+        })
     }
 
     /// What kinds of step it has, as the reference says it
@@ -828,7 +876,7 @@ impl StringProcessor {
                     ascending,
                     regex,
                 } => sort_strings(&current, *kind, *ascending, regex.as_ref()).unwrap_or(current),
-                ProcessingStep::TagFilter(filter) => filter_tags(&current, filter),
+                ProcessingStep::TagFilter(step) => filter_tags(&current, &step.filter),
                 ProcessingStep::Unsupported { type_id } => {
                     return Err(format!(
                         "string processing step type {type_id} is not supported yet"

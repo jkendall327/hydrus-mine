@@ -560,10 +560,14 @@ pub fn string_processor(object: &SerialisableObject) -> DecodeResult<StringProce
                 }
                 STRING_TAG_FILTER => {
                     expect(step, STRING_TAG_FILTER, &[1])?;
-                    let [filter, _example] = tuple::<2>(STRING_TAG_FILTER, &info, "tag filter")?;
-                    ProcessingStep::TagFilter(super::import_options::core_tag_filter(
-                        &super::tag_filter::TagFilter::from_tuple(filter)?,
-                    ))
+                    let [filter, example] = tuple::<2>(STRING_TAG_FILTER, &info, "tag filter")?;
+                    ProcessingStep::TagFilter(hydrus_core::url::strings::TagFilterStep {
+                        filter: super::import_options::core_tag_filter(
+                            &super::tag_filter::TagFilter::from_tuple(filter)?,
+                        ),
+                        example: opt_string(STRING_TAG_FILTER, example, "example")?
+                            .unwrap_or_default(),
+                    })
                 }
                 other => ProcessingStep::Unsupported {
                     type_id: other.code(),
