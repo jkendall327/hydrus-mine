@@ -154,3 +154,9 @@ folder now" submenus there. Not started in the GUI.
   - Fuzz/property tests for the parsers that take untrusted input
     (system predicates, Client API parameters, URL parsing).
   - A cargo-mutants sweep of `hydrus-search` and `hydrus-core`.
+  - Owed mutation checks:
+    - `hydrus-gui`'s downloader lists (commit cd43dd5). The run was
+      stopped after a few of its 91 mutants; their one survivor was
+      fixed.
+    - `hydrus-gui-model`'s `subscriptions_list` and
+      `subscriptions_dialog`, which haven't had one yet.
