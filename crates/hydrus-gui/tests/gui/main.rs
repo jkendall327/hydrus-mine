@@ -33,6 +33,7 @@ mod session;
 mod slideshow;
 mod status_bar;
 mod still;
+mod subscriptions;
 mod thumbnail_icons;
 mod thumbnail_menu;
 mod thumbnail_ratings;

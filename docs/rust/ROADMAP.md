@@ -21,7 +21,7 @@ and are tested against the reference. The work is the GUI over them.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
-**Done** (model only, no window yet):
+**Done**:
 
 - `oracle/record_subscriptions_list.py` records the reference dialog on
   four subscriptions in varied states. Fixture:
@@ -39,55 +39,35 @@ and are tested against the reference. The work is the GUI over them.
       the selection, the buttons' actions, and the deleted;
     - `CheckNow`: the check-now prompts.
   - Tests: `tests/model/subscriptions_list.rs` replays the recording.
+- The window (`ui/subscriptions.slint`, `src/subscriptions_window.rs`),
+  opened from network > "subscriptions…".
+  - It lists the subscriptions and has delete, pause/resume, scrub
+    delays, check queries now (with the prompts, in the window's own
+    question panel, `Asking`) and select subscriptions.
+  - "apply" writes only what changed.
+  - `tests/gui/subscriptions.rs` tests it.
 
 **Next**:
 
-1. **A choices window.** A generic Slint window for "Check which?" and
-   other button-choice questions: a title, a message, N buttons, and
-   cancel by closing it. The reference's `SelectFromListButtons`.
-2. **The window.**
-   - `ui/manage_subscriptions.slint`: a `ListTable` with
-     `SUBSCRIPTION_COLUMNS`, and the buttons the model supports:
-     - add (later),
-     - edit (later),
-     - delete,
-     - pause/resume,
-     - scrub delays,
-     - check queries now,
-     - reset (later),
-     - select subscriptions,
-     - overwrite checker options (the existing checker options editor,
-       `checker_options_window.rs`),
-     - apply and cancel.
-   - Show the "globally paused" warning when subscriptions are paused
-     from the network menu.
-   - Open it from the network menu entry "subscriptions…"; see
-     `hydrus-gui-model::main_menu`.
-3. **Loading and applying** (`hydrus_store::subscriptions` has the
-   reads and writes).
-   - Load each subscription's settings and queries.
-   - For each query, load its file log counts
-     (`queues::file_seed_counts`) and its seeds' times
-     (`queues::file_seeds` → `SeedTime`).
-   - Apply writes:
-     - changed settings and query states;
-     - renames;
-     - deletes (`delete_subscription`).
-   - The daemon may run a subscription meanwhile. The reference pauses
-     its subscriptions while the dialog is open ("Waiting for current
-     subscription work to finish."). Decide whether to do the same (a
-     pause flag the daemon honours) or write only the fields the dialog
-     changed. Record the choice in `DECISIONS.md`.
-4. **The edit subscription dialog**: name, downloader, queries list
-   (`query_row` is ready), query buttons, limits, checker options,
-   publication options. The reference's layout, strings and button
-   behaviour are written up in `docs/rust/notes/manage_subscriptions.md`.
-   Record it before porting (extend the recorder).
-5. Then the rest of the list's buttons:
+1. **The edit subscription dialog**. Recorded already:
+   `oracle/record_edit_subscription.py` (fixture
+   `oracle/fixtures/edit_subscription.json`) has its fields as it opens,
+   the query list's buttons with the paste-queries messages, and what
+   "apply" gives back. The dialog holds:
+   - name, downloader, and the queries list (`query_row` is ready);
+   - the query buttons;
+   - limits, checker options, and publication options.
+
+   The reference's layout, strings and button behaviour are written up
+   in `docs/rust/notes/manage_subscriptions.md`. Extend the recorder for
+   anything it doesn't cover yet (adding a query, the query editor).
+2. Then the rest of the list's buttons:
    - add (choose a downloader),
    - edit,
    - reset (empties the queries' file logs, after a question),
    - retry failed/ignored,
+   - overwrite downloader, overwrite checker options (the checker
+     options editor exists: `checker_options_window.rs`),
    - merge, separate, deduplicate, lowercase,
    - export/import/duplicate,
    - import options.
@@ -103,6 +83,8 @@ folder now" submenus there. Not started in the GUI.
   See `DIFFERENCES.md`, "Import folders and sidecars".
 - Same shape as subscriptions: a list dialog of folders, an edit dialog
   per folder, apply/cancel.
+- The lists' rows are recorded already: `oracle/record_folders_lists.py`
+  (fixture `oracle/fixtures/folders_lists.json`).
 - Record the reference's `ClientGUIImportFolders.EditImportFoldersPanel`
   and the export folders panel first (`ClientGUI._ManageImportFolders`,
   `_ManageExportFolders` open them).
@@ -158,5 +140,14 @@ folder now" submenus there. Not started in the GUI.
     - `hydrus-gui`'s downloader lists (commit cd43dd5). The run was
       stopped after a few of its 91 mutants; their one survivor was
       fixed.
-    - `hydrus-gui-model`'s `subscriptions_list` and
-      `subscriptions_dialog`, which haven't had one yet.
+    - The subscriptions dialog: 27 survivors in its last run.
+      - `subscriptions_dialog`'s `sort_key`: no test sorts by status,
+        times, delay or items with data that tells them apart.
+      - `DialogQuery::latest_added` and `can_reset`: no test selects
+        only the subscription with no queries.
+      - `CheckNow`'s filter of paused subscriptions' queries.
+      - The ">" and ">=" boundaries of the time texts in
+        `subscriptions_list`.
+      - `subscriptions_window`'s `changes`: no test applies with a name
+        or a query unchanged.
+      - Its `now`.

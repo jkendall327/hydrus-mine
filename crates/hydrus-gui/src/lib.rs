@@ -44,6 +44,7 @@ pub mod predicate_editor_window;
 mod session_dialog;
 pub mod slideshow;
 pub mod still;
+mod subscriptions_window;
 pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
@@ -128,7 +129,7 @@ pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
     favourites, info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
     options, page_chooser, predicate_editors, ratings, scanbar, selection, session_saving, sort,
-    status, thumbnail_icons, thumbnail_ratings,
+    status, subscriptions_dialog, subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -153,6 +154,8 @@ pub struct Bound {
     /// The session saving dialog while it is open (pages > sessions >
     /// save).
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
+    /// The manage subscriptions dialog while it is open.
+    pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -949,6 +952,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
+    let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -999,6 +1003,21 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            // network > subscriptions…
+            manage_subscriptions: {
+                let pages = pages.clone();
+                let slot = subscriptions.clone();
+                Rc::new(move || {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let store = pages.borrow().store().clone();
+                    match subscriptions_window::open(&store, &slot) {
+                        Ok(window) => *slot.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not open the subscriptions: {e}"),
                     }
                 })
             },
@@ -2137,6 +2156,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         checker_options,
         session_dialog,
+        subscriptions,
         archive_delete,
         filter,
         open_page,

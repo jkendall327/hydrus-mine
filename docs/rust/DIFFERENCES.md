@@ -550,6 +550,17 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   goes when the download ends rather than ten seconds later.
 - **Subscription changes made from the command line reach a running
   `hydrus serve` within five minutes.**
+- **The manage subscriptions dialog is a first pass.** It lists the
+  subscriptions and can delete, pause/resume, scrub delays, check
+  queries now and select by query text. It has no "add", "edit", "reset",
+  "retry", "merge", "separate", "deduplicate", "lowercase",
+  "export"/"import"/"duplicate", "overwrite downloader/checker options" or
+  import options buttons yet. It doesn't reckon bandwidth waits (the
+  error/delay column is empty unless the subscription is delayed). It
+  doesn't pause subscriptions while open, as the reference does: "apply"
+  writes only what the dialog changed, so a subscription the daemon ran
+  meanwhile keeps what the run found, unless the dialog changed the same
+  query.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

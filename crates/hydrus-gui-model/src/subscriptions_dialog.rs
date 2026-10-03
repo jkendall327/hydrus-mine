@@ -372,10 +372,11 @@ pub struct CheckNow {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Stage {
-    PausedSubscriptions,
+    Start,
     AskedPausedSubscriptions,
-    Dead { all: bool },
-    PausedQueries,
+    CheckDead,
+    AskedDead,
+    CheckPausedQueries,
     AskedPausedQueries,
     Ready,
 }
@@ -387,7 +388,7 @@ impl CheckNow {
     pub fn new(dialog: &Subscriptions, now: i64) -> Self {
         Self {
             subscriptions: dialog.selected(now),
-            stage: Stage::PausedSubscriptions,
+            stage: Stage::Start,
             do_paused_subscriptions: true,
             do_alive: true,
             do_dead: true,
@@ -403,7 +404,7 @@ impl CheckNow {
     }
 
     /// The queries asked about: those of the subscriptions chosen, less
-    /// the alive or the dead as answered.
+    /// the alive or the dead as answered (`filtered`).
     fn queries<'a>(&self, dialog: &'a Subscriptions, filtered: bool) -> Vec<&'a DialogQuery> {
         self.chosen(dialog)
             .into_iter()
@@ -420,116 +421,134 @@ impl CheckNow {
             .collect()
     }
 
-    /// The next question, if there is one; `None` when ready to
+    /// The question waiting on an answer, if one is.
+    pub fn question(&self, dialog: &Subscriptions) -> Option<Choice> {
+        let choice = |message: String, choices: &[&str]| Choice {
+            title: CHECK_WHICH.into(),
+            message,
+            choices: choices.iter().map(|&c| c.to_owned()).collect(),
+        };
+        match self.stage {
+            Stage::AskedPausedSubscriptions => {
+                let subs = self.chosen(dialog);
+                let paused = subs.iter().filter(|s| s.settings.paused).count();
+                let message = format!(
+                    "Of the {} selected subscriptions, {} are paused. Do you want to unpause these paused subs and check their queries?",
+                    human_int(subs.len() as u64),
+                    human_int(paused as u64)
+                );
+                Some(if paused == subs.len() {
+                    choice(
+                        message,
+                        &[
+                            "yes, unpause them and check their queries",
+                            "no, leave them alone",
+                        ],
+                    )
+                } else {
+                    choice(
+                        message,
+                        &[
+                            "yes, check queries within paused subs",
+                            "no, just check within unpaused subs",
+                        ],
+                    )
+                })
+            }
+            Stage::AskedDead => {
+                let queries = self.queries(dialog, false);
+                let dead = queries.iter().filter(|q| q.state.dead).count();
+                let message = format!(
+                    "Of the {} selected queries, {} are DEAD. Do you want to check these?",
+                    human_int(queries.len() as u64),
+                    human_int(dead as u64)
+                );
+                Some(if dead == queries.len() {
+                    choice(
+                        message,
+                        &["yes, resurrect the DEAD queries", "no, leave them DEAD"],
+                    )
+                } else {
+                    let alive = format!(
+                        "check the {} ALIVE",
+                        human_int((queries.len() - dead) as u64)
+                    );
+                    let resurrect =
+                        format!("resurrect and check the {} DEAD", human_int(dead as u64));
+                    choice(message, &["yes, check all of them", &alive, &resurrect])
+                })
+            }
+            Stage::AskedPausedQueries => {
+                let queries = self.queries(dialog, true);
+                let paused = queries.iter().filter(|q| q.state.paused).count();
+                let message = format!(
+                    "Of the {} selected queries, {} are paused. Do you want to unpause and check them?",
+                    human_int(queries.len() as u64),
+                    human_int(paused as u64)
+                );
+                Some(if paused == queries.len() {
+                    choice(message, &["yes, check them", "no, leave them alone"])
+                } else {
+                    choice(
+                        message,
+                        &[
+                            "yes check paused queries",
+                            "no just what is currently unpaused",
+                        ],
+                    )
+                })
+            }
+            _ => None,
+        }
+    }
+
+    /// On to the next question, if there is one; `None` when ready to
     /// [`apply`](Self::apply).
     pub fn next(&mut self, dialog: &Subscriptions) -> Option<Choice> {
         loop {
             match self.stage {
-                Stage::PausedSubscriptions => {
-                    let subs = self.chosen(dialog);
-                    let paused = subs.iter().filter(|s| s.settings.paused).count();
-                    if paused == 0 {
-                        self.stage = Stage::Dead { all: false };
-                        continue;
-                    }
-                    self.stage = Stage::AskedPausedSubscriptions;
-                    let choices = if paused == subs.len() {
-                        [
-                            "yes, unpause them and check their queries",
-                            "no, leave them alone",
-                        ]
+                Stage::Start => {
+                    let any_paused = self.chosen(dialog).iter().any(|s| s.settings.paused);
+                    self.stage = if any_paused {
+                        Stage::AskedPausedSubscriptions
                     } else {
-                        [
-                            "yes, check queries within paused subs",
-                            "no, just check within unpaused subs",
-                        ]
+                        Stage::CheckDead
                     };
-                    return Some(Choice {
-                        title: CHECK_WHICH.into(),
-                        message: format!(
-                            "Of the {} selected subscriptions, {} are paused. Do you want to unpause these paused subs and check their queries?",
-                            human_int(subs.len() as u64),
-                            human_int(paused as u64)
-                        ),
-                        choices: choices.iter().map(|&c| c.into()).collect(),
-                    });
                 }
-                Stage::Dead { .. } => {
-                    let queries = self.queries(dialog, false);
-                    let dead = queries.iter().filter(|q| q.state.dead).count();
-                    if dead == 0 {
-                        self.stage = Stage::PausedQueries;
-                        continue;
-                    }
-                    // (asked: `answer` reads which choices were offered)
-                    let all = dead == queries.len();
-                    self.stage = Stage::Dead { all };
-                    let choices = if all {
-                        vec![
-                            "yes, resurrect the DEAD queries".to_owned(),
-                            "no, leave them DEAD".into(),
-                        ]
+                Stage::CheckDead => {
+                    let any_dead = self.queries(dialog, false).iter().any(|q| q.state.dead);
+                    self.stage = if any_dead {
+                        Stage::AskedDead
                     } else {
-                        vec![
-                            "yes, check all of them".to_owned(),
-                            format!(
-                                "check the {} ALIVE",
-                                human_int((queries.len() - dead) as u64)
-                            ),
-                            format!("resurrect and check the {} DEAD", human_int(dead as u64)),
-                        ]
+                        Stage::CheckPausedQueries
                     };
-                    return Some(Choice {
-                        title: CHECK_WHICH.into(),
-                        message: format!(
-                            "Of the {} selected queries, {} are DEAD. Do you want to check these?",
-                            human_int(queries.len() as u64),
-                            human_int(dead as u64)
-                        ),
-                        choices,
-                    });
                 }
-                Stage::PausedQueries => {
-                    let queries = self.queries(dialog, true);
-                    let paused = queries.iter().filter(|q| q.state.paused).count();
-                    if paused == 0 {
-                        self.stage = Stage::Ready;
-                        return None;
-                    }
-                    self.stage = Stage::AskedPausedQueries;
-                    let choices = if paused == queries.len() {
-                        ["yes, check them", "no, leave them alone"]
+                Stage::CheckPausedQueries => {
+                    let any_paused = self.queries(dialog, true).iter().any(|q| q.state.paused);
+                    self.stage = if any_paused {
+                        Stage::AskedPausedQueries
                     } else {
-                        [
-                            "yes check paused queries",
-                            "no just what is currently unpaused",
-                        ]
+                        Stage::Ready
                     };
-                    return Some(Choice {
-                        title: CHECK_WHICH.into(),
-                        message: format!(
-                            "Of the {} selected queries, {} are paused. Do you want to unpause and check them?",
-                            human_int(queries.len() as u64),
-                            human_int(paused as u64)
-                        ),
-                        choices: choices.iter().map(|&c| c.into()).collect(),
-                    });
                 }
-                Stage::AskedPausedSubscriptions | Stage::AskedPausedQueries | Stage::Ready => {
-                    return None;
+                Stage::Ready => return None,
+                Stage::AskedPausedSubscriptions | Stage::AskedDead | Stage::AskedPausedQueries => {
+                    return self.question(dialog);
                 }
             }
         }
     }
 
-    /// The last question answered with the choice at `index`.
-    pub fn answer(&mut self, index: usize) {
+    /// The question asked answered with the choice at `index`.
+    pub fn answer(&mut self, dialog: &Subscriptions, index: usize) {
         match self.stage {
             Stage::AskedPausedSubscriptions => {
                 self.do_paused_subscriptions = index == 0;
-                self.stage = Stage::Dead { all: false };
+                self.stage = Stage::CheckDead;
             }
-            Stage::Dead { all } => {
+            Stage::AskedDead => {
+                let queries = self.queries(dialog, false);
+                let all = queries.iter().all(|q| q.state.dead);
                 (self.do_alive, self.do_dead) = match (all, index) {
                     (true, 0) => (false, true),
                     (true, _) => (false, false),
@@ -537,7 +556,7 @@ impl CheckNow {
                     (false, 1) => (true, false),
                     (false, _) => (false, true),
                 };
-                self.stage = Stage::PausedQueries;
+                self.stage = Stage::CheckPausedQueries;
             }
             Stage::AskedPausedQueries => {
                 self.do_paused_queries = index == 0;

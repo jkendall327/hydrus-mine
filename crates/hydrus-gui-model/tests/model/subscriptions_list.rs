@@ -230,7 +230,7 @@ fn the_dialogs_buttons_act_as_the_references() {
                         cancelled = true;
                         break;
                     };
-                    check.answer(usize::try_from(index).unwrap());
+                    check.answer(&dialog, usize::try_from(index).unwrap());
                 }
                 if !cancelled {
                     check.apply(&mut dialog);

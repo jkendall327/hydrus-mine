@@ -1,0 +1,198 @@
+// The manage subscriptions dialog (network > subscriptions…; the
+// reference's `EditSubscriptionsPanel`, bound by
+// `src/subscriptions_window.rs`): the subscriptions list, the buttons
+// hydrus-rs has so far, and the questions they ask, held until "apply".
+
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+
+// A question asked in a window (the reference's quick dialogs): its title
+// and message, and its answers as buttons (`SelectFromListButtons`, a
+// yes/no), or a text box to fill in (`EnterText`, whose first button is
+// "ok"). Escape or "cancel" closes it unanswered.
+export component Asking inherits Rectangle {
+    in property <string> title;
+    in property <string> message;
+    in property <[string]> choices;
+    in property <bool> wants-text;
+    in-out property <string> text;
+    callback chosen(int);
+    callback cancelled();
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    VerticalLayout {
+        padding: 8px;
+        spacing: 6px;
+        Text {
+            text: root.title;
+            font-weight: 700;
+            color: Theme.text;
+        }
+        Text {
+            text: root.message;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        if root.wants-text: LineEdit {
+            text <=> root.text;
+            accepted => { root.chosen(0); }
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: end;
+            for choice[i] in root.choices: Button {
+                text: choice;
+                clicked => { root.chosen(i); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancelled(); }
+            }
+        }
+    }
+}
+
+export component SubscriptionsWindow inherits Window {
+    in property <string> window-title: "manage subscriptions";
+    title: root.window-title;
+    preferred-width: 1180px;
+    preferred-height: 520px;
+    background: Theme.window;
+    // subscriptions paused from the network menu
+    in property <bool> globally-paused;
+    in property <[TableRow]> rows;
+    in property <int> sort-column;
+    in property <bool> ascending: true;
+    // what the buttons can do for the selection
+    in property <bool> any-selected;
+    in property <bool> can-check-now;
+    in property <bool> can-scrub-delays;
+    // a question waiting on an answer
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    in property <bool> asking-text;
+    in-out property <string> asked-text;
+    callback sort(int, bool);
+    // (row, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback delete();
+    callback pause-resume();
+    callback scrub-delays();
+    callback check-now();
+    callback select-subscriptions();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.asking) {
+                    root.cancelled();
+                } else {
+                    root.cancel();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if root.globally-paused: Text {
+                text: "SUBSCRIPTIONS ARE CURRENTLY GLOBALLY PAUSED! CHECK THE NETWORK MENU TO UNPAUSE THEM.";
+                color: Theme.error;
+                horizontal-alignment: center;
+                wrap: word-wrap;
+            }
+            ListTable {
+                min-height: 12 * 22px;
+                vertical-stretch: 1;
+                // (the reference's widths, in characters)
+                columns: [
+                    { title: "name", width: 140px, stretch: true },
+                    { title: "source", width: 140px },
+                    { title: "status", width: 175px },
+                    { title: "last new file time", width: 130px },
+                    { title: "last checked", width: 130px },
+                    { title: "error/delay?", width: 112px },
+                    { title: "items", width: 91px },
+                    { title: "paused", width: 56px },
+                    { title: "custom import options", width: 168px },
+                ];
+                rows: root.rows;
+                sort-column: root.sort-column;
+                ascending: root.ascending;
+                sort(column, ascending) => { root.sort(column, ascending); }
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                delete-pressed => { if root.any-selected { root.delete(); } }
+            }
+            // the reference's button rows, as far as hydrus-rs has them
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "delete";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.delete(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "pause/resume";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.pause-resume(); }
+                }
+                Button {
+                    text: "scrub delays";
+                    enabled: root.can-scrub-delays && !root.asking;
+                    clicked => { root.scrub-delays(); }
+                }
+                Button {
+                    text: "check queries now";
+                    enabled: root.can-check-now && !root.asking;
+                    clicked => { root.check-now(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "select subscriptions";
+                    enabled: !root.asking;
+                    clicked => { root.select-subscriptions(); }
+                }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                wants-text: root.asking-text;
+                text <=> root.asked-text;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

@@ -129,11 +129,28 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - database: whether file maintenance works in idle and normal time;
 - network: every pause switch hydrus has (all new network traffic,
   subscriptions, all paged importer work, file importing, gallery
-  searching, watcher checking), which the daemon obeys;
+  searching, watcher checking), which the daemon obeys; and
+  "subscriptions…", the manage subscriptions dialog (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
 - help: the help, links and changelog in the browser, and advanced mode
   (which adds hydrus's advanced entries).
+
+Network > "subscriptions…" opens the manage subscriptions dialog
+(`src/subscriptions_window.rs`, `hydrus-gui-model/src/subscriptions_dialog.rs`),
+the reference's `EditSubscriptionsPanel`. It lists the subscriptions as
+the reference does (name, source, status such as "2 working, 1 paused,
+1 dead", last new file time, last checked, error/delay such as
+"delayed--retrying in 2 hours - because: …", items, paused), sorted by
+any column and selected as the reference's lists select, and warns when
+subscriptions are paused from the network menu. Its buttons delete the
+selected (asking "Remove all selected?"), pause or resume each, scrub
+their delays, check their queries now (asking first, as the reference
+does, whether to unpause paused subscriptions, check DEAD queries, and
+unpause paused queries), and select the subscriptions with a query
+containing some text. Nothing is written until "apply", which writes
+only what changed; "cancel" writes nothing. The rows and the questions
+are as `oracle/record_subscriptions_list.py` recorded the reference's.
 
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as

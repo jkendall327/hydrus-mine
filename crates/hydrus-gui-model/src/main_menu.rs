@@ -156,6 +156,8 @@ pub enum Command {
     AdvancedMode,
     /// Open the options window.
     Options,
+    /// Open the manage subscriptions dialog.
+    ManageSubscriptions,
     /// Open the "review files to import" window.
     ImportFiles,
     /// Search a file or tag domain (a search page's domain buttons).
@@ -784,7 +786,7 @@ fn network_menu(facts: &Facts) -> Entry {
         vec![
             menu("pause", pauses),
             SEP,
-            todo(dots("subscriptions")),
+            item(dots("subscriptions"), Command::ManageSubscriptions),
             SEP,
             menu(
                 "data",

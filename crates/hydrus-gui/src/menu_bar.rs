@@ -27,6 +27,8 @@ pub(crate) struct Hooks {
     pub reshow: Rc<dyn Fn()>,
     /// Open the options window.
     pub options: Rc<dyn Fn()>,
+    /// Open the manage subscriptions dialog.
+    pub manage_subscriptions: Rc<dyn Fn()>,
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
     /// Save the open pages as this session, or a new one (asking).
@@ -496,6 +498,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
         Command::Options => (hooks.options)(),
+        Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ImportFiles => (hooks.import_files)(),
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),
