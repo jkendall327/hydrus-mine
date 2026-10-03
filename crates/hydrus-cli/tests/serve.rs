@@ -588,7 +588,8 @@ fn changed_options_apply_without_a_restart() {
         .expect("the proxy is asked");
     assert_eq!(first, "GET http://hydrus-test.invalid/file.png HTTP/1.1");
     // the thumbnail options, which imports make thumbnails by: noticed
-    // once, as the daemon reads them again
+    // once, through the shared store snapshot refresh (plain settings writes
+    // remain supported without publishing a revision).
     store
         .write(|ctx| {
             let mut thumbnails: hydrus_core::thumbnail::ThumbnailSettings =
@@ -597,12 +598,12 @@ fn changed_options_apply_without_a_restart() {
             settings::set(ctx.conn(), &thumbnails)
         })
         .unwrap();
-    wait_for("the thumbnail options changed");
+    wait_for("the store snapshot changed");
     std::thread::sleep(Duration::from_millis(2500));
     assert!(
         lines
             .try_iter()
-            .all(|line| !line.contains("the thumbnail options changed")),
+            .all(|line| !line.contains("the store snapshot changed")),
         "said again: its snapshot was not read again"
     );
     drop(serving.0.stdin.take());
