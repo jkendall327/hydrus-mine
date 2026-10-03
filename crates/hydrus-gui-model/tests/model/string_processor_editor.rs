@@ -58,7 +58,9 @@ impl Editor {
             } => Editor::Sorter(SorterEditor::new(
                 *kind,
                 *ascending,
-                regex.as_ref().map(hydrus_core::url::strings::PyRegex::pattern),
+                regex
+                    .as_ref()
+                    .map(hydrus_core::url::strings::PyRegex::pattern),
                 editor.example_texts_for(step),
             )),
             _ => return None,

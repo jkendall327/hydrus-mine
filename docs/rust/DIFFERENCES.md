@@ -607,10 +607,17 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The sidecar editors** edit a router's destination in a window of its
   own (the reference embeds it in the router editor), list "Which
   type?"'s descriptions in its message, and take JSON object names a
-  line each. String processing, a sidecar's filename conversion and a
-  JSON sidecar's parsing formula are shown but not edited yet; the
-  router editor has no testing panel; the routers list has no import and
-  export buttons.
+  line each. A sidecar's filename conversion and a JSON sidecar's
+  parsing formula are shown but not edited yet; the router editor has no
+  testing panel; the routers list has no import and export buttons.
+- **The string processor editor** has no starting strings to test with
+  from the sidecar editors (the reference takes them from its example
+  files; the single example can be typed), and no import, export or
+  paste buttons. A match or converter step is added as made and can't be
+  edited yet; a tag filter step is edited in the tag filter editor
+  without the reference's example tag test. "add" lists its kinds'
+  descriptions in its question. A sorter's error for a regex that won't
+  compile is in hydrus-rs's words, not Python's.
 - **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
   reference asks which in a dialog), and edited in the "filename tagging"

@@ -192,6 +192,7 @@ export component SidecarRouterWindow inherits Window {
     callback edit();
     callback delete();
     callback edit-destination();
+    callback edit-processing();
     callback chosen(int);
     callback cancelled();
     callback apply();
@@ -223,10 +224,10 @@ export component SidecarRouterWindow inherits Window {
                 text: root.processing-note;
                 color: Theme.text;
             }
-            Text {
+            Button {
                 text: root.processing;
-                wrap: word-wrap;
-                color: Theme.text;
+                enabled: !root.asking;
+                clicked => { root.edit-processing(); }
             }
         }
         Box {
@@ -319,6 +320,7 @@ export component SidecarNodeWindow inherits Window {
     in property <string> asking-message;
     in property <[string]> asking-choices;
     callback changed();
+    callback edit-processing();
     callback change-type();
     callback choose-service();
     callback sidecar-help();
@@ -499,10 +501,10 @@ export component SidecarNodeWindow inherits Window {
                 text: root.processing-note;
                 color: Theme.text;
             }
-            Text {
+            Button {
                 text: root.processing;
-                wrap: word-wrap;
-                color: Theme.text;
+                enabled: !root.asking;
+                clicked => { root.edit-processing(); }
             }
         }
         Rectangle { vertical-stretch: 1; }

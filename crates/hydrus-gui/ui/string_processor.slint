@@ -1,0 +1,449 @@
+// The string processor editor (the reference's `EditStringProcessorPanel`,
+// bound by `src/string_processor_window.rs`; its workings are
+// hydrus-gui-model's `string_editors`): its steps with up, delete, down,
+// add and edit, and its test results (the starting strings and those
+// strings processed, and a single example through each step, a tab each);
+// and the editor of a splitter, joiner, selector/slicer or sorter step.
+
+import { Button, CheckBox, ComboBox, LineEdit, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+component Box inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        Text {
+            text: root.title;
+            font-weight: 700;
+            color: Theme.text;
+        }
+        @children
+    }
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    color: Theme.text;
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    height: 26px;
+    min-width: label.preferred-width + 16px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component ApplyCancel inherits HorizontalLayout {
+    in property <bool> enabled: true;
+    callback apply();
+    callback cancel();
+    alignment: end;
+    spacing: 6px;
+    Button {
+        text: "apply";
+        enabled: root.enabled;
+        clicked => { root.apply(); }
+    }
+    Button {
+        text: "cancel";
+        clicked => { root.cancel(); }
+    }
+}
+
+export component StringProcessorWindow inherits Window {
+    in property <string> window-title: "edit string processor";
+    title: root.window-title;
+    preferred-width: 820px;
+    preferred-height: 640px;
+    background: Theme.window;
+    in property <[TableRow]> steps;
+    in property <bool> any-selected;
+    in property <[TableRow]> starting;
+    in property <[TableRow]> processed;
+    in-out property <string> example;
+    in property <[string]> tabs;
+    in property <int> tab-index;
+    in property <[TableRow]> tab-rows;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback up();
+    callback delete();
+    callback down();
+    callback add();
+    callback edit();
+    callback text-clicked(int);
+    callback example-edited();
+    callback tab-chosen(int);
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Box {
+            vertical-stretch: 1;
+            title: "processing steps";
+            HorizontalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                ListTable {
+                    horizontal-stretch: 1;
+                    columns: [{ title: "step", width: 600px, stretch: true }];
+                    rows: root.steps;
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(r); }
+                }
+                VerticalLayout {
+                    alignment: center;
+                    spacing: 4px;
+                    Button {
+                        text: "\u{2191}";
+                        enabled: root.any-selected && !root.asking;
+                        clicked => { root.up(); }
+                    }
+                    Button {
+                        text: "X";
+                        enabled: root.any-selected && !root.asking;
+                        clicked => { root.delete(); }
+                    }
+                    Button {
+                        text: "\u{2193}";
+                        enabled: root.any-selected && !root.asking;
+                        clicked => { root.down(); }
+                    }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                vertical-stretch: 0;
+                Button {
+                    horizontal-stretch: 1;
+                    text: "add";
+                    enabled: !root.asking;
+                    clicked => { root.add(); }
+                }
+                Button {
+                    horizontal-stretch: 1;
+                    text: "edit";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.edit(); }
+                }
+            }
+        }
+        Box {
+            vertical-stretch: 1;
+            title: "test results";
+            HorizontalLayout {
+                spacing: 6px;
+                ListTable {
+                    columns: [{ title: "starting strings", width: 180px, stretch: true }];
+                    rows: root.starting;
+                    row-clicked(r, ctrl, shift) => { root.text-clicked(r); }
+                }
+                ListTable {
+                    columns: [{ title: "processed strings", width: 180px, stretch: true }];
+                    rows: root.processed;
+                }
+                VerticalLayout {
+                    spacing: 4px;
+                    horizontal-stretch: 1;
+                    Label { text: "single example string"; }
+                    LineEdit {
+                        text <=> root.example;
+                        edited => { root.example-edited(); }
+                    }
+                    Label { text: "results for each step"; }
+                    HorizontalLayout {
+                        spacing: 0px;
+                        alignment: start;
+                        for tab[i] in root.tabs: Tab {
+                            text: tab;
+                            current: i == root.tab-index;
+                            clicked => { root.tab-chosen(i); }
+                        }
+                    }
+                    ListTable {
+                        vertical-stretch: 1;
+                        columns: [{ title: "result", width: 200px, stretch: true }];
+                        rows: root.tab-rows;
+                    }
+                }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}
+
+// A splitter (kind 0), joiner (1), selector/slicer (2) or sorter (3).
+export component StringStepWindow inherits Window {
+    in property <string> window-title: "edit processing step";
+    title: root.window-title;
+    preferred-width: 560px;
+    preferred-height: 460px;
+    background: Theme.window;
+    in property <int> kind;
+    // splitter
+    in-out property <string> separator;
+    in-out property <bool> max-splits-on;
+    in-out property <int> max-splits: 1;
+    in-out property <string> split-example;
+    // joiner
+    in-out property <string> joiner;
+    in-out property <bool> tuple-on;
+    in-out property <int> tuple-size: 2;
+    // slicer
+    in-out property <int> select-type;
+    in-out property <int> single;
+    in-out property <bool> start-on;
+    in-out property <int> start;
+    in-out property <bool> end-on;
+    in-out property <int> end: -1;
+    // sorter
+    in-out property <int> sort-type;
+    in-out property <bool> ascending;
+    in-out property <bool> regex-on;
+    in-out property <string> regex: "\\d+";
+    in property <string> summary;
+    in property <bool> invalid;
+    in property <[TableRow]> texts;
+    in property <[TableRow]> results;
+    in property <string> veto;
+    callback changed();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        if root.kind == 0: Box {
+            title: "splitter values";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "separator: "; }
+                LineEdit {
+                    text <=> root.separator;
+                    edited => { root.changed(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "max splits: "; }
+                CheckBox {
+                    text: "no limit";
+                    checked: !root.max-splits-on;
+                    toggled => {
+                        root.max-splits-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.max-splits-on;
+                    minimum: 1;
+                    maximum: 65535;
+                    value <=> root.max-splits;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.kind == 1: Box {
+            title: "join text";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "text to join with: "; }
+                LineEdit {
+                    text <=> root.joiner;
+                    edited => { root.changed(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "join groups of size: "; }
+                CheckBox {
+                    text: "merge all into one string";
+                    checked: !root.tuple-on;
+                    toggled => {
+                        root.tuple-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.tuple-on;
+                    minimum: 2;
+                    maximum: 65535;
+                    value <=> root.tuple-size;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.kind == 2: Box {
+            title: "selector values";
+            Label {
+                text: "Negative indices are ok! Check the summary text to make sure your numbers are correct!";
+                wrap: word-wrap;
+            }
+            ComboBox {
+                model: ["select one item", "select range"];
+                current-index <=> root.select-type;
+                selected => { root.changed(); }
+            }
+            if root.select-type == 0: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "index to select: "; }
+                SpinBox {
+                    minimum: -65536;
+                    maximum: 65536;
+                    value <=> root.single;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.select-type == 1: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "starting index: "; }
+                CheckBox {
+                    text: "start at the beginning";
+                    checked: !root.start-on;
+                    toggled => {
+                        root.start-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.start-on;
+                    minimum: -65536;
+                    maximum: 65536;
+                    value <=> root.start;
+                    edited => { root.changed(); }
+                }
+            }
+            if root.select-type == 1: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "ending index: "; }
+                CheckBox {
+                    text: "finish at the end";
+                    checked: !root.end-on;
+                    toggled => {
+                        root.end-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                SpinBox {
+                    enabled: root.end-on;
+                    minimum: -65536;
+                    maximum: 65536;
+                    value <=> root.end;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.kind == 3: Box {
+            title: "sort values";
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "sort type: "; }
+                ComboBox {
+                    model: ["human sort", "strict lexicographic", "reverse"];
+                    current-index <=> root.sort-type;
+                    selected => { root.changed(); }
+                }
+            }
+            CheckBox {
+                text: "ascending";
+                checked <=> root.ascending;
+                toggled => { root.changed(); }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "regex for substring sorting: "; }
+                CheckBox {
+                    text: "use whole string";
+                    checked: !root.regex-on;
+                    toggled => {
+                        root.regex-on = !self.checked;
+                        root.changed();
+                    }
+                }
+                LineEdit {
+                    enabled: root.regex-on;
+                    text <=> root.regex;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.summary != "": Label {
+            text: root.summary;
+            horizontal-alignment: center;
+        }
+        if root.invalid: Label {
+            text: "(invalid)";
+            color: Theme.error;
+        }
+        Box {
+            vertical-stretch: 1;
+            title: "test results";
+            if root.kind == 0: HorizontalLayout {
+                spacing: 6px;
+                Label { text: "example string: "; }
+                LineEdit {
+                    text <=> root.split-example;
+                    edited => { root.changed(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                if root.kind != 0: ListTable {
+                    columns: [{ title: "strings", width: 200px, stretch: true }];
+                    rows: root.texts;
+                }
+                ListTable {
+                    columns: [{ title: "result", width: 200px, stretch: true }];
+                    rows: root.results;
+                }
+            }
+        }
+        if root.veto != "": Label {
+            text: root.veto;
+            wrap: word-wrap;
+            color: Theme.error;
+        }
+        ApplyCancel {
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}

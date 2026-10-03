@@ -10,6 +10,7 @@ use std::sync::Arc;
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
 use hydrus_core::ServiceKey;
+use hydrus_core::url::strings::StringProcessor;
 use hydrus_parse::sidecar::{Exporter, Importer, Router, TagDisplay};
 use hydrus_store::Store;
 
@@ -27,6 +28,8 @@ pub struct Slots {
     pub routers: Rc<RefCell<Option<SidecarRoutersWindow>>>,
     pub router: Rc<RefCell<Option<SidecarRouterWindow>>>,
     pub node: Rc<RefCell<Option<SidecarNodeWindow>>>,
+    /// The string processor editor, from a router or source.
+    pub strings: crate::string_processor_window::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -35,6 +38,7 @@ impl std::fmt::Debug for Slots {
             .field("routers", &self.routers.borrow().is_some())
             .field("router", &self.router.borrow().is_some())
             .field("node", &self.node.borrow().is_some())
+            .field("strings", &self.strings)
             .finish()
     }
 }
@@ -301,9 +305,10 @@ pub fn open_node(
     store: &Arc<Store>,
     context: Context,
     node: &Node,
-    slot: &Rc<RefCell<Option<SidecarNodeWindow>>>,
+    slots: &Slots,
     done: Rc<dyn Fn(Node)>,
 ) -> Result<SidecarNodeWindow, slint::PlatformError> {
+    let slot = &slots.node;
     let window = SidecarNodeWindow::new()?;
     let snapshot = store.snapshot();
     let services = &snapshot.services;
@@ -352,6 +357,41 @@ pub fn open_node(
                 read_node(&window, &mut state.borrow_mut());
             }
             refresh();
+        }
+    });
+    // a source's processing, in the string processor editor
+    window.on_edit_processing({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let store = store.clone();
+        let strings = slots.strings.clone();
+        move || {
+            let Editing::Source(e) = &state.borrow().editing else {
+                return;
+            };
+            if strings.processor.borrow().is_some() {
+                return;
+            }
+            let applied: Rc<dyn Fn(StringProcessor)> = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |processor| {
+                    if let Editing::Source(e) = &mut state.borrow_mut().editing {
+                        e.processor = processor;
+                    }
+                    refresh();
+                }
+            });
+            match crate::string_processor_window::open(
+                &store,
+                &e.processor,
+                Vec::new(),
+                &strings,
+                applied,
+            ) {
+                Ok(w) => *strings.processor.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the string processor: {e}"),
+            }
         }
     });
     window.on_change_type({
@@ -565,7 +605,7 @@ pub fn open_router(
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
-        let slot = slots.node.clone();
+        let slots = slots.clone();
         Rc::new(move |importer: Importer, at: Option<usize>| {
             let done: Rc<dyn Fn(Node)> = {
                 let state = state.clone();
@@ -583,8 +623,8 @@ pub fn open_router(
                     refresh();
                 })
             };
-            match open_node(&store, context, &Node::Source(importer), &slot, done) {
-                Ok(w) => *slot.borrow_mut() = Some(w),
+            match open_node(&store, context, &Node::Source(importer), &slots, done) {
+                Ok(w) => *slots.node.borrow_mut() = Some(w),
                 Err(e) => eprintln!("could not open the source: {e}"),
             }
         })
@@ -651,7 +691,7 @@ pub fn open_router(
         let state = state.clone();
         let refresh = refresh.clone();
         let store = store.clone();
-        let slot = slots.node.clone();
+        let slots = slots.clone();
         move || {
             let exporter = state.borrow().router.exporter.clone();
             let done: Rc<dyn Fn(Node)> = {
@@ -664,9 +704,40 @@ pub fn open_router(
                     refresh();
                 })
             };
-            match open_node(&store, context, &Node::Destination(exporter), &slot, done) {
-                Ok(w) => *slot.borrow_mut() = Some(w),
+            match open_node(&store, context, &Node::Destination(exporter), &slots, done) {
+                Ok(w) => *slots.node.borrow_mut() = Some(w),
                 Err(e) => eprintln!("could not open the destination: {e}"),
+            }
+        }
+    });
+    // the router's processing, in the string processor editor
+    window.on_edit_processing({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let store = store.clone();
+        let strings = slots.strings.clone();
+        move || {
+            if strings.processor.borrow().is_some() {
+                return;
+            }
+            let processor = state.borrow().router.processor.clone();
+            let applied: Rc<dyn Fn(StringProcessor)> = Rc::new({
+                let state = state.clone();
+                let refresh = refresh.clone();
+                move |processor| {
+                    state.borrow_mut().router.processor = processor;
+                    refresh();
+                }
+            });
+            match crate::string_processor_window::open(
+                &store,
+                &processor,
+                Vec::new(),
+                &strings,
+                applied,
+            ) {
+                Ok(w) => *strings.processor.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the string processor: {e}"),
             }
         }
     });

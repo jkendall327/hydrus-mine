@@ -218,3 +218,140 @@ fn an_export_folders_sidecars_come_from_the_templates() {
     let settings::ExportFolders(written) = store.read(settings::get).unwrap();
     assert_eq!(written[0].routers.len(), rows.len() - 1);
 }
+
+fn table(rows: &slint::ModelRc<hydrus_gui::TableRow>) -> Vec<String> {
+    labels(rows)
+}
+
+#[test]
+fn a_routers_processing_is_edited_in_the_string_processor_editor() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    open(&ui, "manage import folders\u{2026}");
+    let list = bound
+        .folders
+        .import_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    list.invoke_add();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let watched = tempfile::tempdir().unwrap();
+    edit.set_path(watched.path().to_string_lossy().into_owned().into());
+    edit.invoke_edit_sidecars();
+    let slots = &bound.folders.sidecars;
+    let routers = slots.routers.borrow().as_ref().unwrap().clone_strong();
+    routers.invoke_add();
+    let router = slots.router.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(router.get_processing(), "sorting human sort (ascending)");
+
+    // the router's processing: its one step, a sort
+    router.invoke_edit_processing();
+    let strings = &slots.strings;
+    let editor = strings.processor.borrow().as_ref().unwrap().clone_strong();
+    let processor_window = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    assert_eq!(editor.get_window_title(), "edit string processor");
+    assert_eq!(
+        table(&editor.get_steps()),
+        ["SORT: sorting human sort (ascending)"]
+    );
+    // a single example, through each step
+    editor.set_example("b,a,c".into());
+    editor.invoke_example_edited();
+    assert_eq!(editor.get_tabs().iter().collect::<Vec<_>>(), ["sorter (1)"]);
+    // a splitter added, asking which kind first
+    editor.invoke_add();
+    assert!(editor.get_asking());
+    assert_eq!(editor.get_asking_title(), "Which type of processing step?");
+    editor.invoke_chosen(3);
+    let step = strings.step.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(step.get_window_title(), "edit processing step");
+    assert_eq!(step.get_kind(), 0);
+    assert_eq!(step.get_separator(), ",");
+    // (its example: the example through the steps before it)
+    assert_eq!(step.get_split_example(), "b,a,c");
+    assert_eq!(table(&step.get_results()), ["b", "a", "c"]);
+    // no separator: said so on "apply"
+    step.set_separator("".into());
+    step.invoke_changed();
+    assert!(step.get_invalid());
+    step.invoke_apply();
+    assert_eq!(
+        step.get_veto(),
+        "Sorry, you have to have a value in the separator field!"
+    );
+    step.set_separator(",".into());
+    step.invoke_changed();
+    assert_eq!(step.get_veto(), "");
+    step.invoke_apply();
+    assert!(strings.step.borrow().is_none());
+    assert_eq!(
+        table(&editor.get_steps()),
+        [
+            "SORT: sorting human sort (ascending)",
+            "SPLIT: splitting by \",\""
+        ]
+    );
+    // moved up, to sort what it splits
+    editor.invoke_row_clicked(1, false, false);
+    editor.invoke_up();
+    assert_eq!(table(&editor.get_steps())[0], "SPLIT: splitting by \",\"");
+    editor.invoke_tab_chosen(1);
+    assert_eq!(table(&editor.get_tab_rows()), ["a", "b", "c"]);
+    let pixels = headless::render(&windows.get(processor_window).unwrap(), 820, 640);
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(&shots.join("string_processor.png"), &pixels, 820, 640).unwrap();
+    // the sort edited: descending
+    editor.invoke_row_clicked(1, false, false);
+    editor.invoke_edit();
+    let step = strings.step.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(step.get_kind(), 3);
+    step.set_ascending(false);
+    step.invoke_changed();
+    step.invoke_apply();
+    editor.invoke_tab_chosen(1);
+    assert_eq!(table(&editor.get_tab_rows()), ["c", "b", "a"]);
+    // a joiner added and taken out again, asking first
+    editor.invoke_add();
+    editor.invoke_chosen(4);
+    let step = strings.step.borrow().as_ref().unwrap().clone_strong();
+    step.invoke_apply();
+    assert_eq!(table(&editor.get_steps()).len(), 3);
+    editor.invoke_row_clicked(2, false, false);
+    editor.invoke_delete();
+    assert_eq!(editor.get_asking_message(), "Remove 1 selected?");
+    editor.invoke_chosen(0);
+    assert_eq!(table(&editor.get_steps()).len(), 2);
+    editor.invoke_apply();
+    assert!(strings.processor.borrow().is_none());
+    assert_eq!(
+        router.get_processing(),
+        "splitting by \",\"\nsorting human sort (descending)"
+    );
+    router.invoke_apply();
+    routers.invoke_apply();
+    edit.invoke_apply();
+    list.invoke_apply();
+    let written = store.read(import_folders::import_folders).unwrap();
+    let steps = &written[0].settings.routers[0].processor.steps;
+    assert_eq!(steps.len(), 2);
+    assert!(matches!(
+        steps[1],
+        hydrus_core::url::strings::ProcessingStep::Sort {
+            ascending: false,
+            ..
+        }
+    ));
+}

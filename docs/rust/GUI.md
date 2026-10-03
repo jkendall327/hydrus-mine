@@ -316,6 +316,19 @@ filename (remove the file's extension, a suffix, and the resulting
 sidecar for a test path). What they show and ask at each step is as
 `oracle/record_sidecar_editors.py` recorded the reference's.
 
+A router's or source's processing button (its steps, a line each) opens
+the string processor editor (`ui/string_processor.slint`,
+`src/string_processor_window.rs`, `hydrus-gui-model/src/string_editors.rs`):
+its steps ("SPLIT: splitting by \",\"") with up, X (asking "Remove 1
+selected?"), down, add (asking "Which type of processing step?") and
+edit (or a double-click); and the test results, the starting strings and
+those strings processed, and a single example through each step but the
+slicers, a tab each ("splitter (3)"). A splitter, joiner, selector/slicer
+or sorter is edited in a step window (its fields, summary and results,
+and "apply" refusing a splitter with no separator); a tag filter in the
+tag filter editor. What they show at each step is as
+`oracle/record_string_processor_editor.py` recorded the reference's.
+
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the
