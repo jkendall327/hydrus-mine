@@ -102,6 +102,7 @@ async fn a_local_import_imports_its_files() {
                     None,
                     &ImportOptionsSlice::default(),
                     &paths,
+                    &queues::PathTags::new(),
                     LocalImport {
                         delete_after_success: delete,
                     },

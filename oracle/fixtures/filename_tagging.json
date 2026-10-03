@@ -1,0 +1,499 @@
+{
+ "paths": [
+  "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+  "/home/user/pictures/artist name/0001.png",
+  "/srv/import/Some_File (v2).webm"
+ ],
+ "cases": [
+  {
+   "case": {},
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     ""
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     ""
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     ""
+    ]
+   ],
+   "value": {}
+  },
+  {
+   "case": {
+    "all": [
+     "imported",
+     "Creator:Someone"
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "creator:someone, imported"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "creator:someone, imported"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "creator:someone, imported"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "creator:someone",
+      "imported"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "creator:someone",
+      "imported"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "creator:someone",
+      "imported"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "filename": ""
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "0012 - page 3"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "0001"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "some_file (v2)"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "0012 - page 3"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "0001"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "some_file (v2)"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "filename": "title",
+    "directories": {
+     "0": "",
+     "-1": "series",
+     "-2": "creator"
+    }
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "creator:artist name, home, series:blue series, title:0012 - page 3"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "creator:pictures, home, series:artist name, title:0001"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "creator:srv, series:import, srv, title:some_file (v2)"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "creator:artist name",
+      "home",
+      "series:blue series",
+      "title:0012 - page 3"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "creator:pictures",
+      "home",
+      "series:artist name",
+      "title:0001"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "creator:srv",
+      "series:import",
+      "srv",
+      "title:some_file (v2)"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "directories": {
+     "1": "second",
+     "2": "third",
+     "-3": "third last"
+    }
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "second:user, third last:pictures, third:pictures"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "second:user, third last:user, third:pictures"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "second:import"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "second:user",
+      "third last:pictures",
+      "third:pictures"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "second:user",
+      "third last:user",
+      "third:pictures"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "second:import"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "quick": [
+     [
+      "page",
+      "(?<=page )\\d+"
+     ],
+     [
+      "version",
+      "(?<=\\(v)\\d+(?=\\))"
+     ]
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "page:3"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     ""
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "version:2"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "page:3"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "version:2"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "regexes": [
+     "[a-z]+(?= series)",
+     "(\\d{4})"
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "0012, blue"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "0001"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     ""
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "0012",
+      "blue"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "0001"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "number": [
+     1,
+     1,
+     "import order"
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "import order:1"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "import order:2"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "import order:3"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "import order:1"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "import order:2"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "import order:3"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "number": [
+     10,
+     -2,
+     "n"
+    ],
+    "all": [
+     "x"
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "n:10, x"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "n:8, x"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "n:6, x"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "n:10",
+      "x"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "n:8",
+      "x"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "n:6",
+      "x"
+     ]
+    }
+   }
+  },
+  {
+   "case": {
+    "single": {
+     "0": [
+      "first only"
+     ],
+     "2": [
+      "third only",
+      "Shared"
+     ]
+    },
+    "all": [
+     "shared"
+    ]
+   },
+   "tabs": [
+    "sidecars",
+    "downloader tags",
+    "my tags",
+    "second tags"
+   ],
+   "rows": [
+    [
+     "1",
+     "/home/user/pictures/artist name/blue series/0012 - page 3.jpg",
+     "first only, shared"
+    ],
+    [
+     "2",
+     "/home/user/pictures/artist name/0001.png",
+     "shared"
+    ],
+    [
+     "3",
+     "/srv/import/Some_File (v2).webm",
+     "shared, third only"
+    ]
+   ],
+   "value": {
+    "/home/user/pictures/artist name/blue series/0012 - page 3.jpg": {
+     "my tags": [
+      "first only",
+      "shared"
+     ]
+    },
+    "/home/user/pictures/artist name/0001.png": {
+     "my tags": [
+      "shared"
+     ]
+    },
+    "/srv/import/Some_File (v2).webm": {
+     "my tags": [
+      "shared",
+      "third only"
+     ]
+    }
+   }
+  }
+ ]
+}

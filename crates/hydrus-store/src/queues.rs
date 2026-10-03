@@ -482,13 +482,19 @@ impl LocalImport {
     }
 }
 
+/// Tags for some paths: by path, `(tag service key hex, tags)`.
+pub type PathTags = BTreeMap<String, Vec<(String, BTreeSet<String>)>>;
+
 /// Make a local import of `paths`, each a path seed with its modified time
 /// (seconds) as its source time, in order (`HDDImport.__init__`); its id.
+/// `tags` are tags for some paths, by tag service, added to their files as
+/// they are (`paths_to_additional_service_keys_to_tags`).
 pub fn create_local_import(
     conn: &Connection,
     page_key: Option<&[u8]>,
     options: &ImportOptionsSlice,
     paths: &[(String, Option<i64>)],
+    tags: &PathTags,
     settings: LocalImport,
     now: i64,
 ) -> Result<i64> {
@@ -509,7 +515,10 @@ pub fn create_local_import(
             data_for_comparison: path.clone(),
             source_time: *modified,
             referral_url: None,
-            meta: FileSeedMeta::default(),
+            meta: FileSeedMeta {
+                external_additional_tags: tags.get(path).cloned().unwrap_or_default(),
+                ..FileSeedMeta::default()
+            },
         })
         .collect();
     add_file_seeds(conn, id, &seeds, false, now)?;

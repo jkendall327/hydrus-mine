@@ -7,6 +7,7 @@ mod checker_options;
 mod duplicates_page;
 mod edit_subscription;
 mod file_log;
+mod filename_tagging;
 mod folders;
 mod import_options_editor;
 mod importer_menu;

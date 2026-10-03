@@ -60,6 +60,8 @@ pub enum NewPage {
     /// `NewPageImportHDD`).
     LocalImport {
         paths: Vec<(String, Option<i64>)>,
+        /// Tags for some of them (from the "filename tagging" dialog).
+        tags: hydrus_store::queues::PathTags,
         delete_after_success: bool,
     },
 }

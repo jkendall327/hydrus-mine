@@ -29,6 +29,7 @@ mod duplicates_sidebar;
 mod edit_subscription_window;
 pub mod favourites_window;
 mod file_log_window;
+mod filename_tagging_window;
 mod filter_window;
 mod folders_window;
 mod gallery;
@@ -135,11 +136,11 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, file_log, folders, import_options_editor,
-    importer_menu, info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
-    options, page_chooser, predicate_editors, ratings, scanbar, search_log, selection,
-    session_saving, sort, status, subscriptions_dialog, subscriptions_list, thumbnail_icons,
-    thumbnail_ratings,
+    duplicates_page, edit_subscription, favourites, file_log, filename_tagging, folders,
+    import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
+    manage_tags, media_actions, options, page_chooser, predicate_editors, ratings, scanbar,
+    search_log, selection, session_saving, sort, status, subscriptions_dialog, subscriptions_list,
+    thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -181,6 +182,8 @@ pub struct Bound {
     pub open_page: Rc<dyn Fn(&page_chooser::NewPage)>,
     /// The "review files to import" window while it is open, and its list.
     pub review_imports: ReviewSlot,
+    /// Its "filename tagging" dialog.
+    pub filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>>,
     /// The "multiple/deleted locations" list while it is open.
     pub locations: Rc<RefCell<Option<LocationsWindow>>>,
     /// The favourite searches' dialogs while they are open.
@@ -406,6 +409,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // the "review files to import" window, with paths (from file > import
     // files, or dropped on the window); "import now" opens an import page
     let review_imports: ReviewSlot = Rc::default();
+    let filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>> = Rc::default();
     // the "multiple/deleted locations" list, from the file domain button
     let locations: Rc<RefCell<Option<LocationsWindow>>> = Rc::default();
     let favourite_dialogs = favourites_window::Slots::default();
@@ -415,7 +419,9 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let predicate_editor: Rc<RefCell<Option<PredicateEditorWindow>>> = Rc::default();
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
+        let tagging = filename_tagging.clone();
         let open_page = open_page.clone();
+        let pages = pages.clone();
         move |paths: Vec<String>| {
             if let Some((window, review)) = slot.borrow().as_ref() {
                 review.borrow_mut().add_paths(paths);
@@ -426,14 +432,24 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             let import_now: import_window::ImportNow = Rc::new({
                 let open_page = open_page.clone();
-                move |paths, delete_after_success| {
+                move |paths, tags, delete_after_success| {
                     open_page(&page_chooser::NewPage::LocalImport {
                         paths,
+                        tags,
                         delete_after_success,
                     });
                 }
             });
-            if let Err(e) = import_window::open(&slot, paths, import_now) {
+            let tag_services: Vec<(String, String)> = pages
+                .borrow()
+                .store()
+                .snapshot()
+                .services
+                .all()
+                .filter(|s| s.service_type().is_real_tag_service())
+                .map(|s| (s.key.to_hex(), s.name.clone()))
+                .collect();
+            if let Err(e) = import_window::open(&slot, paths, tag_services, &tagging, &import_now) {
                 eprintln!("could not open the import window: {e}");
             }
         }
@@ -2466,6 +2482,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         filter,
         open_page,
         review_imports,
+        filename_tagging,
         locations,
         favourites: favourite_dialogs,
         predicate_editor,

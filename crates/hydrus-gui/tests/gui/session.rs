@@ -1517,8 +1517,15 @@ fn a_local_import_page_shows_and_controls_its_import() {
         ("/imports/b.jpg".to_owned(), Some(1_600_000_001)),
         ("/imports/c.gif".to_owned(), None),
     ];
+    // (tags for one of them, as the "filename tagging" dialog gives)
+    let mut tags = queues::PathTags::new();
+    tags.insert(
+        "/imports/b.jpg".to_owned(),
+        vec![("6d79".to_owned(), ["blue".to_owned()].into_iter().collect())],
+    );
     (bound.open_page)(&NewPage::LocalImport {
         paths: paths.clone(),
+        tags,
         delete_after_success: true,
     });
     assert_eq!(bound.pages.borrow().shown().name, "import");
@@ -1544,9 +1551,13 @@ fn a_local_import_page_shows_and_controls_its_import() {
             delete_after_success: true
         })
     );
-    let seeds: Vec<(String, Option<i64>)> = store
-        .read(move |c| queues::file_seeds(c, queue))
-        .unwrap()
+    let made_seeds = store.read(move |c| queues::file_seeds(c, queue)).unwrap();
+    assert_eq!(
+        made_seeds[1].meta.external_additional_tags,
+        [("6d79".to_owned(), ["blue".to_owned()].into_iter().collect())]
+    );
+    assert!(made_seeds[0].meta.external_additional_tags.is_empty());
+    let seeds: Vec<(String, Option<i64>)> = made_seeds
         .into_iter()
         .map(|s| (s.data, s.source_time))
         .collect();

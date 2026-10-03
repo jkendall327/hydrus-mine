@@ -1,0 +1,231 @@
+// The "filename tagging" dialog for files about to be imported from disk
+// (the reference's `EditLocalImportFilenameTaggingPanel`, opened by "review
+// files to import"'s "add tags/urls with the import >>"; its workings are
+// hydrus-gui-model's `filename_tagging`, bound by
+// `src/filename_tagging_window.rs`): a tab per tag service, each with the
+// paths and the tags each gets, over its "simple" and "advanced" options.
+
+import { Button, CheckBox, LineEdit, SpinBox, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+// a "misc" row: a checkbox and its namespace
+export struct MiscRow {
+    label: string,
+    on: bool,
+    namespace: string,
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+component BoxTitle inherits Text {
+    font-weight: 700;
+    color: Theme.text;
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    height: 28px;
+    min-width: label.preferred-width + 20px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+export component FilenameTaggingWindow inherits Window {
+    title: "filename tagging";
+    preferred-width: 1000px;
+    preferred-height: 760px;
+    background: Theme.window;
+    in property <[string]> services;
+    in property <int> service-index;
+    in property <[TableRow]> rows;
+    in-out property <bool> advanced;
+    // simple
+    in-out property <string> tags-all;
+    in-out property <string> tags-selected;
+    in property <bool> has-selection;
+    in property <[MiscRow]> misc;
+    // advanced
+    in-out property <string> quick;
+    in-out property <string> regexes;
+    in-out property <int> number-base;
+    in-out property <int> number-step;
+    in-out property <string> number-namespace;
+    // what is wrong with what is typed
+    in property <string> errors;
+    callback service-chosen(int);
+    callback row-clicked(int, bool, bool);
+    // a text field or number changed: the two-way fields are read
+    callback changed();
+    // a "misc" row's box ticked or not, or its namespace typed
+    callback misc-toggled(int, bool);
+    callback misc-namespace(int, string);
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        HorizontalLayout {
+            spacing: 0px;
+            alignment: start;
+            for name[i] in root.services: Tab {
+                text: name;
+                current: i == root.service-index;
+                clicked => { root.service-chosen(i); }
+            }
+        }
+        ListTable {
+            vertical-stretch: 1;
+            columns: [
+                { title: "#", width: 40px },
+                { title: "path", width: 420px },
+                { title: "metadata", width: 300px, stretch: true },
+            ];
+            rows: root.rows;
+            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+        }
+        HorizontalLayout {
+            spacing: 0px;
+            alignment: start;
+            Tab {
+                text: "simple";
+                current: !root.advanced;
+                clicked => { root.advanced = false; }
+            }
+            Tab {
+                text: "advanced";
+                current: root.advanced;
+                clicked => { root.advanced = true; }
+            }
+        }
+        if !root.advanced: HorizontalLayout {
+            spacing: 10px;
+            height: 260px;
+            VerticalLayout {
+                spacing: 4px;
+                BoxTitle { text: "tags for all"; }
+                Label { text: "a tag a line"; }
+                TextEdit {
+                    vertical-stretch: 1;
+                    text <=> root.tags-all;
+                    edited => { root.changed(); }
+                }
+            }
+            VerticalLayout {
+                spacing: 4px;
+                BoxTitle { text: "tags just for selected files"; }
+                Label { text: root.has-selection ? "a tag a line" : "(select files above)"; }
+                TextEdit {
+                    vertical-stretch: 1;
+                    enabled: root.has-selection;
+                    text <=> root.tags-selected;
+                    edited => { root.changed(); }
+                }
+            }
+            VerticalLayout {
+                spacing: 4px;
+                alignment: start;
+                BoxTitle { text: "misc"; }
+                for row[i] in root.misc: HorizontalLayout {
+                    spacing: 4px;
+                    Label {
+                        text: row.label;
+                        min-width: 170px;
+                    }
+                    CheckBox {
+                        checked: row.on;
+                        toggled => { root.misc-toggled(i, self.checked); }
+                    }
+                    LineEdit {
+                        width: 110px;
+                        placeholder-text: "namespace";
+                        text: row.namespace;
+                        edited(text) => { root.misc-namespace(i, text); }
+                    }
+                }
+            }
+        }
+        if root.advanced: HorizontalLayout {
+            spacing: 10px;
+            height: 260px;
+            VerticalLayout {
+                spacing: 4px;
+                BoxTitle { text: "quick namespaces"; }
+                Label { text: "namespace:regex, a line each; all files are tagged with \"namespace:match\""; }
+                TextEdit {
+                    vertical-stretch: 1;
+                    text <=> root.quick;
+                    edited => { root.changed(); }
+                }
+            }
+            VerticalLayout {
+                spacing: 4px;
+                BoxTitle { text: "regexes"; }
+                Label { text: "a regex a line; every match is a tag"; }
+                TextEdit {
+                    vertical-stretch: 1;
+                    text <=> root.regexes;
+                    edited => { root.changed(); }
+                }
+                BoxTitle { text: "#"; }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: "# base/step: "; }
+                    SpinBox {
+                        minimum: -10000000;
+                        maximum: 10000000;
+                        value <=> root.number-base;
+                        edited => { root.changed(); }
+                    }
+                    SpinBox {
+                        minimum: -1000000;
+                        maximum: 1000000;
+                        value <=> root.number-step;
+                        edited => { root.changed(); }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: "# namespace: "; }
+                    LineEdit {
+                        text <=> root.number-namespace;
+                        edited => { root.changed(); }
+                    }
+                }
+            }
+        }
+        if root.errors != "": Label {
+            text: root.errors;
+            color: Theme.error;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

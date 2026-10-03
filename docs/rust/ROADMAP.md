@@ -75,9 +75,13 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
 
 **Next**:
 
-- The filename tagging options editor (`EditFilenameTaggingOptionPanel`)
-  and the sidecar routers editor, which the import and export folder
-  dialogs (and "review files to import") open.
+- The import folder dialog's filename tagging list (adding and editing a
+  tag service's options with `EditFilenameTaggingOptionPanel`, an example
+  path's tags shown) can reuse `hydrus-gui-model`'s `filename_tagging`
+  and the "filename tagging" dialog's "simple"/"advanced" boxes, which
+  "review files to import" now opens.
+- The sidecar routers editor, which the import and export folder dialogs
+  and the "filename tagging" dialog's "sidecars" tab open.
 - An import folder's import options, after an import options editor.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs

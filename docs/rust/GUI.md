@@ -372,9 +372,19 @@ successful import" says, in the reference's red, that they will be
 deleted. "import now" opens an "import" page of the good files, in the
 list's order. Paths go in through the box over the list (enter adds one,
 a file or folder, as typed or pasted with a file manager's quotes) in
-place of the reference's "add files"/"add folder" pickers, and "add
-tags/urls with the import >>" is greyed out until the import's metadata
-options are ported.
+place of the reference's "add files"/"add folder" pickers.
+
+"add tags/urls with the import >>" opens the "filename tagging" dialog
+(`src/filename_tagging_window.rs`, `hydrus-gui-model/src/filename_tagging.rs`),
+the reference's `EditLocalImportFilenameTaggingPanel`: a tab per real
+tag service, each listing the files (#, path, and the tags each gets,
+shown again as the options change) over "simple" (tags for all, tags
+just for the selected files, and the filename and directories as tags,
+each with a namespace; typing a namespace ticks its box) and "advanced"
+(quick namespaces, regexes, and a number for each file from a base by a
+step, in a namespace). "apply" imports the files with their tags, as
+`oracle/record_filename_tagging.py` recorded the reference's dialog
+giving them.
 
 A gallery downloader page is the reference's too. Its "gallery
 downloader" box says how its searches stand ("2 queries - 4/6", and

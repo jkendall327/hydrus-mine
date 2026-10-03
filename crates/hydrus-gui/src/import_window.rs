@@ -15,7 +15,9 @@ use crate::{ImportRow, ReviewImportsWindow};
 
 /// What "import now" hands on: the good files, each with its modified time
 /// (seconds), and whether to delete them once imported.
-pub type ImportNow = Rc<dyn Fn(Vec<(String, Option<i64>)>, bool)>;
+/// Import these paths (with their modified times), with tags for some,
+/// deleting each afterwards or not.
+pub type ImportNow = Rc<dyn Fn(Vec<(String, Option<i64>)>, hydrus_store::queues::PathTags, bool)>;
 
 /// A path as typed or pasted: trimmed, and without the quotes a file
 /// manager's "copy as path" puts round it.
@@ -49,7 +51,9 @@ struct Selection {
 pub(crate) fn open(
     slot: &crate::ReviewSlot,
     paths: Vec<String>,
-    import_now: ImportNow,
+    tag_services: Vec<(String, String)>,
+    tagging: &Rc<RefCell<Option<crate::FilenameTaggingWindow>>>,
+    import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
     let window = ReviewImportsWindow::new().map_err(|e| e.to_string())?;
     let review = Rc::new(RefCell::new(Review::new()));
@@ -196,6 +200,7 @@ pub(crate) fn open(
     window.on_import_now({
         let review = review.clone();
         let close = close.clone();
+        let import_now = import_now.clone();
         move || {
             let (paths, delete) = {
                 let review = review.borrow();
@@ -213,7 +218,49 @@ pub(crate) fn open(
                 (paths, review.delete_after_success)
             };
             close();
-            import_now(paths, delete);
+            import_now(paths, hydrus_store::queues::PathTags::new(), delete);
+        }
+    });
+    // "add tags/urls with the import >>": the "filename tagging" dialog,
+    // whose "apply" imports with its tags
+    window.on_add_tags({
+        let review = review.clone();
+        let close = close.clone();
+        let tagging = tagging.clone();
+        let import_now = import_now.clone();
+        move || {
+            if tagging.borrow().is_some() {
+                return;
+            }
+            let (paths, delete) = {
+                let review = review.borrow();
+                if !review.can_import() {
+                    return;
+                }
+                let paths: Vec<(String, Option<i64>)> = review
+                    .good_paths()
+                    .into_iter()
+                    .map(|p| {
+                        let time = modified(&p);
+                        (p, time)
+                    })
+                    .collect();
+                (paths, review.delete_after_success)
+            };
+            let names: Vec<String> = paths.iter().map(|p| p.0.clone()).collect();
+            let done: Rc<dyn Fn(hydrus_store::queues::PathTags)> = {
+                let close = close.clone();
+                let import_now = import_now.clone();
+                Rc::new(move |tags| {
+                    close();
+                    import_now(paths.clone(), tags, delete);
+                })
+            };
+            match crate::filename_tagging_window::open(tag_services.clone(), names, &tagging, done)
+            {
+                Ok(dialog) => *tagging.borrow_mut() = Some(dialog),
+                Err(e) => eprintln!("could not open the filename tagging: {e}"),
+            }
         }
     });
     window.on_cancel({

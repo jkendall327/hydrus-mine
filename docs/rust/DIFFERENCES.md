@@ -484,8 +484,11 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   sidecars and `Thumbs.db` set aside), but **it has no file or folder
   picker**: paths are typed or pasted into a box over its list, or dropped
   on it or the main window. Its "add tags/urls with the import >>" button
-  is greyed out (no filename tagging or sidecar options yet), so "import
-  now" is the only way in, with the default import options.
+  opens the "filename tagging" dialog, which has no "sidecars" tab yet;
+  its tags are typed a line each (the reference has a tags input with
+  autocomplete and paste buttons), as are its quick namespaces
+  ("namespace:regex") and regexes, where the reference has lists with
+  add and edit dialogs.
 - **There is one review window at a time**: files dropped on the main
   window while it is open join its list, where the reference opens a
   second window.

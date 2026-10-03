@@ -87,6 +87,7 @@ export component ReviewImportsWindow inherits Window {
     callback stop();
     callback subdirectories-toggled(bool);
     callback delete-toggled(bool);
+    callback add-tags();
     callback import-now();
     callback cancel();
 
@@ -229,10 +230,11 @@ export component ReviewImportsWindow inherits Window {
                     enabled: root.can-import;
                     clicked => { root.import-now(); }
                 }
-                // (tags and sidecars with the import aren't done yet)
+                // (the "filename tagging" dialog, which starts the import)
                 Button {
                     text: "add tags/urls with the import >>";
-                    enabled: false;
+                    enabled: root.can-import;
+                    clicked => { root.add-tags(); }
                 }
             }
         }
