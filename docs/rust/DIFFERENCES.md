@@ -581,6 +581,16 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   query is typed as the Client API's tags rather than through the search
   autocomplete, and its sidecars can't be tested on example files. They
   don't pause the folders while open, as the reference does.
+- **The duplicates page's preparation tab** has no "regenerate search
+  tree" or "regenerate search numbers" (hydrus-rs builds its search index
+  afresh, and counts searched files directly) or "resync potential pairs
+  to storage" yet. Working hard tells `hydrus serve` to search whatever
+  its idle and normal time switches say (it has no idle time of its own).
+  The tab's name always hides the percentage once over 99% done (the
+  reference's option for it isn't kept). The auto-resolution tab can't
+  edit rules or review their actions yet, and a rule's status can't say
+  which rule `hydrus serve` is working on ("searching", "resolving"): it
+  says "working".
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

@@ -1,0 +1,129 @@
+{
+ "columns": [
+  "name",
+  "progress",
+  "status"
+ ],
+ "rows": [
+  {
+   "counts": {},
+   "paused": false,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "no pairs",
+   "status": "done"
+  },
+  {
+   "counts": {
+    "4": 5
+   },
+   "paused": false,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "5 to search, 0 pairs resolved",
+   "status": "working"
+  },
+  {
+   "counts": {
+    "4": 5
+   },
+   "paused": false,
+   "max_pending": null,
+   "can_work": false,
+   "progress": "5 to search, 0 pairs resolved",
+   "status": "waiting"
+  },
+  {
+   "counts": {
+    "4": 5
+   },
+   "paused": true,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "5 to search, 0 pairs resolved",
+   "status": "paused"
+  },
+  {
+   "counts": {
+    "1": 2,
+    "3": 1200
+   },
+   "paused": false,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "2 still to test, 1,200 pairs resolved",
+   "status": "working"
+  },
+  {
+   "counts": {
+    "3": 3,
+    "2": 1,
+    "6": 2,
+    "0": 7
+   },
+   "paused": false,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "Done! 3 pairs resolved (1 failed the test) (2 denied by user) (7 did not match the search)",
+   "status": "done"
+  },
+  {
+   "counts": {
+    "5": 4
+   },
+   "paused": false,
+   "max_pending": 0,
+   "can_work": true,
+   "progress": "4 ready to resolve, 0 pairs resolved",
+   "status": "queued"
+  },
+  {
+   "counts": {
+    "5": 4,
+    "1": 3
+   },
+   "paused": false,
+   "max_pending": 4,
+   "can_work": true,
+   "progress": "3 still to test, 4 ready to resolve, 0 pairs resolved",
+   "status": "queued"
+  },
+  {
+   "counts": {
+    "5": 3,
+    "1": 3
+   },
+   "paused": false,
+   "max_pending": 4,
+   "can_work": false,
+   "progress": "3 still to test, 3 ready to resolve, 0 pairs resolved",
+   "status": "waiting"
+  },
+  {
+   "counts": {
+    "4": 1,
+    "1": 1,
+    "5": 1,
+    "3": 1,
+    "2": 1,
+    "6": 1,
+    "0": 1
+   },
+   "paused": false,
+   "max_pending": 0,
+   "can_work": true,
+   "progress": "1 to search, 1 still to test, 1 ready to resolve, 1 pairs resolved (1 failed the test) (1 denied by user) (1 did not match the search)",
+   "status": "working"
+  },
+  {
+   "counts": {
+    "0": 12000
+   },
+   "paused": false,
+   "max_pending": null,
+   "can_work": true,
+   "progress": "Done! 0 pairs resolved (12,000 did not match the search)",
+   "status": "done"
+  }
+ ]
+}

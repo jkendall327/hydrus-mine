@@ -25,6 +25,7 @@ mod archive_delete_window;
 mod checker_options_window;
 pub mod daemon;
 mod drops;
+mod duplicates_sidebar;
 mod edit_subscription_window;
 pub mod favourites_window;
 mod filter_window;
@@ -129,10 +130,10 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    edit_subscription, favourites, folders, info_lines, list_selection, local_import, main_menu,
-    manage_tags, media_actions, options, page_chooser, predicate_editors, ratings, scanbar,
-    selection, session_saving, sort, status, subscriptions_dialog, subscriptions_list,
-    thumbnail_icons, thumbnail_ratings,
+    duplicates_page, edit_subscription, favourites, folders, info_lines, list_selection,
+    local_import, main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors,
+    ratings, scanbar, selection, session_saving, sort, status, subscriptions_dialog,
+    subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -290,15 +291,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     );
     show_tabs(window, &pages.borrow());
     refresh(window, &current.borrow().borrow());
+    // a duplicates page's sidebar tabs
+    let duplicates = Rc::new(duplicates_sidebar::Sidebar::default());
+    duplicates.show(window, &current.borrow().borrow());
 
     // after a change to the page shown, show it; `true` if its files changed
     let shown = {
         let current = current.clone();
         let weak = window.as_weak();
         let rows = rows.clone();
+        let duplicates = duplicates.clone();
         move |files: bool| {
             if let Some(window) = weak.upgrade() {
                 refresh(&window, &current.borrow().borrow());
+                duplicates.show(&window, &current.borrow().borrow());
                 if files {
                     rows.reset();
                 }
@@ -310,6 +316,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let current = current.clone();
         move || current.borrow().clone()
     };
+    duplicates_sidebar::bind(window, &duplicates, page.clone());
     // change the pages, then show whichever page is now shown; a change
     // that can't be made says why
     // (the menu bar's titles, shown again after a change)

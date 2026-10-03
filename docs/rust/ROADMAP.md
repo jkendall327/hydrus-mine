@@ -84,14 +84,23 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 
-- The duplicates page has its filtering tab (the duplicate filter works).
-- The preparation tab is missing: search distance, "search now",
-  maintenance numbers.
-- The auto-resolution tab is missing: the rules list, the rule editor,
-  and review of pending actions.
-- The backend has the similar files search and auto-resolution
-  (`hydrus-duplicates`, `hydrus-store::duplicates`), checked against the
-  reference.
+**Done**: the sidebar's three tabs (`ui/duplicates_page.slint`,
+`src/duplicates_sidebar.rs`, `hydrus-gui-model`'s `duplicates_page`):
+preparation's numbers, distance, working hard and cog menu, and
+auto-resolution's rules list, pause/play and resets. Recorded by
+`oracle/record_duplicates_preparation.py` and
+`oracle/record_auto_resolution_rows.py`; tested in
+`tests/model/duplicates_page.rs` and `tests/gui/duplicates_page.rs`.
+
+**Next**:
+
+- The auto-resolution rules editor (`EditDuplicatesAutoResolutionRules
+  Panel` and the rule editor with its comparators,
+  `ClientGUIDuplicatesAutoResolution.py`), and "review actions"
+  (`ClientGUIDuplicatesAutoResolutionRuleReview.py`). Big: record the
+  editors' fields and the comparators' labels first.
+- The filtering tab's search editor (`EditPotentialDuplicatesSearch
+  ContextPanel`) and its "quick and dirty processing" box.
 
 ## 4. Downloader pages: leftovers
 

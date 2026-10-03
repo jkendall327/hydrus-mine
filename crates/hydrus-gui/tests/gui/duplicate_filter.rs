@@ -19,7 +19,7 @@ use hydrus_store::duplicates::{
 };
 use hydrus_store::similar::{self, SimilarFilesSettings};
 
-fn store_with_pairs() -> (tempfile::TempDir, Arc<Store>) {
+pub(crate) fn store_with_pairs() -> (tempfile::TempDir, Arc<Store>) {
     let dir = tempfile::tempdir().unwrap();
     let store = Store::open(dir.path()).unwrap();
     let importer = FileImporter::new(Arc::clone(&store), MediaTools::new());
@@ -49,7 +49,7 @@ fn store_with_pairs() -> (tempfile::TempDir, Arc<Store>) {
     (dir, store)
 }
 
-fn my_files(store: &Store) -> (ServiceId, hydrus_core::ServiceKey) {
+pub(crate) fn my_files(store: &Store) -> (ServiceId, hydrus_core::ServiceKey) {
     let snapshot = store.snapshot();
     let service = snapshot.services.builtin(builtin_keys::MY_FILES).unwrap();
     (service.id, service.key.clone())

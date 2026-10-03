@@ -796,6 +796,22 @@ they are few, as `duplicate_filter_auto_commit_batch_size` has it), and
 closing with decisions pending asks too. Merges use your duplicate merge
 options. The model is `hydrus-gui-model/src/duplicate_filter.rs`, tested in
 `tests/gui/duplicate_filter.rs` with the window drawn headless.
+The duplicates page's sidebar has the reference's three tabs
+(`ui/duplicates_page.slint`, `src/duplicates_sidebar.rs`,
+`hydrus-gui-model/src/duplicates_page.rs`). Preparation says how many
+files are eligible for the similar files search and how many it has
+searched at the search distance (named by the distance menu, "exact
+match" to "speculative", or set exactly), names the tab "preparation (60%
+done)" while there is work left, starts and stops working hard, and from
+its cog menu switches the search on in idle and normal time and deletes
+every potential pair to search again (asking first). Filtering launches
+the duplicate filter. Auto-resolution lists the rules with their progress
+("5 to search, 2 still to test, 3 pairs resolved") and status, pauses and
+plays the selected, switches auto-resolution on in idle and normal time,
+and resets the selected (or every) rule's search, tests or denials,
+asking first. What the tabs say is as
+`oracle/record_duplicates_preparation.py` and
+`oracle/record_auto_resolution_rows.py` recorded the reference's.
 `crates/hydrus-gui/tests/gui/search_page.rs` drives the page and
 `tests/gui/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of
@@ -810,8 +826,8 @@ other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, downloader
 pages' file and search log windows and import options buttons, and a
 download's cog and error menus (bandwidth rules, the last error); in
-the duplicates page, editing its search and the preparation and
-auto-resolution tabs; in the duplicate filter, the custom action,
+the duplicates page, editing its search, editing auto-resolution rules
+and reviewing their actions, and quick and dirty processing; in the duplicate filter, the custom action,
 deleting from the filter, the hover frames, and
 reviewing auto-resolution's pending
 pairs; the viewer's other zoom shortcuts (fill, max, the zoom menu), its

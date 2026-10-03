@@ -10,6 +10,8 @@ import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { TableColumn, TableRow } from "list_table.slint";
 import { MenuBarRow, MenuLine, MenuPane, MenuPanes, MenuTitle } from "main_menu.slint";
 import { PopupData, PopupStack } from "popups.slint";
+import { DuplicatesData, DuplicatesSidebar } from "duplicates_page.slint";
+export { DuplicatesData }
 import { RatingShape } from "viewer.slint";
 export { DownloadLine, GalleryData, WatcherData }
 export { MenuLine, MenuPane, MenuTitle, PopupData }
@@ -501,8 +503,12 @@ export component MainWindow inherits Window {
     callback tab-space-pressed(int, bool);
     // why the page shown has no search, if it hasn't
     in property <string> note;
-    // a duplicates page, which can launch the duplicate filter
+    // a duplicates page, which can launch the duplicate filter; its
+    // sidebar's tabs (duplicates_page.slint)
     in property <bool> can-filter;
+    in property <DuplicatesData> duplicates;
+    in property <[TableRow]> duplicates-rules;
+    callback duplicates-action(string, int, bool, bool);
     in property <[string]> sort-names;
     in property <int> sort-index;
     in property <[string]> order-names;
@@ -956,13 +962,21 @@ export component MainWindow inherits Window {
                 if root.note != "" && !root.importing && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     alignment: start;
-                    Text {
+                    if !root.can-filter: Text {
                         text: root.note;
                         wrap: word-wrap;
                     }
-                    if root.can-filter: Button {
-                        text: "launch the duplicate filter";
-                        clicked => { root.launch-filter(); }
+                    if root.can-filter: DuplicatesSidebar {
+                        data: root.duplicates;
+                        rules: root.duplicates-rules;
+                        note: root.note;
+                        action(what, n, ctrl, shift) => {
+                            if (what == "launch filter") {
+                                root.launch-filter();
+                            } else {
+                                root.duplicates-action(what, n, ctrl, shift);
+                            }
+                        }
                     }
                     TagList {
                         tags: root.tags;

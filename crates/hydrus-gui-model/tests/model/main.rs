@@ -4,6 +4,7 @@
 //! seconds; the windows' own tests are hydrus-gui's.
 
 mod checker_options;
+mod duplicates_page;
 mod edit_subscription;
 mod folders;
 mod local_import_dialog;

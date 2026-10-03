@@ -331,12 +331,15 @@ pub fn stop_searching(conn: &Connection, hash_id: HashId) -> Result<()> {
 
 /// When and how far the similar-files search runs (the client options'
 /// `similar_files_duplicate_pairs_search_distance` and
-/// `maintain_similar_files_duplicate_pairs_during_active` / `_idle`).
+/// `maintain_similar_files_duplicate_pairs_during_active` / `_idle`), and
+/// whether the duplicates page has told it to work hard whatever those say.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
+#[serde(default)]
 pub struct SimilarFilesSettings {
     pub search_distance: u32,
     pub during_active: bool,
     pub during_idle: bool,
+    pub work_hard: bool,
 }
 
 impl Default for SimilarFilesSettings {
@@ -345,8 +348,22 @@ impl Default for SimilarFilesSettings {
             search_distance: 0,
             during_active: true,
             during_idle: true,
+            work_hard: false,
         }
     }
+}
+
+/// Forget every potential pair (and the auto-resolution rules' records of
+/// them), and search every file again (`DeletePotentialDuplicatePairs`, the
+/// duplicates page's "delete all potential duplicate pairs and
+/// re-search").
+pub fn delete_potential_pairs(conn: &Connection) -> Result<()> {
+    conn.execute_batch(
+        "DELETE FROM potential_pairs;
+         DELETE FROM dup_auto_pairs;
+         UPDATE similar_search_status SET searched_distance = NULL;",
+    )?;
+    crate::duplicates::cache::changed(conn)
 }
 
 impl crate::settings::Setting for SimilarFilesSettings {
@@ -358,7 +375,7 @@ impl crate::settings::Setting for SimilarFilesSettings {
 pub fn run_search(store: &crate::Store, batch: usize) -> Result<usize> {
     let settings: SimilarFilesSettings = store.read(crate::settings::get)?;
     // (there is no "idle" without a GUI: either switch runs it)
-    if !settings.during_active && !settings.during_idle {
+    if !settings.during_active && !settings.during_idle && !settings.work_hard {
         return Ok(0);
     }
     let distance = settings.search_distance;

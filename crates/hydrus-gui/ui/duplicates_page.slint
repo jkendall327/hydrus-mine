@@ -1,0 +1,269 @@
+// A duplicates page's sidebar (the reference's `SidebarDuplicateFilter`):
+// its preparation tab (how far the similar files search has got, its
+// distance, working hard, and its cog menu), its filtering tab (launching
+// the duplicate filter) and its auto-resolution tab (the rules, pausing
+// them, and its cog menu). Its workings are hydrus-gui-model's
+// `duplicates_page`, bound by `src/duplicates_sidebar.rs`; everything it
+// does comes through `action`.
+
+import { Button, ProgressIndicator, SpinBox, TabWidget } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+
+export struct DuplicatesData {
+    // the preparation tab's name, "preparation (60% done)"
+    preparation-name: string,
+    eligible: string,
+    distance: int,
+    distance-label: string,
+    searched: string,
+    searched-fraction: float,
+    can-start: bool,
+    working-hard: bool,
+    search-during-idle: bool,
+    search-during-active: bool,
+    // the auto-resolution tab
+    rules-during-idle: bool,
+    rules-during-active: bool,
+    any-rule-selected: bool,
+    // a question waiting on an answer
+    asking: bool,
+    asking-title: string,
+    asking-message: string,
+    asking-choices: [string],
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+export component DuplicatesSidebar inherits VerticalLayout {
+    in property <DuplicatesData> data;
+    in property <[TableRow]> rules;
+    in property <string> note;
+    // what was done: "launch filter", "refresh", "distance" (the distance),
+    // "work hard" (1 or 0), "search during idle", "search during active",
+    // "delete pairs", "rules during idle", "rules during active", "rule"
+    // (a row clicked: its row, ctrl, shift), "pause rules", "reset search",
+    // "reset test", "reset denied", "chosen" (an answer's index),
+    // "cancelled"
+    callback action(string, int, bool, bool);
+    spacing: 6px;
+    TabWidget {
+        Tab {
+            title: root.data.preparation-name;
+            VerticalLayout {
+                padding: 6px;
+                spacing: 6px;
+                alignment: start;
+                Text {
+                    text: "potential duplicate pair discovery";
+                    font-weight: 700;
+                    color: Theme.text;
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label {
+                        text: root.data.eligible;
+                        horizontal-stretch: 1;
+                    }
+                    Button {
+                        width: 30px;
+                        text: "⟳";
+                        clicked => { root.action("refresh", 0, false, false); }
+                    }
+                    prep-cog := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            Menu {
+                                title: "search for potential duplicate pairs";
+                                MenuItem {
+                                    title: "during idle time";
+                                    checkable: true;
+                                    checked: root.data.search-during-idle;
+                                    activated => { root.action("search during idle", 0, false, false); }
+                                }
+                                MenuItem {
+                                    title: "during normal time";
+                                    checkable: true;
+                                    checked: root.data.search-during-active;
+                                    activated => { root.action("search during active", 0, false, false); }
+                                }
+                            }
+                            MenuSeparator { }
+                            MenuItem {
+                                title: "delete all potential duplicate pairs and re-search";
+                                activated => { root.action("delete pairs", 0, false, false); }
+                            }
+                        }
+                        Button {
+                            width: 30px;
+                            text: "⚙";
+                            clicked => { prep-cog.show({ x: 0px, y: self.height }); }
+                        }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    Label { text: "search distance: "; }
+                    distance-menu := ContextMenuArea {
+                        horizontal-stretch: 1;
+                        Menu {
+                            MenuItem {
+                                title: "exact match";
+                                activated => { root.action("distance", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "very similar";
+                                activated => { root.action("distance", 2, false, false); }
+                            }
+                            MenuItem {
+                                title: "similar";
+                                activated => { root.action("distance", 4, false, false); }
+                            }
+                            MenuItem {
+                                title: "speculative";
+                                activated => { root.action("distance", 8, false, false); }
+                            }
+                        }
+                        Button {
+                            text: root.data.distance-label;
+                            clicked => { distance-menu.show({ x: 0px, y: self.height }); }
+                        }
+                    }
+                    SpinBox {
+                        width: 90px;
+                        minimum: 0;
+                        maximum: 64;
+                        step-size: 2;
+                        value: root.data.distance;
+                        edited(value) => { root.action("distance", value, false, false); }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    VerticalLayout {
+                        horizontal-stretch: 1;
+                        spacing: 2px;
+                        Label { text: root.data.searched; }
+                        ProgressIndicator { progress: root.data.searched-fraction; }
+                    }
+                    // (the reference's play and pause icons)
+                    if !root.data.working-hard: Button {
+                        text: "work harder";
+                        enabled: root.data.can-start;
+                        clicked => { root.action("work hard", 1, false, false); }
+                    }
+                    if root.data.working-hard: Button {
+                        text: "stop";
+                        clicked => { root.action("work hard", 0, false, false); }
+                    }
+                }
+            }
+        }
+        Tab {
+            title: "filtering";
+            VerticalLayout {
+                padding: 6px;
+                spacing: 6px;
+                alignment: start;
+                Label { text: root.note; }
+                Button {
+                    text: "launch the filter";
+                    clicked => { root.action("launch filter", 0, false, false); }
+                }
+            }
+        }
+        Tab {
+            title: "auto-resolution";
+            VerticalLayout {
+                padding: 6px;
+                spacing: 6px;
+                HorizontalLayout {
+                    spacing: 4px;
+                    alignment: end;
+                    Button {
+                        width: 30px;
+                        text: "⟳";
+                        clicked => { root.action("refresh", 0, false, false); }
+                    }
+                    rules-cog := ContextMenuArea {
+                        width: 30px;
+                        Menu {
+                            MenuItem {
+                                title: "work during idle time";
+                                checkable: true;
+                                checked: root.data.rules-during-idle;
+                                activated => { root.action("rules during idle", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "work during normal time";
+                                checkable: true;
+                                checked: root.data.rules-during-active;
+                                activated => { root.action("rules during active", 0, false, false); }
+                            }
+                            MenuSeparator { }
+                            MenuItem {
+                                title: "reset search";
+                                activated => { root.action("reset search", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "reset test";
+                                activated => { root.action("reset test", 0, false, false); }
+                            }
+                            MenuItem {
+                                title: "reset denied";
+                                activated => { root.action("reset denied", 0, false, false); }
+                            }
+                        }
+                        Button {
+                            width: 30px;
+                            text: "⚙";
+                            clicked => { rules-cog.show({ x: 0px, y: self.height }); }
+                        }
+                    }
+                }
+                ListTable {
+                    min-height: 8 * 22px;
+                    vertical-stretch: 1;
+                    columns: [
+                        { title: "name", width: 110px, stretch: true },
+                        { title: "progress", width: 150px },
+                        { title: "status", width: 70px },
+                    ];
+                    rows: root.rules;
+                    row-clicked(row, ctrl, shift) => { root.action("rule", row, ctrl, shift); }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    alignment: end;
+                    Button {
+                        text: "pause/play";
+                        enabled: root.data.any-rule-selected && !root.data.asking;
+                        clicked => { root.action("pause rules", 0, false, false); }
+                    }
+                    Button {
+                        // (not in hydrus-rs yet)
+                        text: "review actions";
+                        enabled: false;
+                    }
+                    Button {
+                        // (not in hydrus-rs yet)
+                        text: "edit rules";
+                        enabled: false;
+                    }
+                }
+            }
+        }
+    }
+    if root.data.asking: Asking {
+        title: root.data.asking-title;
+        message: root.data.asking-message;
+        choices: root.data.asking-choices;
+        chosen(index) => { root.action("chosen", index, false, false); }
+        cancelled => { root.action("cancelled", 0, false, false); }
+    }
+}

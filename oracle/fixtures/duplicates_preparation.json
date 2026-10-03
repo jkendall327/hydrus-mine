@@ -1,0 +1,221 @@
+{
+ "cases": [
+  {
+   "counts": {},
+   "distance": 8,
+   "hide": false,
+   "eligible": "0 eligible files in the system.",
+   "searched": "All potential duplicates found at this distance.",
+   "gauge": [
+    0,
+    1
+   ],
+   "can_start": false,
+   "page_name": "preparation"
+  },
+  {
+   "counts": {
+    "-1": 10
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "10 eligible files in the system.",
+   "searched": "Have not yet searched at this distance.",
+   "gauge": [
+    0,
+    10
+   ],
+   "can_start": true,
+   "page_name": "preparation (0% done)"
+  },
+  {
+   "counts": {
+    "-1": 4,
+    "8": 6
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "10 eligible files in the system.",
+   "searched": "Searched 6/10 files at this distance.",
+   "gauge": [
+    6,
+    10
+   ],
+   "can_start": true,
+   "page_name": "preparation (60% done)"
+  },
+  {
+   "counts": {
+    "-1": 4,
+    "4": 6
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "10 eligible files in the system.",
+   "searched": "Have not yet searched at this distance.",
+   "gauge": [
+    0,
+    10
+   ],
+   "can_start": true,
+   "page_name": "preparation (0% done)"
+  },
+  {
+   "counts": {
+    "4": 3,
+    "8": 1,
+    "10": 2
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "6 eligible files in the system.",
+   "searched": "Searched 3/6 files at this distance.",
+   "gauge": [
+    3,
+    6
+   ],
+   "can_start": true,
+   "page_name": "preparation (50% done)"
+  },
+  {
+   "counts": {
+    "8": 1200
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "1,200 eligible files in the system.",
+   "searched": "All potential duplicates found at this distance.",
+   "gauge": [
+    1200,
+    1200
+   ],
+   "can_start": false,
+   "page_name": "preparation"
+  },
+  {
+   "counts": {
+    "-1": 1,
+    "8": 1999
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "2,000 eligible files in the system.",
+   "searched": "Searched 1,999/2,000 files at this distance.",
+   "gauge": [
+    1999,
+    2000
+   ],
+   "can_start": true,
+   "page_name": "preparation (99.9% done)"
+  },
+  {
+   "counts": {
+    "-1": 1,
+    "8": 1999
+   },
+   "distance": 8,
+   "hide": true,
+   "eligible": "2,000 eligible files in the system.",
+   "searched": "Searched 1,999/2,000 files at this distance.",
+   "gauge": [
+    1999,
+    2000
+   ],
+   "can_start": true,
+   "page_name": "preparation"
+  },
+  {
+   "counts": {
+    "-1": 1,
+    "8": 99
+   },
+   "distance": 8,
+   "hide": true,
+   "eligible": "100 eligible files in the system.",
+   "searched": "Searched 99/100 files at this distance.",
+   "gauge": [
+    99,
+    100
+   ],
+   "can_start": true,
+   "page_name": "preparation (99% done)"
+  },
+  {
+   "counts": {
+    "-1": 1,
+    "8": 99
+   },
+   "distance": 8,
+   "hide": false,
+   "eligible": "100 eligible files in the system.",
+   "searched": "Searched 99/100 files at this distance.",
+   "gauge": [
+    99,
+    100
+   ],
+   "can_start": true,
+   "page_name": "preparation (99% done)"
+  },
+  {
+   "counts": {
+    "-1": 3,
+    "0": 7
+   },
+   "distance": 0,
+   "hide": false,
+   "eligible": "10 eligible files in the system.",
+   "searched": "Searched 7/10 files at this distance.",
+   "gauge": [
+    7,
+    10
+   ],
+   "can_start": true,
+   "page_name": "preparation (70% done)"
+  },
+  {
+   "counts": {
+    "-1": 1,
+    "0": 2
+   },
+   "distance": 0,
+   "hide": false,
+   "eligible": "3 eligible files in the system.",
+   "searched": "Searched 2/3 files at this distance.",
+   "gauge": [
+    2,
+    3
+   ],
+   "can_start": true,
+   "page_name": "preparation (66.7% done)"
+  },
+  {
+   "counts": {
+    "-1": 12345,
+    "2": 678
+   },
+   "distance": 2,
+   "hide": false,
+   "eligible": "13,023 eligible files in the system.",
+   "searched": "Searched 678/13,023 files at this distance.",
+   "gauge": [
+    678,
+    13023
+   ],
+   "can_start": true,
+   "page_name": "preparation (5.2% done)"
+  }
+ ],
+ "distance_labels": {
+  "0": "exact match",
+  "1": "custom",
+  "2": "very similar",
+  "3": "custom",
+  "4": "similar",
+  "5": "custom",
+  "6": "custom",
+  "7": "custom",
+  "8": "speculative",
+  "9": "custom",
+  "10": "custom"
+ }
+}
