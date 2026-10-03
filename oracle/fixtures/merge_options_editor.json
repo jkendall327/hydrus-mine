@@ -1,0 +1,2611 @@
+{
+ "tag_services": [
+  "downloader tags",
+  "my tags",
+  "second tags"
+ ],
+ "rating_services": [
+  "favourites",
+  "stars",
+  "counter"
+ ],
+ "cases": [
+  {
+   "decision": "better",
+   "custom": false,
+   "start": "client",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "move from worse to better",
+        "all tags"
+       ],
+       [
+        "my tags",
+        "move from worse to better",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "move from worse to better",
+         []
+        ],
+        [
+         "downloader tags",
+         "move from worse to better",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_tag",
+      null,
+      null,
+      []
+     ],
+     "said": [
+      {
+       "auto": "select service",
+       "choices": [
+        "second tags"
+       ]
+      },
+      {
+       "select": "select action",
+       "choices": [
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "sorted": true,
+       "preselected": null
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "move from worse to better",
+        "all tags"
+       ],
+       [
+        "my tags",
+        "move from worse to better",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "move from worse to better",
+         []
+        ],
+        [
+         "downloader tags",
+         "move from worse to better",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "delete_tags",
+      [
+       "downloader tags"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "my tags",
+        "move from worse to better",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "move from worse to better",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_tag",
+      "downloader tags",
+      "copy from worse to better",
+      [
+       [
+        "creator:",
+        "black"
+       ]
+      ]
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "downloader tags",
+        "second tags"
+       ],
+       "sorted": true,
+       "preselected": null
+      },
+      {
+       "select": "select action",
+       "choices": [
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "sorted": true,
+       "preselected": null
+      },
+      {
+       "dialog": "edit which tags will be merged"
+      },
+      {
+       "filter given": []
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "move from worse to better",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "move from worse to better",
+         []
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "edit_tag_action",
+      "my tags",
+      "copy in both directions"
+     ],
+     "said": [
+      {
+       "select": "select action",
+       "choices": [
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "sorted": true,
+       "preselected": "move from worse to better"
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         []
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "edit_tag_filter",
+      "my tags",
+      [
+       [
+        "",
+        "black"
+       ],
+       [
+        ":",
+        "black"
+       ],
+       [
+        "series:",
+        "white"
+       ]
+      ]
+     ],
+     "said": [
+      {
+       "dialog": "edit which tags will be merged"
+      },
+      {
+       "filter given": []
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_rating",
+      null,
+      null
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "stars",
+        "counter"
+       ],
+       "sorted": true,
+       "preselected": null
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "delete_ratings",
+      [
+       "favourites"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_rating",
+      "favourites",
+      "move from worse to better"
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "favourites",
+        "stars",
+        "counter"
+       ],
+       "sorted": true,
+       "preselected": null
+      },
+      {
+       "select": "select action",
+       "choices": [
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "sorted": true,
+       "preselected": null
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "move from worse to better"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "move from worse to better"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "edit_rating",
+      "favourites",
+      "copy in both directions"
+     ],
+     "said": [
+      {
+       "select": "select action",
+       "choices": [
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "sorted": true,
+       "preselected": "move from worse to better"
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "archive",
+      "if one is archived, archive the other"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "copy from worse to better",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "urls",
+      "make no change"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "earlier worse overwrites later better",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "make no change",
+       "file_modified": "copy from worse to better",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "file_modified",
+      "both get earliest"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "copy from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "make no change",
+       "file_modified": "copy in both directions",
+       "notes": "copy from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "notes",
+      "make no change"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "make no change",
+       "file_modified": "copy in both directions",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "notes",
+      "move from worse to better"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "move from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "make no change",
+       "file_modified": "copy in both directions",
+       "notes": "move from worse to better",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "note_settings",
+      false,
+      "append"
+     ],
+     "said": [
+      {
+       "dialog": "edit note merge options"
+      },
+      {
+       "notes given": [
+        true,
+        3
+       ],
+       "simple": true
+      }
+     ],
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy from worse to better",
+        "all tags except 'creator' tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "only adding 'series' tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "if one is archived, archive the other",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "move from worse to better",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         [
+          [
+           "",
+           "black"
+          ],
+          [
+           ":",
+           "black"
+          ],
+          [
+           "series:",
+           "white"
+          ]
+         ]
+        ],
+        [
+         "downloader tags",
+         "copy from worse to better",
+         [
+          [
+           "creator:",
+           "black"
+          ]
+         ]
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 1,
+       "urls": "make no change",
+       "file_modified": "copy in both directions",
+       "notes": "move from worse to better",
+       "note_extend": false,
+       "note_conflict": 2
+      }
+     }
+    }
+   ]
+  },
+  {
+   "decision": "same quality",
+   "custom": false,
+   "start": "client",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "note": "Editing for \"same quality\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [
+       [
+        "downloader tags",
+        "copy in both directions",
+        "all tags"
+       ],
+       [
+        "my tags",
+        "copy in both directions",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         []
+        ],
+        [
+         "downloader tags",
+         "copy in both directions",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy in both directions",
+       "file_modified": "copy in both directions",
+       "notes": "copy in both directions",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "delete_tags",
+      [
+       "my tags",
+       "downloader tags"
+      ]
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?"
+      }
+     ],
+     "state": {
+      "note": "Editing for \"same quality\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy in both directions",
+       "file_modified": "copy in both directions",
+       "notes": "copy in both directions",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_tag",
+      "my tags",
+      null,
+      []
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "downloader tags",
+        "my tags",
+        "second tags"
+       ],
+       "sorted": true,
+       "preselected": null
+      },
+      {
+       "dialog": "edit which tags will be merged"
+      },
+      {
+       "filter given": []
+      }
+     ],
+     "state": {
+      "note": "Editing for \"same quality\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [
+       [
+        "my tags",
+        "copy in both directions",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "copy in both directions",
+       "file_modified": "copy in both directions",
+       "notes": "copy in both directions",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "urls",
+      "make no change"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"same quality\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [
+       [
+        "my tags",
+        "copy in both directions",
+        "all tags"
+       ]
+      ],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "both get earliest",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [
+        [
+         "my tags",
+         "copy in both directions",
+         []
+        ]
+       ],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "make no change",
+       "file_modified": "copy in both directions",
+       "notes": "copy in both directions",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    }
+   ]
+  },
+  {
+   "decision": "alternates",
+   "custom": false,
+   "start": "client",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "note": "Editing for \"alternates\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [],
+       "ratings": [],
+       "archive": 0,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "add_rating",
+      "favourites",
+      null
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "favourites",
+        "stars",
+        "counter"
+       ],
+       "sorted": true,
+       "preselected": null
+      }
+     ],
+     "state": {
+      "note": "Editing for \"alternates\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 0,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "archive",
+      "always archive both"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"alternates\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [
+       [
+        "favourites",
+        "copy in both directions"
+       ]
+      ],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "always archive both",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": false
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [],
+       "ratings": [
+        [
+         "favourites",
+         "copy in both directions"
+        ]
+       ],
+       "archive": 2,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    }
+   ]
+  },
+  {
+   "decision": "alternates",
+   "custom": true,
+   "start": "client",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "note": "Editing for \"alternates\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [],
+       "ratings": [],
+       "archive": 0,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    },
+    {
+     "step": [
+      "set",
+      "notes",
+      "copy in both directions"
+     ],
+     "said": [],
+     "state": {
+      "note": "Editing for \"alternates\".\n\nNote that this has fewer actions than the \"this is better\" decision. You can mostly just copy in both directions.",
+      "tag_rows": [],
+      "rating_rows": [],
+      "tag_edit_action_shown": false,
+      "rating_edit_action_shown": false,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy in both directions"
+       ],
+       "value": "copy in both directions",
+       "enabled": true
+      },
+      "note_settings_enabled": true,
+      "value": {
+       "tags": [],
+       "ratings": [],
+       "archive": 0,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "copy in both directions",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    }
+   ]
+  },
+  {
+   "decision": "better",
+   "custom": false,
+   "start": "empty",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "note": "Editing for \"this is a better duplicate\".",
+      "tag_rows": [],
+      "rating_rows": [],
+      "tag_edit_action_shown": true,
+      "rating_edit_action_shown": true,
+      "archive": {
+       "options": [
+        "make no change",
+        "if one is archived, archive the other",
+        "always archive both"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "file_modified": {
+       "options": [
+        "make no change",
+        "earlier worse overwrites later better",
+        "both get earliest"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "urls": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "notes": {
+       "options": [
+        "make no change",
+        "copy from worse to better",
+        "move from worse to better",
+        "copy in both directions"
+       ],
+       "value": "make no change",
+       "enabled": true
+      },
+      "note_settings_enabled": false,
+      "value": {
+       "tags": [],
+       "ratings": [],
+       "archive": 0,
+       "urls": "make no change",
+       "file_modified": "make no change",
+       "notes": "make no change",
+       "note_extend": true,
+       "note_conflict": 3
+      }
+     }
+    }
+   ]
+  }
+ ]
+}
