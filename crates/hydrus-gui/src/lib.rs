@@ -150,8 +150,9 @@ pub use hydrus_gui_model::{
     import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
     manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
     predicate_editors, ratings, scanbar, search_log, selection, session_saving, sidecar_editors,
-    sidecars, sort, status, string_editors, subscriptions_dedupe, subscriptions_dialog,
-    subscriptions_list, tag_filter_editor, thumbnail_icons, thumbnail_ratings,
+    sidecars, simple_downloader, sort, status, string_editors, subscriptions_dedupe,
+    subscriptions_dialog, subscriptions_list, tag_filter_editor, thumbnail_icons,
+    thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -1422,15 +1423,76 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow().cancel_download(kind);
         }
     });
+    // a simple downloader page's parsing box
+    window.on_simple_pause_play_queue({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().pause_play_queue();
+            shown(false);
+        }
+    });
+    window.on_simple_job_clicked({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |row, ctrl, shift| {
+            if let Ok(row) = usize::try_from(row) {
+                page().borrow_mut().click_simple_job(row, ctrl, shift);
+                shown(false);
+            }
+        }
+    });
+    window.on_simple_move_jobs({
+        let page = page.clone();
+        let shown = shown.clone();
+        move |distance| {
+            page().borrow_mut().move_simple_jobs(distance as isize);
+            shown(false);
+        }
+    });
+    window.on_simple_delete_jobs({
+        let page = page.clone();
+        let shown = shown.clone();
+        move || {
+            page().borrow_mut().delete_simple_jobs();
+            shown(false);
+        }
+    });
+    window.on_simple_formula_chosen({
+        let page = page.clone();
+        let shown = shown.clone();
+        let weak = window.as_weak();
+        move |index| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let names = window.get_simple_formulae();
+            if let Some(name) = usize::try_from(index)
+                .ok()
+                .and_then(|i| slint::Model::row_data(&names, i))
+            {
+                page().borrow_mut().choose_simple_formula(name.to_string());
+                shown(false);
+            }
+        }
+    });
     window.on_url_entered({
         let page = page.clone();
-        move |text| page().borrow().pend_urls(&text)
+        let shown = shown.clone();
+        move |text| {
+            page().borrow_mut().pend_urls(&text);
+            shown(false);
+        }
     });
     window.on_paste_urls({
         let page = page.clone();
+        let shown = shown.clone();
         let weak = window.as_weak();
         move || match arboard::Clipboard::new().and_then(|mut c| c.get_text()) {
-            Ok(text) => page().borrow().pend_urls(&text),
+            Ok(text) => {
+                page().borrow_mut().pend_urls(&text);
+                shown(false);
+            }
             Err(e) => {
                 if let Some(window) = weak.upgrade() {
                     window.set_error(format!("Problem pasting! {e}").into());
@@ -2541,9 +2603,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     page::ImportRefresh::Status => {
                         if let Some(window) = weak.upgrade() {
                             let page = page.borrow();
-                            if let Some(importer) = page.importer() {
-                                show_importer(&window, importer);
-                            }
+                            show_importer(&window, &page);
                             show_gallery(&window, &page);
                             show_watchers(&window, &page);
                         }
@@ -4291,7 +4351,12 @@ pub(crate) fn list_text(text: &str, [r, g, b]: [u8; 3]) -> ListText {
 /// any error, and the status bar; or, for a page without a search, why.
 /// A downloader page's importer: its logs' statuses and progress, its
 /// pause, and its downloads.
-fn show_importer(window: &MainWindow, importer: &page::Importer) {
+fn show_importer(window: &MainWindow, page: &SearchPage) {
+    let Some(importer) = page.importer() else {
+        window.set_simple_downloader(false);
+        return;
+    };
+    show_simple_downloader(window, page, importer);
     window.set_local_import(importer.local);
     window.set_import_action(importer.live.files_status.as_str().into());
     window.set_import_status(importer.files_status().into());
@@ -4309,6 +4374,43 @@ fn show_importer(window: &MainWindow, importer: &page::Importer) {
     window.set_search_status(importer.search_status().into());
     window.set_file_download(download_line(&importer.file_job_line()));
     window.set_search_download(download_line(&importer.gallery_job_line()));
+}
+
+/// A simple downloader page's parsing box: its status line and pause, its
+/// jobs waiting, and its formulae.
+fn show_simple_downloader(window: &MainWindow, page: &SearchPage, importer: &page::Importer) {
+    let Some(simple) = &importer.simple else {
+        window.set_simple_downloader(false);
+        return;
+    };
+    window.set_simple_downloader(true);
+    window.set_simple_parser_status(
+        gallery::live_line(
+            &importer.live.gallery_status,
+            importer.gallery_paused,
+            false,
+        )
+        .into(),
+    );
+    window.set_simple_queue_paused(importer.gallery_paused);
+    let selected = page.simple_selected();
+    let rows: Vec<TableRow> = simple
+        .pending
+        .iter()
+        .enumerate()
+        .map(|(i, job)| table_row(&[simple_downloader::job_label(job)], selected.contains(&i)))
+        .collect();
+    window.set_simple_jobs(ModelRc::new(VecModel::from(rows)));
+    window.set_simple_job_selected(!selected.is_empty());
+    let formulae: hydrus_store::settings::SimpleDownloaderFormulae = page
+        .store()
+        .read(hydrus_store::settings::get)
+        .unwrap_or_default();
+    let (names, index) =
+        simple_downloader::formula_choices(&formulae.formulae, &simple.formula_name);
+    let names: Vec<SharedString> = names.into_iter().map(Into::into).collect();
+    window.set_simple_formulae(ModelRc::new(VecModel::from(names)));
+    window.set_simple_formula(index.and_then(|i| i32::try_from(i).ok()).unwrap_or(0));
 }
 
 /// A list's row, its cells and whether it is selected.
@@ -4504,9 +4606,7 @@ fn refresh(window: &MainWindow, page: &SearchPage) {
     window.set_note(page.note().unwrap_or_default().into());
     let importer = page.importer();
     window.set_importing(importer.is_some());
-    if let Some(importer) = importer {
-        show_importer(window, importer);
-    }
+    show_importer(window, page);
     window.set_gallery_page(page.gallery().is_some());
     show_gallery(window, page);
     window.set_watcher_page(page.watchers().is_some());

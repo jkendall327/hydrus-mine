@@ -144,6 +144,7 @@ struct Closed {
 const URL_PAGE_NAME: &str = "url import";
 /// A local import page's name, as the reference names it.
 const LOCAL_IMPORT_PAGE_NAME: &str = "import";
+const SIMPLE_PAGE_NAME: &str = "simple downloader";
 
 /// How long a closed page can be reopened (the reference's).
 const CLOSED_PAGE_TIMEOUT: std::time::Duration = std::time::Duration::from_secs(60 * 60);
@@ -541,6 +542,14 @@ impl Pages {
                 SearchPage::local_import(store, queues[0], sort.as_ref(), files)
             }
             PageContent::Downloader {
+                kind: DownloaderKind::Simple,
+                queues,
+                sort,
+                ..
+            } if queues.len() == 1 => {
+                SearchPage::simple_downloader(store, queues[0], sort.as_ref(), files)
+            }
+            PageContent::Downloader {
                 kind: DownloaderKind::Gallery,
                 queues,
                 sort,
@@ -577,6 +586,7 @@ impl Pages {
                     DownloaderKind::Urls => ("url", "empty page"),
                     DownloaderKind::Watchers => ("watcher", "no highlighted watcher"),
                     DownloaderKind::Local => ("local import", "empty page"),
+                    DownloaderKind::Simple => ("simple", "empty page"),
                 };
                 let queues = match queues.len() {
                     1 => "its queue".to_owned(),
@@ -994,8 +1004,43 @@ impl Pages {
                     page: Some(Box::new(crate::page::new_watcher_state(&self.store))),
                 },
             },
+            // (on the formula last chosen, `favourite_simple_downloader_formula`)
             NewPage::SimpleDownloader => {
-                return Err("hydrus-gui can't open simple downloader pages yet".into());
+                let key = PageKey::random();
+                let now = std::time::SystemTime::now()
+                    .duration_since(std::time::UNIX_EPOCH)
+                    .map_or(0, |d| i64::try_from(d.as_secs()).unwrap_or(i64::MAX));
+                let queue = self
+                    .store
+                    .write(move |ctx| {
+                        let conn = ctx.conn();
+                        let formulae: hydrus_store::settings::SimpleDownloaderFormulae =
+                            hydrus_store::settings::get(conn)?;
+                        let state = hydrus_store::queues::SimpleDownloader {
+                            formula_name: formulae.favourite,
+                            pending: Vec::new(),
+                        };
+                        let queue = hydrus_store::queues::create_simple_downloader(
+                            conn,
+                            Some(&key.0),
+                            &hydrus_core::import_options::ImportOptionsSlice::default(),
+                            &state,
+                            now,
+                        )?;
+                        hydrus_store::queues::nudge(conn, queue)?;
+                        Ok(queue)
+                    })
+                    .map_err(|e| format!("could not make the page's queue: {e}"))?;
+                Page {
+                    key,
+                    name: SIMPLE_PAGE_NAME.into(),
+                    content: PageContent::Downloader {
+                        kind: DownloaderKind::Simple,
+                        queues: vec![queue],
+                        sort: None,
+                        page: None,
+                    },
+                }
             }
         };
         self.add(page);
@@ -1270,7 +1315,8 @@ impl Pages {
                 kind: DownloaderKind::Urls
                     | DownloaderKind::Gallery
                     | DownloaderKind::Watchers
-                    | DownloaderKind::Local,
+                    | DownloaderKind::Local
+                    | DownloaderKind::Simple,
                 ..
             }
         ) {

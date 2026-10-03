@@ -73,6 +73,8 @@ pub struct SearchPage {
     facts: HashMap<HashId, Facts>,
     /// A downloader page's importer, as last read.
     importer: Option<Importer>,
+    /// A simple downloader page's jobs selected in its list (by row).
+    simple_selected: crate::list_selection::ListSelection<usize>,
     /// The files its importer has brought so far (shown, or taken off the
     /// page since), so each is added once.
     presented: std::collections::HashSet<HashId>,
@@ -94,7 +96,7 @@ pub enum ImportRefresh {
 
 /// A downloader page's importer: the queue it shows (which the daemon
 /// works), as last read from the store.
-#[derive(Debug, Clone, Default, PartialEq, Eq)]
+#[derive(Debug, Clone, Default, PartialEq)]
 pub struct Importer {
     pub queue: i64,
     /// Its file log's seeds by status.
@@ -109,6 +111,10 @@ pub struct Importer {
     pub local: bool,
     /// Its own import options.
     pub options: hydrus_core::import_options::ImportOptionsSlice,
+    /// A simple downloader's jobs and formula; none for other importers.
+    pub simple: Option<queues::SimpleDownloader>,
+    /// Whether its gallery work (a simple downloader's parsing) is paused.
+    pub gallery_paused: bool,
 }
 
 impl Importer {
@@ -224,6 +230,7 @@ impl SearchPage {
             empty_status: std::cell::Cell::new(Some("no search done yet")),
             facts: HashMap::new(),
             importer: None,
+            simple_selected: crate::list_selection::ListSelection::default(),
             presented: std::collections::HashSet::new(),
             gallery: None,
             watchers: None,
@@ -409,6 +416,24 @@ impl SearchPage {
         page.importer = Some(Importer {
             queue,
             local: true,
+            ..Importer::default()
+        });
+        page.read_import(true);
+        page
+    }
+
+    /// A simple downloader page over `queue`: its files as they are
+    /// imported, in the queue's order.
+    pub fn simple_downloader(
+        store: Arc<Store>,
+        queue: i64,
+        sort: Option<&PageSort>,
+        files: Vec<HashId>,
+    ) -> Self {
+        let mut page = Self::fixed(store, "A simple downloader page.", sort, files);
+        page.importer = Some(Importer {
+            queue,
+            simple: Some(queues::SimpleDownloader::default()),
             ..Importer::default()
         });
         page.read_import(true);
@@ -1203,6 +1228,8 @@ impl SearchPage {
             local: row
                 .as_ref()
                 .is_some_and(|q| q.kind == queues::QueueKind::LocalImport),
+            simple: row.as_ref().and_then(queues::SimpleDownloader::of),
+            gallery_paused: row.as_ref().is_some_and(|q| q.gallery_paused),
             options: row.map(|q| q.options).unwrap_or_default(),
         };
         let status_changed = self.importer.as_ref() != Some(&now);
@@ -1227,8 +1254,10 @@ impl SearchPage {
             return;
         };
         let (queue, paused) = (importer.queue, !importer.paused);
+        // (a simple downloader's parsing pauses on its own button)
+        let gallery = importer.simple.is_none().then_some(paused);
         let done = self.store.write(move |ctx| {
-            queues::set_paused(ctx.conn(), queue, Some(paused), Some(paused))?;
+            queues::set_paused(ctx.conn(), queue, Some(paused), gallery)?;
             queues::nudge(ctx.conn(), queue)
         });
         match done {
@@ -1236,6 +1265,105 @@ impl SearchPage {
                 self.refresh_import();
             }
             Err(e) => eprintln!("could not pause or resume the importer: {e}"),
+        }
+    }
+
+    /// A simple downloader's parsing paused or resumed (`PausePlayQueue`).
+    pub fn pause_play_queue(&mut self) {
+        let Some(importer) = &self.importer else {
+            return;
+        };
+        let (queue, paused) = (importer.queue, !importer.gallery_paused);
+        let done = self.store.write(move |ctx| {
+            queues::set_paused(ctx.conn(), queue, None, Some(paused))?;
+            queues::nudge(ctx.conn(), queue)
+        });
+        match done {
+            Ok(()) => {
+                self.refresh_import();
+            }
+            Err(e) => eprintln!("could not pause or resume the parsing: {e}"),
+        }
+    }
+
+    /// A simple downloader's jobs selected, by row.
+    pub fn simple_selected(&self) -> Vec<usize> {
+        let count = self
+            .importer
+            .as_ref()
+            .and_then(|i| i.simple.as_ref())
+            .map_or(0, |s| s.pending.len());
+        let order: Vec<usize> = (0..count).collect();
+        self.simple_selected.in_order(&order)
+    }
+
+    /// A simple downloader's job clicked (with ctrl or shift, as a list
+    /// selects).
+    pub fn click_simple_job(&mut self, row: usize, ctrl: bool, shift: bool) {
+        let count = self
+            .importer
+            .as_ref()
+            .and_then(|i| i.simple.as_ref())
+            .map_or(0, |s| s.pending.len());
+        let order: Vec<usize> = (0..count).collect();
+        self.simple_selected.click(&order, row, ctrl, shift);
+    }
+
+    /// The selected jobs moved up (-1) or down (1), staying selected.
+    pub fn move_simple_jobs(&mut self, distance: isize) {
+        let rows = self.simple_selected();
+        let moved = Arc::new(std::sync::Mutex::new(Vec::new()));
+        let out = moved.clone();
+        self.change_simple(move |state| {
+            if let Ok(mut out) = out.lock() {
+                *out = crate::simple_downloader::shift(state, &rows, distance);
+            }
+        });
+        let rows = moved.lock().map(|r| r.clone()).unwrap_or_default();
+        self.simple_selected.select_many(&rows);
+    }
+
+    /// The selected jobs removed (the list's "X").
+    pub fn delete_simple_jobs(&mut self) {
+        let rows = self.simple_selected();
+        self.simple_selected.select_many(&[]);
+        self.change_simple(move |state| crate::simple_downloader::remove(state, &rows));
+    }
+
+    /// A formula chosen for new jobs (`EventFormulaChanged`): the page's,
+    /// and the one new pages start on (`favourite_simple_downloader_formula`).
+    pub fn choose_simple_formula(&mut self, name: String) {
+        let favourite = name.clone();
+        if let Err(e) = self.store.write(move |ctx| {
+            let conn = ctx.conn();
+            let mut formulae: hydrus_store::settings::SimpleDownloaderFormulae =
+                hydrus_store::settings::get(conn)?;
+            formulae.favourite = favourite;
+            hydrus_store::settings::set(conn, &formulae)
+        }) {
+            eprintln!("could not keep the formula chosen: {e}");
+        }
+        self.change_simple(move |state| state.formula_name = name);
+    }
+
+    /// Change a simple downloader's jobs or formula, and wake the daemon.
+    pub fn change_simple(
+        &mut self,
+        change: impl FnOnce(&mut queues::SimpleDownloader) + Send + 'static,
+    ) {
+        let Some(importer) = &self.importer else {
+            return;
+        };
+        let queue = importer.queue;
+        let done = self.store.write(move |ctx| {
+            queues::update_simple_downloader(ctx.conn(), queue, change)?;
+            queues::nudge(ctx.conn(), queue)
+        });
+        match done {
+            Ok(()) => {
+                self.refresh_import();
+            }
+            Err(e) => eprintln!("could not change the simple downloader: {e}"),
         }
     }
 
@@ -1257,10 +1385,28 @@ impl SearchPage {
     /// Hand URLs typed or pasted into the page to the daemon, which adds
     /// those it can as the reference does (`PendURLs`): each line, trimmed,
     /// empty ones dropped.
-    pub fn pend_urls(&self, text: &str) {
+    pub fn pend_urls(&mut self, text: &str) {
         let Some(importer) = &self.importer else {
             return;
         };
+        // (a simple downloader's become jobs with the formula chosen)
+        if let Some(simple) = &importer.simple {
+            let snapshot = self.store.snapshot();
+            let collapse = snapshot.url_classes.settings().collapse_leading_slashes;
+            let urls = crate::simple_downloader::page_urls(text, collapse);
+            let formulae: hydrus_store::settings::SimpleDownloaderFormulae = self
+                .store
+                .read(hydrus_store::settings::get)
+                .unwrap_or_default();
+            let Some(formula) =
+                crate::simple_downloader::chosen_formula(&formulae.formulae, &simple.formula_name)
+                    .cloned()
+            else {
+                return;
+            };
+            self.change_simple(move |state| crate::simple_downloader::pend(state, &urls, &formula));
+            return;
+        }
         let urls: Vec<String> = text
             .lines()
             .map(|line| line.trim_matches(|c: char| c.is_whitespace() || c == '\u{feff}'))

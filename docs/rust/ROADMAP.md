@@ -16,9 +16,10 @@ screens not started yet:
 2. The simple downloader page. **Done**: its engine (a
    `simple_downloader` queue, `hydrus-download`'s `run_simple_jobs`), the
    formulae (`hydrus-parse::simple`, the reference's defaults, imported
-   from its options). **Next**: carrying its pages over from hydrus's
-   sessions, and the page itself (the sidebar's parsing box, pending jobs,
-   the formula chooser and "edit formulae").
+   from its options), and the page (pages > download > new simple
+   downloader page, or the page chooser). **Next**: carrying its pages
+   over from hydrus's sessions; "edit formulae", with the formula editor
+   (which the parser editor needs too).
 3. The rest of the media "manage" dialogs: URLs, times, ratings, force
    filetype, the embedded metadata window, and share > export files.
 4. Services: review services and manage services.

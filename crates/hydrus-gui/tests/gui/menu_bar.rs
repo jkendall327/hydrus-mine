@@ -141,12 +141,9 @@ fn the_bar_s_menus_open_and_do_what_they_say() {
             ("new url download page".to_owned(), true, false),
             ("new watcher page".to_owned(), true, false),
             ("new gallery page".to_owned(), true, false),
-            ("new simple downloader page".to_owned(), false, false),
+            ("new simple downloader page".to_owned(), true, false),
         ]
     );
-    // (greyed out, it does nothing, and the menus stay)
-    choose(&ui, "new simple downloader page");
-    assert_eq!(panes(&ui).len(), 2);
     let before = tabs(&ui);
     choose(&ui, "new watcher page");
     assert!(panes(&ui).is_empty());

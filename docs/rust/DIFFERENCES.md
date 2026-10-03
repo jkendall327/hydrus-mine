@@ -496,6 +496,20 @@ deletes its files from the client, migrated from the reference's database.
   and we take them in the order sidecars are read. The reference, written
   for Linux, takes them in its set's order, so either may win.
 
+## Simple downloaders (`hydrus-download::queue`)
+
+- **A simple downloader page's formulae can't be edited yet**: its cog
+  button's "edit formulae" waits on the formula editor (which the parser
+  editors need too); hydrus-rs has the reference's two defaults, or those
+  carried over from hydrus. Its pages in hydrus's sessions aren't carried
+  over yet (they are kept as stored). Its download controls sit under its
+  boxes, not inside them.
+
+Checked by `crates/hydrus-download/tests/simple_downloader.rs`,
+`crates/hydrus-legacy/tests/simple_formulae.rs` (against
+`oracle/fixtures/simple_downloader_formulae.json`) and
+`crates/hydrus-gui/tests/gui/simple_downloader.rs`.
+
 ## Local imports (`hydrus-download::queue`)
 
 Checked by `crates/hydrus-download/tests/local_import.rs`.

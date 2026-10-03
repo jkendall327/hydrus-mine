@@ -45,6 +45,7 @@ mod search_log;
 mod search_page;
 mod session;
 mod sidecars;
+mod simple_downloader;
 mod slideshow;
 mod status_bar;
 mod still;

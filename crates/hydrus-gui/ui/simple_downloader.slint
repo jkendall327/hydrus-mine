@@ -1,0 +1,123 @@
+// A simple downloader page's "parsing" box (the reference's
+// `SidebarImporterSimpleDownloader`, bound in `src/lib.rs` over
+// hydrus-gui-model's `simple_downloader`): what its parsing is doing and
+// its pause, the parsing log, the page being downloaded, the jobs waiting
+// (with up, delete and down), the URL box, and the formula chooser.
+
+import { Button, ComboBox, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { DownloadLine, DownloadControl } from "importing.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+export component SimpleParsingBox inherits Rectangle {
+    in property <string> parser-status;
+    in property <bool> queue-paused;
+    in property <string> log-status;
+    in property <DownloadLine> page-download;
+    in property <[TableRow]> jobs;
+    in property <bool> any-job-selected;
+    in property <[string]> formulae;
+    in-out property <int> formula;
+    callback pause-play-queue();
+    callback parsing-log();
+    callback cancel-download();
+    callback job-clicked(int, bool, bool);
+    callback move-jobs(int);
+    callback delete-jobs();
+    callback url-entered(string);
+    callback paste-urls();
+    callback formula-chosen(int);
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        Text {
+            text: "parsing";
+            font-weight: 600;
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            Text {
+                text: root.parser-status;
+                overflow: elide;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            // (gallery_pause/gallery_play: play while paused)
+            Button {
+                icon: root.queue-paused ? @image-url("../../../static/gallery_play.png") : @image-url("../../../static/gallery_pause.png");
+                clicked => { root.pause-play-queue(); }
+            }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            Text {
+                text: root.log-status;
+                wrap: word-wrap;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            Button {
+                text: "parsing log";
+                clicked => { root.parsing-log(); }
+            }
+        }
+        DownloadControl {
+            line: root.page-download;
+            cancel => { root.cancel-download(); }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            height: 160px;
+            ListTable {
+                horizontal-stretch: 1;
+                columns: [{ title: "pending", width: 240px, stretch: true }];
+                rows: root.jobs;
+                row-clicked(r, ctrl, shift) => { root.job-clicked(r, ctrl, shift); }
+            }
+            VerticalLayout {
+                alignment: center;
+                spacing: 2px;
+                Button {
+                    text: "\u{2191}";
+                    width: 28px;
+                    enabled: root.any-job-selected;
+                    clicked => { root.move-jobs(-1); }
+                }
+                Button {
+                    text: "X";
+                    width: 28px;
+                    enabled: root.any-job-selected;
+                    clicked => { root.delete-jobs(); }
+                }
+                Button {
+                    text: "\u{2193}";
+                    width: 28px;
+                    enabled: root.any-job-selected;
+                    clicked => { root.move-jobs(1); }
+                }
+            }
+        }
+        HorizontalLayout {
+            spacing: 4px;
+            url-box := LineEdit {
+                horizontal-stretch: 1;
+                placeholder-text: "url to be parsed by the selected formula";
+                accepted(text) => {
+                    root.url-entered(text);
+                    self.text = "";
+                }
+            }
+            Button {
+                text: "paste";
+                clicked => { root.paste-urls(); }
+            }
+        }
+        ComboBox {
+            model: root.formulae;
+            current-index <=> root.formula;
+            selected => { root.formula-chosen(root.formula); }
+        }
+    }
+}

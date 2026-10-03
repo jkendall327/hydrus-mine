@@ -413,6 +413,18 @@ together (and shows again what they change, such as the tab names);
 durations that aren't numbers) is left as it was and said in a popup, as
 the reference says it.
 
+A simple downloader page (pages > download > new simple downloader page,
+or the page chooser; `ui/simple_downloader.slint`,
+`hydrus-gui-model/src/simple_downloader.rs`) has the URL page's "imports"
+box and the reference's "parsing" box: what its parsing is doing ("checking
+...", 'page checked OK with formula "..." - 2 new urls', "paused") with
+its own pause/play, the parsing log's status and button, the page being
+downloaded, the pages waiting ("all images embedded in page: https://...")
+with up, X and down, the URL box and paste button (full URLs only, each
+once), and the formula chooser. Each page waiting is parsed by `hydrus
+serve` with its formula, the files found downloaded as a URL page's are.
+A new page starts on the formula last chosen.
+
 A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
 hydrus words it ("2 successful (all already in db)"), its progress ("2/2")

@@ -251,6 +251,13 @@ pub async fn get_page_info(
                     json!({ "urls_import": urls_import(app, queues[0], simple)? })
                 }
                 PageContent::Downloader {
+                    kind: DownloaderKind::Simple,
+                    queues,
+                    ..
+                } if !queues.is_empty() => {
+                    json!({ "simple_downloader_import": simple_import(app, queues[0], simple)? })
+                }
+                PageContent::Downloader {
                     kind: DownloaderKind::Local,
                     queues,
                     ..
@@ -401,6 +408,19 @@ fn urls_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
         "imports": imports,
         "gallery_log": log,
         "files_paused": row.is_some_and(|q| q.files_paused),
+    }))
+}
+
+/// A simple downloader (`SimpleDownloaderImport.GetAPIInfoDict`): its
+/// file and gallery logs and whether its files and parsing are paused.
+fn simple_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    let row = app.store.read(|c| hydrus_store::queues::queue(c, queue))?;
+    let (imports, log) = logs(app, queue, simple)?;
+    Ok(json!({
+        "imports": imports,
+        "gallery_log": log,
+        "files_paused": row.as_ref().is_some_and(|q| q.files_paused),
+        "gallery_paused": row.is_some_and(|q| q.gallery_paused),
     }))
 }
 

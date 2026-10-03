@@ -5,6 +5,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ListView, ProgressIndicator, Scro
 import { ListText, Theme } from "theme.slint";
 import { MenuRow, MenuGroups, ThumbnailMenu } from "menus.slint";
 import { DownloadLine, DownloadControl, ImporterBoxes, LocalImportBox } from "importing.slint";
+import { SimpleParsingBox } from "simple_downloader.slint";
 import { GalleryData, GallerySidebar } from "gallery.slint";
 import { WatcherData, WatcherSidebar } from "watcher.slint";
 import { TableColumn, TableRow } from "list_table.slint";
@@ -600,6 +601,20 @@ export component MainWindow inherits Window {
     callback gallery-limit(bool, int);
     // a watcher page's sidebar (watcher.slint)
     in property <bool> watcher-page;
+    // a simple downloader page's: its parsing's status line and pause, its
+    // jobs waiting (and which are selected), and its formulae
+    in property <bool> simple-downloader;
+    in property <string> simple-parser-status;
+    in property <bool> simple-queue-paused;
+    in property <[TableRow]> simple-jobs;
+    in property <bool> simple-job-selected;
+    in property <[string]> simple-formulae;
+    in-out property <int> simple-formula;
+    callback simple-pause-play-queue();
+    callback simple-job-clicked(int, bool, bool);
+    callback simple-move-jobs(int);
+    callback simple-delete-jobs();
+    callback simple-formula-chosen(int);
     in property <WatcherData> watcher-data;
     in property <[TableRow]> watcher-rows;
     in property <int> watcher-sort-column: -1;
@@ -964,7 +979,55 @@ export component MainWindow inherits Window {
                         activated(i) => { root.tag-activated(i); }
                     }
                 }
-                if root.importing && !root.local-import && !root.gallery-page && !root.watcher-page: VerticalBox {
+                if root.importing && root.simple-downloader: VerticalBox {
+                    width: 300px;
+                    alignment: start;
+                    Text {
+                        text: "simple downloader";
+                        font-weight: 700;
+                    }
+                    LocalImportBox {
+                        current-action: root.import-action;
+                        import-status: root.import-status;
+                        import-progress: root.import-progress;
+                        import-fraction: root.import-fraction;
+                        import-paused: root.import-paused;
+                        pause-play-files => { root.pause-play-files(); }
+                        file-log => { root.open-file-log(); }
+                    }
+                    DownloadControl {
+                        line: root.file-download;
+                        cancel => { root.cancel-download(false); }
+                    }
+                    SimpleParsingBox {
+                        parser-status: root.simple-parser-status;
+                        queue-paused: root.simple-queue-paused;
+                        log-status: root.search-status;
+                        page-download: root.search-download;
+                        jobs: root.simple-jobs;
+                        any-job-selected: root.simple-job-selected;
+                        formulae: root.simple-formulae;
+                        formula <=> root.simple-formula;
+                        pause-play-queue => { root.simple-pause-play-queue(); }
+                        parsing-log => { root.open-search-log(); }
+                        cancel-download => { root.cancel-download(true); }
+                        job-clicked(r, ctrl, shift) => { root.simple-job-clicked(r, ctrl, shift); }
+                        move-jobs(d) => { root.simple-move-jobs(d); }
+                        delete-jobs => { root.simple-delete-jobs(); }
+                        url-entered(text) => { root.url-entered(text); }
+                        paste-urls => { root.paste-urls(); }
+                        formula-chosen(i) => { root.simple-formula-chosen(i); }
+                    }
+                    Button {
+                        text: root.import-options-label;
+                        clicked => { root.importer-import-options(); }
+                    }
+                    TagList {
+                        tags: root.tags;
+                        activated(i) => { root.tag-activated(i); }
+                    }
+                }
+                if root.importing && !root.local-import && !root.simple-downloader && !root.gallery-page && !root.watcher-page: VerticalBox {
                     width: 300px;
                     alignment: start;
                     Text {

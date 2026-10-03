@@ -623,7 +623,10 @@ fn pages_menu(facts: &Facts) -> Entry {
                     item("new url download page", Command::NewPage(NewPage::Urls)),
                     item("new watcher page", Command::NewPage(NewPage::Watcher)),
                     item("new gallery page", Command::NewPage(NewPage::Gallery)),
-                    todo("new simple downloader page"),
+                    item(
+                        "new simple downloader page",
+                        Command::NewPage(NewPage::SimpleDownloader),
+                    ),
                 ],
             ),
             menu(

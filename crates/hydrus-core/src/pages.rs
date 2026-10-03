@@ -320,6 +320,7 @@ impl PageContent {
                 DownloaderKind::Urls => 7,
                 DownloaderKind::Watchers => 9,
                 DownloaderKind::Local => 3,
+                DownloaderKind::Simple => 2,
             },
             PageContent::Duplicates { .. } => 8,
             PageContent::Other { page_type, .. } => *page_type,
@@ -411,6 +412,8 @@ pub enum DownloaderKind {
     /// Files imported from disk (the reference's "import" page), over its
     /// one local import queue.
     Local,
+    /// A simple downloader, over its one queue.
+    Simple,
 }
 
 /// How a page sorts its files (the reference's `MediaSort`).

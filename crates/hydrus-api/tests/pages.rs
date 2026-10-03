@@ -645,4 +645,53 @@ async fn gallery_and_watcher_pages_importers_are_described_as_the_references() {
         json!({ "hdd_import": { "imports": empty["imports"], "files_paused": true } })
     );
     let _ = queue;
+
+    // a simple downloader page: its logs, and its files' and parsing's
+    // pauses
+    let simple_key = PageKey::random();
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let q = queues::create_simple_downloader(
+                conn,
+                None,
+                &options,
+                &queues::SimpleDownloader::default(),
+                0,
+            )?;
+            queues::set_paused(conn, q, None, Some(true))?;
+            let mut session = sessions::load(conn, LAST_SESSION)?.unwrap();
+            session.pages.push(Page {
+                key: simple_key,
+                name: "simple downloader".into(),
+                content: PageContent::Downloader {
+                    kind: DownloaderKind::Simple,
+                    queues: vec![q],
+                    sort: None,
+                    page: None,
+                },
+            });
+            sessions::save(conn, &session, 0)
+        })
+        .unwrap();
+    let (_, body) = get(
+        &router,
+        &format!(
+            "/manage_pages/get_page_info?page_key={}",
+            simple_key.to_hex()
+        ),
+    )
+    .await;
+    assert_eq!(body["page_info"]["page_type"], 2);
+    let management = &body["page_info"]["management"]["simple_downloader_import"];
+    assert_eq!(
+        (
+            management["files_paused"].clone(),
+            management["gallery_paused"].clone()
+        ),
+        (json!(false), json!(true))
+    );
+    assert_eq!(management["imports"], empty["imports"]);
+    assert!(management["gallery_log"].is_object());
 }
