@@ -292,6 +292,7 @@ pub(crate) fn open(
     rule_id: i64,
     rule: Rule,
     windows: &Windows,
+    filter: &Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 ) -> Result<(), String> {
     let window = AutoResolutionReviewWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
@@ -388,9 +389,65 @@ pub(crate) fn open(
             refresh();
         }
     });
-    // (the reference opens the duplicate filter, or the media viewer, on
-    // the pair; not in hydrus-rs yet)
-    window.on_row_activated(|_| {});
+    // a pending pair: the duplicate filter on the pending pairs from it,
+    // round to the start, to approve or deny as well as decide on; every
+    // tab is fetched again if it did any work. (The reference opens the
+    // media viewer on an actioned or denied pair; not in hydrus-rs yet.)
+    window.on_row_activated({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let filter = filter.clone();
+        move |row| {
+            let Ok(row) = usize::try_from(row) else {
+                return;
+            };
+            let (store, rule_id, rule, pairs) = {
+                let state = state.borrow();
+                if state.tab != PENDING || row >= state.pending.len() {
+                    return;
+                }
+                let pairs: Vec<(HashId, HashId)> = state.pending[row..]
+                    .iter()
+                    .chain(&state.pending[..row])
+                    .map(|&(_, a, b)| (a, b))
+                    .collect();
+                (
+                    state.store.clone(),
+                    state.rule_id,
+                    state.rule.clone(),
+                    pairs,
+                )
+            };
+            let exited: Rc<dyn Fn()> = {
+                let state = state.clone();
+                let refresh = refresh.clone();
+                Rc::new(move || {
+                    let mut state = state.borrow_mut();
+                    for tab in [PENDING, ACTIONED, DENIED] {
+                        state.fetch(tab);
+                    }
+                    drop(state);
+                    refresh();
+                })
+            };
+            let opened =
+                crate::duplicate_filter::DuplicateFilter::for_review(store, rule_id, rule, pairs)
+                    .and_then(|mut model| {
+                        let step = model.load_batch();
+                        if matches!(step, Ok(crate::duplicate_filter::Step::Finished)) {
+                            return Err(anyhow::anyhow!(
+                                crate::auto_resolution_review::NOTHING_LOCAL_IN_FILTER
+                            ));
+                        }
+                        crate::filter_window::open_filter(model, step, &filter, Some(exited))
+                            .map_err(anyhow::Error::from)
+                    });
+            match opened {
+                Ok(window) => *filter.borrow_mut() = Some(window),
+                Err(e) => eprintln!("{e}"),
+            }
+        }
+    });
     window.on_select_all({
         let state = state.clone();
         let refresh = refresh.clone();

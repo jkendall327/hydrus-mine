@@ -336,8 +336,10 @@ pub(crate) fn open_filter(
     model: DuplicateFilter,
     step: anyhow::Result<Step>,
     slot: &Rc<RefCell<Option<DuplicateFilterWindow>>>,
+    exited_after_work: Option<Rc<dyn Fn()>>,
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = DuplicateFilterWindow::new()?;
+    window.set_reviewing(model.reviewing());
     let model_dir = model.store().dir().to_path_buf();
     let slow = Rc::new(SlowStatements::new(model.store()));
     let stills = Rc::new(Stills::new(model.store()));
@@ -455,6 +457,8 @@ pub(crate) fn open_filter(
                     "alternates" => Decision::ALTERNATES,
                     "false-positive" => Decision::FALSE_POSITIVE,
                     "skip" => Decision::Skip,
+                    "approve" => Decision::Review { approved: true },
+                    "deny" => Decision::Review { approved: false },
                     "back" => {
                         state.model.back();
                         return None;
@@ -495,6 +499,10 @@ pub(crate) fn open_filter(
                 let _ = window.hide();
             }
             slot.borrow_mut().take();
+            let done_work = state.borrow().model.done_work();
+            if done_work && let Some(exited) = &exited_after_work {
+                exited();
+            }
         }
     };
     window.on_answer({

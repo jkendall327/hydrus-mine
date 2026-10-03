@@ -46,6 +46,8 @@ export component DuplicateFilterWindow inherits Window {
     // the still drawn sharply over it, once rendered (see still.rs)
     in property <image> sharp;
     in property <bool> sharp-shown;
+    // the pairs are an auto-resolution rule's, to approve or deny
+    in property <bool> reviewing;
     in property <bool> sharp-opaque: true;
     in property <length> sharp-x;
     in property <length> sharp-y;
@@ -204,6 +206,18 @@ export component DuplicateFilterWindow inherits Window {
                     }
                     Rectangle {
                         height: 8px;
+                    }
+                    if root.reviewing: Text {
+                        text: "auto-resolution";
+                        font-weight: 700;
+                    }
+                    if root.reviewing: Choice {
+                        text: "approve";
+                        clicked => { root.decide("approve"); }
+                    }
+                    if root.reviewing: Choice {
+                        text: "deny";
+                        clicked => { root.decide("deny"); }
                     }
                     Choice {
                         text: "this is better, and delete the other";

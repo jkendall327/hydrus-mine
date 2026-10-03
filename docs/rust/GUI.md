@@ -975,7 +975,11 @@ delete tag mappings: blue", as `oracle/record_merge_summaries.py`
 recorded the reference's summaries), and "approve"
 and "deny" act on the selected (asking first for more than five),
 leaving the earliest row's successor selected; "select all" selects them
-all. A fully automatic rule's tab says it won't wait for approval.
+all. Double-clicking a pending pair opens the duplicate filter on the
+pending pairs from it, with "approve" and "deny" (the rule's action on
+the pair as listed, whichever file is shown) over the usual decisions;
+closing it after committing fetches every tab again. A fully automatic
+rule's tab says it won't wait for approval.
 "actions taken" lists what was done and when, newest first; "undo"
 (asking first, with the reference's warning) undeletes the files and
 dissolves their duplicate groups, so they are searched again. "actions

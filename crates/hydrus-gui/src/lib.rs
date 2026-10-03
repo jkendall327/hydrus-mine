@@ -183,6 +183,8 @@ pub struct Bound {
     pub auto_resolution: auto_resolution_rules_window::Slots,
     /// The rules' "review actions" windows, by a number each.
     pub auto_resolution_reviews: Rc<RefCell<Vec<(u64, AutoResolutionReviewWindow)>>>,
+    /// The duplicate filter opened from a review's pending pairs.
+    pub auto_resolution_review_filter: Rc<RefCell<Option<DuplicateFilterWindow>>>,
     /// An importer's file log while one is open.
     pub file_log: Rc<RefCell<Option<FileLogWindow>>>,
     /// The archive/delete filter while one is open.
@@ -839,7 +841,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 duplicate_filter::DuplicateFilter::for_page(page.store().clone(), duplicates)
                     .and_then(|mut model| {
                         let step = model.load_batch();
-                        filter_window::open_filter(model, step, &filter)
+                        filter_window::open_filter(model, step, &filter, None)
                             .map_err(|e| anyhow::anyhow!("{e}"))
                     });
             match opened {
@@ -2527,6 +2529,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         filename_tagging,
         auto_resolution: duplicates.rules_editor.clone(),
         auto_resolution_reviews: duplicates.reviews.clone(),
+        auto_resolution_review_filter: duplicates.review_filter.clone(),
         locations,
         favourites: favourite_dialogs,
         predicate_editor,

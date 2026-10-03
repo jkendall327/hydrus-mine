@@ -107,10 +107,18 @@ fn trashed(store: &Store, hexes: &[String], ids: &HashMap<String, HashId>) -> Ve
     out
 }
 
-#[test]
-fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
-    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
-    let windows = headless::init();
+/// The reference's run's database, opened with a duplicates page, and each
+/// file's hash in hex, and back.
+struct Opened {
+    _dir: tempfile::TempDir,
+    store: Arc<Store>,
+    ui: MainWindow,
+    bound: Bound,
+    hex: HashMap<HashId, String>,
+    ids: HashMap<String, HashId>,
+}
+
+fn opened() -> Opened {
     let legacy = hydrus_testkit::legacy_fixture("auto_resolution");
     let dir = tempfile::tempdir().unwrap();
     hydrus_store::import::import_legacy(
@@ -154,6 +162,28 @@ fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
         .unwrap();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(Arc::clone(&store)).unwrap());
+    Opened {
+        _dir: dir,
+        store,
+        ui,
+        bound,
+        hex,
+        ids,
+    }
+}
+
+#[test]
+fn pairs_are_approved_denied_and_undone_as_the_reference_does() {
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let windows = headless::init();
+    let Opened {
+        _dir,
+        store,
+        ui,
+        bound,
+        hex,
+        ids,
+    } = opened();
     let rules = store.read(auto::rules).unwrap();
     let rule_id = |name: &str| rules.iter().find(|(_, r)| r.name == name).unwrap().0;
     let reviewed = recorded["reviewed"].as_str().unwrap();
@@ -279,4 +309,74 @@ fn strings(value: &Value) -> Vec<String> {
         .iter()
         .map(|v| v.as_str().unwrap().to_owned())
         .collect()
+}
+
+#[test]
+fn a_pending_pair_is_approved_in_the_duplicate_filter() {
+    let recorded = hydrus_testkit::fixture_json("auto_resolution_review.json");
+    let windows = headless::init();
+    let Opened {
+        _dir,
+        store,
+        ui,
+        bound,
+        hex,
+        ..
+    } = opened();
+    let rules = store.read(auto::rules).unwrap();
+    let reviewed = recorded["reviewed"].as_str().unwrap();
+    let rule = rules.iter().find(|(_, r)| r.name == reviewed).unwrap().0;
+    let steps = recorded["steps"].as_array().unwrap();
+    let window = review(&ui, &bound, reviewed);
+
+    // the pair the reference approved, double-clicked: the filter opens on
+    // the pending pairs from it, with approve and deny
+    let approved = recorded_pairs(&steps[0]["state"], "actioned")[0].clone();
+    let ours = listed(&store, rule, "pending", &hex);
+    let row = ours.iter().position(|p| *p == approved).unwrap();
+    window.invoke_row_activated(i32::try_from(row).unwrap());
+    let filter = bound
+        .auto_resolution_review_filter
+        .borrow()
+        .as_ref()
+        .expect("the filter opened")
+        .clone_strong();
+    assert!(filter.get_reviewing());
+    assert!(
+        filter.get_index_text().starts_with("File One - 1/2"),
+        "{}",
+        filter.get_index_text()
+    );
+    let last = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let pixels = headless::render(&windows.get(last).unwrap(), 1000, 700);
+    let shot = std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("review_filter.png");
+    headless::save_png(&shot, &pixels, 1000, 700).unwrap();
+    // approved, whichever file is shown, then closed, committing
+    filter.invoke_switch_media();
+    filter.invoke_decide("approve".into());
+    for _ in 0..5 {
+        if bound.auto_resolution_review_filter.borrow().is_none() {
+            break;
+        }
+        if filter.get_question().is_empty() {
+            filter.invoke_close_requested();
+        } else {
+            filter.invoke_answer(0);
+        }
+    }
+    assert!(bound.auto_resolution_review_filter.borrow().is_none());
+    // the rule's action taken, as the reference's approval was, and the
+    // review fetched again
+    assert_eq!(
+        listed(&store, rule, "pending", &hex),
+        recorded_pairs(&steps[0]["state"], "pending")
+    );
+    assert_eq!(
+        listed(&store, rule, "actioned", &hex),
+        recorded_pairs(&steps[0]["state"], "actioned")
+    );
+    assert_eq!(window.get_label(), "Found 1 pairs.");
 }

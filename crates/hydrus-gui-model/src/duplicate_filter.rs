@@ -20,6 +20,7 @@ use hydrus_duplicates::statements::{self, FastComparison};
 use hydrus_search::media::FileFacts;
 use hydrus_store::Store;
 use hydrus_store::delete_lock::Reinbox;
+use hydrus_store::duplicates::auto::{Rule, RuleAction};
 use hydrus_store::duplicates::{
     self, ComparisonScores, DuplicateFilterSettings, DuplicateMergeSettings, PairDecision,
     PairOrder, PairRelationship, PairSelection,
@@ -36,6 +37,10 @@ pub enum Decision {
         delete_a: bool,
         delete_b: bool,
     },
+    /// Approved or denied for the auto-resolution rule the pairs came from
+    /// (`DuplicatePairDecisionApproveDeny`): the rule's action on the pair
+    /// as given, whichever file is shown.
+    Review { approved: bool },
     /// Skipped by the user.
     Skip,
     /// Skipped because a file of it was already merged or deleted in this
@@ -141,6 +146,11 @@ pub struct DuplicateFilter {
     /// (`PotentialDuplicatePairFactoryMediaResults`): those not yet given
     /// out as a batch.
     given: Option<Vec<(HashId, HashId)>>,
+    /// The rule whose pending pairs these are, approved or denied here
+    /// (`PotentialDuplicatePairFactoryAutoResolutionReview`).
+    rule: Option<(i64, Rule)>,
+    /// Some decision has been committed (`_have_done_work`).
+    done_work: bool,
     order: PairOrder,
     ascending: bool,
     group_mode: bool,
@@ -180,6 +190,8 @@ impl DuplicateFilter {
             store,
             query,
             given: None,
+            rule: None,
+            done_work: false,
             order,
             ascending,
             group_mode,
@@ -210,6 +222,30 @@ impl DuplicateFilter {
         let mut filter = Self::new(store, query, PairOrder::MinFilesize, true, false)?;
         filter.given = Some(pairs);
         Ok(filter)
+    }
+
+    /// A filter over a rule's pending pairs (A, B), approving or denying
+    /// them as well as deciding on them.
+    pub fn for_review(
+        store: Arc<Store>,
+        rule_id: i64,
+        rule: Rule,
+        pairs: Vec<(HashId, HashId)>,
+    ) -> anyhow::Result<Self> {
+        let query = PotentialsQuery::from_search(&store.snapshot(), &rule.search)?;
+        let mut filter = Self::for_pairs(store, query, pairs)?;
+        filter.rule = Some((rule_id, rule));
+        Ok(filter)
+    }
+
+    /// Whether any decision has been committed since opening.
+    pub fn done_work(&self) -> bool {
+        self.done_work
+    }
+
+    /// Whether the pairs are a rule's, to approve or deny.
+    pub fn reviewing(&self) -> bool {
+        self.rule.is_some()
     }
 
     /// The pairs to filter next, each in the order it is shown.
@@ -362,6 +398,17 @@ impl DuplicateFilter {
                     used.insert(d.a);
                 }
             }
+            // (approved or not, as the reference does)
+            if let (Decision::Review { .. }, Some((_, rule))) = (d.decision, &self.rule) {
+                if matches!(rule.action, RuleAction::Better | RuleAction::SameQuality)
+                    || rule.delete_a
+                {
+                    used.insert(d.a);
+                }
+                if rule.delete_b {
+                    used.insert(d.b);
+                }
+            }
         }
         used
     }
@@ -397,7 +444,12 @@ impl DuplicateFilter {
     fn committable(&self) -> usize {
         self.decisions
             .iter()
-            .filter(|d| matches!(d.decision, Decision::Relationship { .. }))
+            .filter(|d| {
+                matches!(
+                    d.decision,
+                    Decision::Relationship { .. } | Decision::Review { .. }
+                )
+            })
             .count()
     }
 
@@ -467,6 +519,12 @@ impl DuplicateFilter {
         let Some((a, b)) = self.current() else {
             return Ok(Step::Finished);
         };
+        // a review decision is on the pair as given
+        let (a, b) = match decision {
+            Decision::Review { .. } if self.rule.is_none() => return Ok(Step::Showing),
+            Decision::Review { .. } => self.batch[self.index],
+            _ => (a, b),
+        };
         self.decisions.push(Decided { a, b, decision });
         self.index += 1;
         self.next()
@@ -512,6 +570,21 @@ impl DuplicateFilter {
         let merge_settings: DuplicateMergeSettings =
             self.store.read(hydrus_store::settings::get)?;
         let merge_alternates = self.settings.merge_alternates;
+        if self.committable() > 0 {
+            self.done_work = true;
+        }
+        if let Some((rule_id, _)) = &self.rule {
+            let reviewed = |approved: bool| -> Vec<(HashId, HashId)> {
+                self.decisions
+                    .iter()
+                    .filter(|d| d.decision == Decision::Review { approved })
+                    .map(|d| (d.a, d.b))
+                    .collect()
+            };
+            let (approve, deny) = (reviewed(true), reviewed(false));
+            hydrus_duplicates::engine::approve(&self.store, *rule_id, &approve)?;
+            hydrus_duplicates::engine::deny(&self.store, *rule_id, &deny)?;
+        }
         self.store.write_content(move |w| {
             for d in &work {
                 let Decision::Relationship {

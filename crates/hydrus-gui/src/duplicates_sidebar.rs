@@ -50,6 +50,8 @@ pub(crate) struct Sidebar {
     pub(crate) rules_editor: crate::auto_resolution_rules_window::Slots,
     /// The rules' "review actions" windows.
     pub(crate) reviews: crate::auto_resolution_review_window::Windows,
+    /// The duplicate filter opened from a review's pending pairs.
+    pub(crate) review_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 }
 
 impl Sidebar {
@@ -234,9 +236,13 @@ impl Sidebar {
                     .collect();
                 drop(state);
                 for (id, rule) in rules {
-                    if let Err(e) =
-                        crate::auto_resolution_review_window::open(&store, id, rule, &self.reviews)
-                    {
+                    if let Err(e) = crate::auto_resolution_review_window::open(
+                        &store,
+                        id,
+                        rule,
+                        &self.reviews,
+                        &self.review_filter,
+                    ) {
                         eprintln!("could not open the review: {e}");
                     }
                 }

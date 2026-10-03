@@ -219,7 +219,7 @@ impl Preview {
         if matches!(step, Ok(crate::duplicate_filter::Step::Finished)) {
             return Some(crate::auto_resolution_review::NOTHING_LOCAL_IN_FILTER.to_owned());
         }
-        match crate::filter_window::open_filter(model, step, &self.filter) {
+        match crate::filter_window::open_filter(model, step, &self.filter, None) {
             Ok(window) => {
                 *self.filter.borrow_mut() = Some(window);
                 None

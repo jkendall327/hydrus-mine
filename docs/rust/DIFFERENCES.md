@@ -422,10 +422,10 @@ in-memory predicate tests their comparators use by
   list with no local pair says so under the tabs, not in a dialog.
 - **The "review actions" window** lists a rule's pending pairs by their
   groups; the reference lists them in its table's order (when they were
-  queued), which hydrus-rs doesn't keep. Double-clicking a pair (the reference opens the
-  duplicate filter, approving or denying, on the pending pairs, or the
-  media viewer on a pair) and the lists' right-click "show in a new page"
-  aren't there yet. Approving and denying happen at once, without the
+  queued), which hydrus-rs doesn't keep. Double-clicking an actioned or
+  denied pair (the reference opens the media viewer on it) and the
+  lists' right-click "show in a new page" aren't there yet; a pending
+  list with no local pair says so on the terminal, not in a dialog. Approving and denying happen at once, without the
   reference's "approving: 1/4" progress and popup.
 - **Jpeg quality is read from the file's header** (its quantisation tables
   and sampling factors, as Pillow reads them), for "A has clearly better
