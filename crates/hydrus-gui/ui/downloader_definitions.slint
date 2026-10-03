@@ -13,6 +13,7 @@ export struct DefinitionField {
 component Fields inherits VerticalLayout {
     vertical-stretch: 0;
     in property <[DefinitionField]> fields;
+    in property <bool> enabled: true;
     callback text-edited(int,string);
     callback choice-edited(int,int);
     callback toggled(int,bool);
@@ -24,19 +25,19 @@ component Fields inherits VerticalLayout {
         max-height: field.kind == 3 ? 70px : 32px;
         Text { width: 245px; text: field.label; color: Theme.text; vertical-alignment: center; wrap: word-wrap; }
         if field.kind == 0: LineEdit {
-            text: field.text; enabled: field.enabled;
+            text: field.text; enabled: field.enabled && root.enabled;
             edited(text) => { root.text-edited(field.id,text); }
         }
         if field.kind == 1: ComboBox {
-            model: field.options; current-index: field.chosen; enabled: field.enabled;
+            model: field.options; current-index: field.chosen; enabled: field.enabled && root.enabled;
             selected => { root.choice-edited(field.id,self.current-index); }
         }
         if field.kind == 2: CheckBox {
-            checked: field.checked; enabled: field.enabled;
+            checked: field.checked; enabled: field.enabled && root.enabled;
             toggled => { root.toggled(field.id,self.checked); }
         }
         if field.kind == 3: TextEdit {
-            min-height: 70px; text: field.text; enabled: field.enabled;
+            min-height: 70px; text: field.text; enabled: field.enabled && root.enabled;
             edited(text) => { root.text-edited(field.id,text); }
         }
     }
@@ -119,6 +120,7 @@ export component DownloaderDefinitionEditWindow inherits Window {
     in property <[TableRow]> members;
     in property <bool> nested;
     in property <bool> rule-processor;
+    in property <bool> child-open;
     in property <string> note;
     in property <string> preview;
     in property <string> error;
@@ -134,12 +136,13 @@ export component DownloaderDefinitionEditWindow inherits Window {
     callback converter(int);
     callback action(string);
     callback answered(bool);
+    callback closed();
     VerticalLayout {
         height: root.height - 52px;
         padding: 10px; spacing: 8px;
         if root.tabs.length > 0: HorizontalLayout {
             vertical-stretch: 0;
-            for name[i] in root.tabs: Button { text: name; enabled: root.tab != i; clicked => { root.tab-chosen(i); } }
+            for name[i] in root.tabs: Button { text: name; enabled: root.tab != i && !root.child-open; clicked => { root.tab-chosen(i); } }
         }
         ScrollView {
             min-height: 0px;
@@ -149,51 +152,52 @@ export component DownloaderDefinitionEditWindow inherits Window {
                 alignment: start;
                 Fields {
                     fields: root.fields;
+                    enabled: !root.child-open;
                     text-edited(i,t) => { root.text-edited(i,t); }
                     choice-edited(i,c) => { root.choice-edited(i,c); }
                     toggled(i,v) => { root.toggled(i,v); }
                 }
                 if root.rule-tabs.length > 0 && root.tab == 0: VerticalLayout {
                     HorizontalLayout {
-                        for name[i] in root.rule-tabs: Button { text: name; enabled: root.rule-tab != i; clicked => { root.rule-tab-chosen(i); } }
+                        for name[i] in root.rule-tabs: Button { text: name; enabled: root.rule-tab != i && !root.child-open; clicked => { root.rule-tab-chosen(i); } }
                     }
                     for rule[i] in root.rules: Rectangle {
                         height: 28px;
                         background: root.selected-rule == i ? Theme.highlight : Theme.panel;
                         Text { x: 5px; text: rule; color: Theme.text; vertical-alignment: center; }
-                        TouchArea { clicked => { root.rule-selected(i); } double-clicked => { root.rule-selected(i); root.rule-action("edit"); } }
+                        TouchArea { enabled: !root.child-open; clicked => { root.rule-selected(i); } double-clicked => { root.rule-selected(i); root.rule-action("edit"); } }
                     }
                     HorizontalLayout {
                         spacing: 6px; alignment: start;
-                        Button { text: "add"; clicked => { root.rule-action("add"); } }
-                        Button { text: "edit"; enabled: root.selected-rule >= 0; clicked => { root.rule-action("edit"); } }
-                        Button { text: "delete"; enabled: root.selected-rule >= 0; clicked => { root.rule-action("delete"); } }
-                        Button { text: "up"; enabled: root.rule-tab == 0 && root.selected-rule > 0; clicked => { root.rule-action("up"); } }
-                        Button { text: "down"; enabled: root.rule-tab == 0 && root.selected-rule >= 0 && root.selected-rule < root.rules.length - 1; clicked => { root.rule-action("down"); } }
+                        Button { text: "add"; enabled: !root.child-open; clicked => { root.rule-action("add"); } }
+                        Button { text: "edit"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("edit"); } }
+                        Button { text: "delete"; enabled: root.selected-rule >= 0 && !root.child-open; clicked => { root.rule-action("delete"); } }
+                        Button { text: "up"; enabled: root.rule-tab == 0 && root.selected-rule > 0 && !root.child-open; clicked => { root.rule-action("up"); } }
+                        Button { text: "down"; enabled: root.rule-tab == 0 && root.selected-rule >= 0 && root.selected-rule < root.rules.length - 1 && !root.child-open; clicked => { root.rule-action("down"); } }
                     }
                 }
                 if root.rule-tabs.length > 0 && root.tab == 1: HorizontalLayout {
-                    Button { text: "edit API/redirect converter"; clicked => { root.converter(0); } }
-                    Button { text: "edit referral converter"; clicked => { root.converter(1); } }
+                    Button { text: "edit API/redirect converter"; enabled: !root.child-open; clicked => { root.converter(0); } }
+                    Button { text: "edit referral converter"; enabled: !root.child-open; clicked => { root.converter(1); } }
                 }
-                if root.rule-processor: Button { text: "edit default value string processor"; clicked => { root.converter(2); } }
+                if root.rule-processor: Button { text: "edit default value string processor"; enabled: !root.child-open; clicked => { root.converter(2); } }
                 if root.nested: VerticalLayout {
                     vertical-stretch: 0;
                     Text { text: "choose gugs"; color: Theme.text; }
-                    for member[i] in root.members: CheckBox { text: member.cells[0]; checked: member.selected; toggled => { root.member-toggled(i); } }
+                    for member[i] in root.members: CheckBox { text: member.cells[0]; checked: member.selected; enabled: !root.child-open; toggled => { root.member-toggled(i); } }
                 }
                 if root.note != "": Text { text: root.note; color: Theme.text; wrap: word-wrap; }
                 Text { text: root.preview; color: Theme.text; wrap: word-wrap; }
             }
         }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }
-        if root.question != "": Question { text: root.question; answered(yes) => { root.answered(yes); } }
+        if root.question != "" && !root.child-open: Question { text: root.question; answered(yes) => { root.answered(yes); } }
     }
     footer := HorizontalLayout {
         x: 10px; y: root.height - 42px;
         width: root.width - 20px; height: 32px;
         spacing: 6px; alignment: end;
-        Button { text: "apply"; clicked => { root.action("apply"); } }
-        Button { text: "cancel"; clicked => { root.action("cancel"); } }
+        Button { text: "apply"; enabled: !root.child-open; clicked => { root.action("apply"); } }
+        Button { text: "cancel"; enabled: !root.child-open; clicked => { root.action("cancel"); } }
     }
 }

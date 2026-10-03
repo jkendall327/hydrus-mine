@@ -97,6 +97,7 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
     edit.invoke_rule_selected(0);
     edit.invoke_rule_action("edit".into());
     let path = child(&slots.rule);
+    assert!(edit.get_child_open());
     path.invoke_toggled(2, true);
     path.invoke_text_edited(1, "wrong".into());
     path.invoke_action("apply".into());
@@ -105,6 +106,7 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
         "That default value does not match the rule!"
     );
     path.invoke_action("cancel".into());
+    assert!(!edit.get_child_open());
     edit.invoke_rule_tab_chosen(1);
     edit.invoke_rule_selected(0);
     edit.invoke_rule_action("edit".into());
@@ -123,6 +125,7 @@ fn class_rules_apply_snapshot_roundtrip_and_cancel_safety() {
     rule.invoke_text_edited(1, "5".into());
     rule.invoke_action("apply".into());
     assert!(slots.rule.borrow().is_none());
+    assert!(!edit.get_child_open());
     edit.invoke_choice_edited(2, 0);
     edit.invoke_tab_chosen(1);
     edit.invoke_toggled(11, false);
@@ -326,10 +329,13 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
         list.invoke_row_clicked(0, false, false);
         list.invoke_action("edit".into());
         let edit = child(&slots.class_edit);
+        assert!(!edit.get_child_open());
+        let original_fields = edit.get_fields();
         let preview = edit.get_preview();
         let rules = edit.get_rules().row_count();
         edit.invoke_rule_selected(0);
         edit.invoke_converter(0);
+        assert!(edit.get_child_open());
         let converter = slots
             .strings
             .converter
@@ -372,7 +378,16 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
             !slots.strings.has_open(),
             "converter cancellation clears its conversion"
         );
+        assert!(!edit.get_child_open());
+        for i in 0..original_fields.row_count() {
+            let original_field = original_fields.row_data(i).unwrap();
+            let current = edit.get_fields().row_data(i).unwrap();
+            assert_eq!(current.text, original_field.text);
+            assert_eq!(current.chosen, original_field.chosen);
+            assert_eq!(current.checked, original_field.checked);
+        }
         edit.invoke_converter(0);
+        assert!(edit.get_child_open());
         let reopened = slots
             .strings
             .converter
@@ -387,6 +402,7 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
         );
         reopened.invoke_cancel();
         assert!(!slots.strings.has_open());
+        assert!(!edit.get_child_open());
         if wm_close {
             edit.window().dispatch_event(WindowEvent::CloseRequested);
         } else {
@@ -410,7 +426,10 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
     edit.invoke_rule_selected(0);
     edit.invoke_rule_action("edit".into());
     let rule = child(&slots.rule);
+    assert!(edit.get_child_open());
+    assert!(!rule.get_child_open());
     rule.invoke_converter(2);
+    assert!(rule.get_child_open());
     let processor = slots
         .strings
         .processor
@@ -443,13 +462,27 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
         !slots.strings.has_open(),
         "processor close cancels its entire subtree"
     );
+    assert!(!rule.get_child_open());
+    assert!(
+        edit.get_child_open(),
+        "the class still has its parameter editor open"
+    );
     rule.invoke_tab_chosen(0);
     assert_eq!(rule.get_fields().row_data(0).unwrap().text, original_name);
     rule.invoke_converter(2);
     assert!(slots.strings.processor.borrow().is_some());
     slots.strings.cancel_all();
+    assert!(!rule.get_child_open());
     rule.invoke_action("cancel".into());
     assert!(slots.rule.borrow().is_none());
+    assert!(!edit.get_child_open());
+    edit.invoke_rule_tab_chosen(2);
+    edit.invoke_rule_action("add".into());
+    assert!(edit.get_child_open());
+    let header = child(&slots.rule);
+    header.window().dispatch_event(WindowEvent::CloseRequested);
+    assert!(slots.rule.borrow().is_none());
+    assert!(!edit.get_child_open());
     edit.invoke_action("cancel".into());
     list.invoke_action("cancel".into());
     assert_eq!(
@@ -457,4 +490,71 @@ fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
         original
     );
     assert_eq!(store.snapshot().url_classes.settings(), &original);
+}
+
+#[test]
+fn lifecycle_native_fields_disable_typing_until_child_closes() {
+    use std::cell::RefCell;
+    use std::rc::Rc;
+
+    use hydrus_gui::DefinitionField;
+    use slint::platform::{Key, PointerEventButton, WindowEvent};
+    use slint::{LogicalPosition, ModelRc, SharedString, VecModel};
+
+    let rendered = headless::init();
+    let editor = DownloaderDefinitionEditWindow::new().unwrap();
+    editor.set_fields(ModelRc::new(VecModel::from(vec![DefinitionField {
+        id: 0,
+        label: "name:".into(),
+        text: "original name".into(),
+        enabled: true,
+        ..Default::default()
+    }])));
+    let edits = Rc::new(RefCell::new(Vec::new()));
+    editor.on_text_edited({
+        let edits = edits.clone();
+        move |_, text| edits.borrow_mut().push(text.to_string())
+    });
+    editor.show().unwrap();
+    let window = rendered.get(0).unwrap();
+    let send_key = |text: SharedString| {
+        window.dispatch_event(WindowEvent::KeyPressed { text: text.clone() });
+        window.dispatch_event(WindowEvent::KeyReleased { text });
+    };
+    let type_name = |name: &str| {
+        // With no tab row, the first 32px field starts at the 10px padding.
+        let position = LogicalPosition::new(400.0, 26.0);
+        window.dispatch_event(WindowEvent::PointerPressed {
+            position,
+            button: PointerEventButton::Left,
+        });
+        window.dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+        let control: SharedString = Key::Control.into();
+        window.dispatch_event(WindowEvent::KeyPressed {
+            text: control.clone(),
+        });
+        send_key("a".into());
+        window.dispatch_event(WindowEvent::KeyReleased { text: control });
+        send_key(name.into());
+    };
+    editor.set_child_open(true);
+    headless::render(&window, 950, 740);
+    headless::render(&window, 950, 740);
+    type_name("blocked name");
+    assert!(
+        edits.borrow().is_empty(),
+        "a disabled native field cannot accept typing"
+    );
+    editor.set_child_open(false);
+    headless::render(&window, 950, 740);
+    headless::render(&window, 950, 740);
+    type_name("accepted name");
+    assert_eq!(
+        edits.borrow().last().map(String::as_str),
+        Some("accepted name")
+    );
+    editor.hide().unwrap();
 }

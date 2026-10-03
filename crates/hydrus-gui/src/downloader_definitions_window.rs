@@ -684,9 +684,12 @@ fn open_editor(
     let refresh: Rc<dyn Fn(bool)> = Rc::new({
         let state = state.clone();
         let weak = window.as_weak();
+        let slots = slots.clone();
         move |whole| {
             if let Some(w) = weak.upgrade() {
-                show_editor(&w, &state.borrow(), whole);
+                let editor = state.borrow();
+                w.set_child_open(editor_blocked(&editor, &slots));
+                show_editor(&w, &editor, whole);
             }
         }
     });
@@ -710,10 +713,14 @@ fn open_editor(
                 Value::Rule(_, _) => slots.strings.cancel_all(),
                 Value::Gug(_) | Value::Header(_, _) => (),
             }
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
+            let window = weak.upgrade();
+            if let Some(window) = &window {
+                let _ = window.hide();
             }
             slot.borrow_mut().take();
+            if let Some(window) = window {
+                window.invoke_closed();
+            }
         }
     });
     window.on_text_edited({
@@ -975,6 +982,7 @@ fn open_converter(
     };
     let done = Rc::new({
         let state = state.clone();
+        let refresh = refresh.clone();
         move |converter| {
             if let Value::Class(c) = &mut state.borrow_mut().value {
                 if which == 0 {
@@ -992,7 +1000,14 @@ fn open_converter(
         &slots.strings,
         done,
     ) {
-        Ok(w) => *slots.strings.converter.borrow_mut() = Some(w),
+        Ok(w) => {
+            w.on_closed({
+                let refresh = refresh.clone();
+                move || refresh(true)
+            });
+            *slots.strings.converter.borrow_mut() = Some(w);
+            refresh(false);
+        }
         Err(e) => eprintln!("could not open converter: {e}"),
     }
 }
@@ -1131,6 +1146,7 @@ fn rule_action(
     let child_editor = Editor::new(value, &draft);
     let done: Done = Rc::new({
         let state = state.clone();
+        let refresh = refresh.clone();
         move |value| {
             let mut editor = state.borrow_mut();
             let Value::Class(class) = &mut editor.value else {
@@ -1191,7 +1207,12 @@ fn rule_action(
         }
     });
     let window = open_editor(store, child_editor, slots, slots.rule.clone(), done)?;
+    window.on_closed({
+        let refresh = refresh.clone();
+        move || refresh(true)
+    });
     *slots.rule.borrow_mut() = Some(window);
+    refresh(false);
     Ok(())
 }
 
@@ -1208,6 +1229,7 @@ fn open_default_processor(
     let Value::Rule(r, _) = &e.value else { return };
     let done = Rc::new({
         let state = state.clone();
+        let refresh = refresh.clone();
         move |processor| {
             if let Value::Rule(r, _) = &mut state.borrow_mut().value {
                 r.default_processor = processor;
@@ -1222,7 +1244,14 @@ fn open_default_processor(
         &slots.strings,
         done,
     ) {
-        Ok(window) => *slots.strings.processor.borrow_mut() = Some(window),
+        Ok(window) => {
+            window.on_closed({
+                let refresh = refresh.clone();
+                move || refresh(true)
+            });
+            *slots.strings.processor.borrow_mut() = Some(window);
+            refresh(false);
+        }
         Err(e) => eprintln!("could not open default processor: {e}"),
     }
 }

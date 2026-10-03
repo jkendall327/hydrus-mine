@@ -1240,7 +1240,9 @@ normalization flags, API and referral converters, and gallery page indices.
 The example shows matching, stored/request URLs, API/referral URLs and the next
 page. Invalid examples and defaults keep the editor open. Applying refreshes
 URL matching immediately; cancelling leaves the native settings unchanged.
-Definition drafts stay modal while their rule or string editors are open.
+Definition drafts stay modal while their rule or string editors are open:
+the parent fields and editing controls are disabled until the child closes.
+Closing a child restores the parent controls and reloads their draft values.
 Cancelling a converter or default processor also closes its nested editors,
 so the definition can be closed or edited again without abandoned windows.
 
