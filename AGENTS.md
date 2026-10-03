@@ -114,6 +114,9 @@ box. Each one is a commit that passes CI on its own.
 - When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
   to the current worktree's absolute `oracle/fixtures` path. Otherwise a
   cached `hydrus-testkit` can read the checkout it was compiled in.
+  Give each worktree a distinct `RUSTC_WORKSPACE_WRAPPER` path as well:
+  Cargo then separates workspace artifacts while sharing third-party
+  dependencies, avoiding reuse of another branch's modified libraries.
 
 ## Things that have bitten before
 
