@@ -194,6 +194,20 @@ reference's frame does. The rows and menus are as
 `oracle/record_file_log.py` recorded the reference's. Windows' own
 popup menus are drawn as the menu bar's are (`src/popup_menu.rs`).
 
+The "search" box (a gallery search's, a URL downloader's) has a "search
+log" button, and a watcher's "checker" box a "check log" button, which
+open the same window as the search log (`src/search_log_window.rs`,
+`hydrus-gui-model/src/search_log.rs`), the reference's
+`EditGallerySeedLogPanel`: the pages read (#, url, status, added, last
+modified, note) with the log's status above. A right click on pages
+offers copying their URLs and notes, opening them, the page's referral
+URL, headers and inherited tags, trying it again (just that page, or a
+search letting it carry on to next pages), skipping it, and the whole
+log's menu: deleting entries of each status (asking first), restarting a
+search whose last page failed, and copying every URL. Changes nudge the
+downloader to work the queue again. As `oracle/record_search_log.py`
+recorded the reference's.
+
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,
 `hydrus-gui-model/src/folders.rs`), the reference's
@@ -842,7 +856,7 @@ window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, downloader
-pages' search log windows and import options buttons, and a
+pages' import options buttons, and a
 download's cog and error menus (bandwidth rules, the last error); in
 the duplicates page, editing its search, editing auto-resolution rules
 and reviewing their actions, and quick and dirty processing; in the duplicate filter, the custom action,

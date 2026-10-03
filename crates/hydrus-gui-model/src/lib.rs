@@ -28,6 +28,7 @@ pub mod page_chooser;
 pub mod predicate_editors;
 pub mod ratings;
 pub mod scanbar;
+pub mod search_log;
 pub mod selection;
 pub mod session_saving;
 pub mod sort;

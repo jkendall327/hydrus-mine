@@ -68,6 +68,8 @@ export component WatcherSidebar inherits VerticalLayout {
     callback page-checker();
     // the highlighted watcher's file log
     callback file-log();
+    // the check log button (`GallerySeedLogButton`)
+    callback search-log();
     callback watcher-checker();
     spacing: 6px;
     Text {
@@ -294,9 +296,16 @@ export component WatcherSidebar inherits VerticalLayout {
                         line: root.search-download;
                         cancel => { root.cancel-download(true); }
                     }
-                    Button {
-                        text: "checker options";
-                        clicked => { root.watcher-checker(); }
+                    HorizontalLayout {
+                        spacing: 4px;
+                        Button {
+                            text: "check log";
+                            clicked => { root.search-log(); }
+                        }
+                        Button {
+                            text: "checker options";
+                            clicked => { root.watcher-checker(); }
+                        }
                     }
                 }
             }

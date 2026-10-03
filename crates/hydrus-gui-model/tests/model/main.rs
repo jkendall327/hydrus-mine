@@ -12,6 +12,7 @@ mod local_import_dialog;
 mod main_menu;
 mod options_dialog;
 mod recent_predicates;
+mod search_log;
 mod selection;
 mod session_saving;
 mod subscriptions_buttons;

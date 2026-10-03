@@ -46,6 +46,7 @@ mod playback;
 mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
+mod search_log_window;
 mod session_dialog;
 pub mod slideshow;
 pub mod still;
@@ -134,7 +135,7 @@ pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
     duplicates_page, edit_subscription, favourites, file_log, folders, info_lines, list_selection,
     local_import, main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors,
-    ratings, scanbar, selection, session_saving, sort, status, subscriptions_dialog,
+    ratings, scanbar, search_log, selection, session_saving, sort, status, subscriptions_dialog,
     subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
@@ -773,6 +774,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
                 Ok(window) => *file_log.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the file log: {e}"),
+            }
+        }
+    });
+    // and its search log (a watcher's check log)
+    window.on_open_search_log({
+        let page = page.clone();
+        let file_log = file_log.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let Some(importer) = page.importer() else {
+                return;
+            };
+            if let Some(old) = file_log.borrow_mut().take() {
+                let _ = old.hide();
+            }
+            match search_log_window::open(page.store(), importer.queue, &file_log) {
+                Ok(window) => *file_log.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the search log: {e}"),
             }
         }
     });

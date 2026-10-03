@@ -73,6 +73,8 @@ export component ImporterBoxes inherits VerticalLayout {
     callback cancel-download(bool);
     // the file log button (`FileSeedCacheButton`)
     callback file-log();
+    // the search log button (`GallerySeedLogButton`)
+    callback search-log();
     spacing: 6px;
     Rectangle {
         border-width: 1px;
@@ -131,9 +133,18 @@ export component ImporterBoxes inherits VerticalLayout {
         VerticalLayout {
             padding: 6px;
             spacing: 4px;
-            Text {
-                text: "search";
-                font-weight: 600;
+            HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: "search";
+                    font-weight: 600;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Button {
+                    text: "search log";
+                    clicked => { root.search-log(); }
+                }
             }
             // (gallery_pause/gallery_play)
             if root.status-lines: HorizontalLayout {

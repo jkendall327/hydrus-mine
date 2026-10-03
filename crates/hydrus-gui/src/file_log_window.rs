@@ -67,6 +67,21 @@ impl State {
 /// A change to the store.
 type StoreChange = Box<dyn FnOnce(&rusqlite::Connection) -> hydrus_store::Result<()> + Send>;
 
+/// A log's columns, as the window shows them: titles and widths, the
+/// widest stretching.
+pub(crate) fn columns(columns: &[(&str, f32)]) -> ModelRc<crate::TableColumn> {
+    let widest = columns.iter().map(|c| c.1).fold(0.0, f32::max);
+    let columns: Vec<crate::TableColumn> = columns
+        .iter()
+        .map(|&(title, width)| crate::TableColumn {
+            title: title.into(),
+            width,
+            stretch: width >= widest,
+        })
+        .collect();
+    ModelRc::new(VecModel::from(columns))
+}
+
 fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
@@ -143,8 +158,12 @@ fn hash_ids(store: &Store, seeds: &[&FileSeed]) -> Vec<HashId> {
 fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Vec<HashId>)) {
     let queue = state.queue;
     let now = now();
+    // (each change nudges the daemon, which works the queue)
     let write = |f: StoreChange| {
-        if let Err(e) = store.write(move |ctx| f(ctx.conn())) {
+        if let Err(e) = store.write(move |ctx| {
+            f(ctx.conn())?;
+            queues::nudge(ctx.conn(), queue)
+        }) {
             eprintln!("could not change the file log: {e}");
         }
     };
@@ -272,6 +291,16 @@ pub(crate) fn open(
         asking: None,
     }));
     read(store, &mut state.borrow_mut());
+    // (the reference's widths, in characters)
+    window.set_columns(columns(&[
+        ("#", 40.0),
+        ("source", 300.0),
+        ("status", 100.0),
+        ("added", 150.0),
+        ("last modified", 150.0),
+        ("source time", 150.0),
+        ("note", 160.0),
+    ]));
     let popup: Rc<Popup<Action>> = Popup::new();
     window.set_menu_panes(popup.model());
     let refresh = {

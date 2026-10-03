@@ -1,0 +1,523 @@
+{
+ "now": 1700000000,
+ "seeds": [
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=1",
+   1,
+   86400,
+   86400,
+   "3 new urls found\n(and more)"
+  ],
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=2",
+   1,
+   86400,
+   3600,
+   "no new urls found"
+  ],
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=3",
+   4,
+   3600,
+   30,
+   "Error: 404"
+  ],
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=4",
+   7,
+   5,
+   5,
+   ""
+  ],
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=5",
+   8,
+   90,
+   90,
+   ""
+  ],
+  [
+   "https://example.com/gallery?tags=blue%20eyes&page=6",
+   0,
+   172800,
+   172800,
+   ""
+  ]
+ ],
+ "rows": [
+  [
+   "0",
+   "https://example.com/gallery?tags=blue eyes&page=1",
+   "successful",
+   "1 day ago",
+   "1 day ago",
+   "3 new urls found"
+  ],
+  [
+   "1",
+   "https://example.com/gallery?tags=blue eyes&page=2",
+   "successful",
+   "1 day ago",
+   "1 hour ago",
+   "no new urls found"
+  ],
+  [
+   "2",
+   "https://example.com/gallery?tags=blue eyes&page=3",
+   "error",
+   "1 hour ago",
+   "30 seconds ago",
+   "Error: 404"
+  ],
+  [
+   "3",
+   "https://example.com/gallery?tags=blue eyes&page=4",
+   "ignored",
+   "5 seconds ago",
+   "5 seconds ago",
+   ""
+  ],
+  [
+   "4",
+   "https://example.com/gallery?tags=blue eyes&page=5",
+   "skipped",
+   "1 minute 30 seconds ago",
+   "1 minute 30 seconds ago",
+   ""
+  ],
+  [
+   "5",
+   "https://example.com/gallery?tags=blue eyes&page=6",
+   "",
+   "2 days ago",
+   "2 days ago",
+   ""
+  ]
+ ],
+ "header": "2 successful, 1 ignored, 1 failed, 1 skipped, 1 pending",
+ "menus": [
+  {
+   "counts": {},
+   "last_failed": false,
+   "read_only": false,
+   "can_generate": true,
+   "menu": [
+    {
+     "menu": "ADVANCED: import new urls",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "1": 2
+   },
+   "last_failed": false,
+   "read_only": false,
+   "can_generate": true,
+   "menu": [
+    "delete 2 'successful' gallery log entries from the log",
+    "---",
+    {
+     "menu": "export all urls",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new urls",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "1": 2,
+    "4": 1
+   },
+   "last_failed": true,
+   "read_only": false,
+   "can_generate": true,
+   "menu": [
+    "delete 2 'successful' gallery log entries from the log",
+    "delete 1 'failed' gallery log entries from the log",
+    "---",
+    "restart and resume failed search",
+    "---",
+    {
+     "menu": "export all urls",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new urls",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "1": 2,
+    "4": 1
+   },
+   "last_failed": true,
+   "read_only": true,
+   "can_generate": true,
+   "menu": [
+    "delete 2 'successful' gallery log entries from the log",
+    "delete 1 'failed' gallery log entries from the log",
+    "---",
+    {
+     "menu": "export all urls",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "1": 1,
+    "7": 2,
+    "8": 1,
+    "0": 1
+   },
+   "last_failed": false,
+   "read_only": false,
+   "can_generate": false,
+   "menu": [
+    "delete 1 'successful' gallery log entries from the log",
+    "delete 2 'ignored' gallery log entries from the log",
+    "delete 1 'skipped' gallery log entries from the log",
+    "---",
+    {
+     "menu": "export all urls",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new urls",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    }
+   ]
+  }
+ ],
+ "row_menus": [
+  {
+   "kind": "search",
+   "selected": [
+    0
+   ],
+   "menu": [
+    "copy url",
+    "copy note",
+    "---",
+    "open urls",
+    "---",
+    "no additional urls",
+    "no additional headers",
+    "no inherited tags",
+    "---",
+    "try again (just this one page)",
+    "try again (and allow search to continue)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "search",
+   "selected": [
+    2
+   ],
+   "menu": [
+    "copy url",
+    "copy note",
+    "---",
+    "open urls",
+    "---",
+    "no additional urls",
+    "no additional headers",
+    "no inherited tags",
+    "---",
+    "try again (just this one page)",
+    "try again (and allow search to continue)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "search",
+   "selected": [
+    1,
+    3
+   ],
+   "menu": [
+    "copy urls",
+    "copy notes",
+    "---",
+    "open urls",
+    "---",
+    "try again (just this one page)",
+    "try again (and allow search to continue)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "check",
+   "selected": [
+    0
+   ],
+   "menu": [
+    "copy url",
+    "copy note",
+    "---",
+    "open urls",
+    "---",
+    "no additional urls",
+    "no additional headers",
+    "no inherited tags",
+    "---",
+    "try again (just this one page)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "check",
+   "selected": [
+    2
+   ],
+   "menu": [
+    "copy url",
+    "copy note",
+    "---",
+    "open urls",
+    "---",
+    "no additional urls",
+    "no additional headers",
+    "no inherited tags",
+    "---",
+    "try again (just this one page)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "kind": "check",
+   "selected": [
+    1,
+    3
+   ],
+   "menu": [
+    "copy urls",
+    "copy notes",
+    "---",
+    "open urls",
+    "---",
+    "try again (just this one page)",
+    "skip",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 2 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "delete 1 'ignored' gallery log entries from the log",
+      "delete 1 'skipped' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected page objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ],
+ "delete_question": "Are you sure you want to delete all the error search log entries? This is useful for cleaning up and de-laggifying a very large list, but be careful you aren't removing something you would want to revisit."
+}

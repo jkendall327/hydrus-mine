@@ -2480,6 +2480,7 @@ dependencies = [
  "anyhow",
  "arboard",
  "crossbeam-channel",
+ "hex",
  "hydrus-core",
  "hydrus-duplicates",
  "hydrus-gui-model",

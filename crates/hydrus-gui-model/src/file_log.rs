@@ -119,14 +119,14 @@ pub enum Action {
     NotYet,
 }
 
-/// A menu entry.
+/// A menu entry, its items doing an `A`.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub enum Entry {
-    Item(String, Action),
+pub enum Entry<A = Action> {
+    Item(String, A),
     /// Text shown, which does nothing.
     Label(String),
     Separator,
-    Menu(String, Vec<Entry>),
+    Menu(String, Vec<Entry<A>>),
 }
 
 fn item(label: impl Into<String>, action: Action) -> Entry {
@@ -310,15 +310,17 @@ pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
 }
 
 /// Separators as Qt shows them: none leading, trailing or doubled.
-fn tidy(entries: Vec<Entry>) -> Vec<Entry> {
-    let mut out: Vec<Entry> = Vec::new();
+pub(crate) fn tidy<A>(entries: Vec<Entry<A>>) -> Vec<Entry<A>> {
+    let mut out: Vec<Entry<A>> = Vec::new();
     for entry in entries {
-        if entry == Entry::Separator && out.last().is_none_or(|e| *e == Entry::Separator) {
+        if matches!(entry, Entry::Separator)
+            && out.last().is_none_or(|e| matches!(e, Entry::Separator))
+        {
             continue;
         }
         out.push(entry);
     }
-    if out.last() == Some(&Entry::Separator) {
+    if matches!(out.last(), Some(Entry::Separator)) {
         out.pop();
     }
     out

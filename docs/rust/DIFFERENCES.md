@@ -598,6 +598,9 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   again doesn't offer to clear its deletion record. It opens from
   downloader pages, not yet from an import folder or a subscription's
   query.
+- **The search log window** can't yet export URLs to a png, import new
+  URLs, or export the selected page objects (greyed out); it opens from
+  downloader pages, not yet from a subscription's query.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

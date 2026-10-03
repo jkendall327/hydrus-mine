@@ -32,6 +32,7 @@ mod recent_predicates;
 mod scanbar;
 mod search_domains;
 mod search_lock;
+mod search_log;
 mod search_page;
 mod session;
 mod slideshow;
