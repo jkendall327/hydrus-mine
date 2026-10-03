@@ -898,10 +898,15 @@ impl Pages {
             NewPage::LocalImport {
                 paths,
                 tags,
+                routers,
                 delete_after_success,
             } => {
-                let (paths, tags, delete_after_success) =
-                    (paths.clone(), tags.clone(), *delete_after_success);
+                let (paths, tags, routers, delete_after_success) = (
+                    paths.clone(),
+                    tags.clone(),
+                    routers.clone(),
+                    *delete_after_success,
+                );
                 let key = PageKey::random();
                 let now = std::time::SystemTime::now()
                     .duration_since(std::time::UNIX_EPOCH)
@@ -918,7 +923,7 @@ impl Pages {
                             &tags,
                             hydrus_store::queues::LocalImport {
                                 delete_after_success,
-                                routers: Vec::new(),
+                                routers,
                             },
                             now,
                         )?;

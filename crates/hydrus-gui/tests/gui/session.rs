@@ -1526,6 +1526,7 @@ fn a_local_import_page_shows_and_controls_its_import() {
     (bound.open_page)(&NewPage::LocalImport {
         paths: paths.clone(),
         tags,
+        routers: Vec::new(),
         delete_after_success: true,
     });
     assert_eq!(bound.pages.borrow().shown().name, "import");

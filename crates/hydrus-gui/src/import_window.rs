@@ -14,10 +14,16 @@ use crate::local_import::{Parse, Review};
 use crate::{ImportRow, ReviewImportsWindow};
 
 /// What "import now" hands on: the good files, each with its modified time
-/// (seconds), and whether to delete them once imported.
-/// Import these paths (with their modified times), with tags for some,
-/// deleting each afterwards or not.
-pub type ImportNow = Rc<dyn Fn(Vec<(String, Option<i64>)>, hydrus_store::queues::PathTags, bool)>;
+/// (seconds), tags for some, the sidecar routers to read each one's
+/// metadata with, and whether to delete them once imported.
+pub type ImportNow = Rc<
+    dyn Fn(
+        Vec<(String, Option<i64>)>,
+        hydrus_store::queues::PathTags,
+        Vec<hydrus_parse::sidecar::Router>,
+        bool,
+    ),
+>;
 
 /// A path as typed or pasted: trimmed, and without the quotes a file
 /// manager's "copy as path" puts round it.
@@ -53,6 +59,7 @@ pub(crate) fn open(
     paths: Vec<String>,
     tag_services: Vec<(String, String)>,
     tagging: &Rc<RefCell<Option<crate::FilenameTaggingWindow>>>,
+    sidecars: &crate::filename_tagging_window::Sidecars,
     import_now: &ImportNow,
 ) -> Result<ReviewImportsWindow, String> {
     let window = ReviewImportsWindow::new().map_err(|e| e.to_string())?;
@@ -239,7 +246,12 @@ pub(crate) fn open(
                 (paths, review.delete_after_success)
             };
             close();
-            import_now(paths, hydrus_store::queues::PathTags::new(), delete);
+            import_now(
+                paths,
+                hydrus_store::queues::PathTags::new(),
+                Vec::new(),
+                delete,
+            );
         }
     });
     // "add tags/urls with the import >>": the "filename tagging" dialog,
@@ -248,6 +260,7 @@ pub(crate) fn open(
         let review = review.clone();
         let close = close.clone();
         let tagging = tagging.clone();
+        let sidecars = sidecars.clone();
         let import_now = import_now.clone();
         move || {
             if tagging.borrow().is_some() {
@@ -269,16 +282,21 @@ pub(crate) fn open(
                 (paths, review.delete_after_success)
             };
             let names: Vec<String> = paths.iter().map(|p| p.0.clone()).collect();
-            let done: Rc<dyn Fn(hydrus_store::queues::PathTags)> = {
+            let done: crate::filename_tagging_window::Done = {
                 let close = close.clone();
                 let import_now = import_now.clone();
-                Rc::new(move |tags| {
+                Rc::new(move |tags, routers| {
                     close();
-                    import_now(paths.clone(), tags, delete);
+                    import_now(paths.clone(), tags, routers, delete);
                 })
             };
-            match crate::filename_tagging_window::open(tag_services.clone(), names, &tagging, done)
-            {
+            match crate::filename_tagging_window::open(
+                tag_services.clone(),
+                names,
+                &tagging,
+                sidecars.clone(),
+                done,
+            ) {
                 Ok(dialog) => *tagging.borrow_mut() = Some(dialog),
                 Err(e) => eprintln!("could not open the filename tagging: {e}"),
             }

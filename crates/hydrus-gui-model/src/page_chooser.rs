@@ -9,7 +9,7 @@ use hydrus_core::{ServiceKey, ServiceType};
 use hydrus_store::Store;
 
 /// What a button does.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 enum Entry {
     Menu(Menu),
     Page(NewPage),
@@ -39,7 +39,7 @@ impl Menu {
 }
 
 /// The page chosen.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum NewPage {
     /// A file search page on this file domain.
     Search {
@@ -62,6 +62,9 @@ pub enum NewPage {
         paths: Vec<(String, Option<i64>)>,
         /// Tags for some of them (from the "filename tagging" dialog).
         tags: hydrus_store::queues::PathTags,
+        /// The sidecar routers to read each one's metadata with (from its
+        /// "sidecars" tab).
+        routers: Vec<hydrus_parse::sidecar::Router>,
         delete_after_success: bool,
     },
 }

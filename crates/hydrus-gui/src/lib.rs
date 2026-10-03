@@ -201,6 +201,8 @@ pub struct Bound {
     pub review_imports: ReviewSlot,
     /// Its "filename tagging" dialog.
     pub filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>>,
+    /// That dialog's sidecar editors, from its "sidecars" tab.
+    pub filename_tagging_sidecars: sidecars_window::Slots,
     /// The "multiple/deleted locations" list while it is open.
     pub locations: Rc<RefCell<Option<LocationsWindow>>>,
     /// The favourite searches' dialogs while they are open.
@@ -427,6 +429,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     // files, or dropped on the window); "import now" opens an import page
     let review_imports: ReviewSlot = Rc::default();
     let filename_tagging: Rc<RefCell<Option<FilenameTaggingWindow>>> = Rc::default();
+    let filename_tagging_sidecars = sidecars_window::Slots::default();
     // the "multiple/deleted locations" list, from the file domain button
     let locations: Rc<RefCell<Option<LocationsWindow>>> = Rc::default();
     let favourite_dialogs = favourites_window::Slots::default();
@@ -437,6 +440,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let review_files: Rc<dyn Fn(Vec<String>)> = Rc::new({
         let slot = review_imports.clone();
         let tagging = filename_tagging.clone();
+        let tagging_sidecars = filename_tagging_sidecars.clone();
         let open_page = open_page.clone();
         let pages = pages.clone();
         move |paths: Vec<String>| {
@@ -449,10 +453,11 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
             let import_now: import_window::ImportNow = Rc::new({
                 let open_page = open_page.clone();
-                move |paths, tags, delete_after_success| {
+                move |paths, tags, routers, delete_after_success| {
                     open_page(&page_chooser::NewPage::LocalImport {
                         paths,
                         tags,
+                        routers,
                         delete_after_success,
                     });
                 }
@@ -466,7 +471,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 .filter(|s| s.service_type().is_real_tag_service())
                 .map(|s| (s.key.to_hex(), s.name.clone()))
                 .collect();
-            if let Err(e) = import_window::open(&slot, paths, tag_services, &tagging, &import_now) {
+            let sidecars = filename_tagging_window::Sidecars {
+                store: pages.borrow().store().clone(),
+                slots: tagging_sidecars.clone(),
+            };
+            if let Err(e) =
+                import_window::open(&slot, paths, tag_services, &tagging, &sidecars, &import_now)
+            {
                 eprintln!("could not open the import window: {e}");
             }
         }
@@ -2574,6 +2585,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         open_page,
         review_imports,
         filename_tagging,
+        filename_tagging_sidecars,
         auto_resolution: duplicates.rules_editor.clone(),
         auto_resolution_reviews: duplicates.reviews.clone(),
         auto_resolution_review_filter: duplicates.review_filter.clone(),

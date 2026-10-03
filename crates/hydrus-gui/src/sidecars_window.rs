@@ -65,7 +65,7 @@ fn usize_of(i: i32) -> usize {
 }
 
 /// A service's name by its key in hex.
-fn namer(store: &Store) -> impl Fn(&str) -> Option<String> {
+pub(crate) fn namer(store: &Store) -> impl Fn(&str) -> Option<String> {
     let snapshot = store.snapshot();
     move |key: &str| {
         hex::decode(key)

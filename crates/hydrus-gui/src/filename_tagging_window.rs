@@ -1,14 +1,20 @@
-//! The "filename tagging" dialog, bound (`ui/filename_tagging.slint`):
-//! hydrus-gui-model's [`filename_tagging`](crate::filename_tagging) for
-//! each real tag service, a tab each, with the paths and the tags each
-//! gets shown again as the options change. "apply" gives the tags for
-//! each path to `done` (which starts the import, as the reference's does).
+//! The "filename tagging" dialog, bound (`ui/filename_tagging.slint`): a
+//! "sidecars" tab, the paths with what each one's sidecars give
+//! ([`file_preview`](crate::sidecars::file_preview)) and the routers that
+//! read them (edited in the sidecar editors); then hydrus-gui-model's
+//! [`filename_tagging`](crate::filename_tagging) for each real tag
+//! service, a tab each, with the paths and the tags each gets shown again
+//! as the options change. "apply" gives the tags for each path and the
+//! routers to `done` (which starts the import, as the reference's does).
 
 use std::cell::RefCell;
 use std::rc::Rc;
+use std::sync::Arc;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
+use hydrus_parse::sidecar::Router;
+use hydrus_store::Store;
 use hydrus_store::queues::PathTags;
 
 use crate::filename_tagging::{
@@ -32,7 +38,24 @@ struct State {
     errors: Vec<String>,
     /// One service's options alone: the example path whose tags are shown.
     example: Option<String>,
+    /// The "sidecars" tab is the one shown.
+    on_sidecars: bool,
+    routers: Vec<Router>,
+    /// The store (for service names) and the sidecar editors, with the
+    /// "sidecars" tab.
+    sidecars: Option<Sidecars>,
 }
+
+/// What the "sidecars" tab needs: the store, for its services, and the
+/// sidecar editors' windows.
+#[derive(Clone)]
+pub(crate) struct Sidecars {
+    pub(crate) store: Arc<Store>,
+    pub(crate) slots: crate::sidecars_window::Slots,
+}
+
+/// What "apply" gives: the tags for each path, and the sidecar routers.
+pub(crate) type Done = Rc<dyn Fn(PathTags, Vec<Router>)>;
 
 impl State {
     fn tab(&self) -> &ServiceTagging {
@@ -68,6 +91,36 @@ fn lines(text: &str) -> Vec<String> {
         .filter(|l| !l.is_empty())
         .map(str::to_owned)
         .collect()
+}
+
+/// Show the "sidecars" tab's rows and its routers button.
+fn show_sidecars(window: &FilenameTaggingWindow, state: &State) {
+    window.set_on_sidecars(state.on_sidecars);
+    let Some(sidecars) = &state.sidecars else {
+        return;
+    };
+    let namer = crate::sidecars_window::namer(&sidecars.store);
+    let rows: Vec<TableRow> = state
+        .paths
+        .iter()
+        .enumerate()
+        .map(|(i, path)| {
+            let strings = crate::sidecars::file_preview(&state.routers, path, &namer);
+            let cells: Vec<SharedString> = vec![
+                hydrus_core::numbers::human_int(i as u64 + 1).into(),
+                path.as_str().into(),
+                strings.join(" | ").into(),
+            ];
+            TableRow {
+                cells: ModelRc::new(VecModel::from(cells)),
+                selected: false,
+            }
+        })
+        .collect();
+    window.set_sidecar_rows(ModelRc::new(VecModel::from(rows)));
+    window.set_sidecars(
+        crate::folders_window::sidecars_label(&sidecars.store, &state.routers).into(),
+    );
 }
 
 /// Show the paths' rows and what is wrong.
@@ -132,6 +185,7 @@ fn show(window: &FilenameTaggingWindow, state: &mut State) {
     window.set_number_step(i32::try_from(tab.number_step).unwrap_or(1));
     window.set_number_namespace(tab.number_namespace.as_str().into());
     show_rows(window, state);
+    show_sidecars(window, state);
 }
 
 /// Read the tab's two-way fields.
@@ -199,7 +253,7 @@ pub(crate) fn open_options(
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
     done: Rc<dyn Fn(hydrus_parse::folders::FilenameTagging)>,
 ) -> Result<FilenameTaggingWindow, String> {
-    let (window, state) = build(vec![service], Vec::new(), slot, Rc::new(|_| {}))?;
+    let (window, state) = build(vec![service], Vec::new(), slot, None, Rc::new(|_, _| {}))?;
     window.set_window_title("edit filename tagging options".into());
     window.set_options_mode(true);
     window.set_example(example.as_str().into());
@@ -246,15 +300,17 @@ pub(crate) fn open_options(
 }
 
 /// Open the dialog on `paths` for the real tag services (`(key hex,
-/// name)`); "apply" gives the tags for each path to `done`. It forgets
-/// itself from `slot` when closed.
+/// name)`), with its "sidecars" tab; "apply" gives the tags for each path
+/// and the sidecar routers to `done`. It forgets itself from `slot` when
+/// closed.
 pub(crate) fn open(
     services: Vec<(String, String)>,
     paths: Vec<String>,
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
-    done: Rc<dyn Fn(PathTags)>,
+    sidecars: Sidecars,
+    done: Done,
 ) -> Result<FilenameTaggingWindow, String> {
-    let (window, _) = build(services, paths, slot, done)?;
+    let (window, _) = build(services, paths, slot, Some(sidecars), done)?;
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }
@@ -264,7 +320,8 @@ fn build(
     services: Vec<(String, String)>,
     paths: Vec<String>,
     slot: &Rc<RefCell<Option<FilenameTaggingWindow>>>,
-    done: Rc<dyn Fn(PathTags)>,
+    sidecars: Option<Sidecars>,
+    done: Done,
 ) -> Result<(FilenameTaggingWindow, Rc<RefCell<State>>), String> {
     let window = FilenameTaggingWindow::new().map_err(|e| e.to_string())?;
     // (the reference's defaults: the filename's namespace "filename")
@@ -291,6 +348,9 @@ fn build(
         shown_single: Vec::new(),
         errors: Vec::new(),
         example: None,
+        on_sidecars: false,
+        routers: Vec::new(),
+        sidecars,
     }));
     if state.borrow().services.is_empty() {
         return Err("there are no tag services".into());
@@ -319,7 +379,57 @@ fn build(
             {
                 state.current = i;
             }
+            state.on_sidecars = false;
             show(&window, &mut state);
+        }
+    });
+    window.on_sidecars_chosen({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move || {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let mut state = state.borrow_mut();
+            state.on_sidecars = state.sidecars.is_some();
+            show_sidecars(&window, &state);
+        }
+    });
+    window.on_edit_sidecars({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move || {
+            let (sidecars, routers) = {
+                let state = state.borrow();
+                let Some(sidecars) = state.sidecars.clone() else {
+                    return;
+                };
+                (sidecars, state.routers.clone())
+            };
+            if sidecars.slots.routers.borrow().is_some() {
+                return;
+            }
+            let applied: Rc<dyn Fn(Vec<Router>)> = Rc::new({
+                let weak = weak.clone();
+                let state = state.clone();
+                move |routers| {
+                    let mut state = state.borrow_mut();
+                    state.routers = routers;
+                    if let Some(window) = weak.upgrade() {
+                        show_sidecars(&window, &state);
+                    }
+                }
+            });
+            match crate::sidecars_window::open_routers(
+                &sidecars.store,
+                crate::sidecar_editors::Context::Import,
+                routers,
+                &sidecars.slots,
+                applied,
+            ) {
+                Ok(w) => *sidecars.slots.routers.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the sidecars: {e}"),
+            }
         }
     });
     window.on_row_clicked({
@@ -404,6 +514,7 @@ fn build(
         let state = state.clone();
         let close = close.clone();
         move || {
+            let routers = state.borrow().routers.clone();
             let tags: PathTags = {
                 let state = state.borrow();
                 let services: Vec<(String, ServiceTagging)> = state
@@ -425,7 +536,7 @@ fn build(
                     .collect()
             };
             close();
-            done(tags);
+            done(tags, routers);
         }
     });
     window.on_cancel({

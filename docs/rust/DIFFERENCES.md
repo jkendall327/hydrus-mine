@@ -514,7 +514,12 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   sidecars and `Thumbs.db` set aside), but **it has no file or folder
   picker**: paths are typed or pasted into a box over its list, or dropped
   on it or the main window. Its "add tags/urls with the import >>" button
-  opens the "filename tagging" dialog, which has no "sidecars" tab yet;
+  opens the "filename tagging" dialog. Its "sidecars" tab edits the
+  routers in the sidecar editors' window from a button (the reference
+  lists them in the tab), and shows times in UTC (the reference, local
+  time); a router's rows go through its processor in the order the
+  sidecars give them (the reference's go through a set, so a slice or
+  rows the human sort ties come out in no set order);
   its tags are typed a line each (the reference has a tags input with
   autocomplete and paste buttons), as are its quick namespaces
   ("namespace:regex") and regexes, where the reference has lists with

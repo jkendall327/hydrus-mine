@@ -303,6 +303,117 @@ fn files_are_imported_with_the_tags_filename_tagging_gives_them() {
     let _ = files;
 }
 
+/// The "sidecars" tab's rows: path and metadata.
+fn sidecar_rows(dialog: &hydrus_gui::FilenameTaggingWindow) -> Vec<(String, String)> {
+    use slint::Model as _;
+    let rows = dialog.get_sidecar_rows();
+    (0..rows.row_count())
+        .map(|r| {
+            let cells = rows.row_data(r).unwrap().cells;
+            (
+                cells.row_data(1).unwrap().to_string(),
+                cells.row_data(2).unwrap().to_string(),
+            )
+        })
+        .collect()
+}
+
+#[test]
+fn files_are_imported_with_the_sidecars_tab_routers() {
+    let (_dirs, store) = store();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let work = tempfile::tempdir().unwrap();
+    let bmp = place(work.path(), "bmp_24.bmp");
+    let png = place(work.path(), "apng_rgba.png");
+    // the bmp's tags in a .txt sidecar beside it (set aside as a sidecar)
+    std::fs::write(format!("{bmp}.txt"), "series:metroid\ncreator:samus\n").unwrap();
+    menu(&ui, "import files\u{2026}");
+    let review = bound
+        .review_imports
+        .borrow()
+        .as_ref()
+        .map(|(w, _)| w.clone_strong())
+        .unwrap();
+    review.invoke_path_entered(work.path().display().to_string().into());
+    parsed(&review);
+    review.invoke_add_tags();
+    let dialog = bound
+        .filename_tagging
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    // (a tag service's tab first)
+    assert!(!dialog.get_on_sidecars());
+    dialog.invoke_sidecars_chosen();
+    assert!(dialog.get_on_sidecars());
+    assert_eq!(dialog.get_sidecars(), "no sidecars");
+    let rows = sidecar_rows(&dialog);
+    assert_eq!(rows.len(), 2);
+    assert!(rows.iter().all(|(_, metadata)| metadata.is_empty()));
+
+    // a router: a .txt sidecar's lines, to my tags
+    dialog.invoke_edit_sidecars();
+    let slots = &bound.filename_tagging_sidecars;
+    let routers = slots.routers.borrow().as_ref().unwrap().clone_strong();
+    routers.invoke_add();
+    let router = slots.router.borrow().as_ref().unwrap().clone_strong();
+    router.invoke_add();
+    router.invoke_chosen(0);
+    let node = slots.node.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(node.get_type_label(), "a .txt sidecar");
+    node.invoke_apply();
+    router.invoke_apply();
+    routers.invoke_apply();
+    assert!(slots.routers.borrow().is_none());
+    assert_eq!(
+        dialog.get_sidecars(),
+        "Taking from .txt sidecar, applying some sorting, sending tags t\u{2026}"
+    );
+    // each file's row: what its sidecar gives
+    let rows = sidecar_rows(&dialog);
+    let metadata = |path: &str| rows.iter().find(|(p, _)| p == path).unwrap().1.clone();
+    assert_eq!(
+        metadata(&bmp),
+        "to \"my tags\": creator:samus, series:metroid"
+    );
+    assert_eq!(metadata(&png), "");
+    let pixels = headless::render(&windows.get(2).unwrap(), 1000, 760);
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(
+        &shots.join("filename_tagging_sidecars.png"),
+        &pixels,
+        1000,
+        760,
+    )
+    .unwrap();
+    // a tag service's tab again
+    dialog.invoke_service_chosen(0);
+    assert!(!dialog.get_on_sidecars());
+
+    // "apply": an import page reading them
+    dialog.invoke_apply();
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    let made = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap();
+    let local = LocalImport::of(&made).unwrap();
+    assert_eq!(local.routers.len(), 1);
+    assert!(matches!(
+        local.routers[0].exporter,
+        hydrus_parse::sidecar::Exporter::MediaTags { .. }
+    ));
+}
+
 /// "add files" and "add folder" ask the system's pickers (here, a stand-in
 /// that says what was asked) and parse what they give.
 #[test]

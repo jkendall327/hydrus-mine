@@ -135,7 +135,7 @@ const SKIP_UNITS: [Unit; 4] = [Unit::Days, Unit::Hours, Unit::Minutes, Unit::Sec
 
 /// The sidecar button's label (`_RefreshLabel`): no sidecars, the one
 /// router as it describes itself, or how many.
-fn sidecars_label(store: &Store, routers: &[hydrus_parse::sidecar::Router]) -> String {
+pub(crate) fn sidecars_label(store: &Store, routers: &[hydrus_parse::sidecar::Router]) -> String {
     let snapshot = store.snapshot();
     let namer = |key: &str| {
         hex::decode(key)

@@ -26,6 +26,7 @@ mod selection;
 mod session_saving;
 mod sidecar_descriptions;
 mod sidecar_editors;
+mod sidecar_previews;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;

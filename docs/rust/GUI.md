@@ -431,9 +431,14 @@ shown again as the options change) over "simple" (tags for all, tags
 just for the selected files, and the filename and directories as tags,
 each with a namespace; typing a namespace ticks its box) and "advanced"
 (quick namespaces, regexes, and a number for each file from a base by a
-step, in a namespace). "apply" imports the files with their tags, as
+step, in a namespace). Its first tab, "sidecars", lists the files with
+what each one's sidecars give (`to "my tags": creator:samus,
+series:metroid`, "2 notes: ...", "1 URL: ...", "archived time: ..."), as
+`oracle/dump_sidecar_previews.py` recorded the reference's, over the
+"sidecar import routes" button, which opens the sidecar editors (see the
+import folders below). "apply" imports the files with their tags, as
 `oracle/record_filename_tagging.py` recorded the reference's dialog
-giving them.
+giving them, and the import reads each file's sidecars as it goes in.
 
 An import folder's dialog lists the tag services it tags files for by
 their paths, with "edit" and "delete" for each and "add" for another

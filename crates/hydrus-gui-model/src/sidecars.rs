@@ -175,3 +175,139 @@ pub fn button_label(routers: &[Router], namer: Namer<'_>) -> (String, String) {
     };
     (label, text)
 }
+
+/// `ElideText`, not centred.
+fn elide_end(text: &str, max: usize) -> String {
+    if text.chars().count() > max {
+        let kept: String = text.chars().take(max - 1).collect();
+        format!("{kept}\u{2026}")
+    } else {
+        text.to_owned()
+    }
+}
+
+/// `GetFirstLineSummary`: the first line, and how many more there are.
+fn first_line_summary(text: &str) -> String {
+    let lines: Vec<&str> = hydrus_parse::text::splitlines(text);
+    if lines.len() > 1 {
+        format!(
+            "{}\u{2026} (+{} lines)",
+            lines[0],
+            hydrus_core::numbers::human_int(lines.len() as u64 - 1)
+        )
+    } else {
+        text.to_owned()
+    }
+}
+
+/// "1 note: ...", or "3 notes: ..., ..., ...".
+fn summarised(rows: &[String], one: &str, many: &str) -> String {
+    if let [row] = rows {
+        format!("1 {one}: {}", elide_end(&first_line_summary(row), 64))
+    } else {
+        let summaries: Vec<String> = rows
+            .iter()
+            .map(|r| elide_end(&first_line_summary(r), 32))
+            .collect();
+        format!(
+            "{} {many}: {}",
+            hydrus_core::numbers::human_int(rows.len() as u64),
+            summaries.join(", ")
+        )
+    }
+}
+
+/// Python's `float()` of a string, near enough: surrounding whitespace
+/// allowed, and its error text.
+fn python_float(text: &str) -> Result<f64, String> {
+    let trimmed = text.trim();
+    let lower = trimmed.to_ascii_lowercase();
+    let finite_or_special = lower.trim_start_matches(['+', '-']);
+    let allowed = !trimmed.is_empty()
+        && (matches!(finite_or_special, "inf" | "infinity" | "nan")
+            || trimmed
+                .chars()
+                .all(|c| c.is_ascii_digit() || matches!(c, '.' | 'e' | 'E' | '+' | '-' | '_')));
+    allowed
+        .then(|| trimmed.replace('_', "").parse::<f64>().ok())
+        .flatten()
+        .ok_or_else(|| {
+            format!(
+                "could not convert string to float: {}",
+                hydrus_core::url::string_descriptions::python_repr_str(text)
+            )
+        })
+}
+
+/// What an import's routers would read for the file at `path`, a string
+/// for each router whose sidecars gave anything (the "sidecars" tab's
+/// "metadata" column; `_MetadataRoutersPanel._GetPrettyStrings`). Times
+/// are shown in UTC.
+pub fn file_preview(routers: &[Router], path: &str, namer: Namer<'_>) -> Vec<String> {
+    let mut strings = Vec::new();
+    for router in routers {
+        let mut gathered: Vec<String> = Vec::new();
+        for importer in &router.importers {
+            if let Some(Ok(rows)) = hydrus_parse::sidecar::import_sidecar(importer, path) {
+                for row in rows {
+                    if !gathered.contains(&row) {
+                        gathered.push(row);
+                    }
+                }
+            }
+        }
+        if gathered.is_empty() {
+            continue;
+        }
+        let mut processed = hydrus_parse::sidecar::process(&router.processor, gathered);
+        hydrus_core::sort::human_sort(&mut processed);
+        let mut processed = match &router.exporter {
+            Exporter::MediaTags { service_key } => {
+                let mut tags: Vec<String> = processed
+                    .iter()
+                    .map(|t| hydrus_core::tag::clean_tag(t))
+                    // (`CheckTagNotEmpty`: a namespace alone is empty too)
+                    .filter(|t| !hydrus_core::tag::split_tag(t).1.is_empty())
+                    .collect::<std::collections::BTreeSet<_>>()
+                    .into_iter()
+                    .collect();
+                let sort = hydrus_core::tag_sort::TagSort {
+                    sort_type: hydrus_core::tag_sort::TagSortType::Tag,
+                    ascending: true,
+                    group_by: hydrus_core::tag_sort::TagGroupBy::Nothing,
+                };
+                hydrus_core::tag_sort::sort_tags(&sort, &mut tags, String::as_str, |_| 0, &[]);
+                vec![format!(
+                    "to \"{}\": {}",
+                    name(namer, service_key),
+                    tags.join(", ")
+                )]
+            }
+            Exporter::MediaNotes { .. } => vec![summarised(&processed, "note", "notes")],
+            Exporter::MediaUrls => vec![summarised(&processed, "URL", "URLs")],
+            Exporter::MediaTimestamp(stub) => {
+                let stub = timestamp_text(stub, namer);
+                if let [row] = processed.as_slice() {
+                    let time = match python_float(row) {
+                        Ok(seconds) => {
+                            #[expect(clippy::cast_possible_truncation, reason = "as the reference")]
+                            let ms = (seconds * 1000.0).floor() as i64;
+                            hydrus_import::status::pretty_time(hydrus_core::TimestampMs(ms))
+                        }
+                        Err(e) => format!("Could not parse time! {e}"),
+                    };
+                    vec![format!("{stub}: {time}")]
+                } else {
+                    vec![format!(
+                        "{stub}: {} times?",
+                        hydrus_core::numbers::human_int(processed.len() as u64)
+                    )]
+                }
+            }
+            Exporter::Txt { .. } | Exporter::Json { .. } => processed,
+        };
+        processed.sort();
+        strings.extend(processed);
+    }
+    strings
+}

@@ -19,7 +19,7 @@ use hydrus_store::settings::{FolderSettings, Pauses};
 use crate::page_chooser::NewPage;
 
 /// A menu entry.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Entry {
     /// What it does (none: hydrus-rs can't yet), and whether hydrus
     /// enables it.
@@ -116,7 +116,7 @@ impl Pause {
 }
 
 /// What an entry does.
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq)]
 pub enum Command {
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
