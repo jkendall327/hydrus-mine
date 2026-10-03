@@ -2,7 +2,8 @@
 //! `oracle/fixtures/gui_sessions.json` (made by
 //! `oracle/dump_gui_sessions.py`): every field lands where the reference
 //! puts it, and a session's tree and pages read as the reference reads them.
-//! (Local imports, the "import" pages' importers, among them.)
+//! (Local imports, the "import" pages' importers, and simple downloaders
+//! among them.)
 
 use serde_json::{Value as Json, json};
 
@@ -11,9 +12,9 @@ use hydrus_core::subscriptions::CheckerOptions;
 use hydrus_legacy::objects::auto_resolution::PotentialsSearch;
 use hydrus_legacy::objects::gui_sessions::{
     LegacyGalleryImport, LegacyHddImport, LegacyMultipleGalleryImport, LegacyMultipleWatcherImport,
-    LegacyPage, LegacyUrlsImport, LegacyWatcherImport, PageContent, SessionNode, gallery_import,
-    hdd_import, multiple_gallery_import, multiple_watcher_import, page, page_data, session,
-    urls_import, watcher_import,
+    LegacyPage, LegacySimpleDownloaderImport, LegacyUrlsImport, LegacyWatcherImport, PageContent,
+    SessionNode, gallery_import, hdd_import, multiple_gallery_import, multiple_watcher_import,
+    page, page_data, session, simple_downloader_import, urls_import, watcher_import,
 };
 use hydrus_legacy::objects::import_options::slice;
 use hydrus_legacy::objects::subscriptions::checker_options;
@@ -140,6 +141,24 @@ fn hdd_facts(h: &LegacyHddImport, expected: &Json) -> Json {
     })
 }
 
+fn simple_facts(d: &LegacySimpleDownloaderImport, expected: &Json) -> Json {
+    let (file_seeds, gallery_seeds) = seeds(&d.file_seeds, &d.gallery_seeds);
+    let pending: Vec<Json> = d
+        .pending
+        .iter()
+        .map(|(url, formula)| json!([url, formula.name]))
+        .collect();
+    json!({
+        "file_seeds": file_seeds,
+        "gallery_seeds": gallery_seeds,
+        "pending": pending,
+        "import_options": same_options(&d.import_options, &expected["import_options"]),
+        "formula_name": d.formula_name,
+        "gallery_paused": d.gallery_paused,
+        "files_paused": d.files_paused,
+    })
+}
+
 fn same<T: PartialEq + std::fmt::Debug>(
     ours: &T,
     expected: &Json,
@@ -187,6 +206,9 @@ fn page_facts(p: &LegacyPage, expected: &Json) -> Json {
         PageContent::LocalImport(h) => {
             json!({ "hdd_import": hdd_facts(h, &variables["hdd_import"]) })
         }
+        PageContent::SimpleDownloader(d) => json!({
+            "simple_downloader_import": simple_facts(d, &variables["simple_downloader_import"])
+        }),
         PageContent::Other => json!({}),
     };
     if let Some(sort) = &p.sort {
@@ -210,6 +232,7 @@ fn expected_page_facts(expected: &Json) -> Json {
         "multiple_gallery_import",
         "multiple_watcher_import",
         "hdd_import",
+        "simple_downloader_import",
         "file_search_context",
         "synchronised",
         "system_hash_locked",
@@ -261,6 +284,10 @@ fn downloaders_read_as_the_reference_reads_them() {
         let ours = hdd_import(&object(&case["stored"])).unwrap();
         assert_eq!(hdd_facts(&ours, &case["facts"]), case["facts"]);
     }
+    for case in cases("simple_downloader_imports") {
+        let ours = simple_downloader_import(&object(&case["stored"])).unwrap();
+        assert_eq!(simple_facts(&ours, &case["facts"]), case["facts"]);
+    }
 }
 
 /// (search pages locked to a `system:hash`, with what the hash follows,
@@ -273,6 +300,7 @@ fn pages_read_as_the_reference_reads_them() {
         .chain(cases("locked_pages"))
         .chain(cases("collected_pages"))
         .chain(cases("hdd_import_pages"))
+        .chain(cases("simple_downloader_pages"))
     {
         let ours = page(&object(&case["stored"])).unwrap();
         assert_eq!(

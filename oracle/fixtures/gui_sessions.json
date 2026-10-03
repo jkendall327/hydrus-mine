@@ -49326,5 +49326,4305 @@
     ]
    ]
   }
+ ],
+ "simple_downloader_imports": [
+  {
+   "facts": {
+    "file_seeds": [
+     {
+      "additional": {
+       "6c6f63616c2074616773": [],
+       "abababababababababababababababababababababababababababababababab": [
+        "blue eyes",
+        "creator:someone",
+        "éclair"
+       ]
+      },
+      "comparison": "http://ünïcode.example/0?q=a b&normalised",
+      "created": 1620423588,
+      "data": "http://ünïcode.example/0?q=a b",
+      "filterable": [
+       "series:metroid"
+      ],
+      "hashes": [
+       [
+        "md5",
+        "8e1342d91fd08bf4ca531cf3e172243b"
+       ],
+       [
+        "sha1",
+        "f474f0cd6b8fc678127dcdd32c3efe54a246307c"
+       ],
+       [
+        "sha256",
+        "f5c635c2abf520f2a241d3ee681d2034abe89fff2b8785361c784901d6df99e3"
+       ]
+      ],
+      "headers": [],
+      "modified": 1620423636,
+      "note": "",
+      "notes": [],
+      "primary": [
+       "https://gelbooru.com/index.php?id=0&page=post&s=view"
+      ],
+      "referral": null,
+      "source": [
+       "https://example.com/files/100.jpg",
+       "https://safebooru.org/index.php?page=post&s=view&id=101"
+      ],
+      "source_time": 1619751958,
+      "status": 2,
+      "tags": [
+       "meta:highres",
+       "solo",
+       "キャラクター:初音ミク"
+      ],
+      "type": 1
+     }
+    ],
+    "files_paused": false,
+    "formula_name": "all images embedded in page",
+    "gallery_paused": true,
+    "gallery_seeds": [
+     {
+      "additional": {},
+      "can_generate_more_pages": true,
+      "created": 1642743541,
+      "filterable": [
+       "blue eyes"
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1642745401,
+      "note": "Found 40 new URLs.",
+      "referral": "https://gelbooru.com/index.php?id=0&page=post&s=view",
+      "status": 3,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=0"
+     },
+     {
+      "additional": {
+       "abababababababababababababababababababababababababababababababab": [
+        "solo"
+       ]
+      },
+      "can_generate_more_pages": true,
+      "created": 1588423124,
+      "filterable": [
+       "meta:highres",
+       "éclair"
+      ],
+      "headers": [],
+      "modified": 1588425294,
+      "note": "",
+      "referral": "https://safebooru.org/index.php?page=post&s=view&id=1",
+      "status": 0,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=40"
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         5
+        ],
+        [
+         2,
+         [
+          153,
+          1,
+          [
+           false,
+           true,
+           3,
+           [
+            "artist note",
+            "comment"
+           ],
+           null,
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "pending": [
+     [
+      "https://example.com/page/0/0",
+      "my formula"
+     ],
+     [
+      "https://example.com/page/0/1",
+      "all images embedded in page"
+     ]
+    ]
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [
+      [
+       "https://example.com/page/0/0",
+       [
+        63,
+        "my formula",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "https://example.com/page/0/1",
+       [
+        63,
+        "all images embedded in page",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=0",
+           true,
+           [
+            "blue eyes"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           1642743541,
+           1642745401,
+           3,
+           "Found 40 new URLs.",
+           "https://gelbooru.com/index.php?id=0&page=post&s=view",
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=40",
+           true,
+           [
+            "meta:highres",
+            "éclair"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "solo"
+              ]
+             ]
+            ]
+           ],
+           1588423124,
+           1588425294,
+           0,
+           "",
+           "https://safebooru.org/index.php?page=post&s=view&id=1",
+           {}
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "http://ünïcode.example/0?q=a b",
+           "http://ünïcode.example/0?q=a b&normalised",
+           1620423588,
+           1620423636,
+           1619751958,
+           2,
+           "",
+           null,
+           {},
+           [
+            "series:metroid"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "6c6f63616c2074616773",
+              []
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "éclair",
+               "blue eyes",
+               "creator:someone"
+              ]
+             ]
+            ]
+           ],
+           [
+            "https://gelbooru.com/index.php?id=0&page=post&s=view"
+           ],
+           [
+            "https://example.com/files/100.jpg",
+            "https://safebooru.org/index.php?page=post&s=view&id=101"
+           ],
+           [
+            "meta:highres",
+            "キャラクター:初音ミク",
+            "solo"
+           ],
+           [],
+           [
+            [
+             "sha1",
+             "f474f0cd6b8fc678127dcdd32c3efe54a246307c"
+            ],
+            [
+             "md5",
+             "8e1342d91fd08bf4ca531cf3e172243b"
+            ],
+            [
+             "sha256",
+             "f5c635c2abf520f2a241d3ee681d2034abe89fff2b8785361c784901d6df99e3"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       [
+        [
+         [
+          0,
+          5
+         ],
+         [
+          2,
+          [
+           153,
+           1,
+           [
+            false,
+            true,
+            3,
+            [
+             "artist note",
+             "comment"
+            ],
+            null,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     "all images embedded in page",
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "file_seeds": [],
+    "files_paused": false,
+    "formula_name": "my formula",
+    "gallery_paused": true,
+    "gallery_seeds": [
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "blue eyes",
+        "creator:someone"
+       ],
+       "6c6f63616c2074616773": []
+      },
+      "can_generate_more_pages": true,
+      "created": 1648359593,
+      "filterable": [
+       "blue eyes",
+       "éclair",
+       "キャラクター:初音ミク"
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1648359940,
+      "note": "",
+      "referral": "https://safebooru.org/index.php?page=post&s=view&id=10",
+      "status": 4,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=400"
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "pending": [
+     [
+      "https://example.com/page/1/0",
+      "my formula"
+     ],
+     [
+      "https://example.com/page/1/1",
+      "my formula"
+     ]
+    ]
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [
+      [
+       "https://example.com/page/1/0",
+       [
+        63,
+        "my formula",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      [
+       "https://example.com/page/1/1",
+       [
+        63,
+        "my formula",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=400",
+           true,
+           [
+            "éclair",
+            "キャラクター:初音ミク",
+            "blue eyes"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "6c6f63616c2074616773",
+              []
+             ],
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "blue eyes",
+               "creator:someone"
+              ]
+             ]
+            ]
+           ],
+           1648359593,
+           1648359940,
+           4,
+           "",
+           "https://safebooru.org/index.php?page=post&s=view&id=10",
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       []
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     "my formula",
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "file_seeds": [],
+    "files_paused": false,
+    "formula_name": "all images embedded in page",
+    "gallery_paused": true,
+    "gallery_seeds": [
+     {
+      "additional": {},
+      "can_generate_more_pages": false,
+      "created": 1638340737,
+      "filterable": [
+       "creator:someone",
+       "キャラクター:初音ミク"
+      ],
+      "headers": [],
+      "modified": 1638341729,
+      "note": "Found 40 new URLs.",
+      "referral": "https://gelbooru.com/index.php?id=20&page=post&s=view",
+      "status": 2,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=800"
+     },
+     {
+      "additional": {
+       "abababababababababababababababababababababababababababababababab": [
+        "meta:highres"
+       ]
+      },
+      "can_generate_more_pages": false,
+      "created": 1644049613,
+      "filterable": [],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1644051163,
+      "note": "Found 40 new URLs.",
+      "referral": null,
+      "status": 3,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=840"
+     },
+     {
+      "additional": {},
+      "can_generate_more_pages": false,
+      "created": 1641111657,
+      "filterable": [
+       "meta:highres",
+       "キャラクター:初音ミク"
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1641116312,
+      "note": "",
+      "referral": "https://example.com/files/22.jpg",
+      "status": 7,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=880"
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "pending": [
+     [
+      "https://example.com/page/2/0",
+      "my formula"
+     ]
+    ]
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [
+      [
+       "https://example.com/page/2/0",
+       [
+        63,
+        "my formula",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=800",
+           false,
+           [
+            "キャラクター:初音ミク",
+            "creator:someone"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           1638340737,
+           1638341729,
+           2,
+           "Found 40 new URLs.",
+           "https://gelbooru.com/index.php?id=20&page=post&s=view",
+           {}
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=840",
+           false,
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "meta:highres"
+              ]
+             ]
+            ]
+           ],
+           1644049613,
+           1644051163,
+           3,
+           "Found 40 new URLs.",
+           null,
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=880",
+           false,
+           [
+            "meta:highres",
+            "キャラクター:初音ミク"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           1641111657,
+           1641116312,
+           7,
+           "",
+           "https://example.com/files/22.jpg",
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       []
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     "all images embedded in page",
+     true,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "file_seeds": [
+     {
+      "additional": {
+       "abababababababababababababababababababababababababababababababab": []
+      },
+      "comparison": "https://safebooru.org/index.php?page=post&s=view&id=30&normalised",
+      "created": 1570854134,
+      "data": "https://safebooru.org/index.php?page=post&s=view&id=30",
+      "filterable": [
+       "solo",
+       "éclair"
+      ],
+      "hashes": [
+       [
+        "md5",
+        "a8f06610480339e867ec45ffb77e90f0"
+       ],
+       [
+        "sha1",
+        "3314cb866ed0de73ac417ad779e656132482898b"
+       ]
+      ],
+      "headers": [],
+      "modified": 1570854586,
+      "note": "Error: 404\n\nsome traceback",
+      "notes": [
+       [
+        "artist note",
+        "multi\nline"
+       ]
+      ],
+      "primary": [
+       "https://example.com/files/30.jpg",
+       "https://example.com/files/31.jpg"
+      ],
+      "referral": null,
+      "source": [
+       "https://example.com/files/131.jpg",
+       "https://gelbooru.com/index.php?id=130&page=post&s=view"
+      ],
+      "source_time": 1569882715,
+      "status": 1,
+      "tags": [
+       "series:metroid",
+       "solo",
+       "éclair"
+      ],
+      "type": 1
+     },
+     {
+      "additional": {},
+      "comparison": "https://safebooru.org/index.php?page=post&s=view&id=31",
+      "created": 1559216748,
+      "data": "https://safebooru.org/index.php?page=post&s=view&id=31",
+      "filterable": [
+       "blue eyes",
+       "キャラクター:初音ミク"
+      ],
+      "hashes": [
+       [
+        "md5",
+        "35ad474a5e94db509bf92c7a53c2ab20"
+       ],
+       [
+        "sha1",
+        "ce0639c3674301532d14b67e7ba7826c4f16d8cf"
+       ],
+       [
+        "sha256",
+        "e68083cb296fe0f37df77323fb2353d9f76d75e686fda4bde6da12d1bff2acb2"
+       ]
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ],
+       [
+        "X-Thing",
+        "yes"
+       ]
+      ],
+      "modified": 1559221379,
+      "note": "Error: 404\n\nsome traceback",
+      "notes": [
+       [
+        "artist note",
+        "multi\nline"
+       ],
+       [
+        "comment",
+        "nice"
+       ]
+      ],
+      "primary": [
+       "http://ünïcode.example/31?q=a b",
+       "https://example.com/files/32.jpg"
+      ],
+      "referral": null,
+      "source": [],
+      "source_time": 1559055049,
+      "status": 4,
+      "tags": [],
+      "type": 1
+     },
+     {
+      "additional": {},
+      "comparison": "https://gelbooru.com/index.php?id=32&page=post&s=view",
+      "created": 1508211659,
+      "data": "https://gelbooru.com/index.php?id=32&page=post&s=view",
+      "filterable": [
+       "blue eyes",
+       "series:metroid"
+      ],
+      "hashes": [
+       [
+        "md5",
+        "b78f13647a2af01cc1aeb9eea0d7aac0"
+       ],
+       [
+        "sha256",
+        "ca1a007869ba23a39e4a1008672d9f3960b3ba5f14fcff160854b02d11821a25"
+       ]
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1508212972,
+      "note": "",
+      "notes": [],
+      "primary": [
+       "http://ünïcode.example/32?q=a b",
+       "https://safebooru.org/index.php?page=post&s=view&id=33"
+      ],
+      "referral": null,
+      "source": [],
+      "source_time": 1507997505,
+      "status": 1,
+      "tags": [
+       "blue eyes",
+       "meta:highres"
+      ],
+      "type": 1
+     },
+     {
+      "additional": {
+       "6c6f63616c2074616773": [
+        "creator:someone",
+        "meta:highres",
+        "series:metroid"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "creator:someone",
+        "solo",
+        "キャラクター:初音ミク"
+       ]
+      },
+      "comparison": "http://ünïcode.example/33?q=a b",
+      "created": 1579380040,
+      "data": "http://ünïcode.example/33?q=a b",
+      "filterable": [],
+      "hashes": [
+       [
+        "md5",
+        "f3aff4b3b550a46a69f1934af7daca46"
+       ],
+       [
+        "sha1",
+        "95a113ea383b87da7cfc0da93b2a63cef057eda9"
+       ],
+       [
+        "sha256",
+        "4fbdbbfe04840f7aaf26e45488e93c581a2415248b0c4f395b2476470d245ecf"
+       ]
+      ],
+      "headers": [
+       [
+        "X-Thing",
+        "yes"
+       ]
+      ],
+      "modified": 1579380395,
+      "note": "",
+      "notes": [],
+      "primary": [],
+      "referral": "https://example.com/files/1033.jpg",
+      "source": [
+       "https://example.com/files/133.jpg"
+      ],
+      "source_time": null,
+      "status": 2,
+      "tags": [
+       "creator:someone"
+      ],
+      "type": 1
+     },
+     {
+      "additional": {},
+      "comparison": "https://gelbooru.com/index.php?id=34&page=post&s=view",
+      "created": 1698378501,
+      "data": "https://gelbooru.com/index.php?id=34&page=post&s=view",
+      "filterable": [
+       "creator:someone",
+       "solo"
+      ],
+      "hashes": [
+       [
+        "md5",
+        "975b78621111e6fe0f1380ceb8273724"
+       ],
+       [
+        "sha1",
+        "38aacfb0a387eb54d4a2b923fefaabda04cde308"
+       ],
+       [
+        "sha256",
+        "1a90e95736fe49a00180c43b8801258cc96cebbf05f5a96f857d5016734ecc4d"
+       ]
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ],
+       [
+        "X-Thing",
+        "yes"
+       ]
+      ],
+      "modified": 1698383395,
+      "note": "Error: 404\n\nsome traceback",
+      "notes": [
+       [
+        "artist note",
+        "multi\nline"
+       ],
+       [
+        "comment",
+        "nice"
+       ]
+      ],
+      "primary": [
+       "http://ünïcode.example/35?q=a b",
+       "https://safebooru.org/index.php?page=post&s=view&id=34"
+      ],
+      "referral": "http://ünïcode.example/1034?q=a b",
+      "source": [
+       "https://gelbooru.com/index.php?id=134&page=post&s=view"
+      ],
+      "source_time": null,
+      "status": 9,
+      "tags": [],
+      "type": 1
+     }
+    ],
+    "files_paused": false,
+    "formula_name": "all images embedded in page",
+    "gallery_paused": false,
+    "gallery_seeds": [],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "pending": []
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       []
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://safebooru.org/index.php?page=post&s=view&id=30",
+           "https://safebooru.org/index.php?page=post&s=view&id=30&normalised",
+           1570854134,
+           1570854586,
+           1569882715,
+           1,
+           "Error: 404\n\nsome traceback",
+           null,
+           {},
+           [
+            "éclair",
+            "solo"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "abababababababababababababababababababababababababababababababab",
+              []
+             ]
+            ]
+           ],
+           [
+            "https://example.com/files/30.jpg",
+            "https://example.com/files/31.jpg"
+           ],
+           [
+            "https://gelbooru.com/index.php?id=130&page=post&s=view",
+            "https://example.com/files/131.jpg"
+           ],
+           [
+            "éclair",
+            "series:metroid",
+            "solo"
+           ],
+           [
+            [
+             "artist note",
+             "multi\nline"
+            ]
+           ],
+           [
+            [
+             "md5",
+             "a8f06610480339e867ec45ffb77e90f0"
+            ],
+            [
+             "sha1",
+             "3314cb866ed0de73ac417ad779e656132482898b"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://safebooru.org/index.php?page=post&s=view&id=31",
+           "https://safebooru.org/index.php?page=post&s=view&id=31",
+           1559216748,
+           1559221379,
+           1559055049,
+           4,
+           "Error: 404\n\nsome traceback",
+           null,
+           {
+            "Referer": "https://a.example/",
+            "X-Thing": "yes"
+           },
+           [
+            "キャラクター:初音ミク",
+            "blue eyes"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           [
+            "https://example.com/files/32.jpg",
+            "http://ünïcode.example/31?q=a b"
+           ],
+           [],
+           [],
+           [
+            [
+             "artist note",
+             "multi\nline"
+            ],
+            [
+             "comment",
+             "nice"
+            ]
+           ],
+           [
+            [
+             "md5",
+             "35ad474a5e94db509bf92c7a53c2ab20"
+            ],
+            [
+             "sha1",
+             "ce0639c3674301532d14b67e7ba7826c4f16d8cf"
+            ],
+            [
+             "sha256",
+             "e68083cb296fe0f37df77323fb2353d9f76d75e686fda4bde6da12d1bff2acb2"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://gelbooru.com/index.php?id=32&page=post&s=view",
+           "https://gelbooru.com/index.php?id=32&page=post&s=view",
+           1508211659,
+           1508212972,
+           1507997505,
+           1,
+           "",
+           null,
+           {
+            "Referer": "https://a.example/"
+           },
+           [
+            "blue eyes",
+            "series:metroid"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           [
+            "https://safebooru.org/index.php?page=post&s=view&id=33",
+            "http://ünïcode.example/32?q=a b"
+           ],
+           [],
+           [
+            "meta:highres",
+            "blue eyes"
+           ],
+           [],
+           [
+            [
+             "sha256",
+             "ca1a007869ba23a39e4a1008672d9f3960b3ba5f14fcff160854b02d11821a25"
+            ],
+            [
+             "md5",
+             "b78f13647a2af01cc1aeb9eea0d7aac0"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "http://ünïcode.example/33?q=a b",
+           "http://ünïcode.example/33?q=a b",
+           1579380040,
+           1579380395,
+           null,
+           2,
+           "",
+           "https://example.com/files/1033.jpg",
+           {
+            "X-Thing": "yes"
+           },
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "6c6f63616c2074616773",
+              [
+               "meta:highres",
+               "series:metroid",
+               "creator:someone"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "キャラクター:初音ミク",
+               "creator:someone",
+               "solo"
+              ]
+             ]
+            ]
+           ],
+           [],
+           [
+            "https://example.com/files/133.jpg"
+           ],
+           [
+            "creator:someone"
+           ],
+           [],
+           [
+            [
+             "md5",
+             "f3aff4b3b550a46a69f1934af7daca46"
+            ],
+            [
+             "sha1",
+             "95a113ea383b87da7cfc0da93b2a63cef057eda9"
+            ],
+            [
+             "sha256",
+             "4fbdbbfe04840f7aaf26e45488e93c581a2415248b0c4f395b2476470d245ecf"
+            ]
+           ]
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://gelbooru.com/index.php?id=34&page=post&s=view",
+           "https://gelbooru.com/index.php?id=34&page=post&s=view",
+           1698378501,
+           1698383395,
+           null,
+           9,
+           "Error: 404\n\nsome traceback",
+           "http://ünïcode.example/1034?q=a b",
+           {
+            "Referer": "https://a.example/",
+            "X-Thing": "yes"
+           },
+           [
+            "creator:someone",
+            "solo"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           [
+            "http://ünïcode.example/35?q=a b",
+            "https://safebooru.org/index.php?page=post&s=view&id=34"
+           ],
+           [
+            "https://gelbooru.com/index.php?id=134&page=post&s=view"
+           ],
+           [],
+           [
+            [
+             "comment",
+             "nice"
+            ],
+            [
+             "artist note",
+             "multi\nline"
+            ]
+           ],
+           [
+            [
+             "sha1",
+             "38aacfb0a387eb54d4a2b923fefaabda04cde308"
+            ],
+            [
+             "md5",
+             "975b78621111e6fe0f1380ceb8273724"
+            ],
+            [
+             "sha256",
+             "1a90e95736fe49a00180c43b8801258cc96cebbf05f5a96f857d5016734ecc4d"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     "all images embedded in page",
+     false,
+     false
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "https://example.com/files/40.jpg",
+      "created": 1661313559,
+      "data": "https://example.com/files/40.jpg",
+      "filterable": [],
+      "hashes": [
+       [
+        "sha1",
+        "107561c86452dc91960fc93e09b9573ccb024da8"
+       ],
+       [
+        "sha256",
+        "16ef7c3476818c3ef4f6d4535eaca28f71e9039d38eb0648c9535d25f835a0ff"
+       ]
+      ],
+      "headers": [],
+      "modified": 1661313655,
+      "note": "Found 3 new URLs.",
+      "notes": [
+       [
+        "artist note",
+        "multi\nline"
+       ],
+       [
+        "comment",
+        "nice"
+       ]
+      ],
+      "primary": [],
+      "referral": null,
+      "source": [],
+      "source_time": null,
+      "status": 3,
+      "tags": [],
+      "type": 1
+     }
+    ],
+    "files_paused": true,
+    "formula_name": "all images embedded in page",
+    "gallery_paused": false,
+    "gallery_seeds": [
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "blue eyes",
+        "meta:highres",
+        "éclair"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "creator:someone"
+       ]
+      },
+      "can_generate_more_pages": false,
+      "created": 1607547446,
+      "filterable": [
+       "solo",
+       "éclair"
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1607550503,
+      "note": "Found 40 new URLs.",
+      "referral": "https://gelbooru.com/index.php?id=40&page=post&s=view",
+      "status": 3,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=1600"
+     },
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": [
+        "キャラクター:初音ミク"
+       ],
+       "abababababababababababababababababababababababababababababababab": [
+        "series:metroid"
+       ]
+      },
+      "can_generate_more_pages": false,
+      "created": 1639191723,
+      "filterable": [],
+      "headers": [],
+      "modified": 1639194581,
+      "note": "",
+      "referral": null,
+      "status": 4,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=1640"
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         5
+        ],
+        [
+         2,
+         [
+          153,
+          1,
+          [
+           false,
+           true,
+           3,
+           [
+            "comment"
+           ],
+           null,
+           []
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ],
+    "pending": []
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=1600",
+           false,
+           [
+            "éclair",
+            "solo"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "meta:highres",
+               "éclair",
+               "blue eyes"
+              ]
+             ],
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "creator:someone"
+              ]
+             ]
+            ]
+           ],
+           1607547446,
+           1607550503,
+           3,
+           "Found 40 new URLs.",
+           "https://gelbooru.com/index.php?id=40&page=post&s=view",
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=1640",
+           false,
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "series:metroid"
+              ]
+             ],
+             [
+              "646f776e6c6f616465722074616773",
+              [
+               "キャラクター:初音ミク"
+              ]
+             ]
+            ]
+           ],
+           1639191723,
+           1639194581,
+           4,
+           "",
+           null,
+           {}
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://example.com/files/40.jpg",
+           "https://example.com/files/40.jpg",
+           1661313559,
+           1661313655,
+           null,
+           3,
+           "Found 3 new URLs.",
+           null,
+           {},
+           [],
+           [
+            77,
+            1,
+            []
+           ],
+           [],
+           [],
+           [],
+           [
+            [
+             "comment",
+             "nice"
+            ],
+            [
+             "artist note",
+             "multi\nline"
+            ]
+           ],
+           [
+            [
+             "sha1",
+             "107561c86452dc91960fc93e09b9573ccb024da8"
+            ],
+            [
+             "sha256",
+             "16ef7c3476818c3ef4f6d4535eaca28f71e9039d38eb0648c9535d25f835a0ff"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       [
+        [
+         [
+          0,
+          5
+         ],
+         [
+          2,
+          [
+           153,
+           1,
+           [
+            false,
+            true,
+            3,
+            [
+             "comment"
+            ],
+            null,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     "all images embedded in page",
+     false,
+     true
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "file_seeds": [
+     {
+      "additional": {},
+      "comparison": "https://safebooru.org/index.php?page=post&s=view&id=50&normalised",
+      "created": 1604106702,
+      "data": "https://safebooru.org/index.php?page=post&s=view&id=50",
+      "filterable": [
+       "series:metroid",
+       "キャラクター:初音ミク"
+      ],
+      "hashes": [],
+      "headers": [],
+      "modified": 1604110499,
+      "note": "Error: 404\n\nsome traceback",
+      "notes": [
+       [
+        "comment",
+        "nice"
+       ]
+      ],
+      "primary": [
+       "http://ünïcode.example/50?q=a b",
+       "https://safebooru.org/index.php?page=post&s=view&id=51"
+      ],
+      "referral": null,
+      "source": [],
+      "source_time": 1603458807,
+      "status": 3,
+      "tags": [
+       "creator:someone"
+      ],
+      "type": 1
+     },
+     {
+      "additional": {
+       "646f776e6c6f616465722074616773": []
+      },
+      "comparison": "/home/someone/import/51.png",
+      "created": 1514353279,
+      "data": "/home/someone/import/51.png",
+      "filterable": [],
+      "hashes": [
+       [
+        "md5",
+        "c8faf37a20645ea997eca4c50c32d5c0"
+       ],
+       [
+        "sha1",
+        "3a9a12c0c029d658a88c640732b9e9430c1306bb"
+       ],
+       [
+        "sha256",
+        "525bf2a46edb5fe9d5e7d67826e1880dc269094dac5e55c69ede3de20dd33bdb"
+       ]
+      ],
+      "headers": [
+       [
+        "X-Thing",
+        "yes"
+       ]
+      ],
+      "modified": 1514357499,
+      "note": "Error: 404\n\nsome traceback",
+      "notes": [],
+      "primary": [],
+      "referral": "https://safebooru.org/index.php?page=post&s=view&id=1051",
+      "source": [
+       "http://ünïcode.example/151?q=a b"
+      ],
+      "source_time": 1513802767,
+      "status": 8,
+      "tags": [
+       "meta:highres"
+      ],
+      "type": 0
+     }
+    ],
+    "files_paused": false,
+    "formula_name": "all images embedded in page",
+    "gallery_paused": true,
+    "gallery_seeds": [
+     {
+      "additional": {
+       "abababababababababababababababababababababababababababababababab": [
+        "meta:highres",
+        "solo"
+       ]
+      },
+      "can_generate_more_pages": true,
+      "created": 1669158801,
+      "filterable": [
+       "series:metroid",
+       "éclair",
+       "キャラクター:初音ミク"
+      ],
+      "headers": [
+       [
+        "Referer",
+        "https://a.example/"
+       ]
+      ],
+      "modified": 1669163782,
+      "note": "",
+      "referral": null,
+      "status": 1,
+      "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=2000"
+     }
+    ],
+    "import_options": [
+     143,
+     1,
+     [
+      21,
+      2,
+      []
+     ]
+    ],
+    "pending": [
+     [
+      "https://example.com/page/5/0",
+      "my formula"
+     ]
+    ]
+   },
+   "stored": [
+    18,
+    6,
+    [
+     [
+      [
+       "https://example.com/page/5/0",
+       [
+        63,
+        "my formula",
+        1,
+        [
+         27,
+         8,
+         [
+          [
+           26,
+           3,
+           [
+            [
+             2,
+             [
+              62,
+              3,
+              [
+               0,
+               "a",
+               {},
+               null,
+               null,
+               false,
+               [
+                51,
+                1,
+                [
+                 3,
+                 "",
+                 null,
+                 null,
+                 "example string"
+                ]
+               ]
+              ]
+             ]
+            ]
+           ]
+          ],
+          0,
+          "href",
+          "",
+          [
+           84,
+           1,
+           [
+            26,
+            3,
+            []
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      67,
+      1,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          66,
+          4,
+          [
+           "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=2000",
+           true,
+           [
+            "éclair",
+            "キャラクター:初音ミク",
+            "series:metroid"
+           ],
+           [
+            77,
+            1,
+            [
+             [
+              "abababababababababababababababababababababababababababababababab",
+              [
+               "meta:highres",
+               "solo"
+              ]
+             ]
+            ]
+           ],
+           1669158801,
+           1669163782,
+           1,
+           "",
+           null,
+           {
+            "Referer": "https://a.example/"
+           }
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      8,
+      8,
+      [
+       26,
+       3,
+       [
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           1,
+           "https://safebooru.org/index.php?page=post&s=view&id=50",
+           "https://safebooru.org/index.php?page=post&s=view&id=50&normalised",
+           1604106702,
+           1604110499,
+           1603458807,
+           3,
+           "Error: 404\n\nsome traceback",
+           null,
+           {},
+           [
+            "キャラクター:初音ミク",
+            "series:metroid"
+           ],
+           [
+            77,
+            1,
+            []
+           ],
+           [
+            "http://ünïcode.example/50?q=a b",
+            "https://safebooru.org/index.php?page=post&s=view&id=51"
+           ],
+           [],
+           [
+            "creator:someone"
+           ],
+           [
+            [
+             "comment",
+             "nice"
+            ]
+           ],
+           []
+          ]
+         ]
+        ],
+        [
+         2,
+         [
+          57,
+          8,
+          [
+           0,
+           "/home/someone/import/51.png",
+           "/home/someone/import/51.png",
+           1514353279,
+           1514357499,
+           1513802767,
+           8,
+           "Error: 404\n\nsome traceback",
+           "https://safebooru.org/index.php?page=post&s=view&id=1051",
+           {
+            "X-Thing": "yes"
+           },
+           [],
+           [
+            77,
+            1,
+            [
+             [
+              "646f776e6c6f616465722074616773",
+              []
+             ]
+            ]
+           ],
+           [],
+           [
+            "http://ünïcode.example/151?q=a b"
+           ],
+           [
+            "meta:highres"
+           ],
+           [],
+           [
+            [
+             "sha256",
+             "525bf2a46edb5fe9d5e7d67826e1880dc269094dac5e55c69ede3de20dd33bdb"
+            ],
+            [
+             "sha1",
+             "3a9a12c0c029d658a88c640732b9e9430c1306bb"
+            ],
+            [
+             "md5",
+             "c8faf37a20645ea997eca4c50c32d5c0"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     [
+      143,
+      1,
+      [
+       21,
+       2,
+       []
+      ]
+     ],
+     "all images embedded in page",
+     true,
+     false
+    ]
+   ]
+  }
+ ],
+ "simple_downloader_pages": [
+  {
+   "facts": {
+    "name": "simple downloader",
+    "type": 2,
+    "variables": {
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "simple_downloader_import": {
+      "file_seeds": [
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [],
+         "abababababababababababababababababababababababababababababababab": [
+          "blue eyes"
+         ]
+        },
+        "comparison": "http://ünïcode.example/0?q=a b&normalised",
+        "created": 1594627729,
+        "data": "http://ünïcode.example/0?q=a b",
+        "filterable": [
+         "キャラクター:初音ミク"
+        ],
+        "hashes": [
+         [
+          "md5",
+          "e644cf12dac6f20553409a9e9ded9846"
+         ]
+        ],
+        "headers": [
+         [
+          "X-Thing",
+          "yes"
+         ]
+        ],
+        "modified": 1594629966,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": "http://ünïcode.example/1000?q=a b",
+        "source": [
+         "https://example.com/files/100.jpg",
+         "https://example.com/files/101.jpg"
+        ],
+        "source_time": null,
+        "status": 7,
+        "tags": [
+         "blue eyes"
+        ],
+        "type": 1
+       },
+       {
+        "additional": {},
+        "comparison": "http://ünïcode.example/1?q=a b&normalised",
+        "created": 1682441921,
+        "data": "http://ünïcode.example/1?q=a b",
+        "filterable": [
+         "creator:someone",
+         "éclair",
+         "キャラクター:初音ミク"
+        ],
+        "hashes": [],
+        "headers": [
+         [
+          "Referer",
+          "https://a.example/"
+         ]
+        ],
+        "modified": 1682445861,
+        "note": "Error: 404\n\nsome traceback",
+        "notes": [
+         [
+          "artist note",
+          "multi\nline"
+         ],
+         [
+          "comment",
+          "nice"
+         ]
+        ],
+        "primary": [
+         "https://example.com/files/1.jpg",
+         "https://example.com/files/2.jpg"
+        ],
+        "referral": null,
+        "source": [
+         "https://safebooru.org/index.php?page=post&s=view&id=101",
+         "https://safebooru.org/index.php?page=post&s=view&id=102"
+        ],
+        "source_time": 1681445784,
+        "status": 1,
+        "tags": [],
+        "type": 1
+       },
+       {
+        "additional": {},
+        "comparison": "https://safebooru.org/index.php?page=post&s=view&id=2&normalised",
+        "created": 1543686049,
+        "data": "https://safebooru.org/index.php?page=post&s=view&id=2",
+        "filterable": [
+         "blue eyes",
+         "meta:highres",
+         "キャラクター:初音ミク"
+        ],
+        "hashes": [
+         [
+          "md5",
+          "cc33ad3d4f1a3ebee0788c2b0ae7e13c"
+         ],
+         [
+          "sha256",
+          "0699963d12ea415195c65a2928cf3a15f863b53e374adbd0b76e21dac97390a7"
+         ]
+        ],
+        "headers": [],
+        "modified": 1543690122,
+        "note": "",
+        "notes": [],
+        "primary": [],
+        "referral": "https://safebooru.org/index.php?page=post&s=view&id=1002",
+        "source": [
+         "http://ünïcode.example/102?q=a b",
+         "http://ünïcode.example/103?q=a b"
+        ],
+        "source_time": null,
+        "status": 9,
+        "tags": [
+         "meta:highres"
+        ],
+        "type": 1
+       }
+      ],
+      "files_paused": false,
+      "formula_name": "my formula",
+      "gallery_paused": true,
+      "gallery_seeds": [],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        [
+         [
+          [
+           0,
+           5
+          ],
+          [
+           2,
+           [
+            153,
+            1,
+            [
+             false,
+             true,
+             3,
+             [
+              "artist note",
+              "comment"
+             ],
+             null,
+             []
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ],
+      "pending": [
+       [
+        "https://example.com/page/0/0",
+        "all images embedded in page"
+       ],
+       [
+        "https://example.com/page/0/1",
+        "all images embedded in page"
+       ],
+       [
+        "https://example.com/page/0/2",
+        "all images embedded in page"
+       ]
+      ]
+     }
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "simple downloader",
+     2,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "simple_downloader_import"
+        ],
+        [
+         2,
+         [
+          18,
+          6,
+          [
+           [
+            [
+             "https://example.com/page/0/0",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             "https://example.com/page/0/1",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             "https://example.com/page/0/2",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            67,
+            1,
+            [
+             26,
+             3,
+             []
+            ]
+           ],
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "http://ünïcode.example/0?q=a b",
+                 "http://ünïcode.example/0?q=a b&normalised",
+                 1594627729,
+                 1594629966,
+                 null,
+                 7,
+                 "",
+                 "http://ünïcode.example/1000?q=a b",
+                 {
+                  "X-Thing": "yes"
+                 },
+                 [
+                  "キャラクター:初音ミク"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "646f776e6c6f616465722074616773",
+                    []
+                   ],
+                   [
+                    "abababababababababababababababababababababababababababababababab",
+                    [
+                     "blue eyes"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [],
+                 [
+                  "https://example.com/files/100.jpg",
+                  "https://example.com/files/101.jpg"
+                 ],
+                 [
+                  "blue eyes"
+                 ],
+                 [],
+                 [
+                  [
+                   "md5",
+                   "e644cf12dac6f20553409a9e9ded9846"
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "http://ünïcode.example/1?q=a b",
+                 "http://ünïcode.example/1?q=a b&normalised",
+                 1682441921,
+                 1682445861,
+                 1681445784,
+                 1,
+                 "Error: 404\n\nsome traceback",
+                 null,
+                 {
+                  "Referer": "https://a.example/"
+                 },
+                 [
+                  "éclair",
+                  "creator:someone",
+                  "キャラクター:初音ミク"
+                 ],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [
+                  "https://example.com/files/2.jpg",
+                  "https://example.com/files/1.jpg"
+                 ],
+                 [
+                  "https://safebooru.org/index.php?page=post&s=view&id=102",
+                  "https://safebooru.org/index.php?page=post&s=view&id=101"
+                 ],
+                 [],
+                 [
+                  [
+                   "artist note",
+                   "multi\nline"
+                  ],
+                  [
+                   "comment",
+                   "nice"
+                  ]
+                 ],
+                 []
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "https://safebooru.org/index.php?page=post&s=view&id=2",
+                 "https://safebooru.org/index.php?page=post&s=view&id=2&normalised",
+                 1543686049,
+                 1543690122,
+                 null,
+                 9,
+                 "",
+                 "https://safebooru.org/index.php?page=post&s=view&id=1002",
+                 {},
+                 [
+                  "meta:highres",
+                  "キャラクター:初音ミク",
+                  "blue eyes"
+                 ],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [],
+                 [
+                  "http://ünïcode.example/103?q=a b",
+                  "http://ünïcode.example/102?q=a b"
+                 ],
+                 [
+                  "meta:highres"
+                 ],
+                 [],
+                 [
+                  [
+                   "md5",
+                   "cc33ad3d4f1a3ebee0788c2b0ae7e13c"
+                  ],
+                  [
+                   "sha256",
+                   "0699963d12ea415195c65a2928cf3a15f863b53e374adbd0b76e21dac97390a7"
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             [
+              [
+               [
+                0,
+                5
+               ],
+               [
+                2,
+                [
+                 153,
+                 1,
+                 [
+                  false,
+                  true,
+                  3,
+                  [
+                   "artist note",
+                   "comment"
+                  ],
+                  null,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           "my formula",
+           true,
+           false
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "simple downloader",
+    "type": 2,
+    "variables": {
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       0,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "simple_downloader_import": {
+      "file_seeds": [],
+      "files_paused": false,
+      "formula_name": "all images embedded in page",
+      "gallery_paused": false,
+      "gallery_seeds": [
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "series:metroid",
+          "solo"
+         ],
+         "abababababababababababababababababababababababababababababababab": [
+          "creator:someone",
+          "solo",
+          "éclair"
+         ]
+        },
+        "can_generate_more_pages": true,
+        "created": 1549080138,
+        "filterable": [
+         "creator:someone"
+        ],
+        "headers": [],
+        "modified": 1549081670,
+        "note": "",
+        "referral": "https://example.com/files/10.jpg",
+        "status": 0,
+        "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=400"
+       }
+      ],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        []
+       ]
+      ],
+      "pending": [
+       [
+        "https://example.com/page/1/0",
+        "my formula"
+       ],
+       [
+        "https://example.com/page/1/1",
+        "all images embedded in page"
+       ],
+       [
+        "https://example.com/page/1/2",
+        "all images embedded in page"
+       ]
+      ]
+     }
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "simple downloader",
+     2,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           0,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "simple_downloader_import"
+        ],
+        [
+         2,
+         [
+          18,
+          6,
+          [
+           [
+            [
+             "https://example.com/page/1/0",
+             [
+              63,
+              "my formula",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             "https://example.com/page/1/1",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             "https://example.com/page/1/2",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            67,
+            1,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                66,
+                4,
+                [
+                 "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=400",
+                 true,
+                 [
+                  "creator:someone"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "abababababababababababababababababababababababababababababababab",
+                    [
+                     "éclair",
+                     "creator:someone",
+                     "solo"
+                    ]
+                   ],
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "series:metroid",
+                     "solo"
+                    ]
+                   ]
+                  ]
+                 ],
+                 1549080138,
+                 1549081670,
+                 0,
+                 "",
+                 "https://example.com/files/10.jpg",
+                 {}
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             []
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             []
+            ]
+           ],
+           "all images embedded in page",
+           false,
+           false
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  },
+  {
+   "facts": {
+    "name": "simple downloader",
+    "type": 2,
+    "variables": {
+     "media_collect": [
+      78,
+      2,
+      [
+       [],
+       [],
+       true,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "media_sort": [
+      49,
+      3,
+      [
+       "system",
+       2,
+       1,
+       [
+        80,
+        2,
+        [
+         "616c6c206b6e6f776e2074616773",
+         true,
+         true,
+         "616c6c206b6e6f776e2074616773"
+        ]
+       ]
+      ]
+     ],
+     "simple_downloader_import": {
+      "file_seeds": [
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [],
+         "6c6f63616c2074616773": []
+        },
+        "comparison": "https://example.com/files/20.jpg&normalised",
+        "created": 1551248896,
+        "data": "https://example.com/files/20.jpg",
+        "filterable": [
+         "meta:highres"
+        ],
+        "hashes": [
+         [
+          "md5",
+          "6d660777f436886dcaccfde1a16c16a4"
+         ],
+         [
+          "sha1",
+          "762e2fc666dfe94fa0d1c90127bbc20c2b26aad5"
+         ],
+         [
+          "sha256",
+          "ddc13248e3493f2f50ecb607b319c88f859e5afd2814ad41fc3da062d4af7f1c"
+         ]
+        ],
+        "headers": [],
+        "modified": 1551253373,
+        "note": "Error: 404\n\nsome traceback",
+        "notes": [],
+        "primary": [
+         "http://ünïcode.example/20?q=a b",
+         "http://ünïcode.example/21?q=a b"
+        ],
+        "referral": null,
+        "source": [
+         "https://example.com/files/120.jpg"
+        ],
+        "source_time": 1550344408,
+        "status": 1,
+        "tags": [],
+        "type": 1
+       },
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "éclair"
+         ]
+        },
+        "comparison": "https://example.com/files/21.jpg&normalised",
+        "created": 1662651508,
+        "data": "https://example.com/files/21.jpg",
+        "filterable": [
+         "éclair"
+        ],
+        "hashes": [
+         [
+          "sha1",
+          "7c2ca5023b7bd0636fb5306eef4437bd0485439c"
+         ],
+         [
+          "sha256",
+          "b758a78b9301805c258568ab6b9adf381867ce7c453da7d746da907c5202573a"
+         ]
+        ],
+        "headers": [
+         [
+          "Referer",
+          "https://a.example/"
+         ],
+         [
+          "X-Thing",
+          "yes"
+         ]
+        ],
+        "modified": 1662652511,
+        "note": "Found 3 new URLs.",
+        "notes": [
+         [
+          "artist note",
+          "multi\nline"
+         ],
+         [
+          "comment",
+          "nice"
+         ]
+        ],
+        "primary": [
+         "http://ünïcode.example/22?q=a b",
+         "https://gelbooru.com/index.php?id=21&page=post&s=view"
+        ],
+        "referral": null,
+        "source": [
+         "https://gelbooru.com/index.php?id=121&page=post&s=view"
+        ],
+        "source_time": null,
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "series:metroid",
+         "solo"
+        ],
+        "type": 1
+       },
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "solo",
+          "キャラクター:初音ミク"
+         ],
+         "6c6f63616c2074616773": [
+          "meta:highres",
+          "series:metroid"
+         ]
+        },
+        "comparison": "http://ünïcode.example/22?q=a b&normalised",
+        "created": 1632360598,
+        "data": "http://ünïcode.example/22?q=a b",
+        "filterable": [
+         "blue eyes",
+         "meta:highres",
+         "キャラクター:初音ミク"
+        ],
+        "hashes": [
+         [
+          "md5",
+          "14d89dd31b6d1617cbf322e0b9417c96"
+         ],
+         [
+          "sha1",
+          "ede30d5049a41a94dd23a2fd89408b71df3230a4"
+         ]
+        ],
+        "headers": [
+         [
+          "Referer",
+          "https://a.example/"
+         ],
+         [
+          "X-Thing",
+          "yes"
+         ]
+        ],
+        "modified": 1632364239,
+        "note": "",
+        "notes": [
+         [
+          "artist note",
+          "multi\nline"
+         ],
+         [
+          "comment",
+          "nice"
+         ]
+        ],
+        "primary": [],
+        "referral": null,
+        "source": [],
+        "source_time": 1631481871,
+        "status": 1,
+        "tags": [
+         "creator:someone",
+         "series:metroid",
+         "キャラクター:初音ミク"
+        ],
+        "type": 1
+       },
+       {
+        "additional": {},
+        "comparison": "/home/someone/import/23.png",
+        "created": 1562332747,
+        "data": "/home/someone/import/23.png",
+        "filterable": [
+         "blue eyes",
+         "éclair"
+        ],
+        "hashes": [],
+        "headers": [
+         [
+          "Referer",
+          "https://a.example/"
+         ],
+         [
+          "X-Thing",
+          "yes"
+         ]
+        ],
+        "modified": 1562334793,
+        "note": "",
+        "notes": [],
+        "primary": [
+         "https://gelbooru.com/index.php?id=23&page=post&s=view",
+         "https://gelbooru.com/index.php?id=24&page=post&s=view"
+        ],
+        "referral": "https://gelbooru.com/index.php?id=1023&page=post&s=view",
+        "source": [
+         "https://gelbooru.com/index.php?id=124&page=post&s=view",
+         "https://safebooru.org/index.php?page=post&s=view&id=123"
+        ],
+        "source_time": null,
+        "status": 3,
+        "tags": [
+         "blue eyes",
+         "series:metroid"
+        ],
+        "type": 0
+       },
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "series:metroid"
+         ]
+        },
+        "comparison": "https://safebooru.org/index.php?page=post&s=view&id=24&normalised",
+        "created": 1542666541,
+        "data": "https://safebooru.org/index.php?page=post&s=view&id=24",
+        "filterable": [],
+        "hashes": [
+         [
+          "md5",
+          "1ce5765f412e1d9c4157d48f6cc2c910"
+         ],
+         [
+          "sha1",
+          "6b253530fead9af9cc912926308e3e6a4132cbf5"
+         ],
+         [
+          "sha256",
+          "e035fba3531f2c08ae51a54871a3e9b6baebc5d9622583aafd939568427430f2"
+         ]
+        ],
+        "headers": [
+         [
+          "X-Thing",
+          "yes"
+         ]
+        ],
+        "modified": 1542670803,
+        "note": "Found 3 new URLs.",
+        "notes": [],
+        "primary": [
+         "http://ünïcode.example/25?q=a b",
+         "https://safebooru.org/index.php?page=post&s=view&id=24"
+        ],
+        "referral": null,
+        "source": [],
+        "source_time": 1542647011,
+        "status": 2,
+        "tags": [],
+        "type": 1
+       }
+      ],
+      "files_paused": false,
+      "formula_name": "all images embedded in page",
+      "gallery_paused": true,
+      "gallery_seeds": [
+       {
+        "additional": {
+         "646f776e6c6f616465722074616773": [
+          "solo"
+         ],
+         "abababababababababababababababababababababababababababababababab": []
+        },
+        "can_generate_more_pages": true,
+        "created": 1564676216,
+        "filterable": [
+         "creator:someone",
+         "solo",
+         "キャラクター:初音ミク"
+        ],
+        "headers": [],
+        "modified": 1564680344,
+        "note": "Found 40 new URLs.",
+        "referral": "https://example.com/files/20.jpg",
+        "status": 0,
+        "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=800"
+       },
+       {
+        "additional": {},
+        "can_generate_more_pages": false,
+        "created": 1636251646,
+        "filterable": [
+         "creator:someone",
+         "meta:highres"
+        ],
+        "headers": [
+         [
+          "Referer",
+          "https://a.example/"
+         ]
+        ],
+        "modified": 1636255815,
+        "note": "",
+        "referral": "http://ünïcode.example/21?q=a b",
+        "status": 4,
+        "url": "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=840"
+       }
+      ],
+      "import_options": [
+       143,
+       1,
+       [
+        21,
+        2,
+        []
+       ]
+      ],
+      "pending": [
+       [
+        "https://example.com/page/2/0",
+        "all images embedded in page"
+       ]
+      ]
+     }
+    }
+   },
+   "stored": [
+    12,
+    17,
+    [
+     "simple downloader",
+     2,
+     [
+      21,
+      2,
+      [
+       [
+        [
+         0,
+         "media_sort"
+        ],
+        [
+         2,
+         [
+          49,
+          3,
+          [
+           "system",
+           2,
+           1,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "media_collect"
+        ],
+        [
+         2,
+         [
+          78,
+          2,
+          [
+           [],
+           [],
+           true,
+           [
+            80,
+            2,
+            [
+             "616c6c206b6e6f776e2074616773",
+             true,
+             true,
+             "616c6c206b6e6f776e2074616773"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       [
+        [
+         0,
+         "simple_downloader_import"
+        ],
+        [
+         2,
+         [
+          18,
+          6,
+          [
+           [
+            [
+             "https://example.com/page/2/0",
+             [
+              63,
+              "all images embedded in page",
+              1,
+              [
+               27,
+               8,
+               [
+                [
+                 26,
+                 3,
+                 [
+                  [
+                   2,
+                   [
+                    62,
+                    3,
+                    [
+                     0,
+                     "a",
+                     {},
+                     null,
+                     null,
+                     false,
+                     [
+                      51,
+                      1,
+                      [
+                       3,
+                       "",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ]
+                   ]
+                  ]
+                 ]
+                ],
+                0,
+                "href",
+                "",
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            67,
+            1,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                66,
+                4,
+                [
+                 "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=800",
+                 true,
+                 [
+                  "キャラクター:初音ミク",
+                  "creator:someone",
+                  "solo"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "abababababababababababababababababababababababababababababababab",
+                    []
+                   ],
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "solo"
+                    ]
+                   ]
+                  ]
+                 ],
+                 1564676216,
+                 1564680344,
+                 0,
+                 "Found 40 new URLs.",
+                 "https://example.com/files/20.jpg",
+                 {}
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                66,
+                4,
+                [
+                 "https://safebooru.org/index.php?page=post&s=list&tags=blue_eyes&pid=840",
+                 false,
+                 [
+                  "meta:highres",
+                  "creator:someone"
+                 ],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 1636251646,
+                 1636255815,
+                 4,
+                 "",
+                 "http://ünïcode.example/21?q=a b",
+                 {
+                  "Referer": "https://a.example/"
+                 }
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            8,
+            8,
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "https://example.com/files/20.jpg",
+                 "https://example.com/files/20.jpg&normalised",
+                 1551248896,
+                 1551253373,
+                 1550344408,
+                 1,
+                 "Error: 404\n\nsome traceback",
+                 null,
+                 {},
+                 [
+                  "meta:highres"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "6c6f63616c2074616773",
+                    []
+                   ],
+                   [
+                    "646f776e6c6f616465722074616773",
+                    []
+                   ]
+                  ]
+                 ],
+                 [
+                  "http://ünïcode.example/20?q=a b",
+                  "http://ünïcode.example/21?q=a b"
+                 ],
+                 [
+                  "https://example.com/files/120.jpg"
+                 ],
+                 [],
+                 [],
+                 [
+                  [
+                   "sha256",
+                   "ddc13248e3493f2f50ecb607b319c88f859e5afd2814ad41fc3da062d4af7f1c"
+                  ],
+                  [
+                   "md5",
+                   "6d660777f436886dcaccfde1a16c16a4"
+                  ],
+                  [
+                   "sha1",
+                   "762e2fc666dfe94fa0d1c90127bbc20c2b26aad5"
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "https://example.com/files/21.jpg",
+                 "https://example.com/files/21.jpg&normalised",
+                 1662651508,
+                 1662652511,
+                 null,
+                 1,
+                 "Found 3 new URLs.",
+                 null,
+                 {
+                  "Referer": "https://a.example/",
+                  "X-Thing": "yes"
+                 },
+                 [
+                  "éclair"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "éclair"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [
+                  "https://gelbooru.com/index.php?id=21&page=post&s=view",
+                  "http://ünïcode.example/22?q=a b"
+                 ],
+                 [
+                  "https://gelbooru.com/index.php?id=121&page=post&s=view"
+                 ],
+                 [
+                  "series:metroid",
+                  "creator:someone",
+                  "solo"
+                 ],
+                 [
+                  [
+                   "artist note",
+                   "multi\nline"
+                  ],
+                  [
+                   "comment",
+                   "nice"
+                  ]
+                 ],
+                 [
+                  [
+                   "sha1",
+                   "7c2ca5023b7bd0636fb5306eef4437bd0485439c"
+                  ],
+                  [
+                   "sha256",
+                   "b758a78b9301805c258568ab6b9adf381867ce7c453da7d746da907c5202573a"
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "http://ünïcode.example/22?q=a b",
+                 "http://ünïcode.example/22?q=a b&normalised",
+                 1632360598,
+                 1632364239,
+                 1631481871,
+                 1,
+                 "",
+                 null,
+                 {
+                  "Referer": "https://a.example/",
+                  "X-Thing": "yes"
+                 },
+                 [
+                  "meta:highres",
+                  "キャラクター:初音ミク",
+                  "blue eyes"
+                 ],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "6c6f63616c2074616773",
+                    [
+                     "meta:highres",
+                     "series:metroid"
+                    ]
+                   ],
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "キャラクター:初音ミク",
+                     "solo"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [],
+                 [],
+                 [
+                  "キャラクター:初音ミク",
+                  "series:metroid",
+                  "creator:someone"
+                 ],
+                 [
+                  [
+                   "artist note",
+                   "multi\nline"
+                  ],
+                  [
+                   "comment",
+                   "nice"
+                  ]
+                 ],
+                 [
+                  [
+                   "md5",
+                   "14d89dd31b6d1617cbf322e0b9417c96"
+                  ],
+                  [
+                   "sha1",
+                   "ede30d5049a41a94dd23a2fd89408b71df3230a4"
+                  ]
+                 ]
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 0,
+                 "/home/someone/import/23.png",
+                 "/home/someone/import/23.png",
+                 1562332747,
+                 1562334793,
+                 null,
+                 3,
+                 "",
+                 "https://gelbooru.com/index.php?id=1023&page=post&s=view",
+                 {
+                  "Referer": "https://a.example/",
+                  "X-Thing": "yes"
+                 },
+                 [
+                  "éclair",
+                  "blue eyes"
+                 ],
+                 [
+                  77,
+                  1,
+                  []
+                 ],
+                 [
+                  "https://gelbooru.com/index.php?id=24&page=post&s=view",
+                  "https://gelbooru.com/index.php?id=23&page=post&s=view"
+                 ],
+                 [
+                  "https://gelbooru.com/index.php?id=124&page=post&s=view",
+                  "https://safebooru.org/index.php?page=post&s=view&id=123"
+                 ],
+                 [
+                  "blue eyes",
+                  "series:metroid"
+                 ],
+                 [],
+                 []
+                ]
+               ]
+              ],
+              [
+               2,
+               [
+                57,
+                8,
+                [
+                 1,
+                 "https://safebooru.org/index.php?page=post&s=view&id=24",
+                 "https://safebooru.org/index.php?page=post&s=view&id=24&normalised",
+                 1542666541,
+                 1542670803,
+                 1542647011,
+                 2,
+                 "Found 3 new URLs.",
+                 null,
+                 {
+                  "X-Thing": "yes"
+                 },
+                 [],
+                 [
+                  77,
+                  1,
+                  [
+                   [
+                    "646f776e6c6f616465722074616773",
+                    [
+                     "series:metroid"
+                    ]
+                   ]
+                  ]
+                 ],
+                 [
+                  "https://safebooru.org/index.php?page=post&s=view&id=24",
+                  "http://ünïcode.example/25?q=a b"
+                 ],
+                 [],
+                 [],
+                 [],
+                 [
+                  [
+                   "sha256",
+                   "e035fba3531f2c08ae51a54871a3e9b6baebc5d9622583aafd939568427430f2"
+                  ],
+                  [
+                   "sha1",
+                   "6b253530fead9af9cc912926308e3e6a4132cbf5"
+                  ],
+                  [
+                   "md5",
+                   "1ce5765f412e1d9c4157d48f6cc2c910"
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ]
+           ],
+           [
+            143,
+            1,
+            [
+             21,
+             2,
+             []
+            ]
+           ],
+           "all images embedded in page",
+           true,
+           false
+          ]
+         ]
+        ]
+       ]
+      ]
+     ]
+    ]
+   ]
+  }
  ]
 }

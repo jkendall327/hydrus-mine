@@ -158,8 +158,10 @@ them (a URL downloader page shows its queue's progress and files in
 list` shows them. A duplicates page
 comes across with its search, pair sort and group mode, and launches the
 duplicate filter (a store imported before duplicates pages were read
-opens its duplicates pages too, from the copy kept of them). Pages of kinds hydrus-rs doesn't open yet (a
-simple downloader...) are kept as they were stored. An "import" page that
+opens its duplicates pages too, from the copy kept of them). A simple downloader page comes across with
+its pages waiting (each with its formula), its logs, its formula and its
+pauses, and its parsing formulae with your other options. Pages of kinds
+hydrus-rs doesn't open yet (petitions...) are kept as they were stored. An "import" page that
 reads sidecars for its files keeps its routers, and its files left to
 import read them as they go in. Your other saved
 sessions come across under their names (hydrus's own "last session", if

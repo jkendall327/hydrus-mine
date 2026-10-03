@@ -39,6 +39,7 @@ const MULTIPLE_GALLERY_IMPORT: SerialisableType = SerialisableType(20);
 const WATCHER_IMPORT: SerialisableType = SerialisableType(17);
 const MULTIPLE_WATCHER_IMPORT: SerialisableType = SerialisableType(64);
 const HDD_IMPORT: SerialisableType = SerialisableType(9);
+const SIMPLE_DOWNLOADER_IMPORT: SerialisableType = SerialisableType(18);
 
 /// `ClientGUIPagesCore.PAGE_TYPE_*`.
 pub mod page_type {
@@ -116,9 +117,23 @@ pub enum PageContent {
     Watchers(LegacyMultipleWatcherImport),
     Duplicates(LegacyDuplicatesPage),
     LocalImport(LegacyHddImport),
-    /// A page whose state isn't read here (a simple downloader, a
-    /// petitions page...).
+    SimpleDownloader(LegacySimpleDownloaderImport),
+    /// A page whose state isn't read here (a petitions page...).
     Other,
+}
+
+/// A simple downloader page's importer (`SimpleDownloaderImport`): the
+/// pages waiting with their formulae, its logs, its chosen formula and its
+/// pauses.
+#[derive(Debug, Clone, PartialEq)]
+pub struct LegacySimpleDownloaderImport {
+    pub pending: Vec<(String, hydrus_parse::simple::SimpleFormula)>,
+    pub gallery_seeds: Vec<LegacyGallerySeed>,
+    pub file_seeds: Vec<LegacyFileSeed>,
+    pub import_options: ImportOptionsSlice,
+    pub formula_name: String,
+    pub gallery_paused: bool,
+    pub files_paused: bool,
 }
 
 /// A duplicates page's filtering settings.
@@ -355,6 +370,9 @@ pub fn page(object: &SerialisableObject) -> DecodeResult<LegacyPage> {
         page_type::IMPORT_FROM_DISK => {
             PageContent::LocalImport(hdd_import(object_variable("hdd_import")?)?)
         }
+        page_type::SIMPLE_DOWNLOADER => PageContent::SimpleDownloader(simple_downloader_import(
+            object_variable("simple_downloader_import")?,
+        )?),
         page_type::DUPLICATE_FILTER => {
             PageContent::Duplicates(LegacyDuplicatesPage {
                 search: PotentialsSearch::from_object(object_variable(
@@ -411,6 +429,47 @@ pub fn urls_import(object: &SerialisableObject) -> DecodeResult<LegacyUrlsImport
         file_seeds: file_seeds(k, file_seed_cache)?,
         import_options: import_options(k, options)?,
         paused: boolean(k, paused, "paused")?,
+    })
+}
+
+/// Decode a simple downloader page's importer.
+pub fn simple_downloader_import(
+    object: &SerialisableObject,
+) -> DecodeResult<LegacySimpleDownloaderImport> {
+    let k = SIMPLE_DOWNLOADER_IMPORT;
+    expect(object, k, &[6])?;
+    let info = object.info();
+    let [
+        pending,
+        gallery_log,
+        file_seed_cache,
+        options,
+        formula_name,
+        gallery_paused,
+        files_paused,
+    ] = tuple::<7>(k, &info, "simple downloader")?;
+    let pending = pending
+        .as_list()
+        .ok_or_else(|| malformed(k, "the pending jobs are not a list"))?
+        .iter()
+        .map(|job| {
+            let [url, formula] = tuple::<2>(k, job, "pending job")?;
+            let formula = SerialisableObject::from_tuple(formula)
+                .map_err(|e| malformed(k, format!("a job's formula: {e}")))?;
+            Ok((
+                string(k, url, "job url")?,
+                super::parsers::simple_formula(&formula)?,
+            ))
+        })
+        .collect::<DecodeResult<_>>()?;
+    Ok(LegacySimpleDownloaderImport {
+        pending,
+        gallery_seeds: gallery_seeds(k, gallery_log)?,
+        file_seeds: file_seeds(k, file_seed_cache)?,
+        import_options: import_options(k, options)?,
+        formula_name: string(k, formula_name, "formula name")?,
+        gallery_paused: boolean(k, gallery_paused, "queue paused")?,
+        files_paused: boolean(k, files_paused, "files paused")?,
     })
 }
 

@@ -177,6 +177,8 @@ pub enum PageQueueState {
     Watcher(hydrus_core::watchers::WatcherState),
     /// An "import" page's files, from disk.
     LocalImport(crate::queues::LocalImport),
+    /// A simple downloader's jobs and formula.
+    SimpleDownloader(crate::queues::SimpleDownloader),
 }
 
 /// One Client API access key, as stored natively.
@@ -1082,6 +1084,7 @@ impl Copier<'_> {
                     PageQueueState::Gallery(_) => queues::QueueKind::Gallery,
                     PageQueueState::Watcher(_) => queues::QueueKind::Watcher,
                     PageQueueState::LocalImport(_) => queues::QueueKind::LocalImport,
+                    PageQueueState::SimpleDownloader(_) => queues::QueueKind::SimpleDownloader,
                 };
                 let id = queues::create_queue(
                     self.conn,
@@ -1110,6 +1113,7 @@ impl Copier<'_> {
                     PageQueueState::Urls => None,
                     PageQueueState::Gallery(search) => Some(serde_json::to_value(search)),
                     PageQueueState::LocalImport(settings) => Some(serde_json::to_value(settings)),
+                    PageQueueState::SimpleDownloader(state) => Some(serde_json::to_value(state)),
                     PageQueueState::Watcher(state) => {
                         let mut state = state.clone();
                         let times: Vec<_> = files

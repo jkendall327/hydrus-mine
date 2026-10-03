@@ -2,7 +2,8 @@
 """Record how the reference reads GUI sessions and the pages in them.
 
 Random downloader importers (URL pages, gallery searches and their pages,
-watchers and their pages, and the "import" pages' local imports), page
+watchers and their pages, the "import" pages' local imports, and simple
+downloaders), page
 managers of every page type hydrus-rs cares about, and session trees, built
 with the reference's classes. Each case keeps:
 
@@ -399,6 +400,55 @@ def hdd_import_page( i ):
     return page
 
 
+# simple downloaders
+
+def simple_downloader_import( i ):
+    """A simple downloader (made after the others, so their random draws
+    are unchanged): pages waiting, each with a formula, its logs filled,
+    its formula chosen, and its pauses."""
+
+    from hydrus.client.parsing import ClientParsing
+
+    formulae = [ ClientParsing.SimpleDownloaderParsingFormula( name = name, formula = ClientParsing.ParseFormulaHTML() ) for name in [ 'all images embedded in page', 'my formula' ] ]
+
+    d = ClientImportSimpleURLs.SimpleDownloaderImport()
+
+    d._import_options_container = import_options_container()
+
+    for k in range( rng.randint( 0, 3 ) ):
+
+        d._pending_jobs.append( ( f'https://example.com/page/{i}/{k}', rng.choice( formulae ) ) )
+
+
+    fill( d._file_seed_cache, d._gallery_seed_log, i )
+
+    d._formula_name = rng.choice( [ f.GetName() for f in formulae ] )
+    d._gallery_paused = rng.random() < 0.3
+    d._files_paused = rng.random() < 0.3
+
+    return d
+
+
+def simple_downloader_import_facts( d ):
+
+    return dict(
+        seeds_facts( d._file_seed_cache, d._gallery_seed_log ),
+        pending = [ [ url, formula.GetName() ] for ( url, formula ) in d._pending_jobs ],
+        import_options = tuple_of( d._import_options_container ),
+        formula_name = d._formula_name,
+        gallery_paused = d._gallery_paused,
+        files_paused = d._files_paused,
+    )
+
+
+def simple_downloader_page( i ):
+
+    page = base_page( 'simple downloader', ClientGUIPagesCore.PAGE_TYPE_IMPORT_SIMPLE_DOWNLOADER )
+    page.SetVariable( 'simple_downloader_import', simple_downloader_import( i ) )
+
+    return page
+
+
 def page_manager_facts( page ):
 
     facts = { 'name' : page.GetPageName(), 'type' : page.GetType() }
@@ -408,6 +458,7 @@ def page_manager_facts( page ):
         'multiple_gallery_import' : multiple_gallery_import_facts,
         'multiple_watcher_import' : multiple_watcher_import_facts,
         'hdd_import' : hdd_import_facts,
+        'simple_downloader_import' : simple_downloader_import_facts,
     }
 
     variables = {}
@@ -560,6 +611,8 @@ def main():
     fixture[ 'hdd_imports' ] = cases( hdd_import, hdd_import_facts, 8 )
     fixture[ 'hdd_import_pages' ] = cases( hdd_import_page, page_manager_facts, 3 )
     fixture[ 'hdd_import_sessions' ] = [ session( i, make_page = hdd_import_page ) for i in range( 3 ) ]
+    fixture[ 'simple_downloader_imports' ] = cases( simple_downloader_import, simple_downloader_import_facts, 6 )
+    fixture[ 'simple_downloader_pages' ] = cases( simple_downloader_page, page_manager_facts, 3 )
 
     json.dump( fixture, sys.stdout, indent = 1, sort_keys = True, ensure_ascii = False )
     sys.stdout.write( '\n' )

@@ -1968,6 +1968,22 @@ impl SessionContext<'_> {
                     gallery_seeds: Vec::new(),
                 }]
             }
+            PageContent::SimpleDownloader(d) => vec![super::PageQueueInput {
+                options: d.import_options,
+                files_paused: d.files_paused,
+                gallery_paused: d.gallery_paused,
+                created: None,
+                state: super::PageQueueState::SimpleDownloader(crate::queues::SimpleDownloader {
+                    formula_name: d.formula_name,
+                    pending: d
+                        .pending
+                        .into_iter()
+                        .map(|(url, formula)| crate::queues::SimpleJob { url, formula })
+                        .collect(),
+                }),
+                file_seeds: d.file_seeds,
+                gallery_seeds: d.gallery_seeds,
+            }],
             PageContent::Duplicates(d) => {
                 let content = match duplicates_page(&d, self.scales) {
                     Ok(duplicates) => super::PageInputContent::Duplicates { duplicates, sort },
@@ -1987,19 +2003,6 @@ impl SessionContext<'_> {
                 });
             }
             PageContent::Other => {
-                use hydrus_legacy::objects::gui_sessions::page_type;
-                let what = match page.page_type {
-                    page_type::SIMPLE_DOWNLOADER => Some("a simple downloader page"),
-                    _ => None,
-                };
-                if let Some(what) = what {
-                    self.input.warnings.push(format!(
-                        "Page \"{}\" of session \"{name}\" is {what}, which hydrus-rs doesn't \
-                         run yet, so its unfinished work was not carried over (the original is \
-                         kept)",
-                        page.name
-                    ));
-                }
                 return Some(super::PageInput {
                     name: page.name,
                     content: kept(sort),
@@ -2019,6 +2022,9 @@ impl SessionContext<'_> {
             hydrus_legacy::objects::gui_sessions::page_type::GALLERY => DownloaderKind::Gallery,
             hydrus_legacy::objects::gui_sessions::page_type::IMPORT_FROM_DISK => {
                 DownloaderKind::Local
+            }
+            hydrus_legacy::objects::gui_sessions::page_type::SIMPLE_DOWNLOADER => {
+                DownloaderKind::Simple
             }
             _ => DownloaderKind::Watchers,
         };
@@ -2602,6 +2608,21 @@ mod tests {
             highlighted_any |= highlighted.is_some();
         }
         assert!(highlighted_any);
+    }
+
+    #[test]
+    fn a_clients_simple_downloader_formulae_come_across() {
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+        let decoded: crate::settings::SimpleDownloaderFormulae =
+            serde_json::from_value(input.settings["simple_downloader_formulae"].clone()).unwrap();
+        // (a new client's: the reference's two defaults, in its stored order)
+        let mut decoded = decoded;
+        decoded.formulae.sort_by(|a, b| a.name.cmp(&b.name));
+        assert_eq!(
+            decoded,
+            crate::settings::SimpleDownloaderFormulae::default()
+        );
     }
 
     #[test]
