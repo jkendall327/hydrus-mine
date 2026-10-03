@@ -17,7 +17,9 @@
 pub(crate) mod cv;
 pub(crate) mod cvx;
 pub(crate) mod decode;
+pub(crate) mod embedded;
 pub(crate) mod exif;
+mod exif_tags;
 pub(crate) mod icc;
 pub(crate) mod metadata;
 pub(crate) mod pil;

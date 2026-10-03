@@ -1,0 +1,2998 @@
+{
+ "media/apng_3frames.png": {
+  "mime": "apng",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/apng_late_actl.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "Comment:\n    xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  "extra": []
+ },
+ "media/apng_odd_delays.png": {
+  "mime": "apng",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/apng_rgba.png": {
+  "mime": "apng",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/apng_single_frame.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/avif_alpha.avif": {
+  "mime": "avif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/avif_sequence.avifs": {
+  "mime": "avif sequence",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/avif_still.avif": {
+  "mime": "avif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/bmp_1bit.bmp": {
+  "mime": "bitmap",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "96.01194815354799"
+   ],
+   [
+    "compression",
+    "0"
+   ]
+  ]
+ },
+ "media/bmp_24.bmp": {
+  "mime": "bitmap",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "96.01194815354799"
+   ],
+   [
+    "compression",
+    "0"
+   ]
+  ]
+ },
+ "media/bmp_32_rgba.bmp": {
+  "mime": "bitmap",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "96.01194815354799"
+   ],
+   [
+    "compression",
+    "0"
+   ]
+  ]
+ },
+ "media/bmp_8bit.bmp": {
+  "mime": "bitmap",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "96.01194815354799"
+   ],
+   [
+    "compression",
+    "0"
+   ]
+  ]
+ },
+ "media/bmp_gray.bmp": {
+  "mime": "bitmap",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "96.01194815354799"
+   ],
+   [
+    "compression",
+    "0"
+   ]
+  ]
+ },
+ "media/gif_anim.gif": {
+  "mime": "animated gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_anim_noduration.gif": {
+  "mime": "animated gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_anim_transparent.gif": {
+  "mime": "animated gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_grey.gif": {
+  "mime": "static gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_small_frame.gif": {
+  "mime": "static gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_static.gif": {
+  "mime": "static gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/gif_static_transparent.gif": {
+  "mime": "static gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/heic_alpha.heic": {
+  "mime": "heic",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "nclx_profile:\n    color_primaries:\n        1\n    color_primary_blue_x:\n        0.15000000596046448\n    color_primary_blue_y:\n        0.05999999865889549\n    color_primary_green_x:\n        0.30000001192092896\n    color_primary_green_y:\n        0.6000000238418579\n    color_primary_red_x:\n        0.6399999856948853\n    color_primary_red_y:\n        0.33000001311302185\n    color_primary_white_x:\n        0.3127000033855438\n    color_primary_white_y:\n        0.32899999618530273\n    full_range_flag:\n        1\n    matrix_coefficients:\n        6\n    transfer_characteristics:\n        13",
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ]
+  ]
+ },
+ "media/heic_still.heic": {
+  "mime": "heic",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "nclx_profile:\n    color_primaries:\n        1\n    color_primary_blue_x:\n        0.15000000596046448\n    color_primary_blue_y:\n        0.05999999865889549\n    color_primary_green_x:\n        0.30000001192092896\n    color_primary_green_y:\n        0.6000000238418579\n    color_primary_red_x:\n        0.6399999856948853\n    color_primary_red_y:\n        0.33000001311302185\n    color_primary_white_x:\n        0.3127000033855438\n    color_primary_white_y:\n        0.32899999618530273\n    full_range_flag:\n        1\n    matrix_coefficients:\n        6\n    transfer_characteristics:\n        13",
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ]
+  ]
+ },
+ "media/ico_bmp.ico": {
+  "mime": "icon",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/ico_png.ico": {
+  "mime": "icon",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/jpeg_1x1.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_420.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_422.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:2"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_444_q95.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:4:4"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_cmyk.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "unknown"
+   ],
+   [
+    "progressive",
+    "no"
+   ]
+  ]
+ },
+ "media/jpeg_comment.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_exif_software.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "271",
+    "Make",
+    "Camera Maker"
+   ],
+   [
+    "305",
+    "Software",
+    "Oracle Paint 1.0"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_flat.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_gray.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "greyscale (no subsampling)"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_icc_p3.jpg": {
+  "mime": "jpeg",
+  "has_icc": true,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "colour",
+    "icc profile"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_icc_srgb.jpg": {
+  "mime": "jpeg",
+  "has_icc": true,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "colour",
+    "icc profile"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_large.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_mirror.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient2.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "2"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient3.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "3"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient4.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "4"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient5.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "5"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient6.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "6"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient7.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "7"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_orient8.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "8"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_progressive.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "yes"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_tall.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_tiny.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jpeg_wide.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "media/jxl_still.jxl": {
+  "mime": "jxl",
+  "has_icc": true,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "colour",
+    "icc profile"
+   ]
+  ]
+ },
+ "media/png_1bit.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_1x1.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_chrm_rgba.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_exif.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "6"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_flat.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_gama_chrm.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "colour",
+    "gamma + chromaticity"
+   ]
+  ]
+ },
+ "media/png_gray16.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_icc_p3.png": {
+  "mime": "png",
+  "has_icc": true,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "colour",
+    "icc profile"
+   ]
+  ]
+ },
+ "media/png_interlaced.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_l.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_la.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_late_text.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "Description:\n    late text chunk",
+  "extra": []
+ },
+ "media/png_p.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_p_trns.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgb.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgb16.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgba.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgba16.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgba_clear.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgba_nearly_opaque.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_rgba_opaque.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_software.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "Oracle Paint 1.0"
+   ]
+  ]
+ },
+ "media/png_srgb_chunk.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "colour",
+    "sRGB"
+   ]
+  ]
+ },
+ "media/png_tall.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_text.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "Comment:\n    a human readable comment\nTitle:\n    Oracle",
+  "extra": []
+ },
+ "media/png_wide.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/png_ztxt.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "parameters:\n    masterpiece, best quality\n    Steps: 20, Sampler: Euler a",
+  "extra": []
+ },
+ "media/tiff_gray_deflate.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "100"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "80"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "8"
+   ],
+   [
+    "259",
+    "Compression",
+    "8"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "1"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "8"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "80"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "7693"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "tiff_adobe_deflate"
+   ]
+  ]
+ },
+ "media/tiff_lzw_rgba.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "120"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "90"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "5"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "8"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "4"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "90"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "52195"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "338",
+    "ExtraSamples",
+    "2"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "tiff_lzw"
+   ]
+  ]
+ },
+ "media/tiff_orient6.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "90"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "60"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "152"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "60"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "16200"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "media/tiff_palette.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "80"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "60"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "8"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "3"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "1670"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "60"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "4800"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "320",
+    "ColorMap",
+    "(44288, 44032, 26624, 24064, 41728, 29696, 17664, 9472, 48896, 36864, 29440, 11776, 46336, 45824, 27136, 31232, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 54272, 44288, 49152, 41984, 36864, 37120, 37120, 36352, 27648, 28928, 28416, 29440, 22016, 14080, 22016, 13056, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 34304, 33536, 32256, 39680, 30720, 37632, 44288, 46080, 29952, 27904, 36352, 36096, 27648, 28672, 28928, 29440, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "media/tiff_raw.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "160"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "120"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "140"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "120"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "57600"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "media/webp_alpha.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_alpha_lossless.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_anim.webp": {
+  "mime": "animated webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_anim_alpha.webp": {
+  "mime": "animated webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_exif_orient6.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "6"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_lossless.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "media/webp_lossy.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/embedded_exif_dpcm.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "282",
+    "XResolution",
+    "118.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "118.0"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "3"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "299.72"
+   ]
+  ]
+ },
+ "metadata/embedded_exif_multi.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "3"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "2"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/embedded_exif_no_unit.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "282",
+    "XResolution",
+    "200.0"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "72"
+   ]
+  ]
+ },
+ "metadata/embedded_exif_rich.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "0",
+    "GPSVersionID",
+    "4B: 02020000"
+   ],
+   [
+    "1",
+    "InteropIndex",
+    "N"
+   ],
+   [
+    "2",
+    "GPSLatitude",
+    "(51.0, 30.0, 12.34)"
+   ],
+   [
+    "6",
+    "GPSAltitude",
+    "7.5"
+   ],
+   [
+    "271",
+    "Make",
+    "Camera[null]Maker[null]"
+   ],
+   [
+    "272",
+    "Model",
+    "Model 9"
+   ],
+   [
+    "274",
+    "Orientation",
+    "1"
+   ],
+   [
+    "282",
+    "XResolution",
+    "300.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "300.0"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "2"
+   ],
+   [
+    "305",
+    "Software",
+    "Editor 2.0"
+   ],
+   [
+    "33434",
+    "ExposureTime",
+    "0.004"
+   ],
+   [
+    "33437",
+    "FNumber",
+    "2.8"
+   ],
+   [
+    "34665",
+    "ExifOffset",
+    "172"
+   ],
+   [
+    "36867",
+    "DateTimeOriginal",
+    "2023:11:14 22:13:20"
+   ],
+   [
+    "37380",
+    "ExposureBiasValue",
+    "-0.3333333333333333"
+   ],
+   [
+    "37510",
+    "UserComment",
+    "17B: 41534349490000006120636f6d6d656e74"
+   ],
+   [
+    "41989",
+    "FocalLengthIn35mmFilm",
+    "35"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "300.0"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/embedded_exif_rich.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": [
+   [
+    "0",
+    "GPSVersionID",
+    "4B: 02020000"
+   ],
+   [
+    "1",
+    "InteropIndex",
+    "N"
+   ],
+   [
+    "2",
+    "GPSLatitude",
+    "(51.0, 30.0, 12.34)"
+   ],
+   [
+    "6",
+    "GPSAltitude",
+    "7.5"
+   ],
+   [
+    "271",
+    "Make",
+    "Camera[null]Maker[null]"
+   ],
+   [
+    "272",
+    "Model",
+    "Model 9"
+   ],
+   [
+    "274",
+    "Orientation",
+    "1"
+   ],
+   [
+    "282",
+    "XResolution",
+    "300.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "300.0"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "2"
+   ],
+   [
+    "305",
+    "Software",
+    "Editor 2.0"
+   ],
+   [
+    "33434",
+    "ExposureTime",
+    "0.004"
+   ],
+   [
+    "33437",
+    "FNumber",
+    "2.8"
+   ],
+   [
+    "34665",
+    "ExifOffset",
+    "172"
+   ],
+   [
+    "36867",
+    "DateTimeOriginal",
+    "2023:11:14 22:13:20"
+   ],
+   [
+    "37380",
+    "ExposureBiasValue",
+    "-0.3333333333333333"
+   ],
+   [
+    "37510",
+    "UserComment",
+    "17B: 41534349490000006120636f6d6d656e74"
+   ],
+   [
+    "41989",
+    "FocalLengthIn35mmFilm",
+    "35"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/embedded_exif_rich.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": [
+   [
+    "0",
+    "GPSVersionID",
+    "4B: 02020000"
+   ],
+   [
+    "1",
+    "InteropIndex",
+    "N"
+   ],
+   [
+    "2",
+    "GPSLatitude",
+    "(51.0, 30.0, 12.34)"
+   ],
+   [
+    "6",
+    "GPSAltitude",
+    "7.5"
+   ],
+   [
+    "271",
+    "Make",
+    "Camera[null]Maker[null]"
+   ],
+   [
+    "272",
+    "Model",
+    "Model 9"
+   ],
+   [
+    "274",
+    "Orientation",
+    "1"
+   ],
+   [
+    "282",
+    "XResolution",
+    "300.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "300.0"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "2"
+   ],
+   [
+    "305",
+    "Software",
+    "Editor 2.0"
+   ],
+   [
+    "33434",
+    "ExposureTime",
+    "0.004"
+   ],
+   [
+    "33437",
+    "FNumber",
+    "2.8"
+   ],
+   [
+    "34665",
+    "ExifOffset",
+    "172"
+   ],
+   [
+    "36867",
+    "DateTimeOriginal",
+    "2023:11:14 22:13:20"
+   ],
+   [
+    "37380",
+    "ExposureBiasValue",
+    "-0.3333333333333333"
+   ],
+   [
+    "37510",
+    "UserComment",
+    "17B: 41534349490000006120636f6d6d656e74"
+   ],
+   [
+    "41989",
+    "FocalLengthIn35mmFilm",
+    "35"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/embedded_jfif_aspect.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01, (3, 2) DPI, unitless DPI"
+   ]
+  ]
+ },
+ "metadata/embedded_jfif_cm.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "101.6"
+   ],
+   [
+    "jfif",
+    "v1.01, dots per centimetre"
+   ]
+  ]
+ },
+ "metadata/embedded_jfif_dpcm.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "dpi",
+    "100"
+   ],
+   [
+    "jfif",
+    "v1.01, dots per inch"
+   ]
+  ]
+ },
+ "metadata/embedded_png_dpi.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "(96.012, 119.9896)"
+   ]
+  ]
+ },
+ "metadata/embedded_progressive.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:4:4"
+   ],
+   [
+    "progressive",
+    "yes"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/embedded_tiff_cm.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "24"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "16"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "192"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "16"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "1152"
+   ],
+   [
+    "282",
+    "XResolution",
+    "72.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "96.0"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "3"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "(182.88, 243.84)"
+   ],
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "metadata/embedded_tiff_lzw_orient.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "24"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "16"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "5"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "8"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "16"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "95"
+   ],
+   [
+    "282",
+    "XResolution",
+    "72.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "96.0"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "2"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "dpi",
+    "(72.0, 96.0)"
+   ],
+   [
+    "compression",
+    "tiff_lzw"
+   ]
+  ]
+ },
+ "metadata/embedded_tiff_nounit.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "24"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "16"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "192"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "16"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "1152"
+   ],
+   [
+    "282",
+    "XResolution",
+    "72.0"
+   ],
+   [
+    "283",
+    "YResolution",
+    "96.0"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "296",
+    "ResolutionUnit",
+    "1"
+   ]
+  ],
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ],
+   [
+    "TIFF DPI",
+    "(72.0, 96.0)"
+   ]
+  ]
+ },
+ "metadata/embedded_xmp_orientation.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": [
+   [
+    "274",
+    "Orientation",
+    "3"
+   ]
+  ],
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                tiff:Orientation:\n                    3\n                xmlns:tiff:\n                    http://ns.adobe.com/tiff/1.0/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/gif_comment_created_with.gif": {
+  "mime": "static gif",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/jpeg_comment_created_with.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_after_unwanted.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": "By-line:\n    by someone",
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_blank.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_caption.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": "Caption/Abstract:\n    ümlaut caption",
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_empty_field.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": "Object Name:\n    unknown IPTC value type: None",
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_invalid.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_keywords.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": "Keywords:\n    ['blue eyes', 'metroid']",
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_long.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_truncated.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": "Headline:\n    headline",
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_iptc_version_only.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_photoshop_no_iptc.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_xmp.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_xmp_empty.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    empty/unknown",
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_xmp_not_utf8.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/jpeg_xmp_padded.jpg": {
+  "mime": "jpeg",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "subsampling",
+    "4:2:0"
+   ],
+   [
+    "progressive",
+    "no"
+   ],
+   [
+    "jfif",
+    "v1.01"
+   ]
+  ]
+ },
+ "metadata/png_comment_created_with.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "GIMP"
+   ]
+  ]
+ },
+ "metadata/png_comment_plain.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": "Comment:\n    a nice picture",
+  "extra": []
+ },
+ "metadata/png_creator.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "some program"
+   ]
+  ]
+ },
+ "metadata/png_lowercase_comment.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "something"
+   ]
+  ]
+ },
+ "metadata/png_software_itxt.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "prögram"
+   ]
+  ]
+ },
+ "metadata/png_software_late.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "software/source",
+    "late program"
+   ]
+  ]
+ },
+ "metadata/png_source_blank.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/png_xmp.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/png_xmp_as_text.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/png_xmp_compressed.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/png_xmp_late.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/png_xmp_not_utf8.png": {
+  "mime": "png",
+  "has_icc": false,
+  "exif": null,
+  "xmp": null,
+  "iptc": null,
+  "text": null,
+  "extra": []
+ },
+ "metadata/tiff_iptc.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "48"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "32"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "186"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "32"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "4608"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "33723",
+    "IPTCNAA",
+    "33B: 1c0200000200041c02190009626c756520657965731c021900076d6574726f6964"
+   ]
+  ],
+  "xmp": null,
+  "iptc": "Keywords:\n    ['blue eyes', 'metroid']",
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "metadata/tiff_xmp.tiff": {
+  "mime": "tiff",
+  "has_icc": false,
+  "exif": [
+   [
+    "256",
+    "ImageWidth",
+    "48"
+   ],
+   [
+    "257",
+    "ImageLength",
+    "32"
+   ],
+   [
+    "258",
+    "BitsPerSample",
+    "(8, 8, 8)"
+   ],
+   [
+    "259",
+    "Compression",
+    "1"
+   ],
+   [
+    "262",
+    "PhotometricInterpretation",
+    "2"
+   ],
+   [
+    "273",
+    "StripOffsets",
+    "472"
+   ],
+   [
+    "277",
+    "SamplesPerPixel",
+    "3"
+   ],
+   [
+    "278",
+    "RowsPerStrip",
+    "32"
+   ],
+   [
+    "279",
+    "StripByteCounts",
+    "4608"
+   ],
+   [
+    "284",
+    "PlanarConfiguration",
+    "1"
+   ],
+   [
+    "700",
+    "XMLPacket",
+    "319B: 3c3f787061636b657420626567696e3d22efbbbf222069643d2257354d304d7043656869487a7265537a4e54637a6b633964223f3e3c783a786d706d65746120786d6c6e733a783d2261646f62653a6e733a6d6574612f223e3c7264663a52444620786d6c6e733a7264663d22687474703a2f2f7777772e77332e6f72672f313939392f30322f32322d7264662d73796e7461782d6e7323223e3c7264663a4465736372697074696f6e207264663a61626f75743d222220786d6c6e733a64633d22687474703a2f2f7075726c2e6f72672f64632f656c656d656e74732f312e312f223e3c64633a63726561746f723e736f6d656f6e653c2f64633a63726561746f723e3c2f7264663a4465736372697074696f6e3e3c2f7264663a5244463e3c2f783a786d706d6574613e3c3f787061636b657420656e643d2277223f3e"
+   ]
+  ],
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": [
+   [
+    "compression",
+    "raw"
+   ]
+  ]
+ },
+ "metadata/webp_xmp.webp": {
+  "mime": "webp",
+  "has_icc": false,
+  "exif": null,
+  "xmp": "[document]:\n    xmpmeta:\n        RDF:\n            Description:\n                creator:\n                    text:\n                        someone\n                xmlns:dc:\n                    http://purl.org/dc/elements/1.1/\n            xmlns:rdf:\n                http://www.w3.org/1999/02/22-rdf-syntax-ns#\n        xmlns:x:\n            adobe:ns:meta/",
+  "iptc": null,
+  "text": null,
+  "extra": []
+ }
+}

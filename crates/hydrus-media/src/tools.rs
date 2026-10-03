@@ -829,7 +829,7 @@ fn cover_bytes(path: &Path, mime: Mime) -> Option<Vec<u8>> {
 /// A ugoira frame's duration when nothing says (`UGOIRA_DEFAULT_FRAME_DURATION_MS`).
 pub const UGOIRA_DEFAULT_FRAME_DURATION_MS: u32 = 125;
 
-const NOT_HUMAN_READABLE: &[&str] = &[
+pub(crate) const NOT_HUMAN_READABLE: &[&str] = &[
     "exif",
     "Raw profile type exif",
     "icc_profile",

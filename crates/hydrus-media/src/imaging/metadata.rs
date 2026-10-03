@@ -121,11 +121,111 @@ const SHOWN: &[(u8, u8)] = &[
     (2, 202),
 ];
 
+/// What `GetIPTCDict` calls each record it shows
+/// (`iptc_tuple_int_enums_to_strs_lookup`).
+const LABELS: &[((u8, u8), &str)] = &[
+    ((1, 70), "Date Sent"),
+    ((1, 80), "Time Sent"),
+    ((1, 100), "UNO"),
+    ((2, 3), "Object Type Reference"),
+    ((2, 4), "Object Attribute Reference"),
+    ((2, 5), "Object Name"),
+    ((2, 7), "Edit Status"),
+    ((2, 8), "Editorial Update"),
+    ((2, 10), "Urgency"),
+    ((2, 12), "Subject Reference"),
+    ((2, 15), "Category"),
+    ((2, 20), "Supplemental Category"),
+    ((2, 22), "Fixture Identifier"),
+    ((2, 25), "Keywords"),
+    ((2, 26), "Content Location Code"),
+    ((2, 27), "Content Location Name"),
+    ((2, 30), "Release Date"),
+    ((2, 35), "Release Time"),
+    ((2, 37), "Expiration Date"),
+    ((2, 38), "Expiration Time"),
+    ((2, 40), "Special Instructions"),
+    ((2, 42), "Action Advised"),
+    ((2, 45), "Reference Service"),
+    ((2, 47), "Reference Date"),
+    ((2, 50), "Reference Number"),
+    ((2, 55), "Date Created"),
+    ((2, 60), "Time Created"),
+    ((2, 62), "Digital Creation Date"),
+    ((2, 63), "Digital Creation Time"),
+    ((2, 65), "Originating Program"),
+    ((2, 70), "Program Version"),
+    ((2, 75), "Object Cycle"),
+    ((2, 80), "By-line"),
+    ((2, 85), "By-line Title"),
+    ((2, 90), "City"),
+    ((2, 92), "Sub-location"),
+    ((2, 95), "Province/State"),
+    ((2, 100), "Country/Primary Location Code"),
+    ((2, 101), "Country/Primary Location Name"),
+    ((2, 103), "Original Transmission Reference"),
+    ((2, 105), "Headline"),
+    ((2, 110), "Credit"),
+    ((2, 115), "Source"),
+    ((2, 116), "Copyright Notice"),
+    ((2, 118), "Contact"),
+    ((2, 120), "Caption/Abstract"),
+    ((2, 122), "Writer/Editor"),
+    ((2, 125), "Rasterized Caption"),
+    ((2, 130), "Image Type"),
+    ((2, 131), "Image Orientation"),
+    ((2, 135), "Language Identifier"),
+    ((2, 150), "Audio Type"),
+    ((2, 151), "Audio Sampling Rate"),
+    ((2, 152), "Audio Sampling Resolution"),
+    ((2, 153), "Audio Duration"),
+    ((2, 154), "Audio Outcue"),
+    ((2, 200), "ObjectData Preview File Format"),
+    ((2, 201), "ObjectData Preview File Format Version"),
+    ((2, 202), "ObjectData Preview Data"),
+];
+
+/// `GetIPTCDict`: each shown record's label and value (repeated ones as a
+/// Python list of their texts), blank ones left out; `None` if none is
+/// left, or the block is malformed.
+pub(crate) fn iptc_rows(data: &[u8]) -> Option<Vec<(String, String)>> {
+    let text = |b: Option<&[u8]>| match b {
+        Some(b) => String::from_utf8_lossy(b).into_owned(),
+        None => "weird encoding: None".to_owned(),
+    };
+    let mut out: Vec<(String, String)> = Vec::new();
+    for (tag, values) in iptc_datasets(data)? {
+        let Some((_, label)) = LABELS.iter().find(|(t, _)| *t == tag) else {
+            continue;
+        };
+        let value = match values {
+            Values::One(Some(b)) => text(Some(b)),
+            Values::One(None) => "unknown IPTC value type: None".to_owned(),
+            Values::Many(items) => {
+                let items: Vec<String> = items
+                    .into_iter()
+                    .map(|b| super::exif::py_str_repr(&text(b)))
+                    .collect();
+                format!("[{}]", items.join(", "))
+            }
+        };
+        let value = py_strip(&value).to_owned();
+        if value.is_empty() {
+            continue;
+        }
+        match out.iter_mut().find(|(l, _)| l == label) {
+            Some((_, v)) => *v = value,
+            None => out.push(((*label).to_owned(), value)),
+        }
+    }
+    (!out.is_empty()).then_some(out)
+}
+
 /// One IPTC dataset's value(s), as `IptcImageFile` keeps them: a field
 /// of size 0 is `None`, and a repeated dataset becomes a list.
 enum Values<'a> {
     One(Option<&'a [u8]>),
-    Many,
+    Many(Vec<Option<&'a [u8]>>),
 }
 
 /// `IptcImagePlugin.getiptcinfo`'s parse of an IPTC block: the datasets
@@ -181,7 +281,13 @@ fn iptc_datasets(data: &[u8]) -> Option<Vec<((u8, u8), Values<'_>)>> {
             None
         };
         match fields.iter_mut().find(|(t, _)| *t == tag) {
-            Some((_, v)) => *v = Values::Many,
+            Some((_, Values::Many(items))) => items.push(value),
+            Some((_, v)) => {
+                let Values::One(first) = *v else {
+                    unreachable!("matched above")
+                };
+                *v = Values::Many(vec![first, value]);
+            }
             None => fields.push((tag, Values::One(value))),
         }
     }
@@ -207,7 +313,7 @@ pub(crate) fn has_shown_iptc(data: &[u8]) -> bool {
             && match values {
                 // ("unknown IPTC value type: None", and a list's repr, are
                 // never blank)
-                Values::One(None) | Values::Many => true,
+                Values::One(None) | Values::Many(_) => true,
                 Values::One(Some(bytes)) => !py_strip(&String::from_utf8_lossy(bytes)).is_empty(),
             }
     })

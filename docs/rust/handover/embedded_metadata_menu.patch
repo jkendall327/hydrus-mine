@@ -1,0 +1,174 @@
+diff --git a/crates/hydrus-gui/src/lib.rs b/crates/hydrus-gui/src/lib.rs
+index 96e2933..45c3435 100644
+--- a/crates/hydrus-gui/src/lib.rs
++++ b/crates/hydrus-gui/src/lib.rs
+@@ -3059,6 +3059,11 @@ fn thumbnail_menu_rows(
+         },
+         info_title: info.title.as_str().into(),
+         info_is_menu: info.is_menu,
++        info_metadata: if info.metadata {
++            id(Action::EmbeddedMetadata, thumbnail_menu::EMBEDDED_METADATA)
++        } else {
++            -1
++        },
+         info_before: labels(&info.before),
+         info_sub_title: info_sub_title.into(),
+         info_sub: labels(&info_sub),
+diff --git a/crates/hydrus-gui/src/thumbnail_menu.rs b/crates/hydrus-gui/src/thumbnail_menu.rs
+index 8a5bc13..4a8b6c1 100644
+--- a/crates/hydrus-gui/src/thumbnail_menu.rs
++++ b/crates/hydrus-gui/src/thumbnail_menu.rs
+@@ -67,6 +67,8 @@ pub enum Action {
+     ManageTimes,
+     /// Force the selected files' filetype (the file shown's).
+     ForceFiletype,
++    /// The focused file's embedded metadata window.
++    EmbeddedMetadata,
+     /// The selected files' URLs (the focused file's, in the viewer).
+     ManageUrls,
+     OpenInNewPage,
+@@ -419,6 +421,9 @@ fn separate(entries: &mut Vec<Entry>) {
+ /// `focused` file's info lines when one is selected, and how often they
+ /// were viewed; or, with nothing in it, a label. `None` with nothing
+ /// selected.
++/// The info menu's entry for the embedded metadata window.
++pub const EMBEDDED_METADATA: &str = "show detailed embedded file metadata";
++
+ pub fn info_menu(
+     store: &Store,
+     focused: Option<HashId>,
+@@ -455,8 +460,11 @@ pub fn info_menu(
+             label += &format!(", {duration}");
+         }
+     } else if let Some(file) = focused {
+-        // (the reference's "show detailed embedded file metadata" comes
+-        // first, which hydrus-rs doesn't have yet)
++        entries.push(Entry::Item(
++            EMBEDDED_METADATA.into(),
++            Action::EmbeddedMetadata,
++        ));
++        entries.push(Entry::Separator);
+         if let Ok(mut batch) =
+             store.read(|c| hydrus_store::media::load(c, &snapshot.services, None, &[file]))
+             && let Some(media) = batch.results.pop()
+@@ -1466,6 +1474,8 @@ fn items(entries: &[Entry]) -> Vec<SlotItem> {
+ pub struct InfoSlots {
+     pub title: String,
+     pub is_menu: bool,
++    /// Whether it starts with the embedded metadata window's entry.
++    pub metadata: bool,
+     pub before: Vec<String>,
+     pub sub: Option<(String, Vec<String>)>,
+     pub after: Vec<String>,
+@@ -1500,6 +1510,11 @@ impl InfoSlots {
+             ..Self::default()
+         };
+         let mut past_separator = false;
++        let mut inner = inner;
++        if let [Entry::Item(_, Action::EmbeddedMetadata), rest @ ..] = inner {
++            info.metadata = true;
++            inner = rest.strip_prefix(&[Entry::Separator]).unwrap_or(rest);
++        }
+         for e in inner {
+             match (e, past_separator) {
+                 (Entry::Separator, _) => past_separator = true,
+@@ -1524,7 +1539,15 @@ impl InfoSlots {
+         let menu = |(title, lines): &(String, Vec<String>)| {
+             Entry::Menu(title.clone(), lines.iter().map(label).collect())
+         };
+-        let mut inner: Vec<Entry> = self.before.iter().map(label).collect();
++        let mut inner: Vec<Entry> = Vec::new();
++        if self.metadata {
++            inner.push(Entry::Item(
++                EMBEDDED_METADATA.into(),
++                Action::EmbeddedMetadata,
++            ));
++            inner.push(Entry::Separator);
++        }
++        inner.extend(self.before.iter().map(label));
+         inner.extend(self.sub.iter().map(menu));
+         inner.extend(self.after.iter().map(label));
+         separate(&mut inner);
+diff --git a/crates/hydrus-gui/tests/gui/thumbnail_menu.rs b/crates/hydrus-gui/tests/gui/thumbnail_menu.rs
+index 16d7220..0d96468 100644
+--- a/crates/hydrus-gui/tests/gui/thumbnail_menu.rs
++++ b/crates/hydrus-gui/tests/gui/thumbnail_menu.rs
+@@ -95,13 +95,7 @@ fn the_menu_is_the_reference_s() {
+             let mut theirs = pruned(&theirs);
+             if let Some(mut info) = info {
+                 if let Some(entries) = info.get_mut("entries") {
+-                    let kept: Vec<Value> = entries
+-                        .as_array()
+-                        .unwrap()
+-                        .iter()
+-                        .filter(|e| *e != "show detailed embedded file metadata")
+-                        .cloned()
+-                        .collect();
++                    let kept: Vec<Value> = entries.as_array().unwrap().iter().cloned().collect();
+                     *entries = Value::Array(tidy(kept));
+                 }
+                 theirs.insert(0, info);
+diff --git a/crates/hydrus-gui/tests/gui/viewer_menu.rs b/crates/hydrus-gui/tests/gui/viewer_menu.rs
+index 0fe125e..e7c85de 100644
+--- a/crates/hydrus-gui/tests/gui/viewer_menu.rs
++++ b/crates/hydrus-gui/tests/gui/viewer_menu.rs
+@@ -74,13 +74,7 @@ fn the_viewer_s_menu_is_the_reference_s() {
+             let mut info = theirs.remove(0);
+             let mut theirs = pruned(&theirs);
+             if let Some(entries) = info.get_mut("entries") {
+-                let kept: Vec<Value> = entries
+-                    .as_array()
+-                    .unwrap()
+-                    .iter()
+-                    .filter(|e| *e != "show detailed embedded file metadata")
+-                    .cloned()
+-                    .collect();
++                let kept: Vec<Value> = entries.as_array().unwrap().iter().cloned().collect();
+                 *entries = Value::Array(tidy(kept));
+             }
+             theirs.insert(0, info);
+diff --git a/crates/hydrus-gui/ui/main.slint b/crates/hydrus-gui/ui/main.slint
+index 698664c..28ad422 100644
+--- a/crates/hydrus-gui/ui/main.slint
++++ b/crates/hydrus-gui/ui/main.slint
+@@ -1383,6 +1383,11 @@ export component MainWindow inherits Window {
+                     Menu {
+                         if root.thumbnail-menu.info-is-menu: Menu {
+                             title: root.thumbnail-menu.info-title;
++                            if root.thumbnail-menu.info-metadata >= 0: MenuItem {
++                                title: "show detailed embedded file metadata";
++                                activated => { root.menu-chosen(root.thumbnail-menu.info-metadata); }
++                            }
++                            if root.thumbnail-menu.info-metadata >= 0: MenuSeparator { }
+                             for row in root.thumbnail-menu.info-before: MenuItem {
+                                 title: row.label;
+                                 activated => { root.menu-chosen(row.id); }
+diff --git a/crates/hydrus-gui/ui/menus.slint b/crates/hydrus-gui/ui/menus.slint
+index 1834604..6a52e68 100644
+--- a/crates/hydrus-gui/ui/menus.slint
++++ b/crates/hydrus-gui/ui/menus.slint
+@@ -51,6 +51,8 @@ export struct ThumbnailMenu {
+     // the urls menu: manage, then, if there are URLs to offer, open in
+     // browser, open in a new page, and copy
+     has-urls: bool,
++    // the info menu's "show detailed embedded file metadata" (-1 for none)
++    info-metadata: int,
+     urls-manage: int,
+     has-url-lists: bool,
+     urls-visit: MenuGroups,
+diff --git a/crates/hydrus-gui/ui/viewer.slint b/crates/hydrus-gui/ui/viewer.slint
+index d23d470..be0f2dd 100644
+--- a/crates/hydrus-gui/ui/viewer.slint
++++ b/crates/hydrus-gui/ui/viewer.slint
+@@ -368,6 +368,11 @@ export component MediaViewerWindow inherits Window {
+             Menu {
+                 if root.context-menu.info-is-menu: Menu {
+                     title: root.context-menu.info-title;
++                    if root.context-menu.info-metadata >= 0: MenuItem {
++                        title: "show detailed embedded file metadata";
++                        activated => { root.menu-chosen(root.context-menu.info-metadata); }
++                    }
++                    if root.context-menu.info-metadata >= 0: MenuSeparator { }
+                     for row in root.context-menu.info-before: MenuItem {
+                         title: row.label;
+                         activated => { root.menu-chosen(row.id); }
