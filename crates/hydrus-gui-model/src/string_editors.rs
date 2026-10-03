@@ -1197,3 +1197,62 @@ impl ConversionEditor {
         )
     }
 }
+
+/// A tag filter step's explanation, over its filter button.
+pub const TAG_FILTER_MESSAGE: &str = "This works the same as any tag filter elsewhere in the program. Note that it converts your texts to valid hydrus tags, so everything is coming out lowercase with trimmed whitespace, and invalid tags will never pass.";
+
+/// `StringTagFilter.Test`: why `text` doesn't pass ("\"x\" was not a valid
+/// tag!", "\"x\" did not pass the tag filter!").
+pub fn tag_filter_test(
+    filter: &hydrus_core::tag_filter::TagFilter,
+    text: &str,
+) -> Result<(), String> {
+    let Some(tag) = hydrus_core::tag::clean_tag_checked(text) else {
+        return Err(format!("\"{text}\" was not a valid tag!"));
+    };
+    if filter.tag_ok(&tag, true) {
+        Ok(())
+    } else {
+        Err(format!("\"{text}\" did not pass the tag filter!"))
+    }
+}
+
+/// A tag filter step's editor (`EditStringTagFilterPanel`): the filter,
+/// and an example (the first test string, if any) and whether it passes.
+#[derive(Debug, Clone, PartialEq)]
+pub struct TagFilterStepEditor {
+    pub filter: hydrus_core::tag_filter::TagFilter,
+    pub example: String,
+}
+
+impl TagFilterStepEditor {
+    pub fn new(step: &TagFilterStep, example: Option<String>) -> Self {
+        Self {
+            filter: step.filter.clone(),
+            example: example.unwrap_or_default(),
+        }
+    }
+
+    /// The filter button's label.
+    pub fn filter_label(&self) -> String {
+        crate::tag_filter_editor::button_label(&self.filter, false, "", false).0
+    }
+
+    /// "Example matches ok!", or "Example does not match - " and why.
+    pub fn test_result(&self) -> (String, bool) {
+        match tag_filter_test(&self.filter, &self.example) {
+            Ok(()) => ("Example matches ok!".to_owned(), true),
+            Err(reason) => (format!("Example does not match - {reason}"), false),
+        }
+    }
+
+    /// "ok": the step, or why not.
+    pub fn value(&self) -> Result<TagFilterStep, String> {
+        tag_filter_test(&self.filter, &self.example)
+            .map(|()| TagFilterStep {
+                filter: self.filter.clone(),
+                example: self.example.clone(),
+            })
+            .map_err(|_| "Please enter an example text that matches the given rules!".to_owned())
+    }
+}

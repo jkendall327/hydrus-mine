@@ -209,8 +209,8 @@ export component StringProcessorWindow inherits Window {
     }
 }
 
-// A splitter (kind 0), joiner (1), selector/slicer (2), sorter (3) or
-// string match (4).
+// A splitter (kind 0), joiner (1), selector/slicer (2), sorter (3),
+// string match (4) or tag filter (5).
 export component StringStepWindow inherits Window {
     in property <string> window-title: "edit processing step";
     title: root.window-title;
@@ -255,6 +255,11 @@ export component StringStepWindow inherits Window {
     in property <bool> show-limits;
     in property <string> test-result;
     in property <bool> test-ok;
+    // tag filter
+    in property <string> tag-filter-message;
+    in property <string> tag-filter;
+    in-out property <string> tag-example;
+    callback edit-tag-filter();
     in property <string> summary;
     in property <bool> invalid;
     in property <[TableRow]> texts;
@@ -517,6 +522,35 @@ export component StringStepWindow inherits Window {
                 color: root.test-ok ? Theme.text : Theme.error;
             }
         }
+        if root.kind == 5: Box {
+            title: "string tag filter";
+            Label {
+                text: root.tag-filter-message;
+                wrap: word-wrap;
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "tag filter: "; }
+                Button {
+                    horizontal-stretch: 1;
+                    text: root.tag-filter;
+                    clicked => { root.edit-tag-filter(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label { text: "example string: "; }
+                LineEdit {
+                    text <=> root.tag-example;
+                    edited => { root.changed(); }
+                }
+            }
+            Label {
+                text: root.test-result;
+                wrap: word-wrap;
+                color: root.test-ok ? Theme.text : Theme.error;
+            }
+        }
         if root.summary != "": Label {
             text: root.summary;
             horizontal-alignment: center;
@@ -525,8 +559,8 @@ export component StringStepWindow inherits Window {
             text: "(invalid)";
             color: Theme.error;
         }
-        if root.kind == 4: Rectangle { vertical-stretch: 1; }
-        if root.kind != 4: Box {
+        if root.kind >= 4: Rectangle { vertical-stretch: 1; }
+        if root.kind < 4: Box {
             vertical-stretch: 1;
             title: "test results";
             if root.kind == 0: HorizontalLayout {

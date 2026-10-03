@@ -1,7 +1,8 @@
 //! The string processor editor, bound (`ui/string_processor.slint`):
 //! hydrus-gui-model's [`ProcessorEditor`] in a window, and the editors of
 //! its steps: a splitter, joiner, selector/slicer or sorter in a step
-//! window, as is a string match; a tag filter in the tag filter editor; a
+//! window, as are a string match and a tag filter (its filter in the tag
+//! filter editor); a
 //! converter in the converter editor ([`open_converter`]), whose
 //! conversions each open in a conversion window.
 
@@ -11,15 +12,14 @@ use std::sync::Arc;
 
 use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
 
-use hydrus_core::url::strings::{
-    Conversion, ProcessingStep, StringConverter, StringProcessor, TagFilterStep,
-};
+use hydrus_core::url::strings::{Conversion, ProcessingStep, StringConverter, StringProcessor};
 use hydrus_store::Store;
 
 use crate::string_editors::{
     ADD_CHOICES, ADD_TITLE, CHARACTER_SETS, CONVERSION_TITLE, CONVERSION_TYPES, ConversionEditor,
     ConverterEditor, DATEPARSER_NOTE, ENCODINGS, HASH_FUNCTIONS, JoinerEditor, MatchEditor,
     ProcessorEditor, SORT_TYPES, STEP_TITLE, SlicerEditor, SorterEditor, SplitterEditor,
+    TAG_FILTER_MESSAGE, TagFilterStepEditor,
 };
 use crate::{
     ConversionWindow, StringConverterWindow, StringProcessorWindow, StringStepWindow, TableRow,
@@ -346,6 +346,7 @@ enum StepEditor {
     Slicer(SlicerEditor),
     Sorter(SorterEditor),
     Match(MatchEditor),
+    TagFilter(TagFilterStepEditor),
 }
 
 impl StepEditor {
@@ -356,6 +357,7 @@ impl StepEditor {
             StepEditor::Slicer(e) => Ok(e.value()),
             StepEditor::Sorter(e) => Ok(e.value()),
             StepEditor::Match(e) => e.value().map(ProcessingStep::Filter),
+            StepEditor::TagFilter(e) => e.value().map(ProcessingStep::TagFilter),
         }
     }
 }
@@ -435,6 +437,17 @@ fn show_step(window: &StringStepWindow, editor: &StepEditor) {
             window.set_summary(SharedString::new());
             window.set_invalid(false);
         }
+        StepEditor::TagFilter(e) => {
+            window.set_kind(5);
+            window.set_tag_filter_message(TAG_FILTER_MESSAGE.into());
+            window.set_tag_filter(e.filter_label().into());
+            window.set_tag_example(e.example.as_str().into());
+            let (text, ok) = e.test_result();
+            window.set_test_result(text.into());
+            window.set_test_ok(ok);
+            window.set_summary(SharedString::new());
+            window.set_invalid(false);
+        }
     }
 }
 
@@ -478,6 +491,7 @@ fn read_step(window: &StringStepWindow, editor: &mut StepEditor) {
                 e.set_type(match_type);
             }
         }
+        StepEditor::TagFilter(e) => e.example = window.get_tag_example().to_string(),
     }
 }
 
@@ -523,34 +537,10 @@ fn open_step(
             editor.example_texts_for(step),
         )),
         ProcessingStep::Filter(string_match) => StepEditor::Match(MatchEditor::new(string_match)),
-        ProcessingStep::TagFilter(tag_filter) => {
-            if slots.tag_filter.borrow().is_some() {
-                return;
-            }
-            let example = tag_filter.example.clone();
-            let applied: Rc<dyn Fn(hydrus_core::tag_filter::TagFilter)> = Rc::new(move |filter| {
-                put(
-                    index,
-                    ProcessingStep::TagFilter(TagFilterStep {
-                        filter,
-                        example: example.clone(),
-                    }),
-                );
-            });
-            match crate::tag_filter_window::open(
-                store,
-                &tag_filter.filter,
-                false,
-                STEP_TITLE,
-                "",
-                &slots.tag_filter,
-                applied,
-            ) {
-                Ok(w) => *slots.tag_filter.borrow_mut() = Some(w),
-                Err(e) => eprintln!("could not open the tag filter: {e}"),
-            }
-            return;
-        }
+        ProcessingStep::TagFilter(tag_filter) => StepEditor::TagFilter(TagFilterStepEditor::new(
+            tag_filter,
+            Some(editor.example_text_for(step)),
+        )),
         ProcessingStep::Convert(converter) => {
             if slots.converter.borrow().is_some() {
                 return;
@@ -600,6 +590,45 @@ fn open_step(
             read_step(&window, &mut editor);
             show_step(&window, &editor);
             window.set_veto(SharedString::new());
+        }
+    });
+    // a tag filter step's filter, in the tag filter editor
+    window.on_edit_tag_filter({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slot = slots.tag_filter.clone();
+        move || {
+            let StepEditor::TagFilter(e) = &*state.borrow() else {
+                return;
+            };
+            if slot.borrow().is_some() {
+                return;
+            }
+            let applied: Rc<dyn Fn(hydrus_core::tag_filter::TagFilter)> = Rc::new({
+                let weak = weak.clone();
+                let state = state.clone();
+                move |filter| {
+                    if let StepEditor::TagFilter(e) = &mut *state.borrow_mut() {
+                        e.filter = filter;
+                    }
+                    if let Some(window) = weak.upgrade() {
+                        show_step(&window, &state.borrow());
+                    }
+                }
+            });
+            match crate::tag_filter_window::open(
+                &store,
+                &e.filter,
+                false,
+                crate::tag_filter_editor::title(false),
+                TAG_FILTER_MESSAGE,
+                &slot,
+                applied,
+            ) {
+                Ok(w) => *slot.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the tag filter: {e}"),
+            }
         }
     });
     window.on_apply({

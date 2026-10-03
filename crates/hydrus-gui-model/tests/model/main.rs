@@ -30,6 +30,7 @@ mod sidecar_previews;
 mod string_converter_editor;
 mod string_match_editor;
 mod string_processor_editor;
+mod string_tag_filter_tests;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;

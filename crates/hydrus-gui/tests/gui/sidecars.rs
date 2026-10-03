@@ -355,6 +355,31 @@ fn a_routers_processing_is_edited_in_the_string_processor_editor() {
     editor.invoke_row_clicked(2, false, false);
     editor.invoke_delete();
     editor.invoke_chosen(0);
+    // a tag filter added: its example tested, its filter in the tag
+    // filter editor
+    editor.invoke_add();
+    editor.invoke_chosen(1);
+    let step = strings.step.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(step.get_kind(), 5);
+    assert_eq!(step.get_test_result(), "Example matches ok!");
+    step.set_tag_example("   ".into());
+    step.invoke_changed();
+    assert_eq!(
+        step.get_test_result(),
+        "Example does not match - \"   \" was not a valid tag!"
+    );
+    step.set_tag_example("blue eyes".into());
+    step.invoke_changed();
+    step.invoke_edit_tag_filter();
+    let filter = strings.tag_filter.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(filter.get_window_title(), "edit tag filter");
+    filter.invoke_apply();
+    step.invoke_apply();
+    let added = table(&editor.get_steps());
+    assert!(added[2].starts_with("TAG FILTER: "), "{added:?}");
+    editor.invoke_row_clicked(2, false, false);
+    editor.invoke_delete();
+    editor.invoke_chosen(0);
     // a joiner added and taken out again, asking first
     editor.invoke_add();
     editor.invoke_chosen(4);

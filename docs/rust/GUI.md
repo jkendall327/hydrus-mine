@@ -328,7 +328,9 @@ or sorter is edited in a step window (its fields, summary and results,
 and "apply" refusing a splitter with no separator), as is a string match
 (its type, fixed text, character set or regex, its limits and example,
 whether the example matches and why not, and "apply" refusing one it
-fails); a tag filter in the tag filter editor; a converter in the
+fails), and a tag filter (its filter button opening the tag filter
+editor, and whether its example passes: '"x" did not pass the tag
+filter!'); a converter in the
 string converter editor, which a sidecar's filename conversion button
 opens too: its conversions numbered, each with the example converted up
 to it (or the error), with add (starting from the last conversion made),

@@ -1,0 +1,277 @@
+{
+ "cases": [
+  {
+   "rules": [],
+   "results": [
+    [
+     "samus",
+     null
+    ],
+    [
+     "  Samus  ",
+     null
+    ],
+    [
+     "series:metroid",
+     null
+    ],
+    [
+     "creator:someone",
+     null
+    ],
+    [
+     "creator:else",
+     null
+    ],
+    [
+     "character:samus",
+     null
+    ],
+    [
+     "",
+     "\"\" was not a valid tag!"
+    ],
+    [
+     "   ",
+     "\"   \" was not a valid tag!"
+    ],
+    [
+     "series:",
+     "\"series:\" was not a valid tag!"
+    ],
+    [
+     ":colon",
+     null
+    ],
+    [
+     "blue eyes",
+     null
+    ]
+   ]
+  },
+  {
+   "rules": [
+    [
+     "",
+     "black"
+    ]
+   ],
+   "results": [
+    [
+     "samus",
+     "\"samus\" did not pass the tag filter!"
+    ],
+    [
+     "  Samus  ",
+     "\"  Samus  \" did not pass the tag filter!"
+    ],
+    [
+     "series:metroid",
+     null
+    ],
+    [
+     "creator:someone",
+     null
+    ],
+    [
+     "creator:else",
+     null
+    ],
+    [
+     "character:samus",
+     null
+    ],
+    [
+     "",
+     "\"\" was not a valid tag!"
+    ],
+    [
+     "   ",
+     "\"   \" was not a valid tag!"
+    ],
+    [
+     "series:",
+     "\"series:\" was not a valid tag!"
+    ],
+    [
+     ":colon",
+     "\":colon\" did not pass the tag filter!"
+    ],
+    [
+     "blue eyes",
+     "\"blue eyes\" did not pass the tag filter!"
+    ]
+   ]
+  },
+  {
+   "rules": [
+    [
+     ":",
+     "black"
+    ],
+    [
+     "series:",
+     "white"
+    ]
+   ],
+   "results": [
+    [
+     "samus",
+     null
+    ],
+    [
+     "  Samus  ",
+     null
+    ],
+    [
+     "series:metroid",
+     null
+    ],
+    [
+     "creator:someone",
+     "\"creator:someone\" did not pass the tag filter!"
+    ],
+    [
+     "creator:else",
+     "\"creator:else\" did not pass the tag filter!"
+    ],
+    [
+     "character:samus",
+     "\"character:samus\" did not pass the tag filter!"
+    ],
+    [
+     "",
+     "\"\" was not a valid tag!"
+    ],
+    [
+     "   ",
+     "\"   \" was not a valid tag!"
+    ],
+    [
+     "series:",
+     "\"series:\" was not a valid tag!"
+    ],
+    [
+     ":colon",
+     null
+    ],
+    [
+     "blue eyes",
+     null
+    ]
+   ]
+  },
+  {
+   "rules": [
+    [
+     "samus",
+     "black"
+    ]
+   ],
+   "results": [
+    [
+     "samus",
+     "\"samus\" did not pass the tag filter!"
+    ],
+    [
+     "  Samus  ",
+     "\"  Samus  \" did not pass the tag filter!"
+    ],
+    [
+     "series:metroid",
+     null
+    ],
+    [
+     "creator:someone",
+     null
+    ],
+    [
+     "creator:else",
+     null
+    ],
+    [
+     "character:samus",
+     "\"character:samus\" did not pass the tag filter!"
+    ],
+    [
+     "",
+     "\"\" was not a valid tag!"
+    ],
+    [
+     "   ",
+     "\"   \" was not a valid tag!"
+    ],
+    [
+     "series:",
+     "\"series:\" was not a valid tag!"
+    ],
+    [
+     ":colon",
+     null
+    ],
+    [
+     "blue eyes",
+     null
+    ]
+   ]
+  },
+  {
+   "rules": [
+    [
+     "creator:",
+     "black"
+    ],
+    [
+     "creator:someone",
+     "white"
+    ]
+   ],
+   "results": [
+    [
+     "samus",
+     null
+    ],
+    [
+     "  Samus  ",
+     null
+    ],
+    [
+     "series:metroid",
+     null
+    ],
+    [
+     "creator:someone",
+     null
+    ],
+    [
+     "creator:else",
+     "\"creator:else\" did not pass the tag filter!"
+    ],
+    [
+     "character:samus",
+     null
+    ],
+    [
+     "",
+     "\"\" was not a valid tag!"
+    ],
+    [
+     "   ",
+     "\"   \" was not a valid tag!"
+    ],
+    [
+     "series:",
+     "\"series:\" was not a valid tag!"
+    ],
+    [
+     ":colon",
+     null
+    ],
+    [
+     "blue eyes",
+     null
+    ]
+   ]
+  }
+ ]
+}
