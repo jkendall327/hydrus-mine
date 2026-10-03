@@ -61,10 +61,34 @@ fn tagging(case: &Json) -> ServiceTagging {
     t
 }
 
+/// A recorded (POSIX) path as this platform writes it: the reference
+/// splits directories on its own separator, so on Windows it would be
+/// given these paths with backslashes.
+fn native(path: &str) -> String {
+    if cfg!(windows) {
+        path.replace('/', "\\")
+    } else {
+        path.to_owned()
+    }
+}
+
+/// A recorded value, its paths as this platform writes them.
+fn native_json(value: &Json) -> Json {
+    match value {
+        Json::Object(map) => {
+            Json::Object(map.iter().map(|(k, v)| (native(k), v.clone())).collect())
+        }
+        other => other.clone(),
+    }
+}
+
 #[test]
 fn rows_and_values_are_the_references() {
     let recorded = recorded();
-    let paths = strings(&recorded["paths"]);
+    let paths: Vec<String> = strings(&recorded["paths"])
+        .iter()
+        .map(|p| native(p))
+        .collect();
     for case in recorded["cases"].as_array().unwrap() {
         let settings = &case["case"];
         let mine = tagging(settings);
@@ -73,7 +97,13 @@ fn rows_and_values_are_the_references() {
             .enumerate()
             .map(|(i, p)| row(i, p, &mine.tags(i, p)))
             .collect();
-        assert_eq!(json!(rows), case["rows"], "{settings}");
+        let expected: Vec<Json> = case["rows"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|r| json!([r[0], native(r[1].as_str().unwrap()), r[2]]))
+            .collect();
+        assert_eq!(json!(rows), Json::Array(expected), "{settings}");
         // (the other services' tabs, untouched, give nothing)
         let services = vec![
             ("downloader tags".to_owned(), ServiceTagging::default()),
@@ -89,7 +119,11 @@ fn rows_and_values_are_the_references() {
                 (path.to_owned(), Json::Object(by_service))
             })
             .collect();
-        assert_eq!(Json::Object(ours), case["value"], "{settings}");
+        assert_eq!(
+            Json::Object(ours),
+            native_json(&case["value"]),
+            "{settings}"
+        );
     }
 }
 
