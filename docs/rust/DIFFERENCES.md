@@ -595,8 +595,14 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   it, as a clash with itself), and renaming a subscription to differ only
   in case doesn't add " (1)" (the reference counts its old name as
   taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
-- **The import and export folders dialogs** don't edit sidecars yet
-  (they show what is set, which is kept). An import folder's filename
+- **The sidecar editors** edit a router's destination in a window of its
+  own (the reference embeds it in the router editor), list "Which
+  type?"'s descriptions in its message, and take JSON object names a
+  line each. String processing, a sidecar's filename conversion and a
+  JSON sidecar's parsing formula are shown but not edited yet; the
+  router editor has no testing panel; the routers list has no import and
+  export buttons.
+- **The import and export folders dialogs**: an import folder's filename
   tagging is added for a tag service chosen from a list beside "add" (the
   reference asks which in a dialog), and edited in the "filename tagging"
   dialog's boxes (see "review files to import"). An export folder's

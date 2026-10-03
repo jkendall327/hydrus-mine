@@ -254,6 +254,8 @@ export component ImportFolderWindow inherits Window {
     in-out property <[FolderActionRow]> actions;
     in property <[string]> filename-tagging;
     in property <string> sidecars;
+    // the sidecars button clicked
+    callback edit-sidecars();
     in property <bool> asking;
     in property <string> asking-title;
     in property <string> asking-message;
@@ -437,7 +439,10 @@ export component ImportFolderWindow inherits Window {
                             }
                         }
                         Label { text: "sidecar importing:"; }
-                        Label { text: root.sidecars; }
+                        Button {
+                            text: root.sidecars;
+                            clicked => { root.edit-sidecars(); }
+                        }
                     }
                 }
             }
@@ -482,6 +487,8 @@ export component ExportFolderWindow inherits Window {
     in-out property <bool> overwrite-next;
     in-out property <bool> overwrite-always;
     in property <string> sidecars;
+    // the sidecars button clicked
+    callback edit-sidecars();
     in property <bool> asking;
     in property <string> asking-title;
     in property <string> asking-message;
@@ -614,7 +621,10 @@ export component ExportFolderWindow inherits Window {
                             label: "DANGEROUS: always overwrite all sidecars on every run: ";
                             checked <=> root.overwrite-always;
                         }
-                        Label { text: root.sidecars; }
+                        Button {
+                            text: root.sidecars;
+                            clicked => { root.edit-sidecars(); }
+                        }
                     }
                 }
             }

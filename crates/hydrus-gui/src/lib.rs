@@ -56,6 +56,7 @@ mod popups;
 pub mod predicate_editor_window;
 mod search_log_window;
 mod session_dialog;
+pub mod sidecars_window;
 pub mod slideshow;
 pub mod still;
 mod subscriptions_window;
@@ -146,9 +147,9 @@ pub use hydrus_gui_model::{
     edit_subscription, favourites, file_log, filename_tagging, filetype_tree, folders,
     import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
     manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
-    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sidecars, sort,
-    status, subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
-    thumbnail_icons, thumbnail_ratings,
+    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sidecar_editors,
+    sidecars, sort, status, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
+    tag_filter_editor, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};

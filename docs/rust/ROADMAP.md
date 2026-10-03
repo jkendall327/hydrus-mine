@@ -81,8 +81,10 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   buttons; how string processing describes itself (hydrus-core's
   `string_descriptions`); and the editors' workings (`hydrus-gui-model`'s
   `sidecar_editors`, recorded by `oracle/record_sidecar_editors.py`).
-  **Next**: their windows (the routers list, the router editor, the source
-  and destination editors); then the string processor editor they open.
+  Their windows are done (`src/sidecars_window.rs`), from the import and
+  export folder dialogs. **Next**: the "filename tagging" dialog's
+  "sidecars" tab; the string processor editor and the JSON formula
+  editor they open; the router editor's testing panel.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 

@@ -50,6 +50,8 @@ pub struct Slots {
     /// An import folder's file log, and where it shows files.
     pub log: Rc<RefCell<Option<crate::FileLogWindow>>>,
     pub open_files: crate::file_log_window::OpenFiles,
+    /// The sidecar editors.
+    pub sidecars: crate::sidecars_window::Slots,
 }
 
 impl std::fmt::Debug for Slots {
@@ -66,6 +68,7 @@ impl std::fmt::Debug for Slots {
             )
             .field("log", &self.log.borrow().is_some())
             .field("open_files", &self.open_files)
+            .field("sidecars", &self.sidecars)
             .finish()
     }
 }
@@ -670,6 +673,37 @@ fn open_import_folder(
         folder,
         asking: None,
     }));
+    // its sidecars, in the sidecar editors (an import's)
+    window.on_edit_sidecars({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let sidecars = slots.sidecars.clone();
+        move || {
+            let routers = state.borrow().folder.settings.routers.clone();
+            let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
+                let weak = weak.clone();
+                let state = state.clone();
+                let store = store.clone();
+                Rc::new(move |routers| {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_sidecars(sidecars_label(&store, &routers).into());
+                    }
+                    state.borrow_mut().folder.settings.routers = routers;
+                })
+            };
+            match crate::sidecars_window::open_routers(
+                &store,
+                crate::sidecar_editors::Context::Import,
+                routers,
+                &sidecars,
+                applied,
+            ) {
+                Ok(w) => *sidecars.routers.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the sidecars: {e}"),
+            }
+        }
+    });
     let show = {
         let weak = window.as_weak();
         let state = state.clone();
@@ -1142,7 +1176,14 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
                     });
                 })
             };
-            match open_export_folder(&store, folder, &text, &slots.export_edit, &done) {
+            match open_export_folder(
+                &store,
+                &slots.sidecars,
+                folder,
+                &text,
+                &slots.export_edit,
+                &done,
+            ) {
                 Ok(window) => *slots.export_edit.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the export folder: {e}"),
             }
@@ -1220,7 +1261,8 @@ fn read_export_fields(window: &ExportFolderWindow, folder: &mut ExportFolder) {
 /// checks out, and asking first if it deletes from the client) it gives
 /// the edited folder to `done`.
 fn open_export_folder(
-    store: &Store,
+    store: &Arc<Store>,
+    sidecars: &crate::sidecars_window::Slots,
     folder: ExportFolder,
     text: &Rc<TextContext>,
     slot: &Rc<RefCell<Option<ExportFolderWindow>>>,
@@ -1255,6 +1297,37 @@ fn open_export_folder(
         folder,
         asking: None,
     }));
+    // its sidecars, in the sidecar editors (an export's)
+    window.on_edit_sidecars({
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let sidecars = sidecars.clone();
+        move || {
+            let routers = state.borrow().folder.routers.clone();
+            let applied: Rc<dyn Fn(Vec<hydrus_parse::sidecar::Router>)> = {
+                let weak = weak.clone();
+                let state = state.clone();
+                let store = store.clone();
+                Rc::new(move |routers| {
+                    if let Some(window) = weak.upgrade() {
+                        window.set_sidecars(sidecars_label(&store, &routers).into());
+                    }
+                    state.borrow_mut().folder.routers = routers;
+                })
+            };
+            match crate::sidecars_window::open_routers(
+                &store,
+                crate::sidecar_editors::Context::Export,
+                routers,
+                &sidecars,
+                applied,
+            ) {
+                Ok(w) => *sidecars.routers.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open the sidecars: {e}"),
+            }
+        }
+    });
     let show = {
         let weak = window.as_weak();
         let state = state.clone();

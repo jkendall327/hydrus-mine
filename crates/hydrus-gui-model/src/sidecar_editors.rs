@@ -1031,3 +1031,11 @@ pub fn templates(
         }
     }
 }
+
+/// What deleting from a list asks first (`AddEditDeleteListBox._Delete`).
+pub fn remove_question(n: usize) -> String {
+    format!(
+        "Remove {} selected?",
+        hydrus_core::numbers::human_int(n as u64)
+    )
+}

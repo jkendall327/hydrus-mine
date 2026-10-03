@@ -1,0 +1,522 @@
+// The sidecar editors (the reference's `ClientGUIMetadataMigration*`;
+// their workings are hydrus-gui-model's `sidecar_editors`, bound by
+// `src/sidecars_window.rs`): the routers list, a router's editor (its
+// sources, processing and destination), and the editor of a source or a
+// destination.
+
+import { Button, CheckBox, ComboBox, LineEdit, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+component Box inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        Text {
+            text: root.title;
+            font-weight: 700;
+            color: Theme.text;
+        }
+        @children
+    }
+}
+
+component Row inherits HorizontalLayout {
+    in property <string> label;
+    spacing: 6px;
+    Text {
+        width: 300px;
+        text: root.label;
+        wrap: word-wrap;
+        vertical-alignment: center;
+        color: Theme.text;
+    }
+    @children
+}
+
+// a list with add, edit and delete beside it
+component EditList inherits HorizontalLayout {
+    in property <[TableRow]> rows;
+    in property <string> column;
+    in property <bool> asking;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    spacing: 4px;
+    ListTable {
+        horizontal-stretch: 1;
+        min-height: 120px;
+        columns: [{ title: root.column, width: 400px, stretch: true }];
+        rows: root.rows;
+        row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+        row-activated(r) => { root.row-activated(r); }
+    }
+    VerticalLayout {
+        spacing: 4px;
+        alignment: start;
+        Button {
+            text: "add";
+            enabled: !root.asking;
+            clicked => { root.add(); }
+        }
+        Button {
+            text: "edit";
+            enabled: root.one-selected && !root.asking;
+            clicked => { root.edit(); }
+        }
+        Button {
+            text: "delete";
+            enabled: root.any-selected && !root.asking;
+            clicked => { root.delete(); }
+        }
+        @children
+    }
+}
+
+component ApplyCancel inherits HorizontalLayout {
+    in property <bool> enabled: true;
+    callback apply();
+    callback cancel();
+    alignment: end;
+    spacing: 6px;
+    Button {
+        text: "apply";
+        enabled: root.enabled;
+        clicked => { root.apply(); }
+    }
+    Button {
+        text: "cancel";
+        clicked => { root.cancel(); }
+    }
+}
+
+// "edit metadata migration routers"
+export component SidecarRoutersWindow inherits Window {
+    in property <string> window-title: "edit metadata migration routers";
+    title: root.window-title;
+    preferred-width: 760px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <[TableRow]> rows;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    // the templates menu's entries, if any
+    in property <[string]> templates;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback template(int);
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        EditList {
+            vertical-stretch: 1;
+            column: "sidecar actions";
+            rows: root.rows;
+            asking: root.asking;
+            one-selected: root.one-selected;
+            any-selected: root.any-selected;
+            row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+            row-activated(r) => { root.row-activated(r); }
+            add => { root.add(); }
+            edit => { root.edit(); }
+            delete => { root.delete(); }
+            templates-menu := ContextMenuArea {
+                Menu {
+                    for template[i] in root.templates: MenuItem {
+                        title: template;
+                        activated => { root.template(i); }
+                    }
+                }
+                if root.templates.length > 0: Button {
+                    text: "★";
+                    enabled: !root.asking;
+                    clicked => { templates-menu.show({ x: 0px, y: self.height }); }
+                }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}
+
+// "edit metadata migration router"
+export component SidecarRouterWindow inherits Window {
+    in property <string> window-title: "edit metadata migration router";
+    title: root.window-title;
+    preferred-width: 720px;
+    preferred-height: 480px;
+    background: Theme.window;
+    in property <[TableRow]> sources;
+    in property <bool> one-selected;
+    in property <bool> any-selected;
+    in property <string> processing-note;
+    in property <string> processing;
+    in property <string> destination;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback edit-destination();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Box {
+            vertical-stretch: 1;
+            title: "sources";
+            EditList {
+                vertical-stretch: 1;
+                column: "source";
+                rows: root.sources;
+                asking: root.asking;
+                one-selected: root.one-selected;
+                any-selected: root.any-selected;
+                row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(r); }
+                add => { root.add(); }
+                edit => { root.edit(); }
+                delete => { root.delete(); }
+            }
+        }
+        Box {
+            title: "processing";
+            Text {
+                text: root.processing-note;
+                color: Theme.text;
+            }
+            Text {
+                text: root.processing;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+        }
+        Box {
+            title: "destination";
+            HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    horizontal-stretch: 1;
+                    text: root.destination;
+                    wrap: word-wrap;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+                Button {
+                    text: "edit";
+                    enabled: !root.asking;
+                    clicked => { root.edit-destination(); }
+                }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}
+
+// a source's or a destination's editor
+export component SidecarNodeWindow inherits Window {
+    in property <string> window-title: "edit metadata migration source";
+    title: root.window-title;
+    preferred-width: 640px;
+    preferred-height: 560px;
+    background: Theme.window;
+    in property <string> type-label;
+    in property <bool> show-naming;
+    in property <bool> show-separator;
+    in property <bool> show-timestamp;
+    in property <bool> show-tags;
+    // a source's tags have a display type
+    in property <bool> show-display;
+    in property <bool> show-json;
+    in property <bool> show-forced;
+    in property <bool> show-nested;
+    in property <bool> show-processing;
+    in property <bool> show-sidecar-help;
+    // the sidecar filename box
+    in-out property <bool> remove-ext;
+    in-out property <string> suffix;
+    in-out property <string> example;
+    in property <string> result;
+    in property <string> converter-label;
+    // the .txt separator
+    in property <[string]> separators;
+    in-out property <int> separator;
+    in-out property <string> custom-separator;
+    // the tag service
+    in property <string> service-label;
+    in property <[string]> displays;
+    in-out property <int> display;
+    // the timestamp type, and what shows below it: 0 nothing, 1 the file
+    // service, 2 the deleted file service, 3 the viewer, 4 the domain
+    in property <[string]> timestamp-kinds;
+    in-out property <int> timestamp-kind;
+    in property <int> detail;
+    in property <[string]> file-services;
+    in-out property <int> file-service;
+    in property <[string]> deleted-services;
+    in-out property <int> deleted-service;
+    in property <[string]> canvases;
+    in-out property <int> canvas;
+    in-out property <string> domain;
+    // a destination's forced note name, and JSON object names (a name a
+    // line)
+    in-out property <bool> forced-on;
+    in-out property <string> forced-name;
+    in-out property <string> nested;
+    in property <string> processing-note;
+    in property <string> processing;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback changed();
+    callback change-type();
+    callback choose-service();
+    callback sidecar-help();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Button {
+            text: root.type-label;
+            enabled: !root.asking;
+            clicked => { root.change-type(); }
+        }
+        if root.show-tags: VerticalLayout {
+            spacing: 4px;
+            Row {
+                label: "tag service: ";
+                Button {
+                    horizontal-stretch: 1;
+                    text: root.service-label;
+                    enabled: !root.asking;
+                    clicked => { root.choose-service(); }
+                }
+            }
+            if root.show-display: Row {
+                label: "tag display type: ";
+                ComboBox {
+                    horizontal-stretch: 1;
+                    model: root.displays;
+                    current-index <=> root.display;
+                    selected => { root.changed(); }
+                }
+            }
+        }
+        if root.show-forced: Box {
+            title: "name";
+            HorizontalLayout {
+                spacing: 6px;
+                CheckBox {
+                    text: "Forced Note Name: ";
+                    checked <=> root.forced-on;
+                    toggled => { root.changed(); }
+                }
+                LineEdit {
+                    horizontal-stretch: 1;
+                    enabled: root.forced-on;
+                    placeholder-text: "use \"name: text\" format";
+                    text <=> root.forced-name;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.show-timestamp: Box {
+            title: "timestamp type";
+            ComboBox {
+                model: root.timestamp-kinds;
+                current-index <=> root.timestamp-kind;
+                selected => { root.changed(); }
+            }
+            if root.detail == 1: ComboBox {
+                model: root.file-services;
+                current-index <=> root.file-service;
+                selected => { root.changed(); }
+            }
+            if root.detail == 2: ComboBox {
+                model: root.deleted-services;
+                current-index <=> root.deleted-service;
+                selected => { root.changed(); }
+            }
+            if root.detail == 3: ComboBox {
+                model: root.canvases;
+                current-index <=> root.canvas;
+                selected => { root.changed(); }
+            }
+            if root.detail == 4: Row {
+                label: "domain: ";
+                LineEdit {
+                    horizontal-stretch: 1;
+                    text <=> root.domain;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.show-sidecar-help: HorizontalLayout {
+            alignment: end;
+            Button {
+                text: "?";
+                enabled: !root.asking;
+                clicked => { root.sidecar-help(); }
+            }
+        }
+        if root.show-nested: Box {
+            title: "JSON Objects structure";
+            TextEdit {
+                height: 70px;
+                text <=> root.nested;
+                edited => { root.changed(); }
+            }
+        }
+        if root.show-json: Row {
+            label: "json parsing formula: ";
+            Button {
+                horizontal-stretch: 1;
+                text: "edit parsing formula";
+                enabled: false;
+            }
+        }
+        if root.show-separator: Box {
+            title: "sidecar txt separator";
+            Row {
+                label: "separator: ";
+                ComboBox {
+                    horizontal-stretch: 1;
+                    model: root.separators;
+                    current-index <=> root.separator;
+                    selected => { root.changed(); }
+                }
+            }
+            Row {
+                label: "custom: ";
+                LineEdit {
+                    horizontal-stretch: 1;
+                    enabled: root.separator == 2;
+                    text <=> root.custom-separator;
+                    edited => { root.changed(); }
+                }
+            }
+        }
+        if root.show-naming: Box {
+            title: "sidecar filename";
+            Row {
+                label: "remove file .ext?: ";
+                CheckBox {
+                    checked <=> root.remove-ext;
+                    toggled => { root.changed(); }
+                }
+            }
+            Row {
+                label: "optional suffix: ";
+                LineEdit {
+                    horizontal-stretch: 1;
+                    text <=> root.suffix;
+                    edited => { root.changed(); }
+                }
+            }
+            Row {
+                label: "ADVANCED: final sidecar filename conversion: ";
+                Text {
+                    horizontal-stretch: 1;
+                    text: root.converter-label;
+                    vertical-alignment: center;
+                    color: Theme.text;
+                }
+            }
+            Row {
+                label: "Test media path: ";
+                LineEdit {
+                    horizontal-stretch: 1;
+                    text <=> root.example;
+                    edited => { root.changed(); }
+                }
+            }
+            Row {
+                label: "Resulting sidecar path: ";
+                LineEdit {
+                    horizontal-stretch: 1;
+                    read-only: true;
+                    text: root.result;
+                }
+            }
+        }
+        if root.show-processing: VerticalLayout {
+            spacing: 2px;
+            Text {
+                text: root.processing-note;
+                color: Theme.text;
+            }
+            Text {
+                text: root.processing;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+        }
+        Rectangle { vertical-stretch: 1; }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        ApplyCancel {
+            enabled: !root.asking;
+            apply => { root.apply(); }
+            cancel => { root.cancel(); }
+        }
+    }
+}

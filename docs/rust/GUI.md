@@ -297,6 +297,25 @@ parse) and the sidecar overwrite options. The rows and the checks are as
 `oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`
 recorded the reference's.
 
+Both dialogs' sidecars button ("no sidecars", the one router as it
+describes itself, or "3 sidecar actions") opens the reference's sidecar
+editors (`ui/sidecars.slint`, `src/sidecars_window.rs`,
+`hydrus-gui-model/src/sidecar_editors.rs`): the routers ("Taking from
+.txt sidecar, applying some sorting, sending tags to media, on \"my
+tags\".") with add, edit (or a double-click) and delete (asking first),
+and for an export the templates menu's "easy one-click JSON that covers
+the basics"; a router's sources, processing and destination, "apply"
+asking first about notes split by newlines into or out of a .txt; and a
+source's or destination's editor: "change type" (an import folder's
+sources are .txt and .json sidecars and its destinations a file's tags,
+notes, urls or timestamps; an export folder's the other way round),
+keeping what two kinds share, the tag service and display type, the
+timestamp type (with its file service, viewer or domain), the forced
+note name, the JSON object names, the .txt separator, and the sidecar
+filename (remove the file's extension, a suffix, and the resulting
+sidecar for a test path). What they show and ask at each step is as
+`oracle/record_sidecar_editors.py` recorded the reference's.
+
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the
