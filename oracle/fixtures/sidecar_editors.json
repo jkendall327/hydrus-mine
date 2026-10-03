@@ -1,0 +1,4576 @@
+{
+ "names": {
+  "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270": "art",
+  "6c6f63616c2066696c6573": "my files",
+  "7265706f7369746f72792075706461746573": "repository updates",
+  "7472617368": "trash",
+  "616c6c206c6f63616c2066696c6573": "hydrus local file storage",
+  "616c6c206c6f63616c206d65646961": "combined local file domains",
+  "646f776e6c6f616465722074616773": "downloader tags",
+  "6c6f63616c2074616773": "my tags",
+  "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0": "second tags",
+  "6661766f757269746573": "favourites",
+  "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2": "stars",
+  "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de": "counter",
+  "6c6f63616c206e6f746573": "local notes",
+  "636c69656e7420617069": "client api",
+  "616c6c206b6e6f776e2066696c6573": "all known files",
+  "616c6c206b6e6f776e2074616773": "all known tags",
+  "616c6c2064656c657465642066696c6573": "deleted from anywhere"
+ },
+ "cases": [
+  {
+   "editor": "importer",
+   "context": "import",
+   "start": "txt",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.jpg.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         false,
+         "",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "suffix",
+      "tags"
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.jpg.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         false,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "remove_ext",
+      true
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "example",
+      "folder/my_image.jpg"
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "folder/my_image.jpg",
+       "result": "folder/my_image.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "separator",
+      "four pipes (||||)",
+      null
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "folder/my_image.jpg",
+       "result": "folder/my_image.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "four pipes (||||)"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         "||||"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "separator",
+      "custom text",
+      ", "
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "folder/my_image.jpg",
+       "result": "folder/my_image.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "custom text"
+       },
+       "custom": ", ",
+       "custom_enabled": true
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         ", "
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a .json sidecar"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of source are we going to use?",
+       "choices": [
+        [
+         "a .json sidecar",
+         "Strings somewhere in a JSON file."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a .json sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.tags.json"
+      },
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "json_formula": true,
+      "processing": "no string processing",
+      "value": {
+       "text": "from JSON sidecar",
+       "object": [
+        114,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         [
+          31,
+          4,
+          [
+           [
+            [
+             0,
+             [
+              51,
+              1,
+              [
+               0,
+               "posts",
+               null,
+               null,
+               "posts"
+              ]
+             ]
+            ]
+           ],
+           0,
+           "",
+           [
+            84,
+            1,
+            [
+             26,
+             3,
+             []
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a .txt sidecar"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of source are we going to use?",
+       "choices": [
+        [
+         "a .txt sidecar",
+         "A list of raw newline-separated texts in a .txt file."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "custom text"
+       },
+       "custom": ", ",
+       "custom_enabled": true
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         ", "
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "example",
+      "noext"
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": true,
+       "suffix": "tags",
+       "converter": "no string conversions",
+       "example": "noext",
+       "result": "noext.tags.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "custom text"
+       },
+       "custom": ", ",
+       "custom_enabled": true
+      },
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "from .txt sidecar",
+       "object": [
+        110,
+        4,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         true,
+         "tags",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.txt"
+          ]
+         ],
+         ", "
+        ]
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "importer",
+   "context": "import",
+   "start": "json",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "type": "a .json sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "",
+       "converter": "no string conversions",
+       "example": "my_image.jpg",
+       "result": "my_image.jpg.json"
+      },
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "json_formula": true,
+      "processing": "no string processing",
+      "value": {
+       "text": "from JSON sidecar",
+       "object": [
+        114,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         false,
+         "",
+         [
+          55,
+          2,
+          [
+           [],
+           "my_image.jpg.json"
+          ]
+         ],
+         [
+          31,
+          4,
+          [
+           [
+            [
+             1,
+             null
+            ]
+           ],
+           0,
+           "",
+           [
+            84,
+            1,
+            [
+             26,
+             3,
+             []
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "importer",
+   "context": "export",
+   "start": "tags",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "my tags",
+       "display": "display tags"
+      },
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"my tags\" display tags",
+       "object": [
+        111,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         "6c6f63616c2074616773",
+         1
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "display",
+      "display tags"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "my tags",
+       "display": "display tags"
+      },
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"my tags\" display tags",
+       "object": [
+        111,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         "6c6f63616c2074616773",
+         1
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "service",
+      "second tags"
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "all known tags",
+        "downloader tags",
+        "second tags"
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "second tags",
+       "display": "display tags"
+      },
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"second tags\" display tags",
+       "object": [
+        111,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+         1
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's timestamps"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of source are we going to use?",
+       "choices": [
+        [
+         "a file's notes",
+         "The notes that a file has."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ],
+        [
+         "a file's timestamps",
+         "A recorded timestamp that a file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "archived time (will auto-archive on import!)"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "archived time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           5,
+           null,
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "imported time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "imported time"
+       },
+       "file_service": {
+        "options": [
+         "art",
+         "my files",
+         "repository updates",
+         "trash",
+         "hydrus local file storage",
+         "combined local file domains",
+         "deleted from anywhere"
+        ],
+        "value": "art"
+       },
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"art\" imported time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           3,
+           "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "file_service",
+      "trash"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "imported time"
+       },
+       "file_service": {
+        "options": [
+         "art",
+         "my files",
+         "repository updates",
+         "trash",
+         "hydrus local file storage",
+         "combined local file domains",
+         "deleted from anywhere"
+        ],
+        "value": "trash"
+       },
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"trash\" imported time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           3,
+           "7472617368",
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "deleted time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "deleted time"
+       },
+       "file_service": null,
+       "deleted_service": {
+        "options": [
+         "art",
+         "my files",
+         "repository updates",
+         "hydrus local file storage",
+         "combined local file domains"
+        ],
+        "value": "art"
+       },
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"art\" deleted time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           4,
+           "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "last viewed time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "last viewed time"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": {
+        "options": [
+         "media viewer",
+         "preview viewer"
+        ],
+        "value": "media viewer"
+       },
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "media viewer last viewed time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           6,
+           0,
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "canvas",
+      "preview viewer"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "last viewed time"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": {
+        "options": [
+         "media viewer",
+         "preview viewer"
+        ],
+        "value": "preview viewer"
+       },
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "preview viewer last viewed time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           6,
+           1,
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "domain modified time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "domain modified time"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": null,
+       "domain": ""
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "error": "You have to enter a domain!"
+      }
+     }
+    },
+    {
+     "step": [
+      "domain",
+      "example.com"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "domain modified time"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": null,
+       "domain": "example.com"
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"example.com\" domain modified time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           0,
+           "example.com",
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "aggregate modified time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "aggregate modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "aggregate modified time"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "aggregate modified time from media",
+       "object": [
+        123,
+        1,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         [
+          121,
+          2,
+          [
+           2,
+           null,
+           null
+          ]
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's notes"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of source are we going to use?",
+       "choices": [
+        [
+         "a file's tags",
+         "The tags that a file has on a particular service."
+        ],
+        [
+         "a file's notes",
+         "The notes that a file has."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's notes",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "notes from media",
+       "object": [
+        120,
+        1,
+        [
+         84,
+         1,
+         [
+          26,
+          3,
+          []
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's tags"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of source are we going to use?",
+       "choices": [
+        [
+         "a file's tags",
+         "The tags that a file has on a particular service."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ],
+        [
+         "a file's timestamps",
+         "A recorded timestamp that a file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "second tags",
+       "display": "display tags"
+      },
+      "json_formula": false,
+      "processing": "no string processing",
+      "value": {
+       "text": "\"second tags\" display tags",
+       "object": [
+        111,
+        3,
+        [
+         [
+          84,
+          1,
+          [
+           26,
+           3,
+           []
+          ]
+         ],
+         "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+         1
+        ]
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "exporter",
+   "context": "import",
+   "start": "tags",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "my tags"
+      },
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "tags to media, on \"my tags\"",
+       "object": [
+        115,
+        1,
+        "6c6f63616c2074616773"
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "service",
+      "downloader tags"
+     ],
+     "said": [
+      {
+       "select": "select service",
+       "choices": [
+        "downloader tags",
+        "second tags"
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's tags",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": {
+       "service": "downloader tags"
+      },
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "tags to media, on \"downloader tags\"",
+       "object": [
+        115,
+        1,
+        "646f776e6c6f616465722074616773"
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's notes"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of destination are we going to use?",
+       "choices": [
+        [
+         "a file's notes",
+         "The notes that a file has."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ],
+        [
+         "a file's timestamps",
+         "A recorded timestamp the file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's notes",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "notes to media",
+       "object": [
+        119,
+        2,
+        null
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "forced_name",
+      "comment"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's notes",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "forced_name": "comment",
+      "nested": null,
+      "value": {
+       "text": "notes to media",
+       "object": [
+        119,
+        2,
+        "comment"
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's timestamps"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of destination are we going to use?",
+       "choices": [
+        [
+         "a file's tags",
+         "The tags that a file has on a particular service."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ],
+        [
+         "a file's timestamps",
+         "A recorded timestamp the file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "archived time (will auto-archive on import!)"
+       },
+       "file_service": null,
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "archived time to media",
+       "object": [
+        122,
+        1,
+        [
+         121,
+         2,
+         [
+          5,
+          null,
+          null
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "timestamp_type",
+      "imported time"
+     ],
+     "said": [],
+     "state": {
+      "type": "a file's timestamps",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": {
+       "type": {
+        "options": [
+         "archived time (will auto-archive on import!)",
+         "file modified time",
+         "domain modified time",
+         "imported time",
+         "deleted time",
+         "previous imported time (for undelete)",
+         "last viewed time"
+        ],
+        "value": "imported time"
+       },
+       "file_service": {
+        "options": [
+         "art",
+         "my files",
+         "repository updates",
+         "trash",
+         "hydrus local file storage",
+         "combined local file domains",
+         "deleted from anywhere"
+        ],
+        "value": "art"
+       },
+       "deleted_service": null,
+       "canvas": null,
+       "domain": null
+      },
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "\"art\" imported time to media",
+       "object": [
+        122,
+        1,
+        [
+         121,
+         2,
+         [
+          3,
+          "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+          null
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a file's URLs"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of destination are we going to use?",
+       "choices": [
+        [
+         "a file's tags",
+         "The tags that a file has on a particular service."
+        ],
+        [
+         "a file's notes",
+         "The notes that a file has."
+        ],
+        [
+         "a file's URLs",
+         "The known URLs that a file has."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a file's URLs",
+      "sidecar": null,
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "urls to media",
+       "object": [
+        117,
+        1,
+        []
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "exporter",
+   "context": "export",
+   "start": "txt",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "to .txt sidecar",
+       "object": [
+        116,
+        3,
+        [
+         false,
+         "",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "suffix",
+      "urls"
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "urls",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.urls.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "newline"
+       },
+       "custom": "",
+       "custom_enabled": false
+      },
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "to .urls.txt sidecar",
+       "object": [
+        116,
+        3,
+        [
+         false,
+         "urls",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         "\n"
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "separator",
+      "custom text",
+      ","
+     ],
+     "said": [],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "urls",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.urls.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "custom text"
+       },
+       "custom": ",",
+       "custom_enabled": true
+      },
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "to .urls.txt sidecar",
+       "object": [
+        116,
+        3,
+        [
+         false,
+         "urls",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         ","
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a .json sidecar"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of destination are we going to use?",
+       "choices": [
+        [
+         "a .json sidecar",
+         "Strings somewhere in a JSON file."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a .json sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "urls",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.urls.json"
+      },
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": [],
+      "value": {
+       "text": "to .urls.json sidecar",
+       "object": [
+        113,
+        2,
+        [
+         false,
+         "urls",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         []
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "nested",
+      [
+       "meta",
+       "tags"
+      ]
+     ],
+     "said": [],
+     "state": {
+      "type": "a .json sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "urls",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.urls.json"
+      },
+      "separator": null,
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": [
+       "meta",
+       "tags"
+      ],
+      "value": {
+       "text": "to .urls.json sidecar (meta>tags)",
+       "object": [
+        113,
+        2,
+        [
+         false,
+         "urls",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         [
+          "meta",
+          "tags"
+         ]
+        ]
+       ]
+      }
+     }
+    },
+    {
+     "step": [
+      "change_type",
+      "a .txt sidecar"
+     ],
+     "said": [
+      {
+       "buttons": "Which type?",
+       "message": "Which kind of destination are we going to use?",
+       "choices": [
+        [
+         "a .txt sidecar",
+         "A list of raw newline-separated texts in a .txt file."
+        ]
+       ]
+      }
+     ],
+     "state": {
+      "type": "a .txt sidecar",
+      "sidecar": {
+       "remove_ext": false,
+       "suffix": "urls",
+       "converter": "no string conversions",
+       "example": "01234564789abcdef.jpg",
+       "result": "01234564789abcdef.jpg.urls.txt"
+      },
+      "separator": {
+       "choice": {
+        "options": [
+         "newline",
+         "four pipes (||||)",
+         "custom text"
+        ],
+        "value": "custom text"
+       },
+       "custom": ",",
+       "custom_enabled": true
+      },
+      "timestamp": null,
+      "tags": null,
+      "forced_name": null,
+      "nested": null,
+      "value": {
+       "text": "to .urls.txt sidecar",
+       "object": [
+        116,
+        3,
+        [
+         false,
+         "urls",
+         [
+          55,
+          2,
+          [
+           [],
+           "0123456789abcdef.jpg.txt"
+          ]
+         ],
+         ","
+        ]
+       ]
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "router",
+   "context": "import",
+   "start": "new",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "sources": [],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a file's tags",
+       "sidecar": null,
+       "separator": null,
+       "timestamp": null,
+       "tags": {
+        "service": "my tags"
+       },
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "tags to media, on \"my tags\"",
+        "object": [
+         115,
+         1,
+         "6c6f63616c2074616773"
+        ]
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "router",
+   "context": "export",
+   "start": "new",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "sources": [],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a .txt sidecar",
+       "sidecar": {
+        "remove_ext": false,
+        "suffix": "",
+        "converter": "no string conversions",
+        "example": "01234564789abcdef.jpg",
+        "result": "01234564789abcdef.jpg.txt"
+       },
+       "separator": {
+        "choice": {
+         "options": [
+          "newline",
+          "four pipes (||||)",
+          "custom text"
+         ],
+         "value": "newline"
+        },
+        "custom": "",
+        "custom_enabled": false
+       },
+       "timestamp": null,
+       "tags": null,
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "to .txt sidecar",
+        "object": [
+         116,
+         3,
+         [
+          false,
+          "",
+          [
+           55,
+           2,
+           [
+            [],
+            "0123456789abcdef.jpg.txt"
+           ]
+          ],
+          "\n"
+         ]
+        ]
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "router",
+   "context": "import",
+   "start": "txt notes",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "sources": [
+       "from .txt sidecar"
+      ],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a file's notes",
+       "sidecar": null,
+       "separator": null,
+       "timestamp": null,
+       "tags": null,
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "notes to media",
+        "object": [
+         119,
+         2,
+         null
+        ]
+       }
+      }
+     }
+    },
+    {
+     "step": [
+      "ok"
+     ],
+     "said": [
+      {
+       "asked": "Hey, you are importing notes from a .txt file but have selected the \"newline\" separator to specify where multiple notes split. If any of your notes have multiple lines, they will be broken by this! Are you sure this is how the notes in the .txt are formatted, with a newline separator? If you created these sidecars, it would be better if you used a different separator like \"||||\" or just went for JSON instead. Are you sure you want to go ahead?"
+      },
+      {
+       "ok": false
+      }
+     ],
+     "state": {
+      "sources": [
+       "from .txt sidecar"
+      ],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a file's notes",
+       "sidecar": null,
+       "separator": null,
+       "timestamp": null,
+       "tags": null,
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "notes to media",
+        "object": [
+         119,
+         2,
+         null
+        ]
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "router",
+   "context": "export",
+   "start": "notes txt",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "sources": [
+       "notes from media"
+      ],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a .txt sidecar",
+       "sidecar": {
+        "remove_ext": false,
+        "suffix": "",
+        "converter": "no string conversions",
+        "example": "01234564789abcdef.jpg",
+        "result": "01234564789abcdef.jpg.txt"
+       },
+       "separator": {
+        "choice": {
+         "options": [
+          "newline",
+          "four pipes (||||)",
+          "custom text"
+         ],
+         "value": "newline"
+        },
+        "custom": "",
+        "custom_enabled": false
+       },
+       "timestamp": null,
+       "tags": null,
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "to .txt sidecar",
+        "object": [
+         116,
+         3,
+         [
+          false,
+          "",
+          [
+           55,
+           2,
+           [
+            [],
+            "0123456789abcdef.jpg.txt"
+           ]
+          ],
+          "\n"
+         ]
+        ]
+       }
+      }
+     }
+    },
+    {
+     "step": [
+      "ok"
+     ],
+     "said": [
+      {
+       "asked": "Hey, you are exporing notes to a .txt file but have selected a \"newline\" separator to split multiple notes. This will break any notes that have multiple lines--are you sure you do not want to select \"||||\" (or something else unlikely to appear in your note text) as your separator instead? Another option is to export to JSON instead."
+      },
+      {
+       "ok": false
+      }
+     ],
+     "state": {
+      "sources": [
+       "notes from media"
+      ],
+      "processing": "sorting human sort (ascending)",
+      "destination": {
+       "type": "a .txt sidecar",
+       "sidecar": {
+        "remove_ext": false,
+        "suffix": "",
+        "converter": "no string conversions",
+        "example": "01234564789abcdef.jpg",
+        "result": "01234564789abcdef.jpg.txt"
+       },
+       "separator": {
+        "choice": {
+         "options": [
+          "newline",
+          "four pipes (||||)",
+          "custom text"
+         ],
+         "value": "newline"
+        },
+        "custom": "",
+        "custom_enabled": false
+       },
+       "timestamp": null,
+       "tags": null,
+       "forced_name": null,
+       "nested": null,
+       "value": {
+        "text": "to .txt sidecar",
+        "object": [
+         116,
+         3,
+         [
+          false,
+          "",
+          [
+           55,
+           2,
+           [
+            [],
+            "0123456789abcdef.jpg.txt"
+           ]
+          ],
+          "\n"
+         ]
+        ]
+       }
+      }
+     }
+    }
+   ]
+  },
+  {
+   "editor": "routers",
+   "context": "import",
+   "start": "empty",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "labels": [],
+      "templates": [
+       {
+        "label": "easy one-click JSON that covers the basics",
+        "description": "this will import all notes, urls, tags, and basic times as they are currently defined. it will match the easy-export JSON and if tag service names match up, tags will work too",
+        "routers": [
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending notes to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "notes",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             119,
+             2,
+             null
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending urls to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "urls",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             117,
+             1,
+             []
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending tags to media, on \"downloader tags\".",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "storage",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "downloader tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             115,
+             1,
+             "646f776e6c6f616465722074616773"
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending tags to media, on \"my tags\".",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "storage",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "my tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             115,
+             1,
+             "6c6f63616c2074616773"
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending tags to media, on \"second tags\".",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "storage",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "second tags",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             115,
+             1,
+             "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0"
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending archived time to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "times",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "archived",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             122,
+             1,
+             [
+              121,
+              2,
+              [
+               5,
+               null,
+               null
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending \"hydrus local file storage\" imported time to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "times",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "imported",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             122,
+             1,
+             [
+              121,
+              2,
+              [
+               3,
+               "616c6c206c6f63616c2066696c6573",
+               null
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending media viewer last viewed time to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "times",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "last_viewed_media_viewer",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             122,
+             1,
+             [
+              121,
+              2,
+              [
+               6,
+               0,
+               null
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking from JSON sidecar, applying some sorting, sending preview viewer last viewed time to media.",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                114,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 false,
+                 "",
+                 [
+                  55,
+                  2,
+                  [
+                   [],
+                   "my_image.jpg.json"
+                  ]
+                 ],
+                 [
+                  31,
+                  4,
+                  [
+                   [
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "times",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     0,
+                     [
+                      51,
+                      1,
+                      [
+                       0,
+                       "last_viewed_preview_viewer",
+                       null,
+                       null,
+                       "example string"
+                      ]
+                     ]
+                    ],
+                    [
+                     1,
+                     null
+                    ]
+                   ],
+                   0,
+                   "",
+                   [
+                    84,
+                    1,
+                    [
+                     26,
+                     3,
+                     []
+                    ]
+                   ]
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             122,
+             1,
+             [
+              121,
+              2,
+              [
+               6,
+               1,
+               null
+              ]
+             ]
+            ]
+           ]
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "editor": "routers",
+   "context": "export",
+   "start": "empty",
+   "states": [
+    {
+     "step": null,
+     "state": {
+      "labels": [],
+      "templates": [
+       {
+        "label": "easy one-click JSON that covers the basics",
+        "description": "this will export all notes, urls, tags, and basic times as they are currently defined",
+        "routers": [
+         {
+          "text": "Taking notes from media, applying some sorting, sending to .json sidecar (notes).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                120,
+                1,
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "notes"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking urls from media, applying some sorting, sending to .json sidecar (urls).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                118,
+                2,
+                [
+                 84,
+                 1,
+                 [
+                  26,
+                  3,
+                  []
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "urls"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"downloader tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>downloader tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "646f776e6c6f616465722074616773",
+                 0
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "storage",
+               "downloader tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"downloader tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>downloader tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "646f776e6c6f616465722074616773",
+                 1
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "display",
+               "downloader tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"my tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>my tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "6c6f63616c2074616773",
+                 0
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "storage",
+               "my tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"my tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>my tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "6c6f63616c2074616773",
+                 1
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "display",
+               "my tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"second tags\" stored tags, applying some sorting, sending to .json sidecar (tags>storage>second tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+                 0
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "storage",
+               "second tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"second tags\" display tags, applying some sorting, sending to .json sidecar (tags>display>second tags).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                111,
+                3,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 "5ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec05ec0",
+                 1
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "tags",
+               "display",
+               "second tags"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking archived time from media, applying some sorting, sending to .json sidecar (times>archived).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                123,
+                1,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 [
+                  121,
+                  2,
+                  [
+                   5,
+                   null,
+                   null
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "times",
+               "archived"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking \"hydrus local file storage\" imported time from media, applying some sorting, sending to .json sidecar (times>imported).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                123,
+                1,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 [
+                  121,
+                  2,
+                  [
+                   3,
+                   "616c6c206c6f63616c2066696c6573",
+                   null
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "times",
+               "imported"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking media viewer last viewed time from media, applying some sorting, sending to .json sidecar (times>last_viewed_media_viewer).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                123,
+                1,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 [
+                  121,
+                  2,
+                  [
+                   6,
+                   0,
+                   null
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "times",
+               "last_viewed_media_viewer"
+              ]
+             ]
+            ]
+           ]
+          ]
+         },
+         {
+          "text": "Taking preview viewer last viewed time from media, applying some sorting, sending to .json sidecar (times>last_viewed_preview_viewer).",
+          "object": [
+           109,
+           3,
+           [
+            [
+             26,
+             3,
+             [
+              [
+               2,
+               [
+                123,
+                1,
+                [
+                 [
+                  84,
+                  1,
+                  [
+                   26,
+                   3,
+                   []
+                  ]
+                 ],
+                 [
+                  121,
+                  2,
+                  [
+                   6,
+                   1,
+                   null
+                  ]
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             84,
+             1,
+             [
+              26,
+              3,
+              [
+               [
+                2,
+                [
+                 99,
+                 1,
+                 [
+                  2,
+                  true,
+                  null
+                 ]
+                ]
+               ]
+              ]
+             ]
+            ],
+            [
+             113,
+             2,
+             [
+              false,
+              "",
+              [
+               55,
+               2,
+               [
+                [],
+                "0123456789abcdef.jpg.json"
+               ]
+              ],
+              [
+               "times",
+               "last_viewed_preview_viewer"
+              ]
+             ]
+            ]
+           ]
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

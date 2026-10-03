@@ -78,8 +78,11 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   and the "filename tagging" dialog's "sidecars" tab open. **Done**: how
   routers describe themselves (`hydrus-gui-model`'s `sidecars`, recorded
   by `oracle/dump_sidecar_descriptions.py`), on the dialogs' sidecars
-  buttons. **Next**: the routers list and the router, importer and
-  exporter editors; then the string processor editor they open.
+  buttons; how string processing describes itself (hydrus-core's
+  `string_descriptions`); and the editors' workings (`hydrus-gui-model`'s
+  `sidecar_editors`, recorded by `oracle/record_sidecar_editors.py`).
+  **Next**: their windows (the routers list, the router editor, the source
+  and destination editors); then the string processor editor they open.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 
