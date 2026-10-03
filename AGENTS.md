@@ -95,8 +95,8 @@ box. Each one is a commit that passes CI on its own.
 - Subject in the imperative, saying what the user gets, often "..., as
   the reference does". The body says what changed and which recording
   proves it.
-- CI (`.github/workflows/rust.yml`) runs on pushes to `master` and
-  `claude/**` branches, and on pull requests.
+- CI (`.github/workflows/rust.yml`) runs on pushes to `master`,
+  `claude/**`, and `codex/**` branches, and on pull requests.
 
 ## Several agents at once
 
