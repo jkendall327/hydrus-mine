@@ -25,6 +25,7 @@ mod archive_delete_window;
 mod checker_options_window;
 pub mod daemon;
 mod drops;
+mod edit_subscription_window;
 pub mod favourites_window;
 mod filter_window;
 mod gallery;
@@ -127,9 +128,10 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    favourites, info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
-    options, page_chooser, predicate_editors, ratings, scanbar, selection, session_saving, sort,
-    status, subscriptions_dialog, subscriptions_list, thumbnail_icons, thumbnail_ratings,
+    edit_subscription, favourites, info_lines, list_selection, local_import, main_menu,
+    manage_tags, media_actions, options, page_chooser, predicate_editors, ratings, scanbar,
+    selection, session_saving, sort, status, subscriptions_dialog, subscriptions_list,
+    thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -156,6 +158,9 @@ pub struct Bound {
     pub session_dialog: Rc<RefCell<Option<SessionDialog>>>,
     /// The manage subscriptions dialog while it is open.
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
+    /// The edit subscription dialog while it is open (from the manage
+    /// subscriptions dialog).
+    pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -953,6 +958,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
+    let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -1010,12 +1016,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             manage_subscriptions: {
                 let pages = pages.clone();
                 let slot = subscriptions.clone();
+                let edit_slot = edit_subscription.clone();
+                let checker_slot = checker_options.clone();
                 Rc::new(move || {
                     if slot.borrow().is_some() {
                         return;
                     }
                     let store = pages.borrow().store().clone();
-                    match subscriptions_window::open(&store, &slot) {
+                    let slots = edit_subscription_window::Slots {
+                        edit: edit_slot.clone(),
+                        checker: checker_slot.clone(),
+                    };
+                    match subscriptions_window::open(&store, &slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the subscriptions: {e}"),
                     }
@@ -2157,6 +2169,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         checker_options,
         session_dialog,
         subscriptions,
+        edit_subscription,
         archive_delete,
         filter,
         open_page,
@@ -2614,7 +2627,7 @@ fn file_url(path: &str) -> String {
 
 /// Put `text` on the clipboard (as the reference's menu labels do when
 /// chosen).
-fn copy_to_clipboard(text: &str) {
+pub(crate) fn copy_to_clipboard(text: &str) {
     to_clipboard(&Clip::Text(text.to_owned()));
 }
 
@@ -2632,6 +2645,24 @@ type Clipper = Rc<dyn Fn(&Clip)>;
 thread_local! {
     /// What takes copies in place of the clipboard, if anything.
     static CLIPPER: RefCell<Option<Clipper>> = RefCell::new(None);
+    /// What gives text in place of the clipboard, if anything.
+    static PASTER: RefCell<Option<Rc<dyn Fn() -> String>>> = RefCell::new(None);
+}
+
+/// Read pasted text from `paster` rather than the clipboard (for tests),
+/// on this thread.
+pub fn set_paster(paster: impl Fn() -> String + 'static) {
+    PASTER.with(|p| *p.borrow_mut() = Some(Rc::new(paster)));
+}
+
+/// The clipboard's text (or the paster's).
+pub(crate) fn from_clipboard() -> Result<String, String> {
+    if let Some(paster) = PASTER.with(|p| p.borrow().clone()) {
+        return Ok(paster());
+    }
+    arboard::Clipboard::new()
+        .and_then(|mut c| c.get_text())
+        .map_err(|e| e.to_string())
 }
 
 /// Give what is copied to `clipper` rather than the clipboard (for tests,

@@ -46,24 +46,17 @@ and are tested against the reference. The work is the GUI over them.
     question panel, `Asking`) and select subscriptions.
   - "apply" writes only what changed.
   - `tests/gui/subscriptions.rs` tests it.
+- The edit subscription dialog (`ui/edit_subscription.slint`,
+  `src/edit_subscription_window.rs`, `hydrus-gui-model`'s
+  `edit_subscription`), opened by "add" and "edit": tested against
+  `oracle/fixtures/edit_subscription.json` in
+  `tests/model/edit_subscription.rs`, and `tests/gui/edit_subscription.rs`.
+  Its import options button and the query editor's additional tags wait
+  on an import options editor.
 
 **Next**:
 
-1. **The edit subscription dialog**. Recorded already:
-   `oracle/record_edit_subscription.py` (fixture
-   `oracle/fixtures/edit_subscription.json`) has its fields as it opens,
-   the query list's buttons with the paste-queries messages, and what
-   "apply" gives back. The dialog holds:
-   - name, downloader, and the queries list (`query_row` is ready);
-   - the query buttons;
-   - limits, checker options, and publication options.
-
-   The reference's layout, strings and button behaviour are written up
-   in `docs/rust/notes/manage_subscriptions.md`. Extend the recorder for
-   anything it doesn't cover yet (adding a query, the query editor).
-2. Then the rest of the list's buttons:
-   - add (choose a downloader),
-   - edit,
+1. The rest of the list's buttons:
    - reset (empties the queries' file logs, after a question),
    - retry failed/ignored,
    - overwrite downloader, overwrite checker options (the checker

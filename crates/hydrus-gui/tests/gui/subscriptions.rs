@@ -15,7 +15,7 @@ use hydrus_store::import::import_legacy;
 use hydrus_store::queues::{self, FileSeedMeta, NewFileSeed, SeedStatus, SeedType};
 use hydrus_store::subscriptions;
 
-fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
+pub(crate) fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let native = tempfile::tempdir().unwrap();
     import_legacy(
@@ -27,12 +27,12 @@ fn store() -> ([tempfile::TempDir; 2], Arc<Store>) {
     ([legacy, native], store)
 }
 
-fn now() -> i64 {
+pub(crate) fn now() -> i64 {
     hydrus_core::time::TimestampMs::now().millis() / 1000
 }
 
 /// network > subscriptions…, from the menu bar.
-fn open_dialog(ui: &MainWindow, bound: &Bound) -> SubscriptionsWindow {
+pub(crate) fn open_dialog(ui: &MainWindow, bound: &Bound) -> SubscriptionsWindow {
     let titles = ui.get_menu_titles();
     let network = (0..titles.row_count())
         .position(|i| titles.row_data(i).unwrap().label == "network")
@@ -53,7 +53,7 @@ fn open_dialog(ui: &MainWindow, bound: &Bound) -> SubscriptionsWindow {
 
 /// The list's rows, as shown: each one's cells and whether it is
 /// selected.
-fn rows(dialog: &SubscriptionsWindow) -> Vec<(Vec<String>, bool)> {
+pub(crate) fn rows(dialog: &SubscriptionsWindow) -> Vec<(Vec<String>, bool)> {
     let rows = dialog.get_rows();
     (0..rows.row_count())
         .map(|r| {

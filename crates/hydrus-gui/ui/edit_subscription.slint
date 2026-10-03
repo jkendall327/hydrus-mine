@@ -1,0 +1,433 @@
+// The edit subscription dialog (the reference's `EditSubscriptionPanel`,
+// opened from the manage subscriptions dialog's "add" and "edit"; its
+// workings are hydrus-gui-model's `edit_subscription`, bound by
+// `src/edit_subscription_window.rs`): the name, the delay, the downloader
+// and the queries list with its buttons, the subscription's settings, and
+// the query editor ("edit subscription query") in its place while a query
+// is edited.
+
+import { Button, CheckBox, LineEdit, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+
+// a box's title, as the reference's static boxes
+component BoxTitle inherits Text {
+    font-weight: 700;
+    color: Theme.text;
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+component Group inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        BoxTitle { text: root.title; }
+        @children
+    }
+}
+
+// a label and a checkbox on a row, as the reference's grids
+component CheckRow inherits HorizontalLayout {
+    in property <string> label;
+    in-out property <bool> checked;
+    callback toggled();
+    spacing: 6px;
+    Label {
+        text: root.label;
+        horizontal-stretch: 1;
+    }
+    CheckBox {
+        checked <=> root.checked;
+        toggled => { root.toggled(); }
+    }
+}
+
+export component EditSubscriptionWindow inherits Window {
+    in property <string> window-title: "edit subscription";
+    title: root.window-title;
+    preferred-width: 1100px;
+    preferred-height: 720px;
+    background: Theme.window;
+    in-out property <string> name;
+    in property <string> delay;
+    in property <string> downloader;
+    // the queries list
+    in property <[TableRow]> rows;
+    in property <int> sort-column;
+    in property <bool> ascending: true;
+    in property <bool> any-selected;
+    in property <bool> one-selected;
+    in property <bool> can-check-now;
+    in property <bool> can-reset;
+    in property <bool> can-retry-failed;
+    in property <bool> can-retry-ignored;
+    // the settings
+    in-out property <bool> paused;
+    in property <int> most-files;
+    in-out property <int> initial-limit;
+    in-out property <int> periodic-limit;
+    in-out property <bool> random-sample;
+    in-out property <bool> show-popup;
+    in-out property <bool> publish-popup-button;
+    in-out property <bool> publish-page;
+    in-out property <string> label-override;
+    in-out property <bool> label-override-none;
+    in-out property <bool> merge-publish;
+    in property <string> import-options;
+    // a question waiting on an answer
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    // the query editor, while a query is edited
+    in property <bool> editing-query;
+    in-out property <string> query-text;
+    in-out property <string> display-name;
+    in-out property <bool> display-name-none;
+    in-out property <bool> query-check-now;
+    in-out property <bool> query-paused;
+    in property <string> query-status;
+    in property <string> query-file-log;
+    in property <string> query-search-log;
+    callback sort(int, bool);
+    // (row, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback choose-downloader();
+    callback add-query();
+    callback copy-queries();
+    callback paste-queries();
+    callback edit-query();
+    callback delete-queries();
+    callback pause-play();
+    callback retry-failed();
+    callback retry-ignored();
+    callback check-now();
+    callback reset();
+    callback edit-checker();
+    callback chosen(int);
+    callback cancelled();
+    callback query-status-changed();
+    callback query-apply();
+    callback query-cancel();
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.asking) {
+                    root.cancelled();
+                } else if (root.editing-query) {
+                    root.query-cancel();
+                } else {
+                    root.cancel();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            if !root.editing-query: VerticalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                HorizontalLayout {
+                    spacing: 6px;
+                    Label { text: "name: "; }
+                    LineEdit {
+                        text <=> root.name;
+                        horizontal-stretch: 1;
+                    }
+                }
+                Label { text: root.delay; }
+                Group {
+                    title: "site and queries";
+                    vertical-stretch: 1;
+                    Button {
+                        text: root.downloader;
+                        enabled: !root.asking;
+                        clicked => { root.choose-downloader(); }
+                    }
+                    ListTable {
+                        min-height: 7 * 22px;
+                        vertical-stretch: 1;
+                        // (the reference's widths, in characters)
+                        columns: [
+                            { title: "name/query", width: 140px, stretch: true },
+                            { title: "paused", width: 56px },
+                            { title: "status", width: 56px },
+                            { title: "last new file time", width: 130px },
+                            { title: "last check time", width: 130px },
+                            { title: "next check time", width: 130px },
+                            { title: "file velocity", width: 130px },
+                            { title: "recent delays", width: 105px },
+                            { title: "items", width: 91px },
+                            { title: "additional tags", width: 140px },
+                        ];
+                        rows: root.rows;
+                        sort-column: root.sort-column;
+                        ascending: root.ascending;
+                        sort(column, ascending) => { root.sort(column, ascending); }
+                        row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                        row-activated(row) => { root.row-activated(row); }
+                        delete-pressed => { if root.any-selected { root.delete-queries(); } }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        alignment: end;
+                        Button {
+                            text: "add";
+                            enabled: !root.asking;
+                            clicked => { root.add-query(); }
+                        }
+                        Button {
+                            text: "copy queries";
+                            enabled: root.any-selected && !root.asking;
+                            clicked => { root.copy-queries(); }
+                        }
+                        Button {
+                            text: "paste queries";
+                            enabled: !root.asking;
+                            clicked => { root.paste-queries(); }
+                        }
+                        Button {
+                            text: "edit";
+                            enabled: root.one-selected && !root.asking;
+                            clicked => { root.edit-query(); }
+                        }
+                        Button {
+                            text: "delete";
+                            enabled: root.any-selected && !root.asking;
+                            clicked => { root.delete-queries(); }
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        alignment: end;
+                        Button {
+                            text: "pause/play";
+                            enabled: root.any-selected && !root.asking;
+                            clicked => { root.pause-play(); }
+                        }
+                        if root.can-retry-failed: Button {
+                            text: "retry failed";
+                            enabled: !root.asking;
+                            clicked => { root.retry-failed(); }
+                        }
+                        if root.can-retry-ignored: Button {
+                            text: "retry ignored";
+                            enabled: !root.asking;
+                            clicked => { root.retry-ignored(); }
+                        }
+                        Button {
+                            text: "check now";
+                            enabled: root.can-check-now && !root.asking;
+                            clicked => { root.check-now(); }
+                        }
+                        Button {
+                            text: "reset";
+                            enabled: root.can-reset && !root.asking;
+                            clicked => { root.reset(); }
+                        }
+                    }
+                }
+                HorizontalLayout {
+                    spacing: 6px;
+                    VerticalLayout {
+                        spacing: 6px;
+                        horizontal-stretch: 1;
+                        Group {
+                            title: "control";
+                            CheckRow {
+                                label: "currently paused: ";
+                                checked <=> root.paused;
+                            }
+                        }
+                        Group {
+                            title: "synchronisation";
+                            Label { text: "Don't change these values unless you know what you are doing!"; }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                Label {
+                                    text: "on first check, get at most this many urls/posts: ";
+                                    horizontal-stretch: 1;
+                                }
+                                SpinBox {
+                                    width: 110px;
+                                    minimum: 1;
+                                    maximum: root.most-files;
+                                    value <=> root.initial-limit;
+                                }
+                            }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                Label {
+                                    text: "on normal checks, get at most this many newer urls/posts: ";
+                                    horizontal-stretch: 1;
+                                }
+                                SpinBox {
+                                    width: 110px;
+                                    minimum: 1;
+                                    maximum: root.most-files;
+                                    value <=> root.periodic-limit;
+                                }
+                            }
+                            CheckRow {
+                                label: "do not worry about subscription gaps: ";
+                                checked <=> root.random-sample;
+                            }
+                            Button {
+                                text: "checker options";
+                                enabled: !root.asking;
+                                clicked => { root.edit-checker(); }
+                            }
+                        }
+                        Rectangle { vertical-stretch: 1; }
+                    }
+                    VerticalLayout {
+                        spacing: 6px;
+                        horizontal-stretch: 1;
+                        Group {
+                            title: "file publication";
+                            Label { text: "If you like, the subscription can send its files to popup buttons or pages directly. The files it sends are shaped by the 'presentation' options in _file import options_."; }
+                            CheckRow {
+                                label: "show a popup while working: ";
+                                checked <=> root.show-popup;
+                            }
+                            CheckRow {
+                                label: "publish presented files to a popup button: ";
+                                checked <=> root.publish-popup-button;
+                            }
+                            CheckRow {
+                                label: "publish presented files to a page: ";
+                                checked <=> root.publish-page;
+                            }
+                            HorizontalLayout {
+                                spacing: 6px;
+                                Label {
+                                    text: "publish to a specific label: ";
+                                    horizontal-stretch: 1;
+                                }
+                                LineEdit {
+                                    text <=> root.label-override;
+                                    placeholder-text: "subscription files";
+                                    enabled: !root.label-override-none;
+                                    horizontal-stretch: 1;
+                                }
+                                CheckBox {
+                                    text: "no, use subscription name";
+                                    checked <=> root.label-override-none;
+                                }
+                            }
+                            CheckRow {
+                                label: "publish all queries to the same page/popup button: ";
+                                checked <=> root.merge-publish;
+                            }
+                        }
+                        Rectangle { vertical-stretch: 1; }
+                    }
+                }
+                Button {
+                    // (not editable here yet)
+                    text: root.import-options;
+                    enabled: false;
+                }
+            }
+            if root.editing-query: VerticalLayout {
+                spacing: 6px;
+                vertical-stretch: 1;
+                BoxTitle { text: "edit subscription query"; }
+                Group {
+                    title: "query and name";
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Label { text: "query text: "; }
+                        LineEdit {
+                            text <=> root.query-text;
+                            horizontal-stretch: 1;
+                        }
+                    }
+                    HorizontalLayout {
+                        spacing: 6px;
+                        Label { text: "optional display name: "; }
+                        LineEdit {
+                            text <=> root.display-name;
+                            placeholder-text: "query name";
+                            enabled: !root.display-name-none;
+                            horizontal-stretch: 1;
+                        }
+                        CheckBox {
+                            text: "use query text";
+                            checked <=> root.display-name-none;
+                        }
+                    }
+                }
+                Group {
+                    title: "status";
+                    Label { text: root.query-status; }
+                    CheckRow {
+                        label: "check now: ";
+                        checked <=> root.query-check-now;
+                        toggled => { root.query-status-changed(); }
+                    }
+                    CheckRow {
+                        label: "paused: ";
+                        checked <=> root.query-paused;
+                        toggled => { root.query-status-changed(); }
+                    }
+                }
+                Group {
+                    title: "history";
+                    Label { text: root.query-file-log; }
+                    Label { text: root.query-search-log; }
+                }
+                Rectangle { vertical-stretch: 1; }
+                HorizontalLayout {
+                    alignment: end;
+                    spacing: 6px;
+                    Button {
+                        text: "apply";
+                        enabled: !root.asking;
+                        clicked => { root.query-apply(); }
+                    }
+                    Button {
+                        text: "cancel";
+                        clicked => { root.query-cancel(); }
+                    }
+                }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
+            }
+            if !root.editing-query: HorizontalLayout {
+                alignment: end;
+                spacing: 6px;
+                Button {
+                    text: "apply";
+                    enabled: !root.asking;
+                    clicked => { root.apply(); }
+                }
+                Button {
+                    text: "cancel";
+                    clicked => { root.cancel(); }
+                }
+            }
+        }
+    }
+}

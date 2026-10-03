@@ -152,6 +152,25 @@ containing some text. Nothing is written until "apply", which writes
 only what changed; "cancel" writes nothing. The rows and the questions
 are as `oracle/record_subscriptions_list.py` recorded the reference's.
 
+"add" (asking which downloader, or saying there are none) and "edit"
+(or a double-click) open the edit subscription dialog
+(`src/edit_subscription_window.rs`, `hydrus-gui-model/src/edit_subscription.rs`),
+the reference's `EditSubscriptionPanel`: the name, the delay line, the
+downloader (a button to choose another), the queries list and its
+buttons, "currently paused", the file limits, "do not worry about
+subscription gaps", the checker options (the checker options editor),
+and the file publication options. The queries list's buttons add a query
+and edit one (in the query editor: query text, display name, check now,
+paused, and the file and search logs' status), copy and paste queries
+(the paste asking what to add and whether to revive the DEAD, as the
+reference words it), delete, pause/play, retry failed and retry ignored
+(all, 403s, 404s or blacklisted), check now (asking the "Check which?"
+questions) and reset (asking first). "apply" gives the subscription back
+to the list, renamed " (1)" if its name is taken; the list's "apply"
+writes it, with new queries, deleted queries and the file logs' resets
+and retries. Its workings are as `oracle/record_edit_subscription.py`
+recorded the reference's.
+
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the

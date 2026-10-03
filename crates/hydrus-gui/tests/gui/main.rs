@@ -9,6 +9,7 @@ mod archive_delete;
 mod collect;
 mod downloader_lists;
 mod duplicate_filter;
+mod edit_subscription;
 mod favourites;
 mod import_files;
 mod info_lines;

@@ -1,7 +1,8 @@
 // The manage subscriptions dialog (network > subscriptions…; the
 // reference's `EditSubscriptionsPanel`, bound by
 // `src/subscriptions_window.rs`): the subscriptions list, the buttons
-// hydrus-rs has so far, and the questions they ask, held until "apply".
+// hydrus-rs has so far (add and edit open `edit_subscription.slint`), and
+// the questions they ask, held until "apply".
 
 import { Button, LineEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -67,6 +68,7 @@ export component SubscriptionsWindow inherits Window {
     in property <bool> ascending: true;
     // what the buttons can do for the selection
     in property <bool> any-selected;
+    in property <bool> one-selected;
     in property <bool> can-check-now;
     in property <bool> can-scrub-delays;
     // a question waiting on an answer
@@ -79,6 +81,9 @@ export component SubscriptionsWindow inherits Window {
     callback sort(int, bool);
     // (row, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
     callback delete();
     callback pause-resume();
     callback scrub-delays();
@@ -131,12 +136,23 @@ export component SubscriptionsWindow inherits Window {
                 ascending: root.ascending;
                 sort(column, ascending) => { root.sort(column, ascending); }
                 row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-activated(row) => { if !root.asking { root.row-activated(row); } }
                 delete-pressed => { if root.any-selected { root.delete(); } }
             }
             // the reference's button rows, as far as hydrus-rs has them
             HorizontalLayout {
                 spacing: 6px;
                 alignment: end;
+                Button {
+                    text: "add";
+                    enabled: !root.asking;
+                    clicked => { root.add(); }
+                }
+                Button {
+                    text: "edit";
+                    enabled: root.one-selected && !root.asking;
+                    clicked => { root.edit(); }
+                }
                 Button {
                     text: "delete";
                     enabled: root.any-selected && !root.asking;

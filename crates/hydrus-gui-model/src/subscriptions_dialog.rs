@@ -10,6 +10,7 @@ use hydrus_core::numbers::human_int;
 use hydrus_core::subscriptions::{QueryState, SeedTime, SubscriptionSettings};
 use hydrus_store::queues::StatusCounts;
 
+use crate::edit_subscription::LogChange;
 use crate::list_selection::ListSelection;
 use crate::subscriptions_list::{QueryFacts, ShortSummary, SubscriptionFacts, subscription_row};
 
@@ -23,9 +24,25 @@ pub struct DialogQuery {
     /// posted.
     pub files: StatusCounts,
     pub seed_times: Vec<SeedTime>,
+    /// The notes of its ignored files, for "retry ignored".
+    pub ignored_notes: Vec<String>,
+    /// What to do to its file log on "apply", in order.
+    pub log_changes: Vec<LogChange>,
 }
 
 impl DialogQuery {
+    /// A query not in the store yet.
+    pub fn new(state: QueryState) -> Self {
+        Self {
+            queue: None,
+            state,
+            files: StatusCounts::new(),
+            seed_times: Vec::new(),
+            ignored_notes: Vec::new(),
+            log_changes: Vec::new(),
+        }
+    }
+
     /// When its latest file was found (0 for none).
     pub fn latest_added(&self) -> i64 {
         self.seed_times.iter().map(|t| t.created).max().unwrap_or(0)
@@ -72,6 +89,8 @@ pub struct DialogSubscription {
     pub name: String,
     pub settings: SubscriptionSettings,
     pub queries: Vec<DialogQuery>,
+    /// The queues of its queries deleted in the edit dialog.
+    pub deleted_queries: Vec<i64>,
 }
 
 impl DialogSubscription {
@@ -176,8 +195,63 @@ impl Subscriptions {
             name,
             settings,
             queries,
+            deleted_queries: Vec::new(),
         });
         key
+    }
+
+    /// `name`, or with " (1)", " (2)" and so on after it, the first no
+    /// other subscription has, casefolded (`SetNonDupeName`).
+    fn non_dupe_name(&self, name: &str, except: Option<u64>) -> String {
+        let taken: Vec<String> = self
+            .subscriptions
+            .iter()
+            .filter(|s| Some(s.key) != except)
+            .map(|s| hydrus_core::casefold::casefold(&s.name))
+            .collect();
+        crate::favourites::non_dupe_name(name, &|n| {
+            taken.contains(&hydrus_core::casefold::casefold(n))
+        })
+    }
+
+    /// Add a new subscription as the edit dialog gave it back ("add"),
+    /// renamed if its name is taken; it is selected.
+    pub fn add_edited(
+        &mut self,
+        name: &str,
+        settings: SubscriptionSettings,
+        queries: Vec<DialogQuery>,
+    ) -> u64 {
+        let name = self.non_dupe_name(name, None);
+        let key = self.push(None, name, settings, queries);
+        self.selection.select_many(&[key]);
+        key
+    }
+
+    /// Replace a subscription with what the edit dialog gave back ("edit"):
+    /// a changed name is renamed if another has it (the reference counts
+    /// the subscription's own old name as taken too, so a change of case
+    /// alone gets " (1)"; hydrus-rs doesn't).
+    pub fn replace_edited(
+        &mut self,
+        key: u64,
+        name: &str,
+        settings: SubscriptionSettings,
+        queries: Vec<DialogQuery>,
+        deleted_queries: Vec<i64>,
+    ) {
+        let unchanged = self.get(key).is_some_and(|s| s.name == name);
+        let name = if unchanged {
+            name.to_owned()
+        } else {
+            self.non_dupe_name(name, Some(key))
+        };
+        if let Some(s) = self.get_mut(key) {
+            s.name = name;
+            s.settings = settings;
+            s.queries = queries;
+            s.deleted_queries.extend(deleted_queries);
+        }
     }
 
     pub fn get(&self, key: u64) -> Option<&DialogSubscription> {
@@ -383,6 +457,67 @@ enum Stage {
 
 const CHECK_WHICH: &str = "Check which?";
 
+fn check_which(message: String, choices: &[&str]) -> Choice {
+    Choice {
+        title: CHECK_WHICH.into(),
+        message,
+        choices: choices.iter().map(|&c| c.to_owned()).collect(),
+    }
+}
+
+/// "Check which?" about the DEAD among `total` queries: its answers are
+/// check all, the alive, or the dead (or, when all are dead, resurrect
+/// them or not).
+pub fn dead_question(total: usize, dead: usize) -> Choice {
+    let message = format!(
+        "Of the {} selected queries, {} are DEAD. Do you want to check these?",
+        human_int(total as u64),
+        human_int(dead as u64)
+    );
+    if dead == total {
+        check_which(
+            message,
+            &["yes, resurrect the DEAD queries", "no, leave them DEAD"],
+        )
+    } else {
+        let alive = format!("check the {} ALIVE", human_int((total - dead) as u64));
+        let resurrect = format!("resurrect and check the {} DEAD", human_int(dead as u64));
+        check_which(message, &["yes, check all of them", &alive, &resurrect])
+    }
+}
+
+/// What an answer to [`dead_question`] checks: (the alive, the dead).
+pub fn dead_answer(all_dead: bool, index: usize) -> (bool, bool) {
+    match (all_dead, index) {
+        (true, 0) => (false, true),
+        (true, _) => (false, false),
+        (false, 0) => (true, true),
+        (false, 1) => (true, false),
+        (false, _) => (false, true),
+    }
+}
+
+/// "Check which?" about the paused among `total` queries: the first
+/// answer checks them too.
+pub fn paused_queries_question(total: usize, paused: usize) -> Choice {
+    let message = format!(
+        "Of the {} selected queries, {} are paused. Do you want to unpause and check them?",
+        human_int(total as u64),
+        human_int(paused as u64)
+    );
+    if paused == total {
+        check_which(message, &["yes, check them", "no, leave them alone"])
+    } else {
+        check_which(
+            message,
+            &[
+                "yes check paused queries",
+                "no just what is currently unpaused",
+            ],
+        )
+    }
+}
+
 impl CheckNow {
     /// On the selected.
     pub fn new(dialog: &Subscriptions, now: i64) -> Self {
@@ -423,11 +558,7 @@ impl CheckNow {
 
     /// The question waiting on an answer, if one is.
     pub fn question(&self, dialog: &Subscriptions) -> Option<Choice> {
-        let choice = |message: String, choices: &[&str]| Choice {
-            title: CHECK_WHICH.into(),
-            message,
-            choices: choices.iter().map(|&c| c.to_owned()).collect(),
-        };
+        let choice = check_which;
         match self.stage {
             Stage::AskedPausedSubscriptions => {
                 let subs = self.chosen(dialog);
@@ -458,45 +589,12 @@ impl CheckNow {
             Stage::AskedDead => {
                 let queries = self.queries(dialog, false);
                 let dead = queries.iter().filter(|q| q.state.dead).count();
-                let message = format!(
-                    "Of the {} selected queries, {} are DEAD. Do you want to check these?",
-                    human_int(queries.len() as u64),
-                    human_int(dead as u64)
-                );
-                Some(if dead == queries.len() {
-                    choice(
-                        message,
-                        &["yes, resurrect the DEAD queries", "no, leave them DEAD"],
-                    )
-                } else {
-                    let alive = format!(
-                        "check the {} ALIVE",
-                        human_int((queries.len() - dead) as u64)
-                    );
-                    let resurrect =
-                        format!("resurrect and check the {} DEAD", human_int(dead as u64));
-                    choice(message, &["yes, check all of them", &alive, &resurrect])
-                })
+                Some(dead_question(queries.len(), dead))
             }
             Stage::AskedPausedQueries => {
                 let queries = self.queries(dialog, true);
                 let paused = queries.iter().filter(|q| q.state.paused).count();
-                let message = format!(
-                    "Of the {} selected queries, {} are paused. Do you want to unpause and check them?",
-                    human_int(queries.len() as u64),
-                    human_int(paused as u64)
-                );
-                Some(if paused == queries.len() {
-                    choice(message, &["yes, check them", "no, leave them alone"])
-                } else {
-                    choice(
-                        message,
-                        &[
-                            "yes check paused queries",
-                            "no just what is currently unpaused",
-                        ],
-                    )
-                })
+                Some(paused_queries_question(queries.len(), paused))
             }
             _ => None,
         }
@@ -549,13 +647,7 @@ impl CheckNow {
             Stage::AskedDead => {
                 let queries = self.queries(dialog, false);
                 let all = queries.iter().all(|q| q.state.dead);
-                (self.do_alive, self.do_dead) = match (all, index) {
-                    (true, 0) => (false, true),
-                    (true, _) => (false, false),
-                    (false, 0) => (true, true),
-                    (false, 1) => (true, false),
-                    (false, _) => (false, true),
-                };
+                (self.do_alive, self.do_dead) = dead_answer(all, index);
                 self.stage = Stage::CheckPausedQueries;
             }
             Stage::AskedPausedQueries => {

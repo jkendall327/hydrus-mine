@@ -84,7 +84,7 @@ pub struct ShortSummary {
 
 /// `TimestampToPrettyTimeDelta` with no "now" leeway
 /// (`just_now_threshold = 0`).
-fn delta_exact(timestamp: i64, now: i64) -> String {
+pub(crate) fn delta_exact(timestamp: i64, now: i64) -> String {
     if timestamp == now {
         return "now".into();
     }

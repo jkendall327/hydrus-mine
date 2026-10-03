@@ -552,15 +552,25 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   `hydrus serve` within five minutes.**
 - **The manage subscriptions dialog is a first pass.** It lists the
   subscriptions and can delete, pause/resume, scrub delays, check
-  queries now and select by query text. It has no "add", "edit", "reset",
-  "retry", "merge", "separate", "deduplicate", "lowercase",
-  "export"/"import"/"duplicate", "overwrite downloader/checker options" or
-  import options buttons yet. It doesn't reckon bandwidth waits (the
+  queries now and select by query text, and add and edit subscriptions.
+  It has no "reset", "retry", "merge", "separate", "deduplicate",
+  "lowercase", "export"/"import"/"duplicate", "overwrite
+  downloader/checker options" or import options buttons yet. It doesn't reckon bandwidth waits (the
   error/delay column is empty unless the subscription is delayed). It
   doesn't pause subscriptions while open, as the reference does: "apply"
   writes only what the dialog changed, so a subscription the daemon ran
   meanwhile keeps what the run found, unless the dialog changed the same
   query.
+- **The edit subscription dialog** has no import options button (it
+  shows, disabled, what they are), no multi-site downloader warning, and
+  no "additional tags" or file log compaction number in the query editor.
+  Its downloader choice is one list (the reference puts the downloaders
+  not on show, and those that don't work, under further entries); its
+  retry buttons are two buttons where the reference has a menu. Editing a
+  query's text to differ only in case is allowed (the reference refuses
+  it, as a clash with itself), and renaming a subscription to differ only
+  in case doesn't add " (1)" (the reference counts its old name as
+  taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

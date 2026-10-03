@@ -12,6 +12,7 @@ pub mod checker_options;
 pub mod collect;
 pub mod domains;
 pub mod duplicate_filter;
+pub mod edit_subscription;
 pub mod favourites;
 pub mod info_lines;
 pub mod list_selection;

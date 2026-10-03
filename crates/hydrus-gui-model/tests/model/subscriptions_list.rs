@@ -110,7 +110,7 @@ fn the_lists_rows_are_the_references() {
 }
 
 /// A recorded subscription as the dialog would load it.
-fn dialog_subscription(
+pub(crate) fn dialog_subscription(
     recorded: &Json,
     now: i64,
 ) -> (Option<i64>, String, SubscriptionSettings, Vec<DialogQuery>) {
@@ -158,6 +158,7 @@ fn dialog_subscription(
                 state,
                 files: facts.files,
                 seed_times,
+                ..DialogQuery::new(QueryState::new(""))
             }
         })
         .collect();
