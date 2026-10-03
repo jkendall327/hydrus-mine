@@ -830,6 +830,66 @@ fn open_rule(
             show_rule(&window, &state, false);
         }
     });
+    // the preview: the rule as edited, or why it can't be had
+    let preview = crate::auto_resolution_preview_window::Preview::new(store);
+    let edited = {
+        let state = state.clone();
+        let store = store.clone();
+        move |window: &AutoResolutionRuleWindow| -> Result<Rule, String> {
+            let mut state = state.borrow_mut();
+            read_rule(window, &store, &mut state);
+            let mut errors = state.errors.clone();
+            if state.rule.action == RuleAction::Better
+                && !rule_can_determine_better(&state.rule.comparators)
+            {
+                errors.push(CANNOT_DETERMINE_BETTER.into());
+            }
+            if errors.is_empty() {
+                Ok(state.rule.clone())
+            } else {
+                Err(errors.join(" "))
+            }
+        }
+    };
+    window.on_preview_shown({
+        let weak = window.as_weak();
+        let preview = preview.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                preview.shown(&window, edited(&window));
+            }
+        }
+    });
+    window.on_preview_refetch({
+        let weak = window.as_weak();
+        let preview = preview.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                preview.refetch(&window);
+            }
+        }
+    });
+    window.on_preview_retest({
+        let weak = window.as_weak();
+        let preview = preview.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                preview.retest(&window);
+            }
+        }
+    });
+    window.on_preview_fetch_changed({
+        let weak = window.as_weak();
+        let preview = preview.clone();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let limit = (!window.get_preview_fetch_all())
+                    .then(|| usize::try_from(window.get_preview_fetch_limit()).ok())
+                    .flatten();
+                preview.set_limit(&window, limit);
+            }
+        }
+    });
     window.on_apply({
         let weak = window.as_weak();
         let state = state.clone();

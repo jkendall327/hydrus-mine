@@ -316,6 +316,111 @@ fn action_pair(
     })
 }
 
+/// A rule editor's preview search (`PreviewPanel`): the potential pairs
+/// in the rule's domain (within its distance), and those its search
+/// matches, as their kings, the pair with the bigger smaller file first
+/// (`DUPE_PAIR_SORT_MIN_FILESIZE`, descending), at most `limit` of them.
+#[derive(Debug, Clone, Default, PartialEq, Eq)]
+pub struct PreviewSearch {
+    pub searched: usize,
+    pub matched: Vec<(HashId, HashId)>,
+}
+
+pub fn preview_search(
+    store: &Store,
+    rule: &Rule,
+    limit: Option<usize>,
+    clock: &Clock,
+) -> Result<PreviewSearch> {
+    let snapshot = store.snapshot();
+    let scope = rule_scope(&snapshot, &rule.search.search_1.location)?;
+    store.read(|conn| {
+        let searched = duplicates::potential_pairs(
+            conn,
+            &snapshot,
+            &PotentialsSearch {
+                scope: scope.clone(),
+                kind: duplicates::PairSearchKind::OneFileMatchesOneSearch,
+                pixel_duplicates: rule.search.pixel_duplicates,
+                max_hamming_distance: rule.search.max_hamming_distance,
+                search_1: None,
+                search_2: None,
+            },
+        )?
+        .len();
+        let mut matched = Vec::new();
+        let mut groups: Vec<GroupPair> = matching_pairs(conn, &snapshot, rule, &scope, clock)?
+            .into_iter()
+            .collect();
+        groups.sort_unstable();
+        for (one, two) in groups {
+            if let (Some(a), Some(b)) =
+                (best_king(conn, one, &scope)?, best_king(conn, two, &scope)?)
+            {
+                matched.push((a, b));
+            }
+        }
+        let ids: Vec<HashId> = matched.iter().flat_map(|&(a, b)| [a, b]).collect();
+        let facts = hydrus_search::media::load_facts(conn, &snapshot, &ids)?;
+        let size = |h: HashId| {
+            facts
+                .get(&h)
+                .and_then(|f| f.size)
+                .filter(|&s| s > 0)
+                .unwrap_or(1)
+        };
+        matched.sort_by_key(|&(a, b)| {
+            let (x, y) = (size(a), size(b));
+            std::cmp::Reverse((x.min(y), x.max(y)))
+        });
+        if let Some(limit) = limit {
+            matched.truncate(limit);
+        }
+        Ok(PreviewSearch { searched, matched })
+    })
+}
+
+/// A preview's test of a pair (`GetMatchingAB`, not shuffled): A and B, if
+/// it passes either way round, and whether it passes both ways round
+/// (`MatchingPairMatchesBothWaysAround`).
+pub fn preview_test(
+    store: &Store,
+    rule: &Rule,
+    first: HashId,
+    second: HashId,
+    clock: &Clock,
+) -> Result<Option<((HashId, HashId), bool)>> {
+    let snapshot = store.snapshot();
+    let facts =
+        store.read(|conn| hydrus_search::media::load_facts(conn, &snapshot, &[first, second]))?;
+    let (Some(f1), Some(f2)) = (facts.get(&first), facts.get(&second)) else {
+        return Ok(None);
+    };
+    let file = |id, facts| selector::File { id, facts };
+    let mut content = crate::content::StoreContent::new(store);
+    let Some(first_is_a) = selector::matching_ab(
+        &rule.comparators,
+        file(first, f1),
+        file(second, f2),
+        false,
+        clock,
+        &mut content,
+    ) else {
+        return Ok(None);
+    };
+    let (a, b, fa, fb) = if first_is_a {
+        (first, second, f1, f2)
+    } else {
+        (second, first, f2, f1)
+    };
+    // (the other way round: B as A)
+    let both = rule
+        .comparators
+        .iter()
+        .all(|c| selector::test(c, file(b, fb), file(a, fa), clock, &mut content));
+    Ok(Some(((a, b), both)))
+}
+
 /// What one pass over the rules did.
 #[derive(Debug, Default, Clone, PartialEq, Eq)]
 pub struct WorkDone {

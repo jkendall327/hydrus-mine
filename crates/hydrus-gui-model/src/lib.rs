@@ -7,6 +7,7 @@
 
 pub mod archive_delete;
 pub mod audio;
+pub mod auto_resolution_preview;
 pub mod auto_resolution_review;
 pub mod auto_resolution_rules;
 pub mod autocomplete;

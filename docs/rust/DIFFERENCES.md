@@ -415,6 +415,11 @@ in-memory predicate tests their comparators use by
   On a CPU without AVX2 and FMA the reference's OpenCV takes other code
   paths and its floats can differ in the last bit; ours are the same on any
   CPU (only slower there).
+- **The rule editor's preview** takes its sample in one search, the
+  pairs with the biggest smaller file first, where the reference fetches
+  random fragments of the domain's pairs (sorting each); "pairs searched"
+  counts the domain's pairs within the rule's distance. Double-clicking a
+  pair doesn't open the duplicate filter yet.
 - **The "review actions" window** lists a rule's pending pairs by their
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. Double-clicking a pair (the reference opens the

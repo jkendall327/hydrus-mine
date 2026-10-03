@@ -8,6 +8,7 @@ import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } f
 import { Theme } from "theme.slint";
 import { ListTable, TableRow } from "list_table.slint";
 import { Asking } from "subscriptions.slint";
+import { PairList, PairRow } from "auto_resolution_review.slint";
 
 component Label inherits Text {
     vertical-alignment: center;
@@ -271,6 +272,20 @@ export component AutoResolutionRuleWindow inherits Window {
     callback comparator-add();
     callback comparator-edit();
     callback comparator-delete();
+    // the preview: shown (the rule as edited, searched and tested as it
+    // has changed), fetched again, tested again, its sample's size changed
+    in property <string> preview-search-label;
+    in-out property <int> preview-fetch-limit: 250;
+    in-out property <bool> preview-fetch-all;
+    in property <string> preview-to-test-label;
+    in property <string> preview-pass-label;
+    in property <[PairRow]> preview-pass-rows;
+    in property <string> preview-fail-label;
+    in property <[PairRow]> preview-fail-rows;
+    callback preview-shown();
+    callback preview-refetch();
+    callback preview-retest();
+    callback preview-fetch-changed();
     callback apply();
     callback cancel();
     VerticalLayout {
@@ -332,6 +347,14 @@ export component AutoResolutionRuleWindow inherits Window {
                 text: "action";
                 current: root.tab == 2;
                 clicked => { root.tab = 2; }
+            }
+            Tab {
+                text: "preview";
+                current: root.tab == 3;
+                clicked => {
+                    root.tab = 3;
+                    root.preview-shown();
+                }
             }
         }
         if root.tab == 0: VerticalLayout {
@@ -446,6 +469,79 @@ export component AutoResolutionRuleWindow inherits Window {
                     checked <=> root.default-merge;
                     toggled => { root.changed(); }
                 }
+            }
+        }
+        if root.tab == 3: VerticalLayout {
+            spacing: 6px;
+            vertical-stretch: 1;
+            Text {
+                text: "preview of rule work";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Text {
+                text: "search";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Label { text: root.preview-search-label; }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: start;
+                Label { text: "only sample this many: "; }
+                SpinBox {
+                    enabled: !root.preview-fetch-all;
+                    minimum: 1;
+                    maximum: 100000000;
+                    value <=> root.preview-fetch-limit;
+                    edited => { root.preview-fetch-changed(); }
+                }
+                CheckBox {
+                    text: "fetch all";
+                    checked <=> root.preview-fetch-all;
+                    toggled => { root.preview-fetch-changed(); }
+                }
+                Button {
+                    // (the reference's refresh icon: "Fetch a sample of pairs")
+                    text: "fetch again";
+                    clicked => { root.preview-refetch(); }
+                }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                Label {
+                    horizontal-stretch: 1;
+                    text: root.preview-to-test-label;
+                }
+                Button {
+                    // ("Retest the fetched pairs")
+                    text: "test again";
+                    clicked => { root.preview-retest(); }
+                }
+            }
+            Text {
+                text: "pairs that will be actioned";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Label { text: root.preview-pass-label; }
+            PairList {
+                vertical-stretch: 2;
+                min-height: 2 * 90px + 26px;
+                columns: ["A", "B", "action"];
+                rows: root.preview-pass-rows;
+            }
+            Text {
+                text: "pairs that will be skipped";
+                font-weight: 700;
+                color: Theme.text;
+            }
+            Label { text: root.preview-fail-label; }
+            PairList {
+                vertical-stretch: 1;
+                min-height: 90px + 26px;
+                columns: ["1", "2", ""];
+                rows: root.preview-fail-rows;
             }
         }
         if root.errors != "": Label {

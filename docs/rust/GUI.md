@@ -951,7 +951,13 @@ multiplier and delta; a pair test; visual duplicates; and OR and AND
 lists of comparators, each edited in an editor of its own) and the
 action (which, deleting A or B, and default or custom merge options).
 "apply" refuses a "better" rule whose comparators can't tell A from B,
-with the reference's words. What they say is as
+with the reference's words. Its "preview" tab searches the rule as
+edited for a sample of its pairs ("only sample this many", or all) and
+tests each, off the UI thread: "47 pairs searched; 10 matched", the
+pairs that will be actioned (A and B, which way round, what the rule does
+and what it would change) and those that will be skipped; a changed
+search fetches again, changed comparators or actions test again, and a
+rule that can't be had says why. What they say is as
 `oracle/record_auto_resolution_summaries.py` recorded the reference's.
 
 "review actions" (or double-clicking a rule) opens the reference's

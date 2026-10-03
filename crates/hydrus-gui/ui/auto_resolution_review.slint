@@ -50,7 +50,7 @@ component Thumb inherits Rectangle {
 
 // the reference's `ThumbnailPairList`: rows a thumbnail high, selected
 // as its lists select (click, ctrl+click, shift+click)
-component PairList inherits Rectangle {
+export component PairList inherits Rectangle {
     in property <[string]> columns;
     in property <[PairRow]> rows;
     callback row-clicked(int, bool, bool);
