@@ -27,8 +27,12 @@ screens not started yet:
    **Half done**: the embedded metadata window (see "Handover: the
    embedded metadata window" below).
 4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Next**: manage local services; remote repositories/IPFS/account administration and bulk maintenance remain subsequent work.
-5. Tag siblings and parents (and tags > display/search, migrate tags,
-   sibling/parent sync).
+5. Tag siblings and parents. **First pass done**: service editors, staged
+   add/delete/rescind, automatic conflict/cycle repair, remembered workspace
+   filters, clipboard/.txt import/export, and atomic graph/count refresh.
+   **Left**: write autocomplete and asynchronous list loading, default service
+   tabs, repository permission/reason suggestions; tags > display/search,
+   migrate tags, sibling/parent sync.
 6. The downloader definition editors: URL classes, parsers, gallery URL
    generators, URL class links, logins, import/export downloaders.
 

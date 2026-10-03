@@ -207,6 +207,8 @@ export component MediaViewerWindow inherits Window {
     callback undelete();
     callback answer(bool);
     callback manage-tags();
+    // Sibling/parent Apply changes the display of the current file.
+    callback refresh-tags();
     // zoom in (1), out (-1) or switch (0), about the pointer if it is over
     // the window
     callback zoom(int, bool, length, length);

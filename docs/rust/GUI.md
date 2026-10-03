@@ -136,6 +136,7 @@ as Qt's do; a press anywhere else closes them. What works so far:
   mode "nudge subscriptions awake", which wakes `hydrus serve`'s
   subscriptions daemon to look for subscriptions due; and
   "subscriptions…", the manage subscriptions dialog (below);
+- tags: the siblings and parents editors (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);
 - help: the help, links and changelog in the browser, and advanced mode
@@ -1331,3 +1332,24 @@ autocomplete options, sessions, shortcut sets, recent tags.
   page with a thumbnail grid over a real library, is where that is judged.
 
 Services → review opens the service registry with each local and built-in service's name, type, database id, service key copying and refresh. File-domain sizes and deleted counts, tag mapping/tag/file counts, and rated-file counts come from a consistent native store read and match `oracle/record_services.py`. Refresh retains the selected key. Bulk maintenance and remote administration actions show an explicit unavailable explanation.
+
+## Tag siblings and parents
+
+Tags > siblings and tags > parents open service editors on local tag services
+and tag repositories. Enter tags on each side, then add (parents can add every
+child/parent combination); double-click a preview tag to remove it. The
+relationship table sorts by its columns and supports Ctrl/Shift selection,
+Delete and double-click removal. Conflicting siblings and links that would
+close cycles are removed automatically, with the reference's replacement
+reasons. Changes stay staged as (+) and (-) rows until Apply; Cancel drops all
+service pages' changes. Removing a pending or petitioned pair asks whether to
+rescind it. Apply asks about a complete uncommitted input pair. Show all pairs,
+show pending and petitioned groups, the parents' show whole chains, and wipe
+workspace filter the remembered groups. Clipboard/.txt import and selected
+pair export use alternating tag lines. Repository changes ask for reasons and
+remain pending/petitioned through the existing store content status machinery.
+Applying updates the display graph and autocomplete counts atomically before
+the main page refreshes its tags. `oracle/record_tag_relationships.py` records
+the reference panels' labels and local/remote action-context transitions;
+model replay, snapshot/count rollback checks, and real-store menu/window tests
+cover the implementation.

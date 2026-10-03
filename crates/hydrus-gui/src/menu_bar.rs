@@ -20,6 +20,8 @@ type ShownLines = Rc<RefCell<Vec<(Vec<MenuLine>, ModelRc<MenuLine>)>>>;
 
 /// What the menu bar works with.
 pub(crate) struct Hooks {
+    /// Open the siblings or parents editor.
+    pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
     pub pages: Rc<RefCell<Pages>>,
     pub change_pages: ChangePages,
     pub ask: Ask,
@@ -556,6 +558,7 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 eprintln!("could not nudge the subscriptions: {e}");
             }
         }
+        Command::TagRelationships(kind) => (hooks.tag_relationships)(kind),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

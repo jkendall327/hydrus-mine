@@ -1,0 +1,1758 @@
+[
+  {
+    "kind": "siblings",
+    "local": true,
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "columns": [
+      "",
+      "to be replaced",
+      "ideal",
+      "note"
+    ],
+    "default_sort": [
+      2,
+      true
+    ],
+    "buttons": [
+      "add",
+      "delete",
+      "import",
+      "export",
+      "",
+      "",
+      "wipe workspace"
+    ],
+    "labels": [
+      "",
+      "Tags on the left will appear as those on the right.",
+      "\"downloader tags\" apply these siblings and are fully synced. | Siblings are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+      "",
+      "set tags to be replaced",
+      "set new ideal tag",
+      "show all pairs",
+      "show pending and petitioned groups"
+    ],
+    "steps": [
+      {
+        "step": null,
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair a->d is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "a",
+              "b"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair c->a is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      }
+    ],
+    "filtered": {
+      "false": [
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ],
+      "true": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "d"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "kind": "parents",
+    "local": true,
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "columns": [
+      "",
+      "child",
+      "parent",
+      "note"
+    ],
+    "default_sort": [
+      2,
+      true
+    ],
+    "buttons": [
+      "add",
+      "delete",
+      "import",
+      "export",
+      "",
+      "",
+      "wipe workspace"
+    ],
+    "labels": [
+      "Files with any tag on the left will also be given the tags on the right.",
+      "\"downloader tags\" apply these parents and are fully synced. | Parents are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+      "",
+      "set children",
+      "set parents",
+      "show all pairs",
+      "show pending and petitioned groups",
+      "show whole chains"
+    ],
+    "steps": [
+      {
+        "step": null,
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair a->d is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            0,
+            [
+              "c",
+              "a"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": []
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: added by user"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: by user"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            0,
+            [
+              "a",
+              "d"
+            ],
+            "No reason given."
+          ],
+          [
+            1,
+            [
+              "b",
+              "c"
+            ],
+            "No reason given."
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair c->a is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      }
+    ],
+    "filtered": {
+      "false": [
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ],
+      "true": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "d"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "kind": "siblings",
+    "local": false,
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "columns": [
+      "",
+      "to be replaced",
+      "ideal",
+      "note"
+    ],
+    "default_sort": [
+      2,
+      true
+    ],
+    "buttons": [
+      "add",
+      "delete",
+      "import",
+      "export",
+      "",
+      "",
+      "wipe workspace"
+    ],
+    "labels": [
+      "",
+      "Tags on the left will appear as those on the right.",
+      "The account for this service is currently unsynced! It is uncertain if you have permission to upload siblings! Please try to refresh the account in _services->review_.\n\n\"a tag repository\" apply these siblings and are fully synced. | Siblings are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+      "",
+      "set tags to be replaced",
+      "set new ideal tag",
+      "show all pairs",
+      "show pending and petitioned groups"
+    ],
+    "steps": [
+      {
+        "step": null,
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\nc->a\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "add",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\na->d\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair a->d is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\na->d\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "(-) ",
+            "a",
+            "b",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "a",
+              "b"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair c->a is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      }
+    ],
+    "filtered": {
+      "false": [
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ],
+      "true": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "d"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ]
+    }
+  },
+  {
+    "kind": "parents",
+    "local": false,
+    "initial": [
+      [
+        "a",
+        "b"
+      ],
+      [
+        "b",
+        "c"
+      ],
+      [
+        "cousin",
+        "b"
+      ]
+    ],
+    "columns": [
+      "",
+      "child",
+      "parent",
+      "note"
+    ],
+    "default_sort": [
+      2,
+      true
+    ],
+    "buttons": [
+      "add",
+      "delete",
+      "import",
+      "export",
+      "",
+      "",
+      "wipe workspace"
+    ],
+    "labels": [
+      "Files with any tag on the left will also be given the tags on the right.",
+      "The account for this service is currently unsynced! It is uncertain if you have permission to upload parents! Please try to refresh the account in _services->review_.\n\n\"a tag repository\" apply these parents and are fully synced. | Parents are set to sync all the time in the background. | Changes from this dialog should be reflected soon after closing the dialog.",
+      "",
+      "set children",
+      "set parents",
+      "show all pairs",
+      "show pending and petitioned groups",
+      "show whole chains"
+    ],
+    "steps": [
+      {
+        "step": null,
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "",
+            "b",
+            "c",
+            ""
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [],
+        "asked": []
+      },
+      {
+        "step": [
+          "add",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\nc->a\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "add",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\na->d\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair a->d is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "a",
+            "d"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "(+) ",
+            "c",
+            "a",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "oracle reason"
+          ],
+          [
+            2,
+            [
+              "c",
+              "a"
+            ],
+            "REPLACEMENT: oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "Enter a reason for:\n\na->d\n\nTo be added. A janitor will review your petition.",
+            "yes": "OK",
+            "no": "cancel"
+          }
+        ]
+      },
+      {
+        "step": [
+          "delete",
+          [
+            "c",
+            "a"
+          ]
+        ],
+        "rows": [
+          [
+            "",
+            "a",
+            "b",
+            ""
+          ],
+          [
+            "(+) ",
+            "a",
+            "d",
+            "Reason: oracle reason"
+          ],
+          [
+            "(-) ",
+            "b",
+            "c",
+            "Reason: REPLACEMENT: oracle reason"
+          ],
+          [
+            "",
+            "cousin",
+            "b",
+            ""
+          ]
+        ],
+        "updates": [
+          [
+            2,
+            [
+              "a",
+              "d"
+            ],
+            "oracle reason"
+          ],
+          [
+            4,
+            [
+              "b",
+              "c"
+            ],
+            "REPLACEMENT: oracle reason"
+          ]
+        ],
+        "asked": [
+          {
+            "message": "The pair c->a is pending.",
+            "yes": "rescind the pend",
+            "no": "do nothing"
+          }
+        ]
+      }
+    ],
+    "filtered": {
+      "false": [
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ],
+      "true": [
+        [
+          "a",
+          "b"
+        ],
+        [
+          "a",
+          "d"
+        ],
+        [
+          "b",
+          "c"
+        ],
+        [
+          "cousin",
+          "b"
+        ]
+      ]
+    }
+  }
+]

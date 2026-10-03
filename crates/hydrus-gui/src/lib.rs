@@ -69,6 +69,7 @@ pub mod still;
 pub mod string_processor_window;
 mod subscriptions_window;
 pub mod tag_filter_window;
+pub(crate) mod tag_relationships_window;
 pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
@@ -158,7 +159,8 @@ pub use hydrus_gui_model::{
     notes_editor, options, page_chooser, predicate_editors, ratings, ratings_editor, scanbar,
     search_log, selection, session_saving, sidecar_editors, sidecars, simple_downloader, sort,
     status, string_editors, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
-    tag_filter_editor, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
+    tag_filter_editor, tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor,
+    urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -175,6 +177,8 @@ pub struct Bound {
     pub viewer: Rc<RefCell<Option<MediaViewerWindow>>>,
     /// The manage tags window while one is open.
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
+    /// Siblings or parents while the corresponding editor is open.
+    pub tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>>,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
@@ -918,6 +922,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // F3: manage tags; once applied, the tags are counted again
     let manage_tags: Rc<RefCell<Option<ManageTagsWindow>>> = Rc::default();
+    let tag_relationships: Rc<RefCell<Option<TagRelationshipsWindow>>> = Rc::default();
     let tags_changed: Rc<dyn Fn()> = Rc::new({
         let page = page.clone();
         let shown = shown.clone();
@@ -1206,6 +1211,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
+            tag_relationships: {
+                let slot = tag_relationships.clone();
+                let pages = pages.clone();
+                let applied: Rc<dyn Fn()> = Rc::new({
+                    let tags_changed = tags_changed.clone();
+                    let viewer = viewer.clone();
+                    move || {
+                        tags_changed();
+                        if let Some(window) = viewer.borrow().as_ref() {
+                            window.invoke_refresh_tags();
+                        }
+                    }
+                });
+                Rc::new(move |kind| {
+                    if slot.borrow().is_some() {
+                        return;
+                    }
+                    let store = pages.borrow().store().clone();
+                    match tag_relationships::Relationships::new(store, kind) {
+                        Ok(model) => {
+                            match tag_relationships_window::open(model, &slot, applied.clone()) {
+                                Ok(window) => *slot.borrow_mut() = Some(window),
+                                Err(e) => eprintln!("could not open tag relationships: {e}"),
+                            }
+                        }
+                        Err(e) => eprintln!("could not load tag relationships: {e}"),
+                    }
+                })
+            },
             pages: pages.clone(),
             change_pages: Rc::new(change_pages.clone()),
             ask: {
@@ -2813,6 +2847,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         rows,
         viewer,
         manage_tags,
+        tag_relationships,
         manage_notes,
         manage_ratings,
         manage_times,
@@ -3634,6 +3669,21 @@ fn open_viewer(
             }
         }
     };
+    window.on_refresh_tags({
+        let model = model.clone();
+        let weak = window.as_weak();
+        move || {
+            if let Some(window) = weak.upgrade() {
+                let tags = model
+                    .borrow()
+                    .tag_rows()
+                    .into_iter()
+                    .map(|(row, rgb)| list_text(&row, rgb))
+                    .collect::<Vec<_>>();
+                window.set_tags(ModelRc::new(VecModel::from(tags)));
+            }
+        }
+    });
     // the file's info line and buttons, in the top hover frame, and its
     // notes
     let show_info = {

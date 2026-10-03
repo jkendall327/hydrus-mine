@@ -118,6 +118,8 @@ impl Pause {
 /// What an entry does.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Command {
+    /// Open tags > siblings or parents.
+    TagRelationships(hydrus_store::display::RelationKind),
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
     /// An entry of a window's own popup menu: its index among that menu's
@@ -891,8 +893,14 @@ fn tags_menu() -> Entry {
             SEP,
             todo(dots("display/search")),
             SEP,
-            todo(dots("siblings")),
-            todo(dots("parents")),
+            item(
+                dots("siblings"),
+                Command::TagRelationships(hydrus_store::display::RelationKind::Siblings),
+            ),
+            item(
+                dots("parents"),
+                Command::TagRelationships(hydrus_store::display::RelationKind::Parents),
+            ),
             menu(
                 "advanced",
                 vec![todo(dots("manage where tag siblings and parents apply"))],

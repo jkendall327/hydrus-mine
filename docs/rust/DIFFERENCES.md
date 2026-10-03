@@ -870,3 +870,25 @@ changes.
 The imported export phrase and filename limits are reused. Legacy manual export
 destination, trash preference and default sidecar routes are not yet mapped
 into the new manual settings; choices made in this window are persisted.
+
+## Tag relationship editors
+
+The first siblings/parents editors use clean-tag text inputs and preview
+lists; the reference's full write autocomplete, paste buttons, tag context
+menus, and default service-tab preference are not connected yet. Import/export
+are direct clipboard and .txt buttons rather than two popup menus. Relationship
+rows are loaded synchronously when the dialog opens, so opening a service with
+very many pairs can pause the UI; reference background fetch/progress states
+remain to be ported. The port commits and recalculates display immediately,
+so it shows that behavior instead of the reference's background-sync status.
+Repository reasons and rescinds are supported, but account/moderator permission
+warnings, moderator reason bypass and recent/fixed reason suggestions are not
+implemented. Pending changes are persisted; uploading still depends on the
+repository uploader's existing capabilities. Self-pairs imported from text are
+reported and rejected rather than stored after the reference's critical loop
+warning (the display graph ignores such pairs anyway). Batches creating loops
+or conflicting sibling ideals are rejected with an explicit message; enter
+the pairs separately to perform the ordinary automatic repairs. Already corrupt
+reference graph cycles are traversed safely, but do not raise its detailed
+pre-existing-loop warning. Tag display application editing, tag migration and
+manual background sibling/parent synchronization remain separate future work.

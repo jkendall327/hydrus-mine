@@ -61,3 +61,5 @@ pub mod thumbnail_icons;
 pub mod thumbnail_ratings;
 pub mod times_editor;
 pub mod urls_editor;
+
+pub mod tag_relationships;
