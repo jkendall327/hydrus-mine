@@ -20,6 +20,7 @@ mod import_files;
 mod import_options;
 mod importer_list_menu;
 mod info_lines;
+mod list_drag;
 mod main_shortcuts;
 mod manage_notes;
 mod manage_tags;

@@ -1,7 +1,9 @@
 // A list as the reference's lists are (its `BetterListCtrl`): titled
 // columns, clicked to sort by them (again to reverse), and rows selected
 // as hydrus-gui-model's list_selection says (click, ctrl+click,
-// shift+click), each drawn selected as the selection has it.
+// shift+click, and dragging across rows, which selects from the row
+// pressed to the row under the pointer, as a shift+click there would),
+// each drawn selected as the selection has it.
 
 import { ScrollView } from "std-widgets.slint";
 import { Theme } from "theme.slint";
@@ -38,6 +40,10 @@ export component ListTable inherits Rectangle {
     // (the row shown, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
+    // the row a drag is over now
+    property <int> drag-row: -1;
+    // the row under the pointer
+    property <int> hovered-row: touch.has-hover ? floor(touch.mouse-y / root.row-height) : -1;
     // (a right press on a row: the row, and where, in the window)
     callback row-menu(int, length, length);
     // (the delete key, the list having the keyboard)
@@ -80,36 +86,68 @@ export component ListTable inherits Rectangle {
             }
         }
         ScrollView {
+            // the rows, and over them one touch area for them all, which
+            // outlives the rows (a click usually gives the list new rows,
+            // and a drag goes on over them)
             VerticalLayout {
                 alignment: start;
-                for row[r] in root.rows: Rectangle {
-                    height: root.row-height;
-                    background: row.selected ? Theme.highlight : row-touch.has-hover ? Theme.hover : transparent;
-                    HorizontalLayout {
-                        for column[c] in root.columns: Cell {
-                            column: column;
-                            Text {
-                                x: 4px;
-                                width: parent.width - 8px;
-                                vertical-alignment: center;
-                                text: row.cells[c];
-                                overflow: elide;
-                                color: row.selected ? Theme.highlight-text : Theme.text;
+                Rectangle {
+                    // (as big as the rows, to scroll across them)
+                    min-width: rows-layout.min-width;
+                    preferred-width: rows-layout.preferred-width;
+                    min-height: rows-layout.min-height;
+                    preferred-height: rows-layout.preferred-height;
+                    rows-layout := VerticalLayout {
+                        alignment: start;
+                        for row[r] in root.rows: Rectangle {
+                            height: root.row-height;
+                            background: row.selected ? Theme.highlight : (touch.has-hover && root.hovered-row == r) ? Theme.hover : transparent;
+                            HorizontalLayout {
+                                for column[c] in root.columns: Cell {
+                                    column: column;
+                                    Text {
+                                        x: 4px;
+                                        width: parent.width - 8px;
+                                        vertical-alignment: center;
+                                        text: row.cells[c];
+                                        overflow: elide;
+                                        color: row.selected ? Theme.highlight-text : Theme.text;
+                                    }
+                                }
                             }
                         }
                     }
-                    row-touch := TouchArea {
+                    touch := TouchArea {
+                        width: rows-layout.width;
+                        height: root.rows.length * root.row-height;
+                        y: 0;
                         pointer-event(event) => {
+                            let at = floor(self.mouse-y / root.row-height);
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                                 keys.focus();
-                                root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                                root.drag-row = at;
+                                root.row-clicked(at, event.modifiers.control, event.modifiers.shift);
+                            }
+                            if (event.kind == PointerEventKind.up) {
+                                root.drag-row = -1;
                             }
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
                                 keys.focus();
-                                root.row-menu(r, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
+                                root.row-menu(at, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
                             }
                         }
-                        double-clicked => { root.row-activated(r); }
+                        double-clicked => { root.row-activated(floor(self.mouse-y / root.row-height)); }
+                        // dragged: from the row pressed to the row under the
+                        // pointer, as a shift+click there
+                        moved => {
+                            if (self.pressed && root.drag-row >= 0) {
+                                let over = max(0, min(root.rows.length - 1, floor(self.mouse-y / root.row-height)));
+                                if (over != root.drag-row) {
+                                    root.drag-row = over;
+                                    root.row-clicked(over, false, true);
+                                }
+                            }
+                        }
                     }
                 }
             }

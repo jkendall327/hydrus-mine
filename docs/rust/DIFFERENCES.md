@@ -327,8 +327,7 @@ search.
   page's own presentation options (new files only, say) aren't applied
   yet, and the page has no sort or collect controls yet: its files are in
   the queue's order.
-- **A gallery or watcher downloader page's list**: dragging across rows
-  doesn't select them (click, ctrl+click and shift+click do). The page's
+- **A gallery or watcher downloader page's list**: the page's
   "import options" button edits what new searches or watchers get (see
   the import options editor below), as do the "highlighted" boxes' own
   (and the highlighted search's file limit). Its
@@ -344,6 +343,10 @@ search.
   than as a passing note over them, and the reference's shortcut to
   apply it isn't bound. Double-clicking beside the tabs doesn't add a
   note.
+
+- **Dragging across a list's rows with ctrl held** selects the range
+  from the row pressed, as a plain drag does; the reference's adds the
+  range to what was selected (or takes it away).
 
 ## The media viewer (`hydrus-gui`)
 

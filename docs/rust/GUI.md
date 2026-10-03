@@ -413,7 +413,9 @@ and stop characters), status ("DONE", "working", "pending"), items ("2 -
 1Ign") and added ("5 minutes ago"), sortable by any column (clicked
 again, the other way). Its rows are selected as the reference's lists
 select them: a click selects one, ctrl+click adds or takes one away,
-shift+click selects from the last clicked; the delete key removes them.
+shift+click selects from the last clicked, and dragging across rows
+selects from the row pressed to the one under the pointer (as every list
+built on `ui/list_table.slint` does); the delete key removes them.
 A double-click on a search, or its highlight button with one selected,
 shows it (a double-click on the one shown stops showing it): the page then holds that
 search's files, and the "highlighted query" box under the list has its

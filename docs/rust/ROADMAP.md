@@ -110,7 +110,6 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 
 ## 4. Downloader pages: leftovers
 
-- Dragging across rows to select.
 - The Client API's `/manage_pages/get_page_info` for gallery and watcher
   pages.
 - See `DIFFERENCES.md`, "Pages".
