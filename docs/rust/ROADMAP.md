@@ -94,8 +94,13 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 - The auto-resolution rules editor (`EditDuplicatesAutoResolutionRules
   Panel` and the rule editor with its comparators,
   `ClientGUIDuplicatesAutoResolution.py`), and "review actions"
-  (`ClientGUIDuplicatesAutoResolutionRuleReview.py`). Big: record the
-  editors' fields and the comparators' labels first.
+  (`ClientGUIDuplicatesAutoResolutionRuleReview.py`). **Done**: what the
+  list and editor say of rules (`hydrus-gui-model`'s
+  `auto_resolution_rules`: rows, comparator summaries, which can tell A
+  from B), recorded by `oracle/record_auto_resolution_summaries.py`.
+  **Next**: the "edit rules" list window (add, edit, delete, add
+  suggested), then the rule editor's tabs (search, comparison with its
+  comparator editors, action), then "review actions".
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.
 
