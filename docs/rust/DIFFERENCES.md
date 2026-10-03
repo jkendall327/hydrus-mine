@@ -591,6 +591,13 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   edit rules or review their actions yet, and a rule's status can't say
   which rule `hydrus serve` is working on ("searching", "resolving"): it
   says "working".
+- **The file log window** can't yet import new sources, export them to
+  a png, search for the selected URLs, or do its advanced entries (these
+  are greyed out); its "additional urls" don't show the URL a URL class
+  would actually fetch or refer from; trying a previously deleted file
+  again doesn't offer to clear its deletion record. It opens from
+  downloader pages, not yet from an import folder or a subscription's
+  query.
 - **Subscriptions run one at a time**, as with the reference's default
   `max_simultaneous_subscriptions`; a higher setting comes across but
   isn't used yet.

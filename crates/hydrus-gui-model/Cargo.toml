@@ -23,6 +23,8 @@ hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 serde_json.workspace = true
 tempfile.workspace = true
+hex.workspace = true
+sha2.workspace = true
 
 [lints]
 workspace = true

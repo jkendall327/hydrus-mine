@@ -176,6 +176,24 @@ writes it, with new queries, deleted queries and the file logs' resets
 and retries. Its workings are as `oracle/record_edit_subscription.py`
 recorded the reference's.
 
+A downloader page's "imports" box (a URL downloader's, a local import's,
+and the highlighted search's or watcher's) has a "file log" button, which
+opens the file log window (`src/file_log_window.rs`,
+`hydrus-gui-model/src/file_log.rs`), the reference's
+`EditFileSeedCachePanel`: the importer's files as the reference lists
+them (#, source, status, added, last modified, source time, note) with
+its status above. A right click on files (selecting the one under the
+pointer) offers opening their files in a new page, copying their URLs or
+paths and notes, opening them, their hashes, URLs, headers and tags, trying
+them again, skipping and deleting them (asking first), and the whole log's
+menu, which the "whole log" button also opens: retrying failures and
+ignored files, deleting files of each status, skipping the unstarted,
+showing the new or all files in a new page, reversing the order, and
+copying every source. Its actions change the importer at once, as the
+reference's frame does. The rows and menus are as
+`oracle/record_file_log.py` recorded the reference's. Windows' own
+popup menus are drawn as the menu bar's are (`src/popup_menu.rs`).
+
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,
 `hydrus-gui-model/src/folders.rs`), the reference's
@@ -824,7 +842,7 @@ window move and embedded metadata buttons, and its tooltips; editing,
 copying and hiding notes), the volume shortcuts
 other than the global mute, the scanbar's buffering
 shading, playing animated JPEG XL, downloader
-pages' file and search log windows and import options buttons, and a
+pages' search log windows and import options buttons, and a
 download's cog and error menus (bandwidth rules, the last error); in
 the duplicates page, editing its search, editing auto-resolution rules
 and reviewing their actions, and quick and dirty processing; in the duplicate filter, the custom action,

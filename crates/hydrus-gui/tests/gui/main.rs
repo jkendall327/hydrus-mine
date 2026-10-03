@@ -12,6 +12,7 @@ mod duplicate_filter;
 mod duplicates_page;
 mod edit_subscription;
 mod favourites;
+mod file_log;
 mod folders;
 mod import_files;
 mod info_lines;

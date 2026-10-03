@@ -1,0 +1,458 @@
+//! An importer's file log window (the reference's `EditFileSeedCachePanel`)
+//! and its menus: each file's row, the right-click menu on selected rows
+//! (`_GetListCtrlMenu`), and the whole log's menu (`PopulateFileSeedCache
+//! Menu`, also the file log button's). Menus are trees of [`Entry`], each
+//! item carrying the [`Action`] it does. Recorded by
+//! `oracle/record_file_log.py`.
+
+use hydrus_core::numbers::human_int;
+use hydrus_core::time::timestamp_to_pretty_time_delta;
+use hydrus_store::queues::{FileSeed, SeedStatus, SeedType, StatusCounts};
+
+/// The file log's column titles.
+pub const COLUMNS: [&str; 7] = [
+    "#",
+    "source",
+    "status",
+    "added",
+    "last modified",
+    "source time",
+    "note",
+];
+
+/// A URL as the reference shows it (`ConvertURLToHumanString`):
+/// percent-decoded, as UTF-8 (`urllib.parse.unquote`).
+pub fn human_url(url: &str) -> String {
+    let bytes = url.as_bytes();
+    let mut out: Vec<u8> = Vec::with_capacity(bytes.len());
+    let mut i = 0;
+    while i < bytes.len() {
+        let hex = |b: u8| char::from(b).to_digit(16);
+        if bytes[i] == b'%'
+            && let (Some(&h), Some(&l)) = (bytes.get(i + 1), bytes.get(i + 2))
+            && let (Some(h), Some(l)) = (hex(h), hex(l))
+        {
+            out.push(u8::try_from(h * 16 + l).unwrap_or(b'?'));
+            i += 3;
+        } else {
+            out.push(bytes[i]);
+            i += 1;
+        }
+    }
+    String::from_utf8_lossy(&out).into_owned()
+}
+
+/// A status as the file log names it (`status_string_lookup`; unknown is
+/// blank).
+pub fn status_text(status: SeedStatus) -> &'static str {
+    match status {
+        SeedStatus::Unknown => "",
+        SeedStatus::SuccessfulAndNew => "successful",
+        SeedStatus::SuccessfulButRedundant => "already in db",
+        SeedStatus::Deleted => "deleted",
+        SeedStatus::Error => "error",
+        SeedStatus::Vetoed => "ignored",
+        SeedStatus::Skipped => "skipped",
+        SeedStatus::SuccessfulAndChildFiles => "created children",
+    }
+}
+
+/// A file's row (`_ConvertFileSeedToDisplayTuple`): its place in the log,
+/// its source, status, when it was added and last changed, when it was
+/// posted, and its note's first line.
+pub fn row(seed: &FileSeed, index: usize, now: i64) -> Vec<String> {
+    let source = if seed.seed_type == SeedType::Url {
+        human_url(&seed.data_for_comparison)
+    } else {
+        seed.data_for_comparison.clone()
+    };
+    vec![
+        human_int(index as u64),
+        source,
+        status_text(seed.status).to_owned(),
+        timestamp_to_pretty_time_delta(seed.created, now, " ago"),
+        timestamp_to_pretty_time_delta(seed.modified, now, " ago"),
+        seed.source_time.map_or_else(
+            || "unknown".to_owned(),
+            |t| timestamp_to_pretty_time_delta(t, now, " ago"),
+        ),
+        seed.note.lines().next().unwrap_or_default().to_owned(),
+    ]
+}
+
+/// What a menu item does.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Action {
+    /// Failed files to be tried again.
+    RetryFailed,
+    /// Ignored files to be tried again.
+    RetryIgnored,
+    /// Remove files with these statuses from the log.
+    DeleteStatuses(Vec<SeedStatus>),
+    /// Unstarted files skipped.
+    SkipUnknown,
+    /// The log's files (the new ones only, or all) in a new page.
+    ShowFiles { new_only: bool },
+    /// The log's order reversed.
+    Reverse,
+    /// Every source to the clipboard, a line each.
+    ExportToClipboard,
+    /// New sources (URLs or paths) from the clipboard.
+    ImportFromClipboard,
+    /// The selected files in a new page.
+    OpenSelectedFiles,
+    /// The selected's sources to the clipboard.
+    CopySources,
+    /// The selected's notes to the clipboard.
+    CopyNotes,
+    /// Open the selected's URLs, or their files' locations.
+    OpenSources,
+    /// A new page searching for the selected's URLs.
+    SearchUrls,
+    /// The selected set to be tried again.
+    TryAgain,
+    /// The selected skipped.
+    Skip,
+    /// The selected removed, after a question.
+    DeleteSelected,
+    /// Not in hydrus-rs yet (sources as png, the advanced entries).
+    NotYet,
+}
+
+/// A menu entry.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum Entry {
+    Item(String, Action),
+    /// Text shown, which does nothing.
+    Label(String),
+    Separator,
+    Menu(String, Vec<Entry>),
+}
+
+fn item(label: impl Into<String>, action: Action) -> Entry {
+    Entry::Item(label.into(), action)
+}
+
+/// What the whole log's menu needs to know: its files' counts by status,
+/// how many there are, and whether they are URLs (an empty log's are).
+#[derive(Debug, Clone, Default)]
+pub struct LogFacts {
+    pub counts: StatusCounts,
+    pub len: usize,
+    pub urls: bool,
+}
+
+impl LogFacts {
+    fn count(&self, status: SeedStatus) -> usize {
+        self.counts.get(&status).copied().unwrap_or(0)
+    }
+}
+
+/// The whole log's menu (`PopulateFileSeedCacheMenu`); `any_selected`
+/// adds the advanced submenu's export of the selected.
+pub fn log_menu(log: &LogFacts, any_selected: bool) -> Vec<Entry> {
+    use SeedStatus::{
+        Deleted, Error, Skipped, SuccessfulAndChildFiles, SuccessfulAndNew, SuccessfulButRedundant,
+        Unknown, Vetoed,
+    };
+    let already_in = log.count(SuccessfulButRedundant);
+    let successful = log.count(SuccessfulAndNew) + already_in;
+    let vetoed = log.count(Vetoed);
+    let deleted = log.count(Deleted);
+    let errors = log.count(Error);
+    let skipped = log.count(Skipped);
+    let unknown = log.count(Unknown);
+    let n = |n: usize| human_int(n as u64);
+    let delete = |count: usize, what: &str, statuses: Vec<SeedStatus>| {
+        item(
+            format!(
+                "delete {} '{what}' file import items from the queue",
+                n(count)
+            ),
+            Action::DeleteStatuses(statuses),
+        )
+    };
+    let mut menu = Vec::new();
+    if errors > 0 {
+        menu.push(item(
+            format!("retry {} failures", n(errors)),
+            Action::RetryFailed,
+        ));
+    }
+    if vetoed > 0 {
+        menu.push(item(
+            format!("retry {} ignored", n(vetoed)),
+            Action::RetryIgnored,
+        ));
+    }
+    menu.push(Entry::Separator);
+    if successful > 0 {
+        menu.push(delete(
+            successful,
+            "successful",
+            vec![
+                SuccessfulAndNew,
+                SuccessfulButRedundant,
+                SuccessfulAndChildFiles,
+            ],
+        ));
+    }
+    if already_in > 0 {
+        menu.push(delete(
+            already_in,
+            "already in db",
+            vec![SuccessfulButRedundant],
+        ));
+    }
+    if deleted > 0 {
+        menu.push(delete(deleted, "previously deleted", vec![Deleted]));
+    }
+    if errors > 0 {
+        menu.push(delete(errors, "failed", vec![Error]));
+    }
+    if vetoed > 0 {
+        menu.push(delete(vetoed, "ignored", vec![Vetoed]));
+    }
+    if skipped > 0 {
+        menu.push(delete(skipped, "skipped", vec![Skipped]));
+    }
+    if unknown > 0 {
+        menu.push(item(
+            format!(
+                "delete {} 'unknown' (i.e. unstarted) file import items from the queue",
+                n(unknown)
+            ),
+            Action::DeleteStatuses(vec![Unknown]),
+        ));
+    }
+    let started = vec![
+        SuccessfulAndNew,
+        SuccessfulButRedundant,
+        Deleted,
+        Error,
+        Vetoed,
+        Skipped,
+        SuccessfulAndChildFiles,
+    ];
+    if log.len > 0 {
+        menu.push(Entry::Separator);
+        let non_unknown = log.len - unknown;
+        if unknown > 0 && non_unknown > 0 {
+            menu.push(item(
+                format!(
+                    "delete everything except 'unknown' (i.e. unstarted) ({} items) from the queue",
+                    n(non_unknown)
+                ),
+                Action::DeleteStatuses(started.clone()),
+            ));
+        }
+        let mut everything = vec![Unknown];
+        everything.extend(started);
+        menu.push(item(
+            format!("delete everything ({} items) from the queue", n(log.len)),
+            Action::DeleteStatuses(everything),
+        ));
+    }
+    if unknown > 0 {
+        menu.push(Entry::Separator);
+        menu.push(item(
+            format!(
+                "set {} 'unknown' (i.e. unstarted) file import items to 'skipped'",
+                n(unknown)
+            ),
+            Action::SkipUnknown,
+        ));
+    }
+    menu.push(Entry::Separator);
+    if successful > 0 {
+        menu.push(item(
+            "show new files in a new page",
+            Action::ShowFiles { new_only: true },
+        ));
+        menu.push(item(
+            "show all files in a new page",
+            Action::ShowFiles { new_only: false },
+        ));
+    }
+    menu.push(Entry::Separator);
+    if log.len > 0 {
+        menu.push(item("reverse import order", Action::Reverse));
+        menu.push(Entry::Separator);
+        menu.push(Entry::Menu(
+            "export all sources".into(),
+            vec![
+                item("to clipboard", Action::ExportToClipboard),
+                item("to png", Action::NotYet),
+            ],
+        ));
+    }
+    menu.push(Entry::Menu(
+        "ADVANCED: import new sources".into(),
+        vec![
+            item("from clipboard", Action::ImportFromClipboard),
+            item("from png", Action::NotYet),
+        ],
+    ));
+    if any_selected || log.urls {
+        let mut advanced = Vec::new();
+        if any_selected {
+            advanced.push(item(
+                "export selected import objects to clipboard",
+                Action::NotYet,
+            ));
+        }
+        if log.urls {
+            advanced.push(item("re-normalise all URLs", Action::NotYet));
+        }
+        menu.push(Entry::Menu("advanced".into(), advanced));
+    }
+    tidy(menu)
+}
+
+/// Separators as Qt shows them: none leading, trailing or doubled.
+fn tidy(entries: Vec<Entry>) -> Vec<Entry> {
+    let mut out: Vec<Entry> = Vec::new();
+    for entry in entries {
+        if entry == Entry::Separator && out.last().is_none_or(|e| *e == Entry::Separator) {
+            continue;
+        }
+        out.push(entry);
+    }
+    if out.last() == Some(&Entry::Separator) {
+        out.pop();
+    }
+    out
+}
+
+/// The URL details of one selected URL file (`_GetListCtrlMenu`): the
+/// normalised and request URLs where they differ, its referral URL, and
+/// its primary and source URLs.
+fn url_entries(seed: &FileSeed) -> Vec<Entry> {
+    let mut urls = Vec::new();
+    let pretty = human_url(&seed.data_for_comparison);
+    if seed.data_for_comparison != pretty {
+        urls.push(Entry::Label(format!(
+            "normalised url: {}",
+            seed.data_for_comparison
+        )));
+    }
+    if seed.data != seed.data_for_comparison {
+        urls.push(Entry::Label(format!("request url: {}", seed.data)));
+    }
+    if let Some(referral) = &seed.referral_url {
+        urls.push(Entry::Label(format!("referral url: {referral}")));
+    }
+    if !seed.meta.primary_urls.is_empty() {
+        urls.push(Entry::Separator);
+        for url in &seed.meta.primary_urls {
+            urls.push(Entry::Label(format!("primary url: {url}")));
+        }
+    }
+    if !seed.meta.source_urls.is_empty() {
+        urls.push(Entry::Separator);
+        for url in &seed.meta.source_urls {
+            urls.push(Entry::Label(format!("source url: {url}")));
+        }
+    }
+    tidy(urls)
+}
+
+/// A labelled list as a submenu, or its "no ..." label.
+fn list_or_none(title: &str, none: &str, items: Vec<String>) -> Entry {
+    if items.is_empty() {
+        Entry::Label(none.into())
+    } else {
+        Entry::Menu(title.into(), items.into_iter().map(Entry::Label).collect())
+    }
+}
+
+/// The right-click menu on the selected files (`_GetListCtrlMenu`); with
+/// none selected, the whole log's.
+pub fn row_menu(selected: &[&FileSeed], log: &LogFacts) -> Vec<Entry> {
+    if selected.is_empty() {
+        return log_menu(log, false);
+    }
+    let urls = log.urls;
+    let mut menu = vec![Entry::Separator];
+    if selected.iter().any(|s| s.meta.hash("sha256").is_some()) {
+        menu.push(item(
+            "open selected files in a new page",
+            Action::OpenSelectedFiles,
+        ));
+        menu.push(Entry::Separator);
+    }
+    menu.push(item(
+        if urls { "copy urls" } else { "copy paths" },
+        Action::CopySources,
+    ));
+    menu.push(item("copy notes", Action::CopyNotes));
+    menu.push(Entry::Separator);
+    menu.push(item(
+        if urls {
+            "open URLs"
+        } else {
+            "open files' locations"
+        },
+        Action::OpenSources,
+    ));
+    if urls {
+        menu.push(item("search for URLs", Action::SearchUrls));
+    }
+    if let [seed] = selected {
+        menu.push(Entry::Separator);
+        let hashes: Vec<String> = ["sha256", "md5", "sha1", "sha512"]
+            .iter()
+            .filter_map(|t| seed.meta.hash(t).map(|h| format!("{t}:{h}")))
+            .collect();
+        menu.push(list_or_none("hashes", "no hashes yet", hashes));
+        if seed.seed_type == SeedType::Url {
+            let details = url_entries(seed);
+            menu.push(if details.is_empty() {
+                Entry::Label("no additional urls".into())
+            } else {
+                Entry::Menu("additional urls".into(), details)
+            });
+            let headers: Vec<String> = seed
+                .meta
+                .request_headers
+                .iter()
+                .map(|(k, v)| format!("{k}: {v}"))
+                .collect();
+            menu.push(list_or_none(
+                "additional headers",
+                "no additional headers",
+                headers,
+            ));
+            let mut parsed: Vec<String> = seed.meta.tags.iter().cloned().collect();
+            parsed.sort_by_key(|t| hydrus_core::sort::human_sort_key(t));
+            menu.push(list_or_none("parsed tags", "no parsed tags", parsed));
+            let mut inherited: Vec<String> =
+                seed.meta.external_filterable_tags.iter().cloned().collect();
+            inherited.sort_by_key(|t| hydrus_core::sort::human_sort_key(t));
+            menu.push(list_or_none(
+                "inherited tags",
+                "no inherited tags",
+                inherited,
+            ));
+        }
+    }
+    menu.push(Entry::Separator);
+    menu.push(item("try again", Action::TryAgain));
+    menu.push(item("skip", Action::Skip));
+    menu.push(item("delete from list", Action::DeleteSelected));
+    menu.push(Entry::Separator);
+    menu.push(Entry::Menu("whole log".into(), log_menu(log, true)));
+    tidy(menu)
+}
+
+/// What deleting the selected asks.
+pub fn delete_question(n: usize) -> String {
+    format!(
+        "Are you sure you want to delete the {} selected entries?",
+        human_int(n as u64)
+    )
+}
+
+/// What opening many selected asks first.
+pub const OPEN_MANY_QUESTION: &str =
+    "You have many objects selected--are you sure you want to open them all?";

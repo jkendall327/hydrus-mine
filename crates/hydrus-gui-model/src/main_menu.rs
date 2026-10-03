@@ -120,6 +120,9 @@ impl Pause {
 pub enum Command {
     /// Copy a label's text (the reference's `AppendMenuLabel`).
     Copy(String),
+    /// An entry of a window's own popup menu: its index among that menu's
+    /// actions (see [`popup`]).
+    Popup(usize),
     /// Switch a pause on or off.
     Pause(Pause),
     /// Check an import folder now (none: all of them).
@@ -1711,4 +1714,64 @@ mod tests {
         assert!(exit.usable());
         assert_eq!(title("&file"), "file");
     }
+}
+
+/// A window's own popup menu (a right-click menu, a button's menu) as menu
+/// entries the open menus show, its items' actions numbered: each item's
+/// [`Command::Popup`] is its action's index in the actions returned. The
+/// tree is any menu's: `kind` says what each node is.
+pub fn popup<N, A: Clone>(
+    nodes: &[N],
+    kind: &dyn Fn(&N) -> PopupNode<'_, N, A>,
+) -> (Vec<Entry>, Vec<A>) {
+    fn walk<N, A: Clone>(
+        nodes: &[N],
+        kind: &dyn Fn(&N) -> PopupNode<'_, N, A>,
+        actions: &mut Vec<A>,
+    ) -> Vec<Entry> {
+        nodes
+            .iter()
+            .map(|n| match kind(n) {
+                PopupNode::Item(label, action) => {
+                    actions.push(action.clone());
+                    Entry::Item {
+                        label: label.to_owned(),
+                        command: Some(Command::Popup(actions.len() - 1)),
+                        enabled: true,
+                    }
+                }
+                PopupNode::Disabled(label) => Entry::Item {
+                    label: label.to_owned(),
+                    command: None,
+                    enabled: true,
+                },
+                PopupNode::Label(label) => Entry::Item {
+                    label: label.to_owned(),
+                    command: Some(Command::Copy(label.to_owned())),
+                    enabled: true,
+                },
+                PopupNode::Separator => Entry::Separator,
+                PopupNode::Menu(label, children) => Entry::Menu {
+                    label: label.to_owned(),
+                    entries: walk(children, kind, actions),
+                    enabled: true,
+                },
+            })
+            .collect()
+    }
+    let mut actions = Vec::new();
+    let entries = walk(nodes, kind, &mut actions);
+    (entries, actions)
+}
+
+/// What a node of a popup menu's tree is (for [`popup`]).
+#[derive(Debug)]
+pub enum PopupNode<'a, N, A> {
+    Item(&'a str, &'a A),
+    /// An item hydrus-rs can't do yet (greyed out).
+    Disabled(&'a str),
+    /// Text that copies itself when chosen (`AppendMenuLabel`).
+    Label(&'a str),
+    Separator,
+    Menu(&'a str, &'a [N]),
 }

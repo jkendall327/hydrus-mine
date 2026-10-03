@@ -2505,6 +2505,7 @@ name = "hydrus-gui-model"
 version = "0.1.0"
 dependencies = [
  "anyhow",
+ "hex",
  "hydrus-core",
  "hydrus-duplicates",
  "hydrus-import",
@@ -2516,6 +2517,7 @@ dependencies = [
  "hydrus-testkit",
  "rusqlite",
  "serde_json",
+ "sha2",
  "tempfile",
 ]
 

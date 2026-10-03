@@ -104,10 +104,12 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 
 ## 4. Downloader pages: leftovers
 
-- The lists' right-click menus:
-  - copy queries;
-  - file and search logs;
-  - presentation options.
+- The file log window is done (`src/file_log_window.rs`, a "file log"
+  button in the importer boxes); the search log window
+  (`ClientGUIGallerySeedLog`) is next, then opening the file log from the
+  import folder dialog and the subscription query editor.
+- The lists' right-click menus (copy queries, presentation options):
+  `src/popup_menu.rs` now draws a window's own popup menus.
 - Dragging across rows to select.
 - Watcher pages have no import options buttons.
 - The "highlighted" boxes don't show a search's or watcher's own file

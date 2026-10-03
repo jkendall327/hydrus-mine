@@ -65,6 +65,8 @@ export component GallerySidebar inherits VerticalLayout {
     callback gug-chosen(int);
     callback limit-changed(bool, int);
     callback cancel-download(bool);
+    // the highlighted query's file log
+    callback file-log();
     spacing: 6px;
     Text {
         text: "gallery downloader";
@@ -224,6 +226,7 @@ export component GallerySidebar inherits VerticalLayout {
                 pause-play-files => { root.pause-play(false, true); }
                 pause-play-search => { root.pause-play(true, true); }
                 cancel-download(gallery) => { root.cancel-download(gallery); }
+                file-log => { root.file-log(); }
             }
         }
     }

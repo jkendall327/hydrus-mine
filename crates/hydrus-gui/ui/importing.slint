@@ -71,6 +71,8 @@ export component ImporterBoxes inherits VerticalLayout {
     callback pause-play-files();
     callback pause-play-search();
     callback cancel-download(bool);
+    // the file log button (`FileSeedCacheButton`)
+    callback file-log();
     spacing: 6px;
     Rectangle {
         border-width: 1px;
@@ -98,9 +100,18 @@ export component ImporterBoxes inherits VerticalLayout {
                     clicked => { root.pause-play-files(); }
                 }
             }
-            if root.import-status != "": Text {
-                text: root.import-status;
-                wrap: word-wrap;
+            HorizontalLayout {
+                spacing: 4px;
+                Text {
+                    text: root.import-status;
+                    wrap: word-wrap;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                }
+                Button {
+                    text: "file log";
+                    clicked => { root.file-log(); }
+                }
             }
             if root.import-progress != "": Text {
                 text: root.import-progress;
@@ -160,6 +171,7 @@ export component LocalImportBox inherits Rectangle {
     in property <float> import-fraction;
     in property <bool> import-paused;
     callback pause-play-files();
+    callback file-log();
     border-width: 1px;
     border-color: Theme.border;
     VerticalLayout {
@@ -183,9 +195,18 @@ export component LocalImportBox inherits Rectangle {
                 clicked => { root.pause-play-files(); }
             }
         }
-        if root.import-status != "": Text {
-            text: root.import-status;
-            wrap: word-wrap;
+        HorizontalLayout {
+            spacing: 4px;
+            Text {
+                text: root.import-status;
+                wrap: word-wrap;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            Button {
+                text: "file log";
+                clicked => { root.file-log(); }
+            }
         }
         if root.import-progress != "": Text {
             text: root.import-progress;

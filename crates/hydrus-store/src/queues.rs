@@ -981,6 +981,36 @@ pub fn retry_file_seeds(
     Ok(n)
 }
 
+/// Set seeds to a status, their notes cleared (`SetStatus`): set back to
+/// unknown, their hashes are forgotten too, so they import afresh.
+pub fn set_file_seed_statuses(
+    conn: &Connection,
+    ids: &[i64],
+    status: SeedStatus,
+    now: i64,
+) -> Result<()> {
+    for &id in ids {
+        let Some(mut seed) = file_seed(conn, id)? else {
+            continue;
+        };
+        seed.status = status;
+        seed.note.clear();
+        seed.modified = now;
+        if status == SeedStatus::Unknown {
+            seed.meta.hashes.clear();
+        }
+        update_file_seed(conn, &seed)?;
+    }
+    Ok(())
+}
+
+/// Reverse the order a queue's seeds are worked in (`ReverseFileSeedCache`).
+pub fn reverse_file_seeds(conn: &Connection, queue: i64) -> Result<()> {
+    conn.prepare_cached("UPDATE file_seeds SET position = -position WHERE queue_id = ?")?
+        .execute([queue])?;
+    Ok(())
+}
+
 /// Remove seeds with these statuses; how many.
 pub fn remove_file_seeds(conn: &Connection, queue: i64, statuses: &[SeedStatus]) -> Result<usize> {
     let mut n = 0;

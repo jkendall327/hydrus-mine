@@ -1,0 +1,532 @@
+{
+ "now": 1700000000,
+ "seeds": [
+  [
+   true,
+   "https://example.com/post/1",
+   1,
+   86400,
+   3600,
+   172800,
+   "",
+   true
+  ],
+  [
+   true,
+   "https://example.com/post/%E6%97%A5%E6%9C%AC 2",
+   2,
+   172800,
+   86400,
+   null,
+   "Found 1 new file.",
+   true
+  ],
+  [
+   true,
+   "https://example.com/post/3",
+   3,
+   10800,
+   30,
+   432000,
+   "Previously deleted\nmore detail",
+   true
+  ],
+  [
+   true,
+   "https://example.com/post/4",
+   4,
+   34560000,
+   864000,
+   null,
+   "Error: 404\ntraceback",
+   false
+  ],
+  [
+   true,
+   "https://example.com/post/5",
+   7,
+   5,
+   5,
+   94608000,
+   "veto: blacklisted!",
+   false
+  ],
+  [
+   true,
+   "https://example.com/post/6",
+   8,
+   3600,
+   3600,
+   null,
+   "",
+   false
+  ],
+  [
+   true,
+   "https://example.com/post/7",
+   0,
+   90,
+   90,
+   null,
+   "",
+   false
+  ]
+ ],
+ "rows": [
+  [
+   "0",
+   "https://example.com/post/1",
+   "successful",
+   "1 day ago",
+   "1 hour ago",
+   "2 days ago",
+   ""
+  ],
+  [
+   "1",
+   "https://example.com/post/日本 2",
+   "already in db",
+   "2 days ago",
+   "1 day ago",
+   "unknown",
+   "Found 1 new file."
+  ],
+  [
+   "2",
+   "https://example.com/post/3",
+   "deleted",
+   "3 hours ago",
+   "30 seconds ago",
+   "5 days ago",
+   "Previously deleted"
+  ],
+  [
+   "3",
+   "https://example.com/post/4",
+   "error",
+   "1 year 1 month ago",
+   "10 days ago",
+   "unknown",
+   "Error: 404"
+  ],
+  [
+   "4",
+   "https://example.com/post/5",
+   "ignored",
+   "5 seconds ago",
+   "5 seconds ago",
+   "2 years 11 months ago",
+   "veto: blacklisted!"
+  ],
+  [
+   "5",
+   "https://example.com/post/6",
+   "skipped",
+   "1 hour ago",
+   "1 hour ago",
+   "unknown",
+   ""
+  ],
+  [
+   "6",
+   "https://example.com/post/7",
+   "",
+   "1 minute 30 seconds ago",
+   "1 minute 30 seconds ago",
+   "unknown",
+   ""
+  ]
+ ],
+ "header": "2 successful (1 already in db), 1 ignored, 1 previously deleted, 1 failed, 1 skipped",
+ "menus": [
+  {
+   "counts": {},
+   "urls": true,
+   "menu": [
+    {
+     "menu": "ADVANCED: import new sources",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    },
+    {
+     "menu": "advanced",
+     "entries": [
+      "re-normalise all URLs"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "0": 3
+   },
+   "urls": true,
+   "menu": [
+    "delete 3 'unknown' (i.e. unstarted) file import items from the queue",
+    "---",
+    "delete everything (3 items) from the queue",
+    "---",
+    "set 3 'unknown' (i.e. unstarted) file import items to 'skipped'",
+    "---",
+    "reverse import order",
+    "---",
+    {
+     "menu": "export all sources",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new sources",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    },
+    {
+     "menu": "advanced",
+     "entries": [
+      "re-normalise all URLs"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "1": 2,
+    "2": 1
+   },
+   "urls": true,
+   "menu": [
+    "delete 3 'successful' file import items from the queue",
+    "delete 1 'already in db' file import items from the queue",
+    "---",
+    "delete everything (3 items) from the queue",
+    "---",
+    "show new files in a new page",
+    "show all files in a new page",
+    "---",
+    "reverse import order",
+    "---",
+    {
+     "menu": "export all sources",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new sources",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    },
+    {
+     "menu": "advanced",
+     "entries": [
+      "re-normalise all URLs"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "4": 1,
+    "7": 2,
+    "3": 1,
+    "8": 1
+   },
+   "urls": false,
+   "menu": [
+    "retry 1 failures",
+    "retry 2 ignored",
+    "---",
+    "delete 1 'previously deleted' file import items from the queue",
+    "delete 1 'failed' file import items from the queue",
+    "delete 2 'ignored' file import items from the queue",
+    "delete 1 'skipped' file import items from the queue",
+    "---",
+    "delete everything (5 items) from the queue",
+    "---",
+    "reverse import order",
+    "---",
+    {
+     "menu": "export all sources",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new sources",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    }
+   ]
+  },
+  {
+   "counts": {
+    "0": 1,
+    "1": 1,
+    "2": 1,
+    "3": 1,
+    "4": 1,
+    "7": 1,
+    "8": 1
+   },
+   "urls": true,
+   "menu": [
+    "retry 1 failures",
+    "retry 1 ignored",
+    "---",
+    "delete 2 'successful' file import items from the queue",
+    "delete 1 'already in db' file import items from the queue",
+    "delete 1 'previously deleted' file import items from the queue",
+    "delete 1 'failed' file import items from the queue",
+    "delete 1 'ignored' file import items from the queue",
+    "delete 1 'skipped' file import items from the queue",
+    "delete 1 'unknown' (i.e. unstarted) file import items from the queue",
+    "---",
+    "delete everything except 'unknown' (i.e. unstarted) (6 items) from the queue",
+    "delete everything (7 items) from the queue",
+    "---",
+    "set 1 'unknown' (i.e. unstarted) file import items to 'skipped'",
+    "---",
+    "show new files in a new page",
+    "show all files in a new page",
+    "---",
+    "reverse import order",
+    "---",
+    {
+     "menu": "export all sources",
+     "entries": [
+      "to clipboard",
+      "to png"
+     ]
+    },
+    {
+     "menu": "ADVANCED: import new sources",
+     "entries": [
+      "from clipboard",
+      "from png"
+     ]
+    },
+    {
+     "menu": "advanced",
+     "entries": [
+      "re-normalise all URLs"
+     ]
+    }
+   ]
+  }
+ ],
+ "row_menus": [
+  {
+   "selected": [
+    0
+   ],
+   "menu": [
+    "open selected files in a new page",
+    "---",
+    "copy urls",
+    "copy notes",
+    "---",
+    "open URLs",
+    "search for URLs",
+    "---",
+    {
+     "menu": "hashes",
+     "entries": [
+      "sha256:f2eb6b089d1f6d8ad3b825285bbac77ec074f1a0054f0ff09fb60ac04f6347f4"
+     ]
+    },
+    "no additional urls",
+    "no additional headers",
+    "no parsed tags",
+    "no inherited tags",
+    "---",
+    "try again",
+    "skip",
+    "delete from list",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "retry 1 failures",
+      "retry 1 ignored",
+      "---",
+      "delete 2 'successful' file import items from the queue",
+      "delete 1 'already in db' file import items from the queue",
+      "delete 1 'previously deleted' file import items from the queue",
+      "delete 1 'failed' file import items from the queue",
+      "delete 1 'ignored' file import items from the queue",
+      "delete 1 'skipped' file import items from the queue",
+      "delete 1 'unknown' (i.e. unstarted) file import items from the queue",
+      "---",
+      "delete everything except 'unknown' (i.e. unstarted) (6 items) from the queue",
+      "delete everything (7 items) from the queue",
+      "---",
+      "set 1 'unknown' (i.e. unstarted) file import items to 'skipped'",
+      "---",
+      "show new files in a new page",
+      "show all files in a new page",
+      "---",
+      "reverse import order",
+      "---",
+      {
+       "menu": "export all sources",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected import objects to clipboard",
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "selected": [
+    3,
+    4
+   ],
+   "menu": [
+    "copy urls",
+    "copy notes",
+    "---",
+    "open URLs",
+    "search for URLs",
+    "---",
+    "try again",
+    "skip",
+    "delete from list",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "retry 1 failures",
+      "retry 1 ignored",
+      "---",
+      "delete 2 'successful' file import items from the queue",
+      "delete 1 'already in db' file import items from the queue",
+      "delete 1 'previously deleted' file import items from the queue",
+      "delete 1 'failed' file import items from the queue",
+      "delete 1 'ignored' file import items from the queue",
+      "delete 1 'skipped' file import items from the queue",
+      "delete 1 'unknown' (i.e. unstarted) file import items from the queue",
+      "---",
+      "delete everything except 'unknown' (i.e. unstarted) (6 items) from the queue",
+      "delete everything (7 items) from the queue",
+      "---",
+      "set 1 'unknown' (i.e. unstarted) file import items to 'skipped'",
+      "---",
+      "show new files in a new page",
+      "show all files in a new page",
+      "---",
+      "reverse import order",
+      "---",
+      {
+       "menu": "export all sources",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected import objects to clipboard",
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "selected": [
+    "path"
+   ],
+   "menu": [
+    "open selected files in a new page",
+    "---",
+    "copy paths",
+    "copy notes",
+    "---",
+    "open files' locations",
+    "---",
+    {
+     "menu": "hashes",
+     "entries": [
+      "sha256:a978971ebdeb98d64f7626d01edb494859620fb5e51d07647f77f9e8e1661b19"
+     ]
+    },
+    "---",
+    "try again",
+    "skip",
+    "delete from list",
+    "---",
+    {
+     "menu": "whole log",
+     "entries": [
+      "delete 1 'successful' file import items from the queue",
+      "---",
+      "delete everything (1 items) from the queue",
+      "---",
+      "show new files in a new page",
+      "show all files in a new page",
+      "---",
+      "reverse import order",
+      "---",
+      {
+       "menu": "export all sources",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "export selected import objects to clipboard"
+       ]
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

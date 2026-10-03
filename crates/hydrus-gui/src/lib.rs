@@ -28,6 +28,7 @@ mod drops;
 mod duplicates_sidebar;
 mod edit_subscription_window;
 pub mod favourites_window;
+mod file_log_window;
 mod filter_window;
 mod folders_window;
 mod gallery;
@@ -42,6 +43,7 @@ mod options_window;
 mod page;
 mod pages;
 mod playback;
+mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 mod session_dialog;
@@ -130,7 +132,7 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, folders, info_lines, list_selection,
+    duplicates_page, edit_subscription, favourites, file_log, folders, info_lines, list_selection,
     local_import, main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors,
     ratings, scanbar, selection, session_saving, sort, status, subscriptions_dialog,
     subscriptions_list, thumbnail_icons, thumbnail_ratings,
@@ -165,6 +167,8 @@ pub struct Bound {
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     /// The import and export folders dialogs while they are open.
     pub folders: folders_window::Slots,
+    /// An importer's file log while one is open.
+    pub file_log: Rc<RefCell<Option<FileLogWindow>>>,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -736,6 +740,42 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
     });
     let filter: Rc<RefCell<Option<DuplicateFilterWindow>>> = Rc::default();
+    // the page's importer's file log, its files shown in new pages
+    let file_log_slot: Rc<RefCell<Option<FileLogWindow>>> = Rc::default();
+    let file_log = file_log_slot.clone();
+    window.on_open_file_log({
+        let page = page.clone();
+        let change_pages = change_pages.clone();
+        let file_log = file_log.clone();
+        move || {
+            let page = page();
+            let page = page.borrow();
+            let Some(importer) = page.importer() else {
+                return;
+            };
+            if let Some(old) = file_log.borrow_mut().take() {
+                let _ = old.hide();
+            }
+            let open_files: Rc<dyn Fn(Vec<hydrus_core::HashId>)> = {
+                let change_pages = change_pages.clone();
+                Rc::new(move |files| {
+                    let location =
+                        hydrus_search::LocationContext::single(hydrus_core::ServiceKey::new(
+                            hydrus_core::service::builtin_keys::COMBINED_LOCAL_FILE_DOMAINS
+                                .to_vec(),
+                        ));
+                    change_pages(&|pages| {
+                        pages.open_files(location.clone(), files.clone(), None, None);
+                        Ok(())
+                    });
+                })
+            };
+            match file_log_window::open(page.store(), importer.queue, &file_log, &open_files) {
+                Ok(window) => *file_log.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the file log: {e}"),
+            }
+        }
+    });
     window.on_launch_filter({
         let page = page.clone();
         let filter = filter.clone();
@@ -2198,6 +2238,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         subscriptions,
         edit_subscription,
         folders,
+        file_log: file_log_slot,
         archive_delete,
         filter,
         open_page,

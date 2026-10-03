@@ -6,6 +6,7 @@
 mod checker_options;
 mod duplicates_page;
 mod edit_subscription;
+mod file_log;
 mod folders;
 mod local_import_dialog;
 mod main_menu;

@@ -1,0 +1,121 @@
+// An importer's file log window (the reference's `EditFileSeedCachePanel`
+// in its frame; its workings are hydrus-gui-model's `file_log`, bound by
+// `src/file_log_window.rs`): the log's status, its files, the right-click
+// menu on them and the whole log's menu (`menus`, drawn over the window),
+// and a question panel.
+
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableRow } from "list_table.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
+import { Asking } from "subscriptions.slint";
+
+export component FileLogWindow inherits Window {
+    in property <string> window-title: "file log";
+    title: root.window-title;
+    preferred-width: 980px;
+    preferred-height: 560px;
+    background: Theme.window;
+    in property <string> status;
+    in property <[TableRow]> rows;
+    in property <[MenuPane]> menu-panes;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    // (row, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    // a right press on a row, and where
+    callback row-menu(int, length, length);
+    // the whole log's menu, from its button
+    callback log-menu(length, length);
+    callback delete-pressed();
+    callback menu-line-hovered(int, int, length, length, length);
+    callback menu-line-clicked(int, int, length, length, length);
+    callback menu-placed(int, length, length, length);
+    callback menu-dismissed();
+    callback chosen(int);
+    callback cancelled();
+    callback close-window();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.menu-panes.length > 0) {
+                    root.menu-dismissed();
+                } else if (root.asking) {
+                    root.cancelled();
+                } else {
+                    root.close-window();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            HorizontalLayout {
+                spacing: 6px;
+                Text {
+                    text: root.status;
+                    vertical-alignment: center;
+                    horizontal-stretch: 1;
+                    color: Theme.text;
+                    overflow: elide;
+                }
+                log-button := Button {
+                    text: "whole log ▾";
+                    enabled: !root.asking;
+                    clicked => {
+                        root.log-menu(self.absolute-position.x, self.absolute-position.y + self.height);
+                    }
+                }
+            }
+            ListTable {
+                vertical-stretch: 1;
+                // (the reference's widths, in characters)
+                columns: [
+                    { title: "#", width: 40px },
+                    { title: "source", width: 300px, stretch: true },
+                    { title: "status", width: 100px },
+                    { title: "added", width: 150px },
+                    { title: "last modified", width: 150px },
+                    { title: "source time", width: 150px },
+                    { title: "note", width: 160px },
+                ];
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-activated(row) => { root.row-activated(row); }
+                row-menu(row, x, y) => { if !root.asking { root.row-menu(row, x, y); } }
+                delete-pressed => { root.delete-pressed(); }
+            }
+            if root.asking: Asking {
+                title: root.asking-title;
+                message: root.asking-message;
+                choices: root.asking-choices;
+                chosen(index) => { root.chosen(index); }
+                cancelled => { root.cancelled(); }
+            }
+            HorizontalLayout {
+                alignment: end;
+                Button {
+                    text: "close";
+                    clicked => { root.close-window(); }
+                }
+            }
+        }
+        if root.menu-panes.length > 0: MenuPanes {
+            width: root.width;
+            height: root.height;
+            panes: root.menu-panes;
+            top: 0px;
+            line-hovered(p, l, right, top, left) => { root.menu-line-hovered(p, l, right, top, left); }
+            line-clicked(p, l, right, top, left) => { root.menu-line-clicked(p, l, right, top, left); }
+            placed(p, x, y, w) => { root.menu-placed(p, x, y, w); }
+            dismiss => { root.menu-dismissed(); }
+        }
+    }
+}

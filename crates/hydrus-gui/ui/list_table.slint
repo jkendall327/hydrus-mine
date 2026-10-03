@@ -38,6 +38,8 @@ export component ListTable inherits Rectangle {
     // (the row shown, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
+    // (a right press on a row: the row, and where, in the window)
+    callback row-menu(int, length, length);
     // (the delete key, the list having the keyboard)
     callback delete-pressed();
     border-width: 1px;
@@ -101,6 +103,10 @@ export component ListTable inherits Rectangle {
                             if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
                                 keys.focus();
                                 root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                            }
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.right) {
+                                keys.focus();
+                                root.row-menu(r, self.absolute-position.x + self.mouse-x, self.absolute-position.y + self.mouse-y);
                             }
                         }
                         double-clicked => { root.row-activated(r); }

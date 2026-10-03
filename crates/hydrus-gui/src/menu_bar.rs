@@ -500,6 +500,8 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
         Command::Options => (hooks.options)(),
+        // (a window's own popup menu's: not the bar's)
+        Command::Popup(_) => {}
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

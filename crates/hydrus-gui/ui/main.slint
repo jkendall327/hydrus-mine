@@ -35,6 +35,7 @@ export { UnlockWindow } from "unlock.slint";
 export { DuplicateFilterWindow, Statement } from "duplicate_filter.slint";
 export { SubscriptionsWindow } from "subscriptions.slint";
 export { EditSubscriptionWindow } from "edit_subscription.slint";
+export { FileLogWindow } from "file_log.slint";
 export { ExportFolderWindow, FolderActionRow, FoldersWindow, ImportFolderWindow } from "folders.slint";
 
 // an icon over a thumbnail (`src/thumbnail_icons.rs`'s `Icon`), and where
@@ -549,6 +550,9 @@ export component MainWindow inherits Window {
     in property <DownloadLine> file-download: { fraction: 0, can-cancel: false };
     in property <DownloadLine> search-download: { fraction: 0, can-cancel: false };
     callback cancel-download(bool);
+    // the page's importer's file log (the highlighted search's or
+    // watcher's, on a gallery or watcher page)
+    callback open-file-log();
     // a gallery page's sidebar (gallery.slint)
     in property <bool> gallery-page;
     in property <GalleryData> gallery-data;
@@ -862,6 +866,7 @@ export component MainWindow inherits Window {
                         gug-chosen(index) => { root.gallery-gug(index); }
                         limit-changed(none, value) => { root.gallery-limit(none, value); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
+                        file-log => { root.open-file-log(); }
                     }
                     TagList {
                         tags: root.tags;
@@ -896,6 +901,7 @@ export component MainWindow inherits Window {
                         page-checker => { root.watcher-page-checker(); }
                         watcher-checker => { root.watcher-checker(); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
+                        file-log => { root.open-file-log(); }
                     }
                     TagList {
                         tags: root.tags;
@@ -912,6 +918,7 @@ export component MainWindow inherits Window {
                         import-fraction: root.import-fraction;
                         import-paused: root.import-paused;
                         pause-play-files => { root.pause-play-files(); }
+                        file-log => { root.open-file-log(); }
                     }
                     TagList {
                         tags: root.tags;
@@ -936,6 +943,7 @@ export component MainWindow inherits Window {
                         search-download: root.search-download;
                         pause-play-files => { root.pause-play-files(); }
                         cancel-download(gallery) => { root.cancel-download(gallery); }
+                        file-log => { root.open-file-log(); }
                     }
                     HorizontalLayout {
                         spacing: 4px;

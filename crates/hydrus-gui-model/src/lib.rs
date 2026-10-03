@@ -15,6 +15,7 @@ pub mod duplicate_filter;
 pub mod duplicates_page;
 pub mod edit_subscription;
 pub mod favourites;
+pub mod file_log;
 pub mod folders;
 pub mod info_lines;
 pub mod list_selection;
