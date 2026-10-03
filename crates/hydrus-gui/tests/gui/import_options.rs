@@ -112,7 +112,7 @@ fn an_import_folders_import_options_are_edited_and_written() {
 #[test]
 fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     let (_dirs, store) = store();
-    let _windows = headless::init();
+    let windows = headless::init();
     let ui = MainWindow::new().unwrap();
     let bound = bind(&ui, Pages::open(store).unwrap());
     // download, then gallery
@@ -138,10 +138,46 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     editor.invoke_kind_clicked(7);
     editor.set_custom_index(1);
     editor.invoke_changed();
+
+    // tags: additional tags for "my tags"
+    editor.invoke_kind_clicked(4);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    let services = editor.get_tag_services();
+    let mine = (0..services.row_count())
+        .position(|i| services.row_data(i).unwrap().name == "my tags")
+        .unwrap();
+    editor.invoke_tag_service_text(i32::try_from(mine).unwrap(), "zebra\napple".into());
+    assert!(
+        labels(&editor)[4].contains("my tags[adding \"apple, zebra\"]"),
+        "{:?}",
+        labels(&editor)
+    );
+    let pixels = headless::render(&windows.get(1).unwrap(), 900, 620);
+    let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
+    headless::save_png(&shots.join("import_options_tags.png"), &pixels, 900, 620).unwrap();
+    // notes: none
+    editor.invoke_kind_clicked(5);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    editor.set_get_notes(false);
+    editor.invoke_changed();
+    assert_eq!(labels(&editor)[5], "> notes: not adding notes");
+    // tag filtering: a blacklist
+    editor.invoke_kind_clicked(2);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    editor.set_tag_blacklist("goblin\norc".into());
+    editor.invoke_changed();
+    assert_eq!(
+        labels(&editor)[2],
+        "> tag filtering: blacklisting on goblin, orc"
+    );
+
     editor.invoke_apply();
     assert_eq!(
         ui.get_gallery_data().import_options,
-        "import options (presentation set)"
+        "import options (tag filtering, tags, notes, pre\u{2026}"
     );
     let page = bound.current.borrow();
     let page = page.borrow();

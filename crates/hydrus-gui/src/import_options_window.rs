@@ -1,10 +1,9 @@
 //! The import options editor's window, bound (`ui/import_options.slint`):
 //! hydrus-gui-model's [`Editor`](crate::import_options_editor::Editor)
 //! shown as the reference's `EditSpecificImportOptionsContainerPanel`, the
-//! list of kinds and the chosen kind's page. Presentation, prefetch, file
-//! filtering and locations are edited here; the other kinds can be set to
-//! custom (from their defaults) or back, and show their summary. "apply"
-//! gives the importer's options to `done`.
+//! list of kinds and the chosen kind's page. Every kind but external
+//! programs is edited here (that can be set to custom, from its default,
+//! or back). "apply" gives the importer's options to `done`.
 
 use std::cell::RefCell;
 use std::rc::Rc;
@@ -24,7 +23,7 @@ use hydrus_store::services::ServiceRegistry;
 use crate::import_options_editor::{
     CUSTOM_CHOICE, DESCRIPTION, Editor, Kind, inbox_choices, use_default_label,
 };
-use crate::{ImportOptionsWindow, ResolutionLimit, SizeLimit};
+use crate::{ImportOptionsWindow, ResolutionLimit, SizeLimit, TagServiceRow};
 
 fn strings(items: Vec<String>) -> ModelRc<SharedString> {
     let items: Vec<SharedString> = items.into_iter().map(Into::into).collect();
@@ -109,6 +108,41 @@ fn status_of(index: i32) -> PresentationStatus {
     }
 }
 
+/// The real tag services (local tag services and repositories): (key
+/// hex, name).
+fn tag_services(services: &ServiceRegistry) -> Vec<(String, String)> {
+    services
+        .all()
+        .filter(|s| s.service_type().is_real_tag_service())
+        .map(|s| (hex::encode(s.key.as_bytes()), s.name.clone()))
+        .collect()
+}
+
+/// A tag service's options in the editor's tags, made (at their default)
+/// if it has none.
+fn service_options<'a>(
+    tags: &'a mut hydrus_core::import_options::TagImportOptions,
+    key: &str,
+) -> &'a mut hydrus_core::import_options::ServiceTagImportOptions {
+    if let Some(i) = tags.services.iter().position(|(k, _)| k == key) {
+        &mut tags.services[i].1
+    } else {
+        tags.services.push((
+            key.to_owned(),
+            hydrus_core::import_options::ServiceTagImportOptions::default(),
+        ));
+        &mut tags.services.last_mut().expect("just pushed").1
+    }
+}
+
+/// Set a text field only if it changed (setting it would move the cursor
+/// of the field typed in).
+fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: String) {
+    if get().as_str() != text {
+        set(text.into());
+    }
+}
+
 struct State {
     editor: Editor,
     services: Arc<hydrus_store::store::Snapshot>,
@@ -134,7 +168,7 @@ fn show(window: &ImportOptionsWindow, state: &State) {
     let values = &editor.values;
     window.set_summary(
         match kind {
-            Kind::Tags | Kind::Notes | Kind::TagFiltering | Kind::ExternalPrograms => format!(
+            Kind::ExternalPrograms => format!(
                 "{} (not editable here yet)",
                 crate::import_options_editor::summary(kind, values, &name)
             ),
@@ -213,6 +247,48 @@ fn show(window: &ImportOptionsWindow, state: &State) {
             .collect();
         window.set_resolutions(ModelRc::new(VecModel::from(resolutions)));
     }
+    if let Some(o) = &values.notes {
+        window.set_get_notes(o.get_notes);
+        window.set_extend_notes(o.extend_existing_note_if_possible);
+        window.set_conflict_index(
+            crate::import_options_editor::CONFLICT_CHOICES
+                .iter()
+                .position(|c| *c == o.conflict)
+                .and_then(|i| i32::try_from(i).ok())
+                .unwrap_or(3),
+        );
+        set_text(
+            || window.get_note_whitelist(),
+            |t| window.set_note_whitelist(t),
+            o.name_whitelist.join("\n"),
+        );
+        set_text(
+            || window.get_note_renames(),
+            |t| window.set_note_renames(t),
+            crate::import_options_editor::renames_text(&o.name_overrides),
+        );
+        window.set_rename_all_on(o.all_name_override.is_some());
+        set_text(
+            || window.get_rename_all(),
+            |t| window.set_rename_all(t),
+            o.all_name_override.clone().unwrap_or_default(),
+        );
+    }
+    if let Some(o) = &values.tag_filtering {
+        set_text(
+            || window.get_tag_blacklist(),
+            |t| window.set_tag_blacklist(t),
+            crate::import_options_editor::blacklist_text(&o.blacklist),
+        );
+        set_text(
+            || window.get_tag_whitelist(),
+            |t| window.set_tag_whitelist(t),
+            o.whitelist.join("\n"),
+        );
+    }
+    if let Some(o) = &values.tags {
+        window.set_gets_no_tags(!o.worth_fetching_tags() && !o.has_additional_tags());
+    }
     if let Some(o) = &values.locations {
         let choices = destinations(services);
         window.set_destination_index(
@@ -229,6 +305,34 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         window.set_primary_urls(o.associate_primary_urls);
         window.set_source_urls(o.associate_source_urls);
     }
+}
+
+/// Show the tags page's services (made anew: only when the page is shown
+/// or switched, not as their texts are typed).
+fn show_tag_services(window: &ImportOptionsWindow, state: &State) {
+    let Some(o) = &state.editor.values.tags else {
+        return;
+    };
+    let default = hydrus_core::import_options::ServiceTagImportOptions::default();
+    let rows: Vec<TagServiceRow> = tag_services(&state.services.services)
+        .into_iter()
+        .map(|(key, name)| {
+            let s = o.service(&key).unwrap_or(&default);
+            TagServiceRow {
+                name: name.into(),
+                get_tags: s.get_tags,
+                filter: s.get_tags_filter.to_filter_string().into(),
+                additional: s.additional_tags.join("\n").into(),
+                to_new: s.to_new_files,
+                to_inbox: s.to_already_in_inbox,
+                to_archive: s.to_already_in_archive,
+                get_overwrite: s.get_tags_overwrite_deleted,
+                additional_overwrite: s.additional_tags_overwrite_deleted,
+                only_existing: s.only_add_existing_tags,
+            }
+        })
+        .collect();
+    window.set_tag_services(ModelRc::new(VecModel::from(rows)));
 }
 
 /// Whether a size limit (by its label) is set.
@@ -286,6 +390,34 @@ fn read(window: &ImportOptionsWindow, state: &mut State) {
             if let Some(o) = &mut editor.values.file_filtering {
                 o.exclude_deleted = window.get_exclude_deleted();
                 o.allow_decompression_bombs = window.get_bombs();
+            }
+        }
+        Kind::Notes => {
+            if let Some(o) = &mut editor.values.notes {
+                o.get_notes = window.get_get_notes();
+                o.extend_existing_note_if_possible = window.get_extend_notes();
+                if let Some(c) = usize::try_from(window.get_conflict_index())
+                    .ok()
+                    .and_then(|i| crate::import_options_editor::CONFLICT_CHOICES.get(i))
+                {
+                    o.conflict = *c;
+                }
+                o.name_whitelist =
+                    crate::import_options_editor::lines(&window.get_note_whitelist());
+                o.name_overrides =
+                    crate::import_options_editor::parse_renames(&window.get_note_renames());
+                o.all_name_override = window
+                    .get_rename_all_on()
+                    .then(|| window.get_rename_all().to_string());
+            }
+        }
+        Kind::TagFiltering => {
+            if let Some(o) = &mut editor.values.tag_filtering {
+                o.blacklist = crate::import_options_editor::with_blacklist(
+                    &o.blacklist,
+                    &window.get_tag_blacklist(),
+                );
+                o.whitelist = crate::import_options_editor::lines(&window.get_tag_whitelist());
             }
         }
         Kind::Locations => {
@@ -355,6 +487,7 @@ pub(crate) fn open(
                 state.borrow_mut().editor.shown = i;
             }
             show(&window, &state.borrow());
+            show_tag_services(&window, &state.borrow());
         }
     });
     window.on_changed({
@@ -365,6 +498,58 @@ pub(crate) fn open(
                 return;
             };
             read(&window, &mut state.borrow_mut());
+            show(&window, &state.borrow());
+        }
+    });
+    window.on_tag_service_toggled({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |i, field, on| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            {
+                let mut state = state.borrow_mut();
+                let services = tag_services(&state.services.services);
+                let Some((key, _)) = usize::try_from(i).ok().and_then(|i| services.get(i)) else {
+                    return;
+                };
+                if let Some(tags) = &mut state.editor.values.tags {
+                    let s = service_options(tags, key);
+                    match field.as_str() {
+                        "get-tags" => s.get_tags = on,
+                        "to-new" => s.to_new_files = on,
+                        "to-inbox" => s.to_already_in_inbox = on,
+                        "to-archive" => s.to_already_in_archive = on,
+                        "get-overwrite" => s.get_tags_overwrite_deleted = on,
+                        "additional-overwrite" => s.additional_tags_overwrite_deleted = on,
+                        _ => s.only_add_existing_tags = on,
+                    }
+                }
+            }
+            show(&window, &state.borrow());
+            show_tag_services(&window, &state.borrow());
+        }
+    });
+    // (typed in: the list's labels shown again, not the services)
+    window.on_tag_service_text({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |i, text| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            {
+                let mut state = state.borrow_mut();
+                let services = tag_services(&state.services.services);
+                let Some((key, _)) = usize::try_from(i).ok().and_then(|i| services.get(i)) else {
+                    return;
+                };
+                if let Some(tags) = &mut state.editor.values.tags {
+                    service_options(tags, key).additional_tags =
+                        crate::import_options_editor::lines(&text);
+                }
+            }
             show(&window, &state.borrow());
         }
     });
@@ -432,6 +617,7 @@ pub(crate) fn open(
         }
     });
     show(&window, &state.borrow());
+    show_tag_services(&window, &state.borrow());
     window.show().map_err(|e| e.to_string())?;
     Ok(window)
 }

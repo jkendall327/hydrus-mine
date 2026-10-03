@@ -512,3 +512,71 @@ pub fn inbox_choices(status: hydrus_core::import_options::PresentationStatus) ->
     }
     choices
 }
+
+/// A text's lines, trimmed, without blank ones.
+pub fn lines(text: &str) -> Vec<String> {
+    text.lines()
+        .map(str::trim)
+        .filter(|l| !l.is_empty())
+        .map(str::to_owned)
+        .collect()
+}
+
+/// A filter's blacklisted slices, a line each (the tag filtering page's
+/// blacklist, as the reference's button shows only the blacklist).
+pub fn blacklist_text(filter: &hydrus_core::tag_filter::TagFilter) -> String {
+    filter
+        .rules()
+        .filter(|(_, r)| *r == hydrus_core::tag_filter::FilterRule::Blacklist)
+        .map(|(s, _)| s.to_owned())
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// `filter` with its blacklist replaced by these lines (its whitelisted
+/// exceptions kept).
+pub fn with_blacklist(
+    filter: &hydrus_core::tag_filter::TagFilter,
+    text: &str,
+) -> hydrus_core::tag_filter::TagFilter {
+    use hydrus_core::tag_filter::{FilterRule, TagFilter};
+    let mut out = TagFilter::new();
+    for (slice, rule) in filter.rules() {
+        if rule == FilterRule::Whitelist {
+            out.set_rule(slice, rule);
+        }
+    }
+    for slice in lines(text) {
+        out.set_rule(slice, FilterRule::Blacklist);
+    }
+    out
+}
+
+/// Note renames as text: "parser name -> saved name", a line each.
+pub fn renames_text(renames: &[(String, String)]) -> String {
+    renames
+        .iter()
+        .map(|(from, to)| format!("{from} -> {to}"))
+        .collect::<Vec<_>>()
+        .join("\n")
+}
+
+/// Note renames from their text; lines without " -> " are dropped.
+pub fn parse_renames(text: &str) -> Vec<(String, String)> {
+    lines(text)
+        .iter()
+        .filter_map(|l| {
+            let (from, to) = l.split_once("->")?;
+            let (from, to) = (from.trim(), to.trim());
+            (!from.is_empty() && !to.is_empty()).then(|| (from.to_owned(), to.to_owned()))
+        })
+        .collect()
+}
+
+/// The notes page's conflict choices, in order (`NOTE_IMPORT_CONFLICT_*`).
+pub const CONFLICT_CHOICES: [hydrus_core::import_options::NoteConflict; 4] = [
+    hydrus_core::import_options::NoteConflict::Replace,
+    hydrus_core::import_options::NoteConflict::Ignore,
+    hydrus_core::import_options::NoteConflict::Append,
+    hydrus_core::import_options::NoteConflict::Rename,
+];

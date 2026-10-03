@@ -589,13 +589,17 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** can set tags, notes and tag filtering
-  to custom options (starting from their defaults) but not yet edit them,
-  nor file filtering's filetypes; locations take one destination (the
-  reference's takes several), and presentation's location is all my
-  files or all local files. It has no copy, paste or favourites buttons,
-  and always lists kinds as the reference's "simple mode" does (hydrus-rs
-  has no option for it yet).
+- **The import options editor** doesn't edit file filtering's filetypes
+  or a tag service's "get tags" filter (shown as what it lets through),
+  and takes the tag filtering blacklist, the whitelist, additional tags
+  and note names as typed lines (the reference has a tag filter editor,
+  a tags input with autocomplete, and list editors; its note renames
+  are a two-column list, typed here as "parser name -> saved name").
+  The tags page's "set a filter for already-exist test" isn't there.
+  Locations take one destination (the reference's takes several), and
+  presentation's location is all my files or all local files. It has no
+  copy, paste or favourites buttons, and always lists kinds as the
+  reference's "simple mode" does (hydrus-rs has no option for it yet).
 - **The search log window** can't yet export URLs to a png, import new
   URLs, or export the selected page objects (greyed out).
 - **A subscription query's logs**, opened from the query editor, change

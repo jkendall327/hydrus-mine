@@ -115,16 +115,15 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 `src/import_options_window.rs`, `hydrus-gui-model`'s `import_options_editor`),
 recorded by `oracle/record_import_options_editor.py`, opened from the
 edit subscription and edit import folder dialogs and gallery and watcher
-pages. It edits presentation,
-prefetch, file filtering (not yet its filetypes) and locations (one
-destination).
+pages. It edits every kind but external programs; tag filters are typed
+as lines (the reference has a tag filter editor), and file filtering's
+filetypes aren't edited yet.
 
 **Next**:
 
-- Pages for tags (per tag service: get tags and its filter, additional
-  tags, the cog menu's switches), notes and tag filtering (the blacklist
-  and whitelist need the tag filter editor and a tags input), and file
-  filtering's filetypes (the reference's mimes tree).
+- File filtering's filetypes (the reference's mimes tree), the tag
+  filter editor for "get tags" filters and the blacklist, and a tags
+  input with autocomplete for additional tags and the whitelist.
 - The "highlighted" boxes' import options buttons (a search's or
   watcher's own), the URL downloader and local import pages', and the
   subscriptions list's "import options" button.

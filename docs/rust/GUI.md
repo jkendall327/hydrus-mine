@@ -223,8 +223,11 @@ options' summary ("> presentation: presenting new files"), and the chosen
 kind's page: "use the default import options" or "set custom import
 options" (starting from the default's), and the options. Presentation,
 prefetch (with its rule that the two checks can't both be dispositive),
-file filtering's switches and size and resolution limits, and locations'
-destination and switches are edited there. "apply" gives the dialog the
+file filtering's switches and size and resolution limits, tag
+filtering's blacklist and whitelist, locations' destination and
+switches, tags (per tag service: getting tags, additional tags, and the
+cog menu's switches; a warning if it gets no tags) and notes are edited
+there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
 

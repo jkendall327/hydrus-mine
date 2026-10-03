@@ -6,7 +6,7 @@
 // the page of the kind chosen: its description, "use the default" or
 // "set custom", and its options.
 
-import { Button, CheckBox, ComboBox, ScrollView, SpinBox } from "std-widgets.slint";
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
 // a file size limit: whether there is one, its number and unit (B, KB,
@@ -24,6 +24,21 @@ export struct ResolutionLimit {
     on: bool,
     width: int,
     height: int,
+}
+
+// a tag service's part of the tags page (`EditServiceTagImportOptionsPanel`)
+export struct TagServiceRow {
+    name: string,
+    get-tags: bool,
+    // what its "get tags" filter lets through
+    filter: string,
+    additional: string,
+    to-new: bool,
+    to-inbox: bool,
+    to-archive: bool,
+    get-overwrite: bool,
+    additional-overwrite: bool,
+    only-existing: bool,
 }
 
 component Label inherits Text {
@@ -85,6 +100,22 @@ export component ImportOptionsWindow inherits Window {
     in property <bool> downloader;
     in-out property <bool> primary-urls;
     in-out property <bool> source-urls;
+    // notes
+    in-out property <bool> get-notes;
+    in-out property <bool> extend-notes;
+    in-out property <int> conflict-index;
+    in-out property <string> note-whitelist;
+    in-out property <string> note-renames;
+    in-out property <bool> rename-all-on;
+    in-out property <string> rename-all;
+    // tag filtering
+    in-out property <string> tag-blacklist;
+    in-out property <string> tag-whitelist;
+    // tags
+    in property <[TagServiceRow]> tag-services;
+    in property <bool> gets-no-tags;
+    callback tag-service-toggled(int, string, bool);
+    callback tag-service-text(int, string);
     callback kind-clicked(int);
     // a field changed: what the window's two-way fields hold is read
     callback changed();
@@ -319,6 +350,140 @@ export component ImportOptionsWindow inherits Window {
                             CheckBox {
                                 checked <=> root.source-urls;
                                 toggled => { root.changed(); }
+                            }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "notes": VerticalLayout {
+                        spacing: 6px;
+                        Row {
+                            label: "get notes: ";
+                            CheckBox {
+                                checked <=> root.get-notes;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "if possible, extend existing notes: ";
+                            CheckBox {
+                                checked <=> root.extend-notes;
+                                toggled => { root.changed(); }
+                            }
+                        }
+                        Row {
+                            label: "if existing note-name conflict, what to do: ";
+                            ComboBox {
+                                model: ["replace the existing note", "do not add the new note", "append the new note to the end of the existing note", "add the new note under a new name"];
+                                current-index <=> root.conflict-index;
+                                selected => { root.changed(); }
+                            }
+                        }
+                        Label { text: "only allow these note names\n(leave blank for 'get all'), one a line: "; }
+                        TextEdit {
+                            height: 80px;
+                            text <=> root.note-whitelist;
+                            edited => { root.changed(); }
+                        }
+                        Label { text: "rename these notes as they come in (\"parser name -> saved name\", one a line): "; }
+                        TextEdit {
+                            height: 80px;
+                            text <=> root.note-renames;
+                            edited => { root.changed(); }
+                        }
+                        Row {
+                            label: "rename spare note(s) to this: ";
+                            CheckBox {
+                                checked <=> root.rename-all-on;
+                                toggled => { root.changed(); }
+                            }
+                            LineEdit {
+                                enabled: root.rename-all-on;
+                                placeholder-text: "do not mass-rename";
+                                text <=> root.rename-all;
+                                edited => { root.changed(); }
+                            }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "tag filtering": VerticalLayout {
+                        spacing: 6px;
+                        Label { text: "file blacklist (a tag, namespace: or the like a line; a file with a tag it blocks is not imported): "; }
+                        TextEdit {
+                            height: 100px;
+                            text <=> root.tag-blacklist;
+                            edited => { root.changed(); }
+                        }
+                        Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
+                        TextEdit {
+                            height: 100px;
+                            text <=> root.tag-whitelist;
+                            edited => { root.changed(); }
+                        }
+                    }
+                    if root.custom-index == 1 && root.kind == "tags": VerticalLayout {
+                        spacing: 8px;
+                        if root.gets-no-tags: Label {
+                            text: "THIS CURRENTLY GETS NO TAGS";
+                            horizontal-alignment: center;
+                            color: Theme.error;
+                        }
+                        for service[i] in root.tag-services: Rectangle {
+                            border-width: 1px;
+                            border-color: Theme.border;
+                            VerticalLayout {
+                                padding: 6px;
+                                spacing: 4px;
+                                Text {
+                                    text: service.name;
+                                    font-weight: 700;
+                                    color: Theme.text;
+                                }
+                                if root.downloader: HorizontalLayout {
+                                    spacing: 6px;
+                                    CheckBox {
+                                        text: "get tags";
+                                        checked: service.get-tags;
+                                        toggled => { root.tag-service-toggled(i, "get-tags", self.checked); }
+                                    }
+                                    Label {
+                                        text: service.get-tags ? "adding: " + service.filter : "";
+                                        horizontal-stretch: 1;
+                                    }
+                                }
+                                Label { text: "additional tags, one a line: "; }
+                                TextEdit {
+                                    height: 60px;
+                                    text: service.additional;
+                                    edited(text) => { root.tag-service-text(i, text); }
+                                }
+                                CheckBox {
+                                    text: "apply tags to new files";
+                                    checked: service.to-new;
+                                    toggled => { root.tag-service-toggled(i, "to-new", self.checked); }
+                                }
+                                CheckBox {
+                                    text: "apply tags to files already in inbox";
+                                    checked: service.to-inbox;
+                                    toggled => { root.tag-service-toggled(i, "to-inbox", self.checked); }
+                                }
+                                CheckBox {
+                                    text: "apply tags to files already in archive";
+                                    checked: service.to-archive;
+                                    toggled => { root.tag-service-toggled(i, "to-archive", self.checked); }
+                                }
+                                if root.downloader: CheckBox {
+                                    text: "parsed tags overwrite previously deleted tags";
+                                    checked: service.get-overwrite;
+                                    toggled => { root.tag-service-toggled(i, "get-overwrite", self.checked); }
+                                }
+                                CheckBox {
+                                    text: "additional tags overwrite previously deleted tags";
+                                    checked: service.additional-overwrite;
+                                    toggled => { root.tag-service-toggled(i, "additional-overwrite", self.checked); }
+                                }
+                                CheckBox {
+                                    text: "only add tags that already exist";
+                                    checked: service.only-existing;
+                                    toggled => { root.tag-service-toggled(i, "only-existing", self.checked); }
+                                }
                             }
                         }
                     }
