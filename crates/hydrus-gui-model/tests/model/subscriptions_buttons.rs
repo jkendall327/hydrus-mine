@@ -11,7 +11,8 @@ use hydrus_gui_model::edit_subscription::RetryIgnored;
 use hydrus_gui_model::subscriptions_dialog::{
     DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY, MERGE_QUESTION, Picked, RESET_QUESTION,
     SEPARATE_CHOICES, SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION,
-    SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, picked,
+    SEPARATE_NAME, SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message,
+    picked,
 };
 use hydrus_store::queues::StatusCounts;
 
@@ -274,6 +275,15 @@ fn the_other_buttons_act_as_the_references() {
                 if let Some(base) = base {
                     dialog.separate(now, &how, &base);
                 }
+            }
+            "duplicate" => {
+                let made = dialog.duplicate_selected(now);
+                assert_eq!(asked[0]["kind"], "information", "{at}");
+                assert_eq!(
+                    asked[0]["message"],
+                    added_message(made.len()).as_str(),
+                    "{at}"
+                );
             }
             "merge" => {
                 assert_eq!(asked[0]["message"], MERGE_QUESTION, "{at}");

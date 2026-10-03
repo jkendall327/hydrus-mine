@@ -28,6 +28,9 @@ pub struct DialogQuery {
     pub ignored_notes: Vec<String>,
     /// What to do to its file log on "apply", in order.
     pub log_changes: Vec<LogChange>,
+    /// For a query not in the store yet, the queue whose file log it
+    /// starts with a copy of (a duplicated subscription's).
+    pub copy_of: Option<i64>,
 }
 
 impl DialogQuery {
@@ -40,6 +43,7 @@ impl DialogQuery {
             seed_times: Vec::new(),
             ignored_notes: Vec::new(),
             log_changes: Vec::new(),
+            copy_of: None,
         }
     }
 
@@ -443,6 +447,33 @@ impl Subscriptions {
         self.selection.select_many(&matching);
     }
 
+    /// "duplicate": a copy of each selected, named as its own name not
+    /// taken ("name (1)"), each query with a copy of its file log; the
+    /// last copy is selected, as the reference adds them one by one.
+    pub fn duplicate_selected(&mut self, now: i64) -> Vec<u64> {
+        let mut made = Vec::new();
+        for key in self.selected(now) {
+            let Some(original) = self.get(key).cloned() else {
+                continue;
+            };
+            let queries = original
+                .queries
+                .into_iter()
+                .map(|q| DialogQuery {
+                    queue: None,
+                    copy_of: q.queue.or(q.copy_of),
+                    ..q
+                })
+                .collect();
+            let name = self.non_dupe_name(&original.name, None);
+            made.push(self.push(None, name, original.settings, queries));
+        }
+        self.selection = ListSelection::default();
+        self.selection
+            .select_many(&made[made.len().saturating_sub(1)..]);
+        made
+    }
+
     /// Delete the selected (after [`DELETE_QUESTION`]).
     pub fn delete_selected(&mut self, now: i64) {
         let doomed = self.selected(now);
@@ -454,6 +485,11 @@ impl Subscriptions {
         }
         self.subscriptions.retain(|s| !doomed.contains(&s.key));
     }
+}
+
+/// What "duplicate" says it did.
+pub fn added_message(n: usize) -> String {
+    format!("{} objects added!", human_int(n as u64))
 }
 
 /// What "reset" asks.

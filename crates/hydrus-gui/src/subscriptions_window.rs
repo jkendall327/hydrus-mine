@@ -26,7 +26,7 @@ use crate::subscriptions_dialog::{
     CheckNow, Choice, DELETE_QUESTION, DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY,
     MERGE_QUESTION, NOT_MERGEABLE, Picked, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_CHOICES,
     SEPARATE_MERGED_CHOICES, SEPARATE_MERGED_NAME, SEPARATE_MERGED_QUESTION, SEPARATE_NAME,
-    SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, picked,
+    SEPARATE_PICK, SEPARATE_QUESTION, Separate, Subscriptions, added_message, picked,
 };
 use crate::subscriptions_list::ShortSummary;
 use crate::{SubscriptionsWindow, TableRow, Tick};
@@ -44,6 +44,8 @@ enum Asking {
     },
     /// A message with only "ok".
     Message(String),
+    /// Information with only "ok".
+    Information(String),
     Reset,
     Lowercase,
     RetryIgnored,
@@ -119,6 +121,7 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
                         .map(|s| s.note.clone())
                         .collect(),
                     log_changes: Vec::new(),
+                    copy_of: None,
                     state: q.state,
                 });
             }
@@ -152,6 +155,8 @@ struct QueryWrite {
     queue: Option<i64>,
     state: QueryState,
     logs: Vec<LogChange>,
+    /// A new query's file log, copied from this queue's.
+    copy_of: Option<i64>,
 }
 
 /// A change "apply" writes.
@@ -163,7 +168,8 @@ enum Write {
     Rename(i64, String),
     Settings(i64, Box<SubscriptionSettings>),
     Query(i64, QueryState),
-    AddQuery(i64, QueryState),
+    /// A new query, its file log copied from a queue's if any.
+    AddQuery(i64, QueryState, Option<i64>),
     /// A query moved to this subscription.
     Move(i64, i64),
     RemoveQuery(i64),
@@ -204,6 +210,7 @@ fn changes(open: &Open) -> Vec<Write> {
                         queue: q.queue,
                         state: q.state.clone(),
                         logs: q.log_changes.clone(),
+                        copy_of: q.copy_of,
                     })
                     .collect(),
             ));
@@ -219,7 +226,7 @@ fn changes(open: &Open) -> Vec<Write> {
         }
         for q in &s.queries {
             let Some(queue) = q.queue else {
-                writes.push(Write::AddQuery(id, q.state.clone()));
+                writes.push(Write::AddQuery(id, q.state.clone(), q.copy_of));
                 continue;
             };
             if owners.get(&queue) != Some(&id) {
@@ -284,7 +291,13 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                     };
                     for q in queries {
                         let Some(queue) = q.queue else {
-                            subscriptions::add_query(conn, id, &q.state, now)?;
+                            let queue = subscriptions::add_query(conn, id, &q.state, now)?;
+                            if let Some(from) = q.copy_of {
+                                queues::copy_seeds(conn, from, queue)?;
+                            }
+                            for &change in &q.logs {
+                                change_log(conn, queue, change, now)?;
+                            }
                             continue;
                         };
                         subscriptions::move_query(conn, queue, id)?;
@@ -295,8 +308,11 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
                     }
                 }
                 Write::Move(queue, id) => subscriptions::move_query(conn, *queue, *id)?,
-                Write::AddQuery(id, state) => {
-                    subscriptions::add_query(conn, *id, state, now)?;
+                Write::AddQuery(id, state, copy_of) => {
+                    let queue = subscriptions::add_query(conn, *id, state, now)?;
+                    if let Some(from) = copy_of {
+                        queues::copy_seeds(conn, *from, queue)?;
+                    }
                 }
                 Write::RemoveQuery(queue) => subscriptions::remove_query(conn, *queue)?,
                 Write::Log(queue, change) => change_log(conn, *queue, *change, now)?,
@@ -510,6 +526,14 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             false,
         )),
         Some(Asking::Dedupe(_, question, _)) => Some((dedupe_choice(question), false)),
+        Some(Asking::Information(message)) => Some((
+            Choice {
+                title: "Information".into(),
+                message: message.clone(),
+                choices: vec!["ok".into()],
+            },
+            false,
+        )),
         _ => None,
     });
     let names_of_selected: Vec<String> = dialog
@@ -913,7 +937,7 @@ pub(crate) fn open(
                     let next = dedupe.answer(&mut open.dialog, &answer);
                     ask_dedupe(open, dedupe, next);
                 }
-                Some(Asking::Message(_)) | None => {}
+                Some(Asking::Message(_) | Asking::Information(_)) | None => {}
             });
             // "add": a new subscription on the downloader chosen, with the
             // client's checker timings for subscriptions
@@ -968,6 +992,17 @@ pub(crate) fn open(
     window.on_retry_failed({
         let change = change.clone();
         move || change(&|open| open.dialog.retry_failed_selected(now()))
+    });
+    window.on_duplicate({
+        let change = change.clone();
+        move || {
+            change(&|open| {
+                let made = open.dialog.duplicate_selected(now());
+                if !made.is_empty() {
+                    open.asking = Some(Asking::Information(added_message(made.len())));
+                }
+            });
+        }
     });
     window.on_deduplicate({
         let change = change.clone();

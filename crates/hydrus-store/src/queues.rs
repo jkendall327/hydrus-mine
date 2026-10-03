@@ -449,6 +449,25 @@ pub fn take_nudges(conn: &Connection) -> Result<Vec<i64>> {
     Ok(nudged)
 }
 
+/// Give queue `to` a copy of `from`'s file and gallery seeds (a
+/// duplicated subscription's query, its log copied as the reference's
+/// export and import copies it).
+pub fn copy_seeds(conn: &Connection, from: i64, to: i64) -> Result<()> {
+    conn.prepare_cached(
+        "INSERT INTO file_seeds (queue_id, position, seed_type, data, data_for_comparison, created, modified, source_time, status, note, referral_url, metadata)
+         SELECT ?2, position, seed_type, data, data_for_comparison, created, modified, source_time, status, note, referral_url, metadata
+         FROM file_seeds WHERE queue_id = ?1 ORDER BY position",
+    )?
+    .execute(params![from, to])?;
+    conn.prepare_cached(
+        "INSERT INTO gallery_seeds (queue_id, position, url, can_generate_more_pages, created, modified, status, note, referral_url, metadata)
+         SELECT ?2, position, url, can_generate_more_pages, created, modified, status, note, referral_url, metadata
+         FROM gallery_seeds WHERE queue_id = ?1 ORDER BY position",
+    )?
+    .execute(params![from, to])?;
+    Ok(())
+}
+
 /// Make a queue.
 pub fn create_queue(
     conn: &Connection,

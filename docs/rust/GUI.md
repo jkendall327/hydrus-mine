@@ -149,7 +149,8 @@ the reference does (name, source, status such as "2 working, 1 paused,
 "delayed--retrying in 2 hours - because: …", items, paused), sorted by
 any column and selected as the reference's lists select, and warns when
 subscriptions are paused from the network menu. Its buttons delete the
-selected (asking "Remove all selected?"), merge those sharing a
+selected (asking "Remove all selected?"), duplicate them ("name (1)",
+with copies of their queries' file logs), merge those sharing a
 downloader (asking which is primary and its new name), separate one (in
 half, into a subscription a query, named "base: query", or only some
 queries, ticked in a list, into one new subscription or one each), lowercase

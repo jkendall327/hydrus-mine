@@ -60,8 +60,9 @@ and are tested against the reference. The work is the GUI over them.
 
 **Next**:
 
-1. The list's last buttons: export/import/duplicate, and import options (after
-   an import options editor exists).
+1. The list's last buttons: export/import (they need the reference's
+   serialised form written, not just read), and the import options
+   column's copy, paste and clear.
 
 ## 2. Manage import folders / export folders
 

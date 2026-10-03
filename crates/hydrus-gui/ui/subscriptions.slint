@@ -119,6 +119,7 @@ export component SubscriptionsWindow inherits Window {
     callback overwrite-checker();
     callback select-subscriptions();
     callback deduplicate();
+    callback duplicate();
     callback chosen(int);
     callback cancelled();
     callback ticked(int, bool);
@@ -189,6 +190,12 @@ export component SubscriptionsWindow inherits Window {
                     enabled: root.any-selected && !root.asking;
                     clicked => { root.delete(); }
                 }
+                Rectangle { width: 12px; }
+                Button {
+                    text: "duplicate";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.duplicate(); }
+                }
             }
             HorizontalLayout {
                 spacing: 6px;
@@ -204,14 +211,14 @@ export component SubscriptionsWindow inherits Window {
                     clicked => { root.separate(); }
                 }
                 Button {
-                    text: "lowercase";
-                    enabled: root.can-lowercase && !root.asking;
-                    clicked => { root.lowercase(); }
-                }
-                Button {
                     text: "deduplicate";
                     enabled: root.can-dedupe && !root.asking;
                     clicked => { root.deduplicate(); }
+                }
+                Button {
+                    text: "lowercase";
+                    enabled: root.can-lowercase && !root.asking;
+                    clicked => { root.lowercase(); }
                 }
                 Rectangle { width: 12px; }
                 Button {

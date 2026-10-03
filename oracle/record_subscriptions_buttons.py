@@ -16,8 +16,9 @@ The buttons: "retry ignored" (asking which), "retry failed", "reset"
 (asking first), "lowercase" (asking first), "overwrite checker options"
 (the checker options editor answered with new options), "overwrite
 downloader" (the downloader chooser answered with a name), "separate"
-(asking how, and the new name) and "merge" (asking first, which is
-primary, and the merged name).
+(asking how, which queries if only some, whether they make one, and the
+new name), "merge" (asking first, which is primary, and the merged name)
+and "duplicate".
 
 Usage: QT_QPA_PLATFORM=offscreen python oracle/record_subscriptions_buttons.py
        (writes fixtures/subscriptions_buttons.json)
@@ -89,6 +90,9 @@ ACTIONS = [
     ( 'separate', [ 'many queries' ], [ None ] ),
     # every query ticked: separated whole
     ( 'separate', [ 'Mixed Case' ], [ 2, '*', 'mc' ] ),
+    # copies, their file logs and all
+    ( 'duplicate', [ 'many queries', 'mc: Greens' ], [] ),
+    ( 'duplicate', [ 'many queries (2)' ], [] ),
 ]
 
 
@@ -359,6 +363,10 @@ def record( session ):
                 elif do == 'overwrite downloader':
 
                     panel.SetDownloader()
+
+                elif do == 'duplicate':
+
+                    panel._subscriptions_panel._Duplicate()
 
                 elif do == 'separate':
 
