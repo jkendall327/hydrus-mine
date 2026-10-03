@@ -2493,6 +2493,7 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "jiff",
  "libloading",
  "png",
  "rand 0.10.3",

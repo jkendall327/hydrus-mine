@@ -63,6 +63,8 @@ pub enum Action {
     ManageRatings,
     /// The focused file's notes.
     ManageNotes,
+    /// The selected files' times (the file shown's, in the viewer).
+    ManageTimes,
     /// The selected files' URLs (the focused file's, in the viewer).
     ManageUrls,
     OpenInNewPage,
@@ -730,7 +732,7 @@ fn spam(menu: &mut Vec<Entry>, entries: Vec<Entry>) {
 }
 
 /// The manage menu: tags, ratings if there are rating services to rate
-/// with, and notes (counting the focused file's).
+/// with, notes (counting the focused file's), and times.
 pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
     let mut entries = vec![Entry::Item("tags".into(), Action::ManageTags)];
     if services.all().any(|s| s.service_type().is_rating_service()) {
@@ -740,6 +742,7 @@ pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
         crate::notes_editor::menu_label(notes),
         Action::ManageNotes,
     ));
+    entries.push(Entry::Item("times".into(), Action::ManageTimes));
     entries
 }
 

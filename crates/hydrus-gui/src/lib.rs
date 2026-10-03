@@ -46,6 +46,7 @@ mod locations_window;
 mod manage_notes_window;
 mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
+mod manage_times_window;
 mod manage_urls_window;
 mod menu_bar;
 pub mod merge_options_window;
@@ -147,14 +148,14 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
-    autocomplete, checker_options, collect, domains, duplicate_filter, duplicates_page,
-    edit_subscription, favourites, file_log, filename_tagging, filetype_tree, folders,
-    import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
-    manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
-    predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
-    sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
+    autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
+    duplicates_page, edit_subscription, favourites, file_log, filename_tagging, filetype_tree,
+    folders, import_options_editor, importer_menu, info_lines, list_selection, local_import,
+    main_menu, manage_tags, media_actions, merge_options_editor, notes_editor, options,
+    page_chooser, predicate_editors, ratings, ratings_editor, scanbar, search_log, selection,
+    session_saving, sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
     subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
-    thumbnail_icons, thumbnail_ratings, urls_editor,
+    thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -175,6 +176,10 @@ pub struct Bound {
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The manage ratings dialog while one is open.
     pub manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>>,
+    /// The manage times dialog while one is open, and the date-time
+    /// editor it opens.
+    pub manage_times: Rc<RefCell<Option<ManageTimesWindow>>>,
+    pub datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>>,
     /// The manage urls dialog while one is open.
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
@@ -953,6 +958,25 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             match manage_ratings_window::open(&store, files, &manage_ratings, applied) {
                 Ok(window) => *manage_ratings.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage ratings: {e}"),
+            }
+        }
+    });
+    // a thumbnail's or the viewer's "manage > times"
+    let manage_times: Rc<RefCell<Option<ManageTimesWindow>>> = Rc::default();
+    let datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>> = Rc::default();
+    let open_manage_times: OpenOnFiles = Rc::new({
+        let manage_times = manage_times.clone();
+        let datetime_editor = datetime_editor.clone();
+        move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            match manage_times_window::open(
+                &store,
+                &files,
+                &manage_times,
+                &datetime_editor,
+                applied,
+            ) {
+                Ok(window) => *manage_times.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open manage times: {e}"),
             }
         }
     });
@@ -2164,6 +2188,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
+        let open_manage_times = open_manage_times.clone();
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
@@ -2183,6 +2208,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_notes: open_manage_notes.clone(),
                 manage_urls: open_manage_urls.clone(),
                 manage_ratings: open_manage_ratings.clone(),
+                manage_times: open_manage_times.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2199,6 +2225,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
+        let open_manage_times = open_manage_times.clone();
         let files_changed = files_changed.clone();
         move |index| {
             let page = page();
@@ -2225,6 +2252,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_notes: open_manage_notes.clone(),
                 manage_urls: open_manage_urls.clone(),
                 manage_ratings: open_manage_ratings.clone(),
+                manage_times: open_manage_times.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2456,6 +2484,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
+        let open_manage_times = open_manage_times.clone();
         let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
@@ -2561,6 +2590,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let files = page.selected_files();
                     if !files.is_empty() {
                         open_manage_ratings(page.store().clone(), files, files_changed.clone());
+                    }
+                }
+                Action::ManageTimes => {
+                    let page = page.borrow();
+                    let files = page.selected_files();
+                    if !files.is_empty() {
+                        open_manage_times(page.store().clone(), files, files_changed.clone());
                     }
                 }
                 _ => {
@@ -2702,6 +2738,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         manage_notes,
         manage_ratings,
+        manage_times,
+        datetime_editor,
         manage_urls,
         options,
         about,
@@ -3399,6 +3437,7 @@ struct ViewerHooks {
     manage_notes: OpenManageNotes,
     manage_urls: OpenOnFiles,
     manage_ratings: OpenOnFiles,
+    manage_times: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3439,6 +3478,7 @@ fn open_viewer(
         manage_notes,
         manage_urls,
         manage_ratings,
+        manage_times,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -4093,6 +4133,7 @@ fn open_viewer(
         let manage_notes = manage_notes.clone();
         let manage_urls = manage_urls.clone();
         let manage_ratings = manage_ratings.clone();
+        let manage_times = manage_times.clone();
         let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
@@ -4174,6 +4215,10 @@ fn open_viewer(
                 Action::ManageRatings => {
                     let store = model.borrow().store().clone();
                     manage_ratings(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::ManageTimes => {
+                    let store = model.borrow().store().clone();
+                    manage_times(store, vec![file], Rc::new(show.clone()));
                 }
                 Action::DeleteFrom(domain) => {
                     let name = model

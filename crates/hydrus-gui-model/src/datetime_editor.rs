@@ -144,15 +144,7 @@ impl DateTimeEditor {
 
     /// Copy: the time shown, in seconds, as JSON.
     pub fn copy(&self) -> (String, Said) {
-        let text = self.value().best().map_or_else(
-            || "null".to_owned(),
-            |ms| {
-                let mut out = String::new();
-                hydrus_core::pyjson::write_python_float(ms as f64 / 1000.0, &mut out);
-                out
-            },
-        );
-        (text, Said::Notice("Copied!".into()))
+        (copy_text(&self.value()), Said::Notice("Copied!".into()))
     }
 
     /// Paste a timestamp in seconds (as JSON, or a string of one) or a
@@ -160,50 +152,73 @@ impl DateTimeEditor {
     /// says (a timestamp it can't read sets nothing, but is still
     /// "Pasted!", as the reference has it).
     pub fn paste(&mut self, text: &str) -> Vec<Said> {
-        let mut said = Vec::new();
-        let parsed = PyJson::parse(text).ok();
-        let seconds: Option<Option<f64>> = match parsed {
-            Some(PyJson::Int(i)) => Some(Some(i as f64)),
-            Some(PyJson::Float(f)) => Some(Some(f)),
-            Some(PyJson::Null) => Some(None),
-            Some(PyJson::Str(s)) => {
-                if let Ok(f) = s.trim().parse::<f64>() {
-                    Some(Some(f))
-                } else {
-                    said.push(Said::Critical(
-                        "Problem pasting!".into(),
-                        format!("could not convert string to float: {}", py_repr(&s)),
-                    ));
-                    None
-                }
-            }
-            Some(_) => None,
-            None => {
-                let Some(seconds) = parse_date(text, &self.tz) else {
-                    said.push(Said::Warning(format!(
-                        "Sorry, I did not understand that! I am looking for a simple timestamp integer or parseable datestring, but I got:\n\n{text}"
-                    )));
-                    return said;
-                };
-                Some(Some(seconds))
-            }
-        };
-        let ms = if let Some(seconds) = seconds {
-            seconds.map(|s| (s * 1000.0) as i64)
-        } else {
-            said.push(Said::Critical(
-                "Clipboard Error!".into(),
-                crate::notes_editor::clipboard_parse_error(
-                    "A parseable timestamp string",
-                    text,
-                    "Exception('Not a timestamp!')",
-                ),
-            ));
-            None
-        };
-        let value = self.current.with(ms, false);
-        self.set_value(value, false);
-        said.push(Said::Notice("Pasted!".into()));
+        let (read, mut said) = read_pasted(text, &self.tz);
+        if let Some(ms) = read {
+            let value = self.current.with(ms, false);
+            self.set_value(value, false);
+            said.push(Said::Notice("Pasted!".into()));
+        }
         said
     }
+}
+
+/// Pasted text read as a time (`GetQtDateTimeFromClipboard`): a timestamp
+/// in seconds (as JSON, or a string of one) or a date string, in
+/// milliseconds; `Some(None)` for what isn't a time, which the reference
+/// goes on to set (and refuses); `None` if it gave up. And what it said.
+pub fn read_pasted(text: &str, tz: &TimeZone) -> (Option<Option<i64>>, Vec<Said>) {
+    let mut said = Vec::new();
+    let seconds: Option<Option<f64>> = match PyJson::parse(text).ok() {
+        Some(PyJson::Int(i)) => Some(Some(i as f64)),
+        Some(PyJson::Float(f)) => Some(Some(f)),
+        Some(PyJson::Null) => Some(None),
+        Some(PyJson::Str(s)) => {
+            if let Ok(f) = s.trim().parse::<f64>() {
+                Some(Some(f))
+            } else {
+                said.push(Said::Critical(
+                    "Problem pasting!".into(),
+                    format!("could not convert string to float: {}", py_repr(&s)),
+                ));
+                None
+            }
+        }
+        Some(_) => None,
+        None => {
+            let Some(seconds) = parse_date(text, tz) else {
+                said.push(Said::Warning(format!(
+                    "Sorry, I did not understand that! I am looking for a simple timestamp integer or parseable datestring, but I got:\n\n{text}"
+                )));
+                return (None, said);
+            };
+            Some(Some(seconds))
+        }
+    };
+    let ms = if let Some(seconds) = seconds {
+        seconds.map(|s| (s * 1000.0) as i64)
+    } else {
+        said.push(Said::Critical(
+            "Clipboard Error!".into(),
+            crate::notes_editor::clipboard_parse_error(
+                "A parseable timestamp string",
+                text,
+                "Exception('Not a timestamp!')",
+            ),
+        ));
+        None
+    };
+    (Some(ms), said)
+}
+
+/// Copy of a time over some files (`CopyDateTimeValueRangeToClipboard`):
+/// its earliest, in seconds, as JSON.
+pub fn copy_text(value: &TimeRange) -> String {
+    value.best().map_or_else(
+        || "null".to_owned(),
+        |ms| {
+            let mut out = String::new();
+            hydrus_core::pyjson::write_python_float(ms as f64 / 1000.0, &mut out);
+            out
+        },
+    )
 }

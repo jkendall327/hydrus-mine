@@ -810,7 +810,7 @@ files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, manage's times, force filetype,
+clearing deletion records, manage's force filetype,
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and
@@ -846,6 +846,30 @@ unless set. "copy" copies the ratings not mixed as the reference's JSON
 of service keys and ratings ("Copied 3 ratings!"), and "paste" sets
 those it can take ("Pasted 2 ratings!"; text it can't read is said so).
 "apply" writes the ratings changed to all the files.
+
+Manage → "times" (the selected files'; in the viewer the file shown's)
+opens the reference's "manage times" dialog (`ui/manage_times.slint`,
+`src/manage_times_window.rs`, hydrus-gui-model's `times_editor`,
+checked step by step against the reference's,
+`oracle/record_manage_times.py`): the files' file modified, archived
+and last viewed (media viewer, preview) times, each over all the files
+("2 files set from ... to ..., 1 file without a time set"; an archived
+or last viewed time no file has isn't there, and a file modified time no
+file has can't be edited), each with its own copy and paste; the web
+domain times (add, edit, delete; several selected are set together, and
+editing one some files lack asks whether to give it to all the files)
+and the file service times (imported, deleted, previously imported;
+edit). Each time is edited in the reference's date-time editor
+(`DateTimeEditorWindow`, hydrus-gui-model's `datetime_editor`,
+`oracle/record_datetime_editor.py`): what the files had, the date, the
+time to the millisecond, a cascading step when several files had the
+time (each file in turn set that much later), now, copy and paste (a
+timestamp, or a date string), never later than now. "copy" (one file)
+copies all the times, or one kind, as the reference's serialised
+timestamp data, and "paste" sets the times it names. "apply" writes the
+times changed (asking first if more than 100 changes), a stepped time
+file by file, and a changed file modified time to the files on disk too
+(as the warning under it says).
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the

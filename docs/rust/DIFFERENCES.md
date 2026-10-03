@@ -367,6 +367,17 @@ search.
   (the reference keeps it). Its controls are a fixed size, not the
   options' dialog rating size, and an inc/dec control's middle click
   (typing a count) isn't there; its shortcut to apply isn't bound.
+- **The "manage times" dialog**'s date-time editor takes the date and
+  time typed ("yyyy-MM-dd", "hh:mm:ss.zzz") rather than from a calendar
+  and a time box, and the cascading step as milliseconds rather than
+  hours, minutes, seconds and milliseconds. Its paste reads timestamps
+  and the plain date forms ("2023-11-01", "2023-11-01 12:30:00",
+  "2023-10-05T01:02:03.456") but not every date string the reference's
+  date parser reads ("yesterday", "7/18/2023 8:32:00AM"). Its copy menu
+  is a popup of the same entries; its notices show beside the buttons;
+  its errors are in the dialog's own panel, and a JSON error's own words
+  (after "the general error was:") are hydrus-rs's. The file modified
+  time is changed on disk straight away, not in a cancellable job.
 - **The "manage urls" dialog**'s copy and paste are labelled buttons
   rather than the reference's icons, and its questions are asked in the
   dialog's own panel. Its list sorts and selects as hydrus-rs's lists
