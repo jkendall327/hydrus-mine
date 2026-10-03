@@ -40,6 +40,8 @@ pub struct Slots {
     /// The comparator editors open, innermost last, each with its own
     /// number.
     pub comparators: ComparatorStack,
+    /// The duplicate filter opened from the preview's lists.
+    pub preview_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 }
 
 impl std::fmt::Debug for Slots {
@@ -48,6 +50,7 @@ impl std::fmt::Debug for Slots {
             .field("list", &self.list.borrow().is_some())
             .field("rule", &self.rule.borrow().is_some())
             .field("comparators", &self.comparators.borrow().len())
+            .field("preview_filter", &self.preview_filter.borrow().is_some())
             .finish()
     }
 }
@@ -831,7 +834,8 @@ fn open_rule(
         }
     });
     // the preview: the rule as edited, or why it can't be had
-    let preview = crate::auto_resolution_preview_window::Preview::new(store);
+    let preview =
+        crate::auto_resolution_preview_window::Preview::new(store, slots.preview_filter.clone());
     let edited = {
         let state = state.clone();
         let store = store.clone();
@@ -878,6 +882,26 @@ fn open_rule(
             }
         }
     });
+    for passing in [true, false] {
+        let preview = preview.clone();
+        let weak = window.as_weak();
+        let activated = move |row: i32| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if let Some(said) = usize::try_from(row)
+                .ok()
+                .and_then(|row| preview.activated(passing, row))
+            {
+                window.set_errors(said.into());
+            }
+        };
+        if passing {
+            window.on_preview_pass_activated(activated);
+        } else {
+            window.on_preview_fail_activated(activated);
+        }
+    }
     window.on_preview_fetch_changed({
         let weak = window.as_weak();
         let preview = preview.clone();

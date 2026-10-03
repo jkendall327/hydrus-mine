@@ -134,6 +134,25 @@ fn a_rules_pairs_are_previewed() {
         rule.get_preview_pass_label()
             .starts_with(&format!("{passed} pairs - "))
     );
+    // a pair double-clicked: the duplicate filter, on the passing pairs
+    // from that one round to the start
+    rule.invoke_preview_pass_activated(i32::try_from(passed - 1).unwrap());
+    assert_eq!(rule.get_errors(), "");
+    let filter = bound
+        .auto_resolution
+        .preview_filter
+        .borrow()
+        .as_ref()
+        .expect("the filter opened")
+        .clone_strong();
+    assert!(
+        filter
+            .get_index_text()
+            .starts_with(&format!("File One - 1/{passed}")),
+        "{}",
+        filter.get_index_text()
+    );
+    filter.hide().unwrap();
     // a smaller sample, fetched again
     rule.set_preview_fetch_limit(1);
     rule.invoke_preview_fetch_changed();

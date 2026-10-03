@@ -286,6 +286,9 @@ export component AutoResolutionRuleWindow inherits Window {
     callback preview-refetch();
     callback preview-retest();
     callback preview-fetch-changed();
+    // a pair double-clicked: the duplicate filter on the list from it
+    callback preview-pass-activated(int);
+    callback preview-fail-activated(int);
     callback apply();
     callback cancel();
     VerticalLayout {
@@ -530,6 +533,7 @@ export component AutoResolutionRuleWindow inherits Window {
                 min-height: 2 * 90px + 26px;
                 columns: ["A", "B", "action"];
                 rows: root.preview-pass-rows;
+                row-activated(r) => { root.preview-pass-activated(r); }
             }
             Text {
                 text: "pairs that will be skipped";
@@ -542,6 +546,7 @@ export component AutoResolutionRuleWindow inherits Window {
                 min-height: 90px + 26px;
                 columns: ["1", "2", ""];
                 rows: root.preview-fail-rows;
+                row-activated(r) => { root.preview-fail-activated(r); }
             }
         }
         if root.errors != "": Label {

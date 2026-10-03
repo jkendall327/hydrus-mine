@@ -418,8 +418,8 @@ in-memory predicate tests their comparators use by
 - **The rule editor's preview** takes its sample in one search, the
   pairs with the biggest smaller file first, where the reference fetches
   random fragments of the domain's pairs (sorting each); "pairs searched"
-  counts the domain's pairs within the rule's distance. Double-clicking a
-  pair doesn't open the duplicate filter yet.
+  counts the domain's pairs within the rule's distance. A double-clicked
+  list with no local pair says so under the tabs, not in a dialog.
 - **The "review actions" window** lists a rule's pending pairs by their
   groups; the reference lists them in its table's order (when they were
   queued), which hydrus-rs doesn't keep. Double-clicking a pair (the reference opens the
@@ -618,7 +618,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   a line each (as the Client API reads them), in the rule's location
   (which isn't changed there), where the reference has search
   autocompletes with a location button and a live count of pairs. It has
-  no "preview" tab, nor import/export/duplicate of rules or comparators,
+  no import/export/duplicate of rules or comparators,
   and custom merge options start from the client's for the action and
   aren't edited there. A relative comparator's time delta and range are
   in milliseconds, where the reference has a time widget.

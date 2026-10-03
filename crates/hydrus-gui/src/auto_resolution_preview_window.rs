@@ -56,6 +56,8 @@ pub(crate) struct Preview {
     sender: Sender<Said>,
     receiver: Receiver<Said>,
     timer: slint::Timer,
+    /// The duplicate filter opened from a list, while it is open.
+    filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
 }
 
 fn now() -> hydrus_search::Clock {
@@ -63,7 +65,10 @@ fn now() -> hydrus_search::Clock {
 }
 
 impl Preview {
-    pub(crate) fn new(store: &Arc<Store>) -> Rc<Self> {
+    pub(crate) fn new(
+        store: &Arc<Store>,
+        filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
+    ) -> Rc<Self> {
         let (sender, receiver) = crossbeam_channel::unbounded();
         Rc::new(Self {
             store: store.clone(),
@@ -76,6 +81,7 @@ impl Preview {
             sender,
             receiver,
             timer: slint::Timer::default(),
+            filter,
         })
     }
 
@@ -178,6 +184,48 @@ impl Preview {
         std::thread::spawn(move || test_all(&store, &rule, &pairs, run, &current, &sender));
         self.show(window);
         self.watch(window);
+    }
+
+    /// A list's pair double-clicked: the duplicate filter on the list's
+    /// pairs from it, round to the start (`GetMediaResultPairsStartingAtIndex`),
+    /// as given (`PotentialDuplicatePairFactoryMediaResults`).
+    pub(crate) fn activated(&self, passing: bool, row: usize) -> Option<String> {
+        let (rule, pairs) = {
+            let state = self.state.borrow();
+            let pairs: Vec<(HashId, HashId)> = if passing {
+                state.passed.iter().map(|(pair, _)| *pair).collect()
+            } else {
+                state.failed.clone()
+            };
+            (state.rule.clone()?, pairs)
+        };
+        if row >= pairs.len() {
+            return None;
+        }
+        let pairs: Vec<(HashId, HashId)> =
+            pairs[row..].iter().chain(&pairs[..row]).copied().collect();
+        let query = hydrus_duplicates::potentials::PotentialsQuery::from_search(
+            &self.store.snapshot(),
+            &rule.search,
+        );
+        let model = query.map_err(anyhow::Error::from).and_then(|query| {
+            crate::duplicate_filter::DuplicateFilter::for_pairs(self.store.clone(), query, pairs)
+        });
+        let mut model = match model {
+            Ok(model) => model,
+            Err(e) => return Some(e.to_string()),
+        };
+        let step = model.load_batch();
+        if matches!(step, Ok(crate::duplicate_filter::Step::Finished)) {
+            return Some(crate::auto_resolution_review::NOTHING_LOCAL_IN_FILTER.to_owned());
+        }
+        match crate::filter_window::open_filter(model, step, &self.filter) {
+            Ok(window) => {
+                *self.filter.borrow_mut() = Some(window);
+                None
+            }
+            Err(e) => Some(e.to_string()),
+        }
     }
 
     /// Take in what the worker said, every so often, while it works.

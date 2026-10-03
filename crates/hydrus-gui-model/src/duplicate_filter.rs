@@ -137,6 +137,10 @@ fn deletion_reason(relationship: PairRelationship, delete_a: bool, delete_b: boo
 pub struct DuplicateFilter {
     store: Arc<Store>,
     query: PotentialsQuery,
+    /// Pairs given to filter (A, B), in place of the query's
+    /// (`PotentialDuplicatePairFactoryMediaResults`): those not yet given
+    /// out as a batch.
+    given: Option<Vec<(HashId, HashId)>>,
     order: PairOrder,
     ascending: bool,
     group_mode: bool,
@@ -175,6 +179,7 @@ impl DuplicateFilter {
         Ok(Self {
             store,
             query,
+            given: None,
             order,
             ascending,
             group_mode,
@@ -195,8 +200,25 @@ impl DuplicateFilter {
         Self::new(store, query, page.order, page.ascending, page.group_mode)
     }
 
+    /// A filter over these pairs (A, B) alone, as given (a rule preview's,
+    /// say), in batches as the filter's settings size them.
+    pub fn for_pairs(
+        store: Arc<Store>,
+        query: PotentialsQuery,
+        pairs: Vec<(HashId, HashId)>,
+    ) -> anyhow::Result<Self> {
+        let mut filter = Self::new(store, query, PairOrder::MinFilesize, true, false)?;
+        filter.given = Some(pairs);
+        Ok(filter)
+    }
+
     /// The pairs to filter next, each in the order it is shown.
     fn fetch(&mut self) -> anyhow::Result<Vec<(HashId, HashId)>> {
+        if let Some(given) = &mut self.given {
+            let max = (self.settings.max_batch_size as usize).max(1);
+            let n = given.len().min(max);
+            return Ok(given.drain(..n).collect());
+        }
         let snapshot = self.store.snapshot();
         let (order, ascending, group_mode) = (self.order, self.ascending, self.group_mode);
         let max = self.settings.max_batch_size as usize;

@@ -103,9 +103,9 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   `oracle/record_auto_resolution_review.py`). The pending
   pairs' merge summary is done (`hydrus-gui-model`'s `merge_summary`, on
   hydrus-store's `duplicates::merge::plan`). The rule editor's preview
-  tab is done (`src/auto_resolution_preview_window.rs`). **Next**:
-  opening pairs from "review actions" and the preview in the duplicate
-  filter or the viewer; editing a rule's custom merge options; and its
+  tab is done (`src/auto_resolution_preview_window.rs`), its pairs
+  opening in the duplicate filter. **Next**: opening pairs from "review
+  actions" in the duplicate filter or the viewer; editing a rule's custom merge options; and its
   searches' locations.
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.

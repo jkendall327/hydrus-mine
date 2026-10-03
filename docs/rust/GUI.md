@@ -955,7 +955,8 @@ with the reference's words. Its "preview" tab searches the rule as
 edited for a sample of its pairs ("only sample this many", or all) and
 tests each, off the UI thread: "47 pairs searched; 10 matched", the
 pairs that will be actioned (A and B, which way round, what the rule does
-and what it would change) and those that will be skipped; a changed
+and what it would change) and those that will be skipped, either list's
+pairs opening in the duplicate filter from the one double-clicked; a changed
 search fetches again, changed comparators or actions test again, and a
 rule that can't be had says why. What they say is as
 `oracle/record_auto_resolution_summaries.py` recorded the reference's.
