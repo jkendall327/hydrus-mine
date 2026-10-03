@@ -322,6 +322,7 @@ export component SidecarNodeWindow inherits Window {
     callback changed();
     callback edit-processing();
     callback edit-converter();
+    callback edit-formula();
     callback change-type();
     callback choose-service();
     callback sidecar-help();
@@ -429,7 +430,8 @@ export component SidecarNodeWindow inherits Window {
             Button {
                 horizontal-stretch: 1;
                 text: "edit parsing formula";
-                enabled: false;
+                enabled: !root.asking;
+                clicked => { root.edit-formula(); }
             }
         }
         if root.show-separator: Box {

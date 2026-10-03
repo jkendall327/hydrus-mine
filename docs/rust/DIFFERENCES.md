@@ -526,17 +526,24 @@ deletes its files from the client, migrated from the reference's database.
 
 ## Simple downloaders (`hydrus-download::queue`)
 
-- **A simple downloader page's formulae can't be edited yet**: its cog
-  button's "edit formulae" waits on the formula editor (which the parser
-  editors need too); hydrus-rs has the reference's two defaults, or those
-  carried over from hydrus. Its download controls sit under its boxes, not
-  inside them.
+- **A simple downloader page** uses an "edit formulae" button beside its
+  chooser rather than a cog menu. The saved list supports editing, removal
+  and adding defaults; PNG/clipboard formula import/export is not yet
+  exposed. Download controls sit under its boxes, not inside them.
+- **Formula editors** support HTML and JSON. Existing nested, zipper,
+  context-variable and static formulae are preserved and can be tested;
+  their editing controls are not yet available. The test panel accepts
+  directly editable document text and key=value context lines; it has no
+  URL/file fetch controls or multiple-example chooser. Rule attributes use
+  named fields and a list (activate a row to remove), rather than the
+  reference's dictionary dialog.
 
 Checked by `crates/hydrus-download/tests/simple_downloader.rs`,
 `crates/hydrus-legacy/tests/simple_formulae.rs` (against
 `oracle/fixtures/simple_downloader_formulae.json`),
 `crates/hydrus-legacy/tests/gui_sessions.rs` (its pages in sessions) and
-`crates/hydrus-gui/tests/gui/simple_downloader.rs`.
+`crates/hydrus-gui/tests/gui/simple_downloader.rs`, and the formula editor
+model/GUI tests against `oracle/fixtures/formula_editors.json`.
 
 ## Local imports (`hydrus-download::queue`)
 
@@ -658,8 +665,8 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
 - **The sidecar editors** edit a router's destination in a window of its
   own (the reference embeds it in the router editor), list "Which
   type?"'s descriptions in its message, and take JSON object names a
-  line each. A JSON sidecar's parsing formula is shown but not edited
-  yet; the router editor has no testing panel; the routers list has no
+  line each. JSON sidecar formulae use the reusable HTML/JSON editor;
+  the router editor has no testing panel; the routers list has no
   import and export buttons.
 - **The string processor editor** has no starting strings to test with
   from the sidecar editors (the reference takes them from its example

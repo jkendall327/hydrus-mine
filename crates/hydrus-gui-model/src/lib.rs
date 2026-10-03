@@ -27,6 +27,7 @@ pub mod filename_tagging;
 pub mod filetype_tree;
 pub mod folders;
 pub mod force_filetype;
+pub mod formula_editors;
 pub mod import_options_editor;
 pub mod importer_menu;
 pub mod info_lines;

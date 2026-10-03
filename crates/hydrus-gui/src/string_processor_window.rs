@@ -666,6 +666,34 @@ fn open_step(
     }
 }
 
+/// Edit a reusable string match using the processor's existing match window.
+pub fn open_match(
+    store: &Arc<Store>,
+    string_match: &hydrus_core::url::strings::StringMatch,
+    slots: &Slots,
+    applied: Rc<dyn Fn(hydrus_core::url::strings::StringMatch)>,
+) {
+    if slots.step.borrow().is_some() {
+        return;
+    }
+    let editor = ProcessorEditor::new(&StringProcessor::default(), Vec::new());
+    open_step(
+        store,
+        &editor,
+        None,
+        &ProcessingStep::Filter(string_match.clone()),
+        slots,
+        Rc::new(move |_, step| {
+            if let ProcessingStep::Filter(m) = step {
+                applied(m);
+            }
+        }),
+    );
+    if let Some(window) = slots.step.borrow().as_ref() {
+        window.set_window_title("edit string match".into());
+    }
+}
+
 fn show_converter(window: &StringConverterWindow, editor: &ConverterEditor, asking: bool) {
     let selected = editor.selected();
     let rows: Vec<TableRow> = editor

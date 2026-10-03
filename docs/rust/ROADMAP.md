@@ -18,8 +18,10 @@ screens not started yet:
    formulae (`hydrus-parse::simple`, the reference's defaults, imported
    from its options), and the page (pages > download > new simple
    downloader page, or the page chooser), carried over from hydrus's
-   sessions. **Left**: "edit formulae", with the formula editor (which the
-   parser editors need too, so it comes with item 6).
+   sessions. Its "edit formulae" list now saves named HTML/JSON formulae
+   through the reusable formula editor (rules, parsing tests and string
+   processing). **Left**: formula import/export and nested/zipper/context/
+   static editing, plus the test panel's fetch and multiple-example controls.
 3. The media manage dialogs. **First pass done**: URLs, ratings, times,
    force filetype, detailed embedded metadata, and share > export files
    (previews, worker progress/cancel, sidecars and confirmed trash).
@@ -130,8 +132,11 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   processing button, and the string match editor
   (`oracle/record_string_match_editor.py`) and string converter editor
   (`oracle/record_string_converter_editor.py`), and the tag filter step's
-  editor. **Next**: the JSON formula editor; the router editor's testing
-  panel.
+  editor. JSON sidecar sources now open the reusable HTML/JSON formula
+  editor, whose typed rules, extraction controls, test panel and string
+  processing are checked by `oracle/record_formula_editors.py` and GUI/store
+  tests. **Next**: the router editor's testing panel; formula import/export,
+  additional formula kinds and test data fetch/multiple-example controls.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 

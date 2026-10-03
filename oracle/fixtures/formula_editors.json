@@ -1,0 +1,277 @@
+[
+  {
+    "case": "html_rule",
+    "type": "descendants",
+    "description": "search descendants for the last <a> tag with attributes class=image",
+    "search_enabled": true,
+    "depth_enabled": false
+  },
+  {
+    "case": "html_rule",
+    "type": "ancestors",
+    "description": "walk back up ancestors to the 2nd <a> tag",
+    "search_enabled": false,
+    "depth_enabled": true
+  },
+  {
+    "case": "html_rule",
+    "type": "previous",
+    "description": "search previous siblings for the last <a> tag with attributes class=image",
+    "search_enabled": true,
+    "depth_enabled": false
+  },
+  {
+    "case": "html_rule",
+    "type": "next",
+    "description": "search next siblings for the last <a> tag with attributes class=image",
+    "search_enabled": true,
+    "depth_enabled": false
+  },
+  {
+    "case": "html_formula",
+    "content": "attribute",
+    "name": "links",
+    "rules": [
+      "search descendants for every <a> tag"
+    ],
+    "text": "<html><body><div class=\"post\"><a href=\"one\"> first\n link </a><a href=\"two\">second</a><span>after</span></div></body></html>",
+    "results": [
+      "one",
+      "two"
+    ]
+  },
+  {
+    "case": "html_formula",
+    "content": "string",
+    "name": "links",
+    "rules": [
+      "search descendants for every <a> tag"
+    ],
+    "text": "<html><body><div class=\"post\"><a href=\"one\"> first\n link </a><a href=\"two\">second</a><span>after</span></div></body></html>",
+    "results": [
+      "firstlink",
+      "second"
+    ]
+  },
+  {
+    "case": "html_formula",
+    "content": "html",
+    "name": "links",
+    "rules": [
+      "search descendants for every <a> tag"
+    ],
+    "text": "<html><body><div class=\"post\"><a href=\"one\"> first\n link </a><a href=\"two\">second</a><span>after</span></div></body></html>",
+    "results": [
+      "<a href=\"one\"> firstlink </a>",
+      "<a href=\"two\">second</a>"
+    ]
+  },
+  {
+    "case": "attribute_veto",
+    "error": "Please enter an attribute to fetch!"
+  },
+  {
+    "case": "json_formula",
+    "type": "key",
+    "description": "get the entries that have keys matching \"posts\"",
+    "content": "json",
+    "text": "{\"posts\":[\"a\",\"b\"],\"other\":\"c\"}",
+    "results": [
+      "[\"a\", \"b\"]"
+    ]
+  },
+  {
+    "case": "json_formula",
+    "type": "all",
+    "description": "get all items",
+    "content": "string",
+    "text": "{\"z\":\"z\",\"a\":\"a\"}",
+    "results": [
+      "a",
+      "z"
+    ]
+  },
+  {
+    "case": "json_formula",
+    "type": "index",
+    "description": "get the last item (for Objects, keys sorted)",
+    "content": "string",
+    "text": "[\"a\",\"b\"]",
+    "results": [
+      "b"
+    ]
+  },
+  {
+    "case": "json_formula",
+    "type": "filter",
+    "description": "get the values that match \"42\"",
+    "content": "string",
+    "text": "42",
+    "results": [
+      "42"
+    ]
+  },
+  {
+    "case": "json_formula",
+    "type": "ascend",
+    "description": "walk back up 1 ancestors",
+    "content": "dictionary keys",
+    "text": "{\"posts\":\"a\"}",
+    "results": [
+      "posts"
+    ]
+  },
+  {
+    "case": "json_formula",
+    "type": "deminify",
+    "description": "de-minify json at the 1st item",
+    "content": "json",
+    "text": "[{\"name\":1},\"samus\"]",
+    "results": [
+      "{\"name\": \"samus\"}"
+    ]
+  },
+  {
+    "case": "json_newlines",
+    "text": "[\" first\\n second \"]",
+    "results": [
+      "first\n second"
+    ]
+  },
+  {
+    "case": "queue",
+    "action": "add",
+    "rules": [
+      "search descendants for every <a> tag",
+      "search descendants for every <span> tag"
+    ],
+    "selected": [],
+    "asked": []
+  },
+  {
+    "case": "queue",
+    "action": "edit",
+    "rules": [
+      "search descendants for every <a> tag",
+      "search descendants for every <div> tag"
+    ],
+    "selected": [
+      1
+    ],
+    "asked": []
+  },
+  {
+    "case": "queue",
+    "action": "up",
+    "rules": [
+      "search descendants for every <div> tag",
+      "search descendants for every <a> tag"
+    ],
+    "selected": [
+      0
+    ],
+    "asked": []
+  },
+  {
+    "case": "queue",
+    "action": "down",
+    "rules": [
+      "search descendants for every <a> tag",
+      "search descendants for every <div> tag"
+    ],
+    "selected": [
+      1
+    ],
+    "asked": []
+  },
+  {
+    "case": "queue",
+    "action": "cancel_add",
+    "rules": [
+      "search descendants for every <a> tag",
+      "search descendants for every <div> tag"
+    ],
+    "selected": [
+      1
+    ],
+    "asked": []
+  },
+  {
+    "case": "queue",
+    "action": "delete",
+    "rules": [
+      "search descendants for every <a> tag"
+    ],
+    "selected": [],
+    "asked": [
+      "Remove 1 selected?"
+    ]
+  },
+  {
+    "case": "change_type",
+    "type": "json",
+    "name": "",
+    "content": 1,
+    "processor": []
+  },
+  {
+    "case": "change_type",
+    "type": "html",
+    "name": "",
+    "content": 2,
+    "processor": []
+  },
+  {
+    "case": "named_list",
+    "action": "add",
+    "names": [
+      "links"
+    ]
+  },
+  {
+    "case": "named_list",
+    "action": "add",
+    "names": [
+      "links",
+      "links (1)"
+    ]
+  },
+  {
+    "case": "named_list",
+    "action": "edit",
+    "names": [
+      "links (2)",
+      "links (1)"
+    ]
+  },
+  {
+    "case": "named_list",
+    "action": "delete",
+    "names": [
+      "links (1)"
+    ]
+  },
+  {
+    "case": "named_multi",
+    "before": [
+      "links (1)",
+      "first"
+    ],
+    "after": [
+      "links (1) (1)",
+      "first (1)"
+    ]
+  },
+  {
+    "case": "processor_test",
+    "text": "<html><body><div class=\"post\"><a href=\"one\"> first\n link </a><a href=\"two\">second</a><span>after</span></div></body></html>",
+    "before": [
+      "first\n link",
+      "second"
+    ],
+    "after": [
+      "first\n link!",
+      "second!"
+    ]
+  }
+]

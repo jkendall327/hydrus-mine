@@ -39,6 +39,7 @@ mod filename_tagging_window;
 mod filter_window;
 mod folders_window;
 mod force_filetype_window;
+pub mod formula_window;
 mod gallery;
 mod grid;
 pub mod headless;
@@ -65,6 +66,7 @@ mod search_log_window;
 pub mod services_review_window;
 mod session_dialog;
 pub mod sidecars_window;
+pub mod simple_formulae_window;
 pub mod slideshow;
 pub mod still;
 pub mod string_processor_window;
@@ -155,13 +157,13 @@ pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
     autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
     duplicates_page, edit_subscription, embedded_metadata, export_files, favourites, file_log,
-    filename_tagging, filetype_tree, folders, force_filetype, import_options_editor, importer_menu,
-    info_lines, list_selection, local_import, main_menu, manage_tags, media_actions,
-    merge_options_editor, notes_editor, options, page_chooser, predicate_editors, ratings,
-    ratings_editor, scanbar, search_log, selection, session_saving, sidecar_editors, sidecars,
-    simple_downloader, sort, status, string_editors, subscriptions_dedupe, subscriptions_dialog,
-    subscriptions_list, tag_filter_editor, tag_relationships, thumbnail_icons, thumbnail_ratings,
-    times_editor, urls_editor,
+    filename_tagging, filetype_tree, folders, force_filetype, formula_editors,
+    import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
+    manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
+    predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
+    sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    tag_relationships, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -215,6 +217,8 @@ pub struct Bound {
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
     /// The import and export folders dialogs while they are open.
     pub folders: folders_window::Slots,
+    /// Simple downloader formula list and reusable editors.
+    pub simple_formulae: simple_formulae_window::Slots,
     /// The duplicates auto-resolution rules editor's windows.
     pub auto_resolution: auto_resolution_rules_window::Slots,
     /// The rules' "review actions" windows, by a number each.
@@ -1577,6 +1581,26 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             page().borrow().cancel_download(kind);
         }
     });
+    let simple_formulae = simple_formulae_window::Slots::default();
+    window.on_simple_edit_formulae({
+        let page = page.clone();
+        let shown = shown.clone();
+        let slots = simple_formulae.clone();
+        move || {
+            if slots.list.borrow().is_some() {
+                return;
+            }
+            let store = page().borrow().store().clone();
+            let applied = Rc::new({
+                let shown = shown.clone();
+                move || shown(false)
+            });
+            match simple_formulae_window::open(&store, &slots, applied) {
+                Ok(w) => *slots.list.borrow_mut() = Some(w),
+                Err(e) => eprintln!("could not open simple formulae: {e}"),
+            }
+        }
+    });
     // a simple downloader page's parsing box
     window.on_simple_pause_play_queue({
         let page = page.clone();
@@ -2895,6 +2919,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         subscriptions,
         edit_subscription,
         folders,
+        simple_formulae,
         file_log: file_log_slot,
         archive_delete,
         filter,

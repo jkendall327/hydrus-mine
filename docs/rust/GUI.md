@@ -424,7 +424,25 @@ downloaded, the pages waiting ("all images embedded in page: https://...")
 with up, X and down, the URL box and paste button (full URLs only, each
 once), and the formula chooser. Each page waiting is parsed by `hydrus
 serve` with its formula, the files found downloaded as a URL page's are.
-A new page starts on the formula last chosen.
+A new page starts on the formula last chosen. Its "edit formulae" button
+opens the saved formula list: add, edit, remove (with confirmation), and add
+defaults. Selected formulae edit in sequence; cancelling a child stops the
+remaining edits. Each formula's name is entered before its reusable editor;
+Apply saves the list and refreshes the chooser, while Cancel discards it.
+
+The reusable HTML/JSON formula editor (`formula_window.rs`,
+`ui/formula_editors.slint`) edits ordered rules with add/edit/remove/up/down,
+name, extraction mode and string processor. HTML rules search descendants or
+previous/next siblings, or climb ancestors, with tag names, attributes,
+optional indices and optional string matches. JSON rules select dictionary
+keys, all items, an index, matching scalar values, ancestors or deminified
+JSON. The test panel accepts a document and context variables, runs the real
+parser with its caller's newline policy and shows results or the parse error.
+The processor receives the parsed strings before processing. JSON sidecar
+sources open this same formula editor from "edit parsing formula", restricted
+to JSON and preserving parsed newlines as the sidecar importer does.
+`oracle/record_formula_editors.py` records the real reference controls and
+queue actions, checked by model and headless GUI/store tests.
 
 A URL downloader page shows its queue as the daemon works on it, as the
 reference's does: its sidebar's "imports" box has the file log's status as
