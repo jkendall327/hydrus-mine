@@ -25,7 +25,7 @@ screens not started yet:
 3. The media manage dialogs. **First pass done**: URLs, ratings, times,
    force filetype, detailed embedded metadata, and share > export files
    (previews, worker progress/cancel, sidecars and confirmed trash).
-4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Next**: manage local services; remote repositories/IPFS/account administration and bulk maintenance remain subsequent work.
+4. Services: **Done**: review local/built-in services (native counts, id/key, refresh). **Done**: staged management of local file/tag/rating services with guarded deletion and rating configuration. **Next**: remote repositories/IPFS/account administration, Client API service configuration, live rating previews and review bulk maintenance.
 5. Tag siblings and parents. **First pass done**: service editors, staged
    add/delete/rescind, automatic conflict/cycle repair, remembered workspace
    filters, clipboard/.txt import/export, and atomic graph/count refresh.

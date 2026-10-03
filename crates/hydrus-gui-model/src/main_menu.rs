@@ -137,6 +137,8 @@ pub enum Command {
     RunExportFolder(Option<String>),
     /// Review the local service registry and statistics.
     ReviewServices,
+    /// Manage staged local service lifecycle and rating settings.
+    ManageServices,
     OpenInstallDirectory,
     OpenDatabaseDirectory,
     Exit,
@@ -874,7 +876,7 @@ fn services_menu() -> Entry {
             ),
             SEP,
             item("review", Command::ReviewServices),
-            todo(dots("edit")),
+            item(dots("edit"), Command::ManageServices),
             SEP,
             menu(
                 "advanced",

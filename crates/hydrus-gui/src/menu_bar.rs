@@ -55,6 +55,8 @@ pub(crate) struct Hooks {
     pub about: Rc<dyn Fn()>,
     /// Open service review.
     pub review_services: Rc<dyn Fn()>,
+    /// Open staged service management.
+    pub manage_services: Rc<dyn Fn()>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -567,5 +569,6 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::Favourite(action) => (hooks.favourite)(action),
         Command::About => (hooks.about)(),
         Command::ReviewServices => (hooks.review_services)(),
+        Command::ManageServices => (hooks.manage_services)(),
     }
 }

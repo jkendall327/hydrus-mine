@@ -63,6 +63,7 @@ mod popup_menu;
 mod popups;
 pub mod predicate_editor_window;
 mod search_log_window;
+pub mod services_editor_window;
 pub mod services_review_window;
 mod session_dialog;
 pub mod sidecars_window;
@@ -204,6 +205,8 @@ pub struct Bound {
     pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
+    /// Staged local service editors while open.
+    pub services_editor: services_editor_window::Slots,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -1218,6 +1221,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
+    let services_editor = services_editor_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
@@ -1367,6 +1371,36 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            manage_services: {
+                let pages = pages.clone();
+                let slots = services_editor.clone();
+                let change_pages = change_pages.clone();
+                let rows = rows.clone();
+                let weak = window.as_weak();
+                Rc::new(move || {
+                    if slots.manage.borrow().is_some() {
+                        return;
+                    }
+                    let changed: Rc<dyn Fn()> = Rc::new({
+                        let pages = pages.clone();
+                        let rows = rows.clone();
+                        let change_pages = change_pages.clone();
+                        let weak = weak.clone();
+                        move || {
+                            pages.borrow_mut().reload_settings();
+                            rows.thumbnails_changed();
+                            change_pages(&|_| Ok(()));
+                            if let Some(window) = weak.upgrade() {
+                                window.invoke_refresh_page();
+                            }
+                        }
+                    });
+                    match services_editor_window::open(pages.borrow().store(), &slots, changed) {
+                        Ok(window) => *slots.manage.borrow_mut() = Some(window),
+                        Err(e) => eprintln!("could not manage services: {e}"),
                     }
                 })
             },
@@ -2914,6 +2948,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         about,
         services_review,
+        services_editor,
         checker_options,
         session_dialog,
         subscriptions,

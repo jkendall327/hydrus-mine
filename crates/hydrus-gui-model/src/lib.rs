@@ -47,6 +47,7 @@ pub mod ratings_editor;
 pub mod scanbar;
 pub mod search_log;
 pub mod selection;
+pub mod services_editor;
 pub mod services_review;
 pub mod session_saving;
 pub mod sidecar_editors;
