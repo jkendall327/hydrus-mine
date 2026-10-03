@@ -174,40 +174,170 @@ pub struct PairDecision<'o> {
     pub reinbox: Reinbox,
 }
 
-/// Carry out a decision: merge metadata, delete files, then set the
-/// relationship.
-pub fn apply_decision(w: &mut ContentWriter<'_>, decision: &PairDecision<'_>) -> Result<()> {
-    let (a, b) = (decision.a, decision.b);
-    let batch = media::load(w.conn(), &w.snapshot().services, None, &[a, b])?;
+/// One change a decision makes to a file, as the reference's content
+/// updates are: in the order it makes them.
+#[derive(Debug, Clone, PartialEq)]
+pub enum Change {
+    /// A tag added (or pended, on a repository) or deleted.
+    Mapping {
+        service: ServiceId,
+        action: MappingAction,
+        tag: TagId,
+        file: HashId,
+    },
+    /// A like or numerical rating set (`None`: unset).
+    Rating {
+        service: ServiceId,
+        file: HashId,
+        value: Option<f64>,
+    },
+    /// An inc/dec rating set.
+    IncDec {
+        service: ServiceId,
+        file: HashId,
+        value: i64,
+    },
+    SetNote {
+        file: HashId,
+        name: String,
+        note: String,
+    },
+    DeleteNote {
+        file: HashId,
+        name: String,
+    },
+    Archive(HashId),
+    FileTime {
+        file: HashId,
+        time: FileTime,
+        ms: i64,
+    },
+    AddUrls {
+        file: HashId,
+        urls: Vec<String>,
+    },
+    /// Inboxed before deleting, the delete lock being on.
+    Inbox(HashId),
+    /// Deleted from "all my files".
+    Delete(HashId),
+}
+
+impl Change {
+    /// The file it changes.
+    pub fn file(&self) -> HashId {
+        match self {
+            Change::Mapping { file, .. }
+            | Change::Rating { file, .. }
+            | Change::IncDec { file, .. }
+            | Change::SetNote { file, .. }
+            | Change::DeleteNote { file, .. }
+            | Change::FileTime { file, .. }
+            | Change::AddUrls { file, .. }
+            | Change::Archive(file)
+            | Change::Inbox(file)
+            | Change::Delete(file) => *file,
+        }
+    }
+}
+
+/// What a decision about `a` and `b` changes, in order
+/// (`ProcessPairIntoContentUpdatePackages`): the metadata `merge` moves,
+/// then the deletes asked for, each of a file in "all my files"
+/// (inboxing it first if it is archived and `reinbox` applies).
+#[allow(clippy::too_many_arguments)]
+pub fn plan(
+    conn: &rusqlite::Connection,
+    services: &crate::services::ServiceRegistry,
+    combined_local: ServiceId,
+    a: HashId,
+    b: HashId,
+    merge: Option<&MergeOptions>,
+    [delete_a, delete_b]: [bool; 2],
+    reinbox: Reinbox,
+) -> Result<Vec<Change>> {
+    let batch = media::load(conn, services, None, &[a, b])?;
     let find = |id: HashId| batch.results.iter().find(|r| r.hash_id == id);
     let (Some(ma), Some(mb)) = (find(a), find(b)) else {
         return Err(crate::StoreError::Corrupt(format!(
             "no hash for file id {a} or {b}"
         )));
     };
-    if let Some(options) = decision.merge {
+    let mut changes = Vec::new();
+    if let Some(options) = merge {
         let pair = Pair {
             a: ma,
             b: mb,
             tags: &batch.tags,
         };
-        merge(w, options, &pair, [decision.delete_a, decision.delete_b])?;
+        plan_merge(&mut changes, services, options, &pair, [delete_a, delete_b]);
     }
-    let combined_local = w.roles().combined_local_media;
-    let lock: DeleteLock = crate::settings::get(w.conn())?;
-    for (media, delete) in [(ma, decision.delete_a), (mb, decision.delete_b)] {
+    let lock: DeleteLock = crate::settings::get(conn)?;
+    for (media, delete) in [(ma, delete_a), (mb, delete_b)] {
         if delete && media.is_current_in(combined_local) {
             // (archived as it was before the merge, as in the reference)
-            if !media.inbox && decision.reinbox.applies(&lock) {
-                w.inbox(&[media.hash_id])?;
+            if !media.inbox && reinbox.applies(&lock) {
+                changes.push(Change::Inbox(media.hash_id));
             }
-            w.delete_files(
-                combined_local,
-                &[media.hash_id],
-                Some(decision.deletion_reason),
-            )?;
+            changes.push(Change::Delete(media.hash_id));
         }
     }
+    Ok(changes)
+}
+
+/// Make `changes`, deletes recorded with `deletion_reason`.
+pub fn apply(w: &mut ContentWriter<'_>, changes: &[Change], deletion_reason: &str) -> Result<()> {
+    for change in changes {
+        match change {
+            Change::Mapping {
+                service,
+                action,
+                tag,
+                file,
+            } => {
+                w.update_mappings(*service, action, *tag, &[*file])?;
+            }
+            Change::Rating {
+                service,
+                file,
+                value,
+            } => w.set_rating(*service, &[*file], *value)?,
+            Change::IncDec {
+                service,
+                file,
+                value,
+            } => w.set_incdec(*service, &[*file], *value)?,
+            Change::SetNote { file, name, note } => w.set_note(*file, name, note)?,
+            Change::DeleteNote { file, name } => w.delete_note(*file, name)?,
+            Change::Archive(file) => w.archive(&[*file])?,
+            Change::FileTime { file, time, ms } => w.set_file_time(&[*file], time, *ms)?,
+            Change::AddUrls { file, urls } => w.add_urls(&[*file], urls)?,
+            Change::Inbox(file) => w.inbox(&[*file])?,
+            Change::Delete(file) => {
+                let combined_local = w.roles().combined_local_media;
+                w.delete_files(combined_local, &[*file], Some(deletion_reason))?;
+            }
+        }
+    }
+    Ok(())
+}
+
+/// Carry out a decision: merge metadata, delete files, then set the
+/// relationship.
+pub fn apply_decision(w: &mut ContentWriter<'_>, decision: &PairDecision<'_>) -> Result<()> {
+    let (a, b) = (decision.a, decision.b);
+    let services = w.snapshot().services.clone();
+    let combined_local = w.roles().combined_local_media;
+    let changes = plan(
+        w.conn(),
+        &services,
+        combined_local,
+        a,
+        b,
+        decision.merge,
+        [decision.delete_a, decision.delete_b],
+        decision.reinbox,
+    )?;
+    apply(w, &changes, decision.deletion_reason)?;
     let local_storage = w.roles().local_file_storage;
     RelationshipWriter::new(w.conn(), local_storage).set_pair(decision.relationship, a, b)
 }
@@ -253,14 +383,15 @@ fn should_update_modified(existing: Option<i64>, new: Option<i64>) -> bool {
     }
 }
 
-fn merge(
-    w: &mut ContentWriter<'_>,
+#[allow(clippy::too_many_lines)]
+fn plan_merge(
+    changes: &mut Vec<Change>,
+    services: &crate::services::ServiceRegistry,
     options: &MergeOptions,
     pair: &Pair<'_>,
     [delete_a, delete_b]: [bool; 2],
-) -> Result<()> {
+) {
     let (a, b) = (pair.a, pair.b);
-    let services = w.snapshot().services.clone();
 
     for merge in &options.tags {
         let Ok(service) = services.by_key(&merge.service) else {
@@ -279,21 +410,27 @@ fn merge(
             ),
             _ => continue,
         };
+        let mapping = |action: &MappingAction, tag: TagId, file: HashId| Change::Mapping {
+            service: service.id,
+            action: action.clone(),
+            tag,
+            file,
+        };
         let first = pair.tags_of(a, service.id, &merge.filter);
         let second = pair.tags_of(b, service.id, &merge.filter);
         for tag in second.difference(&first) {
-            w.update_mappings(service.id, &add, *tag, &[a.hash_id])?;
+            changes.push(mapping(&add, *tag, a.hash_id));
         }
         match action {
             MergeAction::Copy => {}
             MergeAction::TwoWay => {
                 for tag in first.difference(&second) {
-                    w.update_mappings(service.id, &add, *tag, &[b.hash_id])?;
+                    changes.push(mapping(&add, *tag, b.hash_id));
                 }
             }
             MergeAction::Move => {
                 for tag in &second {
-                    w.update_mappings(service.id, &MappingAction::Delete, *tag, &[b.hash_id])?;
+                    changes.push(mapping(&MappingAction::Delete, *tag, b.hash_id));
                 }
             }
         }
@@ -302,6 +439,16 @@ fn merge(
     for merge in &options.ratings {
         let Ok(service) = services.by_key(&merge.service) else {
             continue;
+        };
+        let rate = |file: &MediaResult, value: Option<f64>| Change::Rating {
+            service: service.id,
+            file: file.hash_id,
+            value,
+        };
+        let incdec = |file: &MediaResult, value: i64| Change::IncDec {
+            service: service.id,
+            file: file.hash_id,
+            value,
         };
         match service.kind {
             ServiceKind::RatingLike(_) | ServiceKind::RatingNumerical(_) => {
@@ -317,22 +464,22 @@ fn merge(
                 match merge.action {
                     MergeAction::TwoWay => {
                         if worth(first, second) {
-                            w.set_rating(service.id, &[b.hash_id], first)?;
+                            changes.push(rate(b, first));
                         } else if worth(second, first) {
-                            w.set_rating(service.id, &[a.hash_id], second)?;
+                            changes.push(rate(a, second));
                         }
                     }
                     MergeAction::Copy => {
                         if worth(second, first) {
-                            w.set_rating(service.id, &[a.hash_id], second)?;
+                            changes.push(rate(a, second));
                         }
                     }
                     MergeAction::Move => {
                         if second.is_some() {
                             if worth(second, first) {
-                                w.set_rating(service.id, &[a.hash_id], second)?;
+                                changes.push(rate(a, second));
                             }
-                            w.set_rating(service.id, &[b.hash_id], None)?;
+                            changes.push(rate(b, None));
                         }
                     }
                 }
@@ -347,21 +494,21 @@ fn merge(
                 match merge.action {
                     MergeAction::TwoWay => {
                         if second > 0 {
-                            w.set_incdec(service.id, &[a.hash_id], sum)?;
+                            changes.push(incdec(a, sum));
                         }
                         if first > 0 {
-                            w.set_incdec(service.id, &[b.hash_id], sum)?;
+                            changes.push(incdec(b, sum));
                         }
                     }
                     MergeAction::Copy => {
                         if second > 0 {
-                            w.set_incdec(service.id, &[a.hash_id], sum)?;
+                            changes.push(incdec(a, sum));
                         }
                     }
                     MergeAction::Move => {
                         if second > 0 {
-                            w.set_incdec(service.id, &[a.hash_id], sum)?;
-                            w.set_incdec(service.id, &[b.hash_id], 0)?;
+                            changes.push(incdec(a, sum));
+                            changes.push(incdec(b, 0));
                         }
                     }
                 }
@@ -393,19 +540,21 @@ fn merge(
                 .updates(existing, &incoming)
             })
         };
-        let for_a = merged_into(&first, &second);
-        let for_b = (action == MergeAction::TwoWay).then(|| merged_into(&second, &first));
-        for (name, note) in &for_a {
-            w.set_note(a.hash_id, name, note)?;
-        }
-        if let Some(for_b) = for_b {
-            for (name, note) in &for_b {
-                w.set_note(b.hash_id, name, note)?;
-            }
+        let set = |file: HashId, notes: BTreeMap<String, String>| {
+            notes
+                .into_iter()
+                .map(move |(name, note)| Change::SetNote { file, name, note })
+        };
+        changes.extend(set(a.hash_id, merged_into(&first, &second)));
+        if action == MergeAction::TwoWay {
+            changes.extend(set(b.hash_id, merged_into(&second, &first)));
         }
         if action == MergeAction::Move {
             for name in second.keys() {
-                w.delete_note(b.hash_id, name)?;
+                changes.push(Change::DeleteNote {
+                    file: b.hash_id,
+                    name: name.clone(),
+                });
             }
         }
     }
@@ -422,7 +571,7 @@ fn merge(
     };
     for (media, archive) in [(a, archive_a), (b, archive_b)] {
         if archive {
-            w.archive(&[media.hash_id])?;
+            changes.push(Change::Archive(media.hash_id));
         }
     }
 
@@ -430,45 +579,47 @@ fn merge(
         let modified = |m: &MediaResult| m.info.as_ref().and_then(|i| i.file_modified).map(|t| t.0);
         let (first, second) = (modified(a), modified(b));
         if should_update_modified(first, second) {
-            w.set_file_time(
-                &[a.hash_id],
-                &FileTime::FileModified,
-                second.unwrap_or_default(),
-            )?;
+            changes.push(Change::FileTime {
+                file: a.hash_id,
+                time: FileTime::FileModified,
+                ms: second.unwrap_or_default(),
+            });
         } else if action == SyncAction::TwoWay && should_update_modified(second, first) {
-            w.set_file_time(
-                &[b.hash_id],
-                &FileTime::FileModified,
-                first.unwrap_or_default(),
-            )?;
+            changes.push(Change::FileTime {
+                file: b.hash_id,
+                time: FileTime::FileModified,
+                ms: first.unwrap_or_default(),
+            });
         }
     }
 
     if let Some(action) = options.urls {
         let urls_of = |m: &MediaResult| -> BTreeSet<String> { m.urls.iter().cloned().collect() };
         let (first, second) = (urls_of(a), urls_of(b));
-        sync_urls(w, a, b, &first, &second)?;
+        sync_urls(changes, a, b, &first, &second);
         if action == SyncAction::TwoWay {
-            sync_urls(w, b, a, &second, &first)?;
+            sync_urls(changes, b, a, &second, &first);
         }
     }
-    Ok(())
 }
 
 /// Give `dest` the URLs of `source` it lacks, and `source`'s older
 /// modified dates for their domains.
 fn sync_urls(
-    w: &mut ContentWriter<'_>,
+    changes: &mut Vec<Change>,
     dest: &MediaResult,
     source: &MediaResult,
     dest_urls: &BTreeSet<String>,
     source_urls: &BTreeSet<String>,
-) -> Result<()> {
+) {
     let needed: Vec<String> = source_urls.difference(dest_urls).cloned().collect();
     if needed.is_empty() {
-        return Ok(());
+        return;
     }
-    w.add_urls(&[dest.hash_id], &needed)?;
+    changes.push(Change::AddUrls {
+        file: dest.hash_id,
+        urls: needed,
+    });
     let domains: BTreeSet<String> = source_urls
         .iter()
         .filter_map(|url| hydrus_core::url::url_domain(url).ok())
@@ -484,14 +635,13 @@ fn sync_urls(
             continue;
         };
         if should_update_modified(time_of(dest, &domain), Some(source_time)) {
-            w.set_file_time(
-                &[dest.hash_id],
-                &FileTime::DomainModified(domain),
-                source_time,
-            )?;
+            changes.push(Change::FileTime {
+                file: dest.hash_id,
+                time: FileTime::DomainModified(domain),
+                ms: source_time,
+            });
         }
     }
-    Ok(())
 }
 
 #[cfg(test)]

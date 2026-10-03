@@ -949,7 +949,10 @@ three tabs, opening on "pending actions" for a semi-automatic rule and
 "actions taken" otherwise. Each lists pairs with both files' thumbnails
 ("Found 2 pairs."), sampled to a number or all, and fetched again by
 "refresh", or when shown if it had nothing or changed. "pending actions"
-lists what the rule would do to each pair waiting for you, and "approve"
+lists what the rule would do to each pair waiting for you (its action,
+then each file's changes by service, "my tags: add tag mappings: red |
+delete tag mappings: blue", as `oracle/record_merge_summaries.py`
+recorded the reference's summaries), and "approve"
 and "deny" act on the selected (asking first for more than five),
 leaving the earliest row's successor selected; "select all" selects them
 all. A fully automatic rule's tab says it won't wait for approval.

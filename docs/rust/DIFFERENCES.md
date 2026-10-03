@@ -409,9 +409,7 @@ in-memory predicate tests their comparators use by
   CPU (only slower there).
 - **The "review actions" window** lists a rule's pending pairs by their
   groups; the reference lists them in its table's order (when they were
-  queued), which hydrus-rs doesn't keep. A pending pair's "action" says
-  what the rule does, without the reference's summary of the content
-  merge below it. Double-clicking a pair (the reference opens the
+  queued), which hydrus-rs doesn't keep. Double-clicking a pair (the reference opens the
   duplicate filter, approving or denying, on the pending pairs, or the
   media viewer on a pair) and the lists' right-click "show in a new page"
   aren't there yet. Approving and denying happen at once, without the

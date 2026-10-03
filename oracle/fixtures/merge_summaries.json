@@ -1,0 +1,774 @@
+{
+ "files": [
+  "dupe_jpeg_02.png",
+  "dupe_jpeg_02_q60.jpg"
+ ],
+ "setup": [
+  [
+   "tags",
+   0,
+   "my tags",
+   [
+    "blue",
+    "shared"
+   ]
+  ],
+  [
+   "tags",
+   1,
+   "my tags",
+   [
+    "red",
+    "shared",
+    "creator:someone"
+   ]
+  ],
+  [
+   "tags",
+   1,
+   "second tags",
+   [
+    "extra"
+   ]
+  ],
+  [
+   "rating",
+   0,
+   "stars",
+   0.6
+  ],
+  [
+   "rating",
+   1,
+   "stars",
+   0.8
+  ],
+  [
+   "rating",
+   0,
+   "counter",
+   2
+  ],
+  [
+   "rating",
+   1,
+   "counter",
+   3
+  ],
+  [
+   "note",
+   0,
+   "comment",
+   "hello"
+  ],
+  [
+   "note",
+   1,
+   "comment",
+   "hello there"
+  ],
+  [
+   "note",
+   1,
+   "source",
+   "a source"
+  ],
+  [
+   "url",
+   0,
+   "https://example.com/post/0"
+  ],
+  [
+   "url",
+   1,
+   "https://example.com/post/1"
+  ],
+  [
+   "archive",
+   0
+  ]
+ ],
+ "options": [
+  {
+   "options": {
+    "client": 4
+   },
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: creator:someone, page:11, page:2, red, shared, title:a test image: with colons\n    favourites: add ratings: None\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: blue, character:link, creator:someone else, safe, shared\n    downloader tags: delete tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: None"
+    }
+   ]
+  },
+  {
+   "options": {
+    "client": 2
+   },
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    downloader tags: add tag mappings: filename:dupe_jpeg_02, source:fixture\n    favourites: add ratings: 1.0\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    }
+   ]
+  },
+  {
+   "options": {
+    "tags": [
+     [
+      "my tags",
+      1,
+      "creator"
+     ]
+    ],
+    "ratings": [
+     [
+      "stars",
+      1
+     ],
+     [
+      "counter",
+      1
+     ]
+    ],
+    "notes": 1,
+    "archive": 2,
+    "urls": 2,
+    "modified": 2
+   },
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: page:11, page:2, red, shared, title:a test image: with colons\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment, source\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    my tags: delete tag mappings: blue, character:link, safe, shared\n    stars: add ratings: None\n    counter: add ratings: 0\n    local notes: delete notes: comment\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7"
+    }
+   ]
+  },
+  {
+   "options": {
+    "tags": [
+     [
+      "my tags",
+      0,
+      null
+     ],
+     [
+      "second tags",
+      2,
+      null
+     ]
+    ],
+    "ratings": [
+     [
+      "stars",
+      2
+     ],
+     [
+      "counter",
+      2
+     ]
+    ],
+    "notes": 2,
+    "archive": 1,
+    "urls": 0,
+    "modified": 0
+   },
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    hydrus local file storage: set timestamp: file modified time: 2026-09-29 18:36:25.371 | add urls: https://danbooru.donmai.us/posts/1007, https://example.com/post/1, https://example.com/post/7\n    combined local file domains: delete files\nB:\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: archive files | add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    hydrus local file storage: add urls: https://example.com/post/0, https://danbooru.donmai.us/posts/1006, https://gelbooru.com/index.php?page=post&s=view&id=2006, https://example.com/post/6\n    combined local file domains: delete files\nB:\n    second tags: add tag mappings: extra\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source"
+    }
+   ]
+  },
+  {
+   "options": {
+    "tags": [
+     [
+      "my tags",
+      2,
+      null
+     ]
+    ],
+    "ratings": [
+     [
+      "stars",
+      0
+     ],
+     [
+      "counter",
+      0
+     ]
+    ],
+    "notes": 0,
+    "archive": 0,
+    "urls": null,
+    "modified": null
+   },
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    stars: add ratings: 0.8\n    counter: add ratings: 5\n    local notes: set notes: comment, source\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    my tags: add tag mappings: blue, character:link, creator:someone else, safe\n    counter: add ratings: 5\n    local notes: set notes: comment (1)\n    combined local file domains: delete files\nB:\n    my tags: add tag mappings: creator:someone, page:11, page:2, red, title:a test image: with colons"
+    }
+   ]
+  },
+  {
+   "options": {},
+   "cases": [
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    no changes\nB:\n    no changes"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    no changes\nB:\n    no changes"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    no changes\nB:\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    no changes\nB:\n    combined local file domains: delete files"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    combined local file domains: delete files\nB:\n    no changes"
+    },
+    {
+     "a": 0,
+     "b": 1,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    combined local file domains: delete files\nB:\n    no changes"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    no changes\nB:\n    no changes"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    no changes\nB:\n    no changes"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": false,
+     "summary": "A:\n    no changes\nB:\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": false,
+     "delete_b": true,
+     "in_auto_resolution": true,
+     "summary": "A:\n    no changes\nB:\n    combined local file domains: delete files"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": false,
+     "summary": "A:\n    combined local file domains: delete files\nB:\n    no changes"
+    },
+    {
+     "a": 1,
+     "b": 0,
+     "delete_a": true,
+     "delete_b": false,
+     "in_auto_resolution": true,
+     "summary": "A:\n    combined local file domains: delete files\nB:\n    no changes"
+    }
+   ]
+  }
+ ]
+}

@@ -130,10 +130,33 @@ fn when(timestamp_ms: i64, now: i64) -> String {
     )
 }
 
-/// The pending tab's "action" cell: what the rule would do. (The
-/// reference adds the content merge's summary below.)
-pub fn pending_cell(rule: &Rule) -> String {
-    action_text(rule.action).to_owned()
+/// The pending tab's "action" cell (`GetActionSummaryOnMatchingPair`,
+/// not either way round): what the rule does, then what it would change
+/// ([`merge_summary`](crate::merge_summary)), or that it couldn't say.
+pub fn pending_cell(rule: &Rule, merge_summary: Option<&str>) -> String {
+    format!(
+        "{}\n{}",
+        action_text(rule.action),
+        merge_summary.unwrap_or(COULD_NOT_SUMMARISE)
+    )
+}
+
+pub const COULD_NOT_SUMMARISE: &str =
+    "Could not summarise the duplicate merge! Please tell hydrus dev.";
+
+/// What approving `a` and `b` under `rule` would change, summarised.
+pub fn pending_summary(
+    store: &hydrus_store::Store,
+    rule: &Rule,
+    a: hydrus_core::HashId,
+    b: hydrus_core::HashId,
+) -> hydrus_store::Result<String> {
+    let snapshot = store.snapshot();
+    let rule = rule.clone();
+    store.read(move |conn| {
+        let changes = hydrus_duplicates::engine::planned_changes(conn, &snapshot, &rule, a, b)?;
+        crate::merge_summary::summary(conn, &snapshot, &changes, a, b)
+    })
 }
 
 /// The actions taken tab's "action" cell.

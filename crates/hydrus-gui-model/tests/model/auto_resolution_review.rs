@@ -7,7 +7,8 @@ use std::collections::HashMap;
 
 use hydrus_core::HashId;
 use hydrus_gui_model::auto_resolution_review::{
-    FULLY_AUTOMATIC, TABS, actioned_cell, denied_cell, found, pending_cell, start_tab,
+    FULLY_AUTOMATIC, TABS, actioned_cell, denied_cell, found, pending_cell, pending_summary,
+    start_tab,
 };
 use hydrus_store::Store;
 use hydrus_store::duplicates::auto::{self, OperationMode};
@@ -105,8 +106,10 @@ fn each_rules_tabs_list_its_pairs_as_the_reference() {
             ours.sort();
             their_pairs.sort();
             assert_eq!(ours, their_pairs, "{name}");
-            for (_, _, text) in &theirs {
-                assert_eq!(text.lines().next().unwrap(), pending_cell(rule), "{name}");
+            for (a, b, text) in &theirs {
+                let id = |h: &String| *hex.iter().find(|(_, x)| *x == h).unwrap().0;
+                let merge = pending_summary(&store, rule, id(a), id(b)).ok();
+                assert_eq!(*text, pending_cell(rule, merge.as_deref()), "{name}");
             }
         }
 

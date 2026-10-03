@@ -58,6 +58,8 @@ struct State {
     selections: [ListSelection<usize>; 3],
     asking: Option<Asking>,
     thumbs: HashMap<HashId, slint::Image>,
+    /// Each pending pair's "action" cell, once worked out.
+    pending_texts: HashMap<(HashId, HashId), String>,
 }
 
 fn now() -> i64 {
@@ -94,6 +96,9 @@ impl State {
         self.selections[tab] = ListSelection::default();
         self.fetched[tab] = true;
         self.stale[tab] = false;
+        if tab == PENDING {
+            self.pending_texts.clear();
+        }
         let (id, limit) = (self.rule_id, self.limits[tab]);
         let read = match tab {
             PENDING => {
@@ -139,6 +144,19 @@ impl State {
             .unwrap_or_default();
         self.thumbs.insert(id, image.clone());
         image
+    }
+
+    fn pending_text(&mut self, a: HashId, b: HashId) -> String {
+        if let Some(text) = self.pending_texts.get(&(a, b)) {
+            return text.clone();
+        }
+        let merge = crate::auto_resolution_review::pending_summary(&self.store, &self.rule, a, b);
+        if let Err(e) = &merge {
+            eprintln!("could not summarise the duplicate merge: {e}");
+        }
+        let text = pending_cell(&self.rule, merge.ok().as_deref());
+        self.pending_texts.insert((a, b), text.clone());
+        text
     }
 
     /// Approve or deny the pending rows `rows`, as one decision each.
@@ -218,7 +236,7 @@ fn show(window: &AutoResolutionReviewWindow, state: &mut State) {
         .map(|r| {
             let (a, b) = state.files(tab, r);
             let text = match tab {
-                PENDING => pending_cell(&state.rule),
+                PENDING => state.pending_text(a, b),
                 ACTIONED => {
                     let (_, _, t, when) = state.actioned[r];
                     actioned_cell(t, when, now)
@@ -295,6 +313,7 @@ pub(crate) fn open(
         selections: Default::default(),
         asking: None,
         thumbs: HashMap::new(),
+        pending_texts: HashMap::new(),
     }));
     {
         // (pending and denied are fetched as it opens, and the tab shown)

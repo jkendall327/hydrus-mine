@@ -244,6 +244,32 @@ fn relationship(action: RuleAction) -> PairRelationship {
     }
 }
 
+/// What approving `a` and `b` under `rule` would change, as the reference
+/// summarises a pending pair (`GetMergeSummaryOnPair`: A and B as listed,
+/// even for "B is better", and the rule's deletes).
+pub fn planned_changes(
+    conn: &Connection,
+    snapshot: &Snapshot,
+    rule: &Rule,
+    a: HashId,
+    b: HashId,
+) -> Result<Vec<hydrus_store::duplicates::merge::Change>> {
+    let client: DuplicateMergeSettings = settings::get(conn)?;
+    let options = rule_merge_options(rule, &client);
+    let combined_local =
+        hydrus_store::content::DomainRoles::new(&snapshot.services)?.combined_local_media;
+    hydrus_store::duplicates::merge::plan(
+        conn,
+        &snapshot.services,
+        combined_local,
+        a,
+        b,
+        options.as_ref(),
+        [rule.delete_a, rule.delete_b],
+        Reinbox::InAutoResolution,
+    )
+}
+
 /// Apply a rule's action to A and B and log it
 /// (`GetDuplicateActionResult` then `SetDuplicatePairStatus`).
 fn action_pair(
