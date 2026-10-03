@@ -111,6 +111,9 @@ box. Each one is a commit that passes CI on its own.
   callback's wiring, a paragraph) so merges stay easy; put the bulk of a
   feature in its own files.
 - Rebase or merge often; run `scripts/check.sh` after merging.
+- When worktrees share a Cargo target directory, set `HYDRUS_FIXTURE_DIR`
+  to the current worktree's absolute `oracle/fixtures` path. Otherwise a
+  cached `hydrus-testkit` can read the checkout it was compiled in.
 
 ## Things that have bitten before
 

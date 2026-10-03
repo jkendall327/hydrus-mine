@@ -13,9 +13,13 @@ use std::path::{Path, PathBuf};
 use flate2::read::GzDecoder;
 use tempfile::TempDir;
 
-/// The repository's `oracle/fixtures` directory.
+/// The repository's `oracle/fixtures` directory. `HYDRUS_FIXTURE_DIR` can
+/// select the current checkout when worktrees share cached test helpers.
 pub fn fixtures_dir() -> PathBuf {
-    Path::new(env!("CARGO_MANIFEST_DIR")).join("../../oracle/fixtures")
+    std::env::var_os("HYDRUS_FIXTURE_DIR").map_or_else(
+        || Path::new(env!("CARGO_MANIFEST_DIR")).join("../../oracle/fixtures"),
+        PathBuf::from,
+    )
 }
 
 /// Path of a file under `oracle/fixtures`.
@@ -99,5 +103,31 @@ mod tests {
         let a = legacy_fixture("basic");
         let b = legacy_fixture("basic");
         assert_ne!(a.path(), b.path());
+    }
+
+    #[test]
+    fn runtime_fixture_override() {
+        // A subprocess gives the override its own environment, without
+        // changing the fixture directory used by concurrently running tests.
+        if std::env::var_os("HYDRUS_FIXTURE_OVERRIDE_CHILD").is_some() {
+            assert_eq!(
+                fixture_json("worktree-only.json")["worktree"],
+                "other checkout"
+            );
+            return;
+        }
+        let directory = tempfile::tempdir().unwrap();
+        std::fs::write(
+            directory.path().join("worktree-only.json"),
+            r#"{"worktree":"other checkout"}"#,
+        )
+        .unwrap();
+        let status = std::process::Command::new(std::env::current_exe().unwrap())
+            .args(["--exact", "tests::runtime_fixture_override"])
+            .env("HYDRUS_FIXTURE_DIR", directory.path())
+            .env("HYDRUS_FIXTURE_OVERRIDE_CHILD", "1")
+            .status()
+            .unwrap();
+        assert!(status.success());
     }
 }
