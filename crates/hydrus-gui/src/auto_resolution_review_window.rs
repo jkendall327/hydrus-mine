@@ -21,8 +21,8 @@ use hydrus_store::duplicates::auto::{
 
 use crate::auto_resolution_review::{
     BOXES, COLUMNS, FETCHING, FULLY_AUTOMATIC, TABS, TITLE, actioned_cell, approve_question,
-    denied_cell, deny_question, found, pending_cell, remaining, reselect, start_tab,
-    undo_actioned_question, undo_denied_question,
+    denied_cell, deny_question, found, pending_cell, remaining, reselect, show_in_page_label,
+    start_tab, undo_actioned_question, undo_denied_question,
 };
 use crate::list_selection::ListSelection;
 use crate::{AutoResolutionReviewWindow, PairRow};
@@ -258,6 +258,11 @@ fn show(window: &AutoResolutionReviewWindow, state: &mut State) {
         window.set_fetch_limit(i32::try_from(limit).unwrap_or(i32::MAX));
     }
     let selected = state.selected(tab).len();
+    window.set_menu_label(if selected == 0 {
+        SharedString::new()
+    } else {
+        show_in_page_label(selected).into()
+    });
     window.set_can_act(selected > 0);
     window.set_can_select_all(selected < state.len(tab));
     window.set_can_undo(selected > 0);
@@ -273,6 +278,9 @@ fn show(window: &AutoResolutionReviewWindow, state: &mut State) {
     window.set_asking_message(message.into());
     window.set_asking_choices(strings(&["yes", "no"]));
 }
+
+/// Opens files in a new page searching a location.
+pub(crate) type OpenFiles = Rc<dyn Fn(hydrus_search::LocationContext, Vec<HashId>)>;
 
 /// Opens the media viewer on files, from the one at an index.
 pub(crate) type OpenViewer = Rc<dyn Fn(Vec<HashId>, usize)>;
@@ -297,6 +305,7 @@ pub(crate) fn open(
     windows: &Windows,
     filter: &Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
     open_viewer: Option<OpenViewer>,
+    open_files: Option<OpenFiles>,
 ) -> Result<(), String> {
     let window = AutoResolutionReviewWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
@@ -476,6 +485,33 @@ pub(crate) fn open(
                     });
             match opened {
                 Ok(window) => *filter.borrow_mut() = Some(window),
+                Err(e) => eprintln!("{e}"),
+            }
+        }
+    });
+    // the selected pairs' files, in a new page, even if deleted
+    window.on_show_in_page({
+        let state = state.clone();
+        move || {
+            let state = state.borrow();
+            let tab = state.tab;
+            let files: Vec<HashId> = state
+                .selected(tab)
+                .into_iter()
+                .flat_map(|row| {
+                    let (a, b) = state.files(tab, row);
+                    [a, b]
+                })
+                .collect();
+            if files.is_empty() {
+                return;
+            }
+            match crate::auto_resolution_review::show_location(&state.store, &files) {
+                Ok(location) => {
+                    if let Some(open_files) = &open_files {
+                        open_files(location, files);
+                    }
+                }
                 Err(e) => eprintln!("{e}"),
             }
         }

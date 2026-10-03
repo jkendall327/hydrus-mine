@@ -55,6 +55,10 @@ export component PairList inherits Rectangle {
     in property <[PairRow]> rows;
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
+    // the right-click menu's one entry, for the rows selected ("show
+    // selected row in a new page"); none while it is empty
+    in property <string> menu-label;
+    callback show-in-page();
     border-width: 1px;
     border-color: Theme.border;
     background: Theme.panel;
@@ -74,30 +78,39 @@ export component PairList inherits Rectangle {
                 }
             }
         }
-        ScrollView {
-            VerticalLayout {
-                alignment: start;
-                for row[r] in root.rows: Rectangle {
-                    height: 90px;
-                    background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : transparent;
-                    HorizontalLayout {
-                        Thumb { source: row.a; }
-                        Thumb { source: row.b; }
-                        Text {
-                            horizontal-stretch: 1;
-                            vertical-alignment: center;
-                            text: row.text;
-                            wrap: word-wrap;
-                            color: row.selected ? Theme.highlight-text : Theme.text;
-                        }
-                    }
-                    touch := TouchArea {
-                        pointer-event(event) => {
-                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
-                                root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+        ContextMenuArea {
+            enabled: root.menu-label != "";
+            Menu {
+                MenuItem {
+                    title: root.menu-label;
+                    activated => { root.show-in-page(); }
+                }
+            }
+            ScrollView {
+                VerticalLayout {
+                    alignment: start;
+                    for row[r] in root.rows: Rectangle {
+                        height: 90px;
+                        background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : transparent;
+                        HorizontalLayout {
+                            Thumb { source: row.a; }
+                            Thumb { source: row.b; }
+                            Text {
+                                horizontal-stretch: 1;
+                                vertical-alignment: center;
+                                text: row.text;
+                                wrap: word-wrap;
+                                color: row.selected ? Theme.highlight-text : Theme.text;
                             }
                         }
-                        double-clicked => { root.row-activated(r); }
+                        touch := TouchArea {
+                            pointer-event(event) => {
+                                if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                    root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                                }
+                            }
+                            double-clicked => { root.row-activated(r); }
+                        }
                     }
                 }
             }
@@ -139,6 +152,8 @@ export component AutoResolutionReviewWindow inherits Window {
     callback fetch-changed();
     callback row-clicked(int, bool, bool);
     callback row-activated(int);
+    in property <string> menu-label;
+    callback show-in-page();
     callback approve();
     callback deny();
     callback select-all();
@@ -213,6 +228,8 @@ export component AutoResolutionReviewWindow inherits Window {
             rows: root.rows;
             row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
             row-activated(r) => { root.row-activated(r); }
+            menu-label: root.menu-label;
+            show-in-page => { root.show-in-page(); }
         }
         if root.tab == 0: HorizontalLayout {
             spacing: 6px;

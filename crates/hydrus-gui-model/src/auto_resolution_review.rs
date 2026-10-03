@@ -182,6 +182,40 @@ pub fn show_in_page_label(n: usize) -> String {
     }
 }
 
+/// Where "show in a new page" shows pairs' files
+/// (`ShowMediaResultsInNewPageWithAppropriateLocationContext`): all known
+/// files if any isn't stored, all of local storage if any is in the trash,
+/// else all local files.
+pub fn show_location(
+    store: &hydrus_store::Store,
+    files: &[hydrus_core::HashId],
+) -> hydrus_store::Result<hydrus_search::LocationContext> {
+    use hydrus_core::service::builtin_keys::{
+        COMBINED_FILE, COMBINED_LOCAL_FILE_DOMAINS, HYDRUS_LOCAL_FILE_STORAGE, TRASH,
+    };
+    let snapshot = store.snapshot();
+    let (storage, trash) = (
+        snapshot.services.builtin(HYDRUS_LOCAL_FILE_STORAGE)?.id,
+        snapshot.services.builtin(TRASH)?.id,
+    );
+    let (stored, trashed) = store.read(|c| {
+        Ok((
+            hydrus_store::media::current_in(c, storage, files)?,
+            hydrus_store::media::current_in(c, trash, files)?,
+        ))
+    })?;
+    let key = if files.iter().any(|f| !stored.contains(f)) {
+        COMBINED_FILE
+    } else if !trashed.is_empty() {
+        HYDRUS_LOCAL_FILE_STORAGE
+    } else {
+        COMBINED_LOCAL_FILE_DOMAINS
+    };
+    Ok(hydrus_search::LocationContext::single(
+        hydrus_core::ServiceKey::new(key.to_vec()),
+    ))
+}
+
 /// After approving or denying, the row selected: the earliest of those
 /// taken away, or the last left. `None` when none are left.
 pub fn reselect(earliest: usize, left: usize) -> Option<usize> {

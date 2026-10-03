@@ -773,6 +773,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         move |columns| rows.set_columns(usize::try_from(columns).unwrap_or(1))
     });
     let filter: Rc<RefCell<Option<DuplicateFilterWindow>>> = Rc::default();
+    // a duplicates rule's pairs' files, shown in a new page
+    *duplicates.open_files.borrow_mut() = Some(Rc::new({
+        let change_pages = change_pages.clone();
+        move |location: hydrus_search::LocationContext, files: Vec<HashId>| {
+            change_pages(&|pages| {
+                pages.open_files(location.clone(), files.clone(), None, None);
+                Ok(())
+            });
+        }
+    }));
     // logs' files, shown in new pages
     let open_files = file_log_window::OpenFiles({
         let change_pages = change_pages.clone();

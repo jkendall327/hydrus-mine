@@ -980,7 +980,8 @@ pending pairs from it, with "approve" and "deny" (the rule's action on
 the pair as listed, whichever file is shown) over the usual decisions;
 closing it after committing fetches every tab again. Double-clicking an
 actioned or denied pair opens the media viewer on its files still
-stored. A fully automatic
+stored, and right-clicking selected rows offers "show selected row in a
+new page" (or "show 3 rows in a new page"), their files deleted or not. A fully automatic
 rule's tab says it won't wait for approval.
 "actions taken" lists what was done and when, newest first; "undo"
 (asking first, with the reference's warning) undeletes the files and

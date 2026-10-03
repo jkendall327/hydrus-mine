@@ -55,6 +55,8 @@ pub(crate) struct Sidebar {
     /// Opens the media viewer on files, from one (set as the main window
     /// is bound).
     pub(crate) open_viewer: RefCell<Option<crate::auto_resolution_review_window::OpenViewer>>,
+    /// Opens files in a new page (set as the main window is bound).
+    pub(crate) open_files: RefCell<Option<crate::auto_resolution_review_window::OpenFiles>>,
 }
 
 impl Sidebar {
@@ -246,6 +248,7 @@ impl Sidebar {
                         &self.reviews,
                         &self.review_filter,
                         self.open_viewer.borrow().clone(),
+                        self.open_files.borrow().clone(),
                     ) {
                         eprintln!("could not open the review: {e}");
                     }

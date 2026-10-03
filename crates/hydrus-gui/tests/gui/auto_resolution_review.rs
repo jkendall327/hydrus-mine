@@ -392,4 +392,25 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
         .expect("the viewer opened")
         .clone_strong();
     viewer.hide().unwrap();
+
+    // and its files in a new page, from the right-click menu, the trashed
+    // one too
+    assert_eq!(window.get_menu_label(), "");
+    window.invoke_row_clicked(0, false, false);
+    assert_eq!(window.get_menu_label(), "show selected row in a new page");
+    let pages_before = bound.pages.borrow().open_pages().len();
+    window.invoke_show_in_page();
+    assert_eq!(bound.pages.borrow().open_pages().len(), pages_before + 1);
+    let mut shown: Vec<String> = bound
+        .current
+        .borrow()
+        .borrow()
+        .files()
+        .iter()
+        .map(|f| hex[f].clone())
+        .collect();
+    shown.sort();
+    let mut pair = [approved.0, approved.1];
+    pair.sort();
+    assert_eq!(shown, pair);
 }
