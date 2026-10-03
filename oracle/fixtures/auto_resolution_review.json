@@ -1,0 +1,546 @@
+{
+ "now": 1900000000,
+ "rules": [
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "near-perfect jpegs vs pngs"
+  },
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 2 pairs.",
+    "rows": [
+     [
+      "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+      "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c",
+      "set as duplicates--A better\nA:\n    no changes\nB:\n    combined local file domains: delete files"
+     ],
+     [
+      "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+      "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460",
+      "set as duplicates--A better\nA:\n    no changes\nB:\n    combined local file domains: delete files"
+     ]
+    ]
+   },
+   "actioned": {
+    "label": "Found 1 pairs.",
+    "rows": [
+     [
+      "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+      "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+      "set as duplicates--A better\n2026-09-30 06:13:01\n3 years 5 months ago"
+     ]
+    ]
+   },
+   "denied": {
+    "label": "Found 1 pairs.",
+    "rows": [
+     [
+      "a3ded737c2311192631f7eba0dc6b2af22809cc67227be3c77c43fd1be06a502",
+      "62daeb5d17b7e9f7c5cffd9d5d6b9ec93ea0e3c1290c509e47bb9ddf4916118a",
+      "2026-09-30 06:13:01\n3 years 5 months ago"
+     ]
+    ]
+   },
+   "name": "pixel-perfect gifs vs pngs"
+  },
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "pixel-perfect gifs vs pngs - except when png is smaller"
+  },
+  {
+   "tab": 1,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "This rule is fully automatic; it will not wait for human approval.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 5 pairs.",
+    "rows": [
+     [
+      "759eba609060c5afffdf69be2272a58a491ccd6a50a7785d6e4db4203502b396",
+      "dabb48e6f441e5b8af1b5285821f30dc1f980de4820154d50a4cd7ff1882ede1",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2d4ea257990457978f3e7815fbfcfc07ea0b45cc232c9036071ac8e40e8c3f4a",
+      "4a9e1064214ccdf50b16e8d85075fede2d211ff743d9d7deb3abbf9415156d9f",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2b64eb5ebc457a277f07b96b3b92335b9c6be4d2b639bcedd7a2f14ac73f8989",
+      "89054afced1cd2818c69cf86db35bbd365161b50c6529ceccf0fad80b536df61",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2820a462ed9dabae4f1479861f656af6c8f7fe9f020deddd277bdc9749183d82",
+      "8c119f66f5bd6597e4f69c8dccf4456b365a665d34205dc2c5da2ebd0bb4c889",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "592f292127e6bd5846eed74e49daa9f3530a8f4c0fd51c790de55dec3fb5a1cc",
+      "24adf4223f248c29b6d95f0447a44492ab86dd1b8155d768c41070c265cc37a4",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ]
+    ]
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "pixel-perfect jpegs vs pngs"
+  },
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "pixel-perfect jpegs vs pngs - except when png is smaller"
+  },
+  {
+   "tab": 1,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "This rule is fully automatic; it will not wait for human approval.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 13 pairs.",
+    "rows": [
+     [
+      "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+      "f4121538de6c1f28616861089ddc1c2b2fce45430b04347fc0ecc841af627f63",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "baf21d1e4f59d59074035be31514deab486e2e13334de2d3af905fdbf16841b7",
+      "997d86c5cfcda3ba9e0612511436d8897255bb98e289e24d7bfda8e53f8a19da",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e",
+      "eac22b4d7180b5d2b1211579ae53e5aa9352045aeb174633543fbbe77f4fbfc0",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+      "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "fbc8250da88a1e8949952c5569e9bff224dc14284e0e02245a737fd4ba08a714",
+      "759eba609060c5afffdf69be2272a58a491ccd6a50a7785d6e4db4203502b396",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "592f292127e6bd5846eed74e49daa9f3530a8f4c0fd51c790de55dec3fb5a1cc",
+      "ecad2f5f46f29e3cd2b2d30863009dd941fb0912136cf9cae9ab898b9d352049",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2d4ea257990457978f3e7815fbfcfc07ea0b45cc232c9036071ac8e40e8c3f4a",
+      "8c0546de6b9bd7009c0e5ccb2eb78e47a768b9666c03dd8f20bc3bd9411f2240",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2be1583065ff99334f5270c344b7c7f79f89be92a4d38a859d4d20423e0d8b03",
+      "4174521671c6bff422a5153f8b23666561242b315dfcd86e7ae73586dfcf26c5",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "2b64eb5ebc457a277f07b96b3b92335b9c6be4d2b639bcedd7a2f14ac73f8989",
+      "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "3b55f39670eb78a3cb5678f0d0973d51e58a436fcb99f652ec9dcaa3edc44dc1",
+      "2820a462ed9dabae4f1479861f656af6c8f7fe9f020deddd277bdc9749183d82",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "225ba7cdadea5f099ca4fbbaf19849754b64a43e7fe9f5fe120683a228952952",
+      "7dc7ab484c38ca58fb47a6f9768e3895297371e50d4b0eac21a525cdacd44038",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+      "f31975595b2c5b640c8d8fc5068be771cf489272d5bb8ddcb72c93efccde7935",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ],
+     [
+      "4876aa95119c5ff588d57fa4d8bc478b334403168df8212d49b7be7beb30fc04",
+      "09a1c8353eb32f62dd8f3a372d9047f12f67c3506e9aa275be911573ac317107",
+      "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+     ]
+    ]
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "pixel-perfect pairs"
+  },
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "visually similar pairs"
+  },
+  {
+   "tab": 0,
+   "tabs": [
+    "pending actions",
+    "actions taken",
+    "actions denied"
+   ],
+   "pending": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "actioned": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "denied": {
+    "label": "Found 0 pairs.",
+    "rows": []
+   },
+   "name": "visually similar pairs - only earlier imports"
+  }
+ ],
+ "reviewed": "pixel-perfect gifs vs pngs",
+ "undone": "pixel-perfect pairs",
+ "steps": [
+  {
+   "step": "approve the first pending pair",
+   "asked": [],
+   "state": {
+    "tab": 0,
+    "tabs": [
+     "pending actions",
+     "actions taken",
+     "actions denied"
+    ],
+    "pending": {
+     "label": "Found 1 pairs.",
+     "rows": [
+      [
+       "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+       "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460",
+       "set as duplicates--A better\nA:\n    no changes\nB:\n    combined local file domains: delete files"
+      ]
+     ]
+    },
+    "actioned": {
+     "label": "Found 2 pairs.",
+     "rows": [
+      [
+       "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+       "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c",
+       "set as duplicates--A better\n2030-03-17 17:46:40\nnow"
+      ],
+      [
+       "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+       "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+       "set as duplicates--A better\n2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    },
+    "denied": {
+     "label": "Found 1 pairs.",
+     "rows": [
+      [
+       "a3ded737c2311192631f7eba0dc6b2af22809cc67227be3c77c43fd1be06a502",
+       "62daeb5d17b7e9f7c5cffd9d5d6b9ec93ea0e3c1290c509e47bb9ddf4916118a",
+       "2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    }
+   },
+   "trashed": [
+    "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ]
+  },
+  {
+   "step": "deny the first pending pair",
+   "asked": [],
+   "state": {
+    "tab": 0,
+    "tabs": [
+     "pending actions",
+     "actions taken",
+     "actions denied"
+    ],
+    "pending": {
+     "label": "Found 0 pairs.",
+     "rows": []
+    },
+    "actioned": {
+     "label": "Found 2 pairs.",
+     "rows": [
+      [
+       "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+       "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c",
+       "set as duplicates--A better\n2030-03-17 17:46:40\nnow"
+      ],
+      [
+       "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+       "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+       "set as duplicates--A better\n2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    },
+    "denied": {
+     "label": "Found 2 pairs.",
+     "rows": [
+      [
+       "6cd48497a6ddf1c2fb116b61a234692db78387ddc0bcd501c79c9d97a5753add",
+       "94d843848915f5b3bbd07d1d2ef251b3fb417a675d8563178eb359ee1b046460",
+       "2030-03-17 17:46:40\nnow"
+      ],
+      [
+       "a3ded737c2311192631f7eba0dc6b2af22809cc67227be3c77c43fd1be06a502",
+       "62daeb5d17b7e9f7c5cffd9d5d6b9ec93ea0e3c1290c509e47bb9ddf4916118a",
+       "2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    }
+   },
+   "trashed": [
+    "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ]
+  },
+  {
+   "step": "undo the first denied pair",
+   "asked": [
+    "Are you sure you want to undo your deny decisions for these 1 pairs? They will be queued up for re-search."
+   ],
+   "state": {
+    "tab": 0,
+    "tabs": [
+     "pending actions",
+     "actions taken",
+     "actions denied"
+    ],
+    "pending": {
+     "label": "Found 0 pairs.",
+     "rows": []
+    },
+    "actioned": {
+     "label": "Found 2 pairs.",
+     "rows": [
+      [
+       "b3f62f19da738731be45dbdf0a7bf76a76898584d20add4defa3d9856aaccf83",
+       "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c",
+       "set as duplicates--A better\n2030-03-17 17:46:40\nnow"
+      ],
+      [
+       "18eaa2a4acc36081c952694b31f8bfc95a8c92b40c6c570bbd93d78e34676ca2",
+       "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+       "set as duplicates--A better\n2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    },
+    "denied": {
+     "label": "Found 1 pairs.",
+     "rows": [
+      [
+       "a3ded737c2311192631f7eba0dc6b2af22809cc67227be3c77c43fd1be06a502",
+       "62daeb5d17b7e9f7c5cffd9d5d6b9ec93ea0e3c1290c509e47bb9ddf4916118a",
+       "2026-09-30 06:13:01\n3 years 5 months ago"
+      ]
+     ]
+    }
+   },
+   "trashed": [
+    "4639152643c8e9e9434652a5d93d025099d484811f241a7bfb17048344345713",
+    "6887295caca6074b4634e8d1bba1ebcf3ade6be554c4d09a5bd4514392e9ed3c"
+   ]
+  },
+  {
+   "step": "undo the first action taken",
+   "asked": [
+    "Are you sure you want to undo the auto-resolution actions covering these 2 files? This is a serious action and will reset all the duplicate file relationships these files have.\n\nThe only way to do this reliably is to completely dissolve the respective duplicate group(s), which may undo many other decisions. All the files in the duplicate group(s) (not just what you selected) will be queued up for search in the potential duplicates system once more. Any files that are in trash will be undeleted. This action will not remove the entries from this audit log nor undo any content merge."
+   ],
+   "state": {
+    "tab": 1,
+    "tabs": [
+     "pending actions",
+     "actions taken",
+     "actions denied"
+    ],
+    "pending": {
+     "label": "This rule is fully automatic; it will not wait for human approval.",
+     "rows": []
+    },
+    "actioned": {
+     "label": "Found 13 pairs.",
+     "rows": [
+      [
+       "af903ff62452c926f75d8133f2a19109b224da9cbcdb14c68c29eceee99d2057",
+       "f4121538de6c1f28616861089ddc1c2b2fce45430b04347fc0ecc841af627f63",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "baf21d1e4f59d59074035be31514deab486e2e13334de2d3af905fdbf16841b7",
+       "997d86c5cfcda3ba9e0612511436d8897255bb98e289e24d7bfda8e53f8a19da",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "8c201a9e0faf1950160e067603b1fdea2c476943c6dbe202f0119f6a7a27c76e",
+       "eac22b4d7180b5d2b1211579ae53e5aa9352045aeb174633543fbbe77f4fbfc0",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "d17cfbec55c579015262906e2bcb2cba16c022c9c33395d34e67f4c10d3cf671",
+       "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "fbc8250da88a1e8949952c5569e9bff224dc14284e0e02245a737fd4ba08a714",
+       "759eba609060c5afffdf69be2272a58a491ccd6a50a7785d6e4db4203502b396",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "592f292127e6bd5846eed74e49daa9f3530a8f4c0fd51c790de55dec3fb5a1cc",
+       "ecad2f5f46f29e3cd2b2d30863009dd941fb0912136cf9cae9ab898b9d352049",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "2d4ea257990457978f3e7815fbfcfc07ea0b45cc232c9036071ac8e40e8c3f4a",
+       "8c0546de6b9bd7009c0e5ccb2eb78e47a768b9666c03dd8f20bc3bd9411f2240",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "2be1583065ff99334f5270c344b7c7f79f89be92a4d38a859d4d20423e0d8b03",
+       "4174521671c6bff422a5153f8b23666561242b315dfcd86e7ae73586dfcf26c5",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "2b64eb5ebc457a277f07b96b3b92335b9c6be4d2b639bcedd7a2f14ac73f8989",
+       "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "3b55f39670eb78a3cb5678f0d0973d51e58a436fcb99f652ec9dcaa3edc44dc1",
+       "2820a462ed9dabae4f1479861f656af6c8f7fe9f020deddd277bdc9749183d82",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "225ba7cdadea5f099ca4fbbaf19849754b64a43e7fe9f5fe120683a228952952",
+       "7dc7ab484c38ca58fb47a6f9768e3895297371e50d4b0eac21a525cdacd44038",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "1ddfdfb0fdd66c77a7c04407c100e6838370ee96a72a22afd2bb4d04e89ff148",
+       "f31975595b2c5b640c8d8fc5068be771cf489272d5bb8ddcb72c93efccde7935",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ],
+      [
+       "4876aa95119c5ff588d57fa4d8bc478b334403168df8212d49b7be7beb30fc04",
+       "09a1c8353eb32f62dd8f3a372d9047f12f67c3506e9aa275be911573ac317107",
+       "set as duplicates--A better\n2026-09-30 06:12:57\n3 years 5 months ago"
+      ]
+     ]
+    },
+    "denied": {
+     "label": "Found 0 pairs.",
+     "rows": []
+    }
+   },
+   "trashed": [
+    "09a1c8353eb32f62dd8f3a372d9047f12f67c3506e9aa275be911573ac317107",
+    "2820a462ed9dabae4f1479861f656af6c8f7fe9f020deddd277bdc9749183d82",
+    "4174521671c6bff422a5153f8b23666561242b315dfcd86e7ae73586dfcf26c5",
+    "52e3557be64b2cc20dc8e7279f1c0af54d0b22b4c221b4491e6113c546903c13",
+    "759eba609060c5afffdf69be2272a58a491ccd6a50a7785d6e4db4203502b396",
+    "76322a345f5ea96fd94f1fe83d0abb33711022fd3dc9bc10e5c3a746ee9eb511",
+    "7dc7ab484c38ca58fb47a6f9768e3895297371e50d4b0eac21a525cdacd44038",
+    "8c0546de6b9bd7009c0e5ccb2eb78e47a768b9666c03dd8f20bc3bd9411f2240",
+    "997d86c5cfcda3ba9e0612511436d8897255bb98e289e24d7bfda8e53f8a19da",
+    "eac22b4d7180b5d2b1211579ae53e5aa9352045aeb174633543fbbe77f4fbfc0",
+    "ecad2f5f46f29e3cd2b2d30863009dd941fb0912136cf9cae9ab898b9d352049",
+    "f31975595b2c5b640c8d8fc5068be771cf489272d5bb8ddcb72c93efccde7935"
+   ]
+  }
+ ]
+}

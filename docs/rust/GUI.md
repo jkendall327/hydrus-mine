@@ -940,6 +940,26 @@ action (which, deleting A or B, and default or custom merge options).
 "apply" refuses a "better" rule whose comparators can't tell A from B,
 with the reference's words. What they say is as
 `oracle/record_auto_resolution_summaries.py` recorded the reference's.
+
+"review actions" (or double-clicking a rule) opens the reference's
+"review duplicate auto-resolution actions" window for each selected rule
+(`ui/auto_resolution_review.slint`, `src/auto_resolution_review_window.rs`,
+`hydrus-gui-model/src/auto_resolution_review.rs`): the rule's name over
+three tabs, opening on "pending actions" for a semi-automatic rule and
+"actions taken" otherwise. Each lists pairs with both files' thumbnails
+("Found 2 pairs."), sampled to a number or all, and fetched again by
+"refresh", or when shown if it had nothing or changed. "pending actions"
+lists what the rule would do to each pair waiting for you, and "approve"
+and "deny" act on the selected (asking first for more than five),
+leaving the earliest row's successor selected; "select all" selects them
+all. A fully automatic rule's tab says it won't wait for approval.
+"actions taken" lists what was done and when, newest first; "undo"
+(asking first, with the reference's warning) undeletes the files and
+dissolves their duplicate groups, so they are searched again. "actions
+denied" lists the pairs you denied and when; "undo" queues them to be
+searched again. "edit rules" closes these windows, as the reference's
+does. What the tabs list is as `oracle/record_auto_resolution_review.py`
+recorded the reference's, step by step.
 `crates/hydrus-gui/tests/gui/search_page.rs` drives the page and
 `tests/gui/session.rs` a saved session, and both draw the window headless (the
 screenshots land in `target/tmp/`). Not yet: the reference's menu of

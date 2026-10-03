@@ -1,0 +1,257 @@
+// The "review actions" window for a duplicates auto-resolution rule (the
+// reference's `ReviewActionsPanel`; its words are hydrus-gui-model's
+// `auto_resolution_review`, bound by `src/auto_resolution_review_window.rs`):
+// the rule's name over three tabs, pairs waiting for approval, actions
+// taken and pairs denied, each a list of pairs, their thumbnails and what
+// was or would be done.
+
+import { Button, CheckBox, ScrollView, SpinBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+
+// a pair: its two files' thumbnails and the third column's text
+export struct PairRow {
+    a: image,
+    b: image,
+    text: string,
+    selected: bool,
+}
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    height: 28px;
+    min-width: label.preferred-width + 20px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component Thumb inherits Rectangle {
+    in property <image> source;
+    width: 110px;
+    Image {
+        source: root.source;
+        width: parent.width - 8px;
+        height: parent.height - 8px;
+        image-fit: contain;
+    }
+}
+
+// the reference's `ThumbnailPairList`: rows a thumbnail high, selected
+// as its lists select (click, ctrl+click, shift+click)
+component PairList inherits Rectangle {
+    in property <[string]> columns;
+    in property <[PairRow]> rows;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    border-width: 1px;
+    border-color: Theme.border;
+    background: Theme.panel;
+    VerticalLayout {
+        padding: 1px;
+        HorizontalLayout {
+            height: 24px;
+            for title[c] in root.columns: Rectangle {
+                width: c < 2 ? 110px : 0px;
+                horizontal-stretch: c < 2 ? 0 : 1;
+                Text {
+                    x: 4px;
+                    vertical-alignment: center;
+                    text: title;
+                    color: Theme.text;
+                    font-weight: 700;
+                }
+            }
+        }
+        ScrollView {
+            VerticalLayout {
+                alignment: start;
+                for row[r] in root.rows: Rectangle {
+                    height: 90px;
+                    background: row.selected ? Theme.highlight : touch.has-hover ? Theme.hover : transparent;
+                    HorizontalLayout {
+                        Thumb { source: row.a; }
+                        Thumb { source: row.b; }
+                        Text {
+                            horizontal-stretch: 1;
+                            vertical-alignment: center;
+                            text: row.text;
+                            wrap: word-wrap;
+                            color: row.selected ? Theme.highlight-text : Theme.text;
+                        }
+                    }
+                    touch := TouchArea {
+                        pointer-event(event) => {
+                            if (event.kind == PointerEventKind.down && event.button == PointerEventButton.left) {
+                                root.row-clicked(r, event.modifiers.control, event.modifiers.shift);
+                            }
+                        }
+                        double-clicked => { root.row-activated(r); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+export component AutoResolutionReviewWindow inherits Window {
+    in property <string> window-title: "review duplicate auto-resolution actions";
+    title: root.window-title;
+    preferred-width: 760px;
+    preferred-height: 640px;
+    background: Theme.window;
+    in property <string> rule-name;
+    in property <[string]> tabs;
+    in property <int> tab;
+    in property <string> box-title;
+    in property <[string]> columns;
+    // the tab's label ("Found 2 pairs.") and its pairs
+    in property <string> label;
+    in property <[PairRow]> rows;
+    // "only sample this many", or "fetch all"
+    in-out property <int> fetch-limit: 250;
+    in-out property <bool> fetch-all;
+    // the pending tab's buttons
+    in property <bool> can-act;
+    in property <bool> can-select-all;
+    in property <bool> working;
+    in property <string> approve-text: "approve";
+    in property <string> deny-text: "deny";
+    // the other tabs' "undo"
+    in property <bool> can-undo;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback tab-chosen(int);
+    callback refresh();
+    callback fetch-changed();
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback approve();
+    callback deny();
+    callback select-all();
+    callback undo();
+    callback chosen(int);
+    callback cancelled();
+    callback close-window();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        Text {
+            text: root.rule-name;
+            horizontal-alignment: center;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        HorizontalLayout {
+            spacing: 0px;
+            alignment: start;
+            for name[i] in root.tabs: Tab {
+                text: name;
+                current: i == root.tab;
+                clicked => { root.tab-chosen(i); }
+            }
+        }
+        Text {
+            text: root.box-title;
+            font-weight: 700;
+            color: Theme.text;
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            Text {
+                horizontal-stretch: 1;
+                text: root.label;
+                vertical-alignment: center;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+            Button {
+                text: "refresh";
+                enabled: !root.working && !root.asking;
+                clicked => { root.refresh(); }
+            }
+        }
+        HorizontalLayout {
+            spacing: 6px;
+            alignment: start;
+            Text {
+                text: "only sample this many: ";
+                vertical-alignment: center;
+                color: Theme.text;
+            }
+            SpinBox {
+                enabled: !root.fetch-all;
+                minimum: 1;
+                maximum: 100000000;
+                value <=> root.fetch-limit;
+                edited => { root.fetch-changed(); }
+            }
+            CheckBox {
+                text: "fetch all";
+                checked <=> root.fetch-all;
+                toggled => { root.fetch-changed(); }
+            }
+        }
+        PairList {
+            vertical-stretch: 1;
+            min-height: (root.asking ? 1 : 4) * 90px + 26px;
+            columns: root.columns;
+            rows: root.rows;
+            row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+            row-activated(r) => { root.row-activated(r); }
+        }
+        if root.tab == 0: HorizontalLayout {
+            spacing: 6px;
+            Button {
+                horizontal-stretch: 1;
+                text: root.approve-text;
+                enabled: root.can-act && !root.working && !root.asking;
+                clicked => { root.approve(); }
+            }
+            Button {
+                horizontal-stretch: 1;
+                text: root.deny-text;
+                enabled: root.can-act && !root.working && !root.asking;
+                clicked => { root.deny(); }
+            }
+        }
+        if root.tab == 0: Button {
+            text: "select all";
+            enabled: root.can-select-all && !root.working && !root.asking;
+            clicked => { root.select-all(); }
+        }
+        if root.tab != 0: Button {
+            text: "undo";
+            enabled: root.can-undo && !root.asking;
+            clicked => { root.undo(); }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(index) => { root.chosen(index); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            Button {
+                text: "close";
+                clicked => { root.close-window(); }
+            }
+        }
+    }
+}

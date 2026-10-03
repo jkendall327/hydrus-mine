@@ -99,8 +99,12 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   `auto_resolution_rules`: rows, comparator summaries, which can tell A
   from B), recorded by `oracle/record_auto_resolution_summaries.py`.
   The "edit rules" window, the rule editor and the comparator editors
-  are done too (`src/auto_resolution_rules_window.rs`). **Next**:
-  "review actions"; the rule editor's preview tab; editing a rule's
+  are done too (`src/auto_resolution_rules_window.rs`), and "review
+  actions" (`src/auto_resolution_review_window.rs`, recorded by
+  `oracle/record_auto_resolution_review.py`). **Next**: the pending
+  pairs' merge summary (`GetMergeSummaryOnPair`, also the preview tab's),
+  opening pairs from "review actions" in the duplicate filter or the
+  viewer; the rule editor's preview tab; editing a rule's
   custom merge options; and its searches' locations.
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.

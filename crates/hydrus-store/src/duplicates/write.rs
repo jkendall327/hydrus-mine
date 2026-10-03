@@ -129,6 +129,19 @@ impl<'c> RelationshipWriter<'c> {
         self.set_king_of(group, hash_id)
     }
 
+    /// Dissolve the duplicate groups of `hash_ids` (`DissolveMediaIdFromHashes`):
+    /// each group's files are set apart, lose their potentials and
+    /// alternates, and are searched for duplicates again.
+    pub fn dissolve_groups_of(&self, hash_ids: &[HashId]) -> Result<()> {
+        super::cache::changed(self.conn)?;
+        for &hash_id in hash_ids {
+            if let Some(group) = super::group_of(self.conn, hash_id)? {
+                self.dissolve_group(group)?;
+            }
+        }
+        Ok(())
+    }
+
     /// Drop every potential pair involving `hash_id`'s duplicate group.
     pub fn remove_potentials(&self, hash_id: HashId) -> Result<()> {
         if let Some(group) = super::group_of(self.conn, hash_id)? {

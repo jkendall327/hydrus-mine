@@ -236,6 +236,7 @@ export component DuplicatesSidebar inherits VerticalLayout {
                     ];
                     rows: root.rules;
                     row-clicked(row, ctrl, shift) => { root.action("rule", row, ctrl, shift); }
+                    row-activated(row) => { root.action("review rule", row, false, false); }
                 }
                 HorizontalLayout {
                     spacing: 4px;
@@ -246,9 +247,9 @@ export component DuplicatesSidebar inherits VerticalLayout {
                         clicked => { root.action("pause rules", 0, false, false); }
                     }
                     Button {
-                        // (not in hydrus-rs yet)
                         text: "review actions";
-                        enabled: false;
+                        enabled: root.data.any-rule-selected && !root.data.asking;
+                        clicked => { root.action("review actions", 0, false, false); }
                     }
                     Button {
                         text: "edit rules";

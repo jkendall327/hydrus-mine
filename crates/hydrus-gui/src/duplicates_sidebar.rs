@@ -48,6 +48,8 @@ pub(crate) struct Sidebar {
     state: RefCell<State>,
     /// The auto-resolution rules editor's windows.
     pub(crate) rules_editor: crate::auto_resolution_rules_window::Slots,
+    /// The rules' "review actions" windows.
+    pub(crate) reviews: crate::auto_resolution_review_window::Windows,
 }
 
 impl Sidebar {
@@ -213,7 +215,34 @@ impl Sidebar {
                     self.state.borrow_mut().asking = Some(Asking::Reset(which, targets));
                 }
             }
+            "review actions" | "review rule" => {
+                let state = self.state.borrow();
+                let ids: Vec<i64> = state.rules.iter().map(|r| r.0).collect();
+                let chosen: Vec<i64> = if what == "review rule" {
+                    usize::try_from(n)
+                        .ok()
+                        .and_then(|row| ids.get(row).copied())
+                        .into_iter()
+                        .collect()
+                } else {
+                    state.selection.in_order(&ids)
+                };
+                let rules: Vec<(i64, Rule)> = chosen
+                    .into_iter()
+                    .filter_map(|id| state.rules.iter().find(|r| r.0 == id))
+                    .map(|r| (r.0, r.1.clone()))
+                    .collect();
+                drop(state);
+                for (id, rule) in rules {
+                    if let Err(e) =
+                        crate::auto_resolution_review_window::open(&store, id, rule, &self.reviews)
+                    {
+                        eprintln!("could not open the review: {e}");
+                    }
+                }
+            }
             "edit rules" => {
+                crate::auto_resolution_review_window::close_all(&self.reviews);
                 if let Err(e) = crate::auto_resolution_rules_window::open(
                     &store,
                     &self.rules_editor,

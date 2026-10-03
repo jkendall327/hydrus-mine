@@ -593,6 +593,51 @@ pub fn pending_pairs(
         .collect::<rusqlite::Result<_>>()?)
 }
 
+/// A pair a human denied: its groups, their kings (smaller group's
+/// first), and when it was denied.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DeniedPair {
+    pub pair: GroupPair,
+    pub kings: (HashId, HashId),
+    pub timestamp_ms: i64,
+}
+
+/// A rule's denied pairs, newest first (`GetDeniedPairs`); pairs whose
+/// groups are gone are left out.
+pub fn denied_pairs(
+    conn: &Connection,
+    rule_id: i64,
+    limit: Option<usize>,
+) -> Result<Vec<DeniedPair>> {
+    let mut stmt = conn.prepare_cached(
+        "SELECT smaller_group_id, larger_group_id, timestamp_ms FROM dup_auto_pairs
+         WHERE rule_id = ? AND status = ? ORDER BY timestamp_ms DESC LIMIT ?",
+    )?;
+    let limit = limit.map_or(-1, |l| i64::try_from(l).unwrap_or(i64::MAX));
+    let rows = stmt
+        .query_map(params![rule_id, PairStatus::Denied.code(), limit], |r| {
+            Ok(((r.get(0)?, r.get(1)?), r.get::<_, Option<i64>>(2)?))
+        })?
+        .collect::<rusqlite::Result<Vec<(GroupPair, Option<i64>)>>>()?;
+    let mut out = Vec::with_capacity(rows.len());
+    for (pair, when) in rows {
+        let king = |group: i64| -> Result<Option<HashId>> {
+            match u32::try_from(group) {
+                Ok(group) => super::king_of(conn, group),
+                Err(_) => Ok(None),
+            }
+        };
+        if let (Some(a), Some(b)) = (king(pair.0)?, king(pair.1)?) {
+            out.push(DeniedPair {
+                pair,
+                kings: (a, b),
+                timestamp_ms: when.unwrap_or(0),
+            });
+        }
+    }
+    Ok(out)
+}
+
 /// A pair was actioned: it leaves the queue and joins the log.
 pub fn record_actioned(
     conn: &Connection,
