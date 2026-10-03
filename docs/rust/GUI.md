@@ -368,7 +368,9 @@ local import page holding 3 import objects.").
 
 File > import files… opens the reference's "review files to import"
 window, and files dropped on the main window open it with them (dropped
-while it is open, they join its list). It parses the paths given, folders
+while it is open, they join its list); "add files" and "add folder" ask
+the system's file and folder pickers (the desktop portal on Linux), and a
+path can be typed. It parses the paths given, folders
 walked (their subfolders too, if "search subdirectories" is ticked) a
 little at a time as the reference does, and lists them as the reference
 does: #, path, filetype ("png", "PROBLEM: filetype unsupported", "file is

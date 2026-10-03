@@ -131,6 +131,27 @@ pub(crate) fn open(
             }
         }
     });
+    let add_picked = {
+        let review = review.clone();
+        let show = show.clone();
+        move |kind: crate::Pick, title: &str| {
+            let paths = crate::pick(kind, title);
+            if !paths.is_empty() {
+                review
+                    .borrow_mut()
+                    .add_paths(paths.iter().map(|p| p.to_string_lossy().into_owned()));
+                show();
+            }
+        }
+    };
+    window.on_add_files({
+        let add_picked = add_picked.clone();
+        move || add_picked(crate::Pick::Files, "Select the files to add.")
+    });
+    window.on_add_folder({
+        let add_picked = add_picked.clone();
+        move || add_picked(crate::Pick::Folder, "Select a folder to add.")
+    });
     window.on_row_clicked({
         let selection = selection.clone();
         let show = show.clone();

@@ -3001,6 +3001,42 @@ thread_local! {
     static PASTER: RefCell<Option<Rc<dyn Fn() -> String>>> = RefCell::new(None);
 }
 
+/// What the system's picker is asked for.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Pick {
+    /// Files that exist, several.
+    Files,
+    /// One folder.
+    Folder,
+}
+
+/// Something that picks paths in place of the system's picker.
+type Picker = Rc<dyn Fn(Pick, &str) -> Vec<std::path::PathBuf>>;
+
+thread_local! {
+    /// What picks paths in place of the system's picker, if anything.
+    static PICKER: RefCell<Option<Picker>> = RefCell::new(None);
+}
+
+/// Pick paths with `picker` rather than the system's picker (for tests),
+/// on this thread.
+pub fn set_picker(picker: impl Fn(Pick, &str) -> Vec<std::path::PathBuf> + 'static) {
+    PICKER.with(|p| *p.borrow_mut() = Some(Rc::new(picker)));
+}
+
+/// Ask the system's file or folder picker, titled `title`, for paths;
+/// none if cancelled (`FileDialog`, `PickDirectory`).
+pub(crate) fn pick(kind: Pick, title: &str) -> Vec<std::path::PathBuf> {
+    if let Some(picker) = PICKER.with(|p| p.borrow().clone()) {
+        return picker(kind, title);
+    }
+    let dialog = rfd::FileDialog::new().set_title(title);
+    match kind {
+        Pick::Files => dialog.pick_files().unwrap_or_default(),
+        Pick::Folder => dialog.pick_folder().into_iter().collect(),
+    }
+}
+
 /// Read pasted text from `paster` rather than the clipboard (for tests),
 /// on this thread.
 pub fn set_paster(paster: impl Fn() -> String + 'static) {

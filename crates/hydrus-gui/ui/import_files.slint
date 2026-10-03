@@ -80,6 +80,9 @@ export component ReviewImportsWindow inherits Window {
     // a path typed or pasted (as the reference's "add files" and "add
     // folder" pick them)
     callback path-entered(string);
+    // the system's pickers (`FileDialog`, `PickDirectory`)
+    callback add-files();
+    callback add-folder();
     // a click on a row, with ctrl or shift held
     callback row-clicked(int, bool, bool);
     callback remove-files();
@@ -151,6 +154,14 @@ export component ReviewImportsWindow inherits Window {
                         root.path-entered(text);
                         self.text = "";
                     }
+                }
+                Button {
+                    text: "add files";
+                    clicked => { root.add-files(); }
+                }
+                Button {
+                    text: "add folder";
+                    clicked => { root.add-folder(); }
                 }
                 CheckBox {
                     text: "search subdirectories";

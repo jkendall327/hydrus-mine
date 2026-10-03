@@ -1,5 +1,6 @@
 //! file > import files, and files dropped on the window: the "review files
-//! to import" window with the paths given, parsing them as it goes; and
+//! to import" window with the paths given (typed, or from the system's
+//! pickers), parsing them as it goes; and
 //! "import now" opening an import page with its good files, in order, each
 //! with its modified time, and whether to delete them.
 
@@ -299,4 +300,63 @@ fn files_are_imported_with_the_tags_filename_tagging_gives_them() {
     );
     assert!(tags_of(1).contains(&"only this".to_owned()));
     let _ = files;
+}
+
+/// "add files" and "add folder" ask the system's pickers (here, a stand-in
+/// that says what was asked) and parse what they give.
+#[test]
+fn files_and_folders_picked_are_reviewed() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let work = tempfile::tempdir().unwrap();
+    let file = place(work.path(), "bmp_24.bmp");
+    let folder = tempfile::tempdir().unwrap();
+    place(folder.path(), "gif_static.gif");
+    place(folder.path(), "apng_rgba.png");
+    let asked: std::rc::Rc<std::cell::RefCell<Vec<(hydrus_gui::Pick, String)>>> =
+        std::rc::Rc::default();
+    hydrus_gui::set_picker({
+        let asked = asked.clone();
+        let (file, folder) = (file.clone(), folder.path().to_path_buf());
+        move |kind, title| {
+            asked.borrow_mut().push((kind, title.to_owned()));
+            match kind {
+                hydrus_gui::Pick::Files => vec![file.clone().into()],
+                hydrus_gui::Pick::Folder => vec![folder.clone()],
+            }
+        }
+    });
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    menu(&ui, "import files\u{2026}");
+    let window = bound
+        .review_imports
+        .borrow()
+        .as_ref()
+        .map(|(w, _)| w.clone_strong())
+        .unwrap();
+    window.invoke_add_files();
+    parsed(&window);
+    assert_eq!(rows(&window).len(), 1);
+    window.invoke_add_folder();
+    for _ in 0..500 {
+        parsed(&window);
+        if rows(&window).len() == 3 {
+            break;
+        }
+    }
+    assert_eq!(rows(&window).len(), 3);
+    assert_eq!(
+        *asked.borrow(),
+        [
+            (
+                hydrus_gui::Pick::Files,
+                "Select the files to add.".to_owned()
+            ),
+            (
+                hydrus_gui::Pick::Folder,
+                "Select a folder to add.".to_owned()
+            ),
+        ]
+    );
 }
