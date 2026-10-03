@@ -7,10 +7,10 @@
 //! `oracle/record_subscriptions_list.py`.
 
 use hydrus_core::numbers::human_int;
-use hydrus_core::subscriptions::{QueryState, SeedTime, SubscriptionSettings};
-use hydrus_store::queues::StatusCounts;
+use hydrus_core::subscriptions::{CheckerOptions, QueryState, SeedTime, SubscriptionSettings};
+use hydrus_store::queues::{SeedStatus, StatusCounts};
 
-use crate::edit_subscription::LogChange;
+use crate::edit_subscription::{LogChange, RetryIgnored};
 use crate::list_selection::ListSelection;
 use crate::subscriptions_list::{QueryFacts, ShortSummary, SubscriptionFacts, subscription_row};
 
@@ -41,6 +41,80 @@ impl DialogQuery {
             ignored_notes: Vec::new(),
             log_changes: Vec::new(),
         }
+    }
+
+    /// How many of its files have this status.
+    pub fn count(&self, status: SeedStatus) -> usize {
+        self.files.get(&status).copied().unwrap_or(0)
+    }
+
+    /// Move `n` files from one status to another in the counts.
+    fn move_count(&mut self, from: SeedStatus, to: SeedStatus, n: usize) {
+        if n == 0 {
+            return;
+        }
+        let left = self.count(from).saturating_sub(n);
+        if left == 0 {
+            self.files.remove(&from);
+        } else {
+            self.files.insert(from, left);
+        }
+        *self.files.entry(to).or_default() += n;
+    }
+
+    /// Never checked, alive, unpaused, its file log emptied (`Reset`).
+    pub fn reset(&mut self) {
+        let state = &mut self.state;
+        state.last_check_time = 0;
+        state.next_check_time = 0;
+        state.dead = false;
+        state.paused = false;
+        self.files.clear();
+        self.seed_times.clear();
+        self.ignored_notes.clear();
+        self.log_changes.push(LogChange::Reset);
+    }
+
+    /// Its failed files to be tried again, if it has any.
+    pub fn retry_failed(&mut self) {
+        let n = self.count(SeedStatus::Error);
+        if n > 0 {
+            self.move_count(SeedStatus::Error, SeedStatus::Unknown, n);
+            self.log_changes.push(LogChange::RetryFailed);
+        }
+    }
+
+    /// Its ignored files that `which` chooses to be tried again, if it has
+    /// any ignored.
+    pub fn retry_ignored(&mut self, which: RetryIgnored) {
+        if self.count(SeedStatus::Vetoed) == 0 {
+            return;
+        }
+        let before = self.ignored_notes.len();
+        self.ignored_notes.retain(|note| !which.matches(note));
+        let n = before - self.ignored_notes.len();
+        self.move_count(SeedStatus::Vetoed, SeedStatus::Unknown, n);
+        self.log_changes.push(LogChange::RetryIgnored(which));
+    }
+
+    /// Its check times and status reckoned again with these checker
+    /// options (`SyncToQueryLogContainer`): DEAD if files come too slowly
+    /// (and paused, with no files left to get), and when to check next.
+    pub fn sync_to_checker(&mut self, checker: &CheckerOptions, now: i64) {
+        let state = &mut self.state;
+        if state.check_now {
+            state.next_check_time = 0;
+            state.dead = false;
+            return;
+        }
+        if checker.is_dead(&self.seed_times, state.last_check_time) {
+            state.dead = true;
+            if self.files.get(&SeedStatus::Unknown).copied().unwrap_or(0) == 0 {
+                state.paused = true;
+            }
+        }
+        state.next_check_time =
+            checker.next_check_time(&self.seed_times, state.last_check_time, now);
     }
 
     /// When its latest file was found (0 for none).
@@ -160,6 +234,9 @@ pub struct Subscriptions {
     pub subscriptions: Vec<DialogSubscription>,
     /// Those deleted that are in the store.
     pub deleted: Vec<i64>,
+    /// Those in the store gone from the list into others (merged, or
+    /// separated), their queries now the others'.
+    pub absorbed: Vec<i64>,
     /// The list's sort: a column and whether ascending.
     pub sort: (usize, bool),
     pub selection: ListSelection<u64>,
@@ -376,6 +453,273 @@ impl Subscriptions {
             self.selection.forget(*key);
         }
         self.subscriptions.retain(|s| !doomed.contains(&s.key));
+    }
+}
+
+/// What "reset" asks.
+pub const RESET_QUESTION: &str = "Resetting these subscriptions will delete all their remembered urls, meaning when they next run, they will try to download them all over again. This may be expensive in time and data. Only do it if you are willing to wait. Do you want to do it?";
+
+/// What "lowercase" asks.
+pub const LOWERCASE_QUESTION: &str = "This will convert the selected subscriptions' queries to lowercase text. \"My_Query\" will become \"my_query\". Most sites do not care about case, but it can help things stay neat.";
+
+/// What "merge" asks first.
+pub const MERGE_QUESTION: &str = "Are you sure you want to merge the selected subscriptions? This will combine all selected subscriptions that share the same downloader, wrapping all their different queries into one subscription.\n\nThis is a big operation, so if it does not do what you expect, hit cancel afterwards!\n\nPlease note that all other subscription settings settings (like paused status and file limits and tag options) will be merged as well, so double-check your merged subs' settings afterwards.";
+
+/// What "merge" asks of each group: which is primary.
+pub const MERGE_PRIMARY: &str = "select the primary subscription--into which to merge the others";
+
+/// What "merge" says when nothing can merge.
+pub const NOT_MERGEABLE: &str =
+    "Unfortunately, none of those subscriptions appear to be mergeable!";
+
+/// What "separate" asks of more than two queries, and its answers.
+pub const SEPARATE_QUESTION: &str = "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.";
+
+/// What "separate" asks for: the new subscriptions' base name.
+pub const SEPARATE_NAME: &str =
+    "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.";
+
+/// How "separate" breaks a subscription up.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Separate {
+    /// The first half of its queries (by text) into "name (A)", the rest
+    /// staying as "name (B)".
+    Half,
+    /// Each query its own subscription, "base: query".
+    Whole,
+}
+
+impl Separate {
+    /// The answers to [`SEPARATE_QUESTION`] hydrus-rs offers (the
+    /// reference also offers "only extract some of the subscription").
+    pub const CHOICES: [(Self, &'static str); 2] = [
+        (Self::Half, "break it in half"),
+        (Self::Whole, "break it all into single-query subscriptions"),
+    ];
+}
+
+impl Subscriptions {
+    fn selected_mut(&mut self, now: i64) -> Vec<&mut DialogSubscription> {
+        let keys = self.selected(now);
+        self.subscriptions
+            .iter_mut()
+            .filter(|s| keys.contains(&s.key))
+            .collect()
+    }
+
+    fn any_selected_query(&self, now: i64, test: impl Fn(&DialogQuery) -> bool) -> bool {
+        self.selected_subscriptions(now)
+            .iter()
+            .any(|s| s.queries.iter().any(&test))
+    }
+
+    /// A selected query with uppercase in its text.
+    pub fn can_lowercase(&self, now: i64) -> bool {
+        self.any_selected_query(now, |q| {
+            q.state.query_text != q.state.query_text.to_lowercase()
+        })
+    }
+
+    pub fn can_retry_failed(&self, now: i64) -> bool {
+        self.any_selected_query(now, |q| q.count(SeedStatus::Error) > 0)
+    }
+
+    pub fn can_retry_ignored(&self, now: i64) -> bool {
+        self.any_selected_query(now, |q| q.count(SeedStatus::Vetoed) > 0)
+    }
+
+    /// Two selected share a downloader, the empty ones aside
+    /// (`_CanMerge`).
+    pub fn can_merge(&self, now: i64) -> bool {
+        let selected = self.selected_subscriptions(now);
+        let mut downloaders: Vec<&str> = selected
+            .iter()
+            .filter(|s| !s.queries.is_empty())
+            .map(|s| s.settings.gug_name.as_str())
+            .collect();
+        downloaders.sort_unstable();
+        downloaders.dedup();
+        downloaders.len() < selected.len()
+    }
+
+    /// One selected, with more than one query.
+    pub fn can_separate(&self, now: i64) -> bool {
+        match self.selected_subscriptions(now).as_slice() {
+            [one] => one.queries.len() > 1,
+            _ => false,
+        }
+    }
+
+    /// Reset every query of the selected (after [`RESET_QUESTION`]).
+    pub fn reset_selected(&mut self, now: i64) {
+        for s in self.selected_mut(now) {
+            for q in &mut s.queries {
+                q.reset();
+            }
+        }
+    }
+
+    pub fn retry_failed_selected(&mut self, now: i64) {
+        for s in self.selected_mut(now) {
+            for q in &mut s.queries {
+                q.retry_failed();
+            }
+        }
+    }
+
+    pub fn retry_ignored_selected(&mut self, now: i64, which: RetryIgnored) {
+        for s in self.selected_mut(now) {
+            for q in &mut s.queries {
+                q.retry_ignored(which);
+            }
+        }
+    }
+
+    /// Lowercase the selected's queries' texts (after
+    /// [`LOWERCASE_QUESTION`]).
+    pub fn lowercase_selected(&mut self, now: i64) {
+        for s in self.selected_mut(now) {
+            for q in &mut s.queries {
+                q.state.query_text = q.state.query_text.to_lowercase();
+            }
+        }
+    }
+
+    /// The first selected's checker options, which "overwrite checker
+    /// options" starts from.
+    pub fn first_selected_checker(&self, now: i64) -> Option<CheckerOptions> {
+        self.selected_subscriptions(now)
+            .first()
+            .map(|s| s.settings.checker.clone())
+    }
+
+    /// Give the selected these checker options, their queries' check
+    /// times reckoned again where they change.
+    pub fn set_checker_selected(&mut self, now: i64, checker: &CheckerOptions) {
+        for s in self.selected_mut(now) {
+            if s.settings.checker != *checker {
+                s.settings.checker = checker.clone();
+                for q in &mut s.queries {
+                    q.sync_to_checker(checker, now);
+                }
+            }
+        }
+    }
+
+    /// Give the selected this downloader ("overwrite downloader").
+    pub fn set_downloader_selected(&mut self, now: i64, key: &str, name: &str) {
+        for s in self.selected_mut(now) {
+            key.clone_into(&mut s.settings.gug_key);
+            name.clone_into(&mut s.settings.gug_name);
+        }
+    }
+
+    /// Break the one selected up (`Separate`), the new subscriptions
+    /// named from `base` (for [`Separate::Whole`]) and selected; their
+    /// keys.
+    pub fn separate(&mut self, now: i64, how: Separate, base: &str) -> Vec<u64> {
+        let [key] = self.selected(now)[..] else {
+            return Vec::new();
+        };
+        let Some(original) = self.get(key).cloned() else {
+            return Vec::new();
+        };
+        let mut made = Vec::new();
+        match how {
+            Separate::Whole => {
+                self.forget(key);
+                for q in &original.queries {
+                    let name = format!("{base}: {}", q.state.human_name());
+                    let name = self.non_dupe_name(&name, None);
+                    made.push(self.push(None, name, original.settings.clone(), vec![q.clone()]));
+                }
+            }
+            Separate::Half => {
+                // the first half by text; each keeps the order it had, but
+                // the last taken leads the new one, as the reference merges
+                // them into it
+                let mut by_text: Vec<usize> = (0..original.queries.len()).collect();
+                by_text.sort_by_key(|&i| {
+                    hydrus_core::sort::human_sort_key(&original.queries[i].state.query_text)
+                });
+                let taken = &by_text[..original.queries.len() / 2];
+                let (mut queries, rest): (Vec<_>, Vec<_>) = original
+                    .queries
+                    .iter()
+                    .cloned()
+                    .enumerate()
+                    .partition(|(i, _)| taken.contains(i));
+                if let Some(last) = queries.pop() {
+                    queries.insert(0, last);
+                }
+                let queries: Vec<DialogQuery> = queries.into_iter().map(|(_, q)| q).collect();
+                let rest: Vec<DialogQuery> = rest.into_iter().map(|(_, q)| q).collect();
+                // (the original's name not counted as taken)
+                let a = self.non_dupe_name(&format!("{} (A)", original.name), Some(key));
+                made.push(self.push(None, a, original.settings.clone(), queries));
+                let b = self.non_dupe_name(&format!("{} (B)", original.name), Some(key));
+                if let Some(s) = self.get_mut(key) {
+                    s.name = b;
+                    s.queries = rest;
+                }
+                made.push(key);
+            }
+        }
+        self.selection.select_many(&made);
+        made
+    }
+
+    /// Drop a subscription from the list without deleting its queries
+    /// (they live on in others).
+    fn forget(&mut self, key: u64) {
+        if let Some(id) = self.get(key).and_then(|s| s.id) {
+            self.absorbed.push(id);
+        }
+        self.selection.forget(key);
+        self.subscriptions.retain(|s| s.key != key);
+    }
+
+    /// The selected that can merge, in groups sharing a downloader, each
+    /// group by name (`GetMergeable`).
+    pub fn merge_groups(&self, now: i64) -> Vec<Vec<u64>> {
+        let mut groups: Vec<Vec<u64>> = Vec::new();
+        let mut rest = self.selected_subscriptions(now);
+        while let Some(primary) = rest.pop() {
+            let (same, others): (Vec<_>, Vec<_>) = rest
+                .into_iter()
+                .partition(|s| s.settings.gug_name == primary.settings.gug_name);
+            if !same.is_empty() {
+                let mut group: Vec<&DialogSubscription> = vec![primary];
+                group.extend(same);
+                group.sort_by(|a, b| a.name.cmp(&b.name));
+                groups.push(group.iter().map(|s| s.key).collect());
+            }
+            rest = others;
+        }
+        groups
+    }
+
+    /// Merge a group's others into its primary (`Merge`): their queries
+    /// join the primary's, which is renamed `name` (made unique if it
+    /// changed); the others go.
+    pub fn merge(&mut self, primary: u64, group: &[u64], name: &str) {
+        let mut queries = Vec::new();
+        for &key in group.iter().filter(|&&k| k != primary) {
+            if let Some(s) = self.get(key) {
+                queries.extend(s.queries.iter().cloned());
+            }
+            self.forget(key);
+        }
+        let unchanged = self.get(primary).is_some_and(|s| s.name == name);
+        let name = if unchanged {
+            name.to_owned()
+        } else {
+            self.non_dupe_name(name, Some(primary))
+        };
+        if let Some(s) = self.get_mut(primary) {
+            s.queries.extend(queries);
+            s.name = name;
+        }
     }
 }
 

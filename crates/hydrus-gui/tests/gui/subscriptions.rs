@@ -285,3 +285,138 @@ fn the_dialog_lists_the_subscriptions_and_changes_them_on_apply() {
     let dialog = open_dialog(&ui, &bound);
     assert!(dialog.get_globally_paused());
 }
+
+/// The answer at `label` to the question asked.
+fn answer(dialog: &SubscriptionsWindow, label: &str) {
+    let (_, _, choices) = asked(dialog);
+    let i = choices.iter().position(|c| c == label).unwrap();
+    dialog.invoke_chosen(i32::try_from(i).unwrap());
+}
+
+fn select(dialog: &SubscriptionsWindow, names: &[&str]) {
+    let mut first = true;
+    for (r, (cells, _)) in rows(dialog).iter().enumerate() {
+        if names.contains(&cells[0].as_str()) {
+            dialog.invoke_row_clicked(i32::try_from(r).unwrap(), !first, false);
+            first = false;
+        }
+    }
+}
+
+#[test]
+fn merging_separating_and_resetting_are_written_on_apply() {
+    let (_dirs, store) = store();
+    let now = now();
+    store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let settings = SubscriptionSettings {
+                gug_name: "example tag search".into(),
+                ..SubscriptionSettings::default()
+            };
+            let a = subscriptions::create_subscription(conn, "a", &settings)?.unwrap();
+            let mut state = QueryState::new("Red_Hair");
+            state.last_check_time = now - 3600;
+            let red = subscriptions::add_query(conn, a, &state, now)?;
+            let seed = NewFileSeed {
+                seed_type: SeedType::Url,
+                data: "https://booru.example/post/1".into(),
+                data_for_comparison: "https://booru.example/post/1".into(),
+                source_time: None,
+                referral_url: None,
+                meta: FileSeedMeta::default(),
+            };
+            queues::add_file_seeds(conn, red, &[seed], false, now)?;
+            let b = subscriptions::create_subscription(conn, "b", &settings)?.unwrap();
+            subscriptions::add_query(conn, b, &QueryState::new("blue"), now)?;
+            subscriptions::add_query(conn, b, &QueryState::new("green"), now)?;
+            Ok(())
+        })
+        .unwrap();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let dialog = open_dialog(&ui, &bound);
+
+    // merge "a" and "b" into "b", renamed "both"
+    select(&dialog, &["a", "b"]);
+    assert!(dialog.get_can_merge() && !dialog.get_can_separate());
+    assert!(dialog.get_can_lowercase() && dialog.get_can_reset());
+    dialog.invoke_merge();
+    assert!(
+        asked(&dialog)
+            .1
+            .starts_with("Are you sure you want to merge")
+    );
+    answer(&dialog, "yes");
+    let (title, _, choices) = asked(&dialog);
+    assert_eq!(
+        title,
+        "select the primary subscription--into which to merge the others"
+    );
+    assert_eq!(choices, ["a", "b"]);
+    answer(&dialog, "b");
+    let (_, message, _) = asked(&dialog);
+    assert_eq!(
+        message,
+        "b was able to merge 1 other subscriptions. If you wish to change its name, do so here."
+    );
+    assert_eq!(dialog.get_asked_text(), "b");
+    dialog.set_asked_text("both".into());
+    dialog.invoke_chosen(0);
+    assert!(!dialog.get_asking());
+    let shown = rows(&dialog);
+    assert_eq!(shown.len(), 1);
+    assert_eq!(
+        (shown[0].0[0].as_str(), shown[0].0[2].as_str()),
+        ("both", "3 working")
+    );
+
+    // lowercase and reset it
+    select(&dialog, &["both"]);
+    dialog.invoke_lowercase();
+    answer(&dialog, "yes");
+    assert!(!dialog.get_can_lowercase());
+    dialog.invoke_reset();
+    assert!(
+        asked(&dialog)
+            .1
+            .starts_with("Resetting these subscriptions")
+    );
+    answer(&dialog, "yes");
+    assert!(!dialog.get_can_reset());
+
+    // separate it whole, as "x"
+    assert!(dialog.get_can_separate());
+    dialog.invoke_separate();
+    answer(&dialog, "break it all into single-query subscriptions");
+    assert_eq!(dialog.get_asked_text(), "both");
+    dialog.set_asked_text("x".into());
+    dialog.invoke_chosen(0);
+    let names: Vec<String> = rows(&dialog).into_iter().map(|r| r.0[0].clone()).collect();
+    assert_eq!(names, ["x: blue", "x: green", "x: red_hair"]);
+
+    // applied: the queries moved with their histories, emptied by reset
+    dialog.invoke_apply();
+    let written = store.read(subscriptions::subscriptions).unwrap();
+    let names: Vec<&str> = written.iter().map(|s| s.name.as_str()).collect();
+    assert_eq!(names, ["x: blue", "x: green", "x: red_hair"]);
+    let red = store
+        .read(move |c| {
+            let id = subscriptions::find_subscription(c, "x: red_hair")?
+                .unwrap()
+                .id;
+            subscriptions::queries(c, id)
+        })
+        .unwrap();
+    assert_eq!(red.len(), 1);
+    assert_eq!(red[0].state.query_text, "red_hair");
+    assert_eq!(red[0].state.last_check_time, 0);
+    let queue = red[0].queue_id;
+    assert!(
+        store
+            .read(move |c| queues::file_seeds(c, queue))
+            .unwrap()
+            .is_empty()
+    );
+}

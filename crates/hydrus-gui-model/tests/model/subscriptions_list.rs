@@ -16,7 +16,7 @@ use hydrus_gui_model::subscriptions_list::{
 };
 use hydrus_store::queues::{SeedStatus, StatusCounts};
 
-fn status(code: i64) -> SeedStatus {
+pub(crate) fn status(code: i64) -> SeedStatus {
     match code {
         0 => SeedStatus::Unknown,
         1 => SeedStatus::SuccessfulAndNew,
@@ -29,7 +29,7 @@ fn status(code: i64) -> SeedStatus {
     }
 }
 
-fn checker(v: &Json) -> CheckerOptions {
+pub(crate) fn checker(v: &Json) -> CheckerOptions {
     CheckerOptions {
         intended_files_per_check: v[0].as_f64().unwrap(),
         never_faster_than: v[1].as_i64().unwrap(),

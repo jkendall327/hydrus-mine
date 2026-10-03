@@ -549,6 +549,7 @@ pub(crate) fn open(
     });
     window.on_edit_checker({
         let state = state.clone();
+        let change = change.clone();
         let slot = slots.checker.clone();
         let store = store.clone();
         move || {
@@ -556,9 +557,12 @@ pub(crate) fn open(
                 return;
             }
             let current = state.borrow().dialog.settings.checker.clone();
+            // (the queries' check times reckoned again)
             let applied: Rc<dyn Fn(CheckerOptions)> = {
-                let state = state.clone();
-                Rc::new(move |checker| state.borrow_mut().dialog.settings.checker = checker)
+                let change = change.clone();
+                Rc::new(move |checker| {
+                    change(&|open| open.dialog.set_checker(checker.clone(), now()));
+                })
             };
             let advanced = store
                 .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)

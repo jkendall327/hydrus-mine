@@ -1,8 +1,10 @@
 //! The manage subscriptions dialog, bound (network > subscriptions…): the
 //! subscriptions read from the store into a [`Subscriptions`], its list
 //! shown as the reference writes it, its buttons (add and edit, through
-//! the edit subscription dialog; delete, pause/resume, scrub delays, check
-//! queries now, select subscriptions) with the questions they ask, and
+//! the edit subscription dialog; delete, merge, separate, lowercase,
+//! pause/resume, scrub delays, check queries now, retry, reset, select
+//! subscriptions, overwrite downloader and checker options) with the
+//! questions they ask, and
 //! "apply", which writes what changed back to the store (only that, as the
 //! daemon may have run a subscription meanwhile).
 
@@ -17,10 +19,12 @@ use hydrus_core::subscriptions::{QueryState, SubscriptionSettings};
 use hydrus_store::Store;
 use hydrus_store::{queues, subscriptions};
 
-use crate::edit_subscription::{EditSubscription, LogChange};
+use crate::edit_subscription::{EditSubscription, LogChange, RetryIgnored};
 use crate::edit_subscription_window::Slots;
 use crate::subscriptions_dialog::{
-    CheckNow, Choice, DELETE_QUESTION, DialogQuery, SELECT_MESSAGE, Subscriptions,
+    CheckNow, Choice, DELETE_QUESTION, DialogQuery, LOWERCASE_QUESTION, MERGE_PRIMARY,
+    MERGE_QUESTION, NOT_MERGEABLE, RESET_QUESTION, SELECT_MESSAGE, SEPARATE_NAME,
+    SEPARATE_QUESTION, Separate, Subscriptions,
 };
 use crate::subscriptions_list::ShortSummary;
 use crate::{SubscriptionsWindow, TableRow};
@@ -30,11 +34,32 @@ enum Asking {
     Delete,
     Select,
     Check(CheckNow),
-    /// "add"'s downloader, from these: (key, name).
-    Downloader(Vec<(String, String)>),
+    /// A downloader, from these: (key, name), for "add" (a new
+    /// subscription) or "overwrite downloader" (the selected).
+    Downloader {
+        gugs: Vec<(String, String)>,
+        for_add: bool,
+    },
     /// A message with only "ok".
     Message(String),
+    Reset,
+    Lowercase,
+    RetryIgnored,
+    Merge,
+    /// A merge group's primary; the groups after it.
+    MergePrimary(Vec<u64>, Vec<Vec<u64>>),
+    /// A merged subscription's name; the groups after it.
+    MergeName {
+        group: Vec<u64>,
+        primary: u64,
+        rest: Vec<Vec<u64>>,
+    },
+    SeparateHow,
+    SeparateName,
 }
+
+/// What "overwrite downloader" says with no downloaders.
+const NOTHING_TO_SELECT: &str = "Hey, you do not have any downloaders set up in this client, so there is nothing to select!\n\nCheck the _network->downloaders_ menu to find downloaders made by users.";
 
 /// What "add" says with no downloaders (`SelectGUGKeyAndName`).
 const NO_DOWNLOADERS: &str = "Hey, you do not have any downloaders set up in this client, so you cannot create a new subscription yet!\n\nCheck the _network->downloaders_ menu to find downloaders made by users.";
@@ -54,6 +79,8 @@ struct Open {
     read: HashMap<i64, AsRead>,
     short: ShortSummary,
     asking: Option<Asking>,
+    /// The text the question's text box starts with, when it is asked.
+    text: RefCell<Option<String>>,
 }
 
 /// Change the dialog's state, and show it again.
@@ -104,64 +131,102 @@ fn read(store: &Store) -> hydrus_store::Result<Open> {
                 deleted: naming.short_summary_deleted,
             },
             asking: None,
+            text: RefCell::new(None),
         })
     })
+}
+
+/// A query as "apply" writes it: its queue if it has one, its state, and
+/// the changes to its file log.
+struct QueryWrite {
+    queue: Option<i64>,
+    state: QueryState,
+    logs: Vec<LogChange>,
 }
 
 /// A change "apply" writes.
 enum Write {
     Delete(i64),
-    /// A new subscription, with its queries' states.
-    Create(String, Box<SubscriptionSettings>, Vec<QueryState>),
+    /// A new subscription, with its queries (some perhaps another's
+    /// until now).
+    Create(String, Box<SubscriptionSettings>, Vec<QueryWrite>),
     Rename(i64, String),
     Settings(i64, Box<SubscriptionSettings>),
     Query(i64, QueryState),
     AddQuery(i64, QueryState),
+    /// A query moved to this subscription.
+    Move(i64, i64),
     RemoveQuery(i64),
     /// A query's file log changed.
     Log(i64, LogChange),
 }
 
-/// What the dialog changed: deleted subscriptions, and changed names,
-/// settings and query states.
+/// What the dialog changed: deleted subscriptions, new ones, changed
+/// names, settings and query states, queries moved between subscriptions
+/// (merged or separated), and those emptied by it. In an order the
+/// store's unique names allow: deletions, new subscriptions, queries,
+/// those emptied, then names and settings.
 fn changes(open: &Open) -> Vec<Write> {
+    let owners: HashMap<i64, i64> = open
+        .read
+        .iter()
+        .flat_map(|(&id, read)| {
+            read.queries
+                .iter()
+                .filter_map(move |(q, _)| q.map(|q| (q, id)))
+        })
+        .collect();
     let mut writes: Vec<Write> = open
         .dialog
         .deleted
         .iter()
         .map(|&id| Write::Delete(id))
         .collect();
+    let mut names = Vec::new();
     for s in &open.dialog.subscriptions {
         let Some(id) = s.id else {
             writes.push(Write::Create(
                 s.name.clone(),
                 Box::new(s.settings.clone()),
-                s.queries.iter().map(|q| q.state.clone()).collect(),
+                s.queries
+                    .iter()
+                    .map(|q| QueryWrite {
+                        queue: q.queue,
+                        state: q.state.clone(),
+                        logs: q.log_changes.clone(),
+                    })
+                    .collect(),
             ));
             continue;
         };
         writes.extend(s.deleted_queries.iter().map(|&q| Write::RemoveQuery(q)));
-        let Some(read) = open.read.get(&id) else {
-            continue;
-        };
-        if s.name != read.name {
-            writes.push(Write::Rename(id, s.name.clone()));
+        let read = open.read.get(&id);
+        if read.is_some_and(|r| s.name != r.name) {
+            names.push(Write::Rename(id, s.name.clone()));
         }
-        if s.settings != read.settings {
-            writes.push(Write::Settings(id, Box::new(s.settings.clone())));
+        if read.is_none_or(|r| s.settings != r.settings) {
+            names.push(Write::Settings(id, Box::new(s.settings.clone())));
         }
         for q in &s.queries {
             let Some(queue) = q.queue else {
                 writes.push(Write::AddQuery(id, q.state.clone()));
                 continue;
             };
+            if owners.get(&queue) != Some(&id) {
+                writes.push(Write::Move(queue, id));
+            }
             writes.extend(q.log_changes.iter().map(|&c| Write::Log(queue, c)));
-            let before = read.queries.iter().find(|(qq, _)| *qq == Some(queue));
+            let before = owners
+                .get(&queue)
+                .and_then(|owner| open.read.get(owner))
+                .and_then(|r| r.queries.iter().find(|(qq, _)| *qq == Some(queue)));
             if before.is_none_or(|(_, state)| state != &q.state) {
                 writes.push(Write::Query(queue, q.state.clone()));
             }
         }
     }
+    writes.extend(open.dialog.absorbed.iter().map(|&id| Write::Delete(id)));
+    writes.extend(names);
     writes
 }
 
@@ -203,12 +268,23 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
             match change {
                 Write::Delete(id) => subscriptions::delete_subscription(conn, *id)?,
                 Write::Create(name, settings, queries) => {
-                    if let Some(id) = subscriptions::create_subscription(conn, name, settings)? {
-                        for q in queries {
-                            subscriptions::add_query(conn, id, q, now)?;
+                    let Some(id) = subscriptions::create_subscription(conn, name, settings)? else {
+                        eprintln!("could not add the subscription {name:?}: the name is taken");
+                        continue;
+                    };
+                    for q in queries {
+                        let Some(queue) = q.queue else {
+                            subscriptions::add_query(conn, id, &q.state, now)?;
+                            continue;
+                        };
+                        subscriptions::move_query(conn, queue, id)?;
+                        subscriptions::set_query_state(conn, queue, &q.state)?;
+                        for &change in &q.logs {
+                            change_log(conn, queue, change, now)?;
                         }
                     }
                 }
+                Write::Move(queue, id) => subscriptions::move_query(conn, *queue, *id)?,
                 Write::AddQuery(id, state) => {
                     subscriptions::add_query(conn, *id, state, now)?;
                 }
@@ -225,6 +301,39 @@ fn write(store: &Store, writes: Vec<Write>) -> hydrus_store::Result<()> {
         }
         Ok(())
     })
+}
+
+/// Ask "separate"'s new subscriptions' base name, starting from the
+/// selected's name.
+fn ask_separate_name(open: &mut Open) {
+    let name = open
+        .dialog
+        .selection
+        .one()
+        .and_then(|k| open.dialog.get(k))
+        .map(|s| s.name.clone());
+    *open.text.borrow_mut() = name;
+    open.asking = Some(Asking::SeparateName);
+}
+
+/// Merge a group into its primary, named `name` (or its own name), and
+/// ask about the next group, if there is one.
+fn merge_named(
+    open: &mut Open,
+    group: &[u64],
+    primary: u64,
+    mut rest: Vec<Vec<u64>>,
+    name: Option<&str>,
+) {
+    let name = name
+        .map(str::to_owned)
+        .or_else(|| open.dialog.get(primary).map(|s| s.name.clone()))
+        .unwrap_or_default();
+    open.dialog.merge(primary, group, &name);
+    if !rest.is_empty() {
+        let next = rest.remove(0);
+        open.asking = Some(Asking::MergePrimary(next, rest));
+    }
 }
 
 /// Show the dialog's list, buttons and question.
@@ -249,8 +358,84 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
     window.set_one_selected(dialog.selection.one().is_some());
     window.set_can_check_now(dialog.can_check_now(now));
     window.set_can_scrub_delays(dialog.can_scrub_delays(now));
+    window.set_can_merge(dialog.can_merge(now));
+    window.set_can_separate(dialog.can_separate(now));
+    window.set_can_lowercase(dialog.can_lowercase(now));
+    window.set_can_reset(dialog.can_reset(now));
+    window.set_can_retry_failed(dialog.can_retry_failed(now));
+    window.set_can_retry_ignored(dialog.can_retry_ignored(now));
+    let yes_no = |message: &str| {
+        Some((
+            Choice {
+                title: "Are you sure?".into(),
+                message: message.into(),
+                choices: vec!["yes".into(), "no".into()],
+            },
+            false,
+        ))
+    };
+    let names = |keys: &[u64]| -> Vec<String> {
+        keys.iter()
+            .filter_map(|&k| dialog.get(k).map(|s| s.name.clone()))
+            .collect()
+    };
     let question = match &open.asking {
-        None => None,
+        Some(Asking::Reset) => yes_no(RESET_QUESTION),
+        Some(Asking::Lowercase) => yes_no(LOWERCASE_QUESTION),
+        Some(Asking::Merge) => yes_no(MERGE_QUESTION),
+        Some(Asking::RetryIgnored) => Some((
+            Choice {
+                title: RetryIgnored::TITLE.into(),
+                message: String::new(),
+                choices: RetryIgnored::CHOICES
+                    .iter()
+                    .map(|c| c.1.to_owned())
+                    .collect(),
+            },
+            false,
+        )),
+        Some(Asking::MergePrimary(group, _)) => Some((
+            Choice {
+                title: MERGE_PRIMARY.into(),
+                message: String::new(),
+                choices: names(group),
+            },
+            false,
+        )),
+        Some(Asking::MergeName { group, primary, .. }) => Some((
+            Choice {
+                title: "Enter text".into(),
+                message: format!(
+                    "{} was able to merge {} other subscriptions. If you wish to change its name, do so here.",
+                    dialog
+                        .get(*primary)
+                        .map(|s| s.name.as_str())
+                        .unwrap_or_default(),
+                    hydrus_core::numbers::human_int(group.len().saturating_sub(1) as u64)
+                ),
+                choices: vec!["ok".into()],
+            },
+            true,
+        )),
+        Some(Asking::SeparateHow) => Some((
+            Choice {
+                title: "Are you sure?".into(),
+                message: SEPARATE_QUESTION.into(),
+                choices: Separate::CHOICES.iter().map(|c| c.1.to_owned()).collect(),
+            },
+            false,
+        )),
+        Some(Asking::SeparateName) => Some((
+            Choice {
+                title: "Enter text".into(),
+                message: SEPARATE_NAME.into(),
+                choices: vec!["ok".into()],
+            },
+            true,
+        )),
+        _ => None,
+    };
+    let question = question.or_else(|| match &open.asking {
         Some(Asking::Delete) => Some((
             Choice {
                 title: "Are you sure?".into(),
@@ -268,7 +453,7 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             true,
         )),
         Some(Asking::Check(check)) => check.question(dialog).map(|c| (c, false)),
-        Some(Asking::Downloader(gugs)) => Some((
+        Some(Asking::Downloader { gugs, .. }) => Some((
             Choice {
                 title: "select gallery".into(),
                 message: String::new(),
@@ -284,7 +469,11 @@ fn show(window: &SubscriptionsWindow, open: &Open) {
             },
             false,
         )),
-    };
+        _ => None,
+    });
+    if let Some(text) = open.text.borrow_mut().take() {
+        window.set_asked_text(text.into());
+    }
     window.set_asking(question.is_some());
     if let Some((choice, wants_text)) = question {
         window.set_asking_title(choice.title.into());
@@ -432,7 +621,10 @@ pub(crate) fn open(
                 open.asking = Some(if gugs.is_empty() {
                     Asking::Message(NO_DOWNLOADERS.into())
                 } else {
-                    Asking::Downloader(gugs.iter().map(|g| (g.0.clone(), g.1.clone())).collect())
+                    Asking::Downloader {
+                        gugs: gugs.iter().map(|g| (g.0.clone(), g.1.clone())).collect(),
+                        for_add: true,
+                    }
                 });
             });
         }
@@ -488,8 +680,64 @@ pub(crate) fn open(
                 .unwrap_or_default();
             let new_sub = RefCell::new(None);
             change(&|open| match open.asking.take() {
-                Some(Asking::Downloader(gugs)) => {
-                    *new_sub.borrow_mut() = gugs.get(index).cloned();
+                Some(Asking::Downloader { gugs, for_add }) => {
+                    if for_add {
+                        *new_sub.borrow_mut() = gugs.get(index).cloned();
+                    } else if let Some((key, name)) = gugs.get(index) {
+                        open.dialog.set_downloader_selected(now(), key, name);
+                    }
+                }
+                Some(Asking::Reset) => {
+                    if index == 0 {
+                        open.dialog.reset_selected(now());
+                    }
+                }
+                Some(Asking::Lowercase) => {
+                    if index == 0 {
+                        open.dialog.lowercase_selected(now());
+                    }
+                }
+                Some(Asking::RetryIgnored) => {
+                    if let Some((which, _)) = RetryIgnored::CHOICES.get(index) {
+                        open.dialog.retry_ignored_selected(now(), *which);
+                    }
+                }
+                Some(Asking::Merge) => {
+                    if index == 0 {
+                        let mut groups = open.dialog.merge_groups(now());
+                        if groups.is_empty() {
+                            open.asking = Some(Asking::Message(NOT_MERGEABLE.into()));
+                        } else {
+                            let group = groups.remove(0);
+                            open.asking = Some(Asking::MergePrimary(group, groups));
+                        }
+                    }
+                }
+                Some(Asking::MergePrimary(group, rest)) => {
+                    if let Some(&primary) = group.get(index) {
+                        let name = open.dialog.get(primary).map(|s| s.name.clone());
+                        *open.text.borrow_mut() = name;
+                        open.asking = Some(Asking::MergeName {
+                            group,
+                            primary,
+                            rest,
+                        });
+                    }
+                }
+                Some(Asking::MergeName {
+                    group,
+                    primary,
+                    rest,
+                }) => merge_named(open, &group, primary, rest, Some(&text)),
+                Some(Asking::SeparateHow) => match Separate::CHOICES.get(index) {
+                    Some((Separate::Half, _)) => {
+                        open.dialog.separate(now(), Separate::Half, "");
+                    }
+                    Some((Separate::Whole, _)) => ask_separate_name(open),
+                    None => {}
+                },
+                Some(Asking::SeparateName) => {
+                    open.dialog.separate(now(), Separate::Whole, &text);
                 }
                 Some(Asking::Delete) => {
                     if index == 0 {
@@ -530,7 +778,105 @@ pub(crate) fn open(
     });
     window.on_cancelled({
         let change = change.clone();
-        move || change(&|open| open.asking = None)
+        move || {
+            change(&|open| {
+                // (a merged subscription's name cancelled keeps its name,
+                // as the reference's)
+                if let Some(Asking::MergeName {
+                    group,
+                    primary,
+                    rest,
+                }) = open.asking.take()
+                {
+                    merge_named(open, &group, primary, rest, None);
+                }
+            });
+        }
+    });
+    window.on_reset({
+        let change = change.clone();
+        move || change(&|open| open.asking = Some(Asking::Reset))
+    });
+    window.on_lowercase({
+        let change = change.clone();
+        move || change(&|open| open.asking = Some(Asking::Lowercase))
+    });
+    window.on_retry_ignored({
+        let change = change.clone();
+        move || change(&|open| open.asking = Some(Asking::RetryIgnored))
+    });
+    window.on_retry_failed({
+        let change = change.clone();
+        move || change(&|open| open.dialog.retry_failed_selected(now()))
+    });
+    window.on_merge({
+        let change = change.clone();
+        move || change(&|open| open.asking = Some(Asking::Merge))
+    });
+    window.on_separate({
+        let change = change.clone();
+        move || {
+            change(&|open| {
+                let queries = open
+                    .dialog
+                    .selection
+                    .one()
+                    .and_then(|k| open.dialog.get(k))
+                    .map_or(0, |s| s.queries.len());
+                if queries > 2 {
+                    open.asking = Some(Asking::SeparateHow);
+                } else if queries == 2 {
+                    ask_separate_name(open);
+                }
+            });
+        }
+    });
+    window.on_overwrite_downloader({
+        let change = change.clone();
+        let store = store.clone();
+        move || {
+            let gugs = store
+                .read(hydrus_store::settings::get::<hydrus_parse::Downloaders>)
+                .map(|d| crate::gallery::offered_gugs(&d.gugs))
+                .unwrap_or_default();
+            change(&|open| {
+                open.asking = Some(if gugs.is_empty() {
+                    Asking::Message(NOTHING_TO_SELECT.into())
+                } else {
+                    Asking::Downloader {
+                        gugs: gugs.iter().map(|g| (g.0.clone(), g.1.clone())).collect(),
+                        for_add: false,
+                    }
+                });
+            });
+        }
+    });
+    window.on_overwrite_checker({
+        let change = change.clone();
+        let state = state.clone();
+        let store = store.clone();
+        let slot = edit_slots.checker.clone();
+        move || {
+            if slot.borrow().is_some() {
+                return;
+            }
+            let Some(current) = state.borrow().dialog.first_selected_checker(now()) else {
+                return;
+            };
+            let applied: Rc<dyn Fn(hydrus_core::subscriptions::CheckerOptions)> = {
+                let change = change.clone();
+                Rc::new(move |checker| {
+                    change(&|open| open.dialog.set_checker_selected(now(), &checker));
+                })
+            };
+            let advanced = store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                .is_ok_and(|a| a.0);
+            match crate::checker_options_window::open(&current, advanced, &slot, &applied) {
+                Ok(window) => *slot.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the checker options: {e}"),
+            }
+        }
     });
     window.on_apply({
         let state = state.clone();

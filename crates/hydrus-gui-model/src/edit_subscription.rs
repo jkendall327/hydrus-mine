@@ -99,24 +99,6 @@ impl EditQuery {
             self.query.state.display_name.as_deref(),
         )
     }
-
-    fn count(&self, status: SeedStatus) -> usize {
-        self.query.files.get(&status).copied().unwrap_or(0)
-    }
-
-    /// Move `n` files from one status to another in the shown counts.
-    fn move_count(&mut self, from: SeedStatus, to: SeedStatus, n: usize) {
-        if n == 0 {
-            return;
-        }
-        let left = self.count(from).saturating_sub(n);
-        if left == 0 {
-            self.query.files.remove(&from);
-        } else {
-            self.query.files.insert(from, left);
-        }
-        *self.query.files.entry(to).or_default() += n;
-    }
 }
 
 /// What pasting queries found, and what it asks.
@@ -315,13 +297,13 @@ impl EditSubscription {
     pub fn can_retry_failed(&self, now: i64) -> bool {
         self.selected_queries(now)
             .iter()
-            .any(|q| q.count(SeedStatus::Error) > 0)
+            .any(|q| q.query.count(SeedStatus::Error) > 0)
     }
 
     pub fn can_retry_ignored(&self, now: i64) -> bool {
         self.selected_queries(now)
             .iter()
-            .any(|q| q.count(SeedStatus::Vetoed) > 0)
+            .any(|q| q.query.count(SeedStatus::Vetoed) > 0)
     }
 
     /// The query texts, lowercased (not casefolded, as the reference),
@@ -563,15 +545,7 @@ impl EditSubscription {
     pub fn reset_selected(&mut self, now: i64) {
         for key in self.selected(now) {
             if let Some(q) = self.get_mut(key) {
-                let state = &mut q.query.state;
-                state.last_check_time = 0;
-                state.next_check_time = 0;
-                state.dead = false;
-                state.paused = false;
-                q.query.files.clear();
-                q.query.seed_times.clear();
-                q.query.ignored_notes.clear();
-                q.query.log_changes.push(LogChange::Reset);
+                q.query.reset();
             }
         }
     }
@@ -580,11 +554,7 @@ impl EditSubscription {
     pub fn retry_failed(&mut self, now: i64) {
         for key in self.selected(now) {
             if let Some(q) = self.get_mut(key) {
-                let n = q.count(SeedStatus::Error);
-                if n > 0 {
-                    q.move_count(SeedStatus::Error, SeedStatus::Unknown, n);
-                    q.query.log_changes.push(LogChange::RetryFailed);
-                }
+                q.query.retry_failed();
             }
         }
         self.settings.no_work_until = 0;
@@ -595,18 +565,19 @@ impl EditSubscription {
     pub fn retry_ignored(&mut self, now: i64, which: RetryIgnored) {
         for key in self.selected(now) {
             if let Some(q) = self.get_mut(key) {
-                if q.count(SeedStatus::Vetoed) == 0 {
-                    continue;
-                }
-                let notes = &mut q.query.ignored_notes;
-                let before = notes.len();
-                notes.retain(|note| !which.matches(note));
-                let n = before - notes.len();
-                q.move_count(SeedStatus::Vetoed, SeedStatus::Unknown, n);
-                q.query.log_changes.push(LogChange::RetryIgnored(which));
+                q.query.retry_ignored(which);
             }
         }
         self.settings.no_work_until = 0;
+    }
+
+    /// New checker options, its queries' check times reckoned again
+    /// (`_CheckerOptionsUpdated`).
+    pub fn set_checker(&mut self, checker: hydrus_core::subscriptions::CheckerOptions, now: i64) {
+        for q in &mut self.queries {
+            q.query.sync_to_checker(&checker, now);
+        }
+        self.settings.checker = checker;
     }
 }
 

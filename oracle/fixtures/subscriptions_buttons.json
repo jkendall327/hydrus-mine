@@ -1,0 +1,3002 @@
+{
+ "now": 1700000000,
+ "extra": [
+  {
+   "name": "Mixed Case",
+   "gug": "example tag search",
+   "checker": [
+    4,
+    86400,
+    7776000,
+    [
+     1,
+     15552000
+    ]
+   ],
+   "paused": false,
+   "delay": null,
+   "queries": [
+    {
+     "text": "Blue_Sky",
+     "display": null,
+     "seeds": [
+      [
+       1,
+       86400,
+       90000
+      ],
+      [
+       1,
+       172800,
+       176400
+      ]
+     ],
+     "last_check": 86400,
+     "check_now": false,
+     "paused": false
+    },
+    {
+     "text": "green",
+     "display": "Greens",
+     "seeds": [
+      [
+       4,
+       172800,
+       176400
+      ],
+      [
+       7,
+       259200,
+       262800
+      ]
+     ],
+     "last_check": 172800,
+     "check_now": false,
+     "paused": false
+    }
+   ]
+  }
+ ],
+ "start": {
+  "do": "start",
+  "rows": [],
+  "asked": [],
+  "selected": [],
+  "can": {
+   "lowercase": false,
+   "merge": false,
+   "separate": false,
+   "reset": false,
+   "retry_failed": false,
+   "retry_ignored": false
+  },
+  "subscriptions": [
+   {
+    "name": "Empty sub",
+    "gug": "example tag search",
+    "paused": false,
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "queries": []
+   },
+   {
+    "name": "Mixed Case",
+    "gug": "example tag search",
+    "paused": false,
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "queries": [
+     {
+      "text": "Blue_Sky",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699913600,
+      "next_check_time": 1700093600,
+      "files": {
+       "1": 2
+      }
+     },
+     {
+      "text": "green",
+      "display": "Greens",
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699827200,
+      "next_check_time": 1700007200,
+      "files": {
+       "4": 1,
+       "7": 1
+      }
+     }
+    ]
+   },
+   {
+    "name": "artist one",
+    "gug": "example tag search",
+    "paused": false,
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "queries": [
+     {
+      "text": "blue_eyes",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699996400,
+      "next_check_time": 1700441768,
+      "files": {
+       "1": 10,
+       "2": 2,
+       "7": 1,
+       "4": 1
+      }
+     },
+     {
+      "text": "red_hair",
+      "display": "reds",
+      "paused": true,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699827200,
+      "next_check_time": 1701212480,
+      "files": {
+       "1": 3,
+       "0": 2
+      }
+     },
+     {
+      "text": "quiet artist",
+      "display": null,
+      "paused": true,
+      "check_now": false,
+      "dead": true,
+      "last_check_time": 1699740800,
+      "next_check_time": 1707516800,
+      "files": {
+       "1": 2
+      }
+     },
+     {
+      "text": "brand new",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 0,
+      "next_check_time": 0,
+      "files": {}
+     }
+    ]
+   },
+   {
+    "name": "no downloader",
+    "gug": "",
+    "paused": false,
+    "checker": [
+     4,
+     86400,
+     7776000,
+     [
+      1,
+      15552000
+     ]
+    ],
+    "queries": [
+     {
+      "text": "lonely",
+      "display": null,
+      "paused": true,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699136000,
+      "next_check_time": 1699222400,
+      "files": {
+       "1": 1
+      }
+     }
+    ]
+   },
+   {
+    "name": "paused and delayed",
+    "gug": "other search",
+    "paused": true,
+    "checker": [
+     4,
+     43200,
+     604800,
+     [
+      1,
+      7776000
+     ]
+    ],
+    "queries": [
+     {
+      "text": "green",
+      "display": null,
+      "paused": false,
+      "check_now": true,
+      "dead": false,
+      "last_check_time": 1699928000,
+      "next_check_time": 0,
+      "files": {
+       "1": 4,
+       "8": 3
+      }
+     },
+     {
+      "text": "yellow",
+      "display": null,
+      "paused": false,
+      "check_now": false,
+      "dead": false,
+      "last_check_time": 1699827200,
+      "next_check_time": 1699870400,
+      "files": {
+       "3": 1
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "actions": [
+  {
+   "do": "retry ignored",
+   "rows": [
+    "artist one",
+    "Mixed Case"
+   ],
+   "asked": [
+    {
+     "kind": "choice",
+     "title": "select what to retry",
+     "message": "",
+     "choices": [
+      "retry all",
+      "retry 403s",
+      "retry 404s",
+      "retry blacklisted"
+     ],
+     "answer": 0
+    }
+   ],
+   "selected": [
+    "Mixed Case",
+    "artist one"
+   ],
+   "can": {
+    "lowercase": true,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": true,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "Blue_Sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700441768,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 1,
+        "4": 1
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1701212480,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1707516800,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699222400,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 1699928000,
+       "next_check_time": 0,
+       "files": {
+        "1": 4,
+        "8": 3
+       }
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1699870400,
+       "files": {
+        "3": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "retry failed",
+   "rows": [
+    "artist one",
+    "paused and delayed"
+   ],
+   "asked": [],
+   "selected": [
+    "artist one",
+    "paused and delayed"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "Blue_Sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700441768,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1701212480,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1707516800,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699222400,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 1699928000,
+       "next_check_time": 0,
+       "files": {
+        "1": 4,
+        "8": 3
+       }
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1699870400,
+       "files": {
+        "3": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "reset",
+   "rows": [
+    "artist one"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Resetting these subscriptions will delete all their remembered urls, meaning when they next run, they will try to download them all over again. This may be expensive in time and data. Only do it if you are willing to wait. Do you want to do it?",
+     "answer": false
+    }
+   ],
+   "selected": [
+    "artist one"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": true,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "Blue_Sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700441768,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1701212480,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1707516800,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699222400,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 1699928000,
+       "next_check_time": 0,
+       "files": {
+        "1": 4,
+        "8": 3
+       }
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1699870400,
+       "files": {
+        "3": 1
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "reset",
+   "rows": [
+    "paused and delayed"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Resetting these subscriptions will delete all their remembered urls, meaning when they next run, they will try to download them all over again. This may be expensive in time and data. Only do it if you are willing to wait. Do you want to do it?",
+     "answer": true
+    }
+   ],
+   "selected": [
+    "paused and delayed"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": true,
+    "reset": false,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "Blue_Sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700441768,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1701212480,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1707516800,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699222400,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "lowercase",
+   "rows": [
+    "Mixed Case",
+    "artist one"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "This will convert the selected subscriptions' queries to lowercase text. \"My_Query\" will become \"my_query\". Most sites do not care about case, but it can help things stay neat.",
+     "answer": true
+    }
+   ],
+   "selected": [
+    "Mixed Case",
+    "artist one"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": true,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700441768,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1701212480,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1707516800,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699222400,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "overwrite checker options",
+   "rows": [
+    "artist one",
+    "no downloader"
+   ],
+   "asked": [
+    {
+     "kind": "checker options",
+     "answer": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ]
+    }
+   ],
+   "selected": [
+    "artist one",
+    "no downloader"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "overwrite downloader",
+   "rows": [
+    "no downloader",
+    "Mixed Case"
+   ],
+   "asked": [
+    {
+     "kind": "downloader",
+     "current": "example tag search",
+     "answer": "other search"
+    }
+   ],
+   "selected": [
+    "Mixed Case",
+    "no downloader"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": true,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "artist one",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      },
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "artist one"
+   ],
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.",
+     "yeses": [
+      "break it in half",
+      "break it all into single-query subscriptions",
+      "only extract some of the subscription"
+     ],
+     "no": "forget it",
+     "answer": 1
+    },
+    {
+     "kind": "text",
+     "message": "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.",
+     "default": "artist one",
+     "answer": "split"
+    }
+   ],
+   "selected": [
+    "split: blue_eyes",
+    "split: brand new",
+    "split: quiet artist",
+    "split: reds"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Empty sub",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": []
+    },
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "split: blue_eyes",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: brand new",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: reds",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "merge",
+   "rows": [
+    "split: blue_eyes",
+    "split: reds",
+    "split: brand new",
+    "Empty sub"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to merge the selected subscriptions? This will combine all selected subscriptions that share the same downloader, wrapping all their different queries into one subscription.\n\nThis is a big operation, so if it does not do what you expect, hit cancel afterwards!\n\nPlease note that all other subscription settings settings (like paused status and file limits and tag options) will be merged as well, so double-check your merged subs' settings afterwards.",
+     "answer": true
+    },
+    {
+     "kind": "list",
+     "title": "select the primary subscription--into which to merge the others",
+     "choices": [
+      "Empty sub",
+      "split: blue_eyes",
+      "split: brand new",
+      "split: reds"
+     ],
+     "answer": 1
+    },
+    {
+     "kind": "text",
+     "message": "split: blue_eyes was able to merge 3 other subscriptions. If you wish to change its name, do so here.",
+     "default": "split: blue_eyes",
+     "answer": "merged"
+    }
+   ],
+   "selected": [],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": false,
+    "reset": false,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      },
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "merged"
+   ],
+   "asked": [
+    {
+     "kind": "yes/yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to separate the selected subscriptions? Separating breaks merged subscriptions apart into smaller pieces.",
+     "yeses": [
+      "break it in half",
+      "break it all into single-query subscriptions",
+      "only extract some of the subscription"
+     ],
+     "no": "forget it",
+     "answer": 0
+    }
+   ],
+   "selected": [
+    "merged (A)",
+    "merged (B)"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": true,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "paused and delayed",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "separate",
+   "rows": [
+    "paused and delayed"
+   ],
+   "asked": [
+    {
+     "kind": "text",
+     "message": "Please enter the base name for the new subscriptions. They will be named '[NAME]: query'.",
+     "default": "paused and delayed",
+     "answer": "pd"
+    }
+   ],
+   "selected": [
+    "pd: green",
+    "pd: yellow"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": true,
+    "separate": false,
+    "reset": false,
+    "retry_failed": false,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "pd: green",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "pd: yellow",
+     "gug": "other search",
+     "paused": true,
+     "checker": [
+      4,
+      43200,
+      604800,
+      [
+       1,
+       7776000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "do": "merge",
+   "rows": [
+    "pd: green",
+    "pd: yellow",
+    "Mixed Case"
+   ],
+   "asked": [
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "Are you sure you want to merge the selected subscriptions? This will combine all selected subscriptions that share the same downloader, wrapping all their different queries into one subscription.\n\nThis is a big operation, so if it does not do what you expect, hit cancel afterwards!\n\nPlease note that all other subscription settings settings (like paused status and file limits and tag options) will be merged as well, so double-check your merged subs' settings afterwards.",
+     "answer": true
+    },
+    {
+     "kind": "list",
+     "title": "select the primary subscription--into which to merge the others",
+     "choices": [
+      "Mixed Case",
+      "pd: green",
+      "pd: yellow"
+     ],
+     "answer": 0
+    },
+    {
+     "kind": "text",
+     "message": "Mixed Case was able to merge 2 other subscriptions. If you wish to change its name, do so here.",
+     "default": "Mixed Case",
+     "answer": null
+    }
+   ],
+   "selected": [
+    "Mixed Case"
+   ],
+   "can": {
+    "lowercase": false,
+    "merge": false,
+    "separate": true,
+    "reset": true,
+    "retry_failed": true,
+    "retry_ignored": false
+   },
+   "subscriptions": [
+    {
+     "name": "Mixed Case",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      4,
+      86400,
+      7776000,
+      [
+       1,
+       15552000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_sky",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699913600,
+       "next_check_time": 1700093600,
+       "files": {
+        "1": 2
+       }
+      },
+      {
+       "text": "green",
+       "display": "Greens",
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700007200,
+       "files": {
+        "4": 1,
+        "0": 1
+       }
+      },
+      {
+       "text": "green",
+       "display": null,
+       "paused": false,
+       "check_now": true,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "yellow",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      }
+     ]
+    },
+    {
+     "name": "merged (A)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "blue_eyes",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699996400,
+       "next_check_time": 1700219084,
+       "files": {
+        "1": 10,
+        "2": 2,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "merged (B)",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "brand new",
+       "display": null,
+       "paused": false,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 0,
+       "next_check_time": 0,
+       "files": {}
+      },
+      {
+       "text": "red_hair",
+       "display": "reds",
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699827200,
+       "next_check_time": 1700086400,
+       "files": {
+        "1": 3,
+        "0": 2
+       }
+      }
+     ]
+    },
+    {
+     "name": "no downloader",
+     "gug": "other search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "lonely",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": false,
+       "last_check_time": 1699136000,
+       "next_check_time": 1699157600,
+       "files": {
+        "1": 1
+       }
+      }
+     ]
+    },
+    {
+     "name": "split: quiet artist",
+     "gug": "example tag search",
+     "paused": false,
+     "checker": [
+      2,
+      21600,
+      259200,
+      [
+       1,
+       2592000
+      ]
+     ],
+     "queries": [
+      {
+       "text": "quiet artist",
+       "display": null,
+       "paused": true,
+       "check_now": false,
+       "dead": true,
+       "last_check_time": 1699740800,
+       "next_check_time": 1700000000,
+       "files": {
+        "1": 2
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -53,17 +53,17 @@ and are tested against the reference. The work is the GUI over them.
   `tests/model/edit_subscription.rs`, and `tests/gui/edit_subscription.rs`.
   Its import options button and the query editor's additional tags wait
   on an import options editor.
+- The list's other buttons (merge, separate, lowercase, retry, reset,
+  overwrite downloader and checker options), recorded by
+  `oracle/record_subscriptions_buttons.py` and tested in
+  `tests/model/subscriptions_buttons.rs`.
 
 **Next**:
 
-1. The rest of the list's buttons:
-   - reset (empties the queries' file logs, after a question),
-   - retry failed/ignored,
-   - overwrite downloader, overwrite checker options (the checker
-     options editor exists: `checker_options_window.rs`),
-   - merge, separate, deduplicate, lowercase,
-   - export/import/duplicate,
-   - import options.
+1. The list's last buttons: deduplicate (`DedupeAll`, its questions
+   are in the reference's code), "separate"'s "only extract some" (a
+   multiple choice), export/import/duplicate, and import options (after
+   an import options editor exists).
 
 ## 2. Manage import folders / export folders
 

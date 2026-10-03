@@ -71,6 +71,12 @@ export component SubscriptionsWindow inherits Window {
     in property <bool> one-selected;
     in property <bool> can-check-now;
     in property <bool> can-scrub-delays;
+    in property <bool> can-merge;
+    in property <bool> can-separate;
+    in property <bool> can-lowercase;
+    in property <bool> can-reset;
+    in property <bool> can-retry-failed;
+    in property <bool> can-retry-ignored;
     // a question waiting on an answer
     in property <bool> asking;
     in property <string> asking-title;
@@ -88,6 +94,14 @@ export component SubscriptionsWindow inherits Window {
     callback pause-resume();
     callback scrub-delays();
     callback check-now();
+    callback merge();
+    callback separate();
+    callback lowercase();
+    callback reset();
+    callback retry-failed();
+    callback retry-ignored();
+    callback overwrite-downloader();
+    callback overwrite-checker();
     callback select-subscriptions();
     callback chosen(int);
     callback cancelled();
@@ -163,6 +177,22 @@ export component SubscriptionsWindow inherits Window {
                 spacing: 6px;
                 alignment: end;
                 Button {
+                    text: "merge";
+                    enabled: root.can-merge && !root.asking;
+                    clicked => { root.merge(); }
+                }
+                Button {
+                    text: "separate";
+                    enabled: root.can-separate && !root.asking;
+                    clicked => { root.separate(); }
+                }
+                Button {
+                    text: "lowercase";
+                    enabled: root.can-lowercase && !root.asking;
+                    clicked => { root.lowercase(); }
+                }
+                Rectangle { width: 12px; }
+                Button {
                     text: "pause/resume";
                     enabled: root.any-selected && !root.asking;
                     clicked => { root.pause-resume(); }
@@ -177,6 +207,21 @@ export component SubscriptionsWindow inherits Window {
                     enabled: root.can-check-now && !root.asking;
                     clicked => { root.check-now(); }
                 }
+                if root.can-retry-failed: Button {
+                    text: "retry failed";
+                    enabled: !root.asking;
+                    clicked => { root.retry-failed(); }
+                }
+                if root.can-retry-ignored: Button {
+                    text: "retry ignored";
+                    enabled: !root.asking;
+                    clicked => { root.retry-ignored(); }
+                }
+                Button {
+                    text: "reset";
+                    enabled: root.can-reset && !root.asking;
+                    clicked => { root.reset(); }
+                }
             }
             HorizontalLayout {
                 spacing: 6px;
@@ -185,6 +230,16 @@ export component SubscriptionsWindow inherits Window {
                     text: "select subscriptions";
                     enabled: !root.asking;
                     clicked => { root.select-subscriptions(); }
+                }
+                Button {
+                    text: "overwrite downloader";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.overwrite-downloader(); }
+                }
+                Button {
+                    text: "overwrite checker options";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.overwrite-checker(); }
                 }
             }
             if root.asking: Asking {

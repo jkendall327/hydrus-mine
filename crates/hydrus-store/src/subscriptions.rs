@@ -189,6 +189,21 @@ pub fn set_query_state(conn: &Connection, queue_id: i64, state: &QueryState) -> 
     Ok(())
 }
 
+/// Move a query, with its history, to the end of another subscription's
+/// (merging and separating subscriptions).
+pub fn move_query(conn: &Connection, queue_id: i64, subscription_id: i64) -> Result<()> {
+    let position: i64 = conn
+        .prepare_cached(
+            "SELECT COALESCE(MAX(position), 0) + 1 FROM subscription_queries WHERE subscription_id = ?",
+        )?
+        .query_row([subscription_id], |r| r.get(0))?;
+    conn.prepare_cached(
+        "UPDATE subscription_queries SET subscription_id = ?, position = ? WHERE queue_id = ?",
+    )?
+    .execute(params![subscription_id, position, queue_id])?;
+    Ok(())
+}
+
 /// Remove a query with its history.
 pub fn remove_query(conn: &Connection, queue_id: i64) -> Result<()> {
     conn.prepare_cached("DELETE FROM subscription_queries WHERE queue_id = ?")?

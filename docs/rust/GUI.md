@@ -144,11 +144,16 @@ the reference does (name, source, status such as "2 working, 1 paused,
 "delayed--retrying in 2 hours - because: …", items, paused), sorted by
 any column and selected as the reference's lists select, and warns when
 subscriptions are paused from the network menu. Its buttons delete the
-selected (asking "Remove all selected?"), pause or resume each, scrub
-their delays, check their queries now (asking first, as the reference
-does, whether to unpause paused subscriptions, check DEAD queries, and
-unpause paused queries), and select the subscriptions with a query
-containing some text. Nothing is written until "apply", which writes
+selected (asking "Remove all selected?"), merge those sharing a
+downloader (asking which is primary and its new name), separate one (in
+half, or into a subscription a query, named "base: query"), lowercase
+their queries' texts, pause or resume each, scrub their delays, check
+their queries now (asking first, as the reference does, whether to
+unpause paused subscriptions, check DEAD queries, and unpause paused
+queries), retry their failed or ignored files, reset them (emptying their
+queries' file logs), select the subscriptions with a query containing
+some text, and overwrite the selected's downloader or checker options
+(their queries' check times reckoned again). Nothing is written until "apply", which writes
 only what changed; "cancel" writes nothing. The rows and the questions
 are as `oracle/record_subscriptions_list.py` recorded the reference's.
 
