@@ -45,7 +45,11 @@ pub struct UrlQueueStatus {
 
 #[derive(Debug, Default)]
 struct Handle {
+    /// Wakes the file work.
     wake: Notify,
+    /// Wakes the gallery work (a gallery search's, or a URL list's
+    /// gallery URLs), which runs beside the file work.
+    gallery_wake: Notify,
     status: Mutex<UrlQueueStatus>,
     /// The file it is downloading.
     file_job: Mutex<Option<Arc<Job>>>,
@@ -150,6 +154,7 @@ impl QueueRunner {
             }
         }
         handle.wake.notify_one();
+        handle.gallery_wake.notify_one();
     }
 
     /// Look at a queue another process changed (nudged): woken if it is
@@ -567,7 +572,93 @@ impl QueueRunner {
         handle.status.lock().files_status.clear();
     }
 
+    /// Work a queue: a watcher's checks and files in turn; a gallery
+    /// search's (or URL list's) gallery pages and files at once, as the
+    /// reference's `_WorkOnFiles` and `_WorkOnGallery` run, so files from
+    /// the first pages import while later pages are read.
     async fn run(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
+        let kind = self
+            .downloader
+            .store
+            .read(|conn| queues::queue(conn, queue_id))
+            .ok()
+            .flatten()
+            .map(|q| q.kind);
+        match kind {
+            None => {}
+            Some(QueueKind::Watcher) => self.run_files(queue_id, handle).await,
+            Some(_) => {
+                tokio::join!(
+                    self.run_files(queue_id, handle),
+                    self.run_gallery(queue_id, handle)
+                );
+            }
+        }
+    }
+
+    /// A gallery search's (or URL list's) gallery work: each gallery page
+    /// waiting, its files going to the queue (and waking the file work),
+    /// up to a search's file limit.
+    async fn run_gallery(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
+        loop {
+            let store = &self.downloader.store;
+            let queue = match store.read(|conn| queues::queue(conn, queue_id)) {
+                Ok(Some(q)) => q,
+                Ok(None) => return,
+                Err(e) => {
+                    tracing::error!(queue_id, "reading an import queue: {e}");
+                    return;
+                }
+            };
+            let pauses = store
+                .read(hydrus_store::settings::get::<Pauses>)
+                .unwrap_or_default();
+            let delayed_until = handle.status.lock().delayed_until;
+            if let Some(until) = delayed_until {
+                let wait = until - now();
+                if wait > 0 {
+                    tokio::time::sleep(Duration::from_secs(wait as u64)).await;
+                    continue;
+                }
+            }
+            let search = gallery_search(&queue);
+            // (`CheckCanDoGalleryWork`: no more pages once the file limit is hit)
+            let over_limit = search
+                .as_ref()
+                .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
+            // (a closed page's queue waits: "page is closed")
+            if !queue.gallery_paused && !queue.page_closed && !over_limit && pauses.galleries_run()
+            {
+                match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
+                    Ok(Some(gallery_seed)) => {
+                        self.work_on_gallery_seed(gallery_seed, search, handle)
+                            .await;
+                        // (the page's files are ready to import)
+                        handle.wake.notify_one();
+                        tokio::time::sleep(Duration::from_secs(1)).await;
+                        continue;
+                    }
+                    Ok(None) => {}
+                    Err(e) => {
+                        tracing::error!(queue_id, "reading an import queue: {e}");
+                        return;
+                    }
+                }
+            }
+            // idle until more work arrives, or a while (less while paused
+            // globally: the switch may be flipped from the command line)
+            let wait = if pauses.paged_importers || pauses.gallery_searches {
+                30
+            } else {
+                600
+            };
+            let _ = tokio::time::timeout(Duration::from_secs(wait), handle.gallery_wake.notified())
+                .await;
+        }
+    }
+
+    /// A queue's file work (and a watcher's checks).
+    async fn run_files(self: &Arc<Self>, queue_id: i64, handle: &Handle) {
         let mut first_pass = true;
         loop {
             let store = &self.downloader.store;
@@ -614,32 +705,6 @@ impl QueueRunner {
                     continue;
                 }
                 watcher = Some(state);
-            }
-            let search = gallery_search(&queue);
-            // (`CheckCanDoGalleryWork`: no more pages once the file limit is hit)
-            let over_limit = search
-                .as_ref()
-                .is_some_and(|s| s.file_limit.is_some_and(|l| s.num_new_urls_found >= l));
-            // (a closed page's queue waits: "page is closed")
-            if queue.kind != QueueKind::Watcher
-                && !queue.gallery_paused
-                && !queue.page_closed
-                && !over_limit
-                && pauses.galleries_run()
-            {
-                match store.read(|conn| queues::next_gallery_seed(conn, queue_id)) {
-                    Ok(Some(gallery_seed)) => {
-                        self.work_on_gallery_seed(gallery_seed, search, handle)
-                            .await;
-                        tokio::time::sleep(Duration::from_secs(1)).await;
-                        continue;
-                    }
-                    Ok(None) => {}
-                    Err(e) => {
-                        tracing::error!(queue_id, "reading an import queue: {e}");
-                        return;
-                    }
-                }
             }
             let files_blocked = watcher
                 .as_ref()
@@ -702,7 +767,6 @@ impl QueueRunner {
         // (only URL and gallery queues read gallery pages here)
         let job = Job::scoped(bandwidth_scope(QueueKind::Gallery, seed.queue_id));
         *handle.gallery_job.lock() = Some(Arc::clone(&job));
-        handle.status.lock().files_status = "reading a gallery page".into();
         let queue = seed.queue_id;
         let mut sink = QueueSink {
             queue,

@@ -28,6 +28,8 @@ use hydrus_store::queues::{self, SeedStatus};
 #[derive(Default)]
 struct Site {
     hits: Mutex<HashMap<String, usize>>,
+    /// Holds gallery page 9 open until notified.
+    release: tokio::sync::Notify,
 }
 
 fn media(name: &str) -> Vec<u8> {
@@ -61,6 +63,10 @@ async fn gallery(State(site): State<Arc<Site>>, Path(page): Path<u32>) -> Respon
         .lock()
         .entry(format!("gallery/{page}"))
         .or_default() += 1;
+    // (a slow page)
+    if page == 9 {
+        site.release.notified().await;
+    }
     let posts: &[u32] = match page {
         1 => &[1, 2],
         2 => &[3],
@@ -489,6 +495,58 @@ async fn a_gallery_url_in_a_url_queue_queues_its_posts() {
             .primary_urls
             .contains(&format!("{}/gallery/1", s.base))
     );
+}
+
+#[tokio::test(flavor = "multi_thread")]
+async fn files_import_while_later_gallery_pages_are_read() {
+    let s = setup().await;
+    s.runner.start_all().unwrap();
+    let queue = s.runner.url_queue_for(None, None, None).unwrap();
+    // a gallery page, and a second that the site holds open
+    s.runner
+        .pend_urls(
+            queue.id,
+            &[
+                format!("{}/gallery/1", s.base),
+                format!("{}/gallery/9", s.base),
+            ],
+            &BTreeSet::new(),
+            &[],
+        )
+        .unwrap();
+    // the second page is being read (and held)...
+    for _ in 0..400 {
+        if s.site.hits.lock().contains_key("gallery/9") {
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    assert_eq!(s.site.hits.lock().get("gallery/9"), Some(&1));
+    // ...and the first page's posts import meanwhile, as the reference's
+    // file and gallery work run side by side
+    let mut imported = false;
+    for _ in 0..400 {
+        let seeds = s
+            .store
+            .read(|conn| queues::file_seeds(conn, queue.id))
+            .unwrap();
+        if seeds.len() == 2
+            && seeds
+                .iter()
+                .all(|seed| seed.status == SeedStatus::SuccessfulAndNew)
+        {
+            imported = true;
+            break;
+        }
+        tokio::time::sleep(Duration::from_millis(50)).await;
+    }
+    assert!(imported, "the first page's files imported");
+    let pages = s
+        .store
+        .read(|conn| queues::gallery_seeds(conn, queue.id))
+        .unwrap();
+    assert_eq!(pages[1].status, SeedStatus::Unknown, "still being read");
+    s.site.release.notify_one();
 }
 
 #[tokio::test(flavor = "multi_thread")]
