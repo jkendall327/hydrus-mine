@@ -41,6 +41,7 @@ pub mod scanbar;
 pub mod search_log;
 pub mod selection;
 pub mod session_saving;
+pub mod sidecars;
 pub mod sort;
 pub mod status;
 pub mod subscriptions_dedupe;

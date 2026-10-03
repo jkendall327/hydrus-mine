@@ -130,16 +130,22 @@ fn time_edited(seconds: i64, units: &[Unit], field: i32, value: i32, min: i64) -
 const PERIOD_UNITS: [Unit; 3] = [Unit::Days, Unit::Hours, Unit::Minutes];
 const SKIP_UNITS: [Unit; 4] = [Unit::Days, Unit::Hours, Unit::Minutes, Unit::Seconds];
 
-/// The sidecar button's label (`_RefreshLabel`).
-fn sidecars_label(n: usize) -> String {
-    match n {
-        0 => "no sidecars".into(),
-        1 => "1 sidecar action".into(),
-        n => format!(
-            "{} sidecar actions",
-            hydrus_core::numbers::human_int(n as u64)
-        ),
-    }
+/// The sidecar button's label (`_RefreshLabel`): no sidecars, the one
+/// router as it describes itself, or how many.
+fn sidecars_label(store: &Store, routers: &[hydrus_parse::sidecar::Router]) -> String {
+    let snapshot = store.snapshot();
+    let namer = |key: &str| {
+        hex::decode(key)
+            .ok()
+            .and_then(|k| {
+                snapshot
+                    .services
+                    .by_key(&hydrus_core::ServiceKey::new(k))
+                    .ok()
+            })
+            .map(|s| s.name.clone())
+    };
+    crate::sidecars::button_label(routers, &namer).0
 }
 
 /// What a list or edit window's question panel waits on.
@@ -659,7 +665,7 @@ fn open_import_folder(
     ));
     window.set_actions(action_rows(&folder));
     show_filename_tagging(&window, store, &folder);
-    window.set_sidecars(sidecars_label(s.routers.len()).into());
+    window.set_sidecars(sidecars_label(store, &s.routers).into());
     let state = Rc::new(RefCell::new(ImportEdit {
         folder,
         asking: None,
@@ -1136,7 +1142,7 @@ pub(crate) fn open_export_folders(store: &Arc<Store>, slots: &Slots) -> Result<(
                     });
                 })
             };
-            match open_export_folder(folder, &text, &slots.export_edit, &done) {
+            match open_export_folder(&store, folder, &text, &slots.export_edit, &done) {
                 Ok(window) => *slots.export_edit.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open the export folder: {e}"),
             }
@@ -1214,6 +1220,7 @@ fn read_export_fields(window: &ExportFolderWindow, folder: &mut ExportFolder) {
 /// checks out, and asking first if it deletes from the client) it gives
 /// the edited folder to `done`.
 fn open_export_folder(
+    store: &Store,
     folder: ExportFolder,
     text: &Rc<TextContext>,
     slot: &Rc<RefCell<Option<ExportFolderWindow>>>,
@@ -1242,7 +1249,7 @@ fn open_export_folder(
     window.set_phrase(folder.phrase.clone().into());
     window.set_overwrite_next(folder.overwrite_sidecars_on_next_run);
     window.set_overwrite_always(folder.always_overwrite_sidecars);
-    window.set_sidecars(sidecars_label(folder.routers.len()).into());
+    window.set_sidecars(sidecars_label(store, &folder.routers).into());
     window.set_predicates(strings(predicates(&folder, text)));
     let state = Rc::new(RefCell::new(ExportEdit {
         folder,

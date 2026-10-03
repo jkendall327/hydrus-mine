@@ -24,6 +24,7 @@ mod recent_predicates;
 mod search_log;
 mod selection;
 mod session_saving;
+mod sidecar_descriptions;
 mod subscriptions_buttons;
 mod subscriptions_dedupe;
 mod subscriptions_list;

@@ -75,8 +75,11 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
 **Next**:
 
 - The sidecar routers editor, which the import and export folder dialogs
-  and the "filename tagging" dialog's "sidecars" tab open.
-- An import folder's import options, after an import options editor.
+  and the "filename tagging" dialog's "sidecars" tab open. **Done**: how
+  routers describe themselves (`hydrus-gui-model`'s `sidecars`, recorded
+  by `oracle/dump_sidecar_descriptions.py`), on the dialogs' sidecars
+  buttons. **Next**: the routers list and the router, importer and
+  exporter editors; then the string processor editor they open.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 

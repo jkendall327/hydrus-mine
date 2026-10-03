@@ -714,6 +714,16 @@ fn filter_tags(strings: &[String], filter: &crate::tag_filter::TagFilter) -> Vec
     tags
 }
 
+/// The kinds of step a processor's summary names, in the reference's order.
+const STEP_KINDS: [&str; 6] = [
+    "conversion",
+    "joining",
+    "filtering",
+    "splitting",
+    "sorting",
+    "selecting/slicing",
+];
+
 /// A pipeline of [`ProcessingStep`]s over a list of strings.
 #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
 pub struct StringProcessor {
@@ -745,6 +755,34 @@ fn python_slice<T: Clone>(items: &[T], start: Option<i64>, end: Option<i64>) -> 
 }
 
 impl StringProcessor {
+    /// Whether it has any steps (`MakesChanges`).
+    pub fn makes_changes(&self) -> bool {
+        !self.steps.is_empty()
+    }
+
+    /// What kinds of step it has, as the reference says it
+    /// (`StringProcessor.ToString`): "no string processing", or "some
+    /// conversion, sorting". (Tag filters aren't named, as in the
+    /// reference.)
+    pub fn summary(&self) -> String {
+        if self.steps.is_empty() {
+            return "no string processing".to_owned();
+        }
+        let kind = |step: &ProcessingStep| match step {
+            ProcessingStep::Convert(_) => Some(0),
+            ProcessingStep::Join { .. } => Some(1),
+            ProcessingStep::Filter(_) => Some(2),
+            ProcessingStep::Split { .. } => Some(3),
+            ProcessingStep::Sort { .. } => Some(4),
+            ProcessingStep::Slice { .. } => Some(5),
+            ProcessingStep::TagFilter(_) | ProcessingStep::Unsupported { .. } => None,
+        };
+        let present: std::collections::BTreeSet<usize> =
+            self.steps.iter().filter_map(kind).collect();
+        let named: Vec<&str> = present.into_iter().map(|i| STEP_KINDS[i]).collect();
+        format!("some {}", named.join(", "))
+    }
+
     /// Run the pipeline; an unsupported step is an error.
     pub fn process(&self, strings: Vec<String>) -> Result<Vec<String>, String> {
         let mut current = strings;
