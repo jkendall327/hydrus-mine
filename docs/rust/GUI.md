@@ -129,7 +129,9 @@ as Qt's do; a press anywhere else closes them. What works so far:
 - database: whether file maintenance works in idle and normal time;
 - network: every pause switch hydrus has (all new network traffic,
   subscriptions, all paged importer work, file importing, gallery
-  searching, watcher checking), which the daemon obeys; and
+  searching, watcher checking), which the daemon obeys; in advanced
+  mode "nudge subscriptions awake", which wakes `hydrus serve`'s
+  subscriptions daemon to look for subscriptions due; and
   "subscriptions…", the manage subscriptions dialog (below);
 - pending: each repository's content to upload, and forgetting it (asking
   first);

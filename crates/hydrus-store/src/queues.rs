@@ -417,6 +417,11 @@ fn finish_queue((mut queue, options, extra): (Queue, String, String)) -> Result<
     Ok(queue)
 }
 
+/// The nudge that wakes the subscriptions daemon rather than a queue (no
+/// queue has this id): menu bar's network > pause > "nudge subscriptions
+/// awake".
+pub const SUBSCRIPTIONS_NUDGE: i64 = 0;
+
 /// Tell whichever process runs the queues (the daemon) that a queue was
 /// made or changed (seeds added, paused or resumed, deleted), so it looks
 /// at it now rather than when it next would.

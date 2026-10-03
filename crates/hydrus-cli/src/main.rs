@@ -802,6 +802,7 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
         // it nudges them: looked at every second
         if let Some(downloads) = state.downloads.clone() {
             let store = store.clone();
+            let subscriptions = state.subscriptions.clone();
             tokio::spawn(async move {
                 loop {
                     tokio::time::sleep(Duration::from_secs(1)).await;
@@ -821,6 +822,13 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                     match store.write(|ctx| hydrus_store::queues::take_nudges(ctx.conn())) {
                         Ok(queues) => {
                             for queue in queues {
+                                // (the client's "nudge subscriptions awake")
+                                if queue == hydrus_store::queues::SUBSCRIPTIONS_NUDGE {
+                                    if let Some(subscriptions) = &subscriptions {
+                                        subscriptions.wake();
+                                    }
+                                    continue;
+                                }
                                 downloads.nudged(queue);
                             }
                         }

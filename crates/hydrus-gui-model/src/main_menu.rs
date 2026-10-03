@@ -123,6 +123,8 @@ pub enum Command {
     /// An entry of a window's own popup menu: its index among that menu's
     /// actions (see [`popup`]).
     Popup(usize),
+    /// Wake `hydrus serve`'s subscriptions daemon.
+    NudgeSubscriptions,
     /// Switch a pause on or off.
     Pause(Pause),
     /// Check an import folder now (none: all of them).
@@ -777,8 +779,10 @@ fn network_menu(facts: &Facts) -> Entry {
         pause("subscriptions", Pause::Subscriptions, facts),
     ];
     if facts.advanced {
-        // (the daemon's subscriptions can't be woken from here yet)
-        pauses.push(todo("nudge subscriptions awake"));
+        pauses.push(item(
+            "nudge subscriptions awake",
+            Command::NudgeSubscriptions,
+        ));
     }
     pauses.extend([
         SEP,

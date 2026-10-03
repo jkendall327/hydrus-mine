@@ -523,6 +523,13 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
                 window.invoke_importer_list_action(i);
             }
         }
+        Command::NudgeSubscriptions => {
+            if let Err(e) = store.write(|ctx| {
+                hydrus_store::queues::nudge(ctx.conn(), hydrus_store::queues::SUBSCRIPTIONS_NUDGE)
+            }) {
+                eprintln!("could not nudge the subscriptions: {e}");
+            }
+        }
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),
