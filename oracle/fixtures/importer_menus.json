@@ -1,0 +1,442 @@
+{
+ "gallery": [
+  {
+   "selected": [
+    0
+   ],
+   "menu": [
+    "copy queries",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    {
+     "menu": "file log",
+     "entries": [
+      "show file log",
+      "---",
+      "retry 1 failures",
+      "retry 1 ignored",
+      "---",
+      "delete 1 'successful' file import items from the queue",
+      "delete 1 'failed' file import items from the queue",
+      "delete 1 'ignored' file import items from the queue",
+      "delete 1 'unknown' (i.e. unstarted) file import items from the queue",
+      "---",
+      "delete everything except 'unknown' (i.e. unstarted) (3 items) from the queue",
+      "delete everything (4 items) from the queue",
+      "---",
+      "set 1 'unknown' (i.e. unstarted) file import items to 'skipped'",
+      "---",
+      "show new files in a new page",
+      "show all files in a new page",
+      "---",
+      "reverse import order",
+      "---",
+      {
+       "menu": "export all sources",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    },
+    {
+     "menu": "search log",
+     "entries": [
+      "show search log",
+      "---",
+      "delete 1 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "---",
+      "restart and resume failed search",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      }
+     ]
+    },
+    "---",
+    "remove",
+    "---",
+    "pause/play files",
+    "pause/play search"
+   ]
+  },
+  {
+   "selected": [
+    1
+   ],
+   "menu": [
+    "copy queries",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    {
+     "menu": "file log",
+     "entries": [
+      "show file log",
+      "---",
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    },
+    {
+     "menu": "search log",
+     "entries": [
+      "show search log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new urls",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      }
+     ]
+    },
+    "---",
+    "remove",
+    "---",
+    "pause/play files",
+    "pause/play search"
+   ]
+  },
+  {
+   "selected": [
+    0,
+    1
+   ],
+   "menu": [
+    "copy queries",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    "show file logs",
+    "show search log",
+    "---",
+    "remove",
+    "---",
+    "pause/play files",
+    "pause/play search"
+   ]
+  }
+ ],
+ "watcher": [
+  {
+   "selected": [
+    0
+   ],
+   "menu": [
+    "copy urls",
+    "open urls",
+    "---",
+    "copy subjects",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    {
+     "menu": "file log",
+     "entries": [
+      "show file log",
+      "---",
+      "retry 1 failures",
+      "retry 1 ignored",
+      "---",
+      "delete 1 'successful' file import items from the queue",
+      "delete 1 'failed' file import items from the queue",
+      "delete 1 'ignored' file import items from the queue",
+      "delete 1 'unknown' (i.e. unstarted) file import items from the queue",
+      "---",
+      "delete everything except 'unknown' (i.e. unstarted) (3 items) from the queue",
+      "delete everything (4 items) from the queue",
+      "---",
+      "set 1 'unknown' (i.e. unstarted) file import items to 'skipped'",
+      "---",
+      "show new files in a new page",
+      "show all files in a new page",
+      "---",
+      "reverse import order",
+      "---",
+      {
+       "menu": "export all sources",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      },
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    },
+    {
+     "menu": "check log",
+     "entries": [
+      "show check log",
+      "---",
+      "delete 1 'successful' gallery log entries from the log",
+      "delete 1 'failed' gallery log entries from the log",
+      "---",
+      {
+       "menu": "export all urls",
+       "entries": [
+        "to clipboard",
+        "to png"
+       ]
+      }
+     ]
+    },
+    "---",
+    "retry failed",
+    "retry ignored",
+    "---",
+    "remove selected",
+    "---",
+    "pause/play files",
+    "pause/play checking"
+   ]
+  },
+  {
+   "selected": [
+    1
+   ],
+   "menu": [
+    "copy urls",
+    "open urls",
+    "---",
+    "copy subjects",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    {
+     "menu": "file log",
+     "entries": [
+      "show file log",
+      "---",
+      {
+       "menu": "ADVANCED: import new sources",
+       "entries": [
+        "from clipboard",
+        "from png"
+       ]
+      },
+      {
+       "menu": "advanced",
+       "entries": [
+        "re-normalise all URLs"
+       ]
+      }
+     ]
+    },
+    {
+     "menu": "check log",
+     "entries": [
+      "show check log"
+     ]
+    },
+    "---",
+    "remove selected",
+    "---",
+    "pause/play files",
+    "pause/play checking"
+   ]
+  },
+  {
+   "selected": [
+    0,
+    1
+   ],
+   "menu": [
+    "copy urls",
+    "open urls",
+    "---",
+    "copy subjects",
+    "---",
+    {
+     "menu": "show files",
+     "entries": [
+      "default presented files",
+      "presenting new files",
+      "presenting inbox files",
+      "presenting all files",
+      "presenting all files, including if trashed"
+     ]
+    },
+    "---",
+    "show file logs",
+    "show check log",
+    "---",
+    "retry failed",
+    "retry ignored",
+    "---",
+    "remove selected",
+    "---",
+    "pause/play files",
+    "pause/play checking"
+   ]
+  }
+ ],
+ "summaries": [
+  {
+   "status": 0,
+   "inbox": 0,
+   "location": "combined",
+   "downloader": "presenting all files",
+   "watcher": "presenting all files"
+  },
+  {
+   "status": 1,
+   "inbox": 0,
+   "location": "combined",
+   "downloader": "presenting new files",
+   "watcher": "presenting new files"
+  },
+  {
+   "status": 2,
+   "inbox": 0,
+   "location": "combined",
+   "downloader": "not presenting any files",
+   "watcher": "not presenting any files"
+  },
+  {
+   "status": 0,
+   "inbox": 1,
+   "location": "combined",
+   "downloader": "presenting inbox files",
+   "watcher": "presenting inbox files"
+  },
+  {
+   "status": 1,
+   "inbox": 1,
+   "location": "combined",
+   "downloader": "presenting new inbox files",
+   "watcher": "presenting new inbox files"
+  },
+  {
+   "status": 0,
+   "inbox": 2,
+   "location": "combined",
+   "downloader": "presenting all files",
+   "watcher": "presenting all files"
+  },
+  {
+   "status": 1,
+   "inbox": 2,
+   "location": "combined",
+   "downloader": "presenting new or inbox files",
+   "watcher": "presenting new or inbox files"
+  },
+  {
+   "status": 0,
+   "inbox": 0,
+   "location": "storage",
+   "downloader": "presenting all files, including if trashed",
+   "watcher": "presenting all files, including if trashed"
+  },
+  {
+   "status": 1,
+   "inbox": 1,
+   "location": "storage",
+   "downloader": "presenting new inbox files, including if trashed",
+   "watcher": "presenting new inbox files, including if trashed"
+  }
+ ]
+}

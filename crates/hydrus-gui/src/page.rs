@@ -785,6 +785,44 @@ impl SearchPage {
         }
     }
 
+    /// A right press on the list's row `row`: it is selected, alone if it
+    /// wasn't already (the menu then acts on the selection).
+    pub fn press_query(&mut self, row: usize) {
+        let pressed = |order: &[i64], selection: &crate::list_selection::ListSelection<i64>| {
+            order
+                .get(row)
+                .copied()
+                .filter(|id| !selection.is_selected(*id))
+        };
+        if let Some(gallery) = &mut self.gallery
+            && let Some(id) = pressed(&gallery.order(), &gallery.selection)
+        {
+            gallery.selection.select_only(Some(id));
+        }
+        if let Some(watchers) = &mut self.watchers
+            && let Some(id) = pressed(&watchers.order(), &watchers.selection)
+        {
+            watchers.selection.select_only(Some(id));
+        }
+    }
+
+    /// Show these files (the list menu's "show files"), with no search or
+    /// watcher highlighted (`_ShowSelectedImportersFiles`).
+    pub fn show_importers_files(&mut self, files: Vec<HashId>) {
+        if let Some(state) = self.multi_state() {
+            state.highlighted = None;
+        }
+        self.importer = None;
+        self.presented.clear();
+        self.selection.clear();
+        self.collections.clear();
+        self.came.clone_from(&files);
+        self.results = files;
+        self.resort();
+        self.learn_facts();
+        self.count_tags();
+    }
+
     /// Sort the list by a column.
     pub fn sort_queries(&mut self, column: Column, ascending: bool) {
         if let Some(gallery) = &mut self.gallery {

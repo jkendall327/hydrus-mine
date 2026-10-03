@@ -17,13 +17,13 @@ hydrus-import.workspace = true
 hydrus-parse.workspace = true
 rusqlite.workspace = true
 anyhow.workspace = true
+hex.workspace = true
 
 [dev-dependencies]
 hydrus-legacy.workspace = true
 hydrus-testkit.workspace = true
 serde_json.workspace = true
 tempfile.workspace = true
-hex.workspace = true
 sha2.workspace = true
 
 [lints]

@@ -15,6 +15,7 @@ mod favourites;
 mod file_log;
 mod folders;
 mod import_files;
+mod importer_list_menu;
 mod info_lines;
 mod main_shortcuts;
 mod manage_tags;

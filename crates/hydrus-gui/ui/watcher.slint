@@ -50,6 +50,8 @@ export component WatcherSidebar inherits VerticalLayout {
     in property <DownloadLine> search-download;
     // (the row shown, ctrl held, shift held)
     callback row-clicked(int, bool, bool);
+    // a right press on a row, and where (the list's menu)
+    callback row-menu(int, length, length);
     callback sort(int, bool);
     callback highlight();
     callback clear-highlight();
@@ -105,6 +107,7 @@ export component WatcherSidebar inherits VerticalLayout {
                 ascending: root.ascending;
                 sort(column, ascending) => { root.sort(column, ascending); }
                 row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-menu(row, x, y) => { root.row-menu(row, x, y); }
                 // (a double click: highlight it, as the button does)
                 row-activated(row) => { root.highlight(); }
                 delete-pressed => { if root.data.has-selection { root.remove(); } }

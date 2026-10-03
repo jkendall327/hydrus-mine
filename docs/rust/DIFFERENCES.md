@@ -576,8 +576,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
 - **The import and export folders dialogs** don't edit filename tagging
   or sidecars yet (they show what is set, which is kept), nor an import
-  folder's import options, and can't review an import folder's cached
-  paths. Paths are typed, with no directory picker. An export folder's
+  folder's import options. Paths are typed, with no directory picker. An export folder's
   query is typed as the Client API's tags rather than through the search
   autocomplete, and its sidecars can't be tested on example files. They
   don't pause the folders while open, as the reference does.

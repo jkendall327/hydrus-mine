@@ -210,6 +210,36 @@ fn act(store: &Store, state: &mut State, action: &Action) {
     }
 }
 
+/// Do a whole log menu's action on `queue`'s log, with no window open (a
+/// downloader list's menu's); deleting entries of a status, without
+/// asking (the caller asks).
+pub(crate) fn act_on_queue(store: &Store, queue: i64, action: &Action) {
+    let mut state = State {
+        queue,
+        kind: "search",
+        read_only: false,
+        can_generate_more_pages: true,
+        seeds: Vec::new(),
+        selection: ListSelection::default(),
+        asking: None,
+    };
+    read(store, &mut state);
+    if let Action::DeleteStatus(status) = action {
+        let ids: Vec<i64> = state
+            .seeds
+            .iter()
+            .filter(|s| s.status == *status)
+            .map(|s| s.id)
+            .collect();
+        if let Err(e) = store.write(move |ctx| queues::remove_gallery_seeds_by_id(ctx.conn(), &ids))
+        {
+            eprintln!("could not change the search log: {e}");
+        }
+        return;
+    }
+    act(store, &mut state, action);
+}
+
 /// Open the search log of `queue` (its "check log", a watcher's). It
 /// forgets itself from `slot` when closed.
 pub(crate) fn open(
@@ -227,7 +257,7 @@ pub(crate) fn open(
     let state = Rc::new(RefCell::new(State {
         queue,
         kind: if watcher { "check" } else { "search" },
-        read_only: kind == Some(QueueKind::Subscription),
+        read_only: watcher || kind == Some(QueueKind::Subscription),
         can_generate_more_pages: !watcher,
         seeds: Vec::new(),
         selection: ListSelection::default(),

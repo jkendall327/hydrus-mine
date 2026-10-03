@@ -713,6 +713,69 @@ pub fn remove_gallery_seeds_by_id(conn: &Connection, ids: &[i64]) -> Result<()> 
     Ok(())
 }
 
+/// The files a queue presents as `options` say, or (none given) as its own
+/// presentation options do (`GetPresentedHashes`): those its seeds
+/// imported or found, new or in the inbox as the options want, and in
+/// their location; in the queue's order, each once.
+pub fn presented_files_as(
+    conn: &Connection,
+    queue_id: i64,
+    options: Option<&hydrus_core::import_options::PresentationOptions>,
+) -> Result<Vec<HashId>> {
+    let own = if options.is_none() {
+        queue(conn, queue_id)?
+            .and_then(|q| q.options.presentation)
+            .unwrap_or_default()
+    } else {
+        hydrus_core::import_options::PresentationOptions::default()
+    };
+    let options = options.unwrap_or(&own);
+    let mut found: Vec<(hydrus_core::Sha256, bool)> = Vec::new();
+    for seed in file_seeds(conn, queue_id)? {
+        if !seed.status.is_successful() {
+            continue;
+        }
+        if let Some(hash) = seed
+            .meta
+            .hash("sha256")
+            .and_then(|h| h.parse::<hydrus_core::Sha256>().ok())
+        {
+            found.push((hash, seed.status == SeedStatus::SuccessfulAndNew));
+        }
+    }
+    let hashes: Vec<hydrus_core::Sha256> = found.iter().map(|(h, _)| *h).collect();
+    let ids = crate::master::hash_ids(conn, &hashes)?;
+    let all: Vec<HashId> = ids.values().copied().collect();
+    let inbox = crate::media::inboxed(conn, &all)?;
+    let mut located = std::collections::HashSet::new();
+    for key in &options.location {
+        let Ok(key) = hex::decode(key) else {
+            continue;
+        };
+        let service: Option<hydrus_core::ServiceId> = conn
+            .query_row(
+                "SELECT service_id FROM services WHERE service_key = ?",
+                [key],
+                |r| r.get(0),
+            )
+            .optional()?;
+        if let Some(service) = service {
+            located.extend(crate::media::current_in(conn, service, &all)?);
+        }
+    }
+    let mut seen = std::collections::HashSet::new();
+    Ok(found
+        .iter()
+        .filter_map(|(hash, new)| {
+            let id = *ids.get(hash)?;
+            (located.contains(&id)
+                && options.presents(*new, || inbox.contains(&id))
+                && seen.insert(id))
+            .then_some(id)
+        })
+        .collect())
+}
+
 // file seeds -------------------------------------------------------------------
 
 const FILE_SEED_COLUMNS: &str = "seed_id, queue_id, seed_type, data, data_for_comparison, created, \

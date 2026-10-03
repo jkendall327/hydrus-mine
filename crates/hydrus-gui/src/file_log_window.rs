@@ -281,6 +281,24 @@ fn act(store: &Store, state: &mut State, action: &Action, open_files: &dyn Fn(Ve
     }
 }
 
+/// Do a whole log menu's action on `queue`'s log, with no window open (a
+/// downloader list's menu's).
+pub(crate) fn act_on_queue(
+    store: &Store,
+    queue: i64,
+    action: &Action,
+    open_files: &dyn Fn(Vec<HashId>),
+) {
+    let mut state = State {
+        queue,
+        seeds: Vec::new(),
+        selection: ListSelection::default(),
+        asking: None,
+    };
+    read(store, &mut state);
+    act(store, &mut state, action, open_files);
+}
+
 /// Open URLs in the browser, or paths' folders.
 fn open_sources(sources: &[String]) {
     for source in sources {

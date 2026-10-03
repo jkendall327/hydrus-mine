@@ -45,6 +45,10 @@ pub(crate) struct Hooks {
     pub favourites_menu: Rc<dyn Fn() -> Vec<main_menu::Entry>>,
     /// Do what was chosen from it.
     pub favourite: Rc<dyn Fn(crate::favourites::Action)>,
+    /// A downloader page's list's menu, on a right press on a row (its
+    /// entries' `Command::Popup`s go to the window's
+    /// `importer-list-action`).
+    pub importer_menu: Rc<dyn Fn(i32) -> Vec<main_menu::Entry>>,
 }
 
 /// What the menus show now: the store's facts and the pages'.
@@ -219,6 +223,19 @@ pub(crate) fn bind(window: &MainWindow, hooks: Hooks) -> Rc<dyn Fn()> {
         let show = show.clone();
         move |which, x, y| {
             let entries = (hooks.domain_menu)(which);
+            if !entries.is_empty() {
+                open.borrow_mut().open_popup(entries, x, y);
+                show();
+            }
+        }
+    });
+    // a downloader page's list's
+    window.on_importer_list_menu({
+        let open = open.clone();
+        let hooks = hooks.clone();
+        let show = show.clone();
+        move |row, x, y| {
+            let entries = (hooks.importer_menu)(row);
             if !entries.is_empty() {
                 open.borrow_mut().open_popup(entries, x, y);
                 show();
@@ -500,8 +517,12 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
             flip::<hydrus_store::settings::AdvancedMode>(&store, |a| a.0 = !a.0);
         }
         Command::Options => (hooks.options)(),
-        // (a window's own popup menu's: not the bar's)
-        Command::Popup(_) => {}
+        // (the only popup the bar opens with these: a downloader list's)
+        Command::Popup(i) => {
+            if let Ok(i) = i32::try_from(i) {
+                window.invoke_importer_list_action(i);
+            }
+        }
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

@@ -563,6 +563,10 @@ export component MainWindow inherits Window {
     in property <bool> gallery-ascending: true;
     // (the row shown, ctrl held, shift held)
     callback gallery-row-clicked(int, bool, bool);
+    // a gallery's or watcher's list's menu, on a row, at a place
+    callback importer-list-menu(int, length, length);
+    // and its entry chosen (by its index in the menu's actions)
+    callback importer-list-action(int);
     callback gallery-sort(int, bool);
     callback gallery-highlight();
     callback gallery-clear-highlight();
@@ -856,6 +860,7 @@ export component MainWindow inherits Window {
                         search-status: root.search-status;
                         search-download: root.search-download;
                         row-clicked(row, ctrl, shift) => { root.gallery-row-clicked(row, ctrl, shift); }
+                        row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
                         sort(column, ascending) => { root.gallery-sort(column, ascending); }
                         highlight => { root.gallery-highlight(); }
                         clear-highlight => { root.gallery-clear-highlight(); }
@@ -891,6 +896,7 @@ export component MainWindow inherits Window {
                         search-status: root.search-status;
                         search-download: root.search-download;
                         row-clicked(row, ctrl, shift) => { root.watcher-row-clicked(row, ctrl, shift); }
+                        row-menu(row, x, y) => { root.importer-list-menu(row, x, y); }
                         sort(column, ascending) => { root.watcher-sort(column, ascending); }
                         highlight => { root.watcher-highlight(); }
                         clear-highlight => { root.watcher-clear-highlight(); }

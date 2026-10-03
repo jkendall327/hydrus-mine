@@ -79,8 +79,6 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   and the sidecar routers editor, which the import and export folder
   dialogs (and "review files to import") open.
 - An import folder's import options, after an import options editor.
-- Reviewing an import folder's cached paths (the file log window, which
-  the downloader pages want too).
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 
@@ -104,8 +102,6 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 
 ## 4. Downloader pages: leftovers
 
-- The lists' right-click menus (copy queries, presentation options):
-  `src/popup_menu.rs` now draws a window's own popup menus.
 - Dragging across rows to select.
 - Watcher pages have no import options buttons.
 - The "highlighted" boxes don't show a search's or watcher's own file

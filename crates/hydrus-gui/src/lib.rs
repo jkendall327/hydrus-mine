@@ -35,6 +35,7 @@ mod gallery;
 mod grid;
 pub mod headless;
 mod import_window;
+mod importer_list_menu;
 mod locations_window;
 pub(crate) mod manage_tags_window;
 mod menu_bar;
@@ -133,10 +134,10 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    duplicates_page, edit_subscription, favourites, file_log, folders, info_lines, list_selection,
-    local_import, main_menu, manage_tags, media_actions, options, page_chooser, predicate_editors,
-    ratings, scanbar, search_log, selection, session_saving, sort, status, subscriptions_dialog,
-    subscriptions_list, thumbnail_icons, thumbnail_ratings,
+    duplicates_page, edit_subscription, favourites, file_log, folders, importer_menu, info_lines,
+    list_selection, local_import, main_menu, manage_tags, media_actions, options, page_chooser,
+    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sort, status,
+    subscriptions_dialog, subscriptions_list, thumbnail_icons, thumbnail_ratings,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -1028,6 +1029,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
+    // a downloader list's menu's actions, as last opened
+    let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
     let folders = folders_window::Slots {
         open_files: open_files.clone(),
         ..folders_window::Slots::default()
@@ -1141,6 +1144,19 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
                     }
+                })
+            },
+            importer_menu: {
+                let page = page.clone();
+                let actions = importer_actions.clone();
+                Rc::new(move |row| {
+                    let Ok(row) = usize::try_from(row) else {
+                        return Vec::new();
+                    };
+                    let page = page();
+                    let (entries, chosen) = importer_list_menu::open(&mut page.borrow_mut(), row);
+                    *actions.borrow_mut() = chosen;
+                    entries
                 })
             },
             domain_menu: {
@@ -1500,6 +1516,35 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             };
             page().borrow_mut().set_file_limit(limit);
             shown(false);
+        }
+    });
+    // the gallery's or watcher's list's menu, chosen from
+    window.on_importer_list_action({
+        let page = page.clone();
+        let shown = shown.clone();
+        let ask = ask.clone();
+        let weak = window.as_weak();
+        let log = file_log_slot.clone();
+        let open_files = open_files.clone();
+        move |i| {
+            let action = usize::try_from(i)
+                .ok()
+                .and_then(|i| importer_actions.borrow().get(i).cloned());
+            let (Some(action), Some(window)) = (action, weak.upgrade()) else {
+                return;
+            };
+            let ask = |question: String, then: Rc<dyn Fn()>| ask(Asked::Then(question, then));
+            importer_list_menu::act(
+                &importer_list_menu::Context {
+                    window: &window,
+                    page: &page(),
+                    log: &log,
+                    open_files: &open_files,
+                    ask: &ask,
+                    shown: &shown,
+                },
+                &action,
+            );
         }
     });
     // a watcher page's sidebar, as a gallery page's

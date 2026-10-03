@@ -212,6 +212,18 @@ The subscription query editor's "history" box has "file log" and
 as the reference's is), and the edit import folder dialog a "file log"
 button for its cached import paths.
 
+A gallery or watcher page's list has the reference's right-click menu
+(`src/importer_list_menu.rs`, `hydrus-gui-model/src/importer_menu.rs`):
+a right press selects the row (if it isn't already), and the menu acts
+on the selection. It offers copying queries (or a watcher's URLs and
+subjects, and opening the URLs), "show files" (the importers' own
+presentation, new files, inbox files, all files, or all files including
+the trash, shown in the page with nothing highlighted), the file and
+search (or check) logs (with one selected, each log's whole menu in a
+submenu), retrying a watcher's failed and ignored files, removing, and
+pausing or playing. As `oracle/record_importer_menus.py` recorded the
+reference's.
+
 File > import/export folders > "manage import folders…" and "manage
 export folders…" open the folders dialogs (`src/folders_window.rs`,
 `hydrus-gui-model/src/folders.rs`), the reference's
