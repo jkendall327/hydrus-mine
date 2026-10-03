@@ -52,6 +52,9 @@ pub(crate) struct Sidebar {
     pub(crate) reviews: crate::auto_resolution_review_window::Windows,
     /// The duplicate filter opened from a review's pending pairs.
     pub(crate) review_filter: Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
+    /// Opens the media viewer on files, from one (set as the main window
+    /// is bound).
+    pub(crate) open_viewer: RefCell<Option<crate::auto_resolution_review_window::OpenViewer>>,
 }
 
 impl Sidebar {
@@ -242,6 +245,7 @@ impl Sidebar {
                         rule,
                         &self.reviews,
                         &self.review_filter,
+                        self.open_viewer.borrow().clone(),
                     ) {
                         eprintln!("could not open the review: {e}");
                     }

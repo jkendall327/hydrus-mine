@@ -274,6 +274,9 @@ fn show(window: &AutoResolutionReviewWindow, state: &mut State) {
     window.set_asking_choices(strings(&["yes", "no"]));
 }
 
+/// Opens the media viewer on files, from the one at an index.
+pub(crate) type OpenViewer = Rc<dyn Fn(Vec<HashId>, usize)>;
+
 /// The open review windows, each with a number of its own.
 pub(crate) type Windows = Rc<RefCell<Vec<(u64, AutoResolutionReviewWindow)>>>;
 
@@ -293,6 +296,7 @@ pub(crate) fn open(
     rule: Rule,
     windows: &Windows,
     filter: &Rc<RefCell<Option<crate::DuplicateFilterWindow>>>,
+    open_viewer: Option<OpenViewer>,
 ) -> Result<(), String> {
     let window = AutoResolutionReviewWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title(TITLE.into());
@@ -391,8 +395,8 @@ pub(crate) fn open(
     });
     // a pending pair: the duplicate filter on the pending pairs from it,
     // round to the start, to approve or deny as well as decide on; every
-    // tab is fetched again if it did any work. (The reference opens the
-    // media viewer on an actioned or denied pair; not in hydrus-rs yet.)
+    // tab is fetched again if it did any work. An actioned or denied pair:
+    // the media viewer on its files still stored, from A.
     window.on_row_activated({
         let state = state.clone();
         let refresh = refresh.clone();
@@ -403,7 +407,35 @@ pub(crate) fn open(
             };
             let (store, rule_id, rule, pairs) = {
                 let state = state.borrow();
-                if state.tab != PENDING || row >= state.pending.len() {
+                if row >= state.len(state.tab) {
+                    return;
+                }
+                if state.tab != PENDING {
+                    let (a, b) = state.files(state.tab, row);
+                    let store = state.store.clone();
+                    drop(state);
+                    let snapshot = store.snapshot();
+                    let local = snapshot
+                        .services
+                        .builtin(hydrus_core::service::builtin_keys::HYDRUS_LOCAL_FILE_STORAGE);
+                    let stored = local.map_err(anyhow::Error::from).and_then(|local| {
+                        let local = local.id;
+                        store
+                            .read(|c| hydrus_store::media::current_in(c, local, &[a, b]))
+                            .map_err(anyhow::Error::from)
+                    });
+                    let files: Vec<HashId> = match stored {
+                        Ok(stored) => [a, b].into_iter().filter(|f| stored.contains(f)).collect(),
+                        Err(e) => {
+                            eprintln!("{e}");
+                            return;
+                        }
+                    };
+                    if files.is_empty() {
+                        eprintln!("{}", crate::auto_resolution_review::NOTHING_LOCAL_IN_VIEWER);
+                    } else if let Some(open_viewer) = &open_viewer {
+                        open_viewer(files, 0);
+                    }
                     return;
                 }
                 let pairs: Vec<(HashId, HashId)> = state.pending[row..]

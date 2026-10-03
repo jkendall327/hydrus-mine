@@ -2021,6 +2021,39 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         }
     });
     let viewing: Viewing = Rc::default();
+    // the media viewer on files not a page's (a duplicates rule's actioned
+    // pair, say)
+    *duplicates.open_viewer.borrow_mut() = Some(Rc::new({
+        let page = page.clone();
+        let viewer = viewer.clone();
+        let viewing = viewing.clone();
+        let change_pages: ChangePages = Rc::new(change_pages.clone());
+        let open_manage_notes = open_manage_notes.clone();
+        let files_changed = files_changed.clone();
+        let removed = removed.clone();
+        let tags_changed = tags_changed.clone();
+        let open_manage_tags = open_manage_tags.clone();
+        move |files: Vec<HashId>, start: usize| {
+            let store = page().borrow().store().clone();
+            let Some(model) = MediaViewer::new(store, files, start) else {
+                return;
+            };
+            *viewing.borrow_mut() = Some((hydrus_core::pages::PageKey::random().0, None));
+            let hooks = ViewerHooks {
+                viewing: viewing.clone(),
+                removed: removed.clone(),
+                tags_changed: tags_changed.clone(),
+                files_changed: files_changed.clone(),
+                manage_tags: Rc::new(open_manage_tags.clone()),
+                manage_notes: open_manage_notes.clone(),
+                change_pages: change_pages.clone(),
+            };
+            match open_viewer(model, &viewer, hooks) {
+                Ok(window) => *viewer.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open the media viewer: {e}"),
+            }
+        }
+    }));
     window.on_thumbnail_activated({
         let page = page.clone();
         let viewer = viewer.clone();

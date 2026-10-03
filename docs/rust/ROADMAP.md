@@ -105,8 +105,8 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   hydrus-store's `duplicates::merge::plan`). The rule editor's preview
   tab is done (`src/auto_resolution_preview_window.rs`), its pairs
   opening in the duplicate filter. "Review actions" opens its pending
-  pairs in the duplicate filter, to approve or deny. **Next**: opening
-  an actioned or denied pair in the media viewer; editing a rule's custom merge options; and its
+  pairs in the duplicate filter, to approve or deny, and its other pairs
+  in the media viewer. **Next**: the lists' "show in a new page"; editing a rule's custom merge options; and its
   searches' locations.
 - The filtering tab's search editor (`EditPotentialDuplicatesSearch
   ContextPanel`) and its "quick and dirty processing" box.

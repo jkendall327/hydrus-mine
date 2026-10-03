@@ -379,4 +379,17 @@ fn a_pending_pair_is_approved_in_the_duplicate_filter() {
         recorded_pairs(&steps[0]["state"], "actioned")
     );
     assert_eq!(window.get_label(), "Found 1 pairs.");
+
+    // an actioned pair: the media viewer on its files still stored (the
+    // worse one was deleted to the trash, which is still stored)
+    window.invoke_tab_chosen(1);
+    assert!(bound.viewer.borrow().is_none());
+    window.invoke_row_activated(0);
+    let viewer = bound
+        .viewer
+        .borrow()
+        .as_ref()
+        .expect("the viewer opened")
+        .clone_strong();
+    viewer.hide().unwrap();
 }
