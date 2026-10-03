@@ -1,0 +1,138 @@
+// The "manage ratings" dialog for some files (the reference's
+// `DialogManageRatings`, opened by a thumbnail's or the viewer's "manage >
+// ratings"; its workings are hydrus-gui-model's `ratings_editor`, bound by
+// `src/manage_ratings_window.rs`): each rating service's name and control,
+// set by clicking as the viewer's are, copy and paste, and apply.
+
+import { Button } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+import { RatingRow } from "viewer.slint";
+
+export component ManageRatingsWindow inherits Window {
+    in property <string> window-title: "manage ratings";
+    title: root.window-title;
+    preferred-width: 320px;
+    background: Theme.window;
+    in property <[string]> names;
+    in property <[RatingRow]> ratings;
+    in property <length> rating-size: 16px;
+    in property <length> incdec-height: 16px;
+    // what the last copy or paste did ("Copied 3 ratings!")
+    in property <string> notice;
+    // a paste's error
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    // (the row; left or right; how far along it)
+    callback rating-clicked(int, bool, float);
+    callback copy();
+    callback paste();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        for row[i] in root.ratings: HorizontalLayout {
+            spacing: 8px;
+            Text {
+                text: root.names[i] + ": ";
+                color: Theme.text;
+                vertical-alignment: center;
+                horizontal-stretch: 1;
+            }
+            Rectangle {
+                width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                height: row.kind == 2 ? root.incdec-height : root.rating-size;
+                if row.kind == 2: Rectangle {
+                    border-width: 1px;
+                    border-color: row.pen;
+                    background: row.brush;
+                    Text {
+                        x: 0;
+                        width: parent.width - 2px;
+                        height: parent.height;
+                        horizontal-alignment: right;
+                        vertical-alignment: center;
+                        text: row.text;
+                        color: #000000;
+                        font-size: max(root.incdec-height - 1px, 6px);
+                    }
+                }
+                for star[k] in row.shapes: Path {
+                    x: k * (root.rating-size + row.pad);
+                    y: 0;
+                    width: root.rating-size;
+                    height: root.rating-size;
+                    viewbox-width: 12;
+                    viewbox-height: 12;
+                    commands: row.shape;
+                    fill: star.brush;
+                    stroke: star.pen;
+                    stroke-width: 1px;
+                }
+                TouchArea {
+                    enabled: !root.asking;
+                    pointer-event(event) => {
+                        if (event.kind == PointerEventKind.down) {
+                            if (event.button == PointerEventButton.left) {
+                                root.rating-clicked(i, true, self.mouse-x / self.width);
+                            } else if (event.button == PointerEventButton.right) {
+                                root.rating-clicked(i, false, 0);
+                            }
+                        }
+                    }
+                    moved => {
+                        // (dragging along stars sets them)
+                        if (row.kind == 1) {
+                            root.rating-clicked(i, true, self.mouse-x / self.width);
+                        }
+                    }
+                }
+            }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            if root.notice != "": Text {
+                text: root.notice;
+                vertical-alignment: center;
+                color: Theme.text;
+            }
+            Button {
+                text: "copy";
+                enabled: !root.asking;
+                clicked => { root.copy(); }
+            }
+            Button {
+                text: "paste";
+                enabled: !root.asking;
+                clicked => { root.paste(); }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: ["ok"];
+            wants-text: false;
+            chosen(index) => { root.chosen(index); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                enabled: !root.asking;
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

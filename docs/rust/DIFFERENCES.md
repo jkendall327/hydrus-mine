@@ -357,6 +357,16 @@ search.
   than as a passing note over them, and the reference's shortcut to
   apply it isn't bound. Double-clicking beside the tabs doesn't add a
   note.
+- **The "manage ratings" dialog**'s copy and paste are labelled buttons,
+  its notices show beside them rather than as a passing note, and a
+  paste's error is shown in the dialog's own panel; the error itself
+  (after "the general error was:") is hydrus-rs's JSON parser's words
+  rather than Python's, but for a bad service key's, which is Python's.
+  A numerical rating pasted as a whole number (`1`) is copied back as a
+  float (`1.0`), and an inc/dec count pasted as a fraction is ignored
+  (the reference keeps it). Its controls are a fixed size, not the
+  options' dialog rating size, and an inc/dec control's middle click
+  (typing a count) isn't there; its shortcut to apply isn't bound.
 - **The "manage urls" dialog**'s copy and paste are labelled buttons
   rather than the reference's icons, and its questions are asked in the
   dialog's own panel. Its list sorts and selects as hydrus-rs's lists

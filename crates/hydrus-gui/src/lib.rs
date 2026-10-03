@@ -44,6 +44,7 @@ mod import_window;
 mod importer_list_menu;
 mod locations_window;
 mod manage_notes_window;
+mod manage_ratings_window;
 pub(crate) mod manage_tags_window;
 mod manage_urls_window;
 mod menu_bar;
@@ -150,10 +151,10 @@ pub use hydrus_gui_model::{
     edit_subscription, favourites, file_log, filename_tagging, filetype_tree, folders,
     import_options_editor, importer_menu, info_lines, list_selection, local_import, main_menu,
     manage_tags, media_actions, merge_options_editor, notes_editor, options, page_chooser,
-    predicate_editors, ratings, scanbar, search_log, selection, session_saving, sidecar_editors,
-    sidecars, simple_downloader, sort, status, string_editors, subscriptions_dedupe,
-    subscriptions_dialog, subscriptions_list, tag_filter_editor, thumbnail_icons,
-    thumbnail_ratings, urls_editor,
+    predicate_editors, ratings, ratings_editor, scanbar, search_log, selection, session_saving,
+    sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
+    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
+    thumbnail_icons, thumbnail_ratings, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -172,6 +173,8 @@ pub struct Bound {
     pub manage_tags: Rc<RefCell<Option<ManageTagsWindow>>>,
     /// The manage notes dialog while one is open.
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
+    /// The manage ratings dialog while one is open.
+    pub manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>>,
     /// The manage urls dialog while one is open.
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
@@ -942,9 +945,20 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // a thumbnail's or the viewer's "manage > ratings"
+    let manage_ratings: Rc<RefCell<Option<ManageRatingsWindow>>> = Rc::default();
+    let open_manage_ratings: OpenOnFiles = Rc::new({
+        let manage_ratings = manage_ratings.clone();
+        move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            match manage_ratings_window::open(&store, files, &manage_ratings, applied) {
+                Ok(window) => *manage_ratings.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open manage ratings: {e}"),
+            }
+        }
+    });
     // a thumbnail's or the viewer's "urls > manage"
     let manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>> = Rc::default();
-    let open_manage_urls: OpenManageUrls = Rc::new({
+    let open_manage_urls: OpenOnFiles = Rc::new({
         let manage_urls = manage_urls.clone();
         move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
             match manage_urls_window::open(&store, files, &manage_urls, applied) {
@@ -2149,6 +2163,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let change_pages: ChangePages = Rc::new(change_pages.clone());
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
+        let open_manage_ratings = open_manage_ratings.clone();
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
@@ -2167,6 +2182,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_tags: Rc::new(open_manage_tags.clone()),
                 manage_notes: open_manage_notes.clone(),
                 manage_urls: open_manage_urls.clone(),
+                manage_ratings: open_manage_ratings.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2182,6 +2198,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let change_pages: ChangePages = Rc::new(change_pages.clone());
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
+        let open_manage_ratings = open_manage_ratings.clone();
         let files_changed = files_changed.clone();
         move |index| {
             let page = page();
@@ -2207,6 +2224,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_tags: Rc::new(open_manage_tags.clone()),
                 manage_notes: open_manage_notes.clone(),
                 manage_urls: open_manage_urls.clone(),
+                manage_ratings: open_manage_ratings.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2437,6 +2455,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let shown = shown.clone();
         let open_manage_notes = open_manage_notes.clone();
         let open_manage_urls = open_manage_urls.clone();
+        let open_manage_ratings = open_manage_ratings.clone();
         let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
@@ -2535,6 +2554,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let files = page.selected_files();
                     if !files.is_empty() {
                         open_manage_urls(page.store().clone(), files, files_changed.clone());
+                    }
+                }
+                Action::ManageRatings => {
+                    let page = page.borrow();
+                    let files = page.selected_files();
+                    if !files.is_empty() {
+                        open_manage_ratings(page.store().clone(), files, files_changed.clone());
                     }
                 }
                 _ => {
@@ -2675,6 +2701,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         viewer,
         manage_tags,
         manage_notes,
+        manage_ratings,
         manage_urls,
         options,
         about,
@@ -3355,8 +3382,9 @@ type OpenManageTags = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn
 /// Opens manage notes on a file, calling the hook given once applied.
 type OpenManageNotes = Rc<dyn Fn(Arc<hydrus_store::Store>, HashId, Rc<dyn Fn()>)>;
 
-/// Opens manage urls on some files, calling the hook given once applied.
-type OpenManageUrls = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;
+/// Opens a manage dialog (urls, ratings) on some files, calling the hook
+/// given once applied.
+type OpenOnFiles = Rc<dyn Fn(Arc<hydrus_store::Store>, Vec<HashId>, Rc<dyn Fn()>)>;
 
 /// What a viewer tells its page of, and how it opens manage tags and
 /// notes.
@@ -3369,7 +3397,8 @@ struct ViewerHooks {
     files_changed: Rc<dyn Fn()>,
     manage_tags: OpenManageTags,
     manage_notes: OpenManageNotes,
-    manage_urls: OpenManageUrls,
+    manage_urls: OpenOnFiles,
+    manage_ratings: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3409,6 +3438,7 @@ fn open_viewer(
         manage_tags,
         manage_notes,
         manage_urls,
+        manage_ratings,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -4062,6 +4092,7 @@ fn open_viewer(
         let manage_tags_of = manage_tags_of.clone();
         let manage_notes = manage_notes.clone();
         let manage_urls = manage_urls.clone();
+        let manage_ratings = manage_ratings.clone();
         let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
@@ -4139,6 +4170,10 @@ fn open_viewer(
                 Action::ManageUrls => {
                     let store = model.borrow().store().clone();
                     manage_urls(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::ManageRatings => {
+                    let store = model.borrow().store().clone();
+                    manage_ratings(store, vec![file], Rc::new(show.clone()));
                 }
                 Action::DeleteFrom(domain) => {
                     let name = model
@@ -4325,7 +4360,7 @@ fn open_viewer(
 }
 
 /// A rating control as the viewer draws it.
-fn rating_row(control: &ratings::Control) -> RatingRow {
+pub(crate) fn rating_row(control: &ratings::Control) -> RatingRow {
     let colour =
         |rgb: hydrus_store::services::Rgb| slint::Color::from_rgb_u8(rgb.0[0], rgb.0[1], rgb.0[2]);
     let shapes: Vec<RatingShape> = control

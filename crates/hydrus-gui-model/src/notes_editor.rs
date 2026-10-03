@@ -272,6 +272,17 @@ fn python_json_string(s: &str) -> String {
 
 /// What the reference says of clipboard text it couldn't read as notes.
 pub fn clipboard_error(content: &str, error: &str) -> String {
+    clipboard_parse_error(
+        "JSON names and notes, either as an Object or a list of pairs",
+        content,
+        error,
+    )
+}
+
+/// What the reference says of clipboard text it couldn't read
+/// (`PresentClipboardParseError`): what it expected, the text (elided),
+/// and the error.
+pub fn clipboard_parse_error(expected: &str, content: &str, error: &str) -> String {
     let shown: String = if content.chars().count() > 64 {
         content
             .chars()
@@ -282,6 +293,6 @@ pub fn clipboard_error(content: &str, error: &str) -> String {
         content.to_owned()
     };
     format!(
-        "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON names and notes, either as an Object or a list of pairs\" but received this text:\n\n{shown}\n\nMore details have been written to the log, but the general error was:\n\n{error}"
+        "Sorry, I could not understand what was in the clipboard. I was expecting \"{expected}\" but received this text:\n\n{shown}\n\nMore details have been written to the log, but the general error was:\n\n{error}"
     )
 }

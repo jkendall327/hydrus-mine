@@ -25,6 +25,7 @@ mod info_lines;
 mod list_drag;
 mod main_shortcuts;
 mod manage_notes;
+mod manage_ratings;
 mod manage_tags;
 mod manage_urls;
 mod media_actions;

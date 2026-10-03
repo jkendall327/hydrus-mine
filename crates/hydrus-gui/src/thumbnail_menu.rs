@@ -59,6 +59,8 @@ pub enum Action {
     DeletePhysically,
     Undelete,
     ManageTags,
+    /// The selected files' ratings (the file shown's, in the viewer).
+    ManageRatings,
     /// The focused file's notes.
     ManageNotes,
     /// The selected files' URLs (the focused file's, in the viewer).
@@ -727,6 +729,20 @@ fn spam(menu: &mut Vec<Entry>, entries: Vec<Entry>) {
     }
 }
 
+/// The manage menu: tags, ratings if there are rating services to rate
+/// with, and notes (counting the focused file's).
+pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
+    let mut entries = vec![Entry::Item("tags".into(), Action::ManageTags)];
+    if services.all().any(|s| s.service_type().is_rating_service()) {
+        entries.push(Entry::Item("ratings".into(), Action::ManageRatings));
+    }
+    entries.push(Entry::Item(
+        crate::notes_editor::menu_label(notes),
+        Action::ManageNotes,
+    ));
+    entries
+}
+
 /// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
 /// refetch: manage, then, if there are URLs to offer, the focused file's
 /// URLs and the selection's, to open in the web browser, open a page of
@@ -1095,13 +1111,7 @@ pub fn menu(
     if num_selected > 0 {
         entries.push(Entry::Menu(
             "manage".into(),
-            vec![
-                Entry::Item("tags".into(), Action::ManageTags),
-                Entry::Item(
-                    crate::notes_editor::menu_label(notes.unwrap_or(0)),
-                    Action::ManageNotes,
-                ),
-            ],
+            manage_menu(services, notes.unwrap_or(0)),
         ));
         // (the reference's locations, which hydrus-rs doesn't have yet)
         entries.extend(urls);

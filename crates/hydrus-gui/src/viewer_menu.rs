@@ -236,10 +236,7 @@ pub fn viewer_menu(
         .map_or(0, |n| n.len());
     entries.push(Entry::Menu(
         "manage".into(),
-        vec![
-            Entry::Item("tags".into(), Action::ManageTags),
-            Entry::Item(crate::notes_editor::menu_label(notes), Action::ManageNotes),
-        ],
+        crate::thumbnail_menu::manage_menu(&store.snapshot().services, notes),
     ));
     // its urls, opening and sharing it (as the thumbnails' for it alone)
     // (with no selection, as `AddKnownURLsViewCopyMenu` is called here)

@@ -810,7 +810,7 @@ files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, manage's ratings, times, force filetype,
+clearing deletion records, manage's times, force filetype,
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and
@@ -830,6 +830,22 @@ reference does (extending a note a pasted one extends, renaming on a
 clash; text it can't read is said so), and "copy URLs" copies the URLs
 in the note in view. "apply" writes the notes (each cleaned, empty ones
 dropped) and deletes the ones gone; "cancel" with changes asks first.
+
+Manage → "ratings" (there when there are rating services; the selected
+files', in the viewer the file shown's) opens the reference's "manage
+ratings for N files" dialog (`ui/manage_ratings.slint`,
+`src/manage_ratings_window.rs`, hydrus-gui-model's `ratings_editor`,
+checked step by step against the reference's,
+`oracle/record_manage_ratings.py`): each like/dislike, numerical and
+inc/dec service by name, its control drawn as the viewer draws it and
+clicked as the reference's dialog controls are (left likes, sets the
+stars clicked or counts one more; right dislikes, clears or counts one
+less). A service the files differ on starts mixed, in its mixed
+colours (an inc/dec one showing their average), and is left alone
+unless set. "copy" copies the ratings not mixed as the reference's JSON
+of service keys and ratings ("Copied 3 ratings!"), and "paste" sets
+those it can take ("Pasted 2 ratings!"; text it can't read is said so).
+"apply" writes the ratings changed to all the files.
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the

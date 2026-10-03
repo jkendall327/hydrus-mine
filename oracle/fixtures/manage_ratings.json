@@ -1,0 +1,1139 @@
+{
+ "keys": {
+  "favourites": "6661766f757269746573",
+  "stars": "57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2",
+  "counter": "c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de"
+ },
+ "stars": {
+  "num_stars": 5,
+  "allow_zero": true
+ },
+ "cases": [
+  {
+   "files": [
+    [
+     "aa",
+     {
+      "favourites": 1.0,
+      "stars": 0.6,
+      "counter": 3
+     }
+    ]
+   ],
+   "steps": [
+    {
+     "state": [
+      [
+       "favourites",
+       0,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 3 ratings!"
+      }
+     ],
+     "copied": [
+      "[[\"6661766f757269746573\", 1], [\"57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2\", 0.6], [\"c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de\", 3]]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       0,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       0,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.6
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "stars",
+      "stars",
+      4
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       5
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 3 ratings!"
+      }
+     ],
+     "copied": [
+      "[[\"6661766f757269746573\", 0], [\"57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2\", 0.8], [\"c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de\", 4]]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "do": [
+      "ok"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [
+      [
+       "favourites",
+       0,
+       [
+        "aa"
+       ]
+      ],
+      [
+       "stars",
+       0.8,
+       [
+        "aa"
+       ]
+      ],
+      [
+       "counter",
+       4,
+       [
+        "aa"
+       ]
+      ]
+     ],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.8
+      ],
+      [
+       "counter",
+       3,
+       4
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "files": [
+    [
+     "aa",
+     {
+      "favourites": 1.0,
+      "stars": 0.6,
+      "counter": 3
+     }
+    ],
+    [
+     "bb",
+     {
+      "favourites": 0.0
+     }
+    ],
+    [
+     "cc",
+     {
+      "stars": 0.6,
+      "counter": 8
+     }
+    ]
+   ],
+   "steps": [
+    {
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       4,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 0 ratings!"
+      }
+     ],
+     "copied": [
+      "[]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       4,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       4
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "paste",
+      [
+       [
+        "favourites",
+        1
+       ],
+       [
+        "stars",
+        null
+       ],
+       [
+        "nothing",
+        1
+       ],
+       [
+        "counter",
+        9
+       ]
+      ]
+     ],
+     "said": [
+      {
+       "critical": "Clipboard Error!",
+       "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON pairs of service keys and rating values\" but received this text:\n\n[[\"6661766f757269746573\", 1], [\"57a257a257a257a257a257a257a257a…\n\nMore details have been written to the log, but the general error was:\n\nValueError('non-hexadecimal number found in fromhex() arg at position 0')"
+      }
+     ],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 1 ratings!"
+      }
+     ],
+     "copied": [
+      "[[\"c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de\", 3]]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "paste_raw",
+      "this is not json at all, but it does go on for quite a while, longer than sixty-four"
+     ],
+     "said": [
+      {
+       "critical": "Clipboard Error!",
+       "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"JSON pairs of service keys and rating values\" but received this text:\n\nthis is not json at all, but it does go on for quite a while, l…\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+      }
+     ],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "paste",
+      [
+       [
+        "favourites",
+        0.5
+       ],
+       [
+        "stars",
+        2
+       ],
+       [
+        "counter",
+        "x"
+       ]
+      ]
+     ],
+     "said": [
+      {
+       "notice": "Pasted 3 ratings!"
+      }
+     ],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       4,
+       null
+      ],
+      [
+       "stars",
+       4,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "paste",
+      [
+       [
+        "favourites",
+        null
+       ],
+       [
+        "stars",
+        0.4
+       ]
+      ]
+     ],
+     "said": [
+      {
+       "notice": "Pasted 2 ratings!"
+      }
+     ],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.4
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 3 ratings!"
+      }
+     ],
+     "copied": [
+      "[[\"6661766f757269746573\", null], [\"57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2\", 0.4], [\"c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de\", 3]]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.4
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    },
+    {
+     "do": [
+      "ok"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [
+      [
+       "favourites",
+       null,
+       [
+        "aa",
+        "bb",
+        "cc"
+       ]
+      ],
+      [
+       "stars",
+       0.4,
+       [
+        "aa",
+        "bb",
+        "cc"
+       ]
+      ]
+     ],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.4
+      ],
+      [
+       "counter",
+       3,
+       3
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "files": [
+    [
+     "aa",
+     {}
+    ],
+    [
+     "bb",
+     {}
+    ]
+   ],
+   "steps": [
+    {
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied 3 ratings!"
+      }
+     ],
+     "copied": [
+      "[[\"6661766f757269746573\", null], [\"57a257a257a257a257a257a257a257a257a257a257a257a257a257a257a257a2\", null], [\"c0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0dec0de\", 0]]"
+     ],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "stars"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "counter"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "ok"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       2,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "files": [
+    [
+     "aa",
+     {
+      "favourites": 0.0,
+      "stars": 1.0
+     }
+    ],
+    [
+     "bb",
+     {
+      "favourites": 0.0,
+      "stars": 1.0
+     }
+    ]
+   ],
+   "steps": [
+    {
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       1.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "right",
+      "stars"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       2,
+       0.0
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "stars",
+      "stars",
+      1
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       1,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.2
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "left",
+      "favourites"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [],
+     "state": [
+      [
+       "favourites",
+       0,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.2
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    },
+    {
+     "do": [
+      "ok"
+     ],
+     "said": [],
+     "copied": [],
+     "written": [
+      [
+       "favourites",
+       1,
+       [
+        "aa",
+        "bb"
+       ]
+      ],
+      [
+       "stars",
+       0.2,
+       [
+        "aa",
+        "bb"
+       ]
+      ]
+     ],
+     "state": [
+      [
+       "favourites",
+       0,
+       null
+      ],
+      [
+       "stars",
+       3,
+       0.2
+      ],
+      [
+       "counter",
+       3,
+       0
+      ]
+     ]
+    }
+   ]
+  }
+ ]
+}
