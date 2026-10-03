@@ -810,7 +810,7 @@ files themselves (as a file manager pastes them, as hydrus copies them),
 the files' paths, hashes
 (sha256, md5, sha1, sha512, blurhash, pixel hash; the focused file's shown
 in the menu) and file ids. Not yet: the embedded metadata window,
-clearing deletion records, manage's force filetype,
+clearing deletion records, manage's
 duplicates, maintenance and viewing stats,
 locations, urls → force metadata refetch, open's custom
 similarity distance, and
@@ -870,6 +870,19 @@ timestamp data, and "paste" sets the times it names. "apply" writes the
 times changed (asking first if more than 100 changes), a stepped time
 file by file, and a changed file modified time to the files on disk too
 (as the warning under it says).
+
+Manage → "force filetype" (the selected files'; in the viewer the file
+shown's) opens the reference's "force filetypes" dialog
+(`ui/force_filetype.slint`, `src/force_filetype_window.rs`,
+hydrus-gui-model's `force_filetype`, checked against the reference's,
+`oracle/record_force_filetype.py`): its warning, what the files are and
+are forced to ("Of the 4 files, there are 1 jpeg, 2 png, 1 webm. 2 are
+currently being forced, to: 1 png, 1 mp4."), and the filetypes to force
+them all to, in the reference's order ("remove all forced filetypes"
+first when some are forced; a single filetype isn't offered itself).
+"apply" forces them (a file forced to the type it was detected as isn't
+forced) and renames each file on disk to its new extension; hydrus-rs
+then shows and searches it as that type, as the reference does.
 
 Urls → "manage" (the selected files'; in the viewer, the file shown's;
 always the urls menu's first entry, as the reference has it) opens the

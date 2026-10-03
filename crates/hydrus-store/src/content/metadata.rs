@@ -279,6 +279,25 @@ impl ContentWriter<'_> {
         }
     }
 
+    /// Force files to be taken as another filetype (`SetForcedFiletype`),
+    /// their detected one kept; `None`, or the type a file was detected
+    /// as, stops forcing it.
+    pub fn force_filetype(
+        &mut self,
+        hashes: &[HashId],
+        mime: Option<hydrus_core::Mime>,
+    ) -> Result<()> {
+        let mut stmt = self.conn.prepare_cached(
+            "UPDATE files SET forced_mime = CASE WHEN ?1 IS NULL OR ?1 = mime THEN NULL ELSE ?1 END
+             WHERE hash_id = ?2",
+        )?;
+        let code = mime.map(hydrus_core::Mime::code);
+        for &hash in hashes {
+            stmt.execute(params![code, hash])?;
+        }
+        Ok(())
+    }
+
     /// Clear a web domain's modified time. Other timestamps can't be cleared.
     pub fn clear_domain_modified_time(&mut self, hashes: &[HashId], domain: &str) -> Result<()> {
         let Some(domain) = url_domain_id(self.conn, domain)? else {

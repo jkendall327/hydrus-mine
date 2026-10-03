@@ -20,9 +20,9 @@ screens not started yet:
    downloader page, or the page chooser), carried over from hydrus's
    sessions. **Left**: "edit formulae", with the formula editor (which the
    parser editors need too, so it comes with item 6).
-3. The rest of the media "manage" dialogs: force filetype, the embedded
-   metadata window, and share > export files. **Done**: URLs (urls >
-   manage), ratings (manage > ratings), times (manage > times).
+3. The rest of the media "manage" dialogs: the embedded metadata window,
+   and share > export files. **Done**: URLs (urls > manage), ratings
+   (manage > ratings), times (manage > times), force filetype.
 4. Services: review services and manage services.
 5. Tag siblings and parents (and tags > display/search, migrate tags,
    sibling/parent sync).

@@ -65,6 +65,8 @@ pub enum Action {
     ManageNotes,
     /// The selected files' times (the file shown's, in the viewer).
     ManageTimes,
+    /// Force the selected files' filetype (the file shown's).
+    ForceFiletype,
     /// The selected files' URLs (the focused file's, in the viewer).
     ManageUrls,
     OpenInNewPage,
@@ -732,7 +734,7 @@ fn spam(menu: &mut Vec<Entry>, entries: Vec<Entry>) {
 }
 
 /// The manage menu: tags, ratings if there are rating services to rate
-/// with, notes (counting the focused file's), and times.
+/// with, notes (counting the focused file's), times and force filetype.
 pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
     let mut entries = vec![Entry::Item("tags".into(), Action::ManageTags)];
     if services.all().any(|s| s.service_type().is_rating_service()) {
@@ -743,6 +745,7 @@ pub fn manage_menu(services: &ServiceRegistry, notes: usize) -> Vec<Entry> {
         Action::ManageNotes,
     ));
     entries.push(Entry::Item("times".into(), Action::ManageTimes));
+    entries.push(Entry::Item("force filetype".into(), Action::ForceFiletype));
     entries
 }
 

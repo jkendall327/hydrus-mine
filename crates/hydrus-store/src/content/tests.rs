@@ -621,3 +621,50 @@ fn file_info_round_trips() {
     let batch = crate::media::load(&w.conn, &w.snap.services, None, &[id]).unwrap();
     assert_eq!(batch.results[0].info.as_ref(), Some(&info));
 }
+
+#[test]
+fn a_forced_filetype_keeps_the_detected_one_and_is_undone() {
+    use hydrus_core::{Mime, Sha256};
+
+    use crate::media::{FileFlags, FileInfo};
+
+    let w = world();
+    let info = FileInfo {
+        size: 1,
+        mime: Mime::ImageJpeg,
+        original_mime: None,
+        width: None,
+        height: None,
+        duration_ms: None,
+        num_frames: None,
+        has_audio: false,
+        num_words: None,
+        file_modified: None,
+        pixel_hash: None,
+        blurhash: None,
+        flags: FileFlags(0),
+    };
+    let mut c = w.writer();
+    let id = crate::master::intern_hash(c.conn(), &Sha256([2; 32])).unwrap();
+    c.add_file_info(id, &info, false).unwrap();
+    c.add_files(w.roles.local[0], &[(id, Some(5))]).unwrap();
+    c.finish().unwrap();
+    let mimes = |w: &World| {
+        let batch = crate::media::load(&w.conn, &w.snap.services, None, &[id]).unwrap();
+        let info = batch.results[0].info.clone().unwrap();
+        (info.mime, info.original_mime)
+    };
+    let force = |w: &World, mime: Option<Mime>| {
+        let mut c = w.writer();
+        c.force_filetype(&[id], mime).unwrap();
+        c.finish().unwrap();
+    };
+    force(&w, Some(Mime::ImagePng));
+    assert_eq!(mimes(&w), (Mime::ImagePng, Some(Mime::ImageJpeg)));
+    // forced to what it is: not forced
+    force(&w, Some(Mime::ImageJpeg));
+    assert_eq!(mimes(&w), (Mime::ImageJpeg, None));
+    force(&w, Some(Mime::ImageWebp));
+    force(&w, None);
+    assert_eq!(mimes(&w), (Mime::ImageJpeg, None));
+}

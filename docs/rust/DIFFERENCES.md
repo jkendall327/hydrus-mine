@@ -378,6 +378,9 @@ search.
   its errors are in the dialog's own panel, and a JSON error's own words
   (after "the general error was:") are hydrus-rs's. The file modified
   time is changed on disk straight away, not in a cancellable job.
+- **Forcing filetypes** renames the files straight away rather than in a
+  cancellable job, and a file that can't be moved is copied but its old
+  copy isn't queued for cleaning up as the reference queues it.
 - **The "manage urls" dialog**'s copy and paste are labelled buttons
   rather than the reference's icons, and its questions are asked in the
   dialog's own panel. Its list sorts and selects as hydrus-rs's lists

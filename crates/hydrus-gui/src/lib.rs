@@ -36,6 +36,7 @@ mod file_log_window;
 mod filename_tagging_window;
 mod filter_window;
 mod folders_window;
+mod force_filetype_window;
 mod gallery;
 mod grid;
 pub mod headless;
@@ -150,12 +151,12 @@ pub use hydrus_gui_model::{
     archive_delete, audio, auto_resolution_preview, auto_resolution_review, auto_resolution_rules,
     autocomplete, checker_options, collect, datetime_editor, domains, duplicate_filter,
     duplicates_page, edit_subscription, favourites, file_log, filename_tagging, filetype_tree,
-    folders, import_options_editor, importer_menu, info_lines, list_selection, local_import,
-    main_menu, manage_tags, media_actions, merge_options_editor, notes_editor, options,
-    page_chooser, predicate_editors, ratings, ratings_editor, scanbar, search_log, selection,
-    session_saving, sidecar_editors, sidecars, simple_downloader, sort, status, string_editors,
-    subscriptions_dedupe, subscriptions_dialog, subscriptions_list, tag_filter_editor,
-    thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
+    folders, force_filetype, import_options_editor, importer_menu, info_lines, list_selection,
+    local_import, main_menu, manage_tags, media_actions, merge_options_editor, notes_editor,
+    options, page_chooser, predicate_editors, ratings, ratings_editor, scanbar, search_log,
+    selection, session_saving, sidecar_editors, sidecars, simple_downloader, sort, status,
+    string_editors, subscriptions_dedupe, subscriptions_dialog, subscriptions_list,
+    tag_filter_editor, thumbnail_icons, thumbnail_ratings, times_editor, urls_editor,
 };
 pub use page::SearchPage;
 pub use pages::{Pages, Tabs};
@@ -180,6 +181,8 @@ pub struct Bound {
     /// editor it opens.
     pub manage_times: Rc<RefCell<Option<ManageTimesWindow>>>,
     pub datetime_editor: Rc<RefCell<Option<DateTimeEditorWindow>>>,
+    /// The force filetypes dialog while one is open.
+    pub force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>>,
     /// The manage urls dialog while one is open.
     pub manage_urls: Rc<RefCell<Option<ManageUrlsWindow>>>,
     /// The options window while it is open.
@@ -977,6 +980,17 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             ) {
                 Ok(window) => *manage_times.borrow_mut() = Some(window),
                 Err(e) => eprintln!("could not open manage times: {e}"),
+            }
+        }
+    });
+    // a thumbnail's or the viewer's "manage > force filetype"
+    let force_filetype: Rc<RefCell<Option<ForceFiletypeWindow>>> = Rc::default();
+    let open_force_filetype: OpenOnFiles = Rc::new({
+        let force_filetype = force_filetype.clone();
+        move |store: Arc<hydrus_store::Store>, files: Vec<HashId>, applied: Rc<dyn Fn()>| {
+            match force_filetype_window::open(&store, &files, &force_filetype, applied) {
+                Ok(window) => *force_filetype.borrow_mut() = Some(window),
+                Err(e) => eprintln!("could not open force filetypes: {e}"),
             }
         }
     });
@@ -2189,6 +2203,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
+        let open_force_filetype = open_force_filetype.clone();
         let files_changed = files_changed.clone();
         let removed = removed.clone();
         let tags_changed = tags_changed.clone();
@@ -2209,6 +2224,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_urls: open_manage_urls.clone(),
                 manage_ratings: open_manage_ratings.clone(),
                 manage_times: open_manage_times.clone(),
+                force_filetype: open_force_filetype.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2226,6 +2242,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
+        let open_force_filetype = open_force_filetype.clone();
         let files_changed = files_changed.clone();
         move |index| {
             let page = page();
@@ -2253,6 +2270,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 manage_urls: open_manage_urls.clone(),
                 manage_ratings: open_manage_ratings.clone(),
                 manage_times: open_manage_times.clone(),
+                force_filetype: open_force_filetype.clone(),
                 change_pages: change_pages.clone(),
             };
             match open_viewer(model, &viewer, hooks) {
@@ -2485,6 +2503,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         let open_manage_urls = open_manage_urls.clone();
         let open_manage_ratings = open_manage_ratings.clone();
         let open_manage_times = open_manage_times.clone();
+        let open_force_filetype = open_force_filetype.clone();
         let files_changed = files_changed.clone();
         move |id| {
             use thumbnail_menu::Action;
@@ -2597,6 +2616,13 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     let files = page.selected_files();
                     if !files.is_empty() {
                         open_manage_times(page.store().clone(), files, files_changed.clone());
+                    }
+                }
+                Action::ForceFiletype => {
+                    let page = page.borrow();
+                    let files = page.selected_files();
+                    if !files.is_empty() {
+                        open_force_filetype(page.store().clone(), files, files_changed.clone());
                     }
                 }
                 _ => {
@@ -2740,6 +2766,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_ratings,
         manage_times,
         datetime_editor,
+        force_filetype,
         manage_urls,
         options,
         about,
@@ -3438,6 +3465,7 @@ struct ViewerHooks {
     manage_urls: OpenOnFiles,
     manage_ratings: OpenOnFiles,
     manage_times: OpenOnFiles,
+    force_filetype: OpenOnFiles,
     /// Opens pages (from the menu's open and urls entries).
     change_pages: ChangePages,
 }
@@ -3479,6 +3507,7 @@ fn open_viewer(
         manage_urls,
         manage_ratings,
         manage_times,
+        force_filetype,
         change_pages,
     } = hooks;
     let window = MediaViewerWindow::new()?;
@@ -4134,6 +4163,7 @@ fn open_viewer(
         let manage_urls = manage_urls.clone();
         let manage_ratings = manage_ratings.clone();
         let manage_times = manage_times.clone();
+        let force_filetype = force_filetype.clone();
         let show = show.clone();
         let remove_file = remove_file.clone();
         let with_slideshow = with_slideshow.clone();
@@ -4219,6 +4249,10 @@ fn open_viewer(
                 Action::ManageTimes => {
                     let store = model.borrow().store().clone();
                     manage_times(store, vec![file], Rc::new(show.clone()));
+                }
+                Action::ForceFiletype => {
+                    let store = model.borrow().store().clone();
+                    force_filetype(store, vec![file], Rc::new(show.clone()));
                 }
                 Action::DeleteFrom(domain) => {
                     let name = model

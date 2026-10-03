@@ -1,0 +1,1158 @@
+{
+ "cases": [
+  {
+   "name": "two jpegs",
+   "original": {
+    "jpeg": 2
+   },
+   "forced": {},
+   "text": [
+    "WARNING: This is advanced and experimental! Be careful!\n\nThis will override what hydrus thinks the filetype is for all of these files. Files will be renamed to receive their new file extensions. The original filetype is not forgotten, and this can be undone.\n\nOf the 2 files, there are 2 jpeg. None are currently forced to be anything else."
+   ],
+   "choices": [
+    [
+     "image - png",
+     "png"
+    ],
+    [
+     "image - static gif",
+     "static gif"
+    ],
+    [
+     "image - webp",
+     "webp"
+    ],
+    [
+     "image - jxl",
+     "jxl"
+    ],
+    [
+     "image - avif",
+     "avif"
+    ],
+    [
+     "image - bitmap",
+     "bitmap"
+    ],
+    [
+     "image - heic",
+     "heic"
+    ],
+    [
+     "image - heif",
+     "heif"
+    ],
+    [
+     "image - icon",
+     "icon"
+    ],
+    [
+     "image - qoi",
+     "qoi"
+    ],
+    [
+     "image - tiff",
+     "tiff"
+    ],
+    [
+     "animation - animated gif",
+     "animated gif"
+    ],
+    [
+     "animation - apng",
+     "apng"
+    ],
+    [
+     "animation - animated webp",
+     "animated webp"
+    ],
+    [
+     "animation - animated jxl",
+     "animated jxl"
+    ],
+    [
+     "animation - avif sequence",
+     "avif sequence"
+    ],
+    [
+     "animation - heic sequence",
+     "heic sequence"
+    ],
+    [
+     "animation - heif sequence",
+     "heif sequence"
+    ],
+    [
+     "animation - ugoira",
+     "ugoira"
+    ],
+    [
+     "video - mp4",
+     "mp4"
+    ],
+    [
+     "video - webm",
+     "webm"
+    ],
+    [
+     "video - matroska",
+     "matroska"
+    ],
+    [
+     "video - avi",
+     "avi"
+    ],
+    [
+     "video - flv",
+     "flv"
+    ],
+    [
+     "video - quicktime",
+     "quicktime"
+    ],
+    [
+     "video - mpeg",
+     "mpeg"
+    ],
+    [
+     "video - ogv",
+     "ogv"
+    ],
+    [
+     "video - realvideo",
+     "realvideo"
+    ],
+    [
+     "video - wmv",
+     "wmv"
+    ],
+    [
+     "audio - mp3",
+     "mp3"
+    ],
+    [
+     "audio - ogg",
+     "ogg"
+    ],
+    [
+     "audio - flac",
+     "flac"
+    ],
+    [
+     "audio - m4a",
+     "m4a"
+    ],
+    [
+     "audio - matroska audio",
+     "matroska audio"
+    ],
+    [
+     "audio - mp4 audio",
+     "mp4 audio"
+    ],
+    [
+     "audio - realaudio",
+     "realaudio"
+    ],
+    [
+     "audio - tta",
+     "tta"
+    ],
+    [
+     "audio - wave",
+     "wave"
+    ],
+    [
+     "audio - wavpack",
+     "wavpack"
+    ],
+    [
+     "audio - wma",
+     "wma"
+    ],
+    [
+     "application - flash",
+     "flash"
+    ],
+    [
+     "application - pdf",
+     "pdf"
+    ],
+    [
+     "application - epub",
+     "epub"
+    ],
+    [
+     "application - djvu",
+     "djvu"
+    ],
+    [
+     "application - docx",
+     "docx"
+    ],
+    [
+     "application - xlsx",
+     "xlsx"
+    ],
+    [
+     "application - pptx",
+     "pptx"
+    ],
+    [
+     "application - doc",
+     "doc"
+    ],
+    [
+     "application - xls",
+     "xls"
+    ],
+    [
+     "application - ppt",
+     "ppt"
+    ],
+    [
+     "application - rtf",
+     "rtf"
+    ],
+    [
+     "image project file - clip",
+     "clip"
+    ],
+    [
+     "image project file - krita",
+     "krita"
+    ],
+    [
+     "image project file - ora",
+     "ora"
+    ],
+    [
+     "image project file - paint.net",
+     "paint.net"
+    ],
+    [
+     "image project file - procreate",
+     "procreate"
+    ],
+    [
+     "image project file - psd",
+     "psd"
+    ],
+    [
+     "image project file - sai2",
+     "sai2"
+    ],
+    [
+     "image project file - svg",
+     "svg"
+    ],
+    [
+     "image project file - xcf",
+     "xcf"
+    ],
+    [
+     "archive - cbz",
+     "cbz"
+    ],
+    [
+     "archive - 7z",
+     "7z"
+    ],
+    [
+     "archive - gzip",
+     "gzip"
+    ],
+    [
+     "archive - rar",
+     "rar"
+    ],
+    [
+     "archive - zip",
+     "zip"
+    ],
+    [
+     "application/hydrus-update-definitions",
+     "application/hydrus-update-definitions"
+    ],
+    [
+     "application/hydrus-update-content",
+     "application/hydrus-update-content"
+    ]
+   ],
+   "value": "png"
+  },
+  {
+   "name": "mixed, some forced",
+   "original": {
+    "jpeg": 1,
+    "png": 2,
+    "webm": 1
+   },
+   "forced": {
+    "png": 1,
+    "mp4": 1
+   },
+   "text": [
+    "WARNING: This is advanced and experimental! Be careful!\n\nThis will override what hydrus thinks the filetype is for all of these files. Files will be renamed to receive their new file extensions. The original filetype is not forgotten, and this can be undone.\n\nOf the 4 files, there are 1 jpeg, 2 png, 1 webm. 2 are currently being forced, to: 1 png, 1 mp4."
+   ],
+   "choices": [
+    [
+     "remove all forced filetypes",
+     null
+    ],
+    [
+     "image - jpeg",
+     "jpeg"
+    ],
+    [
+     "image - png",
+     "png"
+    ],
+    [
+     "image - static gif",
+     "static gif"
+    ],
+    [
+     "image - webp",
+     "webp"
+    ],
+    [
+     "image - jxl",
+     "jxl"
+    ],
+    [
+     "image - avif",
+     "avif"
+    ],
+    [
+     "image - bitmap",
+     "bitmap"
+    ],
+    [
+     "image - heic",
+     "heic"
+    ],
+    [
+     "image - heif",
+     "heif"
+    ],
+    [
+     "image - icon",
+     "icon"
+    ],
+    [
+     "image - qoi",
+     "qoi"
+    ],
+    [
+     "image - tiff",
+     "tiff"
+    ],
+    [
+     "animation - animated gif",
+     "animated gif"
+    ],
+    [
+     "animation - apng",
+     "apng"
+    ],
+    [
+     "animation - animated webp",
+     "animated webp"
+    ],
+    [
+     "animation - animated jxl",
+     "animated jxl"
+    ],
+    [
+     "animation - avif sequence",
+     "avif sequence"
+    ],
+    [
+     "animation - heic sequence",
+     "heic sequence"
+    ],
+    [
+     "animation - heif sequence",
+     "heif sequence"
+    ],
+    [
+     "animation - ugoira",
+     "ugoira"
+    ],
+    [
+     "video - mp4",
+     "mp4"
+    ],
+    [
+     "video - webm",
+     "webm"
+    ],
+    [
+     "video - matroska",
+     "matroska"
+    ],
+    [
+     "video - avi",
+     "avi"
+    ],
+    [
+     "video - flv",
+     "flv"
+    ],
+    [
+     "video - quicktime",
+     "quicktime"
+    ],
+    [
+     "video - mpeg",
+     "mpeg"
+    ],
+    [
+     "video - ogv",
+     "ogv"
+    ],
+    [
+     "video - realvideo",
+     "realvideo"
+    ],
+    [
+     "video - wmv",
+     "wmv"
+    ],
+    [
+     "audio - mp3",
+     "mp3"
+    ],
+    [
+     "audio - ogg",
+     "ogg"
+    ],
+    [
+     "audio - flac",
+     "flac"
+    ],
+    [
+     "audio - m4a",
+     "m4a"
+    ],
+    [
+     "audio - matroska audio",
+     "matroska audio"
+    ],
+    [
+     "audio - mp4 audio",
+     "mp4 audio"
+    ],
+    [
+     "audio - realaudio",
+     "realaudio"
+    ],
+    [
+     "audio - tta",
+     "tta"
+    ],
+    [
+     "audio - wave",
+     "wave"
+    ],
+    [
+     "audio - wavpack",
+     "wavpack"
+    ],
+    [
+     "audio - wma",
+     "wma"
+    ],
+    [
+     "application - flash",
+     "flash"
+    ],
+    [
+     "application - pdf",
+     "pdf"
+    ],
+    [
+     "application - epub",
+     "epub"
+    ],
+    [
+     "application - djvu",
+     "djvu"
+    ],
+    [
+     "application - docx",
+     "docx"
+    ],
+    [
+     "application - xlsx",
+     "xlsx"
+    ],
+    [
+     "application - pptx",
+     "pptx"
+    ],
+    [
+     "application - doc",
+     "doc"
+    ],
+    [
+     "application - xls",
+     "xls"
+    ],
+    [
+     "application - ppt",
+     "ppt"
+    ],
+    [
+     "application - rtf",
+     "rtf"
+    ],
+    [
+     "image project file - clip",
+     "clip"
+    ],
+    [
+     "image project file - krita",
+     "krita"
+    ],
+    [
+     "image project file - ora",
+     "ora"
+    ],
+    [
+     "image project file - paint.net",
+     "paint.net"
+    ],
+    [
+     "image project file - procreate",
+     "procreate"
+    ],
+    [
+     "image project file - psd",
+     "psd"
+    ],
+    [
+     "image project file - sai2",
+     "sai2"
+    ],
+    [
+     "image project file - svg",
+     "svg"
+    ],
+    [
+     "image project file - xcf",
+     "xcf"
+    ],
+    [
+     "archive - cbz",
+     "cbz"
+    ],
+    [
+     "archive - 7z",
+     "7z"
+    ],
+    [
+     "archive - gzip",
+     "gzip"
+    ],
+    [
+     "archive - rar",
+     "rar"
+    ],
+    [
+     "archive - zip",
+     "zip"
+    ],
+    [
+     "application/hydrus-update-definitions",
+     "application/hydrus-update-definitions"
+    ],
+    [
+     "application/hydrus-update-content",
+     "application/hydrus-update-content"
+    ]
+   ],
+   "value": null
+  },
+  {
+   "name": "all forced",
+   "original": {
+    "zip": 3
+   },
+   "forced": {
+    "cbz": 3
+   },
+   "text": [
+    "WARNING: This is advanced and experimental! Be careful!\n\nThis will override what hydrus thinks the filetype is for all of these files. Files will be renamed to receive their new file extensions. The original filetype is not forgotten, and this can be undone.\n\nOf the 3 files, there are 3 zip. All are currently being forced: 3 cbz."
+   ],
+   "choices": [
+    [
+     "remove all forced filetypes",
+     null
+    ],
+    [
+     "image - jpeg",
+     "jpeg"
+    ],
+    [
+     "image - png",
+     "png"
+    ],
+    [
+     "image - static gif",
+     "static gif"
+    ],
+    [
+     "image - webp",
+     "webp"
+    ],
+    [
+     "image - jxl",
+     "jxl"
+    ],
+    [
+     "image - avif",
+     "avif"
+    ],
+    [
+     "image - bitmap",
+     "bitmap"
+    ],
+    [
+     "image - heic",
+     "heic"
+    ],
+    [
+     "image - heif",
+     "heif"
+    ],
+    [
+     "image - icon",
+     "icon"
+    ],
+    [
+     "image - qoi",
+     "qoi"
+    ],
+    [
+     "image - tiff",
+     "tiff"
+    ],
+    [
+     "animation - animated gif",
+     "animated gif"
+    ],
+    [
+     "animation - apng",
+     "apng"
+    ],
+    [
+     "animation - animated webp",
+     "animated webp"
+    ],
+    [
+     "animation - animated jxl",
+     "animated jxl"
+    ],
+    [
+     "animation - avif sequence",
+     "avif sequence"
+    ],
+    [
+     "animation - heic sequence",
+     "heic sequence"
+    ],
+    [
+     "animation - heif sequence",
+     "heif sequence"
+    ],
+    [
+     "animation - ugoira",
+     "ugoira"
+    ],
+    [
+     "video - mp4",
+     "mp4"
+    ],
+    [
+     "video - webm",
+     "webm"
+    ],
+    [
+     "video - matroska",
+     "matroska"
+    ],
+    [
+     "video - avi",
+     "avi"
+    ],
+    [
+     "video - flv",
+     "flv"
+    ],
+    [
+     "video - quicktime",
+     "quicktime"
+    ],
+    [
+     "video - mpeg",
+     "mpeg"
+    ],
+    [
+     "video - ogv",
+     "ogv"
+    ],
+    [
+     "video - realvideo",
+     "realvideo"
+    ],
+    [
+     "video - wmv",
+     "wmv"
+    ],
+    [
+     "audio - mp3",
+     "mp3"
+    ],
+    [
+     "audio - ogg",
+     "ogg"
+    ],
+    [
+     "audio - flac",
+     "flac"
+    ],
+    [
+     "audio - m4a",
+     "m4a"
+    ],
+    [
+     "audio - matroska audio",
+     "matroska audio"
+    ],
+    [
+     "audio - mp4 audio",
+     "mp4 audio"
+    ],
+    [
+     "audio - realaudio",
+     "realaudio"
+    ],
+    [
+     "audio - tta",
+     "tta"
+    ],
+    [
+     "audio - wave",
+     "wave"
+    ],
+    [
+     "audio - wavpack",
+     "wavpack"
+    ],
+    [
+     "audio - wma",
+     "wma"
+    ],
+    [
+     "application - flash",
+     "flash"
+    ],
+    [
+     "application - pdf",
+     "pdf"
+    ],
+    [
+     "application - epub",
+     "epub"
+    ],
+    [
+     "application - djvu",
+     "djvu"
+    ],
+    [
+     "application - docx",
+     "docx"
+    ],
+    [
+     "application - xlsx",
+     "xlsx"
+    ],
+    [
+     "application - pptx",
+     "pptx"
+    ],
+    [
+     "application - doc",
+     "doc"
+    ],
+    [
+     "application - xls",
+     "xls"
+    ],
+    [
+     "application - ppt",
+     "ppt"
+    ],
+    [
+     "application - rtf",
+     "rtf"
+    ],
+    [
+     "image project file - clip",
+     "clip"
+    ],
+    [
+     "image project file - krita",
+     "krita"
+    ],
+    [
+     "image project file - ora",
+     "ora"
+    ],
+    [
+     "image project file - paint.net",
+     "paint.net"
+    ],
+    [
+     "image project file - procreate",
+     "procreate"
+    ],
+    [
+     "image project file - psd",
+     "psd"
+    ],
+    [
+     "image project file - sai2",
+     "sai2"
+    ],
+    [
+     "image project file - svg",
+     "svg"
+    ],
+    [
+     "image project file - xcf",
+     "xcf"
+    ],
+    [
+     "archive - cbz",
+     "cbz"
+    ],
+    [
+     "archive - 7z",
+     "7z"
+    ],
+    [
+     "archive - gzip",
+     "gzip"
+    ],
+    [
+     "archive - rar",
+     "rar"
+    ],
+    [
+     "application/hydrus-update-definitions",
+     "application/hydrus-update-definitions"
+    ],
+    [
+     "application/hydrus-update-content",
+     "application/hydrus-update-content"
+    ]
+   ],
+   "value": null
+  },
+  {
+   "name": "one thousand",
+   "original": {
+    "static gif": 1000,
+    "apng": 1
+   },
+   "forced": {
+    "animated gif": 1000
+   },
+   "text": [
+    "WARNING: This is advanced and experimental! Be careful!\n\nThis will override what hydrus thinks the filetype is for all of these files. Files will be renamed to receive their new file extensions. The original filetype is not forgotten, and this can be undone.\n\nOf the 1,001 files, there are 1,000 static gif, 1 apng. 1,000 are currently being forced, to: 1,000 animated gif."
+   ],
+   "choices": [
+    [
+     "remove all forced filetypes",
+     null
+    ],
+    [
+     "image - jpeg",
+     "jpeg"
+    ],
+    [
+     "image - png",
+     "png"
+    ],
+    [
+     "image - static gif",
+     "static gif"
+    ],
+    [
+     "image - webp",
+     "webp"
+    ],
+    [
+     "image - jxl",
+     "jxl"
+    ],
+    [
+     "image - avif",
+     "avif"
+    ],
+    [
+     "image - bitmap",
+     "bitmap"
+    ],
+    [
+     "image - heic",
+     "heic"
+    ],
+    [
+     "image - heif",
+     "heif"
+    ],
+    [
+     "image - icon",
+     "icon"
+    ],
+    [
+     "image - qoi",
+     "qoi"
+    ],
+    [
+     "image - tiff",
+     "tiff"
+    ],
+    [
+     "animation - animated gif",
+     "animated gif"
+    ],
+    [
+     "animation - apng",
+     "apng"
+    ],
+    [
+     "animation - animated webp",
+     "animated webp"
+    ],
+    [
+     "animation - animated jxl",
+     "animated jxl"
+    ],
+    [
+     "animation - avif sequence",
+     "avif sequence"
+    ],
+    [
+     "animation - heic sequence",
+     "heic sequence"
+    ],
+    [
+     "animation - heif sequence",
+     "heif sequence"
+    ],
+    [
+     "animation - ugoira",
+     "ugoira"
+    ],
+    [
+     "video - mp4",
+     "mp4"
+    ],
+    [
+     "video - webm",
+     "webm"
+    ],
+    [
+     "video - matroska",
+     "matroska"
+    ],
+    [
+     "video - avi",
+     "avi"
+    ],
+    [
+     "video - flv",
+     "flv"
+    ],
+    [
+     "video - quicktime",
+     "quicktime"
+    ],
+    [
+     "video - mpeg",
+     "mpeg"
+    ],
+    [
+     "video - ogv",
+     "ogv"
+    ],
+    [
+     "video - realvideo",
+     "realvideo"
+    ],
+    [
+     "video - wmv",
+     "wmv"
+    ],
+    [
+     "audio - mp3",
+     "mp3"
+    ],
+    [
+     "audio - ogg",
+     "ogg"
+    ],
+    [
+     "audio - flac",
+     "flac"
+    ],
+    [
+     "audio - m4a",
+     "m4a"
+    ],
+    [
+     "audio - matroska audio",
+     "matroska audio"
+    ],
+    [
+     "audio - mp4 audio",
+     "mp4 audio"
+    ],
+    [
+     "audio - realaudio",
+     "realaudio"
+    ],
+    [
+     "audio - tta",
+     "tta"
+    ],
+    [
+     "audio - wave",
+     "wave"
+    ],
+    [
+     "audio - wavpack",
+     "wavpack"
+    ],
+    [
+     "audio - wma",
+     "wma"
+    ],
+    [
+     "application - flash",
+     "flash"
+    ],
+    [
+     "application - pdf",
+     "pdf"
+    ],
+    [
+     "application - epub",
+     "epub"
+    ],
+    [
+     "application - djvu",
+     "djvu"
+    ],
+    [
+     "application - docx",
+     "docx"
+    ],
+    [
+     "application - xlsx",
+     "xlsx"
+    ],
+    [
+     "application - pptx",
+     "pptx"
+    ],
+    [
+     "application - doc",
+     "doc"
+    ],
+    [
+     "application - xls",
+     "xls"
+    ],
+    [
+     "application - ppt",
+     "ppt"
+    ],
+    [
+     "application - rtf",
+     "rtf"
+    ],
+    [
+     "image project file - clip",
+     "clip"
+    ],
+    [
+     "image project file - krita",
+     "krita"
+    ],
+    [
+     "image project file - ora",
+     "ora"
+    ],
+    [
+     "image project file - paint.net",
+     "paint.net"
+    ],
+    [
+     "image project file - procreate",
+     "procreate"
+    ],
+    [
+     "image project file - psd",
+     "psd"
+    ],
+    [
+     "image project file - sai2",
+     "sai2"
+    ],
+    [
+     "image project file - svg",
+     "svg"
+    ],
+    [
+     "image project file - xcf",
+     "xcf"
+    ],
+    [
+     "archive - cbz",
+     "cbz"
+    ],
+    [
+     "archive - 7z",
+     "7z"
+    ],
+    [
+     "archive - gzip",
+     "gzip"
+    ],
+    [
+     "archive - rar",
+     "rar"
+    ],
+    [
+     "archive - zip",
+     "zip"
+    ],
+    [
+     "application/hydrus-update-definitions",
+     "application/hydrus-update-definitions"
+    ],
+    [
+     "application/hydrus-update-content",
+     "application/hydrus-update-content"
+    ]
+   ],
+   "value": null
+  }
+ ]
+}

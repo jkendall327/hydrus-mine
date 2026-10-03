@@ -18,6 +18,7 @@ mod edit_subscription;
 mod favourites;
 mod file_log;
 mod folders;
+mod force_filetype;
 mod import_files;
 mod import_options;
 mod importer_list_menu;

@@ -1,0 +1,44 @@
+// The "force filetypes" dialog (the reference's
+// `EditFilesForcedFiletypePanel`, opened by a thumbnail's or the viewer's
+// "manage > force filetype"; its text and choices are hydrus-gui-model's
+// `force_filetype`, bound by `src/force_filetype_window.rs`).
+
+import { Button, ComboBox } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+
+export component ForceFiletypeWindow inherits Window {
+    title: "force filetypes";
+    preferred-width: 520px;
+    background: Theme.window;
+    in property <string> text;
+    in property <[string]> choices;
+    in-out property <int> chosen: 0;
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 8px;
+        Text {
+            text: root.text;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        ComboBox {
+            model: root.choices;
+            current-index <=> root.chosen;
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
