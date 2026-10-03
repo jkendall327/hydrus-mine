@@ -148,9 +148,6 @@ filetypes aren't edited yet.
 - **Search page.**
   - The larger system predicate editors that remain.
   - Domain and tag service buttons' remaining cases.
-- **Native file pickers** elsewhere: "review files to import" uses one
-  (`hydrus_gui::pick`, the `rfd` crate); the import and export folder
-  dialogs' paths are still typed.
 - **Testing.**
   - Fuzz/property tests for the parsers that take untrusted input
     (system predicates, Client API parameters, URL parsing).

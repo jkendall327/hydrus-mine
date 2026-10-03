@@ -266,7 +266,8 @@ added or renamed folder is named so no other has its name. The edit
 import folder dialog has the folder's name, path, search subdirectories,
 paused, check regularly and its period, the recent modified time skip
 period, check on manage dialog ok, the popup and page options, and what
-to do with each source file (delete, leave, or move, and where); "apply"
+to do with each source file (delete, leave, or move, and where), each
+folder typed or picked with "browse" (the system's folder picker); "apply"
 refuses a folder with no path, inside hydrus's own directories, or moving
 files nowhere, and warns of directories that don't exist, as the
 reference does. The edit export folder dialog has the name, path, type

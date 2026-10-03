@@ -385,3 +385,59 @@ fn an_import_folders_filename_tagging_is_added_edited_and_deleted() {
     edit.invoke_tagging_delete(0);
     assert!(listed(&edit).is_empty());
 }
+
+/// "browse" beside a folder path, and beside a moved file outcome's
+/// location, asks the system's folder picker (here, a stand-in).
+#[test]
+fn folder_paths_are_picked_with_browse() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    hydrus_gui::set_picker(|kind, title| {
+        assert_eq!(
+            (kind, title),
+            (hydrus_gui::Pick::Folder, "Select directory")
+        );
+        vec!["/picked/folder".into()]
+    });
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+
+    open(&ui, "manage import folders\u{2026}");
+    import_list(&bound).invoke_add();
+    let edit = bound
+        .folders
+        .import_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.invoke_browse_path();
+    assert_eq!(edit.get_path(), "/picked/folder");
+    // a row whose action is "move"
+    let mut row = edit.get_actions().row_data(0).unwrap();
+    row.action = 2;
+    edit.get_actions().set_row_data(0, row);
+    edit.invoke_browse_location(0);
+    assert_eq!(
+        edit.get_actions().row_data(0).unwrap().location,
+        "/picked/folder"
+    );
+
+    open(&ui, "manage export folders\u{2026}");
+    bound
+        .folders
+        .export_list
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .invoke_add();
+    let edit = bound
+        .folders
+        .export_edit
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    edit.invoke_browse_path();
+    assert_eq!(edit.get_path(), "/picked/folder");
+}

@@ -70,6 +70,26 @@ component TextRow inherits HorizontalLayout {
     }
 }
 
+// a folder's path, typed or picked with "browse" (`DirPickerCtrl`)
+component PathRow inherits HorizontalLayout {
+    in property <string> label;
+    in-out property <string> text;
+    callback browse();
+    spacing: 6px;
+    Label {
+        text: root.label;
+        min-width: 180px;
+    }
+    LineEdit {
+        text <=> root.text;
+        horizontal-stretch: 1;
+    }
+    Button {
+        text: "browse";
+        clicked => { root.browse(); }
+    }
+}
+
 // the question panel and the dialog's apply/cancel, shared by the windows
 component Footer inherits VerticalLayout {
     in property <bool> asking;
@@ -244,6 +264,9 @@ export component ImportFolderWindow inherits Window {
     // (which outcome, its action's index)
     callback action-chosen(int, int);
     callback location-edited(int, string);
+    // the system's folder picker, for the path or a row's location
+    callback browse-path();
+    callback browse-location(int);
     callback chosen(int);
     callback cancelled();
     callback apply();
@@ -275,9 +298,10 @@ export component ImportFolderWindow inherits Window {
                             label: "name: ";
                             text <=> root.name;
                         }
-                        TextRow {
+                        PathRow {
                             label: "folder path: ";
                             text <=> root.path;
+                            browse => { root.browse-path(); }
                         }
                         CheckRow {
                             label: "search subdirectories: ";
@@ -370,6 +394,11 @@ export component ImportFolderWindow inherits Window {
                                 text: row.location;
                                 edited(text) => { root.location-edited(i, text); }
                             }
+                            Button {
+                                text: "browse";
+                                enabled: row.action == 2;
+                                clicked => { root.browse-location(i); }
+                            }
                         }
                     }
                     Group {
@@ -434,6 +463,8 @@ export component ExportFolderWindow inherits Window {
     in property <string> types-text;
     in property <string> sidecars-text;
     in-out property <string> name;
+    // the system's folder picker, for the path
+    callback browse-path();
     in-out property <string> path;
     // 0 regular, 1 synchronise
     in-out property <int> export-type;
@@ -492,9 +523,10 @@ export component ExportFolderWindow inherits Window {
                             label: "name: ";
                             text <=> root.name;
                         }
-                        TextRow {
+                        PathRow {
                             label: "folder path: ";
                             text <=> root.path;
+                            browse => { root.browse-path(); }
                         }
                     }
                     Group {

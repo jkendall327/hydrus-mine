@@ -284,6 +284,13 @@ fn write_import_folders(store: &Store, open: ImportList) -> hydrus_store::Result
 }
 
 /// Open the manage import folders dialog on the store's import folders.
+/// A folder from the system's picker ("browse", `PickDirectory`).
+fn picked_folder() -> Option<String> {
+    crate::pick(crate::Pick::Folder, "Select directory")
+        .first()
+        .map(|p| p.to_string_lossy().into_owned())
+}
+
 pub(crate) fn open_import_folders(store: &Arc<Store>, slots: &Slots) -> Result<(), String> {
     if let Some(window) = slots.import_list.borrow().as_ref() {
         return window.show().map_err(|e| e.to_string());
@@ -729,6 +736,28 @@ fn open_import_folder(
                 data.action = index;
                 rows.set_row_data(r, data);
             }
+        }
+    });
+    window.on_browse_path({
+        let weak = window.as_weak();
+        move || {
+            if let (Some(window), Some(path)) = (weak.upgrade(), picked_folder()) {
+                window.set_path(path.into());
+            }
+        }
+    });
+    window.on_browse_location({
+        let weak = window.as_weak();
+        move |row| {
+            let (Some(window), Some(path)) = (weak.upgrade(), picked_folder()) else {
+                return;
+            };
+            // (a new model, so the row's text box shows it though typed in)
+            let mut rows: Vec<_> = window.get_actions().iter().collect();
+            if let Some(data) = usize::try_from(row).ok().and_then(|r| rows.get_mut(r)) {
+                data.location = path.into();
+            }
+            window.set_actions(ModelRc::new(VecModel::from(rows)));
         }
     });
     window.on_location_edited({
@@ -1195,6 +1224,14 @@ fn open_export_folder(
     window.set_sidecars_text(SIDECARS_TEXT.into());
     window.set_name(folder.name.clone().into());
     window.set_path(folder.path.clone().into());
+    window.on_browse_path({
+        let weak = window.as_weak();
+        move || {
+            if let (Some(window), Some(path)) = (weak.upgrade(), picked_folder()) {
+                window.set_path(path.into());
+            }
+        }
+    });
     window.set_export_type(i32::from(folder.export_type == ExportType::Synchronise));
     window.set_delete_from_client(folder.delete_from_client_after_export);
     window.set_symlinks(folder.export_symlinks);
