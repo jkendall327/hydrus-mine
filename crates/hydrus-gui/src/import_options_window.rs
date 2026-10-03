@@ -146,6 +146,8 @@ fn set_text(get: impl Fn() -> SharedString, set: impl Fn(SharedString), text: St
 struct State {
     editor: Editor,
     services: Arc<hydrus_store::store::Snapshot>,
+    /// The allowed filetypes' groups showing their filetypes.
+    filetype_expanded: [bool; 7],
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -216,6 +218,9 @@ fn show(window: &ImportOptionsWindow, state: &State) {
                 .filter_map(|&c| hydrus_core::mime::Mime::from_code(c)),
         );
         window.set_filetypes(hydrus_search::text::filetypes_text(&set).into());
+        window.set_filetype_rows(crate::predicate_editor_window::tree_rows(
+            &crate::filetype_tree::groups(&o.filetypes, &state.filetype_expanded),
+        ));
         window.set_exclude_deleted(o.exclude_deleted);
         window.set_bombs(o.allow_decompression_bombs);
         let sizes: Vec<SizeLimit> = [o.min_size, o.max_size, o.max_gif_size]
@@ -465,6 +470,7 @@ pub(crate) fn open(
     let state = Rc::new(RefCell::new(State {
         editor,
         services: store.snapshot(),
+        filetype_expanded: [false; 7],
     }));
     let close = {
         let weak = window.as_weak();
@@ -488,6 +494,43 @@ pub(crate) fn open(
             }
             show(&window, &state.borrow());
             show_tag_services(&window, &state.borrow());
+        }
+    });
+    window.on_filetype_expanded({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |group, on| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            {
+                let mut state = state.borrow_mut();
+                if let Some(e) = usize::try_from(group)
+                    .ok()
+                    .and_then(|g| state.filetype_expanded.get_mut(g))
+                {
+                    *e = on;
+                }
+            }
+            show(&window, &state.borrow());
+        }
+    });
+    window.on_filetype_ticked({
+        let weak = window.as_weak();
+        let state = state.clone();
+        move |group, option, on| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            if let Some(o) = &mut state.borrow_mut().editor.values.file_filtering {
+                o.filetypes = crate::filetype_tree::tick(
+                    &o.filetypes,
+                    usize::try_from(group).unwrap_or(usize::MAX),
+                    usize::try_from(option).ok(),
+                    on,
+                );
+            }
+            show(&window, &state.borrow());
         }
     });
     window.on_changed({

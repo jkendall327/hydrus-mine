@@ -78,6 +78,32 @@ fn an_import_folders_import_options_are_edited_and_written() {
         labels(&editor)[0],
         "> file filtering: allows all filetypes, excludes previously deleted, excludes > 10 MB"
     );
+    // the allowed filetypes' tree: every group ticked; video unticked,
+    // and the image group opened
+    let tree = |editor: &ImportOptionsWindow| -> Vec<(String, bool, bool)> {
+        let rows = editor.get_filetype_rows();
+        (0..rows.row_count())
+            .map(|i| rows.row_data(i).unwrap())
+            .filter(|r| r.shown)
+            .map(|r| (r.text.to_string(), r.ticked, r.option < 0))
+            .collect()
+    };
+    assert_eq!(tree(&editor).len(), 7);
+    assert!(
+        tree(&editor)
+            .iter()
+            .all(|(_, ticked, group)| *ticked && *group)
+    );
+    editor.invoke_filetype_ticked(2, -1, false);
+    editor.invoke_filetype_expanded(0, true);
+    let shown = tree(&editor);
+    let row = |name: &str| shown.iter().find(|r| r.0 == name).unwrap().clone();
+    assert_eq!(row("video"), ("video".to_owned(), false, true));
+    assert_eq!(row("animation"), ("animation".to_owned(), true, true));
+    // (the image group's filetypes shown, after it)
+    assert_eq!(shown[1], ("jpeg".to_owned(), true, false));
+    assert_eq!(shown.iter().filter(|(_, _, g)| *g).count(), 7);
+    assert!(!labels(&editor)[0].contains("allows all filetypes"));
     let pixels = headless::render(&windows.get(3).unwrap(), 900, 620);
     let shots = std::path::Path::new(env!("CARGO_TARGET_TMPDIR"));
     headless::save_png(&shots.join("import_options.png"), &pixels, 900, 620).unwrap();
@@ -103,9 +129,18 @@ fn an_import_folders_import_options_are_edited_and_written() {
         options.presentation.unwrap().status,
         PresentationStatus::AnyGood
     );
-    assert_eq!(
-        options.file_filtering.unwrap().max_size,
-        Some(10 * 1024 * 1024)
+    let filtering = options.file_filtering.unwrap();
+    assert_eq!(filtering.max_size, Some(10 * 1024 * 1024));
+    // (as specific filetypes, video's not among them)
+    assert!(
+        filtering
+            .filetypes
+            .contains(&hydrus_core::mime::Mime::ImageJpeg.code())
+    );
+    assert!(
+        !filtering
+            .filetypes
+            .contains(&hydrus_core::mime::Mime::VideoMp4.code())
     );
 }
 

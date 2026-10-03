@@ -17,7 +17,7 @@ use super::{Condition, Context, Field, Kind, Panel, RatingService, TreeGroup};
 
 /// The filetypes the reference's tree offers, by group, in its order
 /// (`general_mimetypes_to_mime_groups`, the searchable ones).
-const FILETYPE_TREE: [(Mime, &[Mime]); 7] = [
+pub(crate) const FILETYPE_TREE: [(Mime, &[Mime]); 7] = [
     (
         Mime::GeneralImage,
         &[

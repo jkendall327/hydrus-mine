@@ -622,8 +622,8 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   are greyed out); its "additional urls" don't show the URL a URL class
   would actually fetch or refer from; trying a previously deleted file
   again doesn't offer to clear its deletion record.
-- **The import options editor** doesn't edit file filtering's filetypes
-  or a tag service's "get tags" filter (shown as what it lets through),
+- **The import options editor** doesn't edit a tag service's "get tags"
+  filter (shown as what it lets through),
   and takes the tag filtering blacklist, the whitelist, additional tags
   and note names as typed lines (the reference has a tag filter editor,
   a tags input with autocomplete, and list editors; its note renames

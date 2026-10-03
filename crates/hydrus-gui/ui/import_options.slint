@@ -8,6 +8,7 @@
 
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
+import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
 
 // a file size limit: whether there is one, its number and unit (B, KB,
 // MB, GB)
@@ -87,6 +88,10 @@ export component ImportOptionsWindow inherits Window {
     in-out property <bool> neighbour-spam;
     // file filtering
     in property <string> filetypes;
+    // the allowed filetypes' tree
+    in property <[EditorTreeRow]> filetype-rows;
+    callback filetype-expanded(int, bool);
+    callback filetype-ticked(int, int, bool);
     in-out property <bool> exclude-deleted;
     in-out property <bool> bombs;
     in property <[SizeLimit]> sizes;
@@ -248,6 +253,11 @@ export component ImportOptionsWindow inherits Window {
                         Row {
                             label: "allowed filetypes: ";
                             Label { text: root.filetypes; }
+                        }
+                        FiletypeTree {
+                            rows: root.filetype-rows;
+                            expanded(group, on) => { root.filetype-expanded(group, on); }
+                            ticked(group, option, on) => { root.filetype-ticked(group, option, on); }
                         }
                         Row {
                             label: "exclude previously deleted files: ";

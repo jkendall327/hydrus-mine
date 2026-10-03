@@ -236,7 +236,9 @@ options' summary ("> presentation: presenting new files"), and the chosen
 kind's page: "use the default import options" or "set custom import
 options" (starting from the default's), and the options. Presentation,
 prefetch (with its rule that the two checks can't both be dispositive),
-file filtering's switches and size and resolution limits, tag
+file filtering's allowed filetypes (ticked in the reference's tree of
+filetypes by group, a group's box ticking all of its) and its switches
+and size and resolution limits, tag
 filtering's blacklist and whitelist, locations' destination and
 switches, tags (per tag service: getting tags, additional tags, and the
 cog menu's switches; a warning if it gets no tags) and notes are edited

@@ -1,0 +1,43 @@
+// The reference's tree of filetypes to tick (`OptionsPanelMimesTree`), as
+// the system:filetype editor and file filtering import options show it:
+// each group with a button to show or hide its filetypes, a group's box
+// ticking or unticking all of its.
+
+import { Button, CheckBox } from "std-widgets.slint";
+
+// A row of the filetype tree: a group (`option` -1, with its filetypes
+// shown if `expanded`) or one of its filetypes.
+export struct EditorTreeRow {
+    text: string,
+    ticked: bool,
+    group: int,
+    option: int,
+    shown: bool,
+    expanded: bool,
+}
+
+export component FiletypeTree inherits VerticalLayout {
+    in property <[EditorTreeRow]> rows;
+    in property <bool> enabled: true;
+    callback expanded(int, bool);
+    callback ticked(int, int, bool);
+    for row in root.rows: VerticalLayout {
+        // (a collapsed group's filetypes take no room)
+        if row.shown: HorizontalLayout {
+            padding-left: row.option < 0 ? 0px : 32px;
+            spacing: 2px;
+            if row.option < 0: Button {
+                width: 28px;
+                text: row.expanded ? "▾" : "▸";
+                clicked => { root.expanded(row.group, !row.expanded); }
+            }
+            CheckBox {
+                min-height: 24px;
+                text: row.text;
+                checked: row.ticked;
+                enabled: root.enabled;
+                toggled => { root.ticked(row.group, row.option, self.checked); }
+            }
+        }
+    }
+}

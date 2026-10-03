@@ -119,13 +119,14 @@ auto-resolution's rules list, pause/play and resets. Recorded by
 recorded by `oracle/record_import_options_editor.py`, opened from the
 edit subscription and edit import folder dialogs and gallery and watcher
 pages. It edits every kind but external programs; tag filters are typed
-as lines (the reference has a tag filter editor), and file filtering's
-filetypes aren't edited yet.
+as lines (the reference has a tag filter editor). File filtering's
+filetypes are ticked in the reference's tree (`ui/filetype_tree.slint`,
+shared with the system:filetype editor; `hydrus-gui-model`'s
+`filetype_tree`).
 
 **Next**:
 
-- File filtering's filetypes (the reference's mimes tree), the tag
-  filter editor for "get tags" filters and the blacklist, and a tags
+- The tag filter editor for "get tags" filters and the blacklist, and a tags
   input with autocomplete for additional tags and the whitelist.
 - The subscriptions list's import options row (copy, paste and clear
   of the selected subscriptions' options): copying and pasting want the

@@ -23,6 +23,7 @@ use hydrus_core::{ContentStatus, ServiceKey, ServiceType, Tag};
 use hydrus_search::{TextContext, predicate_text};
 
 mod special;
+pub(crate) use special::FILETYPE_TREE;
 pub use special::Pressed;
 
 /// A system predicate offered with no value, which opens an editor.

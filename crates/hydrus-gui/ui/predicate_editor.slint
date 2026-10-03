@@ -8,16 +8,7 @@
 import { Button, CheckBox, ComboBox, LineEdit, ScrollView, SpinBox, TextEdit } from "std-widgets.slint";
 import { Theme } from "theme.slint";
 
-// A row of the filetype tree: a group (`option` -1, with its filetypes
-// shown if `expanded`) or one of its filetypes.
-export struct EditorTreeRow {
-    text: string,
-    ticked: bool,
-    group: int,
-    option: int,
-    shown: bool,
-    expanded: bool,
-}
+import { EditorTreeRow, FiletypeTree } from "filetype_tree.slint";
 
 // One of a panel's fields: `kind` 0 a label, 1 a choice, 2 tick boxes, 3 a
 // number, 4 a line of text, 5 several lines, 6 the filetype tree, 7 a
@@ -132,25 +123,10 @@ component FieldView {
             enabled: root.field.enabled;
             edited(text) => { root.text-edited(text); }
         }
-        if root.field.kind == 6: VerticalLayout {
-            for row in root.field.rows: VerticalLayout {
-                // (a collapsed group's filetypes take no room)
-                if row.shown: HorizontalLayout {
-                    padding-left: row.option < 0 ? 0px : 32px;
-                    spacing: 2px;
-                    if row.option < 0: Button {
-                        width: 28px;
-                        text: row.expanded ? "▾" : "▸";
-                        clicked => { root.expanded(row.group, !row.expanded); }
-                    }
-                    CheckBox {
-                        min-height: 24px;
-                        text: row.text;
-                        checked: row.ticked;
-                        toggled => { root.tree-ticked(row.group, row.option, self.checked); }
-                    }
-                }
-            }
+        if root.field.kind == 6: FiletypeTree {
+            rows: root.field.rows;
+            expanded(group, on) => { root.expanded(group, on); }
+            ticked(group, option, on) => { root.tree-ticked(group, option, on); }
         }
         if root.field.kind == 7: Button {
             text: root.field.text;

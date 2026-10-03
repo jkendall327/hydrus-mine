@@ -78,29 +78,7 @@ fn field_row(panel: &Panel, i: usize) -> EditorField {
         }
         Field::Tree { groups } => {
             row.kind = 6;
-            let mut rows = Vec::new();
-            for (g, group) in groups.iter().enumerate() {
-                let g = i32::try_from(g).unwrap_or(0);
-                rows.push(EditorTreeRow {
-                    text: group.name.as_str().into(),
-                    ticked: group.ticked.iter().all(|t| *t),
-                    group: g,
-                    option: -1,
-                    shown: true,
-                    expanded: group.expanded,
-                });
-                for (o, (option, ticked)) in group.options.iter().zip(&group.ticked).enumerate() {
-                    rows.push(EditorTreeRow {
-                        text: option.as_str().into(),
-                        ticked: *ticked,
-                        group: g,
-                        option: i32::try_from(o).unwrap_or(0),
-                        shown: group.expanded,
-                        expanded: false,
-                    });
-                }
-            }
-            row.rows = ModelRc::new(VecModel::from(rows));
+            row.rows = tree_rows(groups);
         }
         Field::Button(label) => {
             row.kind = 7;
@@ -495,4 +473,32 @@ pub(crate) fn open(
     window.show().map_err(|e| e.to_string())?;
     *slot.borrow_mut() = Some(window);
     Ok(())
+}
+
+/// The filetype tree's rows (`ui/filetype_tree.slint`): each group, ticked
+/// if all of its filetypes are, then its filetypes.
+pub(crate) fn tree_rows(groups: &[crate::predicate_editors::TreeGroup]) -> ModelRc<EditorTreeRow> {
+    let mut rows = Vec::new();
+    for (g, group) in groups.iter().enumerate() {
+        let g = i32::try_from(g).unwrap_or(0);
+        rows.push(EditorTreeRow {
+            text: group.name.as_str().into(),
+            ticked: group.ticked.iter().all(|t| *t),
+            group: g,
+            option: -1,
+            shown: true,
+            expanded: group.expanded,
+        });
+        for (o, (option, ticked)) in group.options.iter().zip(&group.ticked).enumerate() {
+            rows.push(EditorTreeRow {
+                text: option.as_str().into(),
+                ticked: *ticked,
+                group: g,
+                option: i32::try_from(o).unwrap_or(0),
+                shown: group.expanded,
+                expanded: false,
+            });
+        }
+    }
+    ModelRc::new(VecModel::from(rows))
 }
