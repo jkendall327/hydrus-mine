@@ -380,13 +380,16 @@ pub struct TimesEditor {
     original_domains: BTreeSet<String>,
     /// File service rows: the service, the timestamp type.
     file_services: Vec<(ServiceId, i64, Row)>,
+    /// Whether file modified times before 1980 can't go on disk (as on
+    /// Windows).
+    pub dos_epoch: bool,
 }
 
-/// `HydrusPaths.FileModifiedTimeIsOk`: not before the epoch (on Windows,
-/// 1980).
-fn modified_time_is_ok(ms: i64) -> bool {
+/// `HydrusPaths.FileModifiedTimeIsOk`: not before the epoch (or, on
+/// Windows, the DOS epoch of 1980).
+fn modified_time_is_ok(ms: i64, dos_epoch: bool) -> bool {
     let seconds = ms as f64 / 1000.0;
-    if cfg!(windows) {
+    if dos_epoch {
         seconds >= 315_532_800.0
     } else {
         seconds >= 0.0
@@ -480,6 +483,7 @@ impl TimesEditor {
             domains,
             original_domains,
             file_services,
+            dos_epoch: cfg!(windows),
         }
     }
 
@@ -540,7 +544,7 @@ impl TimesEditor {
     pub fn warning(&self) -> Option<&'static str> {
         let time = self.main_time(Main::Modified);
         let ms = time.value.fixed().filter(|_| time.changed)?;
-        Some(if modified_time_is_ok(ms) {
+        Some(if modified_time_is_ok(ms, self.dos_epoch) {
             MODIFIED_WARNING
         } else {
             MODIFIED_TOO_EARLY
@@ -968,7 +972,7 @@ impl TimesEditor {
             .into_iter()
             .find_map(|(files, time, step)| {
                 let ms = time.ms.filter(|_| time.kind == FILE_MODIFIED)?;
-                modified_time_is_ok(ms).then_some((files, ms, step))
+                modified_time_is_ok(ms, self.dos_epoch).then_some((files, ms, step))
             })
     }
 

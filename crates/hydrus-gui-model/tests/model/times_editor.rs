@@ -110,6 +110,8 @@ fn the_manage_times_dialog_works_as_the_references_does() {
             })
             .collect();
         let mut editor = TimesEditor::new(files, services.clone(), now * 1000);
+        // (recorded on Linux, where any time since the epoch goes on disk)
+        editor.dos_epoch = false;
         let steps = case["steps"].as_array().unwrap();
         assert_eq!(state(&editor, now, &tz), steps[0]["state"], "{name} start");
         let mut last_copied: Option<String> = None;
@@ -279,5 +281,52 @@ fn the_manage_times_dialog_works_as_the_references_does() {
             }
             assert_eq!(state(&editor, now, &tz), step["state"], "{context}");
         }
+    }
+}
+
+/// On Windows a file modified time before 1980 doesn't go on disk, as the
+/// reference's `FileModifiedTimeIsOk` has it there.
+#[test]
+fn a_file_modified_time_before_1980_stays_off_a_windows_disk() {
+    let file = FileTimes {
+        modified: Some(1_600_000_000_000),
+        ..FileTimes::default()
+    };
+    for (dos_epoch, ms, warning, on_disk) in [
+        (
+            true,
+            1_000,
+            hydrus_gui_model::times_editor::MODIFIED_TOO_EARLY,
+            false,
+        ),
+        (
+            true,
+            400_000_000_000,
+            hydrus_gui_model::times_editor::MODIFIED_WARNING,
+            true,
+        ),
+        (
+            false,
+            1_000,
+            hydrus_gui_model::times_editor::MODIFIED_WARNING,
+            true,
+        ),
+        (
+            false,
+            -1_000,
+            hydrus_gui_model::times_editor::MODIFIED_TOO_EARLY,
+            false,
+        ),
+    ] {
+        let mut editor = TimesEditor::new(vec![file.clone()], Vec::new(), 1_700_000_000_000);
+        editor.dos_epoch = dos_epoch;
+        let value = editor.main_time(Main::Modified).value.with(Some(ms), false);
+        editor.set_main(Main::Modified, value);
+        assert_eq!(editor.warning(), Some(warning), "{dos_epoch} {ms}");
+        assert_eq!(
+            editor.file_modified_update().is_some(),
+            on_disk,
+            "{dos_epoch} {ms}"
+        );
     }
 }
