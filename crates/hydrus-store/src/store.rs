@@ -34,6 +34,14 @@ pub const SERVE_LOCK_FILE: &str = "serve.lock";
 /// open.
 pub const GUI_LOCK_FILE: &str = "gui.lock";
 
+/// Changes to snapshot-backed state, shared between independently opened stores.
+#[derive(Debug, Default, serde::Serialize, serde::Deserialize)]
+struct SnapshotRevision(u64);
+
+impl settings::Setting for SnapshotRevision {
+    const KEY: &'static str = "store_snapshot_revision";
+}
+
 /// Take the lock in `name`, in the store directory `dir`: `None` if another
 /// process holds it. It is let go when the file returned is dropped (or the
 /// process ends, however it ends).
@@ -71,6 +79,8 @@ pub fn gui_open(dir: &Path) -> bool {
 /// Immutable view of the in-memory state.
 #[derive(Debug, Default)]
 pub struct Snapshot {
+    /// Revision of services, display graphs and other snapshot-backed settings.
+    pub revision: u64,
     pub services: ServiceRegistry,
     pub display: DisplayGraphs,
     pub storage: FileStorage,
@@ -91,6 +101,7 @@ impl Snapshot {
         let thumbnails = settings::get(conn)?;
         let url_classes = UrlClasses::new(settings::get::<UrlClassSettings>(conn)?);
         Ok(Self {
+            revision: settings::get::<SnapshotRevision>(conn)?.0,
             services,
             display,
             storage,
@@ -99,6 +110,13 @@ impl Snapshot {
             domains: Arc::default(),
             duplicates: Arc::default(),
         })
+    }
+
+    fn reload(conn: &Connection, old: &Self) -> Result<Self> {
+        let mut fresh = Self::load(conn)?;
+        fresh.domains = Arc::clone(&old.domains);
+        fresh.duplicates = Arc::clone(&old.duplicates);
+        Ok(fresh)
     }
 }
 
@@ -220,7 +238,23 @@ impl Store {
     /// Load the in-memory snapshot again (another process changed what it
     /// holds: the thumbnail settings, say).
     pub fn refresh(&self) -> Result<()> {
-        self.write_and_refresh(|_| Ok(()))
+        self.change_and_refresh(|_| Ok(()), false)
+    }
+
+    /// Notice another store's committed snapshot changes. Plain thumbnail
+    /// settings writes are also supported, as the daemon previously watched them.
+    /// Refreshing never advances the revision, so stores cannot wake each other
+    /// indefinitely by merely reloading their snapshots.
+    pub fn refresh_if_changed(&self) -> Result<bool> {
+        let old = self.snapshot();
+        let changed = self.read(|conn| {
+            Ok(settings::get::<SnapshotRevision>(conn)?.0 != old.revision
+                || settings::get::<ThumbnailSettings>(conn)? != old.thumbnails)
+        })?;
+        if changed {
+            self.refresh()?;
+        }
+        Ok(changed)
     }
 
     /// Run a write that changes services or tag relations, republishing the
@@ -230,15 +264,30 @@ impl Store {
         &self,
         f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
     ) -> Result<R> {
+        self.change_and_refresh(f, true)
+    }
+
+    fn change_and_refresh<R: Send + 'static>(
+        &self,
+        f: impl FnOnce(&mut WriteCtx<'_>) -> Result<R> + Send + 'static,
+        changed: bool,
+    ) -> Result<R> {
         let snapshot = Arc::clone(&self.snapshot);
         self.db.write_alone(move |ctx| {
             let result = f(ctx)?;
+            if changed {
+                let revision = settings::get::<SnapshotRevision>(ctx.conn())?
+                    .0
+                    .checked_add(1)
+                    .ok_or_else(|| {
+                        crate::StoreError::Invalid("snapshot revision overflow".into())
+                    })?;
+                settings::set(ctx.conn(), &SnapshotRevision(revision))?;
+            }
             // a service's files go with it, and its id may be used again
             crate::domains::changed(ctx.conn())?;
-            let mut fresh = Snapshot::load(ctx.conn())?;
             let old = snapshot.load();
-            fresh.domains = Arc::clone(&old.domains);
-            fresh.duplicates = Arc::clone(&old.duplicates);
+            let fresh = Snapshot::reload(ctx.conn(), &old)?;
             ctx.after_commit(move || snapshot.store(Arc::new(fresh)));
             Ok(result)
         })
@@ -255,7 +304,17 @@ impl Store {
         let snapshot = Arc::clone(&self.snapshot);
         self.db.write(move |ctx| {
             // loaded on the writer thread: it reflects every committed write
-            let snap = snapshot.load_full();
+            let old = snapshot.load_full();
+            let snap = if settings::get::<SnapshotRevision>(ctx.conn())?.0 == old.revision {
+                old
+            } else {
+                // Another process may have edited relations since our poll.
+                // Use its graph for this write's derived counts immediately.
+                let fresh = Arc::new(Snapshot::reload(ctx.conn(), &old)?);
+                let committed = Arc::clone(&fresh);
+                ctx.after_commit(move || snapshot.store(committed));
+                fresh
+            };
             let mut writer = ContentWriter::new(
                 ctx.conn(),
                 &snap,
@@ -337,5 +396,140 @@ mod tests {
         });
         assert!(failed.is_err());
         assert!(store.snapshot().services.by_name("doomed").is_none());
+    }
+
+    #[test]
+    fn independent_stores_notice_committed_snapshot_changes_without_refresh_loops() {
+        let dir = tempfile::tempdir().unwrap();
+        let editor = Store::open(dir.path()).unwrap();
+        let daemon = Store::open(dir.path()).unwrap();
+        let old = daemon.snapshot();
+        assert!(!daemon.refresh_if_changed().unwrap());
+        let classes = UrlClassSettings {
+            url_classes: vec![hydrus_core::url::UrlClass {
+                name: "edited class".into(),
+                ..Default::default()
+            }],
+            ..Default::default()
+        };
+        let saved = classes.clone();
+        editor
+            .write_and_refresh(move |ctx| {
+                services::insert(
+                    ctx.conn(),
+                    &hydrus_core::ServiceKey::new(vec![3; 32]),
+                    "new tag service",
+                    &services::ServiceKind::LocalTags,
+                )?;
+                settings::set(ctx.conn(), &saved)
+            })
+            .unwrap();
+        assert!(
+            daemon
+                .snapshot()
+                .services
+                .by_name("new tag service")
+                .is_none()
+        );
+        assert!(daemon.refresh_if_changed().unwrap());
+        let fresh = daemon.snapshot();
+        assert!(fresh.services.by_name("new tag service").is_some());
+        assert_eq!(fresh.url_classes.settings(), &classes);
+        assert!(Arc::ptr_eq(&old.domains, &fresh.domains));
+        assert!(Arc::ptr_eq(&old.duplicates, &fresh.duplicates));
+        assert!(old.services.by_name("new tag service").is_none());
+        assert!(!daemon.refresh_if_changed().unwrap());
+        assert!(!editor.refresh_if_changed().unwrap());
+        editor.refresh().unwrap();
+        assert!(!daemon.refresh_if_changed().unwrap());
+
+        let revision = fresh.revision;
+        let failed = editor.write_and_refresh(|ctx| {
+            services::insert(
+                ctx.conn(),
+                &hydrus_core::ServiceKey::new(vec![4; 32]),
+                "rolled back service",
+                &services::ServiceKind::LocalTags,
+            )?;
+            Err::<(), _>(crate::StoreError::Invalid("cancelled".into()))
+        });
+        assert!(failed.is_err());
+        assert_eq!(editor.snapshot().revision, revision);
+        assert!(!daemon.refresh_if_changed().unwrap());
+
+        // Preserve the daemon's existing support for plain thumbnail writes.
+        editor
+            .write(|ctx| {
+                let mut thumbnails: ThumbnailSettings = settings::get(ctx.conn())?;
+                thumbnails.bounding_width += 1;
+                settings::set(ctx.conn(), &thumbnails)
+            })
+            .unwrap();
+        assert!(daemon.refresh_if_changed().unwrap());
+        assert_eq!(daemon.snapshot().revision, revision);
+        assert!(!daemon.refresh_if_changed().unwrap());
+    }
+
+    #[test]
+    fn content_writes_use_foreign_relation_graphs_before_the_next_poll() {
+        use crate::content::MappingAction;
+        use hydrus_core::{Sha256, Tag};
+
+        let dir = tempfile::tempdir().unwrap();
+        let editor = Store::open(dir.path()).unwrap();
+        let daemon = Store::open(dir.path()).unwrap();
+        let old = daemon.snapshot();
+        let service = old.services.by_name("my tags").unwrap().id;
+        let all_files = crate::content::DomainRoles::new(&old.services)
+            .unwrap()
+            .all_known_files
+            .unwrap();
+        let (hash, bad, good) = editor
+            .write(|ctx| {
+                Ok((
+                    crate::master::intern_hash(ctx.conn(), &Sha256([1; 32]))?,
+                    crate::master::intern_tag(ctx.conn(), &Tag::new("bad").unwrap())?,
+                    crate::master::intern_tag(ctx.conn(), &Tag::new("good").unwrap())?,
+                ))
+            })
+            .unwrap();
+        editor
+            .write_and_refresh(move |ctx| {
+                ctx.conn().execute(
+                    "INSERT INTO tag_siblings (service_id, status, bad_tag_id, good_tag_id) VALUES (?1, 0, ?2, ?3)",
+                    rusqlite::params![service, bad, good],
+                )?;
+                crate::counts::rebuild_all(ctx.conn())
+            })
+            .unwrap();
+        let failed = daemon.write_content(move |writer| {
+            assert_eq!(writer.snapshot().display.get(service).ideal(bad), good);
+            writer.update_mappings(service, &MappingAction::Add, bad, &[hash])?;
+            Err::<(), _>(crate::StoreError::Invalid("cancelled".into()))
+        });
+        assert!(failed.is_err());
+        assert!(Arc::ptr_eq(&old, &daemon.snapshot()));
+        daemon
+            .write_content(move |writer| {
+                assert_eq!(writer.snapshot().display.get(service).ideal(bad), good);
+                writer.update_mappings(service, &MappingAction::Add, bad, &[hash])
+            })
+            .unwrap();
+        let table = crate::schema::MappingTables::new(service);
+        let counts: Vec<(hydrus_core::TagId, i64)> = daemon
+            .read(|conn| {
+                let mut stmt = conn.prepare(&format!(
+                    "SELECT tag_id, current FROM {} WHERE domain_id=?1 ORDER BY tag_id",
+                    table.display_counts
+                ))?;
+                Ok(stmt
+                    .query_map([all_files], |row| Ok((row.get(0)?, row.get(1)?)))?
+                    .collect::<std::result::Result<_, _>>()?)
+            })
+            .unwrap();
+        assert_eq!(counts, vec![(good, 1)]);
+        assert_eq!(old.display.get(service).ideal(bad), bad);
+        assert_eq!(daemon.snapshot().display.get(service).ideal(bad), good);
+        assert!(!daemon.refresh_if_changed().unwrap());
     }
 }

@@ -893,19 +893,20 @@ fn run_server(dir: &Path, port: Option<u16>, bind: Option<IpAddr>, attached: boo
                             tracing::error!(error = %e, "reading the network options failed");
                         }
                     }
-                    // (and the thumbnail options, which imports make
-                    // thumbnails by, from the in-memory snapshot)
-                    let store = downloads.downloader().store();
-                    let changed = store
-                        .read(hydrus_store::settings::get::<hydrus_core::thumbnail::ThumbnailSettings>)
-                        .map(|stored| stored != store.snapshot().thumbnails);
-                    match changed {
-                        Ok(true) => match store.refresh() {
-                            Ok(()) => tracing::info!("the thumbnail options changed"),
-                            Err(e) => tracing::error!(error = %e, "refreshing the snapshot failed"),
-                        },
+                }
+            });
+        }
+        // The desktop client has its own Store. Its service, relation and URL
+        // class editors publish a revision so this process reloads too.
+        {
+            let store = store.clone();
+            tokio::spawn(async move {
+                loop {
+                    tokio::time::sleep(Duration::from_secs(1)).await;
+                    match store.refresh_if_changed() {
+                        Ok(true) => tracing::info!("the store snapshot changed"),
                         Ok(false) => {}
-                        Err(e) => tracing::error!(error = %e, "reading the thumbnail options failed"),
+                        Err(e) => tracing::error!(error = %e, "refreshing the snapshot failed"),
                     }
                 }
             });
