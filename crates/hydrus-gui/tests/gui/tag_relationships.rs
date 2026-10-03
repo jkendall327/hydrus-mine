@@ -9,6 +9,29 @@ use slint::{ComponentHandle as _, Model as _};
 
 #[test]
 fn dialogs_stage_cancel_apply_questions_and_update_display() {
+    // Open through the tags menu, using its public click callbacks.
+    fn open(
+        ui: &MainWindow,
+        bound: &hydrus_gui::Bound,
+        name: &str,
+    ) -> hydrus_gui::TagRelationshipsWindow {
+        let top = (0..ui.get_menu_titles().row_count())
+            .find(|&i| ui.get_menu_titles().row_data(i).unwrap().label == "tags")
+            .unwrap();
+        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
+        let panes = ui.get_menu_panes();
+        let pane = panes.row_data(0).unwrap();
+        let at = (0..pane.lines.row_count())
+            .find(|&i| pane.lines.row_data(i).unwrap().label.starts_with(name))
+            .unwrap();
+        ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
+        bound
+            .tag_relationships
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong()
+    }
     let windows = headless::init();
     let dir = tempfile::tempdir().unwrap();
     let legacy = hydrus_testkit::legacy_fixture("basic");
@@ -39,29 +62,6 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
         .unwrap();
     ui.invoke_thumbnail_activated(0);
     let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
-    // Open through the tags menu, using its public click callbacks.
-    fn open(
-        ui: &MainWindow,
-        bound: &hydrus_gui::Bound,
-        name: &str,
-    ) -> hydrus_gui::TagRelationshipsWindow {
-        let top = (0..ui.get_menu_titles().row_count())
-            .find(|&i| ui.get_menu_titles().row_data(i).unwrap().label == "tags")
-            .unwrap();
-        ui.invoke_menu_title_pressed(i32::try_from(top).unwrap(), 0.0, 22.0);
-        let panes = ui.get_menu_panes();
-        let pane = panes.row_data(0).unwrap();
-        let at = (0..pane.lines.row_count())
-            .find(|&i| pane.lines.row_data(i).unwrap().label.starts_with(name))
-            .unwrap();
-        ui.invoke_menu_line_clicked(0, i32::try_from(at).unwrap(), 0.0, 0.0, 0.0);
-        bound
-            .tag_relationships
-            .borrow()
-            .as_ref()
-            .unwrap()
-            .clone_strong()
-    }
     let w = open(&ui, &bound, "siblings");
     let services = w.get_service_names();
     let mine = (0..services.row_count())
@@ -69,7 +69,7 @@ fn dialogs_stage_cancel_apply_questions_and_update_display() {
         .unwrap();
     w.invoke_service_chosen(i32::try_from(mine).unwrap());
     w.set_left_input("unfinished text".into());
-    let other = if mine == 0 { 1 } else { 0 };
+    let other = i32::from(mine == 0);
     w.invoke_service_chosen(other);
     assert_eq!(w.get_left_input(), "");
     w.invoke_service_chosen(i32::try_from(mine).unwrap());
