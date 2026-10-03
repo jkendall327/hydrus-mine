@@ -215,7 +215,8 @@ button for its cached import paths.
 The edit subscription and edit import folder dialogs' "import options"
 button, a gallery or watcher page's (for the searches or watchers it
 makes), and the "highlighted" box's (for that search or watcher alone,
-under the highlighted search's own file limit), opens the import options editor (`src/import_options_window.rs`,
+under the highlighted search's own file limit), and a URL downloader's
+or local import page's, opens the import options editor (`src/import_options_window.rs`,
 `hydrus-gui-model/src/import_options_editor.rs`), the reference's
 `EditSpecificImportOptionsContainerPanel`: a list of the kinds of options
 (in simple mode, as a new client has it), each labelled with whose

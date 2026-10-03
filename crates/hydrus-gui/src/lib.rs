@@ -1593,6 +1593,44 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             }
         }
     });
+    // a URL downloader's or local import's own import options, in the
+    // editor
+    window.on_importer_import_options({
+        let page = page.clone();
+        let shown = shown.clone();
+        let slot = folders.import_options.clone();
+        move || {
+            if slot.borrow().is_some() {
+                return;
+            }
+            let page = page();
+            let Some((queue, local, own)) = page
+                .borrow()
+                .importer()
+                .map(|i| (i.queue, i.local, i.options.clone()))
+            else {
+                return;
+            };
+            let caller = if local {
+                hydrus_core::import_options::CallerType::LocalImport
+            } else {
+                hydrus_core::import_options::CallerType::PostUrls
+            };
+            let store = page.borrow().store().clone();
+            let done: Rc<dyn Fn(hydrus_core::import_options::ImportOptionsSlice)> = {
+                let page = page.clone();
+                let shown = shown.clone();
+                Rc::new(move |options| {
+                    page.borrow_mut().set_query_import_options(queue, &options);
+                    shown(false);
+                })
+            };
+            match import_options_window::open(&store, caller, &own, &slot, done) {
+                Ok(editor) => *slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the import options: {e}"),
+            }
+        }
+    });
     // the shown search's or watcher's own import options, in the editor
     window.on_shown_import_options({
         let page = page.clone();
@@ -4067,6 +4105,9 @@ fn show_importer(window: &MainWindow, importer: &page::Importer) {
     window.set_local_import(importer.local);
     window.set_import_action(importer.live.files_status.as_str().into());
     window.set_import_status(importer.files_status().into());
+    window.set_import_options_label(
+        edit_subscription::import_options_label(&importer.options).into(),
+    );
     window.set_import_progress(importer.progress_text().into());
     #[allow(clippy::cast_precision_loss)] // (a progress bar)
     let fraction = match importer.progress() {

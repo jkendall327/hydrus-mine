@@ -122,8 +122,10 @@ filetypes aren't edited yet.
 - File filtering's filetypes (the reference's mimes tree), the tag
   filter editor for "get tags" filters and the blacklist, and a tags
   input with autocomplete for additional tags and the whitelist.
-- The URL downloader and local import pages' import options buttons,
-  and the subscriptions list's "import options" button.
+- The subscriptions list's import options row (copy, paste and clear
+  of the selected subscriptions' options): copying and pasting want the
+  reference's serialised import options container (hydrus-legacy reads
+  it; nothing writes it yet).
 - The editor's copy and paste and favourites buttons.
 
 ## Later

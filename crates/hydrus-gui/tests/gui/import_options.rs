@@ -242,3 +242,49 @@ fn a_highlighted_searchs_own_file_limit_and_import_options_are_edited() {
         "import options (presentation set)"
     );
 }
+
+#[test]
+fn a_url_downloaders_import_options_are_edited() {
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    // download, then urls
+    ui.invoke_new_page();
+    ui.invoke_chooser_pressed(4);
+    ui.invoke_chooser_pressed(8);
+    let queue = bound
+        .current
+        .borrow()
+        .borrow()
+        .importer()
+        .map(|i| i.queue)
+        .unwrap();
+    assert_eq!(
+        ui.get_import_options_label(),
+        "import options (all default)"
+    );
+    ui.invoke_importer_import_options();
+    let editor = bound
+        .folders
+        .import_options
+        .borrow()
+        .as_ref()
+        .expect("it opens")
+        .clone_strong();
+    assert_eq!(labels(&editor).len(), 8);
+    editor.invoke_kind_clicked(7);
+    editor.set_custom_index(1);
+    editor.invoke_changed();
+    editor.invoke_apply();
+    assert_eq!(
+        ui.get_import_options_label(),
+        "import options (presentation set)"
+    );
+    let options = store
+        .read(move |c| queues::queue(c, queue))
+        .unwrap()
+        .unwrap()
+        .options;
+    assert!(options.presentation.is_some());
+}

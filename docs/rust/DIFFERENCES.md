@@ -471,8 +471,7 @@ Checked by `crates/hydrus-download/tests/local_import.rs`.
   time as its source time, a missing one vetoed ("Source file does not
   exist!"), and, if the import says, each one in the database afterwards
   deleted (to the recycle bin, if the options say). Its sidecars (the
-  reference's metadata routers) aren't supported yet, nor is its page's
-  import options button; the tags to add to each file (from an "import"
+  reference's metadata routers) aren't supported yet; the tags to add to each file (from an "import"
   page carried over from hydrus) are added as a downloader's are.
 
 Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
@@ -550,7 +549,7 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   queries now and select by query text, add and edit subscriptions,
   merge, separate, lowercase, retry, reset, and overwrite downloader and
   checker options. It has no "deduplicate", "export"/"import"/"duplicate"
-  or import options buttons yet. "separate" can't extract only some
+  or import options (copy, paste, clear) buttons yet. "separate" can't extract only some
   queries (the reference's third answer), and "merge" merges each group
   as its questions are answered (cancelling a later group's questions
   leaves the earlier merged, where the reference merges none). It doesn't reckon bandwidth waits (the

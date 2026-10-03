@@ -542,6 +542,10 @@ export component MainWindow inherits Window {
     in property <bool> local-import;
     in property <string> import-action;
     in property <string> import-status;
+    // a URL downloader's or local import's import options, as their button
+    // names them, and their editor
+    in property <string> import-options-label;
+    callback importer-import-options();
     in property <string> import-progress;
     in property <float> import-fraction;
     in property <bool> import-paused;
@@ -941,6 +945,10 @@ export component MainWindow inherits Window {
                         pause-play-files => { root.pause-play-files(); }
                         file-log => { root.open-file-log(); }
                     }
+                    Button {
+                        text: root.import-options-label;
+                        clicked => { root.importer-import-options(); }
+                    }
                     TagList {
                         tags: root.tags;
                         activated(i) => { root.tag-activated(i); }
@@ -983,6 +991,10 @@ export component MainWindow inherits Window {
                             text: "paste";
                             clicked => { root.paste-urls(); }
                         }
+                    }
+                    Button {
+                        text: root.import-options-label;
+                        clicked => { root.importer-import-options(); }
                     }
                     TagList {
                         tags: root.tags;

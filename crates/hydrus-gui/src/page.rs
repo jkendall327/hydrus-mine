@@ -107,6 +107,8 @@ pub struct Importer {
     /// Whether it is a local import's (the reference's "import" page), not
     /// a URL list's.
     pub local: bool,
+    /// Its own import options.
+    pub options: hydrus_core::import_options::ImportOptionsSlice,
 }
 
 impl Importer {
@@ -1198,7 +1200,10 @@ impl SearchPage {
             searches,
             paused: row.as_ref().is_some_and(|q| q.files_paused),
             live: live.unwrap_or_default(),
-            local: row.is_some_and(|q| q.kind == queues::QueueKind::LocalImport),
+            local: row
+                .as_ref()
+                .is_some_and(|q| q.kind == queues::QueueKind::LocalImport),
+            options: row.map(|q| q.options).unwrap_or_default(),
         };
         let status_changed = self.importer.as_ref() != Some(&now);
         self.importer = Some(now);
