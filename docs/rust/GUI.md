@@ -246,6 +246,22 @@ there. "apply" gives the dialog the
 importer's options. As `oracle/record_import_options_editor.py` recorded
 the reference's.
 
+The tag filtering blacklist and each tag service's "get tags" filter
+are buttons saying what the filter does ("blacklisting on goblin, orc",
+"adding: all tags"), opening the reference's tag filter editor
+(`ui/tag_filter.slint`, `src/tag_filter_window.rs`,
+`hydrus-gui-model/src/tag_filter_editor.rs`) with the reference's
+explanation: the filter as a whitelist ("allow these") and a blacklist
+("exclude these"), each with boxes for unnamespaced tags, namespaced tags
+and every namespace the client's parsers parse, a list (double-click or
+"remove" to take entries out, asking first) and an input ("Series:*" is
+the series namespace); and as its "advanced" rules, "exclude these" and
+"except for these". A blacklist has the blacklist tab alone. It says
+when an entry is already blocked or permitted by a broader rule, what the
+filter does, and whether tags typed in the "testing" box pass (a
+blacklist testing each with its siblings). What it shows and does at each
+step is as `oracle/record_tag_filter_editor.py` recorded the reference's.
+
 A gallery or watcher page's list has the reference's right-click menu
 (`src/importer_list_menu.rs`, `hydrus-gui-model/src/importer_menu.rs`):
 a right press selects the row (if it isn't already), and the menu acts

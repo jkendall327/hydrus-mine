@@ -44,6 +44,43 @@ pub const REMOVE_SELECTED: &str = "Remove all selected?";
 pub const GLOBAL_BOXES: [&str; 2] = ["unnamespaced tags", "namespaced tags"];
 pub const HELP: &str = "Here you can set rules to filter tags for one purpose or another. The default is typically to permit all tags. Check the current filter summary text at the bottom-left of the panel to ensure you have your logic correct.\n\nThe whitelist/blacklist/advanced tabs are different ways of looking at the same filter, so you can choose which works best for you. Sometimes it is more useful to think about a filter as a whitelist (where only the listed contents are kept) or a blacklist (where everything _except_ the listed contents are kept), while the advanced tab lets you do a more complicated combination of the two.\n\nAs well as selecting entire namespaces with the checkboxes, you can type or paste the individual tags directly--just hit enter to add each one. Double-click an existing entry in a list to remove it.";
 
+/// A "tag filter" button's label, elided to 45 characters, and its tooltip,
+/// the whole (`TagFilterButton._UpdateLabel`): the blacklist for a
+/// blacklist-only filter, else what it permits, or with `filter_language`
+/// what it adds ("all tags except goblin"), after `prefix`.
+pub fn button_label(
+    filter: &TagFilter,
+    blacklist_only: bool,
+    prefix: &str,
+    filter_language: bool,
+) -> (String, String) {
+    let text = if blacklist_only {
+        filter.to_blacklist_string()
+    } else if filter_language {
+        filter.to_filter_string()
+    } else {
+        filter.to_permitted_string()
+    };
+    let tooltip = format!("{prefix}{text}");
+    let label = if tooltip.chars().count() > 45 {
+        let mut short: String = tooltip.chars().take(44).collect();
+        short.push('\u{2026}');
+        short
+    } else {
+        tooltip.clone()
+    };
+    (label, tooltip)
+}
+
+/// The editor's title, from a "tag filter" button.
+pub fn title(blacklist_only: bool) -> &'static str {
+    if blacklist_only {
+        "edit blacklist"
+    } else {
+        "edit tag filter"
+    }
+}
+
 /// The slices of the "unnamespaced tags" and "namespaced tags" boxes.
 const GLOBAL_SLICES: [&str; 2] = [UNNAMESPACED, NAMESPACED];
 

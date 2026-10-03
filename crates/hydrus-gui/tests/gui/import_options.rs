@@ -202,11 +202,81 @@ fn a_gallery_pages_import_options_are_edited_for_its_new_searches() {
     editor.invoke_kind_clicked(2);
     editor.set_custom_index(1);
     editor.invoke_changed();
-    editor.set_tag_blacklist("goblin\norc".into());
-    editor.invoke_changed();
+    // (in the tag filter editor, a blacklist alone)
+    assert_eq!(editor.get_tag_blacklist(), "no blacklist set");
+    editor.invoke_edit_blacklist();
+    let filter = hydrus_gui::tag_filter_window::last_opened().expect("the editor opens");
+    assert_eq!(filter.get_window_title(), "edit blacklist");
+    assert_eq!(filter.get_tabs().row_count(), 1);
+    assert!(
+        filter
+            .get_message()
+            .starts_with("If a file about to be downloaded")
+    );
+    filter.invoke_typed(1, "Goblin".into());
+    filter.invoke_typed(1, "orc".into());
+    assert_eq!(filter.get_black_rows().row_count(), 2);
+    assert_eq!(filter.get_current(), "blacklisting on goblin, orc");
+    // (unnamespaced rules catch namespaced tags, in a blacklist)
+    filter.set_test_input("character:goblin\nelf".into());
+    filter.invoke_test_edited();
+    assert_eq!(filter.get_test_result(), "1 pass, 1 blocked!");
+    let last = (0..100)
+        .take_while(|&n| windows.get(n).is_some())
+        .last()
+        .unwrap();
+    let pixels = headless::render(&windows.get(last).unwrap(), 760, 720);
+    headless::save_png(&shots.join("tag_filter.png"), &pixels, 760, 720).unwrap();
+    filter.invoke_apply();
+    assert!(hydrus_gui::tag_filter_window::last_opened().is_none());
+    assert_eq!(editor.get_tag_blacklist(), "blacklisting on goblin, orc");
     assert_eq!(
         labels(&editor)[2],
         "> tag filtering: blacklisting on goblin, orc"
+    );
+    // a service's "get tags" filter: no namespaced tags
+    editor.invoke_kind_clicked(4);
+    editor.invoke_edit_get_tags_filter(i32::try_from(mine).unwrap());
+    let filter = hydrus_gui::tag_filter_window::last_opened().expect("the editor opens");
+    assert_eq!(filter.get_window_title(), "edit tag filter");
+    assert_eq!(filter.get_tabs().row_count(), 3);
+    assert_eq!(filter.get_tab(), 0);
+    filter.invoke_global_clicked(0, 1);
+    assert_eq!(
+        filter.get_current(),
+        "current filter: allowing all unnamespaced tags"
+    );
+    // a namespace typed in, then removed, asking first
+    filter.invoke_typed(0, "creator:*".into());
+    assert_eq!(
+        filter.get_current(),
+        "current filter: allowing all unnamespaced tags and 'creator' tags"
+    );
+    let rows = filter.get_white_rows();
+    let creator = (0..rows.row_count())
+        .position(|r| rows.row_data(r).unwrap().cells.row_data(0).unwrap() == "'creator' tags")
+        .unwrap();
+    filter.invoke_row_clicked(0, i32::try_from(creator).unwrap(), false, false);
+    filter.invoke_remove(0);
+    assert!(filter.get_asking());
+    assert_eq!(filter.get_asking_message(), "Remove all selected?");
+    filter.invoke_chosen(0);
+    assert!(!filter.get_asking());
+    assert_eq!(
+        filter.get_current(),
+        "current filter: allowing all unnamespaced tags"
+    );
+    filter.invoke_help();
+    assert!(
+        filter
+            .get_asking_message()
+            .starts_with("Here you can set rules")
+    );
+    filter.invoke_chosen(0);
+    filter.invoke_apply();
+    assert_eq!(
+        editor.get_tag_services().row_data(mine).unwrap().filter,
+        "adding: all unnamespaced tags"
     );
 
     editor.invoke_apply();

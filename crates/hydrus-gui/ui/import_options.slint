@@ -114,7 +114,11 @@ export component ImportOptionsWindow inherits Window {
     in-out property <bool> rename-all-on;
     in-out property <string> rename-all;
     // tag filtering
-    in-out property <string> tag-blacklist;
+    // the blacklist button's label
+    in property <string> tag-blacklist;
+    callback edit-blacklist();
+    // a tag service's "get tags" filter button clicked
+    callback edit-get-tags-filter(int);
     in-out property <string> tag-whitelist;
     // tags
     in property <[TagServiceRow]> tag-services;
@@ -415,11 +419,14 @@ export component ImportOptionsWindow inherits Window {
                     }
                     if root.custom-index == 1 && root.kind == "tag filtering": VerticalLayout {
                         spacing: 6px;
-                        Label { text: "file blacklist (a tag, namespace: or the like a line; a file with a tag it blocks is not imported): "; }
-                        TextEdit {
-                            height: 100px;
-                            text <=> root.tag-blacklist;
-                            edited => { root.changed(); }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Label { text: "file blacklist: "; }
+                            Button {
+                                horizontal-stretch: 1;
+                                text: root.tag-blacklist;
+                                clicked => { root.edit-blacklist(); }
+                            }
                         }
                         Label { text: "file whitelist (a file must have one of these tags, if any are set; a tag a line): "; }
                         TextEdit {
@@ -453,9 +460,11 @@ export component ImportOptionsWindow inherits Window {
                                         checked: service.get-tags;
                                         toggled => { root.tag-service-toggled(i, "get-tags", self.checked); }
                                     }
-                                    Label {
-                                        text: service.get-tags ? "adding: " + service.filter : "";
+                                    Button {
+                                        text: service.filter;
+                                        enabled: service.get-tags;
                                         horizontal-stretch: 1;
+                                        clicked => { root.edit-get-tags-filter(i); }
                                     }
                                 }
                                 Label { text: "additional tags, one a line: "; }

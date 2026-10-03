@@ -32,4 +32,14 @@ impl Downloaders {
     pub fn parser(&self, key: &str) -> Option<&PageParser> {
         self.parsers.iter().find(|p| p.key == key)
     }
+
+    /// Every namespace the parsers parse, sorted (the reference's
+    /// `GetParserNamespaces`, offered by the tag filter editor).
+    pub fn parser_namespaces(&self) -> Vec<String> {
+        let mut all = std::collections::BTreeSet::new();
+        for parser in &self.parsers {
+            all.extend(parser.namespaces());
+        }
+        all.into_iter().collect()
+    }
 }

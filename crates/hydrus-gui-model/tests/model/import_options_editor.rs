@@ -281,10 +281,8 @@ fn each_kinds_summary_is_the_references() {
 }
 
 #[test]
-fn text_fields_read_and_write_lists_renames_and_blacklists() {
-    use hydrus_gui_model::import_options_editor::{
-        blacklist_text, lines, parse_renames, renames_text, with_blacklist,
-    };
+fn text_fields_read_and_write_lists_and_renames() {
+    use hydrus_gui_model::import_options_editor::{lines, parse_renames, renames_text};
     assert_eq!(lines(" a \n\n b\n"), ["a", "b"]);
     let renames = parse_renames("comment -> artist comment\nbad line\n -> x\n");
     assert_eq!(
@@ -292,14 +290,4 @@ fn text_fields_read_and_write_lists_renames_and_blacklists() {
         [("comment".to_owned(), "artist comment".to_owned())]
     );
     assert_eq!(renames_text(&renames), "comment -> artist comment");
-    let filter = TagFilter::new()
-        .with_rule("creator:", FilterRule::Blacklist)
-        .with_rule("creator:someone", FilterRule::Whitelist);
-    assert_eq!(blacklist_text(&filter), "creator:");
-    let edited = with_blacklist(&filter, "goblin\norc");
-    assert_eq!(blacklist_text(&edited), "goblin\norc");
-    assert_eq!(
-        edited.to_blacklist_string(),
-        "blacklisting on goblin, orc except creator:someone"
-    );
 }

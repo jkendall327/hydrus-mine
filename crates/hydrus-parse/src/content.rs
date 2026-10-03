@@ -369,6 +369,23 @@ pub struct SubsidiaryPageParser {
 }
 
 impl PageParser {
+    /// The namespaces of the tags it parses (`GetNamespaces`), its
+    /// subsidiary parsers' too; `""` for tags it takes as they come.
+    pub fn namespaces(&self) -> std::collections::BTreeSet<String> {
+        let mut namespaces: std::collections::BTreeSet<String> = self
+            .content_parsers
+            .iter()
+            .filter_map(|c| match &c.kind {
+                ContentKind::Tag { namespace } => Some(namespace.clone().unwrap_or_default()),
+                _ => None,
+            })
+            .collect();
+        for s in &self.subsidiary {
+            namespaces.extend(s.parser.namespaces());
+        }
+        namespaces
+    }
+
     /// Parse a page into posts. The context's `post_index` counts the posts
     /// with something to download so far.
     pub fn parse(

@@ -148,6 +148,8 @@ struct State {
     services: Arc<hydrus_store::store::Snapshot>,
     /// The allowed filetypes' groups showing their filetypes.
     filetype_expanded: [bool; 7],
+    /// A tag filter being edited.
+    tag_filter: crate::tag_filter_window::Slot,
 }
 
 /// Show the editor whole: the list and the shown kind's page.
@@ -280,11 +282,8 @@ fn show(window: &ImportOptionsWindow, state: &State) {
         );
     }
     if let Some(o) = &values.tag_filtering {
-        set_text(
-            || window.get_tag_blacklist(),
-            |t| window.set_tag_blacklist(t),
-            crate::import_options_editor::blacklist_text(&o.blacklist),
-        );
+        let (label, _) = crate::tag_filter_editor::button_label(&o.blacklist, true, "", false);
+        window.set_tag_blacklist(label.into());
         set_text(
             || window.get_tag_whitelist(),
             |t| window.set_tag_whitelist(t),
@@ -326,7 +325,14 @@ fn show_tag_services(window: &ImportOptionsWindow, state: &State) {
             TagServiceRow {
                 name: name.into(),
                 get_tags: s.get_tags,
-                filter: s.get_tags_filter.to_filter_string().into(),
+                filter: crate::tag_filter_editor::button_label(
+                    &s.get_tags_filter,
+                    false,
+                    "adding: ",
+                    true,
+                )
+                .0
+                .into(),
                 additional: s.additional_tags.join("\n").into(),
                 to_new: s.to_new_files,
                 to_inbox: s.to_already_in_inbox,
@@ -418,10 +424,6 @@ fn read(window: &ImportOptionsWindow, state: &mut State) {
         }
         Kind::TagFiltering => {
             if let Some(o) = &mut editor.values.tag_filtering {
-                o.blacklist = crate::import_options_editor::with_blacklist(
-                    &o.blacklist,
-                    &window.get_tag_blacklist(),
-                );
                 o.whitelist = crate::import_options_editor::lines(&window.get_tag_whitelist());
             }
         }
@@ -471,6 +473,7 @@ pub(crate) fn open(
         editor,
         services: store.snapshot(),
         filetype_expanded: [false; 7],
+        tag_filter: Rc::default(),
     }));
     let close = {
         let weak = window.as_weak();
@@ -482,6 +485,102 @@ pub(crate) fn open(
             slot.borrow_mut().take();
         }
     };
+    // the tag filters, each edited in the tag filter editor
+    let edit_filter = {
+        let weak = window.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        move |service: Option<usize>| {
+            let Some(window) = weak.upgrade() else {
+                return;
+            };
+            let (filter, slot) = {
+                let state = state.borrow();
+                let values = &state.editor.values;
+                let filter = match service {
+                    None => values.tag_filtering.as_ref().map(|o| o.blacklist.clone()),
+                    Some(i) => {
+                        tag_services(&state.services.services)
+                            .get(i)
+                            .and_then(|(key, _)| {
+                                values.tags.as_ref().map(|o| {
+                                    o.service(key)
+                                        .map(|s| s.get_tags_filter.clone())
+                                        .unwrap_or_default()
+                                })
+                            })
+                    }
+                };
+                (filter, state.tag_filter.clone())
+            };
+            let Some(filter) = filter else {
+                return;
+            };
+            let advanced = store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::AdvancedMode>)
+                .unwrap_or_default()
+                .0;
+            let message = match service {
+                None => crate::import_options_editor::BLACKLIST_MESSAGE,
+                Some(_) if advanced => "",
+                Some(_) => crate::import_options_editor::GET_TAGS_FILTER_MESSAGE,
+            };
+            let applied: Rc<dyn Fn(hydrus_core::tag_filter::TagFilter)> = {
+                let weak = window.as_weak();
+                let state = state.clone();
+                Rc::new(move |filter| {
+                    let Some(window) = weak.upgrade() else {
+                        return;
+                    };
+                    {
+                        let mut state = state.borrow_mut();
+                        let key = service.and_then(|i| {
+                            tag_services(&state.services.services)
+                                .get(i)
+                                .map(|s| s.0.clone())
+                        });
+                        let values = &mut state.editor.values;
+                        match key {
+                            None => {
+                                if let Some(o) = &mut values.tag_filtering {
+                                    o.blacklist = filter;
+                                }
+                            }
+                            Some(key) => {
+                                if let Some(o) = &mut values.tags {
+                                    service_options(o, &key).get_tags_filter = filter;
+                                }
+                            }
+                        }
+                    }
+                    show(&window, &state.borrow());
+                    show_tag_services(&window, &state.borrow());
+                })
+            };
+            let blacklist_only = service.is_none();
+            match crate::tag_filter_window::open(
+                &store,
+                &filter,
+                blacklist_only,
+                crate::tag_filter_editor::title(blacklist_only),
+                message,
+                &slot,
+                applied,
+            ) {
+                Ok(editor) => *slot.borrow_mut() = Some(editor),
+                Err(e) => eprintln!("could not open the tag filter editor: {e}"),
+            }
+        }
+    };
+    window.on_edit_blacklist({
+        let edit_filter = edit_filter.clone();
+        move || edit_filter(None)
+    });
+    window.on_edit_get_tags_filter(move |i| {
+        if let Ok(i) = usize::try_from(i) {
+            edit_filter(Some(i));
+        }
+    });
     window.on_kind_clicked({
         let weak = window.as_weak();
         let state = state.clone();

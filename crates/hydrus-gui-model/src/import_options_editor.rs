@@ -522,36 +522,6 @@ pub fn lines(text: &str) -> Vec<String> {
         .collect()
 }
 
-/// A filter's blacklisted slices, a line each (the tag filtering page's
-/// blacklist, as the reference's button shows only the blacklist).
-pub fn blacklist_text(filter: &hydrus_core::tag_filter::TagFilter) -> String {
-    filter
-        .rules()
-        .filter(|(_, r)| *r == hydrus_core::tag_filter::FilterRule::Blacklist)
-        .map(|(s, _)| s.to_owned())
-        .collect::<Vec<_>>()
-        .join("\n")
-}
-
-/// `filter` with its blacklist replaced by these lines (its whitelisted
-/// exceptions kept).
-pub fn with_blacklist(
-    filter: &hydrus_core::tag_filter::TagFilter,
-    text: &str,
-) -> hydrus_core::tag_filter::TagFilter {
-    use hydrus_core::tag_filter::{FilterRule, TagFilter};
-    let mut out = TagFilter::new();
-    for (slice, rule) in filter.rules() {
-        if rule == FilterRule::Whitelist {
-            out.set_rule(slice, rule);
-        }
-    }
-    for slice in lines(text) {
-        out.set_rule(slice, FilterRule::Blacklist);
-    }
-    out
-}
-
 /// Note renames as text: "parser name -> saved name", a line each.
 pub fn renames_text(renames: &[(String, String)]) -> String {
     renames
@@ -580,3 +550,13 @@ pub const CONFLICT_CHOICES: [hydrus_core::import_options::NoteConflict; 4] = [
     hydrus_core::import_options::NoteConflict::Append,
     hydrus_core::import_options::NoteConflict::Rename,
 ];
+
+/// What the "get tags" filter's editor explains (not in advanced mode).
+pub const GET_TAGS_FILTER_MESSAGE: &str = "Here you can filter which tags are applied to the files being imported in this context. This typically means those tags on a booru file page beside the file, but other contexts provide tags from different locations and quality.\n\nThe namespace checkboxes on the left are compiled from what all your current parsers say they can do and are simply for convenience. It is worth doing some smaller tests with a new download source to make sure you know what it can provide and what you actually want.\n\nOnce you are happy, you might want to say 'only \"character:\", \"creator:\" and \"series:\" tags', or 'everything _except_ \"species:\" tags'. This tag filter can get complicated if you want it to--check the help button in the top-right for more information.";
+
+/// What the tag filtering blacklist's editor explains.
+pub const BLACKLIST_MESSAGE: &str = "If a file about to be downloaded has a tag on the site that this blacklist blocks, the file will not be downloaded and imported. If you want to stop 'scat' or 'gore', just type them into the list.\n\nThis system tests the all tags that are parsed from the site, not any other tags the files may have in different places. Siblings of all those tags will also be tested. If none of your tag services have excellent siblings, it is worth adding multiple versions of your tag, just to catch different sites terms. Link up 'gore', 'guro', 'violence', etc...\n\nAdditionally, unnamespaced rules will apply to namespaced tags. 'low_resolution' in the blacklist will catch 'meta:low_resolution' as parsed from a site.\n\nIt is worth doing a small test here, just to make sure it is all set up how you want.";
+
+/// The tag filtering blacklist button's tooltip.
+pub const BLACKLIST_TOOLTIP: &str =
+    "A blacklist will ignore files if they have any of a certain list of tags.";

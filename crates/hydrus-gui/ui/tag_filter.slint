@@ -1,0 +1,398 @@
+// The tag filter editor (the reference's `EditTagFilterPanel`, opened by a
+// "tag filter" button; its workings are hydrus-gui-model's
+// `tag_filter_editor`, bound by `src/tag_filter_window.rs`): one filter as
+// a whitelist, a blacklist and its advanced rules, what it does, and a box
+// to test tags against it.
+
+import { Button, CheckBox, LineEdit, TextEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking, Tick } from "subscriptions.slint";
+import { ListTable, TableRow } from "list_table.slint";
+
+component Tab inherits Rectangle {
+    in property <string> text;
+    in property <bool> current;
+    callback clicked();
+    height: 28px;
+    min-width: label.preferred-width + 20px;
+    border-width: 1px;
+    border-color: Theme.border;
+    background: root.current ? Theme.highlight : transparent;
+    label := Text {
+        text: root.text;
+        color: root.current ? Theme.highlight-text : Theme.text;
+        vertical-alignment: center;
+        horizontal-alignment: center;
+    }
+    TouchArea {
+        clicked => { root.clicked(); }
+    }
+}
+
+component Box inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        Text {
+            text: root.title;
+            font-weight: 700;
+            color: Theme.text;
+        }
+        @children
+    }
+}
+
+// a simple tab's boxes and list: the whitelist's or the blacklist's
+component Simple inherits VerticalLayout {
+    in property <string> title;
+    in property <bool> enabled;
+    in property <string> error;
+    in property <[Tick]> global;
+    in property <[Tick]> namespaces;
+    in property <bool> namespaces-enabled;
+    in property <[TableRow]> rows;
+    in property <bool> block-everything;
+    in property <bool> asking;
+    callback global-clicked(int);
+    callback namespace-clicked(int);
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback typed(string);
+    callback remove();
+    callback block();
+    spacing: 4px;
+    if root.error != "": Text {
+        text: root.error;
+        wrap: word-wrap;
+        color: Theme.error;
+    }
+    Box {
+        title: root.title;
+        vertical-stretch: 1;
+        HorizontalLayout {
+            spacing: 8px;
+            VerticalLayout {
+                spacing: 2px;
+                alignment: start;
+                for tick[i] in root.global: CheckBox {
+                    text: tick.label;
+                    checked: tick.on;
+                    enabled: root.enabled && !root.asking;
+                    toggled => { root.global-clicked(i); }
+                }
+                Rectangle { height: 6px; }
+                for tick[i] in root.namespaces: CheckBox {
+                    text: tick.label;
+                    checked: tick.on;
+                    enabled: root.enabled && root.namespaces-enabled && !root.asking;
+                    toggled => { root.namespace-clicked(i); }
+                }
+            }
+            VerticalLayout {
+                horizontal-stretch: 1;
+                spacing: 4px;
+                ListTable {
+                    vertical-stretch: 1;
+                    min-height: 160px;
+                    columns: [{ title: "tags", width: 240px, stretch: true }];
+                    rows: root.rows;
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(r); }
+                }
+                HorizontalLayout {
+                    spacing: 4px;
+                    input := LineEdit {
+                        horizontal-stretch: 1;
+                        enabled: root.enabled && !root.asking;
+                        accepted(text) => {
+                            root.typed(text);
+                            self.text = "";
+                        }
+                    }
+                    Button {
+                        text: "remove";
+                        enabled: root.enabled && !root.asking;
+                        clicked => { root.remove(); }
+                    }
+                    if root.block-everything: Button {
+                        text: "block everything";
+                        enabled: root.enabled && !root.asking;
+                        clicked => { root.block(); }
+                    }
+                }
+            }
+        }
+    }
+}
+
+// an advanced list: "exclude these" or "except for these"
+component Rules inherits Box {
+    in property <[TableRow]> rows;
+    in property <bool> input-enabled: true;
+    in property <bool> block-everything;
+    in property <bool> asking;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback typed(string);
+    callback delete();
+    callback block();
+    ListTable {
+        vertical-stretch: 1;
+        min-height: 160px;
+        columns: [{ title: "tags", width: 200px, stretch: true }];
+        rows: root.rows;
+        row-clicked(r, ctrl, shift) => { root.row-clicked(r, ctrl, shift); }
+        row-activated(r) => { root.row-activated(r); }
+    }
+    HorizontalLayout {
+        spacing: 4px;
+        LineEdit {
+            horizontal-stretch: 1;
+            enabled: root.input-enabled && !root.asking;
+            accepted(text) => {
+                root.typed(text);
+                self.text = "";
+            }
+        }
+        Button {
+            text: "delete";
+            enabled: !root.asking;
+            clicked => { root.delete(); }
+        }
+        if root.block-everything: Button {
+            text: "block everything";
+            enabled: !root.asking;
+            clicked => { root.block(); }
+        }
+    }
+}
+
+export component TagFilterWindow inherits Window {
+    in property <string> window-title: "edit tag filter";
+    title: root.window-title;
+    preferred-width: 760px;
+    preferred-height: 640px;
+    background: Theme.window;
+    // the caller's explanation, if any
+    in property <string> message;
+    in property <[string]> tabs;
+    in-out property <int> tab;
+    in property <string> instructions;
+    // whitelist
+    in property <bool> white-enabled;
+    in property <string> white-error;
+    in property <[Tick]> white-global;
+    in property <[Tick]> white-namespaces;
+    in property <bool> white-namespaces-enabled;
+    in property <[TableRow]> white-rows;
+    // blacklist
+    in property <bool> black-enabled;
+    in property <string> black-error;
+    in property <[Tick]> black-global;
+    in property <[Tick]> black-namespaces;
+    in property <bool> black-namespaces-enabled;
+    in property <[TableRow]> black-rows;
+    // advanced
+    in property <[TableRow]> exclude-rows;
+    in property <[TableRow]> except-rows;
+    in property <bool> except-input-enabled;
+    // "... is already blocked by a broader rule!", for a moment
+    in property <string> redundant;
+    in property <string> current;
+    // the test box: what it says, and whether all passed (1), some were
+    // blocked (-1) or nothing is typed (0)
+    in property <string> test-note;
+    in property <string> test-result;
+    in property <int> test-good;
+    in-out property <string> test-input;
+    // a question or the help
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback tab-chosen(int);
+    // a list's events: 0 whitelist, 1 blacklist, 2 exclude these, 3 except
+    // for these
+    callback global-clicked(int, int);
+    callback namespace-clicked(int, int);
+    callback row-clicked(int, int, bool, bool);
+    callback row-activated(int, int);
+    callback typed(int, string);
+    callback remove(int);
+    callback block-everything();
+    callback test-edited();
+    callback help();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Text {
+                text: "help for this panel -->";
+                vertical-alignment: center;
+                color: Theme.text;
+            }
+            Button {
+                text: "?";
+                enabled: !root.asking;
+                clicked => { root.help(); }
+            }
+        }
+        if root.message != "": Box {
+            title: "explanation";
+            Text {
+                text: root.message;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+        }
+        Box {
+            title: "filter";
+            vertical-stretch: 1;
+            Text {
+                text: root.instructions;
+                wrap: word-wrap;
+                horizontal-alignment: center;
+                color: Theme.text;
+            }
+            HorizontalLayout {
+                spacing: 0px;
+                alignment: start;
+                for name[i] in root.tabs: Tab {
+                    text: name;
+                    current: i == root.tab;
+                    clicked => { root.tab-chosen(i); }
+                }
+            }
+            if root.tabs[root.tab] == "whitelist": Simple {
+                vertical-stretch: 1;
+                title: "allow these";
+                enabled: root.white-enabled;
+                error: root.white-error;
+                global: root.white-global;
+                namespaces: root.white-namespaces;
+                namespaces-enabled: root.white-namespaces-enabled;
+                rows: root.white-rows;
+                asking: root.asking;
+                global-clicked(i) => { root.global-clicked(0, i); }
+                namespace-clicked(i) => { root.namespace-clicked(0, i); }
+                row-clicked(r, ctrl, shift) => { root.row-clicked(0, r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(0, r); }
+                typed(t) => { root.typed(0, t); }
+                remove => { root.remove(0); }
+            }
+            if root.tabs[root.tab] == "blacklist": Simple {
+                vertical-stretch: 1;
+                title: "exclude these";
+                enabled: root.black-enabled;
+                error: root.black-error;
+                global: root.black-global;
+                namespaces: root.black-namespaces;
+                namespaces-enabled: root.black-namespaces-enabled;
+                rows: root.black-rows;
+                block-everything: true;
+                asking: root.asking;
+                global-clicked(i) => { root.global-clicked(1, i); }
+                namespace-clicked(i) => { root.namespace-clicked(1, i); }
+                row-clicked(r, ctrl, shift) => { root.row-clicked(1, r, ctrl, shift); }
+                row-activated(r) => { root.row-activated(1, r); }
+                typed(t) => { root.typed(1, t); }
+                remove => { root.remove(1); }
+                block => { root.block-everything(); }
+            }
+            if root.tabs[root.tab] == "advanced": HorizontalLayout {
+                vertical-stretch: 1;
+                spacing: 6px;
+                Rules {
+                    title: "exclude these";
+                    rows: root.exclude-rows;
+                    block-everything: true;
+                    asking: root.asking;
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(2, r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(2, r); }
+                    typed(t) => { root.typed(2, t); }
+                    delete => { root.remove(2); }
+                    block => { root.block-everything(); }
+                }
+                Rules {
+                    title: "except for these";
+                    rows: root.except-rows;
+                    input-enabled: root.except-input-enabled;
+                    asking: root.asking;
+                    row-clicked(r, ctrl, shift) => { root.row-clicked(3, r, ctrl, shift); }
+                    row-activated(r) => { root.row-activated(3, r); }
+                    typed(t) => { root.typed(3, t); }
+                    delete => { root.remove(3); }
+                }
+            }
+            if root.redundant != "": Text {
+                text: root.redundant;
+                wrap: word-wrap;
+                color: Theme.error;
+            }
+            Text {
+                text: root.current;
+                wrap: word-wrap;
+                color: Theme.text;
+            }
+        }
+        Box {
+            title: "testing";
+            HorizontalLayout {
+                spacing: 8px;
+                VerticalLayout {
+                    horizontal-stretch: 1;
+                    alignment: center;
+                    if root.test-note != "": Text {
+                        text: root.test-note;
+                        wrap: word-wrap;
+                        color: Theme.text;
+                    }
+                    Text {
+                        text: root.test-result;
+                        wrap: word-wrap;
+                        horizontal-alignment: right;
+                        color: root.test-good > 0 ? Theme.good : root.test-good < 0 ? Theme.bad : Theme.text;
+                    }
+                }
+                TextEdit {
+                    horizontal-stretch: 1;
+                    min-width: 280px;
+                    height: 60px;
+                    text <=> root.test-input;
+                    edited => { root.test-edited(); }
+                }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            chosen(i) => { root.chosen(i); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                enabled: !root.asking;
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                enabled: !root.asking;
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}
