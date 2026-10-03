@@ -5,10 +5,11 @@
 //! rules win: tag rules over namespace rules over the two catch-alls. Used for
 //! import filtering and Client API search restrictions.
 
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, BTreeSet};
 
 use serde::{Deserialize, Serialize};
 
+use crate::numbers::human_int;
 use crate::tag::split_tag;
 
 /// Whether a slice is allowed or blocked.
@@ -92,6 +93,133 @@ impl TagFilter {
             decide(&format!("{namespace}:"))
                 .or_else(|| decide(NAMESPACED))
                 .unwrap_or(true)
+        }
+    }
+
+    /// The rules' slices: (blacklisted, whitelisted), each sorted.
+    fn sides(&self) -> (Vec<&str>, Vec<&str>) {
+        let mut black = Vec::new();
+        let mut white = Vec::new();
+        for (slice, rule) in &self.rules {
+            match rule {
+                FilterRule::Blacklist => black.push(slice.as_str()),
+                FilterRule::Whitelist => white.push(slice.as_str()),
+            }
+        }
+        (black, white)
+    }
+
+    /// What the filter blocks, as a blacklist ("blacklisting on goblin,
+    /// orc"; `ToBlacklistString`).
+    pub fn to_blacklist_string(&self) -> String {
+        let (black, white) = self.sides();
+        if black.is_empty() {
+            return "no blacklist set".into();
+        }
+        let list = |slices: &[&str]| {
+            slices
+                .iter()
+                .map(|s| pretty_slice(s))
+                .collect::<Vec<_>>()
+                .join(", ")
+        };
+        let both: BTreeSet<&str> = [UNNAMESPACED, NAMESPACED].into_iter().collect();
+        let mut text = if black.iter().copied().collect::<BTreeSet<_>>() == both {
+            "blacklisting on any tags".to_owned()
+        } else if black.len() > TOO_MANY_RULES {
+            format!("blacklisting on {} rules", human_int(black.len() as u64))
+        } else {
+            format!("blacklisting on {}", list(&black))
+        };
+        if white.len() > TOO_MANY_RULES {
+            text.push_str(&format!(
+                " except {} other rules",
+                human_int(white.len() as u64)
+            ));
+        } else if !white.is_empty() {
+            text.push_str(&format!(" except {}", list(&white)));
+        }
+        text
+    }
+
+    /// What the filter lets through, as a tag import's "get tags" says it
+    /// ("all tags except goblin"; `ToFilterString`).
+    pub fn to_filter_string(&self) -> String {
+        let (black, white) = self.sides();
+        if black.is_empty() {
+            return "all tags".into();
+        }
+        let list = |slices: &[&str]| {
+            slices
+                .iter()
+                .map(|s| pretty_slice(s))
+                .collect::<Vec<_>>()
+                .join(", ")
+        };
+        let catch_all = |s: &&str| *s == UNNAMESPACED || *s == NAMESPACED;
+        let functional_black: Vec<&str> = black.iter().copied().filter(|s| !catch_all(s)).collect();
+        let functional_white: Vec<&str> = white.iter().copied().filter(|s| !catch_all(s)).collect();
+        let still_filtering = |text: &mut String| {
+            if functional_black.len() > TOO_MANY_RULES {
+                text.push_str(&format!(
+                    " while still filtering on {} rules",
+                    human_int(functional_black.len() as u64)
+                ));
+            } else if !functional_black.is_empty() {
+                text.push_str(&format!(
+                    " while still filtering out {}",
+                    list(&functional_black)
+                ));
+            }
+        };
+        let has_unnamespaced = black.contains(&UNNAMESPACED);
+        let has_namespaced = black.contains(&NAMESPACED);
+        if has_unnamespaced && has_namespaced {
+            let mut text = if white.is_empty() {
+                "no tags!".to_owned()
+            } else if white.len() > TOO_MANY_RULES {
+                format!("only adding on {} rules", human_int(white.len() as u64))
+            } else {
+                format!("only adding {}", list(&white))
+            };
+            if !white.is_empty() {
+                still_filtering(&mut text);
+            }
+            text
+        } else if has_unnamespaced || has_namespaced {
+            let mut text = if has_unnamespaced {
+                "all namespaced tags".to_owned()
+            } else {
+                "all unnamespaced tags".to_owned()
+            };
+            if white.len() > TOO_MANY_RULES {
+                text.push_str(&format!(
+                    " and {} other rules",
+                    human_int(functional_white.len() as u64)
+                ));
+            } else if !white.is_empty() {
+                text.push_str(&format!(" and {}", list(&functional_white)));
+            }
+            still_filtering(&mut text);
+            text
+        } else {
+            let mut text = if black.len() > TOO_MANY_RULES {
+                format!("all tags except on {} rules", human_int(black.len() as u64))
+            } else {
+                format!("all tags except {}", list(&black))
+            };
+            if functional_white.len() > TOO_MANY_RULES {
+                text.push_str(&format!(
+                    " while still allowing on {} rules",
+                    human_int(functional_white.len() as u64)
+                ));
+            } else if !functional_white.is_empty() {
+                text.push_str(&format!(
+                    " while still allowing {}",
+                    list(&functional_white)
+                ));
+            }
+            text
         }
     }
 

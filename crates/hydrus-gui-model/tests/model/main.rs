@@ -8,6 +8,7 @@ mod duplicates_page;
 mod edit_subscription;
 mod file_log;
 mod folders;
+mod import_options_editor;
 mod importer_menu;
 mod local_import_dialog;
 mod main_menu;

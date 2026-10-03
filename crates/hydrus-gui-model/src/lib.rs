@@ -17,6 +17,7 @@ pub mod edit_subscription;
 pub mod favourites;
 pub mod file_log;
 pub mod folders;
+pub mod import_options_editor;
 pub mod importer_menu;
 pub mod info_lines;
 pub mod list_selection;

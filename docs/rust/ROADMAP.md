@@ -110,6 +110,18 @@ auto-resolution's rules list, pause/play and resets. Recorded by
   pages.
 - See `DIFFERENCES.md`, "Pages".
 
+## 5. The import options editor
+
+The subscriptions, import folder and downloader pages' "import options"
+buttons wait on it. **Done**: its model (`hydrus-gui-model`'s
+`import_options_editor`: the kinds listed, whose default each uses, the
+list's labels and every kind's summary), recorded by
+`oracle/record_import_options_editor.py`. **Next**: the window
+(`EditSpecificImportOptionsContainerPanel`) with pages for the simpler
+kinds (presentation, prefetch, file filtering, locations; the reference's
+widgets are catalogued in the recorder's notes of each panel), then tags,
+notes and tag filtering, then wiring it to the buttons.
+
 ## Later
 
 - **Menu bar.**

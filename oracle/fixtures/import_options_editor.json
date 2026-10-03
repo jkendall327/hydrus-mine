@@ -1,0 +1,1091 @@
+{
+ "editors": [
+  {
+   "caller": "gallery/post urls",
+   "code": 1,
+   "simple": true,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (gallery/post urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "gallery/post urls",
+   "code": 1,
+   "simple": false,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (gallery/post urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "watchable urls",
+   "code": 3,
+   "simple": true,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (watchable urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (watchable urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (watchable urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "watchable urls",
+   "code": 3,
+   "simple": false,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (watchable urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (watchable urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (watchable urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "subscription",
+   "code": 2,
+   "simple": true,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (subscription)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (gallery/post urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (subscription)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "subscription",
+   "code": 2,
+   "simple": false,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (subscription)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (gallery/post urls)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (subscription)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (gallery/post urls)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "local hard drive import",
+   "code": 0,
+   "simple": true,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default file filtering (global)",
+    "default locations (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default locations (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "local hard drive import",
+   "code": 0,
+   "simple": false,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (global)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (global)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (global)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "import folder",
+   "code": 9,
+   "simple": true,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default file filtering (global)",
+    "default locations (global)",
+    "default external programs (global)",
+    "default presentation (import folder)"
+   ],
+   "pages": [
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (import folder)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default locations (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  },
+  {
+   "caller": "import folder",
+   "code": 9,
+   "simple": false,
+   "description": "You are editing \"specific importer\".\n\nThese import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default.",
+   "tabs": [
+    "default prefetch logic (global)",
+    "default file filtering (global)",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (global)",
+    "default notes (global)",
+    "default external programs (global)",
+    "default presentation (import folder)"
+   ],
+   "pages": [
+    {
+     "description": "Hydrus tries to save bandwidth. In most cases, it will not redownload a file page (HTML/JSON) or the file itself if it can correctly identify that it already has the file, or, in conjunction with file filtering options, wishes to exclude previously deleted files. Adjusting these settings can and will waste bandwidth and is only appropriate for one-off jobs where some forced recheck is needed.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, it can be checked against these rules. If it fails one of these rules, it will get an \"ignored\" status.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Before a file is imported, its tags can be checked against a tag blacklist and/or whitelist. If a tag hits the blacklist, or no tag hits the whitelist, the import will get an \"ignored\" status. Only the tags that are parsed as part of the download are used in these tests.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "If you have multiple local file services, you can choose to place incoming files in a different location than your default (probably \"my files\"). You can also send them to multiple locations.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up tags through the downloading and parsing process. Here you choose where to send any parsed tags.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "A file may pick up notes through the downloading and parsing process. Here you choose what to do with these notes. Default options are usually fine unless you have particular needs.",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "Here you can choose to run an external program for every file imported. This is only appropriate if you are maintaining a secondary database of additional metadata beside hydrus. Be careful with this!",
+     "choices": [
+      "use the default import options (global)",
+      "set custom import options"
+     ]
+    },
+    {
+     "description": "When files are imported, the importer will then likely want to show them, whether that is adding thumbnails to a page or publishing files to a popup button. Here you can filter which files are actually presented to UI. Selecting \"only new\" or \"only inbox\" are often useful to remove clutter in background/automated import workflows.",
+     "choices": [
+      "use the default import options (import folder)",
+      "set custom import options"
+     ]
+    }
+   ],
+   "custom_tabs": [
+    "default prefetch logic (global)",
+    "> file filtering: allows all filetypes, excludes previously deleted",
+    "default tag filtering (global)",
+    "default locations (global)",
+    "default tags (global)",
+    "default notes (global)",
+    "default external programs (global)",
+    "> presentation: presenting new files"
+   ],
+   "custom_value": [
+    "file filtering",
+    "presentation"
+   ]
+  }
+ ],
+ "summaries": [
+  {
+   "kind": "prefetch",
+   "summary": "looks good"
+  },
+  {
+   "kind": "prefetch",
+   "hash": 0,
+   "url": 0,
+   "summary": "WARNING: always redownloads files!"
+  },
+  {
+   "kind": "prefetch",
+   "hash": 0,
+   "summary": "WARNING: ignores hashes for file redownload checks!"
+  },
+  {
+   "kind": "prefetch",
+   "url": 0,
+   "summary": "WARNING: ignores URLs for file redownload checks!"
+  },
+  {
+   "kind": "prefetch",
+   "fetch_hash": true,
+   "fetch_url": true,
+   "summary": "always redownloads metadata!"
+  },
+  {
+   "kind": "prefetch",
+   "fetch_hash": true,
+   "summary": "ignores hashes for metadata redownload checks"
+  },
+  {
+   "kind": "prefetch",
+   "url": 2,
+   "hash": 1,
+   "fetch_url": true,
+   "summary": "ignores URLs for metadata redownload checks"
+  },
+  {
+   "kind": "file filtering",
+   "summary": "allows all filetypes, excludes previously deleted"
+  },
+  {
+   "kind": "file filtering",
+   "exclude_deleted": false,
+   "bombs": false,
+   "summary": "allows all filetypes, excludes decompression bombs"
+  },
+  {
+   "kind": "file filtering",
+   "min_size": 5120,
+   "max_size": 104857600,
+   "max_gif_size": 33554432,
+   "min_resolution": [
+    50,
+    50
+   ],
+   "max_resolution": [
+    8192,
+    8192
+   ],
+   "summary": "allows all filetypes, excludes previously deleted, excludes < 5 KB, excludes > 100 MB, excludes gifs > 32 MB, excludes < ( 50 x 50 ), excludes > ( 8,192 x 8,192 )"
+  },
+  {
+   "kind": "file filtering",
+   "filetypes": [
+    1,
+    2
+   ],
+   "summary": "allows jpeg, png, excludes previously deleted"
+  },
+  {
+   "kind": "tag filtering",
+   "summary": "allows everything"
+  },
+  {
+   "kind": "tag filtering",
+   "blacklist": [
+    [
+     "orc",
+     1
+    ],
+    [
+     "goblin",
+     1
+    ]
+   ],
+   "summary": "blacklisting on goblin, orc"
+  },
+  {
+   "kind": "tag filtering",
+   "whitelist": [
+    "blue eyes",
+    "green eyes"
+   ],
+   "summary": "tag whitelist: blue eyes, green eyes"
+  },
+  {
+   "kind": "tag filtering",
+   "blacklist": [
+    [
+     "creator:",
+     1
+    ],
+    [
+     "creator:someone",
+     0
+    ]
+   ],
+   "whitelist": [
+    "blue eyes"
+   ],
+   "summary": "blacklisting on 'creator' tags except creator:someone, tag whitelist: blue eyes"
+  },
+  {
+   "kind": "tag filtering",
+   "blacklist": [
+    [
+     "",
+     1
+    ],
+    [
+     ":",
+     1
+    ]
+   ],
+   "summary": "blacklisting on any tags"
+  },
+  {
+   "kind": "locations",
+   "summary": "imports to art"
+  },
+  {
+   "kind": "locations",
+   "archive": true,
+   "destinations_for_already_in_db": true,
+   "summary": "imports to art, automatically archives, puts files in destinations even if they are already in db"
+  },
+  {
+   "kind": "tags",
+   "summary": "not adding any tags"
+  },
+  {
+   "kind": "tags",
+   "tags": {
+    "downloader": {
+     "get_tags": true
+    }
+   },
+   "summary": "downloader tags[all tags]"
+  },
+  {
+   "kind": "tags",
+   "tags": {
+    "downloader": {
+     "get_tags": true,
+     "filter": [
+      [
+       "goblin",
+       1
+      ]
+     ]
+    },
+    "my tags": {
+     "additional": [
+      "zebra",
+      "apple"
+     ]
+    }
+   },
+   "summary": "downloader tags[all tags except goblin] | my tags[adding \"apple, zebra\"]"
+  },
+  {
+   "kind": "tags",
+   "tags": {
+    "downloader": {
+     "get_tags": true,
+     "filter": [
+      [
+       "",
+       1
+      ],
+      [
+       ":",
+       1
+      ],
+      [
+       "creator:",
+       0
+      ]
+     ]
+    }
+   },
+   "summary": "downloader tags[only adding 'creator' tags]"
+  },
+  {
+   "kind": "tags",
+   "tags": {
+    "downloader": {
+     "get_tags": true,
+     "filter": [
+      [
+       "",
+       1
+      ],
+      [
+       "series:",
+       0
+      ],
+      [
+       "series:bad",
+       1
+      ]
+     ]
+    }
+   },
+   "summary": "downloader tags[all namespaced tags and 'series' tags while still filtering out series:bad]"
+  },
+  {
+   "kind": "tags",
+   "tags": {
+    "downloader": {
+     "get_tags": true,
+     "filter": [
+      [
+       ":",
+       1
+      ]
+     ]
+    }
+   },
+   "summary": "downloader tags[all unnamespaced tags]"
+  },
+  {
+   "kind": "notes",
+   "summary": "adding notes, with conflict resolution: add the new note under a new name"
+  },
+  {
+   "kind": "notes",
+   "get_notes": false,
+   "summary": "not adding notes"
+  },
+  {
+   "kind": "notes",
+   "extend": false,
+   "conflict": 0,
+   "summary": "adding notes, duplicating rather than extending, with conflict resolution: replace the existing note"
+  },
+  {
+   "kind": "notes",
+   "conflict": 1,
+   "all_name_override": "note",
+   "summary": "adding notes, with conflict resolution: do not add the new note, with renames"
+  },
+  {
+   "kind": "notes",
+   "conflict": 2,
+   "overrides": {
+    "comment": "artist comment"
+   },
+   "summary": "adding notes, with conflict resolution: append the new note to the end of the existing note, with renames"
+  },
+  {
+   "kind": "presentation",
+   "summary": "presenting all files"
+  },
+  {
+   "kind": "presentation",
+   "status": 1,
+   "inbox": 1,
+   "summary": "presenting new inbox files"
+  },
+  {
+   "kind": "presentation",
+   "status": 2,
+   "summary": "not presenting any files"
+  }
+ ]
+}

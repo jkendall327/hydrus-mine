@@ -494,7 +494,7 @@ fn status_name(status: ContentStatus) -> &'static str {
 }
 
 /// `ConvertSummaryFiletypesToString`.
-fn filetypes_text(filetypes: &FiletypeSet) -> String {
+pub fn filetypes_text(filetypes: &FiletypeSet) -> String {
     let summary = filetypes.summary();
     let classes: BTreeSet<Mime> = Mime::general_classes().into_iter().collect();
     if *summary == classes || summary.contains(&Mime::GeneralFile) {
