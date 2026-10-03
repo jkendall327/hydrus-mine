@@ -498,3 +498,43 @@ fn sessions_are_saved_from_the_pages_menu() {
         live.pages.len() + 1
     );
 }
+
+/// pages > sessions > "clear and load" > a session: asked first, then the
+/// pages are closed for good and the session's pages are at the top.
+#[test]
+fn clear_and_load_replaces_the_pages_with_a_session() {
+    use hydrus_gui::session_saving::clear_and_load_question;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let title =
+        |label: &str| -> i32 { titles(&ui).iter().position(|(t, _)| t == label).unwrap() as i32 };
+    let session_menu = |submenu: &str, entry: &str| {
+        ui.invoke_menu_title_pressed(title("pages"), 80.0, 22.0);
+        hover(&ui, "sessions");
+        hover(&ui, submenu);
+        choose(&ui, entry);
+    };
+    // a session of the one page, saved; then two more pages
+    bound
+        .pages
+        .borrow_mut()
+        .save_session("one page", 0)
+        .unwrap();
+    (bound.open_page)(&hydrus_gui::page_chooser::NewPage::Duplicates);
+    (bound.open_page)(&hydrus_gui::page_chooser::NewPage::Duplicates);
+    let before = tabs(&ui).len();
+    assert!(before >= 3, "{:?}", tabs(&ui));
+
+    // no: nothing changes
+    session_menu("clear and load", "one page");
+    assert_eq!(ui.get_question(), clear_and_load_question("one page"));
+    ui.invoke_answer(false);
+    assert_eq!(tabs(&ui).len(), before);
+    // yes: the session's page alone, none to reopen
+    session_menu("clear and load", "one page");
+    ui.invoke_answer(true);
+    assert_eq!(tabs(&ui).len(), 1);
+    assert!(!bound.pages.borrow_mut().unclose());
+}

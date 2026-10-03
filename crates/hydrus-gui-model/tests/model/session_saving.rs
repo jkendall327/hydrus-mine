@@ -78,3 +78,45 @@ fn saving_sessions_asks_and_saves_as_the_reference() {
     }
     assert_eq!(checked, 8);
 }
+
+#[test]
+fn clear_and_load_asks_as_the_references_does() {
+    use hydrus_gui_model::session_saving::{
+        CLEAR_AND_LOAD_TITLE, clear_and_load_question, close_all_question,
+    };
+    let recorded: serde_json::Value = serde_json::from_str(
+        &std::fs::read_to_string(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/../../oracle/fixtures/sessions_menu.json"
+        ))
+        .unwrap(),
+    )
+    .unwrap();
+    let steps: Vec<&serde_json::Value> = recorded["steps"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .filter(|s| s["do"] == "clear and load")
+        .collect();
+    assert!(!steps.is_empty());
+    for step in &steps {
+        let first = &step["asked"][0];
+        assert_eq!(
+            first["message"],
+            clear_and_load_question(step["name"].as_str().unwrap())
+        );
+        assert_eq!(first["title"], CLEAR_AND_LOAD_TITLE);
+    }
+    // the recorded pages' objections: two local imports, then a watcher
+    // page
+    let importing = "This page is still importing.".to_owned();
+    let both = close_all_question(&[
+        (importing.clone(), "files".into()),
+        (importing, "files".into()),
+    ]);
+    assert_eq!(serde_json::json!(both), steps[3]["asked"][1]["message"]);
+    let watchers =
+        close_all_question(&[("2 watchers are still importing.".into(), "files".into())]);
+    assert_eq!(serde_json::json!(watchers), steps[5]["asked"][1]["message"]);
+    assert_eq!(close_all_question(&[]), None);
+}

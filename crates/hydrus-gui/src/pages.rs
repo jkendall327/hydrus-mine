@@ -1015,6 +1015,56 @@ impl Pages {
         Ok(())
     }
 
+    /// Close every page and load the saved session `name` in their place,
+    /// its pages at the top (the reference's "clear and load": the pages
+    /// closed are gone, not kept to reopen, and their downloads with them).
+    pub fn clear_and_load(&mut self, name: &str) -> Result<(), String> {
+        let saved = self
+            .store
+            .read(|conn| sessions::load(conn, name))
+            .map_err(|e| e.to_string())?
+            .ok_or_else(|| format!("there is no saved session \"{name}\""))?;
+        let pages = copied(&self.store, saved.pages).map_err(|e| e.to_string())?;
+        let mut old = std::mem::take(&mut self.session.pages);
+        refresh_contents(&mut old, &self.open);
+        let queues: Vec<i64> = old.iter().flat_map(closable_queues).collect();
+        self.open.clear();
+        self.delete_queues(queues);
+        self.session.pages = if pages.is_empty() {
+            vec![new_search_page(&self.store)]
+        } else {
+            pages
+        };
+        self.path = vec![0];
+        self.select(0, 0);
+        Ok(())
+    }
+
+    /// What every downloader page says against closing it for a session
+    /// load (`CheckAbleToClose(for_session_close = True)`): `(reason, page
+    /// name)`, in the pages' order.
+    pub fn session_close_vetoes(&mut self) -> Vec<(String, String)> {
+        fn walk(pages: &[Page], out: &mut Vec<(PageKey, String)>) {
+            for page in pages {
+                match &page.content {
+                    PageContent::Pages(children) => walk(children, out),
+                    PageContent::Downloader { .. } => out.push((page.key, page.name.clone())),
+                    _ => {}
+                }
+            }
+        }
+        let mut downloaders = Vec::new();
+        walk(&self.session.pages, &mut downloaders);
+        downloaders
+            .into_iter()
+            .filter_map(|(key, name)| {
+                let opened = self.page(&key)?;
+                let veto = opened.borrow().close_veto(false)?;
+                Some((veto, name))
+            })
+            .collect()
+    }
+
     /// Save the open pages, as they are now, as the session `name`
     /// (replacing one of that name): copies, with their files, so the
     /// saved session stays as it is while the pages change.

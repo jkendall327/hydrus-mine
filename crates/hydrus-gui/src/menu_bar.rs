@@ -463,6 +463,28 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         Command::ClearHistory => hooks.pages.borrow_mut().clear_history(),
         Command::Refresh => window.invoke_refresh_page(),
         Command::AppendSession(name) => change_pages(&|pages| pages.append_session(&name)),
+        // asked first, then (any page objecting) asked again, as the
+        // reference's `LoadGUISession` asks
+        Command::ClearAndLoadSession(name) => {
+            let pages = hooks.pages.clone();
+            let change_pages = hooks.change_pages.clone();
+            let ask = hooks.ask.clone();
+            (hooks.ask)(
+                crate::session_saving::clear_and_load_question(&name),
+                Rc::new(move || {
+                    let load: Rc<dyn Fn()> = {
+                        let change_pages = change_pages.clone();
+                        let name = name.clone();
+                        Rc::new(move || change_pages(&|pages| pages.clear_and_load(&name)))
+                    };
+                    let vetoes = pages.borrow_mut().session_close_vetoes();
+                    match crate::session_saving::close_all_question(&vetoes) {
+                        Some(question) => ask(question, load),
+                        None => load(),
+                    }
+                }),
+            );
+        }
         Command::SaveSession(name) => (hooks.save_session)(name),
         Command::DeleteSession(name) => {
             let store = store.clone();

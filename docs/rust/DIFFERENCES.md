@@ -604,6 +604,9 @@ Checked by `crates/hydrus-gui/tests/gui/local_import_dialog.rs` (against
   presentation's location is all my files or all local files. It has no
   copy, paste or favourites buttons, and always lists kinds as the
   reference's "simple mode" does (hydrus-rs has no option for it yet).
+- **"clear and load" a session**: when pages object to closing, the
+  question has "yes" and "no" (the reference's also has "no, but show me
+  the pages", and its "yes" is only enabled after a moment).
 - **The search log window** can't yet export URLs to a png, import new
   URLs, or export the selected page objects (greyed out).
 - **A subscription query's logs**, opened from the query editor, change

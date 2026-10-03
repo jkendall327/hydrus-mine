@@ -109,3 +109,48 @@ impl Saving {
         }
     }
 }
+
+/// What "clear and load" asks first (`LoadGUISession`).
+pub fn clear_and_load_question(name: &str) -> String {
+    format!("Close the current pages and load session \"{name}\"?")
+}
+
+/// Its title.
+pub const CLEAR_AND_LOAD_TITLE: &str = "Clear and load session?";
+
+/// What closing every page asks, if any page objects
+/// (`AskIfAbleToClose` on the top notebook): each reason with the pages
+/// giving it (`(reason, page name)`, in the pages' order), grouped,
+/// their names in human order, the reasons fewest pages first
+/// (`GetAbleToCloseData`, `ConvertReasonsAndPagesToStatement`).
+pub fn close_all_question(vetoes: &[(String, String)]) -> Option<String> {
+    if vetoes.is_empty() {
+        return None;
+    }
+    let mut groups: Vec<(&str, Vec<String>)> = Vec::new();
+    for (reason, page) in vetoes {
+        match groups.iter_mut().find(|(r, _)| *r == reason.as_str()) {
+            Some((_, pages)) => pages.push(page.clone()),
+            None => groups.push((reason, vec![page.clone()])),
+        }
+    }
+    for (_, pages) in &mut groups {
+        pages.sort_by_key(|p| hydrus_core::sort::human_sort_key(p));
+    }
+    // (a stable sort, as Python's)
+    groups.sort_by_key(|(_, pages)| pages.len());
+    let blocks: Vec<String> = groups
+        .iter()
+        .map(|(reason, pages)| match pages.as_slice() {
+            [one] => format!("page \"{one}\" says: {reason}"),
+            many => format!(
+                "pages{}\n\nsay: {reason}",
+                crate::edit_subscription::insertable_summary(many)
+            ),
+        })
+        .collect();
+    Some(format!(
+        "Close \"top page notebook\"?\n\n{}",
+        blocks.join("\n----\n")
+    ))
+}

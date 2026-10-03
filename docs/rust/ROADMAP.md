@@ -130,9 +130,6 @@ filetypes aren't edited yet.
 ## Later
 
 - **Menu bar.**
-  - "clear and load" a session. Already recorded in
-    `oracle/fixtures/sessions_menu.json`, including pages that veto
-    closing.
   - Menu entries' descriptions in the status bar.
 - **Options window.** The pages hydrus-rs honours are done. The rest of
   the reference's options wait on the features they configure

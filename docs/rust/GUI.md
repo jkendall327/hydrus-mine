@@ -118,8 +118,11 @@ as Qt's do; a press anywhere else closes them. What works so far:
   and asks again, and asks before overwriting one that exists, "no,
   choose another name" asking again; a session's own entry asks whether to
   overwrite it; a session saved is a copy of the pages, with their files,
-  so it stays as saved while the pages change), and deleting one (asking
-  first); the page chooser; a new search page on each
+  so it stays as saved while the pages change), "clear and load" (asking
+  first, then, if a downloader page objects, asking again with the
+  reference's words for every page's objection; the pages closed are
+  gone, not kept to reopen, and the session's pages are at the top), and
+  deleting one (asking first); the page chooser; a new search page on each
   local file domain, the trash or a file repository (searching the tag
   service hydrus's options give search pages, as each new search page
   does, and all the files stored here rather than all known files with

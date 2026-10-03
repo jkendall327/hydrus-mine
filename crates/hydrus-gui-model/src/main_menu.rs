@@ -125,6 +125,8 @@ pub enum Command {
     Popup(usize),
     /// Wake `hydrus serve`'s subscriptions daemon.
     NudgeSubscriptions,
+    /// Close every page (asking first) and load the saved session.
+    ClearAndLoadSession(String),
     /// Switch a pause on or off.
     Pause(Pause),
     /// Check an import folder now (none: all of them).
@@ -542,13 +544,12 @@ fn pages_menu(facts: &Facts) -> Entry {
     );
     let mut sessions = Vec::new();
     if !facts.sessions.is_empty() {
-        // (loading a session in place of the pages is still to come)
         sessions.push(menu(
             "clear and load",
             facts
                 .sessions
                 .iter()
-                .map(|name| todo(name.clone()))
+                .map(|name| item(name.clone(), Command::ClearAndLoadSession(name.clone())))
                 .collect(),
         ));
         sessions.push(menu(
