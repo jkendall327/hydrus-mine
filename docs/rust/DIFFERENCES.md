@@ -183,6 +183,11 @@ search.
   replays in `crates/hydrus-api/tests/conformance.rs` (with the client
   closed), and `crates/hydrus-api/tests/pages.rs` and the session test in
   `crates/hydrus-gui/tests/gui/session.rs` cover the rest.
+  `get_page_info` describes a URL, gallery, watcher or local import
+  page's importers as
+  the reference does, but each search's and watcher's key
+  (`gallery_key`, `watcher_key`, `highlight`) is its queue's number
+  written as 64 hex digits, where the reference makes random ones.
 - **Page keys last.** The reference makes new keys for its pages (and its
   top notebook) each time it starts; ours are kept with the session, so a
   tool can keep one.

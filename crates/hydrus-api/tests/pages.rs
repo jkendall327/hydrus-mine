@@ -459,3 +459,190 @@ async fn a_url_pages_importer_is_described_as_the_references() {
     assert_eq!(log["log_items"], json!([]));
     let _ = queue;
 }
+
+#[tokio::test]
+async fn gallery_and_watcher_pages_importers_are_described_as_the_references() {
+    use hydrus_core::gallery::GallerySearch;
+    use hydrus_core::pages::{DownloaderKind, DownloaderPageState};
+    use hydrus_core::subscriptions::CheckerOptions;
+    use hydrus_core::watchers::{CheckerStatus, WatcherState};
+    use hydrus_store::queues::{self, QueueKind};
+
+    let fixture = common::imported_store("basic");
+    let store = fixture.state.store.clone();
+    let (gallery_key, watcher_key) = (PageKey::random(), PageKey::random());
+    let (searches, watcher) = store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let mut searches = Vec::new();
+            for (query, paused) in [("blue eyes", false), ("red hair", true)] {
+                let q =
+                    queues::create_queue(conn, QueueKind::Gallery, "gallery", None, &options, 0)?;
+                let search = GallerySearch {
+                    query: query.into(),
+                    source_name: "example tag search".into(),
+                    ..GallerySearch::default()
+                };
+                queues::set_queue_extra(conn, q, &serde_json::to_value(&search).unwrap())?;
+                queues::set_paused(conn, q, Some(paused), Some(!paused))?;
+                searches.push(q);
+            }
+            let watcher =
+                queues::create_queue(conn, QueueKind::Watcher, "watcher", None, &options, 0)?;
+            let mut state = WatcherState::new(
+                "https://board.example/thread/1",
+                CheckerOptions::default(),
+                100,
+            );
+            state.subject = "a thread".into();
+            state.last_check_time = 200;
+            state.next_check_time = 300;
+            state.checking_paused = true;
+            state.status = CheckerStatus::Dead;
+            queues::set_queue_extra(conn, watcher, &serde_json::to_value(&state).unwrap())?;
+            let page = |key: PageKey, name: &str, kind, queues: Vec<i64>, highlighted| Page {
+                key,
+                name: name.into(),
+                content: PageContent::Downloader {
+                    kind,
+                    queues,
+                    sort: None,
+                    page: Some(Box::new(DownloaderPageState {
+                        highlighted,
+                        ..DownloaderPageState::default()
+                    })),
+                },
+            };
+            let session = Session {
+                name: LAST_SESSION.into(),
+                pages: vec![
+                    page(
+                        gallery_key,
+                        "gallery",
+                        DownloaderKind::Gallery,
+                        searches.clone(),
+                        Some(searches[1]),
+                    ),
+                    page(
+                        watcher_key,
+                        "watcher",
+                        DownloaderKind::Watchers,
+                        vec![watcher],
+                        None,
+                    ),
+                ],
+            };
+            sessions::save(conn, &session, 0)?;
+            Ok((searches, watcher))
+        })
+        .unwrap();
+    let router = hydrus_api::router(fixture.state.clone());
+    let key = |q: i64| format!("{q:064x}");
+
+    let (status, body) = get(
+        &router,
+        &format!(
+            "/manage_pages/get_page_info?page_key={}",
+            gallery_key.to_hex()
+        ),
+    )
+    .await;
+    assert_eq!(status, 200);
+    assert_eq!(body["page_info"]["page_type"], 1);
+    let empty = json!({
+        "imports": { "status": "", "simple_status": "", "total_processed": 0, "total_to_process": 0 },
+        "gallery_log": { "status": "", "total_processed": 0, "total_to_process": 0 },
+    });
+    let search = |q: i64, query: &str, files: bool, gallery: bool| {
+        json!({
+            "query_text": query,
+            "source": "example tag search",
+            "gallery_key": key(q),
+            "files_paused": files,
+            "gallery_paused": gallery,
+            "imports": empty["imports"],
+            "gallery_log": empty["gallery_log"],
+        })
+    };
+    assert_eq!(
+        body["page_info"]["management"],
+        json!({ "multiple_gallery_import": {
+            "gallery_imports": [
+                search(searches[0], "blue eyes", false, true),
+                search(searches[1], "red hair", true, false),
+            ],
+            "highlight": key(searches[1]),
+        }})
+    );
+
+    let (_, body) = get(
+        &router,
+        &format!(
+            "/manage_pages/get_page_info?page_key={}&simple=false",
+            watcher_key.to_hex()
+        ),
+    )
+    .await;
+    assert_eq!(body["page_info"]["page_type"], 9);
+    let management = &body["page_info"]["management"]["multiple_watcher_import"];
+    assert_eq!(management["highlight"], Json::Null);
+    let w = &management["watcher_imports"][0];
+    assert_eq!(w["url"], "https://board.example/thread/1");
+    assert_eq!(w["watcher_key"], key(watcher));
+    assert_eq!(
+        (
+            w["created"].clone(),
+            w["last_check_time"].clone(),
+            w["next_check_time"].clone()
+        ),
+        (json!(100), json!(200), json!(300))
+    );
+    assert_eq!(
+        (w["files_paused"].clone(), w["checking_paused"].clone()),
+        (json!(false), json!(true))
+    );
+    assert_eq!(w["checking_status"], 1);
+    assert_eq!(w["subject"], "a thread");
+    // (not simply: the logs' items)
+    assert_eq!(w["imports"]["import_items"], json!([]));
+    assert_eq!(w["gallery_log"]["log_items"], json!([]));
+
+    // a local import page: its file log, and whether paused
+    let local_key = PageKey::random();
+    let queue = store
+        .write(move |ctx| {
+            let conn = ctx.conn();
+            let options = hydrus_core::import_options::ImportOptionsSlice::default();
+            let q =
+                queues::create_queue(conn, QueueKind::LocalImport, "import", None, &options, 0)?;
+            queues::set_paused(conn, q, Some(true), None)?;
+            let mut session = sessions::load(conn, LAST_SESSION)?.unwrap();
+            session.pages.push(Page {
+                key: local_key,
+                name: "import".into(),
+                content: PageContent::Downloader {
+                    kind: DownloaderKind::Local,
+                    queues: vec![q],
+                    sort: None,
+                    page: None,
+                },
+            });
+            sessions::save(conn, &session, 0)?;
+            Ok(q)
+        })
+        .unwrap();
+    let (_, body) = get(
+        &router,
+        &format!(
+            "/manage_pages/get_page_info?page_key={}",
+            local_key.to_hex()
+        ),
+    )
+    .await;
+    assert_eq!(
+        body["page_info"]["management"],
+        json!({ "hdd_import": { "imports": empty["imports"], "files_paused": true } })
+    );
+    let _ = queue;
+}

@@ -241,7 +241,7 @@ pub async fn get_page_info(
                 return Ok(json!({ "page_info": info }));
             }
             info.insert("is_media_page".into(), json!(true));
-            // (of the downloader pages, a URL page's importer is described)
+            // (a downloader page's importers are described)
             let management = match &page.content {
                 PageContent::Downloader {
                     kind: DownloaderKind::Urls,
@@ -249,6 +249,43 @@ pub async fn get_page_info(
                     ..
                 } if !queues.is_empty() => {
                     json!({ "urls_import": urls_import(app, queues[0], simple)? })
+                }
+                PageContent::Downloader {
+                    kind: DownloaderKind::Local,
+                    queues,
+                    ..
+                } if !queues.is_empty() => {
+                    json!({ "hdd_import": hdd_import(app, queues[0], simple)? })
+                }
+                PageContent::Downloader {
+                    kind: DownloaderKind::Gallery,
+                    queues,
+                    page: state,
+                    ..
+                } => {
+                    let imports = queues
+                        .iter()
+                        .map(|&q| gallery_import(app, q, simple))
+                        .collect::<ApiResult<Vec<_>>>()?;
+                    json!({ "multiple_gallery_import": {
+                        "gallery_imports": imports,
+                        "highlight": highlight(state.as_deref()),
+                    }})
+                }
+                PageContent::Downloader {
+                    kind: DownloaderKind::Watchers,
+                    queues,
+                    page: state,
+                    ..
+                } => {
+                    let imports = queues
+                        .iter()
+                        .map(|&q| watcher_import(app, q, simple))
+                        .collect::<ApiResult<Vec<_>>>()?;
+                    json!({ "multiple_watcher_import": {
+                        "watcher_imports": imports,
+                        "highlight": highlight(state.as_deref()),
+                    }})
                 }
                 _ => json!({}),
             };
@@ -284,16 +321,98 @@ pub async fn get_page_info(
     Ok(ApiResponse::json(body, &req))
 }
 
+/// An importer's key, as the reference gives each a random one: its
+/// queue's number, as 32 bytes of hex.
+fn importer_key(queue: i64) -> String {
+    format!("{queue:064x}")
+}
+
+/// The importer a gallery or watcher page shows, or none.
+fn highlight(state: Option<&hydrus_core::pages::DownloaderPageState>) -> Json {
+    state
+        .and_then(|s| s.highlighted)
+        .map_or(Json::Null, |q| json!(importer_key(q)))
+}
+
+/// A local import page's importer (`HDDImport.GetAPIInfoDict`): its file
+/// log, and whether it is paused.
+fn hdd_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    let row = app.store.read(|c| hydrus_store::queues::queue(c, queue))?;
+    let (imports, _) = logs(app, queue, simple)?;
+    Ok(json!({
+        "imports": imports,
+        "files_paused": row.is_some_and(|q| q.files_paused),
+    }))
+}
+
+/// A gallery page's search (`GalleryImport.GetAPIInfoDict`).
+fn gallery_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    let row = app.store.read(|c| hydrus_store::queues::queue(c, queue))?;
+    let search: hydrus_core::gallery::GallerySearch = row
+        .as_ref()
+        .and_then(|q| serde_json::from_value(q.extra.clone()).ok())
+        .unwrap_or_default();
+    let (imports, log) = logs(app, queue, simple)?;
+    Ok(json!({
+        "query_text": search.query,
+        "source": search.source_name,
+        "gallery_key": importer_key(queue),
+        "files_paused": row.as_ref().is_some_and(|q| q.files_paused),
+        "gallery_paused": row.as_ref().is_some_and(|q| q.gallery_paused),
+        "imports": imports,
+        "gallery_log": log,
+    }))
+}
+
+/// A watcher page's watcher (`WatcherImport.GetAPIInfoDict`).
+fn watcher_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    use hydrus_core::watchers::CheckerStatus;
+
+    let row = app.store.read(|c| hydrus_store::queues::queue(c, queue))?;
+    let state = row.as_ref().and_then(hydrus_store::watchers::watcher_state);
+    let (imports, log) = logs(app, queue, simple)?;
+    let status = |s: &hydrus_core::watchers::WatcherState| match s.status {
+        CheckerStatus::Ok => 0,
+        CheckerStatus::Dead => 1,
+        CheckerStatus::NotFound => 2,
+    };
+    Ok(json!({
+        "url": state.as_ref().map(|s| s.url.clone()),
+        "watcher_key": importer_key(queue),
+        "created": state.as_ref().map(|s| s.created),
+        "last_check_time": state.as_ref().map(|s| s.last_check_time),
+        "next_check_time": state.as_ref().map(|s| s.next_check_time),
+        "files_paused": row.as_ref().is_some_and(|q| q.files_paused),
+        "checking_paused": state.as_ref().is_some_and(|s| s.checking_paused),
+        "checking_status": state.as_ref().map(status),
+        "subject": state.as_ref().map(|s| s.subject.clone()),
+        "imports": imports,
+        "gallery_log": log,
+    }))
+}
+
 /// A URL downloader page's importer, as the reference describes it
 /// (`URLsImport.GetAPIInfoDict`): its file log's and search log's status and
 /// progress, with their items unless `simple`, and whether it is paused.
 fn urls_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
+    let row = app.store.read(|c| hydrus_store::queues::queue(c, queue))?;
+    let (imports, log) = logs(app, queue, simple)?;
+    Ok(json!({
+        "imports": imports,
+        "gallery_log": log,
+        "files_paused": row.is_some_and(|q| q.files_paused),
+    }))
+}
+
+/// An importer's file log and search log (`FileSeedCache.GetAPIInfoDict`,
+/// `GallerySeedLog.GetAPIInfoDict`): their status and progress, with their
+/// items unless `simple`.
+fn logs(app: &AppState, queue: i64, simple: bool) -> ApiResult<(Json, Json)> {
     use hydrus_store::queues;
 
-    let (naming, row, files, searches, file_seeds, gallery_seeds) = app.store.read(|c| {
+    let (naming, files, searches, file_seeds, gallery_seeds) = app.store.read(|c| {
         Ok((
             hydrus_store::settings::get::<hydrus_core::pages::PageNameSettings>(c)?,
-            queues::queue(c, queue)?,
             queues::file_seed_counts(c, queue)?,
             queues::gallery_seed_counts(c, queue)?,
             (!simple)
@@ -359,11 +478,7 @@ fn urls_import(app: &AppState, queue: i64, simple: bool) -> ApiResult<Json> {
             .collect();
         log["log_items"] = json!(items);
     }
-    Ok(json!({
-        "imports": imports,
-        "gallery_log": log,
-        "files_paused": row.is_some_and(|q| q.files_paused),
-    }))
+    Ok((imports, log))
 }
 
 /// Ask a page to do something: of the client, while it is open; otherwise
