@@ -54,3 +54,4 @@ pub mod subscriptions_list;
 pub mod tag_filter_editor;
 pub mod thumbnail_icons;
 pub mod thumbnail_ratings;
+pub mod urls_editor;

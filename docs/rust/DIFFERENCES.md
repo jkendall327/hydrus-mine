@@ -357,6 +357,10 @@ search.
   than as a passing note over them, and the reference's shortcut to
   apply it isn't bound. Double-clicking beside the tabs doesn't add a
   note.
+- **The "manage urls" dialog**'s copy and paste are labelled buttons
+  rather than the reference's icons, and its questions are asked in the
+  dialog's own panel. Its list sorts and selects as hydrus-rs's lists
+  do (one column, "url").
 
 - **Dragging across a list's rows with ctrl held** selects the range
   from the row pressed, as a plain drag does; the reference's adds the

@@ -48,8 +48,11 @@ export struct ThumbnailMenu {
     manage: [MenuRow],
     // the open menu: its first rows and similar files submenu, then the
     // focused file's
-    // the urls menu: open in browser, open in a new page, and copy
+    // the urls menu: manage, then, if there are URLs to offer, open in
+    // browser, open in a new page, and copy
     has-urls: bool,
+    urls-manage: int,
+    has-url-lists: bool,
     urls-visit: MenuGroups,
     has-url-pages: bool,
     urls-pages: MenuGroups,

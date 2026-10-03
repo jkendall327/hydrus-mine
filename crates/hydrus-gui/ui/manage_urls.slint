@@ -1,0 +1,96 @@
+// The "manage urls" dialog for some files (the reference's
+// `EditURLsPanel`, opened by a thumbnail's or the viewer's "urls >
+// manage"; its workings are hydrus-gui-model's `urls_editor`, bound by
+// `src/manage_urls_window.rs`): the files' URLs, a box that adds one (enter
+// on it empty applies), copy and paste buttons, and delete or a
+// double-click to remove them.
+
+import { Button, LineEdit } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { Asking } from "subscriptions.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+
+export component ManageUrlsWindow inherits Window {
+    in property <string> window-title: "manage urls";
+    title: root.window-title;
+    preferred-width: 560px;
+    preferred-height: 400px;
+    background: Theme.window;
+    // the warning over the list when editing several files
+    in property <string> warning;
+    in property <[TableRow]> rows;
+    in-out property <string> input;
+    // a question asked (a URL that doesn't parse, text left in the box)
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback delete-pressed();
+    callback entered();
+    callback copy();
+    callback paste();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    VerticalLayout {
+        padding: 10px;
+        spacing: 6px;
+        if root.warning != "": Text {
+            text: root.warning;
+            wrap: word-wrap;
+            color: Theme.text;
+        }
+        ListTable {
+            vertical-stretch: 1;
+            columns: [{ title: "url", width: 200px, stretch: true }];
+            rows: root.rows;
+            row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+            row-activated(row) => { root.row-activated(row); }
+            delete-pressed => { root.delete-pressed(); }
+        }
+        LineEdit {
+            enabled: !root.asking;
+            text <=> root.input;
+            accepted => { root.entered(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "copy";
+                enabled: !root.asking;
+                clicked => { root.copy(); }
+            }
+            Button {
+                text: "paste";
+                enabled: !root.asking;
+                clicked => { root.paste(); }
+            }
+        }
+        if root.asking: Asking {
+            title: root.asking-title;
+            message: root.asking-message;
+            choices: root.asking-choices;
+            wants-text: false;
+            chosen(index) => { root.chosen(index); }
+            cancelled => { root.cancelled(); }
+        }
+        HorizontalLayout {
+            alignment: end;
+            spacing: 6px;
+            Button {
+                text: "apply";
+                enabled: !root.asking;
+                clicked => { root.apply(); }
+            }
+            Button {
+                text: "cancel";
+                clicked => { root.cancel(); }
+            }
+        }
+    }
+}

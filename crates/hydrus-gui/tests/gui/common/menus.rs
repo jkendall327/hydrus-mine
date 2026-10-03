@@ -27,7 +27,7 @@ pub fn kept(label: &str) -> Kept {
             "focused file using Default OS File Launch",
             "focused file in web browser",
         ]),
-        "urls" => Kept::Only(&["open in browser", "open in a new page", "copy"]),
+        "urls" => Kept::Only(&["manage", "open in browser", "open in a new page", "copy"]),
         "share" => Kept::Only(&[
             "copy files",
             "copy file",

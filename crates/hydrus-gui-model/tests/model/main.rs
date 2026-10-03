@@ -37,3 +37,4 @@ mod subscriptions_dedupe;
 mod subscriptions_list;
 mod tag_filter_editor;
 mod thumbnail_ratings;
+mod urls_editor;

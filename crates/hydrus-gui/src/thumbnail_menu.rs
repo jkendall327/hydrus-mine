@@ -61,6 +61,8 @@ pub enum Action {
     ManageTags,
     /// The focused file's notes.
     ManageNotes,
+    /// The selected files' URLs (the focused file's, in the viewer).
+    ManageUrls,
     OpenInNewPage,
     /// Open a duplicates page searching for pairs among the selected files.
     OpenInDuplicateFilterPage,
@@ -725,13 +727,14 @@ fn spam(menu: &mut Vec<Entry>, entries: Vec<Entry>) {
     }
 }
 
-/// The urls menu (`AddKnownURLsViewCopyMenu`), less manage and forcing a
-/// metadata refetch: the focused file's URLs and the selection's, to open
-/// in the web browser, open a page of the files that have them, or copy.
-/// None if there are no URLs to offer.
-pub fn urls_menu(facts: &UrlFacts) -> Option<Entry> {
+/// The urls menu (`AddKnownURLsViewCopyMenu`), less forcing a metadata
+/// refetch: manage, then, if there are URLs to offer, the focused file's
+/// URLs and the selection's, to open in the web browser, open a page of
+/// the files that have them, or copy.
+pub fn urls_menu(facts: &UrlFacts) -> Entry {
+    let manage = Entry::Item("manage".into(), Action::ManageUrls);
     if facts.focus.is_empty() && facts.classes.is_empty() && !facts.mixed {
-        return None;
+        return Entry::Menu("urls".into(), vec![manage]);
     }
     let mut visit = Vec::new();
     let mut copy = Vec::new();
@@ -803,12 +806,12 @@ pub fn urls_menu(facts: &UrlFacts) -> Option<Entry> {
             Urls::Selection,
         );
     }
-    let mut inner = vec![Entry::Menu("open in browser".into(), visit)];
+    let mut inner = vec![manage, Entry::Menu("open in browser".into(), visit)];
     if !facts.focus.is_empty() {
         inner.push(Entry::Menu("open in a new page".into(), pages));
     }
     inner.push(Entry::Menu("copy".into(), copy));
-    Some(Entry::Menu("urls".into(), inner))
+    Entry::Menu("urls".into(), inner)
 }
 
 /// The URLs a urls menu entry takes, as the reference's actions take them:
@@ -1219,10 +1222,12 @@ pub struct Slots {
     pub share: Option<ShareSlots>,
 }
 
-/// The urls menu in the template: its open in browser, open in a new
-/// page and copy submenus' groups.
+/// The urls menu in the template: manage, then, if there are URLs to
+/// offer (`lists`), its open in browser, open in a new page and copy
+/// submenus' groups.
 #[derive(Debug, Clone, Default, PartialEq, Eq)]
 pub struct UrlsSlots {
+    pub lists: bool,
     pub visit: Vec<Vec<SlotItem>>,
     pub pages: Option<Vec<Vec<SlotItem>>>,
     pub copy: Vec<Vec<SlotItem>>,
@@ -1233,6 +1238,7 @@ impl UrlsSlots {
         let mut urls = Self::default();
         for e in inner {
             if let Entry::Menu(title, sub) = e {
+                urls.lists = true;
                 match title.as_str() {
                     "open in browser" => urls.visit = groups(sub),
                     "open in a new page" => urls.pages = Some(groups(sub)),
@@ -1244,13 +1250,16 @@ impl UrlsSlots {
     }
 
     fn entry(&self) -> Entry {
-        let mut inner = vec![group_menu("open in browser", &self.visit)];
-        inner.extend(
-            self.pages
-                .iter()
-                .map(|pages| group_menu("open in a new page", pages)),
-        );
-        inner.push(group_menu("copy", &self.copy));
+        let mut inner = vec![Entry::Item("manage".into(), Action::ManageUrls)];
+        if self.lists {
+            inner.push(group_menu("open in browser", &self.visit));
+            inner.extend(
+                self.pages
+                    .iter()
+                    .map(|pages| group_menu("open in a new page", pages)),
+            );
+            inner.push(group_menu("copy", &self.copy));
+        }
         Entry::Menu("urls".into(), inner)
     }
 }
@@ -1680,14 +1689,20 @@ mod tests {
             classes: vec!["booru".into(), "gallery".into()],
             mixed: true,
         };
-        let Some(Entry::Menu(title, inner)) = urls_menu(&facts) else {
+        let Entry::Menu(title, mut inner) = urls_menu(&facts) else {
             panic!("a menu");
         };
         assert_eq!(title, "urls");
         assert_eq!(
             titles(&inner),
-            ["open in browser >", "open in a new page >", "copy >"]
+            [
+                "manage",
+                "open in browser >",
+                "open in a new page >",
+                "copy >"
+            ]
         );
+        inner.remove(0);
         let Entry::Menu(_, visit) = &inner[0] else {
             panic!()
         };
@@ -1730,18 +1745,24 @@ mod tests {
             classes: vec!["booru".into()],
             mixed: false,
         };
-        let Some(Entry::Menu(_, inner)) = urls_menu(&one) else {
+        let Entry::Menu(_, inner) = urls_menu(&one) else {
             panic!()
         };
-        let Entry::Menu(_, visit) = &inner[0] else {
+        let Entry::Menu(_, visit) = &inner[1] else {
             panic!()
         };
         assert_eq!(
             titles(visit),
             ["booru: https://a/1", "---", "these files' booru urls"]
         );
-        // nothing to offer: no menu
-        assert_eq!(urls_menu(&UrlFacts::default()), None);
+        // nothing to offer: manage alone
+        assert_eq!(
+            urls_menu(&UrlFacts::default()),
+            Entry::Menu(
+                "urls".into(),
+                vec![Entry::Item("manage".into(), Action::ManageUrls)]
+            )
+        );
         // and past 15, 14 and a count
         let many = UrlFacts {
             focus: (0..20)
@@ -1749,10 +1770,10 @@ mod tests {
                 .collect(),
             ..UrlFacts::default()
         };
-        let Some(Entry::Menu(_, inner)) = urls_menu(&many) else {
+        let Entry::Menu(_, inner) = urls_menu(&many) else {
             panic!()
         };
-        let Entry::Menu(_, visit) = &inner[0] else {
+        let Entry::Menu(_, visit) = &inner[1] else {
             panic!()
         };
         assert_eq!(visit.len(), 15 + 2);

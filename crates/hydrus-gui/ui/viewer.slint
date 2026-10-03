@@ -573,7 +573,11 @@ export component MediaViewerWindow inherits Window {
                 }
                 if root.context-menu.has-urls: Menu {
                     title: "urls";
-                    Menu {
+                    MenuItem {
+                        title: "manage";
+                        activated => { root.menu-chosen(root.context-menu.urls-manage); }
+                    }
+                    if root.context-menu.has-url-lists: Menu {
                         title: "open in browser";
                         for row in root.context-menu.urls-visit.g1: MenuItem {
                             title: row.label;
@@ -637,7 +641,7 @@ export component MediaViewerWindow inherits Window {
                             activated => { root.menu-chosen(row.id); }
                         }
                     }
-                    Menu {
+                    if root.context-menu.has-url-lists: Menu {
                         title: "copy";
                         for row in root.context-menu.urls-copy.g1: MenuItem {
                             title: row.label;

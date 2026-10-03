@@ -812,7 +812,7 @@ the files' paths, hashes
 in the menu) and file ids. Not yet: the embedded metadata window,
 clearing deletion records, manage's ratings, times, force filetype,
 duplicates, maintenance and viewing stats,
-locations, urls → manage and force metadata refetch, open's custom
+locations, urls → force metadata refetch, open's custom
 similarity distance, and
 share's exporting and copying of bitmaps.
 
@@ -830,6 +830,21 @@ reference does (extending a note a pasted one extends, renaming on a
 clash; text it can't read is said so), and "copy URLs" copies the URLs
 in the note in view. "apply" writes the notes (each cleaned, empty ones
 dropped) and deletes the ones gone; "cancel" with changes asks first.
+
+Urls → "manage" (the selected files'; in the viewer, the file shown's;
+always the urls menu's first entry, as the reference has it) opens the
+reference's "manage urls for N files" dialog (`ui/manage_urls.slint`,
+`src/manage_urls_window.rs`, hydrus-gui-model's `urls_editor`, checked
+step by step against the reference's, `oracle/record_manage_urls.py`):
+the files' URLs, sorted, each counted ("https://a/1 (2)") and warned
+about when there are several files. A URL typed in the box and entered
+is normalised as the URL classes say and added to every file lacking
+it; enter on an empty box applies. "paste" adds a URL a line; texts
+that don't parse as URLs are asked about first. Delete removes the
+selected URLs, a double-click moves a URL into the box to edit, and
+"copy" copies the selected URLs, or all of them. "apply" adds and
+deletes the URLs in the order they were changed, asking first if text
+is left in the box.
 
 Double-clicking a thumbnail opens the media viewer in its own
 window on that file (fullscreen, as hydrus opens it by default, or as

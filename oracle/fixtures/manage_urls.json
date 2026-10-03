@@ -1,0 +1,1113 @@
+{
+ "cases": [
+  {
+   "files": [
+    [
+     "aa",
+     [
+      "https://example.com/post/2",
+      "https://example.com/post/1"
+     ]
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       "https://example.com/post/1",
+       "https://example.com/post/2"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": []
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://example.com/post/3",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://example.com/post/1",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://example.com/a b?x=é#frag",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "not a url",
+      false
+     ],
+     "said": [
+      {
+       "asked": "The URLs:\n\nnot a url\n\n--did not parse. Normally I would not recommend importing invalid URLs, but do you want to force it anyway?"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "not a url",
+      true
+     ],
+     "said": [
+      {
+       "asked": "The URLs:\n\nnot a url\n\n--did not parse. Normally I would not recommend importing invalid URLs, but do you want to force it anyway?"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "select",
+      [
+       "https://example.com/post/1"
+      ]
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/1",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "double",
+      "https://example.com/post/2"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "https://example.com/post/2",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [],
+     "copied": [
+      "https://example.com/a%20b?x=%C3%A9\nhttps://example.com/post/3\nnot a url"
+     ],
+     "state": {
+      "rows": [
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "https://example.com/post/2",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "https://a.net/1\n\nhttps://a.net/2\nhttps://a.net/1\n",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://a.net/1",
+       "https://a.net/2",
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "https://example.com/post/2",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://example.com/post/2",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://a.net/1",
+       "https://a.net/2",
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "ok",
+      "https://left.over",
+      false
+     ],
+     "said": [
+      {
+       "asked": "You have text still in the input! Sure you are ok to apply?"
+      },
+      {
+       "ok": false
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://a.net/1",
+       "https://a.net/2",
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "https://left.over",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "ok",
+      "",
+      null
+     ],
+     "said": [
+      {
+       "ok": true
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://a.net/1",
+       "https://a.net/2",
+       "https://example.com/a%20b?x=%C3%A9",
+       "https://example.com/post/2",
+       "https://example.com/post/3",
+       "not a url"
+      ],
+      "warning": false,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://example.com/post/3",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/a%20b?x=%C3%A9",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "not a url",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://a.net/2",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "add",
+        "https://example.com/post/2",
+        [
+         "aa"
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "files": [
+    [
+     "aa",
+     [
+      "https://example.com/post/1",
+      "https://shared.org/x"
+     ]
+    ],
+    [
+     "bb",
+     [
+      "https://shared.org/x"
+     ]
+    ],
+    [
+     "cc",
+     []
+    ]
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       "https://example.com/post/1 (1)",
+       "https://shared.org/x (2)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": []
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://shared.org/x",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/post/1 (1)",
+       "https://shared.org/x (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "add",
+      "https://new.org/y",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/post/1 (1)",
+       "https://new.org/y (3)",
+       "https://shared.org/x (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "select",
+      [
+       "https://shared.org/x",
+       "https://example.com/post/1"
+      ]
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://example.com/post/1 (1)",
+       "https://new.org/y (3)",
+       "https://shared.org/x (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [],
+     "copied": [
+      "https://example.com/post/1\nhttps://shared.org/x"
+     ],
+     "state": {
+      "rows": [
+       "https://example.com/post/1 (1)",
+       "https://new.org/y (3)",
+       "https://shared.org/x (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "delete"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://new.org/y (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://shared.org/x",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "select",
+      []
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://new.org/y (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://shared.org/x",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [],
+     "copied": [
+      "https://new.org/y"
+     ],
+     "state": {
+      "rows": [
+       "https://new.org/y (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://shared.org/x",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "nope\nhttps://z.org/",
+      true
+     ],
+     "said": [
+      {
+       "asked": "The URLs:\n\nnope\n\n--did not parse. Normally I would not recommend importing invalid URLs, but do you want to force it anyway?"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       "https://new.org/y (3)",
+       "https://z.org/ (3)",
+       "nope (3)"
+      ],
+      "warning": true,
+      "input": "",
+      "updates": [
+       [
+        "add",
+        "https://shared.org/x",
+        [
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://new.org/y",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "delete",
+        "https://example.com/post/1",
+        [
+         "aa"
+        ]
+       ],
+       [
+        "delete",
+        "https://shared.org/x",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "https://z.org/",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ],
+       [
+        "add",
+        "nope",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ]
+       ]
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}

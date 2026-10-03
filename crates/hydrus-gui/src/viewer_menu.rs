@@ -243,9 +243,7 @@ pub fn viewer_menu(
     ));
     // its urls, opening and sharing it (as the thumbnails' for it alone)
     // (with no selection, as `AddKnownURLsViewCopyMenu` is called here)
-    if let Some(urls) = urls_menu(&url_facts(store, Some(file), &[])) {
-        entries.push(urls);
-    }
+    entries.push(urls_menu(&url_facts(store, Some(file), &[])));
     entries.push(Entry::Menu("open".into(), open_menu(store, Some(file), 1)));
     entries.push(share_menu(store, &file_facts, Some(file), &[file]));
     entries.push(Entry::Separator);

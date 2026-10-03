@@ -66,8 +66,7 @@ fn the_menu_is_the_reference_s() {
                 .then(|| share_menu(&store, &files, in_order.first().copied(), &in_order));
             let open = open_menu(&store, in_order.first().copied(), in_order.len());
             let urls = (!selected.is_empty())
-                .then(|| urls_menu(&url_facts(&store, in_order.first().copied(), &in_order)))
-                .flatten();
+                .then(|| urls_menu(&url_facts(&store, in_order.first().copied(), &in_order)));
             // (the recorder selects with a click, then ctrl+clicks, which
             // don't move the focus by hydrus's default: the first file
             // selected is focused)
