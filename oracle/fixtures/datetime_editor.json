@@ -1,0 +1,486 @@
+{
+ "now": 1700000000,
+ "cases": [
+  {
+   "name": "one file",
+   "files": [
+    1699136000123
+   ],
+   "step": 0,
+   "steps": [
+    {
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-11-04",
+      "time": "22:13:20.123",
+      "step": 0.0,
+      "value": "2023-11-04 22:13:20.123 (10 days ago)",
+      "changed": false
+     }
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied!"
+      }
+     ],
+     "copied": [
+      "1699136000.123"
+     ],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-11-04",
+      "time": "22:13:20.123",
+      "step": 0.0,
+      "value": "2023-11-04 22:13:20.123 (10 days ago)",
+      "changed": false
+     }
+    },
+    {
+     "do": [
+      "date",
+      "2023-01-02"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-01-02",
+      "time": "22:13:20.123",
+      "step": 0.0,
+      "value": "2023-01-02 22:13:20.123 (10 months 11 days ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "time",
+      "03:04:05.678"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-01-02",
+      "time": "03:04:05.678",
+      "step": 0.0,
+      "value": "2023-01-02 03:04:05.678 (10 months 12 days ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "date",
+      "2030-01-01"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2030-01-01",
+      "time": "03:04:05.678",
+      "step": 0.0,
+      "value": "2023-11-14 22:13:20.000 (now)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "now"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-11-14",
+      "time": "22:13:20.000",
+      "step": 0.0,
+      "value": "2023-11-14 22:13:20.000 (now)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "1600000000"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2020-09-13",
+      "time": "12:26:40.000",
+      "step": 0.0,
+      "value": "2020-09-13 12:26:40.000 (3 years 2 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "1600000000.25"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2020-09-13",
+      "time": "12:26:40.250",
+      "step": 0.0,
+      "value": "2020-09-13 12:26:40.250 (3 years 2 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "\"1500000000\""
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2017-07-14",
+      "time": "02:40:00.000",
+      "step": 0.0,
+      "value": "2017-07-14 02:40:00.000 (6 years 4 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "null"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2017-07-14",
+      "time": "02:40:00.000",
+      "step": 0.0,
+      "value": "2017-07-14 02:40:00.000 (6 years 4 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "\"soon\""
+     ],
+     "said": [
+      {
+       "critical": "Problem pasting!",
+       "message": "could not convert string to float: 'soon'"
+      },
+      {
+       "critical": "Clipboard Error!",
+       "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"A parseable timestamp string\" but received this text:\n\n\"soon\"\n\nMore details have been written to the log, but the general error was:\n\nException('Not a timestamp!')"
+      },
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2017-07-14",
+      "time": "02:40:00.000",
+      "step": 0.0,
+      "value": "2017-07-14 02:40:00.000 (6 years 4 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "nonsense words"
+     ],
+     "said": [
+      {
+       "warning": "Sorry, I did not understand that! I am looking for a simple timestamp integer or parseable datestring, but I got:\n\nnonsense words"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2017-07-14",
+      "time": "02:40:00.000",
+      "step": 0.0,
+      "value": "2017-07-14 02:40:00.000 (6 years 4 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "[1, 2]"
+     ],
+     "said": [
+      {
+       "critical": "Clipboard Error!",
+       "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"A parseable timestamp string\" but received this text:\n\n[1, 2]\n\nMore details have been written to the log, but the general error was:\n\nException('Not a timestamp!')"
+      },
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2017-07-14",
+      "time": "02:40:00.000",
+      "step": 0.0,
+      "value": "2017-07-14 02:40:00.000 (6 years 4 months ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "2023-11-01 12:30:00"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-11-01",
+      "time": "12:30:00.000",
+      "step": 0.0,
+      "value": "2023-11-01 12:30:00.000 (13 days 9 hours ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "2023-10-05T01:02:03.456"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-10-05",
+      "time": "01:02:03.456",
+      "step": 0.0,
+      "value": "2023-10-05 01:02:03.456 (1 month 10 days ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "2023-09-01"
+     ],
+     "said": [
+      {
+       "notice": "Pasted!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-09-01",
+      "time": "00:00:00.000",
+      "step": 0.0,
+      "value": "2023-09-01 00:00:00.000 (2 months 14 days ago)",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "copy"
+     ],
+     "said": [
+      {
+       "notice": "Copied!"
+      }
+     ],
+     "copied": [
+      "1693526400.0"
+     ],
+     "state": {
+      "label": null,
+      "step_shown": false,
+      "date": "2023-09-01",
+      "time": "00:00:00.000",
+      "step": 0.0,
+      "value": "2023-09-01 00:00:00.000 (2 months 14 days ago)",
+      "changed": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "three files",
+   "files": [
+    1699136000000,
+    1699568000000,
+    null
+   ],
+   "step": 0,
+   "steps": [
+    {
+     "state": {
+      "label": "Originally, 2 files set from 2023-11-04 22:13:20.000 (10 days ago) to 2023-11-09 22:13:20.000 (5 days ago), 1 file without a time set",
+      "step_shown": true,
+      "date": "2023-11-04",
+      "time": "22:13:20.000",
+      "step": 0.0,
+      "value": "2 files set to 2023-11-04 22:13:20.000 (10 days ago), 1 file without a time set",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "step",
+      1.5
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": "Originally, 2 files set from 2023-11-04 22:13:20.000 (10 days ago) to 2023-11-09 22:13:20.000 (5 days ago), 1 file without a time set",
+      "step_shown": true,
+      "date": "2023-11-04",
+      "time": "22:13:20.000",
+      "step": 1.5,
+      "value": "2 files set to 2023-11-04 22:13:20.000 (10 days ago), 1 file without a time set, with step 1.5 seconds",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "step",
+      -0.005
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": "Originally, 2 files set from 2023-11-04 22:13:20.000 (10 days ago) to 2023-11-09 22:13:20.000 (5 days ago), 1 file without a time set",
+      "step_shown": true,
+      "date": "2023-11-04",
+      "time": "22:13:20.000",
+      "step": -0.005,
+      "value": "2 files set to 2023-11-04 22:13:20.000 (10 days ago), 1 file without a time set, with step -5 milliseconds",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "date",
+      "2023-11-01"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": "Originally, 2 files set from 2023-11-04 22:13:20.000 (10 days ago) to 2023-11-09 22:13:20.000 (5 days ago), 1 file without a time set",
+      "step_shown": true,
+      "date": "2023-11-01",
+      "time": "22:13:20.000",
+      "step": -0.005,
+      "value": "2 files set to 2023-11-01 22:13:20.000 (13 days ago), 1 file without a time set, with step -5 milliseconds",
+      "changed": true
+     }
+    },
+    {
+     "do": [
+      "step",
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": "Originally, 2 files set from 2023-11-04 22:13:20.000 (10 days ago) to 2023-11-09 22:13:20.000 (5 days ago), 1 file without a time set",
+      "step_shown": true,
+      "date": "2023-11-01",
+      "time": "22:13:20.000",
+      "step": 0.0,
+      "value": "2 files set to 2023-11-01 22:13:20.000 (13 days ago), 1 file without a time set",
+      "changed": true
+     }
+    }
+   ]
+  },
+  {
+   "name": "two files the same, stepped",
+   "files": [
+    1699913600000,
+    1699913600000
+   ],
+   "step": 250,
+   "steps": [
+    {
+     "state": {
+      "label": "Originally, 2 files set to 2023-11-13 22:13:20.000 (1 day ago), with step 250 milliseconds",
+      "step_shown": true,
+      "date": "2023-11-13",
+      "time": "22:13:20.000",
+      "step": 0.25,
+      "value": "2 files set to 2023-11-13 22:13:20.000 (1 day ago), with step 250 milliseconds",
+      "changed": false
+     }
+    },
+    {
+     "do": [
+      "time",
+      "00:00:00.000"
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "label": "Originally, 2 files set to 2023-11-13 22:13:20.000 (1 day ago), with step 250 milliseconds",
+      "step_shown": true,
+      "date": "2023-11-13",
+      "time": "00:00:00.000",
+      "step": 0.25,
+      "value": "2 files set to 2023-11-13 00:00:00.000 (1 day 22 hours ago), with step 250 milliseconds",
+      "changed": true
+     }
+    }
+   ]
+  }
+ ]
+}

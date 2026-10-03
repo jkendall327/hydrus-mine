@@ -2519,6 +2519,7 @@ dependencies = [
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",
+ "jiff",
  "rusqlite",
  "serde_json",
  "sha2",

@@ -1,0 +1,3116 @@
+{
+ "now": 1700000000,
+ "services": {
+  "my files": "6c6f63616c2066696c6573",
+  "trash": "7472617368",
+  "hydrus local file storage": "616c6c206c6f63616c2066696c6573"
+ },
+ "cases": [
+  {
+   "name": "one file",
+   "files": [
+    {
+     "hash": "aa",
+     "modified": 1665440000000,
+     "archived": 1699740800000,
+     "viewed": 1699827201234,
+     "domains": {
+      "a.com": 1697408000000,
+      "b.com": 1698272000000
+     },
+     "services": [
+      [
+       "my files",
+       3,
+       1699136000000
+      ],
+      [
+       "hydrus local file storage",
+       3,
+       1699136000000
+      ],
+      [
+       "trash",
+       4,
+       1699568000000
+      ],
+      [
+       "trash",
+       7,
+       1699222400000
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2022-10-10 22:13:20.000 (1 year 1 month ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "copy",
+      null
+     ],
+     "said": [
+      {
+       "notice": "Copied 9 encoded time objects!"
+      }
+     ],
+     "copied": [
+      "[26, 3, [[2, [121, 2, [1, null, 1665440000000]]], [2, [121, 2, [5, null, 1699740800000]]], [2, [121, 2, [6, 0, 1699827201234]]], [2, [121, 2, [0, \"a.com\", 1697408000000]]], [2, [121, 2, [0, \"b.com\", 1698272000000]]], [2, [121, 2, [4, \"7472617368\", 1699568000000]]], [2, [121, 2, [3, \"616c6c206c6f63616c2066696c6573\", 1699136000000]]], [2, [121, 2, [3, \"6c6f63616c2066696c6573\", 1699136000000]]], [2, [121, 2, [7, \"7472617368\", 1699222400000]]]]]"
+     ],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2022-10-10 22:13:20.000 (1 year 1 month ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "copy",
+      [
+       0
+      ]
+     ],
+     "said": [
+      {
+       "notice": "Copied 2 encoded time objects!"
+      }
+     ],
+     "copied": [
+      "[26, 3, [[2, [121, 2, [0, \"a.com\", 1697408000000]]], [2, [121, 2, [0, \"b.com\", 1698272000000]]]]]"
+     ],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2022-10-10 22:13:20.000 (1 year 1 month ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "modified",
+      1691360000000,
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "archived",
+      1699913600000,
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "add_domain",
+      "c.com",
+      1699395200000
+     ],
+     "said": [
+      {
+       "entered": "Enter domain."
+      },
+      {
+       "editing": "2023-11-14 22:13:20.000 (now)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "add_domain",
+      "a.com",
+      1699395200000
+     ],
+     "said": [
+      {
+       "entered": "Enter domain."
+      },
+      {
+       "warning": "Sorry, that domain already exists!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "edit_domains",
+      [
+       "b.com"
+      ],
+      1698704000000,
+      0,
+      null
+     ],
+     "said": [
+      {
+       "editing": "2023-10-25 22:13:20.000 (20 days ago)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "delete_domains",
+      [
+       "a.com"
+      ],
+      false
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2023-10-15 22:13:20.000 (30 days ago)"
+       ],
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "delete_domains",
+      [
+       "a.com"
+      ],
+      true
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "add_domain",
+      "d.com",
+      1699481600000
+     ],
+     "said": [
+      {
+       "entered": "Enter domain."
+      },
+      {
+       "editing": "2023-11-14 22:13:20.000 (now)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ],
+       [
+        "d.com",
+        "2023-11-08 22:13:20.000 (6 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "delete_domains",
+      [
+       "d.com"
+      ],
+      true
+     ],
+     "said": [
+      {
+       "asked": "Remove all selected?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "edit_services",
+      [
+       [
+        "my files",
+        3
+       ]
+      ],
+      1695680000000,
+      0
+     ],
+     "said": [
+      {
+       "editing": "2023-11-04 22:13:20.000 (10 days ago)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-30 22:13:20.000 (15 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-09-25 22:13:20.000 (1 month 19 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "COPIED"
+     ],
+     "said": [
+      {
+       "notice": "Pasted 2 encoded times!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-09-25 22:13:20.000 (1 month 19 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "not json"
+     ],
+     "said": [
+      {
+       "critical": "Clipboard Error!",
+       "message": "Sorry, I could not understand what was in the clipboard. I was expecting \"A list of JSON-serialised Timestamp Data objects\" but received this text:\n\nnot json\n\nMore details have been written to the log, but the general error was:\n\nJSONDecodeError('Expecting value: line 1 column 1 (char 0)')"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-09-25 22:13:20.000 (1 month 19 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "[26, 1, [[121, 2, [0, \"a.com\", 1000]], [121, 2, [5, null, 2000]], [121, 2, [6, 1, 3000]], [121, 2, [6, 2, 4000]]]]"
+     ],
+     "said": [
+      {
+       "notice": "Pasted 4 encoded times!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "1970-01-01 00:00:02.000 (53 years 10 months ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-09-25 22:13:20.000 (1 month 19 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "ok",
+      true
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-08-06 22:13:20.000 (3 months 8 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "1970-01-01 00:00:02.000 (53 years 10 months ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "2023-11-12 22:13:21.234 (1 day 23 hours ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "b.com",
+        "2023-10-25 22:13:20.000 (20 days ago)"
+       ],
+       [
+        "c.com",
+        "2023-11-07 22:13:20.000 (7 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "trash",
+        "deleted time",
+        "2023-11-09 22:13:20.000 (5 days ago)"
+       ],
+       [
+        "hydrus local file storage",
+        "imported time",
+        "2023-11-04 22:13:20.000 (10 days ago)"
+       ],
+       [
+        "my files",
+        "imported time",
+        "2023-09-25 22:13:20.000 (1 month 19 days ago)"
+       ],
+       [
+        "trash",
+        "previous imported time (for undelete)",
+        "2023-11-05 22:13:20.000 (9 days ago)"
+       ]
+      ],
+      "copy_shown": true
+     },
+     "written": {
+      "ok": true,
+      "updates": [
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1691360000000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          5,
+          null,
+          2000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "b.com",
+          1698272000000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "c.com",
+          1699395200000
+         ]
+        ]
+       ],
+       [
+        "delete",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "a.com",
+          null
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          3,
+          "6c6f63616c2066696c6573",
+          1695680000000
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [
+        "aa"
+       ],
+       1691360000000,
+       0
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "three files",
+   "files": [
+    {
+     "hash": "aa",
+     "modified": 1665440000000,
+     "archived": 1699740800000,
+     "viewed": 1699827200000,
+     "domains": {
+      "a.com": 1697408000000
+     },
+     "services": [
+      [
+       "my files",
+       3,
+       1699136000000
+      ]
+     ]
+    },
+    {
+     "hash": "bb",
+     "modified": 1674080000000,
+     "archived": 1699654400000,
+     "domains": {
+      "a.com": 1697408000000,
+      "b.com": 1698272000000
+     },
+     "services": [
+      [
+       "my files",
+       3,
+       1699049600000
+      ]
+     ]
+    },
+    {
+     "hash": "cc",
+     "modified": 1674080000000,
+     "inbox": true,
+     "services": [
+      [
+       "my files",
+       3,
+       1698963200000
+      ]
+     ]
+    }
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set from 2022-10-10 22:13:20.000 (1 year 1 month ago) to 2023-01-18 22:13:20.000 (9 months 26 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-15 22:13:20.000 (30 days ago), 1 file without a time set"
+       ],
+       [
+        "b.com",
+        "1 file set to 2023-10-25 22:13:20.000 (20 days ago), 2 files without a time set"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "copy",
+      null
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set from 2022-10-10 22:13:20.000 (1 year 1 month ago) to 2023-01-18 22:13:20.000 (9 months 26 days ago)",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-15 22:13:20.000 (30 days ago), 1 file without a time set"
+       ],
+       [
+        "b.com",
+        "1 file set to 2023-10-25 22:13:20.000 (20 days ago), 2 files without a time set"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "modified",
+      1656800000000,
+      1000
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-15 22:13:20.000 (30 days ago), 1 file without a time set"
+       ],
+       [
+        "b.com",
+        "1 file set to 2023-10-25 22:13:20.000 (20 days ago), 2 files without a time set"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_domains",
+      [
+       "a.com"
+      ],
+      1696544000000,
+      7,
+      false
+     ],
+     "said": [
+      {
+       "editing": "2 files set to 2023-10-15 22:13:20.000 (30 days ago), 1 file without a time set"
+      },
+      {
+       "asked": "Not every file this dialog was launched on has a time for this domain. Do you want to apply what you just set to everything, or just the files that started with this domain?",
+       "yes": "all files",
+       "no": "only edit existing values"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-05 22:13:20.000 (1 month 9 days ago), 1 file without a time set, with step 7 milliseconds"
+       ],
+       [
+        "b.com",
+        "1 file set to 2023-10-25 22:13:20.000 (20 days ago), 2 files without a time set"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_domains",
+      [
+       "b.com"
+      ],
+      1697840000000,
+      0,
+      true
+     ],
+     "said": [
+      {
+       "editing": "1 file set to 2023-10-25 22:13:20.000 (20 days ago), 2 files without a time set"
+      },
+      {
+       "asked": "Not every file this dialog was launched on has a time for this domain. Do you want to apply what you just set to everything, or just the files that started with this domain?",
+       "yes": "all files",
+       "no": "only edit existing values"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-05 22:13:20.000 (1 month 9 days ago), 1 file without a time set, with step 7 milliseconds"
+       ],
+       [
+        "b.com",
+        "3 files set to 2023-10-20 22:13:20.000 (25 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_services",
+      [
+       [
+        "my files",
+        3
+       ]
+      ],
+      1694816000000,
+      -5
+     ],
+     "said": [
+      {
+       "editing": "3 files set from 2023-11-02 22:13:20.000 (12 days ago) to 2023-11-04 22:13:20.000 (10 days ago)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "2 files set to 2023-10-05 22:13:20.000 (1 month 9 days ago), 1 file without a time set, with step 7 milliseconds"
+       ],
+       [
+        "b.com",
+        "3 files set to 2023-10-20 22:13:20.000 (25 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set to 2023-09-15 22:13:20.000 (1 month 29 days ago), with step -5 milliseconds"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "paste",
+      "[26, 1, [[121, 2, [0, \"a.com\", 1000]]]]"
+     ],
+     "said": [
+      {
+       "asked": "Not every file this dialog was launched on has a time for this domain. Do you want to apply what you just set to everything, or just the files that started with this domain?",
+       "yes": "all files",
+       "no": "only edit existing values"
+      },
+      {
+       "notice": "Pasted 1 encoded times!"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "3 files set to 1970-01-01 00:00:01.000 (53 years 10 months ago)"
+       ],
+       [
+        "b.com",
+        "3 files set to 2023-10-20 22:13:20.000 (25 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set to 2023-09-15 22:13:20.000 (1 month 29 days ago), with step -5 milliseconds"
+       ]
+      ],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "ok",
+      true
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "3 files set to 2022-07-02 22:13:20.000 (1 year 4 months ago), with step 1 second",
+        true
+       ],
+       [
+        "archived time: ",
+        "2 files set from 2023-11-10 22:13:20.000 (4 days ago) to 2023-11-11 22:13:20.000 (3 days ago)",
+        true
+       ],
+       [
+        "last viewed in media viewer: ",
+        "1 file set to 2023-11-12 22:13:20.000 (2 days ago), 2 files without a time set",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "a.com",
+        "3 files set to 1970-01-01 00:00:01.000 (53 years 10 months ago)"
+       ],
+       [
+        "b.com",
+        "3 files set to 2023-10-20 22:13:20.000 (25 days ago)"
+       ]
+      ],
+      "file_services": [
+       [
+        "my files",
+        "imported time",
+        "3 files set to 2023-09-15 22:13:20.000 (1 month 29 days ago), with step -5 milliseconds"
+       ]
+      ],
+      "copy_shown": false
+     },
+     "written": {
+      "ok": true,
+      "updates": [
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1656800000000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "bb"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1656800001000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "cc"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1656800002000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "a.com",
+          1000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa",
+         "bb",
+         "cc"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "b.com",
+          1697840000000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          3,
+          "6c6f63616c2066696c6573",
+          1694816000000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "bb"
+        ],
+        [
+         121,
+         2,
+         [
+          3,
+          "6c6f63616c2066696c6573",
+          1694815999995
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "cc"
+        ],
+        [
+         121,
+         2,
+         [
+          3,
+          "6c6f63616c2066696c6573",
+          1694815999990
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [
+        "aa",
+        "bb",
+        "cc"
+       ],
+       1656800000000,
+       1000
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "unknown modified time",
+   "files": [
+    {
+     "hash": "aa",
+     "inbox": true
+    },
+    {
+     "hash": "bb",
+     "inbox": true
+    }
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "unknown -- run file maintenance to determine",
+        false
+       ]
+      ],
+      "warning": null,
+      "domains": [],
+      "file_services": [],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "add_domain",
+      "z.org",
+      1699913600000
+     ],
+     "said": [
+      {
+       "entered": "Enter domain."
+      },
+      {
+       "editing": "2 files set to 2023-11-14 22:13:20.000 (now)"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "unknown -- run file maintenance to determine",
+        false
+       ]
+      ],
+      "warning": null,
+      "domains": [
+       [
+        "z.org",
+        "2 files set to 2023-11-13 22:13:20.000 (1 day ago)"
+       ]
+      ],
+      "file_services": [],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "modified",
+      1699913600000,
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        false
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "z.org",
+        "2 files set to 2023-11-13 22:13:20.000 (1 day ago)"
+       ]
+      ],
+      "file_services": [],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "ok",
+      true
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2023-11-13 22:13:20.000 (1 day ago)",
+        false
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [
+       [
+        "z.org",
+        "2 files set to 2023-11-13 22:13:20.000 (1 day ago)"
+       ]
+      ],
+      "file_services": [],
+      "copy_shown": false
+     },
+     "written": {
+      "ok": true,
+      "updates": [
+       [
+        "set",
+        [],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1699913600000
+         ]
+        ]
+       ],
+       [
+        "set",
+        [
+         "aa",
+         "bb"
+        ],
+        [
+         121,
+         2,
+         [
+          0,
+          "z.org",
+          1699913600000
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [],
+       1699913600000,
+       0
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "old modified time",
+   "files": [
+    {
+     "hash": "aa",
+     "modified": 1665440000000
+    }
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "2022-10-10 22:13:20.000 (1 year 1 month ago)",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [],
+      "file_services": [],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "modified",
+      1000,
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "1970-01-01 00:00:01.000 (53 years 10 months ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [],
+      "file_services": [],
+      "copy_shown": true
+     }
+    },
+    {
+     "do": [
+      "ok",
+      true
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "1970-01-01 00:00:01.000 (53 years 10 months ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [],
+      "file_services": [],
+      "copy_shown": true
+     },
+     "written": {
+      "ok": true,
+      "updates": [
+       [
+        "set",
+        [
+         "aa"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1000
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [
+        "aa"
+       ],
+       1000,
+       0
+      ]
+     }
+    }
+   ]
+  },
+  {
+   "name": "many files",
+   "files": [
+    {
+     "hash": "0000",
+     "modified": 1665440000000
+    },
+    {
+     "hash": "0001",
+     "modified": 1665353600000
+    },
+    {
+     "hash": "0002",
+     "modified": 1665267200000
+    },
+    {
+     "hash": "0003",
+     "modified": 1665180800000
+    },
+    {
+     "hash": "0004",
+     "modified": 1665094400000
+    },
+    {
+     "hash": "0005",
+     "modified": 1665008000000
+    },
+    {
+     "hash": "0006",
+     "modified": 1664921600000
+    },
+    {
+     "hash": "0007",
+     "modified": 1664835200000
+    },
+    {
+     "hash": "0008",
+     "modified": 1664748800000
+    },
+    {
+     "hash": "0009",
+     "modified": 1664662400000
+    },
+    {
+     "hash": "000a",
+     "modified": 1664576000000
+    },
+    {
+     "hash": "000b",
+     "modified": 1664489600000
+    },
+    {
+     "hash": "000c",
+     "modified": 1664403200000
+    },
+    {
+     "hash": "000d",
+     "modified": 1664316800000
+    },
+    {
+     "hash": "000e",
+     "modified": 1664230400000
+    },
+    {
+     "hash": "000f",
+     "modified": 1664144000000
+    },
+    {
+     "hash": "0010",
+     "modified": 1664057600000
+    },
+    {
+     "hash": "0011",
+     "modified": 1663971200000
+    },
+    {
+     "hash": "0012",
+     "modified": 1663884800000
+    },
+    {
+     "hash": "0013",
+     "modified": 1663798400000
+    },
+    {
+     "hash": "0014",
+     "modified": 1663712000000
+    },
+    {
+     "hash": "0015",
+     "modified": 1663625600000
+    },
+    {
+     "hash": "0016",
+     "modified": 1663539200000
+    },
+    {
+     "hash": "0017",
+     "modified": 1663452800000
+    },
+    {
+     "hash": "0018",
+     "modified": 1663366400000
+    },
+    {
+     "hash": "0019",
+     "modified": 1663280000000
+    },
+    {
+     "hash": "001a",
+     "modified": 1663193600000
+    },
+    {
+     "hash": "001b",
+     "modified": 1663107200000
+    },
+    {
+     "hash": "001c",
+     "modified": 1663020800000
+    },
+    {
+     "hash": "001d",
+     "modified": 1662934400000
+    },
+    {
+     "hash": "001e",
+     "modified": 1662848000000
+    },
+    {
+     "hash": "001f",
+     "modified": 1662761600000
+    },
+    {
+     "hash": "0020",
+     "modified": 1662675200000
+    },
+    {
+     "hash": "0021",
+     "modified": 1662588800000
+    },
+    {
+     "hash": "0022",
+     "modified": 1662502400000
+    },
+    {
+     "hash": "0023",
+     "modified": 1662416000000
+    },
+    {
+     "hash": "0024",
+     "modified": 1662329600000
+    },
+    {
+     "hash": "0025",
+     "modified": 1662243200000
+    },
+    {
+     "hash": "0026",
+     "modified": 1662156800000
+    },
+    {
+     "hash": "0027",
+     "modified": 1662070400000
+    },
+    {
+     "hash": "0028",
+     "modified": 1661984000000
+    },
+    {
+     "hash": "0029",
+     "modified": 1661897600000
+    },
+    {
+     "hash": "002a",
+     "modified": 1661811200000
+    },
+    {
+     "hash": "002b",
+     "modified": 1661724800000
+    },
+    {
+     "hash": "002c",
+     "modified": 1661638400000
+    },
+    {
+     "hash": "002d",
+     "modified": 1661552000000
+    },
+    {
+     "hash": "002e",
+     "modified": 1661465600000
+    },
+    {
+     "hash": "002f",
+     "modified": 1661379200000
+    },
+    {
+     "hash": "0030",
+     "modified": 1661292800000
+    },
+    {
+     "hash": "0031",
+     "modified": 1661206400000
+    },
+    {
+     "hash": "0032",
+     "modified": 1661120000000
+    },
+    {
+     "hash": "0033",
+     "modified": 1661033600000
+    },
+    {
+     "hash": "0034",
+     "modified": 1660947200000
+    },
+    {
+     "hash": "0035",
+     "modified": 1660860800000
+    },
+    {
+     "hash": "0036",
+     "modified": 1660774400000
+    },
+    {
+     "hash": "0037",
+     "modified": 1660688000000
+    },
+    {
+     "hash": "0038",
+     "modified": 1660601600000
+    },
+    {
+     "hash": "0039",
+     "modified": 1660515200000
+    },
+    {
+     "hash": "003a",
+     "modified": 1660428800000
+    },
+    {
+     "hash": "003b",
+     "modified": 1660342400000
+    },
+    {
+     "hash": "003c",
+     "modified": 1660256000000
+    },
+    {
+     "hash": "003d",
+     "modified": 1660169600000
+    },
+    {
+     "hash": "003e",
+     "modified": 1660083200000
+    },
+    {
+     "hash": "003f",
+     "modified": 1659996800000
+    },
+    {
+     "hash": "0040",
+     "modified": 1659910400000
+    },
+    {
+     "hash": "0041",
+     "modified": 1659824000000
+    },
+    {
+     "hash": "0042",
+     "modified": 1659737600000
+    },
+    {
+     "hash": "0043",
+     "modified": 1659651200000
+    },
+    {
+     "hash": "0044",
+     "modified": 1659564800000
+    },
+    {
+     "hash": "0045",
+     "modified": 1659478400000
+    },
+    {
+     "hash": "0046",
+     "modified": 1659392000000
+    },
+    {
+     "hash": "0047",
+     "modified": 1659305600000
+    },
+    {
+     "hash": "0048",
+     "modified": 1659219200000
+    },
+    {
+     "hash": "0049",
+     "modified": 1659132800000
+    },
+    {
+     "hash": "004a",
+     "modified": 1659046400000
+    },
+    {
+     "hash": "004b",
+     "modified": 1658960000000
+    },
+    {
+     "hash": "004c",
+     "modified": 1658873600000
+    },
+    {
+     "hash": "004d",
+     "modified": 1658787200000
+    },
+    {
+     "hash": "004e",
+     "modified": 1658700800000
+    },
+    {
+     "hash": "004f",
+     "modified": 1658614400000
+    },
+    {
+     "hash": "0050",
+     "modified": 1658528000000
+    },
+    {
+     "hash": "0051",
+     "modified": 1658441600000
+    },
+    {
+     "hash": "0052",
+     "modified": 1658355200000
+    },
+    {
+     "hash": "0053",
+     "modified": 1658268800000
+    },
+    {
+     "hash": "0054",
+     "modified": 1658182400000
+    },
+    {
+     "hash": "0055",
+     "modified": 1658096000000
+    },
+    {
+     "hash": "0056",
+     "modified": 1658009600000
+    },
+    {
+     "hash": "0057",
+     "modified": 1657923200000
+    },
+    {
+     "hash": "0058",
+     "modified": 1657836800000
+    },
+    {
+     "hash": "0059",
+     "modified": 1657750400000
+    },
+    {
+     "hash": "005a",
+     "modified": 1657664000000
+    },
+    {
+     "hash": "005b",
+     "modified": 1657577600000
+    },
+    {
+     "hash": "005c",
+     "modified": 1657491200000
+    },
+    {
+     "hash": "005d",
+     "modified": 1657404800000
+    },
+    {
+     "hash": "005e",
+     "modified": 1657318400000
+    },
+    {
+     "hash": "005f",
+     "modified": 1657232000000
+    },
+    {
+     "hash": "0060",
+     "modified": 1657145600000
+    },
+    {
+     "hash": "0061",
+     "modified": 1657059200000
+    },
+    {
+     "hash": "0062",
+     "modified": 1656972800000
+    },
+    {
+     "hash": "0063",
+     "modified": 1656886400000
+    },
+    {
+     "hash": "0064",
+     "modified": 1656800000000
+    }
+   ],
+   "steps": [
+    {
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "101 files set from 2022-07-02 22:13:20.000 (1 year 4 months ago) to 2022-10-10 22:13:20.000 (1 year 1 month ago)",
+        true
+       ]
+      ],
+      "warning": null,
+      "domains": [],
+      "file_services": [],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "edit_main",
+      "modified",
+      1699913600000,
+      0
+     ],
+     "said": [],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "101 files set to 2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [],
+      "file_services": [],
+      "copy_shown": false
+     }
+    },
+    {
+     "do": [
+      "ok",
+      false
+     ],
+     "said": [
+      {
+       "asked": "This dialog is about to make more than 100 changes! Are you sure this is all correct?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "101 files set to 2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [],
+      "file_services": [],
+      "copy_shown": false
+     },
+     "written": {
+      "ok": false,
+      "updates": [
+       [
+        "set",
+        [
+         "0000",
+         "0001",
+         "0002",
+         "0003",
+         "0004",
+         "0005",
+         "0006",
+         "0007",
+         "0008",
+         "0009",
+         "000a",
+         "000b",
+         "000c",
+         "000d",
+         "000e",
+         "000f",
+         "0010",
+         "0011",
+         "0012",
+         "0013",
+         "0014",
+         "0015",
+         "0016",
+         "0017",
+         "0018",
+         "0019",
+         "001a",
+         "001b",
+         "001c",
+         "001d",
+         "001e",
+         "001f",
+         "0020",
+         "0021",
+         "0022",
+         "0023",
+         "0024",
+         "0025",
+         "0026",
+         "0027",
+         "0028",
+         "0029",
+         "002a",
+         "002b",
+         "002c",
+         "002d",
+         "002e",
+         "002f",
+         "0030",
+         "0031",
+         "0032",
+         "0033",
+         "0034",
+         "0035",
+         "0036",
+         "0037",
+         "0038",
+         "0039",
+         "003a",
+         "003b",
+         "003c",
+         "003d",
+         "003e",
+         "003f",
+         "0040",
+         "0041",
+         "0042",
+         "0043",
+         "0044",
+         "0045",
+         "0046",
+         "0047",
+         "0048",
+         "0049",
+         "004a",
+         "004b",
+         "004c",
+         "004d",
+         "004e",
+         "004f",
+         "0050",
+         "0051",
+         "0052",
+         "0053",
+         "0054",
+         "0055",
+         "0056",
+         "0057",
+         "0058",
+         "0059",
+         "005a",
+         "005b",
+         "005c",
+         "005d",
+         "005e",
+         "005f",
+         "0060",
+         "0061",
+         "0062",
+         "0063",
+         "0064"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1699913600000
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [
+        "0000",
+        "0001",
+        "0002",
+        "0003",
+        "0004",
+        "0005",
+        "0006",
+        "0007",
+        "0008",
+        "0009",
+        "000a",
+        "000b",
+        "000c",
+        "000d",
+        "000e",
+        "000f",
+        "0010",
+        "0011",
+        "0012",
+        "0013",
+        "0014",
+        "0015",
+        "0016",
+        "0017",
+        "0018",
+        "0019",
+        "001a",
+        "001b",
+        "001c",
+        "001d",
+        "001e",
+        "001f",
+        "0020",
+        "0021",
+        "0022",
+        "0023",
+        "0024",
+        "0025",
+        "0026",
+        "0027",
+        "0028",
+        "0029",
+        "002a",
+        "002b",
+        "002c",
+        "002d",
+        "002e",
+        "002f",
+        "0030",
+        "0031",
+        "0032",
+        "0033",
+        "0034",
+        "0035",
+        "0036",
+        "0037",
+        "0038",
+        "0039",
+        "003a",
+        "003b",
+        "003c",
+        "003d",
+        "003e",
+        "003f",
+        "0040",
+        "0041",
+        "0042",
+        "0043",
+        "0044",
+        "0045",
+        "0046",
+        "0047",
+        "0048",
+        "0049",
+        "004a",
+        "004b",
+        "004c",
+        "004d",
+        "004e",
+        "004f",
+        "0050",
+        "0051",
+        "0052",
+        "0053",
+        "0054",
+        "0055",
+        "0056",
+        "0057",
+        "0058",
+        "0059",
+        "005a",
+        "005b",
+        "005c",
+        "005d",
+        "005e",
+        "005f",
+        "0060",
+        "0061",
+        "0062",
+        "0063",
+        "0064"
+       ],
+       1699913600000,
+       0
+      ]
+     }
+    },
+    {
+     "do": [
+      "ok",
+      true
+     ],
+     "said": [
+      {
+       "asked": "This dialog is about to make more than 100 changes! Are you sure this is all correct?",
+       "yes": "yes",
+       "no": "no"
+      }
+     ],
+     "copied": [],
+     "state": {
+      "rows": [
+       [
+        "file modified time: ",
+        "101 files set to 2023-11-13 22:13:20.000 (1 day ago)",
+        true
+       ]
+      ],
+      "warning": "This will also change the modified time of the file on disk!",
+      "domains": [],
+      "file_services": [],
+      "copy_shown": false
+     },
+     "written": {
+      "ok": true,
+      "updates": [
+       [
+        "set",
+        [
+         "0000",
+         "0001",
+         "0002",
+         "0003",
+         "0004",
+         "0005",
+         "0006",
+         "0007",
+         "0008",
+         "0009",
+         "000a",
+         "000b",
+         "000c",
+         "000d",
+         "000e",
+         "000f",
+         "0010",
+         "0011",
+         "0012",
+         "0013",
+         "0014",
+         "0015",
+         "0016",
+         "0017",
+         "0018",
+         "0019",
+         "001a",
+         "001b",
+         "001c",
+         "001d",
+         "001e",
+         "001f",
+         "0020",
+         "0021",
+         "0022",
+         "0023",
+         "0024",
+         "0025",
+         "0026",
+         "0027",
+         "0028",
+         "0029",
+         "002a",
+         "002b",
+         "002c",
+         "002d",
+         "002e",
+         "002f",
+         "0030",
+         "0031",
+         "0032",
+         "0033",
+         "0034",
+         "0035",
+         "0036",
+         "0037",
+         "0038",
+         "0039",
+         "003a",
+         "003b",
+         "003c",
+         "003d",
+         "003e",
+         "003f",
+         "0040",
+         "0041",
+         "0042",
+         "0043",
+         "0044",
+         "0045",
+         "0046",
+         "0047",
+         "0048",
+         "0049",
+         "004a",
+         "004b",
+         "004c",
+         "004d",
+         "004e",
+         "004f",
+         "0050",
+         "0051",
+         "0052",
+         "0053",
+         "0054",
+         "0055",
+         "0056",
+         "0057",
+         "0058",
+         "0059",
+         "005a",
+         "005b",
+         "005c",
+         "005d",
+         "005e",
+         "005f",
+         "0060",
+         "0061",
+         "0062",
+         "0063",
+         "0064"
+        ],
+        [
+         121,
+         2,
+         [
+          1,
+          null,
+          1699913600000
+         ]
+        ]
+       ]
+      ],
+      "file_modified": [
+       [
+        "0000",
+        "0001",
+        "0002",
+        "0003",
+        "0004",
+        "0005",
+        "0006",
+        "0007",
+        "0008",
+        "0009",
+        "000a",
+        "000b",
+        "000c",
+        "000d",
+        "000e",
+        "000f",
+        "0010",
+        "0011",
+        "0012",
+        "0013",
+        "0014",
+        "0015",
+        "0016",
+        "0017",
+        "0018",
+        "0019",
+        "001a",
+        "001b",
+        "001c",
+        "001d",
+        "001e",
+        "001f",
+        "0020",
+        "0021",
+        "0022",
+        "0023",
+        "0024",
+        "0025",
+        "0026",
+        "0027",
+        "0028",
+        "0029",
+        "002a",
+        "002b",
+        "002c",
+        "002d",
+        "002e",
+        "002f",
+        "0030",
+        "0031",
+        "0032",
+        "0033",
+        "0034",
+        "0035",
+        "0036",
+        "0037",
+        "0038",
+        "0039",
+        "003a",
+        "003b",
+        "003c",
+        "003d",
+        "003e",
+        "003f",
+        "0040",
+        "0041",
+        "0042",
+        "0043",
+        "0044",
+        "0045",
+        "0046",
+        "0047",
+        "0048",
+        "0049",
+        "004a",
+        "004b",
+        "004c",
+        "004d",
+        "004e",
+        "004f",
+        "0050",
+        "0051",
+        "0052",
+        "0053",
+        "0054",
+        "0055",
+        "0056",
+        "0057",
+        "0058",
+        "0059",
+        "005a",
+        "005b",
+        "005c",
+        "005d",
+        "005e",
+        "005f",
+        "0060",
+        "0061",
+        "0062",
+        "0063",
+        "0064"
+       ],
+       1699913600000,
+       0
+      ]
+     }
+    }
+   ]
+  }
+ ]
+}
