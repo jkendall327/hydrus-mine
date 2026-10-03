@@ -5,6 +5,7 @@
 //! testing them) don't wait on the windows' generated code. hydrus-gui
 //! re-exports each module under its own name.
 
+pub mod about;
 pub mod archive_delete;
 pub mod audio;
 pub mod auto_resolution_preview;

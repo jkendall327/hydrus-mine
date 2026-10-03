@@ -176,6 +176,8 @@ pub enum Command {
     /// Manage, save or load a favourite search (a search page's star
     /// button).
     Favourite(crate::favourites::Action),
+    /// Open the about window.
+    About,
 }
 
 /// A repository with content to upload (the pending menu).
@@ -974,7 +976,7 @@ fn help_menu(facts: &Facts) -> Entry {
             check("darkmode", None, false),
             check("advanced mode", Some(Command::AdvancedMode), facts.advanced),
             SEP,
-            todo("about"),
+            item("about", Command::About),
         ],
     )
 }

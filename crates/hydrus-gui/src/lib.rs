@@ -20,6 +20,7 @@ mod ui {
 
 pub use ui::*;
 
+pub mod about_window;
 mod animation;
 mod archive_delete_window;
 mod auto_resolution_preview_window;
@@ -171,6 +172,8 @@ pub struct Bound {
     pub manage_notes: Rc<RefCell<Option<ManageNotesWindow>>>,
     /// The options window while it is open.
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
+    /// The about window while it is open.
+    pub about: Rc<RefCell<Option<AboutWindow>>>,
     /// The checker options editor while one is open (from the options
     /// window).
     pub checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>>,
@@ -297,6 +300,7 @@ fn lay_out_thumbnails(window: &MainWindow, store: &hydrus_store::Store, rows: &T
 
 /// Show `pages` in `window`, and let the window change them.
 pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
+    about_window::note_boot();
     let pages = Rc::new(RefCell::new(pages));
     let first = pages.borrow_mut().current();
     let current = Rc::new(RefCell::new(first.clone()));
@@ -1093,6 +1097,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     });
     // the menu bar, its titles shown again as what they say changes
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
+    let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
@@ -1213,6 +1218,18 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match session_dialog::open(&pages, name.as_deref(), &slot) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not save the session: {e}"),
+                    }
+                })
+            },
+            // help > about
+            about: {
+                let pages = pages.clone();
+                let slot = about.clone();
+                Rc::new(move || {
+                    let store = pages.borrow().store().clone();
+                    match about_window::open(&store) {
+                        Ok(w) => *slot.borrow_mut() = Some(w),
+                        Err(e) => eprintln!("could not open the about window: {e}"),
                     }
                 })
             },
@@ -2575,6 +2592,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         manage_tags,
         manage_notes,
         options,
+        about,
         checker_options,
         session_dialog,
         subscriptions,

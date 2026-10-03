@@ -7,17 +7,22 @@ partway, say exactly where.
 
 The owner's current priority (2026-10) is **breadth**: get every major
 area of the client working in a first pass, rather than perfecting each
-corner before moving on. In order:
+corner before moving on. The subscriptions dialog, the import and export
+folders, the duplicates page's tabs and the downloader pages' leftovers
+have had their first pass. Next, in the owner's order (2026-10-03), the
+screens not started yet:
 
-1. The manage subscriptions dialog.
-2. Manage import folders and export folders.
-3. The duplicates page's preparation and auto-resolution tabs.
-4. The downloader pages' leftovers.
-5. Then the gaps listed under "Later".
+1. The about window (help > about). **Done.**
+2. The simple downloader page.
+3. The rest of the media "manage" dialogs: URLs, times, ratings, force
+   filetype, the embedded metadata window, and share > export files.
+4. Services: review services and manage services.
+5. Tag siblings and parents (and tags > display/search, migrate tags,
+   sibling/parent sync).
+6. The downloader definition editors: URL classes, parsers, gallery URL
+   generators, URL class links, logins, import/export downloaders.
 
-The backends for all of these exist. Subscriptions, import and export
-folders, duplicates search and auto-resolution all run in `hydrus serve`
-and are tested against the reference. The work is the GUI over them.
+Then the gaps listed under "Later", and the half-done items below.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 

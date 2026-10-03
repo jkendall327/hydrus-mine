@@ -275,6 +275,15 @@ search.
   bold. Saving a session asks its name and its questions in one dialog,
   and says a name can't be had over the name box, where the reference
   shows a message box first; and "clear and load" isn't there yet.
+- **The about window describes hydrus-rs**: its name, its own version
+  beside the hydrus version it ports ("v0.1.0, porting hydrus v688, using
+  network version 20"), and, on its description tab, the reference's
+  lines that mean something for it (the platform, ffmpeg and SQLite
+  versions, the boot time, the directories, and the store's cache size,
+  journal and synchronous modes, as SQLite reports them); Python's
+  libraries, Qt, the locale, the commit period and temp-in-memory lines
+  aren't there, and the optional libraries tab lists ffmpeg alone. The
+  boot time is in UTC, and there is no hydrus icon over the name.
 - **The options window has only the options hydrus-rs honours** (so far
   those on twenty pages; the others, and pages with none, aren't there:
   on the connection page, the CA bundle and curl_cffi test; on the

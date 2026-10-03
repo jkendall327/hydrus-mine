@@ -4,6 +4,7 @@
 
 mod common;
 
+mod about;
 mod animation;
 mod archive_delete;
 mod auto_resolution_preview;

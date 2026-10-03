@@ -342,6 +342,14 @@ step is as `oracle/record_string_processor_editor.py`,
 `oracle/record_string_match_editor.py` and
 `oracle/record_string_converter_editor.py` recorded the reference's.
 
+Help > about opens the about window (`ui/about.slint`,
+`src/about_window.rs`, `hydrus-gui-model/src/about.rs`), as the
+reference's "about hydrus": the name, version and site link over the
+"Description" (platform, ffmpeg and SQLite versions, boot time,
+directories and database settings), "Optional Libraries", "Credits" and
+"License" tabs, in the reference's forms
+(`oracle/record_about_window.py`).
+
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the

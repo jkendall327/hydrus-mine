@@ -3,6 +3,7 @@
 //! build without the windows, so they (and mutation testing them) run in
 //! seconds; the windows' own tests are hydrus-gui's.
 
+mod about;
 mod auto_resolution_review;
 mod auto_resolution_rules;
 mod checker_options;

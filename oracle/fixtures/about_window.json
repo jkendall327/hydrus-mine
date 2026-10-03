@@ -1,0 +1,28 @@
+{
+ "title": "about hydrus",
+ "labels": [
+  "hydrus client",
+  "v688, using network version 20",
+  "<a style=\"text-decoration:none; color:#0000ff;\" href=\"https://hydrusnetwork.github.io/hydrus/\">https://hydrusnetwork.github.io/hydrus/</a>",
+  "QtCharts: yes\nQtMultimedia: yes\nQtPdf: yes\n\nmpv: no - error\n\ncbor2: yes\nchardet: yes\ncryptography: yes\ncurl_cffi (under testing): not available\ndateparser: yes\ndateutil: yes\nhtml5lib: yes\nlxml: yes\nlz4: yes\nolefile: yes\nPillow HEIF: yes (via plugin)\nPillow AVIF: yes (native)\nPillow JpegXL: yes (via plugin)\npsutil: yes\npympler: not available\npyopenssl: yes\nshow-in-file-manager: not available\ntldextract: yes",
+  "This is the media management application of the hydrus software suite.\n\nrunning on x86_64 Linux from source\npython: 3.11.15\nFFMPEG: 6.1.1-3ubuntu5\nOpenCV: 4.13.0\nopenssl: OpenSSL 3.0.13 30 Jan 2024\nnumpy: 2.4.6\nPillow: 12.3.0\nQt: PySide6 6.10.3 (offscreen)\nsqlite: 3.45.1\n\nboot time: 14 seconds ago (2026-10-03 16:02:53.014)\n\ninstall dir: /home/user/hydrus-mine\ndb dir: /tmp/hydrus_record_2wt85ouo/db\ntemp dir: /tmp\nlocale: en_US/C\n\ndb cache size per file: 256MB\ndb journal mode: WAL\ndb synchronous mode: 1\ndb transaction commit period: 30 seconds\ndb using memory for temp?: False"
+ ],
+ "tabs": [
+  [
+   "Description",
+   "This is the media management application of the hydrus software suite.\n\nrunning on x86_64 Linux from source\npython: 3.11.15\nFFMPEG: 6.1.1-3ubuntu5\nOpenCV: 4.13.0\nopenssl: OpenSSL 3.0.13 30 Jan 2024\nnumpy: 2.4.6\nPillow: 12.3.0\nQt: PySide6 6.10.3 (offscreen)\nsqlite: 3.45.1\n\nboot time: 14 seconds ago (2026-10-03 16:02:53.014)\n\ninstall dir: /home/user/hydrus-mine\ndb dir: /tmp/hydrus_record_2wt85ouo/db\ntemp dir: /tmp\nlocale: en_US/C\n\ndb cache size per file: 256MB\ndb journal mode: WAL\ndb synchronous mode: 1\ndb transaction commit period: 30 seconds\ndb using memory for temp?: False"
+  ],
+  [
+   "Optional Libraries",
+   "QtCharts: yes\nQtMultimedia: yes\nQtPdf: yes\n\nmpv: no - error\n\ncbor2: yes\nchardet: yes\ncryptography: yes\ncurl_cffi (under testing): not available\ndateparser: yes\ndateutil: yes\nhtml5lib: yes\nlxml: yes\nlz4: yes\nolefile: yes\nPillow HEIF: yes (via plugin)\nPillow AVIF: yes (native)\nPillow JpegXL: yes (via plugin)\npsutil: yes\npympler: not available\npyopenssl: yes\nshow-in-file-manager: not available\ntldextract: yes"
+  ],
+  [
+   "Credits",
+   "Created by Anonymous"
+  ],
+  [
+   "License",
+   "           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE\n                     Version 3, May 2010\n\nCopyright (C) 2011 Hydrus Developer\n\nEveryone is permitted to copy and distribute verbatim or modified\ncopies of this license document, and changing it is allowed as long\nas the name is changed.\n\nThis license applies to any copyrightable work with which it is\npackaged and/or distributed, except works that are already covered by\nanother license. Any other license that applies to the same work\nshall take precedence over this one.\n\nTo the extent permitted by applicable law, the works covered by this\nlicense are provided \"as is\" and do not come with any warranty except\nwhere otherwise explicitly stated.\n\n\n           DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE\n  TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION, AND MODIFICATION\n\n 0. You just DO WHAT THE FUCK YOU WANT TO.\n"
+  ]
+ ]
+}
