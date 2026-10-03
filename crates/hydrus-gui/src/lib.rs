@@ -28,6 +28,7 @@ mod drops;
 mod edit_subscription_window;
 pub mod favourites_window;
 mod filter_window;
+mod folders_window;
 mod gallery;
 mod grid;
 pub mod headless;
@@ -128,7 +129,7 @@ pub(crate) use bind_zoom;
 pub use grid::ThumbnailRows;
 pub use hydrus_gui_model::{
     archive_delete, audio, autocomplete, checker_options, collect, domains, duplicate_filter,
-    edit_subscription, favourites, info_lines, list_selection, local_import, main_menu,
+    edit_subscription, favourites, folders, info_lines, list_selection, local_import, main_menu,
     manage_tags, media_actions, options, page_chooser, predicate_editors, ratings, scanbar,
     selection, session_saving, sort, status, subscriptions_dialog, subscriptions_list,
     thumbnail_icons, thumbnail_ratings,
@@ -161,6 +162,8 @@ pub struct Bound {
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
+    /// The import and export folders dialogs while they are open.
+    pub folders: folders_window::Slots,
     /// The archive/delete filter while one is open.
     pub archive_delete: Rc<RefCell<Option<ArchiveDeleteWindow>>>,
     /// The duplicate filter while one is open.
@@ -959,6 +962,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
+    let folders = folders_window::Slots::default();
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -1030,6 +1034,22 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match subscriptions_window::open(&store, &slot, slots) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the subscriptions: {e}"),
+                    }
+                })
+            },
+            // file > import/export folders > manage import/export folders…
+            manage_folders: {
+                let pages = pages.clone();
+                let slots = folders.clone();
+                Rc::new(move |import| {
+                    let store = pages.borrow().store().clone();
+                    let opened = if import {
+                        folders_window::open_import_folders(&store, &slots)
+                    } else {
+                        folders_window::open_export_folders(&store, &slots)
+                    };
+                    if let Err(e) = opened {
+                        eprintln!("could not open the folders: {e}");
                     }
                 })
             },
@@ -2170,6 +2190,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         session_dialog,
         subscriptions,
         edit_subscription,
+        folders,
         archive_delete,
         filter,
         open_page,

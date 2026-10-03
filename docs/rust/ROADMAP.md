@@ -67,20 +67,20 @@ and are tested against the reference. The work is the GUI over them.
 
 ## 2. Manage import folders / export folders
 
-file > import/export folders > "manage import folders…" and "manage
-export folders…", and the "check import folder now" and "run export
-folder now" submenus there. Not started in the GUI.
+**Done**: file > import/export folders > "manage import folders…" and
+"manage export folders…" (`ui/folders.slint`, `src/folders_window.rs`,
+`hydrus-gui-model`'s `folders`), recorded by
+`oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`,
+tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
 
-- The backend (`hydrus-download::folders`, `hydrus-parse::sidecar`) runs
-  import and export folders with sidecars, migrated from the reference.
-  See `DIFFERENCES.md`, "Import folders and sidecars".
-- Same shape as subscriptions: a list dialog of folders, an edit dialog
-  per folder, apply/cancel.
-- The lists' rows are recorded already: `oracle/record_folders_lists.py`
-  (fixture `oracle/fixtures/folders_lists.json`).
-- Record the reference's `ClientGUIImportFolders.EditImportFoldersPanel`
-  and the export folders panel first (`ClientGUI._ManageImportFolders`,
-  `_ManageExportFolders` open them).
+**Next**:
+
+- The filename tagging options editor (`EditFilenameTaggingOptionPanel`)
+  and the sidecar routers editor, which the import and export folder
+  dialogs (and "review files to import") open.
+- An import folder's import options, after an import options editor.
+- Reviewing an import folder's cached paths (the file log window, which
+  the downloader pages want too).
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 

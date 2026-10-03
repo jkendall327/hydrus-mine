@@ -1,0 +1,661 @@
+{
+ "missing": "/nonexistent/hydrus-rs-oracle",
+ "existing": "/usr",
+ "import_opened": [
+  {
+   "folder": "inbox drop",
+   "fields": {
+    "name": "inbox drop",
+    "path": "/home/me/drop",
+    "search_subdirectories": true,
+    "paused": false,
+    "check_regularly": true,
+    "period": 3600,
+    "period_enabled": true,
+    "skip": 60,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "actions": {
+     "successful": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "redundant": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "deleted": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "failed": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     }
+    },
+    "filename_tagging": [],
+    "import_options": "import options (all default)"
+   }
+  },
+  {
+   "folder": "Archive scans",
+   "fields": {
+    "name": "Archive scans",
+    "path": "/mnt/scans",
+    "search_subdirectories": true,
+    "paused": true,
+    "check_regularly": true,
+    "period": 273600,
+    "period_enabled": true,
+    "skip": 60,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "actions": {
+     "successful": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "redundant": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "deleted": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "failed": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     }
+    },
+    "filename_tagging": [],
+    "import_options": "import options (all default)"
+   }
+  },
+  {
+   "folder": "manual only",
+   "fields": {
+    "name": "manual only",
+    "path": "/home/me/manual",
+    "search_subdirectories": true,
+    "paused": false,
+    "check_regularly": false,
+    "period": 300,
+    "period_enabled": false,
+    "skip": 60,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "actions": {
+     "successful": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "redundant": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "deleted": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "failed": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     }
+    },
+    "filename_tagging": [],
+    "import_options": "import options (all default)"
+   }
+  },
+  {
+   "folder": "new",
+   "fields": {
+    "name": "import folder",
+    "path": "",
+    "search_subdirectories": true,
+    "paused": false,
+    "check_regularly": true,
+    "period": 3600,
+    "period_enabled": true,
+    "skip": 60,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "actions": {
+     "successful": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "redundant": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "deleted": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     },
+     "failed": {
+      "choices": [
+       "delete the source file",
+       "leave the source file alone, do not reattempt it",
+       "move the source file"
+      ],
+      "action": "ignore",
+      "location": "",
+      "location_enabled": false
+     }
+    },
+    "filename_tagging": [],
+    "import_options": "import options (all default)"
+   }
+  }
+ ],
+ "import_applied": [
+  {
+   "veto": "You must enter a path to import from!",
+   "folder": "inbox drop",
+   "edits": {
+    "path": ""
+   },
+   "asked": []
+  },
+  {
+   "value": {
+    "name": "inbox drop",
+    "path": "/usr",
+    "actions": {
+     "successful": "ignore",
+     "redundant": "ignore",
+     "deleted": "ignore",
+     "failed": "ignore"
+    },
+    "locations": {},
+    "period": 3600,
+    "check_regularly": true,
+    "paused": false,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "skip": 60,
+    "search_subdirectories": true
+   },
+   "folder": "inbox drop",
+   "edits": {
+    "path": "/usr"
+   },
+   "asked": []
+  },
+  {
+   "value": {
+    "name": "inbox drop",
+    "path": "/nonexistent/hydrus-rs-oracle",
+    "actions": {
+     "successful": "ignore",
+     "redundant": "ignore",
+     "deleted": "ignore",
+     "failed": "ignore"
+    },
+    "locations": {},
+    "period": 3600,
+    "check_regularly": true,
+    "paused": false,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "skip": 60,
+    "search_subdirectories": true
+   },
+   "folder": "inbox drop",
+   "edits": {
+    "path": "/nonexistent/hydrus-rs-oracle"
+   },
+   "asked": [
+    {
+     "kind": "warning",
+     "message": "The path you have entered--\"/nonexistent/hydrus-rs-oracle\"--does not exist! The dialog will not force you to correct it, but this import folder will do no work as long as the location is missing!"
+    }
+   ]
+  },
+  {
+   "veto": "You must enter a path for your successful file move location!",
+   "folder": "inbox drop",
+   "edits": {
+    "path": "/usr",
+    "actions": {
+     "successful": [
+      "move",
+      ""
+     ]
+    }
+   },
+   "asked": []
+  },
+  {
+   "value": {
+    "name": "inbox drop",
+    "path": "/usr",
+    "actions": {
+     "successful": "ignore",
+     "redundant": "move",
+     "deleted": "ignore",
+     "failed": "delete"
+    },
+    "locations": {
+     "redundant": "/nonexistent/hydrus-rs-oracle"
+    },
+    "period": 3600,
+    "check_regularly": true,
+    "paused": false,
+    "check_now": false,
+    "popup": true,
+    "popup_button": true,
+    "page": false,
+    "skip": 60,
+    "search_subdirectories": true
+   },
+   "folder": "inbox drop",
+   "edits": {
+    "path": "/usr",
+    "actions": {
+     "redundant": [
+      "move",
+      "/nonexistent/hydrus-rs-oracle"
+     ],
+     "failed": [
+      "delete",
+      null
+     ]
+    }
+   },
+   "asked": [
+    {
+     "kind": "warning",
+     "message": "The path you have entered for your redundant file move location--\"/nonexistent/hydrus-rs-oracle\"--does not exist! The dialog will not force you to correct it, but you should not let this import folder run until you have corrected or created it!"
+    }
+   ]
+  },
+  {
+   "value": {
+    "name": "renamed",
+    "path": "/usr",
+    "actions": {
+     "successful": "ignore",
+     "redundant": "ignore",
+     "deleted": "ignore",
+     "failed": "ignore"
+    },
+    "locations": {},
+    "period": 7200,
+    "check_regularly": true,
+    "paused": true,
+    "check_now": true,
+    "popup": false,
+    "popup_button": false,
+    "page": true,
+    "skip": 120,
+    "search_subdirectories": false
+   },
+   "folder": "manual only",
+   "edits": {
+    "path": "/usr",
+    "name": "renamed",
+    "paused": true,
+    "check_regularly": true,
+    "period": 7200,
+    "check_now": true,
+    "search_subdirectories": false,
+    "skip": 120,
+    "popup": false,
+    "popup_button": false,
+    "page": true
+   },
+   "asked": []
+  }
+ ],
+ "export_opened": [
+  {
+   "folder": "favourites",
+   "fields": {
+    "name": "favourites",
+    "path": "/home/me/export",
+    "type": "regular",
+    "types": [
+     "regular",
+     "synchronise"
+    ],
+    "delete": false,
+    "delete_enabled": true,
+    "symlinks": false,
+    "run_regularly": true,
+    "period": 86400,
+    "period_enabled": true,
+    "popup": true,
+    "popup_enabled": true,
+    "run_now": false,
+    "predicates": [
+     "system:archive",
+     "character:samus aran"
+    ],
+    "phrase": "{hash}",
+    "overwrite_next": false,
+    "overwrite_always": false
+   }
+  },
+  {
+   "folder": "Mirror",
+   "fields": {
+    "name": "Mirror",
+    "path": "/mnt/mirror",
+    "type": "synchronise",
+    "types": [
+     "regular",
+     "synchronise"
+    ],
+    "delete": false,
+    "delete_enabled": false,
+    "symlinks": false,
+    "run_regularly": true,
+    "period": 604800,
+    "period_enabled": true,
+    "popup": true,
+    "popup_enabled": true,
+    "run_now": true,
+    "predicates": [
+     "blue eyes",
+     "-red hair"
+    ],
+    "phrase": "{hash} {tags}",
+    "overwrite_next": false,
+    "overwrite_always": false
+   }
+  },
+  {
+   "folder": "clear out",
+   "fields": {
+    "name": "clear out",
+    "path": "/tmp/out",
+    "type": "regular",
+    "types": [
+     "regular",
+     "synchronise"
+    ],
+    "delete": true,
+    "delete_enabled": true,
+    "symlinks": false,
+    "run_regularly": false,
+    "period": 3600,
+    "period_enabled": false,
+    "popup": true,
+    "popup_enabled": false,
+    "run_now": false,
+    "predicates": [
+     "system:inbox"
+    ],
+    "phrase": "{hash}",
+    "overwrite_next": false,
+    "overwrite_always": false
+   }
+  },
+  {
+   "folder": "nothing",
+   "fields": {
+    "name": "nothing",
+    "path": "",
+    "type": "regular",
+    "types": [
+     "regular",
+     "synchronise"
+    ],
+    "delete": false,
+    "delete_enabled": true,
+    "symlinks": false,
+    "run_regularly": false,
+    "period": 86400,
+    "period_enabled": false,
+    "popup": true,
+    "popup_enabled": false,
+    "run_now": true,
+    "predicates": [],
+    "phrase": "{hash}",
+    "overwrite_next": false,
+    "overwrite_always": false
+   }
+  },
+  {
+   "folder": "new",
+   "fields": {
+    "name": "export folder",
+    "path": "",
+    "type": "regular",
+    "types": [
+     "regular",
+     "synchronise"
+    ],
+    "delete": false,
+    "delete_enabled": true,
+    "symlinks": false,
+    "run_regularly": true,
+    "period": 86400,
+    "period_enabled": true,
+    "popup": true,
+    "popup_enabled": true,
+    "run_now": false,
+    "predicates": [],
+    "phrase": "{hash}",
+    "overwrite_next": false,
+    "overwrite_always": false
+   }
+  }
+ ],
+ "export_synchronise": {
+  "delete": false,
+  "delete_enabled": false
+ },
+ "export_applied": [
+  {
+   "folder": "favourites",
+   "edits": {
+    "path": ""
+   },
+   "veto": "You must enter a folder path to export to!",
+   "asked": []
+  },
+  {
+   "folder": "favourites",
+   "edits": {
+    "phrase": "{hash"
+   },
+   "veto": "Could not parse that export phrase! Could not parse that phrase: not enough values to unpack (expected 2, got 1)",
+   "asked": []
+  },
+  {
+   "folder": "favourites",
+   "edits": {
+    "phrase": "[series"
+   },
+   "veto": "Could not parse that export phrase! Could not parse that phrase: not enough values to unpack (expected 2, got 1)",
+   "asked": []
+  },
+  {
+   "folder": "favourites",
+   "edits": {
+    "delete": true,
+    "answer": false
+   },
+   "refused": true,
+   "asked": [
+    {
+     "kind": "warning",
+     "message": "This will delete the exported files from your client (send them to trash) after the export! If you do not know what this means, uncheck it!"
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "You have set this export folder to delete the files from the client (send them to trash) after export! Are you absolutely sure this is what you want?",
+     "answer": false
+    }
+   ]
+  },
+  {
+   "folder": "favourites",
+   "edits": {
+    "delete": true,
+    "answer": true
+   },
+   "value": {
+    "name": "favourites",
+    "path": "/home/me/export",
+    "type": "regular",
+    "delete": true,
+    "symlinks": false,
+    "run_regularly": true,
+    "period": 86400,
+    "phrase": "{hash}",
+    "run_now": false,
+    "popup": true,
+    "overwrite_next": false,
+    "overwrite_always": false
+   },
+   "asked": [
+    {
+     "kind": "warning",
+     "message": "This will delete the exported files from your client (send them to trash) after the export! If you do not know what this means, uncheck it!"
+    },
+    {
+     "kind": "yes/no",
+     "title": "Are you sure?",
+     "message": "You have set this export folder to delete the files from the client (send them to trash) after export! Are you absolutely sure this is what you want?",
+     "answer": true
+    }
+   ]
+  },
+  {
+   "folder": "Mirror",
+   "edits": {
+    "name": "mirror 2",
+    "run_regularly": false,
+    "run_now": false,
+    "period": 259200,
+    "phrase": "{hash} [series]",
+    "symlinks": true,
+    "popup": false,
+    "overwrite_next": true,
+    "overwrite_always": true
+   },
+   "value": {
+    "name": "mirror 2",
+    "path": "/mnt/mirror",
+    "type": "synchronise",
+    "delete": false,
+    "symlinks": true,
+    "run_regularly": false,
+    "period": 259200,
+    "phrase": "{hash} [series]",
+    "run_now": false,
+    "popup": false,
+    "overwrite_next": true,
+    "overwrite_always": true
+   },
+   "asked": []
+  }
+ ]
+}

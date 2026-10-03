@@ -11,6 +11,7 @@ mod downloader_lists;
 mod duplicate_filter;
 mod edit_subscription;
 mod favourites;
+mod folders;
 mod import_files;
 mod info_lines;
 mod main_shortcuts;

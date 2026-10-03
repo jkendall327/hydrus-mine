@@ -29,6 +29,8 @@ pub(crate) struct Hooks {
     pub options: Rc<dyn Fn()>,
     /// Open the manage subscriptions dialog.
     pub manage_subscriptions: Rc<dyn Fn()>,
+    /// Open the manage import folders (`true`) or export folders dialog.
+    pub manage_folders: Rc<dyn Fn(bool)>,
     /// Open the "review files to import" window.
     pub import_files: Rc<dyn Fn()>,
     /// Save the open pages as this session, or a new one (asking).
@@ -499,6 +501,8 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::Options => (hooks.options)(),
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
+        Command::ManageImportFolders => (hooks.manage_folders)(true),
+        Command::ManageExportFolders => (hooks.manage_folders)(false),
         Command::ImportFiles => (hooks.import_files)(),
         Command::SearchDomain(choice) => (hooks.search_domain)(choice),
         Command::Favourite(action) => (hooks.favourite)(action),

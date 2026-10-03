@@ -1,0 +1,556 @@
+// The manage import folders and manage export folders dialogs (file >
+// import/export folders; the reference's `EditImportFoldersPanel` and
+// `EditExportFoldersPanel`), and their edit dialogs (`EditImportFolderPanel`,
+// `EditExportFolderPanel`). Their workings are hydrus-gui-model's
+// `folders`, bound by `src/folders_window.rs`. Paths are typed; questions
+// and warnings are asked in the window's own question panel.
+
+import { Button, CheckBox, ComboBox, LineEdit, ScrollView } from "std-widgets.slint";
+import { Theme } from "theme.slint";
+import { ListTable, TableColumn, TableRow } from "list_table.slint";
+import { Asking } from "subscriptions.slint";
+import { DurationField, TimeFields } from "options.slint";
+
+component BoxTitle inherits Text {
+    font-weight: 700;
+    color: Theme.text;
+}
+
+component Label inherits Text {
+    vertical-alignment: center;
+    wrap: word-wrap;
+    color: Theme.text;
+}
+
+component Group inherits Rectangle {
+    in property <string> title;
+    border-width: 1px;
+    border-color: Theme.border;
+    VerticalLayout {
+        padding: 6px;
+        spacing: 4px;
+        BoxTitle { text: root.title; }
+        @children
+    }
+}
+
+// a label and a checkbox on a row, as the reference's grids
+component CheckRow inherits HorizontalLayout {
+    in property <string> label;
+    in-out property <bool> checked;
+    in property <bool> enabled: true;
+    callback toggled();
+    spacing: 6px;
+    Label {
+        text: root.label;
+        horizontal-stretch: 1;
+        color: root.enabled ? Theme.text : Theme.muted;
+    }
+    CheckBox {
+        enabled: root.enabled;
+        checked <=> root.checked;
+        toggled => { root.toggled(); }
+    }
+}
+
+// a label and a text box on a row
+component TextRow inherits HorizontalLayout {
+    in property <string> label;
+    in-out property <string> text;
+    in property <bool> enabled: true;
+    spacing: 6px;
+    Label {
+        text: root.label;
+        min-width: 180px;
+    }
+    LineEdit {
+        enabled: root.enabled;
+        text <=> root.text;
+        horizontal-stretch: 1;
+    }
+}
+
+// the question panel and the dialog's apply/cancel, shared by the windows
+component Footer inherits VerticalLayout {
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+    spacing: 6px;
+    if root.asking: Asking {
+        title: root.asking-title;
+        message: root.asking-message;
+        choices: root.asking-choices;
+        chosen(index) => { root.chosen(index); }
+        cancelled => { root.cancelled(); }
+    }
+    HorizontalLayout {
+        alignment: end;
+        spacing: 6px;
+        Button {
+            text: "apply";
+            enabled: !root.asking;
+            clicked => { root.apply(); }
+        }
+        Button {
+            text: "cancel";
+            clicked => { root.cancel(); }
+        }
+    }
+}
+
+// the manage import folders and manage export folders lists
+export component FoldersWindow inherits Window {
+    in property <string> window-title;
+    title: root.window-title;
+    preferred-width: 860px;
+    preferred-height: 420px;
+    background: Theme.window;
+    in property <string> intro;
+    in property <string> warning;
+    in property <[TableColumn]> columns;
+    in property <[TableRow]> rows;
+    in property <bool> any-selected;
+    in property <bool> one-selected;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    // (row, ctrl held, shift held)
+    callback row-clicked(int, bool, bool);
+    callback row-activated(int);
+    callback add();
+    callback edit();
+    callback delete();
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.asking) {
+                    root.cancelled();
+                } else {
+                    root.cancel();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            Label { text: root.intro; }
+            if root.warning != "": Label {
+                text: root.warning;
+                color: Theme.error;
+            }
+            ListTable {
+                min-height: 8 * 22px;
+                vertical-stretch: 1;
+                columns: root.columns;
+                rows: root.rows;
+                row-clicked(row, ctrl, shift) => { root.row-clicked(row, ctrl, shift); }
+                row-activated(row) => { if !root.asking { root.row-activated(row); } }
+                delete-pressed => { if root.any-selected { root.delete(); } }
+            }
+            HorizontalLayout {
+                spacing: 6px;
+                alignment: end;
+                Button {
+                    text: "add";
+                    enabled: !root.asking;
+                    clicked => { root.add(); }
+                }
+                Button {
+                    text: "edit";
+                    enabled: root.one-selected && !root.asking;
+                    clicked => { root.edit(); }
+                }
+                Button {
+                    text: "delete";
+                    enabled: root.any-selected && !root.asking;
+                    clicked => { root.delete(); }
+                }
+            }
+            Footer {
+                asking: root.asking;
+                asking-title: root.asking-title;
+                asking-message: root.asking-message;
+                asking-choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
+            }
+        }
+    }
+}
+
+// a file outcome's action, and where to move to
+export struct FolderActionRow {
+    label: string,
+    action: int,
+    location: string,
+}
+
+export component ImportFolderWindow inherits Window {
+    title: "edit import folder";
+    preferred-width: 860px;
+    preferred-height: 760px;
+    background: Theme.window;
+    in-out property <string> name;
+    in-out property <string> path;
+    in-out property <bool> search-subdirectories;
+    in-out property <bool> paused;
+    in-out property <bool> check-regularly;
+    in property <[DurationField]> period;
+    in property <[DurationField]> skip;
+    in-out property <bool> check-now;
+    in-out property <bool> show-popup;
+    in-out property <bool> publish-popup-button;
+    in-out property <bool> publish-page;
+    in property <string> cached-paths;
+    in property <string> import-options;
+    in property <[string]> action-choices;
+    in-out property <[FolderActionRow]> actions;
+    in property <[string]> filename-tagging;
+    in property <string> sidecars;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    // (which field, its value)
+    callback period-edited(int, int);
+    callback skip-edited(int, int);
+    // (which outcome, its action's index)
+    callback action-chosen(int, int);
+    callback location-edited(int, string);
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.asking) {
+                    root.cancelled();
+                } else {
+                    root.cancel();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    spacing: 6px;
+                    Group {
+                        title: "folder options";
+                        TextRow {
+                            label: "name: ";
+                            text <=> root.name;
+                        }
+                        TextRow {
+                            label: "folder path: ";
+                            text <=> root.path;
+                        }
+                        CheckRow {
+                            label: "search subdirectories: ";
+                            checked <=> root.search-subdirectories;
+                        }
+                        CheckRow {
+                            label: "currently paused (if set, will not ever do any work): ";
+                            checked <=> root.paused;
+                        }
+                        CheckRow {
+                            label: "check regularly?: ";
+                            checked <=> root.check-regularly;
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: "check period: ";
+                                horizontal-stretch: 1;
+                                color: root.check-regularly ? Theme.text : Theme.muted;
+                            }
+                            TimeFields {
+                                fields: root.period;
+                                edited(f, n) => { root.period-edited(f, n); }
+                            }
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: "recent modified time skip period: ";
+                                horizontal-stretch: 1;
+                            }
+                            TimeFields {
+                                fields: root.skip;
+                                edited(f, n) => { root.skip-edited(f, n); }
+                            }
+                        }
+                        CheckRow {
+                            label: "check on manage dialog ok: ";
+                            checked <=> root.check-now;
+                        }
+                        CheckRow {
+                            label: "show a popup while working: ";
+                            checked <=> root.show-popup;
+                        }
+                        CheckRow {
+                            label: "publish presented files to a popup button: ";
+                            checked <=> root.publish-popup-button;
+                        }
+                        CheckRow {
+                            label: "publish presented files to a page: ";
+                            checked <=> root.publish-page;
+                        }
+                        HorizontalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: "review currently cached import paths: ";
+                                horizontal-stretch: 1;
+                            }
+                            Label { text: root.cached-paths; }
+                        }
+                    }
+                    Button {
+                        // (not editable here yet)
+                        text: root.import-options;
+                        enabled: false;
+                    }
+                    Group {
+                        title: "source file actions";
+                        for row[i] in root.actions: HorizontalLayout {
+                            spacing: 6px;
+                            Label {
+                                text: row.label;
+                                min-width: 360px;
+                            }
+                            ComboBox {
+                                model: root.action-choices;
+                                current-index: row.action;
+                                selected => { root.action-chosen(i, self.current-index); }
+                            }
+                            LineEdit {
+                                horizontal-stretch: 1;
+                                enabled: row.action == 2;
+                                text: row.location;
+                                edited(text) => { root.location-edited(i, text); }
+                            }
+                        }
+                    }
+                    Group {
+                        title: "metadata import";
+                        Label { text: "filename tagging:"; }
+                        for line in root.filename-tagging: Label { text: line; }
+                        if root.filename-tagging.length == 0: Label {
+                            text: "(none)";
+                            color: Theme.muted;
+                        }
+                        Label { text: "sidecar importing:"; }
+                        Label { text: root.sidecars; }
+                    }
+                }
+            }
+            Footer {
+                asking: root.asking;
+                asking-title: root.asking-title;
+                asking-message: root.asking-message;
+                asking-choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
+            }
+        }
+    }
+}
+
+export component ExportFolderWindow inherits Window {
+    title: "edit export folder";
+    preferred-width: 760px;
+    preferred-height: 820px;
+    background: Theme.window;
+    in property <string> types-text;
+    in property <string> sidecars-text;
+    in-out property <string> name;
+    in-out property <string> path;
+    // 0 regular, 1 synchronise
+    in-out property <int> export-type;
+    in-out property <bool> delete-from-client;
+    in-out property <bool> symlinks;
+    in-out property <bool> run-regularly;
+    in property <[DurationField]> period;
+    in-out property <bool> show-popup;
+    in-out property <bool> run-now;
+    in property <[string]> predicates;
+    in-out property <string> typed;
+    // why what was typed couldn't be added
+    in property <string> error;
+    in-out property <string> phrase;
+    in-out property <bool> overwrite-next;
+    in-out property <bool> overwrite-always;
+    in property <string> sidecars;
+    in property <bool> asking;
+    in property <string> asking-title;
+    in property <string> asking-message;
+    in property <[string]> asking-choices;
+    callback type-chosen(int);
+    callback delete-toggled();
+    // (which field, its value)
+    callback period-edited(int, int);
+    callback typed-accepted();
+    callback predicate-removed(int);
+    callback chosen(int);
+    callback cancelled();
+    callback apply();
+    callback cancel();
+
+    forward-focus: keys;
+    keys := FocusScope {
+        key-pressed(event) => {
+            if (event.text == Key.Escape) {
+                if (root.asking) {
+                    root.cancelled();
+                } else {
+                    root.cancel();
+                }
+                return accept;
+            }
+            reject
+        }
+        VerticalLayout {
+            padding: 8px;
+            spacing: 6px;
+            ScrollView {
+                vertical-stretch: 1;
+                VerticalLayout {
+                    spacing: 6px;
+                    Group {
+                        title: "name and location";
+                        TextRow {
+                            label: "name: ";
+                            text <=> root.name;
+                        }
+                        TextRow {
+                            label: "folder path: ";
+                            text <=> root.path;
+                        }
+                    }
+                    Group {
+                        title: "type of export";
+                        Label { text: root.types-text; }
+                        ComboBox {
+                            model: ["regular", "synchronise"];
+                            current-index: root.export-type;
+                            selected => { root.type-chosen(self.current-index); }
+                        }
+                        CheckRow {
+                            label: "trash files in hydrus client after export: ";
+                            enabled: root.export-type == 0;
+                            checked <=> root.delete-from-client;
+                            toggled => { root.delete-toggled(); }
+                        }
+                        CheckRow {
+                            label: "EXPERIMENTAL: export symlinks";
+                            checked <=> root.symlinks;
+                        }
+                    }
+                    Group {
+                        title: "export period";
+                        CheckRow {
+                            label: "run regularly?: ";
+                            checked <=> root.run-regularly;
+                        }
+                        TimeFields {
+                            fields: root.period;
+                            edited(f, n) => { root.period-edited(f, n); }
+                        }
+                        CheckRow {
+                            label: "show popup when working regularly?: ";
+                            enabled: root.run-regularly;
+                            checked <=> root.show-popup;
+                        }
+                        CheckRow {
+                            label: "run on dialog ok: ";
+                            checked <=> root.run-now;
+                        }
+                    }
+                    Group {
+                        title: "query to export";
+                        // what is typed (as the Client API's tags) adds to
+                        // the search; a double-click removes from it
+                        LineEdit {
+                            placeholder-text: "search";
+                            text <=> root.typed;
+                            accepted => { root.typed-accepted(); }
+                        }
+                        if root.error != "": Label {
+                            text: root.error;
+                            color: Theme.error;
+                        }
+                        for predicate[i] in root.predicates: Rectangle {
+                            height: 22px;
+                            background: remove-touch.has-hover ? Theme.hover : transparent;
+                            Text {
+                                x: 4px;
+                                vertical-alignment: center;
+                                text: predicate;
+                                color: Theme.text;
+                            }
+                            remove-touch := TouchArea {
+                                double-clicked => { root.predicate-removed(i); }
+                            }
+                        }
+                        if root.predicates.length == 0: Label {
+                            text: "(every file)";
+                            color: Theme.muted;
+                        }
+                    }
+                    Group {
+                        title: "filenames";
+                        LineEdit { text <=> root.phrase; }
+                    }
+                    Group {
+                        title: "sidecar exporting";
+                        Label { text: root.sidecars-text; }
+                        CheckRow {
+                            label: "overwrite all sidecars on next run: ";
+                            checked <=> root.overwrite-next;
+                        }
+                        CheckRow {
+                            label: "DANGEROUS: always overwrite all sidecars on every run: ";
+                            checked <=> root.overwrite-always;
+                        }
+                        Label { text: root.sidecars; }
+                    }
+                }
+            }
+            Footer {
+                asking: root.asking;
+                asking-title: root.asking-title;
+                asking-message: root.asking-message;
+                asking-choices: root.asking-choices;
+                chosen(i) => { root.chosen(i); }
+                cancelled => { root.cancelled(); }
+                apply => { root.apply(); }
+                cancel => { root.cancel(); }
+            }
+        }
+    }
+}

@@ -2510,6 +2510,7 @@ dependencies = [
  "hydrus-import",
  "hydrus-legacy",
  "hydrus-media",
+ "hydrus-parse",
  "hydrus-search",
  "hydrus-store",
  "hydrus-testkit",

@@ -158,6 +158,10 @@ pub enum Command {
     Options,
     /// Open the manage subscriptions dialog.
     ManageSubscriptions,
+    /// Open the manage import folders dialog.
+    ManageImportFolders,
+    /// Open the manage export folders dialog.
+    ManageExportFolders,
     /// Open the "review files to import" window.
     ImportFiles,
     /// Search a file or tag domain (a search page's domain buttons).
@@ -424,8 +428,8 @@ fn file_menu(facts: &Facts) -> Entry {
     }
     folders.extend([
         SEP,
-        todo(dots("manage import folders")),
-        todo(dots("manage export folders")),
+        item(dots("manage import folders"), Command::ManageImportFolders),
+        item(dots("manage export folders"), Command::ManageExportFolders),
     ]);
     // (no system tray to minimise to; and "restart" is offered, as hydrus
     // does when it isn't a frozen Linux build)

@@ -5,6 +5,7 @@
 
 mod checker_options;
 mod edit_subscription;
+mod folders;
 mod local_import_dialog;
 mod main_menu;
 mod options_dialog;

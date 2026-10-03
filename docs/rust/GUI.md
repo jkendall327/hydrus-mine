@@ -176,6 +176,28 @@ writes it, with new queries, deleted queries and the file logs' resets
 and retries. Its workings are as `oracle/record_edit_subscription.py`
 recorded the reference's.
 
+File > import/export folders > "manage import folders…" and "manage
+export folders…" open the folders dialogs (`src/folders_window.rs`,
+`hydrus-gui-model/src/folders.rs`), the reference's
+`EditImportFoldersPanel` and `EditExportFoldersPanel`: the folders listed
+as the reference lists them, with add, edit (or a double-click) and delete
+(asking first), and "apply" writing them ("cancel" writes nothing). An
+added or renamed folder is named so no other has its name. The edit
+import folder dialog has the folder's name, path, search subdirectories,
+paused, check regularly and its period, the recent modified time skip
+period, check on manage dialog ok, the popup and page options, and what
+to do with each source file (delete, leave, or move, and where); "apply"
+refuses a folder with no path, inside hydrus's own directories, or moving
+files nowhere, and warns of directories that don't exist, as the
+reference does. The edit export folder dialog has the name, path, type
+(regular or synchronise), trashing exported files (warned of, and asked
+about on "apply"; never when synchronising), symlinks, the run period,
+the popup, run on dialog ok, the query (typed as the Client API's tags,
+double-click to remove), the filename phrase (refused if it doesn't
+parse) and the sidecar overwrite options. The rows and the checks are as
+`oracle/record_folders_lists.py` and `oracle/record_folders_dialogs.py`
+recorded the reference's.
+
 File > options opens the options window (`hydrus-gui-model/src/options.rs`), as the
 reference's "manage options" dialog: its pages listed on the left as
 hydrus lists them (by name, "advanced" last), the page chosen on the
