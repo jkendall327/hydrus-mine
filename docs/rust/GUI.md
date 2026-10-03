@@ -1240,6 +1240,9 @@ normalization flags, API and referral converters, and gallery page indices.
 The example shows matching, stored/request URLs, API/referral URLs and the next
 page. Invalid examples and defaults keep the editor open. Applying refreshes
 URL matching immediately; cancelling leaves the native settings unchanged.
+Definition drafts stay modal while their rule or string editors are open.
+Cancelling a converter or default processor also closes its nested editors,
+so the definition can be closed or edited again without abandoned windows.
 
 Network > downloaders > gallery url generators has single and nested lists,
 with add/edit/duplicate/delete, template and replacement controls, search term

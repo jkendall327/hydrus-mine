@@ -300,3 +300,161 @@ fn single_nested_generators_roundtrip_delete_and_cancel() {
         after
     );
 }
+
+#[test]
+fn lifecycle_string_descendants_cancel_without_orphaning_definition_drafts() {
+    use slint::platform::WindowEvent;
+
+    let fixture = hydrus_testkit::fixture_json("downloader_definitions.json");
+    let object = SerialisableObject::from_tuple_str(&fixture["class"].to_string()).unwrap();
+    let class = domain::url_class(&object).unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let original = UrlClassSettings {
+        url_classes: vec![class],
+        ..Default::default()
+    };
+    let settings = original.clone();
+    store
+        .write_and_refresh(move |ctx| settings::set(ctx.conn(), &settings))
+        .unwrap();
+    headless::init();
+    let slots = Slots::default();
+
+    for wm_close in [false, true] {
+        let list = windows::open(&store, &slots, true).unwrap();
+        list.invoke_row_clicked(0, false, false);
+        list.invoke_action("edit".into());
+        let edit = child(&slots.class_edit);
+        let preview = edit.get_preview();
+        let rules = edit.get_rules().row_count();
+        edit.invoke_rule_selected(0);
+        edit.invoke_converter(0);
+        let converter = slots
+            .strings
+            .converter
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        converter.invoke_add();
+        assert!(slots.strings.conversion.borrow().is_some());
+
+        // The definition draft and confirmed Apply remain modal while the
+        // API converter's unfinished conversion is being edited.
+        edit.invoke_text_edited(40, "https://wrong.example/blocked".into());
+        edit.invoke_choice_edited(2, 0);
+        edit.invoke_toggled(11, false);
+        edit.invoke_rule_selected(0);
+        edit.invoke_rule_action("delete".into());
+        edit.invoke_action("apply".into());
+        edit.invoke_answered(true);
+        edit.invoke_action("cancel".into());
+        edit.window().dispatch_event(WindowEvent::CloseRequested);
+        list.window().dispatch_event(WindowEvent::CloseRequested);
+        assert_eq!(edit.get_preview(), preview);
+        assert_eq!(edit.get_rules().row_count(), rules);
+        assert!(slots.class_edit.borrow().is_some());
+        assert!(slots.classes.borrow().is_some());
+        assert_eq!(
+            store.read::<UrlClassSettings>(settings::get).unwrap(),
+            original
+        );
+
+        if wm_close {
+            converter
+                .window()
+                .dispatch_event(WindowEvent::CloseRequested);
+        } else {
+            converter.invoke_cancel();
+        }
+        assert!(
+            !slots.strings.has_open(),
+            "converter cancellation clears its conversion"
+        );
+        edit.invoke_converter(0);
+        let reopened = slots
+            .strings
+            .converter
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
+        reopened.invoke_add();
+        assert!(
+            slots.strings.conversion.borrow().is_some(),
+            "the converter can be reopened"
+        );
+        reopened.invoke_cancel();
+        assert!(!slots.strings.has_open());
+        if wm_close {
+            edit.window().dispatch_event(WindowEvent::CloseRequested);
+        } else {
+            edit.invoke_action("cancel".into());
+        }
+        assert!(slots.class_edit.borrow().is_none());
+        list.invoke_action("cancel".into());
+        assert!(slots.classes.borrow().is_none());
+        assert_eq!(
+            store.read::<UrlClassSettings>(settings::get).unwrap(),
+            original
+        );
+    }
+
+    // A parameter default processor owns another converter/conversion subtree.
+    let list = windows::open(&store, &slots, true).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let edit = child(&slots.class_edit);
+    edit.invoke_rule_tab_chosen(1);
+    edit.invoke_rule_selected(0);
+    edit.invoke_rule_action("edit".into());
+    let rule = child(&slots.rule);
+    rule.invoke_converter(2);
+    let processor = slots
+        .strings
+        .processor
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    processor.invoke_add();
+    processor.invoke_chosen(2);
+    let converter = slots
+        .strings
+        .converter
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    converter.invoke_add();
+    assert!(slots.strings.conversion.borrow().is_some());
+    let preview = rule.get_preview();
+    let original_name = rule.get_fields().row_data(0).unwrap().text;
+    rule.invoke_text_edited(0, "blocked rename".into());
+    rule.invoke_action("apply".into());
+    rule.window().dispatch_event(WindowEvent::CloseRequested);
+    assert!(slots.rule.borrow().is_some());
+    assert_eq!(rule.get_preview(), preview);
+    processor
+        .window()
+        .dispatch_event(WindowEvent::CloseRequested);
+    assert!(
+        !slots.strings.has_open(),
+        "processor close cancels its entire subtree"
+    );
+    rule.invoke_tab_chosen(0);
+    assert_eq!(rule.get_fields().row_data(0).unwrap().text, original_name);
+    rule.invoke_converter(2);
+    assert!(slots.strings.processor.borrow().is_some());
+    slots.strings.cancel_all();
+    rule.invoke_action("cancel".into());
+    assert!(slots.rule.borrow().is_none());
+    edit.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    assert_eq!(
+        store.read::<UrlClassSettings>(settings::get).unwrap(),
+        original
+    );
+    assert_eq!(store.snapshot().url_classes.settings(), &original);
+}

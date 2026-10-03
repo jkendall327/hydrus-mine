@@ -171,21 +171,24 @@ pub fn open(
         let slot = slot.clone();
         let slots = slots.clone();
         move || {
-            if let Some(w) = weak.upgrade() {
-                let _ = w.hide();
+            if classes {
+                slots.strings.cancel_all();
+                if let Some(rule) = slots.rule.borrow_mut().take() {
+                    let _ = rule.hide();
+                }
             }
-            slot.borrow_mut().take();
             let edit_slot = if classes {
                 &slots.class_edit
             } else {
                 &slots.gug_edit
             };
-            if let Some(w) = edit_slot.borrow_mut().take() {
+            if let Some(editor) = edit_slot.borrow_mut().take() {
+                let _ = editor.hide();
+            }
+            if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
-            if let Some(w) = slots.rule.borrow_mut().take() {
-                let _ = w.hide();
-            }
+            slot.borrow_mut().take();
         }
     });
     let pending_question: Rc<RefCell<Option<Pending>>> = Rc::default();
@@ -216,7 +219,11 @@ pub fn open(
     window.on_tab_chosen({
         let draft = draft.clone();
         let refresh = refresh.clone();
+        let slots = slots.clone();
         move |tab| {
+            if slots.gug_edit.borrow().is_some() {
+                return;
+            }
             let mut d = draft.borrow_mut();
             d.kind = if tab == 1 {
                 Kind::Nested
@@ -468,10 +475,8 @@ fn class_fields(editor: &Editor, c: &UrlClass) -> Vec<DefinitionField> {
 
 fn editor_blocked(editor: &Editor, slots: &Slots) -> bool {
     match editor.value {
-        Value::Class(_) => {
-            slots.rule.borrow().is_some() || slots.strings.converter.borrow().is_some()
-        }
-        Value::Rule(_, _) => slots.strings.processor.borrow().is_some(),
+        Value::Class(_) => slots.rule.borrow().is_some() || slots.strings.has_open(),
+        Value::Rule(_, _) => slots.strings.has_open(),
         Value::Gug(_) | Value::Header(_, _) => false,
     }
 }
@@ -685,9 +690,26 @@ fn open_editor(
             }
         }
     });
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let state = state.clone();
+        let slots = slots.clone();
+        move || editor_blocked(&state.borrow(), &slots)
+    });
     let close: Rc<dyn Fn()> = Rc::new({
         let weak = window.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
         move || {
+            match state.borrow().value {
+                Value::Class(_) => {
+                    slots.strings.cancel_all();
+                    if let Some(rule) = slots.rule.borrow_mut().take() {
+                        let _ = rule.hide();
+                    }
+                }
+                Value::Rule(_, _) => slots.strings.cancel_all(),
+                Value::Gug(_) | Value::Header(_, _) => (),
+            }
             if let Some(w) = weak.upgrade() {
                 let _ = w.hide();
             }
@@ -697,7 +719,11 @@ fn open_editor(
     window.on_text_edited({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i, t| {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().text(i, t.into());
             refresh(false);
         }
@@ -705,7 +731,11 @@ fn open_editor(
     window.on_choice_edited({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i, c| {
+            if blocked() {
+                return;
+            }
             if let Ok(c) = usize::try_from(c) {
                 state.borrow_mut().choose(i, c);
                 refresh(true);
@@ -716,7 +746,11 @@ fn open_editor(
         let state = state.clone();
         let refresh = refresh.clone();
         let weak = window.as_weak();
+        let blocked = blocked.clone();
         move |i, v| {
+            if blocked() {
+                return;
+            }
             state.borrow_mut().toggle(i, v);
             if i == 13
                 && let Value::Class(class) = &state.borrow().value
@@ -734,7 +768,11 @@ fn open_editor(
     window.on_tab_chosen({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 state.borrow_mut().tab = i;
                 refresh(true);
@@ -744,7 +782,11 @@ fn open_editor(
     window.on_rule_tab_chosen({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             if let Ok(i) = usize::try_from(i) {
                 let mut e = state.borrow_mut();
                 e.rule_tab = i;
@@ -757,7 +799,11 @@ fn open_editor(
     window.on_rule_selected({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             let mut editor = state.borrow_mut();
             editor.selected_rule = usize::try_from(i)
                 .ok()
@@ -769,7 +815,11 @@ fn open_editor(
     window.on_member_toggled({
         let state = state.clone();
         let refresh = refresh.clone();
+        let blocked = blocked.clone();
         move |i| {
+            if blocked() {
+                return;
+            }
             let mut e = state.borrow_mut();
             let member = usize::try_from(i)
                 .ok()
@@ -803,7 +853,11 @@ fn open_editor(
         let store = store.clone();
         let slots = slots.clone();
         let weak = window.as_weak();
+        let blocked = blocked.clone();
         move |action| {
+            if blocked() {
+                return;
+            }
             if let Err(e) = rule_action(&store, &state, &slots, action.as_str(), refresh.clone())
                 && let Some(w) = weak.upgrade()
             {
@@ -816,7 +870,11 @@ fn open_editor(
         let state = state.clone();
         let refresh = refresh.clone();
         let slots = slots.clone();
+        let blocked = blocked.clone();
         move |which| {
+            if blocked() {
+                return;
+            }
             if which == 2 {
                 open_default_processor(&store, &state, &slots, refresh.clone());
             } else {
@@ -828,7 +886,11 @@ fn open_editor(
         let state = state.clone();
         let weak = window.as_weak();
         let close = close.clone();
+        let blocked = blocked.clone();
         move |confirmed| {
+            if blocked() {
+                return;
+            }
             let Some(w) = weak.upgrade() else { return };
             let e = state.borrow();
             if let Err(error) = e.validate() {
