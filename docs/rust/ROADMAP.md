@@ -35,10 +35,18 @@ list followed by the editor. Definitions come from saved configuration; new
 recordings use synthetic domains. See the area sections in `GUI.md` and
 `DIFFERENCES.md` for coverage and remaining first-pass limitations.
 
+The continuous overnight run (2026-10-04) adds notebook/tab operations and
+independent named-session snapshots, live Options consumers, favourite-search/tag-filter
+workflows, cookie exchange and header questions, downloader display choices,
+parser/formula fetching and examples, and string/date editing. Its exact
+accounting and validation are in [the overnight report](notes/overnight_gui_burndown.md)
+and [the frozen-baseline ledger](gui-coverage/overnight/progress.json). Remaining
+boundaries stay explicit in the map and `DIFFERENCES.md`.
+
 The [GUI migration map](gui-progress.html) expands selected reference features
-and all 66 exported native windows into nested work, including shared editors,
+and all 70 exported native windows into nested work, including shared editors,
 all 38 reference option tabs and 19 system-predicate groups. It contains 1,812
-reference nodes and 1,277 native nodes, with per-node assessments, concrete
+reference nodes and 1,295 native nodes, with per-node assessments, concrete
 remaining work and pinned source/evidence links. Native first-pass claims cite
 scoped regression evidence; source-supported but unverified behavior is partial.
 Its counts are not a whole-client completion percentage. Maintenance instructions
@@ -46,24 +54,28 @@ and scope limits are in [gui-coverage/README.md](gui-coverage/README.md).
 
 The next breadth work, in the owner's existing order:
 
-1. **Network management**: remaining usage/history views and scheduling controls,
-   automatic pending-header approval questions, and cookie clipboard/Netscape
-   file import/export. Remote repositories, IPFS and account administration are
+1. **Network management**: remaining scheduling and richer job/log actions.
+   Monthly usage charts, history deletion/filtering, automatic pending-header
+   questions, cookie clipboard/Netscape exchange and downloader/media-viewer
+   URL display choices are implemented. Remote repositories, IPFS and account administration are
    outside the owner's current priorities.
 2. **Tags**: sibling/parent sync, migration archives/hash conversion and pair
    mapping-count filters. Native service-to-service mappings/siblings/parents
    migration is implemented. Existing relationship editors still need write
-   autocomplete, asynchronous loading, default service tabs and repository
+   autocomplete, asynchronous loading and repository
    permission/reason suggestions.
 3. **Downloader definitions**: login management/execution, subsidiary editing,
-   additional formula-kind editors and fetch/multiple-example test controls.
+   file-based test-data fetching and remaining formula-specific boundaries.
    Native page/content parser editors, URL-class parser links and definition
-   text/PNG interchange are implemented. HTML/JSON have full formula editors;
-   the remaining formula kinds can be preserved through interchange.
+   text/PNG interchange are implemented. All six native formula kinds have
+   editors; URL fetching and multiple-example selection reach shared children.
 
 Then the gaps listed under "Later", and the half-done items below. The third
 parallel slate and its Windows portability follow-up were reviewed and merged.
-Use the GUI map to choose the next slate with the owner.
+The owner has authorized continuous work rather than fixed slates. Use concrete
+leaves and their remaining boundaries in the GUI map to choose independent work;
+exclude parent groups, aliases and evidence-only reassessments from implementation
+completion goals.
 
 ## 1. Manage subscriptions (network > subscriptions…)
 
@@ -142,8 +154,9 @@ tested in `tests/model/folders.rs` and `tests/gui/folders.rs`.
   editor. JSON sidecar sources now open the reusable HTML/JSON formula
   editor, whose typed rules, extraction controls, test panel and string
   processing are checked by `oracle/record_formula_editors.py` and GUI/store
-  tests. **Next**: the router editor's testing panel; formula import/export,
-  additional formula kinds and test data fetch/multiple-example controls.
+  tests. Formula interchange, additional kinds, URL test-data fetching and
+  multiple-example controls now use the shared editor. **Next**: the router
+  editor's testing panel and file-based test-data fetching.
 
 ## 3. The duplicates page: preparation and auto-resolution tabs
 
@@ -202,7 +215,7 @@ shared with the system:filetype editor; `hydrus-gui-model`'s
 
 - The tag filter editor is done (`src/tag_filter_window.rs`, recorded by
   `oracle/record_tag_filter_editor.py`), for "get tags" filters and the
-  blacklist; its favourites are not. Next, a tags input with
+  blacklist, including favourite CRUD/exchange and bulk paste. Next, a tags input with
   autocomplete for additional tags and the whitelist.
 - The subscriptions list's import options row (copy, paste and clear
   of the selected subscriptions' options): copying and pasting want the

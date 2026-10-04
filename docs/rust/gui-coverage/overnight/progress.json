@@ -1,0 +1,1449 @@
+{
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "source_commit": "c8c5629afc5fc9171db3e310fa7c90caacc029eb",
+  "ci": "passed",
+  "proposed_counts": [
+    {
+      "change_kind": "evidence_only",
+      "classification": "concrete_leaf",
+      "before": "partial",
+      "after": "first_pass",
+      "count": 1
+    },
+    {
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "before": "partial",
+      "after": "first_pass",
+      "count": 5
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "before": "missing",
+      "after": "first_pass",
+      "count": 63
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "before": "missing",
+      "after": "partial",
+      "count": 2
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "before": "partial",
+      "after": "first_pass",
+      "count": 10
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "before": "partial",
+      "after": "partial",
+      "count": 1
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "before": "missing",
+      "after": "first_pass",
+      "count": 11
+    },
+    {
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "before": "missing",
+      "after": "partial",
+      "count": 1
+    },
+    {
+      "change_kind": "implementation_progress",
+      "classification": "concrete_leaf",
+      "before": "partial",
+      "after": "partial",
+      "count": 1
+    },
+    {
+      "change_kind": "implementation_progress",
+      "classification": "parent_or_alias",
+      "before": "partial",
+      "after": "partial",
+      "count": 1
+    },
+    {
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "before": "missing",
+      "after": "first_pass",
+      "count": 7
+    },
+    {
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "before": "missing",
+      "after": "partial",
+      "count": 5
+    },
+    {
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "before": "partial",
+      "after": "first_pass",
+      "count": 2
+    }
+  ],
+  "proposals": [
+    {
+      "id": "audit-network-bandwidth-rows",
+      "label": "Context list and numeric sorting",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-assertions.json"
+    },
+    {
+      "id": "audit-network-bandwidth-history",
+      "label": "Day/week/month/all-time usage span",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-assertions.json"
+    },
+    {
+      "id": "audit-network-bandwidth-detail",
+      "label": "Selected context inherited rules and usage",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-assertions.json"
+    },
+    {
+      "id": "audit-network-bandwidth-defaults",
+      "label": "Edit global and per-kind default rules",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-assertions.json"
+    },
+    {
+      "id": "bandwidth-month-chart",
+      "label": "Monthly bandwidth history chart",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-history.json"
+    },
+    {
+      "id": "bandwidth-delete-history",
+      "label": "Delete selected context history",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-history.json"
+    },
+    {
+      "id": "audit-network-bandwidth-filters",
+      "label": "Usage age and explicit-rule filters",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/bandwidth-history.json"
+    },
+    {
+      "id": "cookies-export",
+      "label": "Export cookies to clipboard",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/cookies.json"
+    },
+    {
+      "id": "cookies-file",
+      "label": "Import Netscape cookies.txt files",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/cookies.json"
+    },
+    {
+      "id": "cookies-clipboard",
+      "label": "Import cookies from clipboard",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/cookies.json"
+    },
+    {
+      "id": "audit-network-display-gugs",
+      "label": "GUG visibility yes/no/cancel batch selection",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/downloader-display.json"
+    },
+    {
+      "id": "audit-network-display-url-classes",
+      "label": "Media-viewer URL-class visibility yes/no/cancel",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/downloader-display.json"
+    },
+    {
+      "id": "audit-network-display-unmatched",
+      "label": "Show unmatched URLs checkbox",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/downloader-display.json"
+    },
+    {
+      "id": "audit-options-favourite-edit-domains",
+      "label": "Edit file/tag domains and current/pending toggles",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "audit-options-favourite-edit-sort",
+      "label": "Choose sort type and direction",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "audit-options-favourite-edit-collect",
+      "label": "Choose namespaces/ratings, tag domain and unmatched collecting",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "audit-options-favourite-edit-autocomplete",
+      "label": "Autocomplete results and system predicate editors",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "audit-options-favourite-edit",
+      "label": "Edit favourite search",
+      "before": "partial",
+      "after": "partial",
+      "change_kind": "implementation_progress",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "audit-options-favourites-edit-predicates",
+      "label": "Typed predicates and double-click removal",
+      "before": "partial",
+      "after": "partial",
+      "change_kind": "implementation_progress",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/favourite-searches.json"
+    },
+    {
+      "id": "header-approval",
+      "label": "Automatic pending header approval questions",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "new_behavior",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/header-approval.json"
+    },
+    {
+      "id": "audit-media-menu-tags-migrate",
+      "label": "migrate…",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/integration.json"
+    },
+    {
+      "id": "audit-options-predicate-filetype-mime-tree",
+      "label": "Expand and tick MIME groups and individual types",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/integration.json"
+    },
+    {
+      "id": "audit-options-predicate-filetype-mime-mode",
+      "label": "Is/is-not inclusion mode",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only_reassessment",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/integration.json"
+    },
+    {
+      "id": "audit-options-predicate-hash-hash-clean",
+      "label": "Guess type / remove bad lines cleanup actions",
+      "before": "partial",
+      "after": "partial",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/integration.json"
+    },
+    {
+      "id": "audit-options-connection-general-network-timeout-seconds",
+      "label": "network timeout (seconds):",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-connection-general-connection-error-retry-wait-seconds",
+      "label": "connection error retry wait (seconds):",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-connection-general-serverside-bandwidth-retry-wait-seconds",
+      "label": "serverside bandwidth retry wait (seconds):",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs",
+      "label": "max number of simultaneous active network jobs:",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain",
+      "label": "max number of simultaneous active network jobs per domain:",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error",
+      "label": "Delay time on a gallery/watcher network error:",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-downloading-misc-delay-time-on-a-subscription-network-error",
+      "label": "Delay time on a subscription network error:",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-downloading-misc-delay-time-on-a-subscription-other-error",
+      "label": "Delay time on a subscription other error:",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-misc-remember-last-open-options-panel-in-this-window",
+      "label": "Remember last open options panel in this window:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-misc-put-the-options-search-bar-at-the",
+      "label": "Put the options search bar at the:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-main-window-confirm-client-exit",
+      "label": "Confirm client exit:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-sessions-sessions-number-of-session-backups-to-keep",
+      "label": "Number of session backups to keep:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-main-window-application-display-name",
+      "label": "Application display name:",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-pages-opening-and-closing-when-closing-the-current-tab-move-focus",
+      "label": "When closing the current tab, move focus:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one",
+      "label": "Also automatically prompt when sending some pages to one:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-system-system-sleep-allow-wake-from-system-sleep-detection",
+      "label": "Allow wake-from-system-sleep detection:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-system-system-sleep-after-a-wake-from-system-sleep-wait-this-many-seconds-before-allowing-new-network-access",
+      "label": "After a wake from system sleep, wait this many seconds before allowing new network access:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type",
+      "label": "When copying file hashes, prefix with booru-friendly hash type:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-gui-pages-page-tab-names-automatically-prompt-to-rename-new-page-of-pages-after-creation",
+      "label": "Automatically prompt to rename new 'page of pages' after creation:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete-default-tag-service-in-search-pages",
+      "label": "Default tag service in search pages:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/options.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2209-by-most-files-first",
+      "label": "by most files first",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2210-by-fewest-files-first",
+      "label": "by fewest files first",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2211-by-largest-total-file-size-first",
+      "label": "by largest total file size first",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2212-by-smallest-total-file-size-first",
+      "label": "by smallest total file size first",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2213-by-name-a-z",
+      "label": "by name a-z",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2214-by-name-z-a",
+      "label": "by name z-a",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2178-to-left-end",
+      "label": "to left end",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2183-left",
+      "label": "left",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2188-right",
+      "label": "right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2193-to-right-end",
+      "label": "to right end",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-session-backups",
+      "label": "Append a timestamped session backup",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-session-backups-name",
+      "label": "{saved session name}",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-session-backups-timestamp",
+      "label": "{backup timestamp}: append selected snapshot",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2057-close-page",
+      "label": "close page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2074-close-other-page-s",
+      "label": "close other page(s)",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2080-other-pages",
+      "label": "other pages",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2084-pages-to-the-left",
+      "label": "pages to the left",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2089-pages-to-the-right",
+      "label": "pages to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2141-first-page",
+      "label": "first page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2146-page-to-the-left",
+      "label": "page to the left",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2151-page-to-the-right",
+      "label": "page to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2156-last-page",
+      "label": "last page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2199-rename-page",
+      "label": "rename page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2235-this-page",
+      "label": "this page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2239-pages-from-here-to-the-right",
+      "label": "pages from here to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2240-pages-to-the-right",
+      "label": "pages to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2201-duplicate-page",
+      "label": "duplicate page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2223-this-page",
+      "label": "this page",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2227-pages-from-here-to-the-right",
+      "label": "pages from here to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "audit-options-tabs-context-action-2228-pages-to-the-right",
+      "label": "pages to the right",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/pages.json"
+    },
+    {
+      "id": "formula-context",
+      "label": "Context-variable formula editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-static",
+      "label": "Static text/output-count formula editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-nested",
+      "label": "Nested first-to-second formula editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-zipper",
+      "label": "Zipper formula list/substitution editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-nested-main",
+      "label": "First/main formula recursive editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-nested-sub",
+      "label": "Second/subformula transformed test data",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-zipper-members",
+      "label": "Add/edit component formulas recursively",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "subsidiary-separator",
+      "label": "Subsidiary separation formula",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "parser-multiple",
+      "label": "Multiple example documents and child data propagation",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "parser-fetch",
+      "label": "Fetch test document from URL",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "formula-fetch",
+      "label": "Fetch URL test data",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/parser-workflows.json"
+    },
+    {
+      "id": "audit-network-conversion-date-fields",
+      "label": "Date phrase/timezone preserved controls",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-network-conversion-date-decode",
+      "label": "Date decode execution and preview",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-network-conversion-date-encode",
+      "label": "Date encode execution and preview",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-network-conversion-dateparser",
+      "label": "Dateparser execution and preview",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-network-processor-exchange",
+      "label": "Processor import/export/paste",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-options-regex-favourites-regular-expression-favourites-editor",
+      "label": "Regular-expression favourites editor",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "options-regex-favourites",
+      "label": "regex favourites",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/string-dates.json"
+    },
+    {
+      "id": "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
+      "label": "Remember last used default tag service in manage tag dialogs:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-dialog-defaults.json"
+    },
+    {
+      "id": "audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs",
+      "label": "Default tag service in tag dialogs:",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-dialog-defaults.json"
+    },
+    {
+      "id": "tag-filter-favourites",
+      "label": "Tag filter favourites/import/export/load/save",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "parent_or_alias",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-favourite-import",
+      "label": "Favourite filter import",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-favourite-export",
+      "label": "Favourite filter export",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-favourite-load",
+      "label": "Favourite filter load",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-favourite-save",
+      "label": "Favourite filter save",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-favourite-delete",
+      "label": "Favourite filter delete",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-paste",
+      "label": "Bulk paste of rule slices",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-extra-panels",
+      "label": "Show other panels in blacklist-only advanced mode",
+      "before": "missing",
+      "after": "first_pass",
+      "change_kind": "implementation",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "audit-shared-tag-apply",
+      "label": "Detached Apply, Cancel and owner closure",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "evidence_only",
+      "classification": "concrete_leaf",
+      "manifest": "docs/rust/gui-coverage/overnight/tag-filters.json"
+    },
+    {
+      "id": "downloader-display",
+      "label": "Downloader and URL display settings",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "options-file-search",
+      "label": "file search",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "audit-options-file-search-file-search-autocomplete",
+      "label": "file search autocomplete",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "options-tag-editing",
+      "label": "tag editing",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "audit-options-tag-editing-tag-dialogs",
+      "label": "tag dialogs",
+      "before": "missing",
+      "after": "partial",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "audit-options-predicate-filetype",
+      "label": "system:filetype",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    },
+    {
+      "id": "audit-options-predicate-filetype-mime",
+      "label": "Inclusive/exclusive filetype tree",
+      "before": "partial",
+      "after": "first_pass",
+      "change_kind": "parent_assessment_followup",
+      "classification": "parent_or_alias",
+      "manifest": "reviewed-patch.json"
+    }
+  ],
+  "ci_evidence": {
+    "source_commit": "c8c5629afc5fc9171db3e310fa7c90caacc029eb",
+    "conclusion": "success",
+    "run_id": 37192318250,
+    "url": "https://github.com/jkendall327/hydrus-mine/actions/runs/37192318250",
+    "jobs": [
+      {
+        "id": 111406929366,
+        "name": "check",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 37192318250,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@master",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "install media tools, and fontconfig for the GUI",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "fmt",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "clippy",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "parity ratchet",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 9
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 18
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 19
+          }
+        ]
+      },
+      {
+        "id": 111406929481,
+        "name": "other-platforms (macos-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 37192318250,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@master",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "install ffmpeg (Windows)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 5
+          },
+          {
+            "name": "install ffmpeg (macOS)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 6
+          },
+          {
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      },
+      {
+        "id": 111406929514,
+        "name": "other-platforms (windows-latest)",
+        "status": "completed",
+        "conclusion": "success",
+        "run_id": 37192318250,
+        "logs_url": null,
+        "steps": [
+          {
+            "name": "Set up job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 1
+          },
+          {
+            "name": "Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 2
+          },
+          {
+            "name": "Run dtolnay/rust-toolchain@master",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 3
+          },
+          {
+            "name": "Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 4
+          },
+          {
+            "name": "install ffmpeg (Windows)",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 5
+          },
+          {
+            "name": "install ffmpeg (macOS)",
+            "status": "completed",
+            "conclusion": "skipped",
+            "number": 6
+          },
+          {
+            "name": "build",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 7
+          },
+          {
+            "name": "test",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 8
+          },
+          {
+            "name": "Post Run Swatinem/rust-cache@v2",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 15
+          },
+          {
+            "name": "Post Run actions/checkout@v4",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 16
+          },
+          {
+            "name": "Complete job",
+            "status": "completed",
+            "conclusion": "success",
+            "number": 17
+          }
+        ]
+      }
+    ],
+    "checked_at_utc": "2026-10-04 10:01:11 UTC"
+  },
+  "completed_at_utc": "2026-10-04T10:01:21.030147+00:00",
+  "goal": 80,
+  "concrete_implementation_completions": 80,
+  "completed_feature_ids": [
+    "bandwidth-month-chart",
+    "bandwidth-delete-history",
+    "audit-network-bandwidth-filters",
+    "cookies-export",
+    "cookies-file",
+    "cookies-clipboard",
+    "audit-network-display-gugs",
+    "audit-network-display-url-classes",
+    "audit-network-display-unmatched",
+    "audit-options-favourite-edit-domains",
+    "audit-options-favourite-edit-sort",
+    "audit-options-favourite-edit-collect",
+    "audit-options-favourite-edit-autocomplete",
+    "header-approval",
+    "audit-options-predicate-filetype-mime-tree",
+    "audit-options-connection-general-network-timeout-seconds",
+    "audit-options-connection-general-connection-error-retry-wait-seconds",
+    "audit-options-connection-general-serverside-bandwidth-retry-wait-seconds",
+    "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs",
+    "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain",
+    "audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error",
+    "audit-options-downloading-misc-delay-time-on-a-subscription-network-error",
+    "audit-options-downloading-misc-delay-time-on-a-subscription-other-error",
+    "audit-options-gui-misc-remember-last-open-options-panel-in-this-window",
+    "audit-options-gui-misc-put-the-options-search-bar-at-the",
+    "audit-options-gui-main-window-confirm-client-exit",
+    "audit-options-gui-sessions-sessions-number-of-session-backups-to-keep",
+    "audit-options-gui-pages-opening-and-closing-when-closing-the-current-tab-move-focus",
+    "audit-options-gui-pages-page-tab-names-also-automatically-prompt-when-sending-some-pages-to-one",
+    "audit-options-system-system-sleep-allow-wake-from-system-sleep-detection",
+    "audit-options-system-system-sleep-after-a-wake-from-system-sleep-wait-this-many-seconds-before-allowing-new-network-access",
+    "audit-options-files-and-trash-when-copying-file-hashes-prefix-with-booru-friendly-hash-type",
+    "audit-options-gui-pages-page-tab-names-automatically-prompt-to-rename-new-page-of-pages-after-creation",
+    "audit-options-file-search-file-search-autocomplete-default-tag-service-in-search-pages",
+    "audit-options-tabs-context-action-2209-by-most-files-first",
+    "audit-options-tabs-context-action-2210-by-fewest-files-first",
+    "audit-options-tabs-context-action-2211-by-largest-total-file-size-first",
+    "audit-options-tabs-context-action-2212-by-smallest-total-file-size-first",
+    "audit-options-tabs-context-action-2213-by-name-a-z",
+    "audit-options-tabs-context-action-2214-by-name-z-a",
+    "audit-options-tabs-context-action-2178-to-left-end",
+    "audit-options-tabs-context-action-2183-left",
+    "audit-options-tabs-context-action-2188-right",
+    "audit-options-tabs-context-action-2193-to-right-end",
+    "audit-options-session-backups-timestamp",
+    "audit-options-tabs-context-action-2057-close-page",
+    "audit-options-tabs-context-action-2074-close-other-page-s",
+    "audit-options-tabs-context-action-2084-pages-to-the-left",
+    "audit-options-tabs-context-action-2089-pages-to-the-right",
+    "audit-options-tabs-context-action-2141-first-page",
+    "audit-options-tabs-context-action-2146-page-to-the-left",
+    "audit-options-tabs-context-action-2151-page-to-the-right",
+    "audit-options-tabs-context-action-2156-last-page",
+    "audit-options-tabs-context-action-2199-rename-page",
+    "audit-options-tabs-context-action-2235-this-page",
+    "audit-options-tabs-context-action-2239-pages-from-here-to-the-right",
+    "audit-options-tabs-context-action-2240-pages-to-the-right",
+    "audit-options-tabs-context-action-2201-duplicate-page",
+    "audit-options-tabs-context-action-2223-this-page",
+    "audit-options-tabs-context-action-2227-pages-from-here-to-the-right",
+    "audit-options-tabs-context-action-2228-pages-to-the-right",
+    "formula-context",
+    "formula-static",
+    "parser-multiple",
+    "parser-fetch",
+    "formula-fetch",
+    "audit-network-conversion-date-fields",
+    "audit-network-conversion-date-decode",
+    "audit-network-conversion-date-encode",
+    "audit-network-processor-exchange",
+    "audit-options-regex-favourites-regular-expression-favourites-editor",
+    "audit-options-tag-editing-tag-dialogs-remember-last-used-default-tag-service-in-manage-tag-dialogs",
+    "audit-options-tag-editing-tag-dialogs-default-tag-service-in-tag-dialogs",
+    "audit-shared-tag-favourite-import",
+    "audit-shared-tag-favourite-export",
+    "audit-shared-tag-favourite-load",
+    "audit-shared-tag-favourite-save",
+    "audit-shared-tag-favourite-delete",
+    "audit-shared-tag-paste",
+    "audit-shared-tag-extra-panels"
+  ],
+  "before": {
+    "partial": 378,
+    "first_pass": 572,
+    "missing": 862
+  },
+  "after": {
+    "partial": 368,
+    "first_pass": 671,
+    "missing": 773
+  },
+  "completions_by_previous_status": {
+    "missing": 70,
+    "partial": 10
+  },
+  "completions_by_manifest": {
+    "bandwidth-history": 3,
+    "cookies": 3,
+    "downloader-display": 3,
+    "favourite-searches": 4,
+    "header-approval": 1,
+    "integration": 1,
+    "options": 19,
+    "pages": 27,
+    "parser-workflows": 5,
+    "string-dates": 5,
+    "tag-dialog-defaults": 2,
+    "tag-filters": 7
+  },
+  "first_pass_parent_or_alias_count": 13,
+  "first_pass_evidence_only_count": 6,
+  "validation_summary": "Linux formatting, strict Clippy, workspace tests and parity ratchet passed; macOS and Windows workspace builds/tests passed."
+}

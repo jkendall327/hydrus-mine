@@ -3,7 +3,9 @@
 Open [gui-progress.html](../gui-progress.html) in a browser. It is a standalone,
 offline map of the Rust reimplementation of Hydrus. JSON, styles and code are
 embedded; there are no external assets, runtime requests or server requirements.
-Source links open GitHub only when clicked.
+Source links open GitHub only when clicked. The reference view’s “Completed
+this run” button filters to the distinct concrete implementations in the overnight
+ledger, retaining their ancestor paths. Reset or switching views clears that filter.
 
 If a managed browser blocks `file://`, serve the same artifact locally:
 
@@ -41,8 +43,11 @@ and [native-inventory.json](native-inventory.json). Their provenance and status
 definitions remain conservative. The source audit expands options, search,
 media, tagging, services, database, network, import/export and shared editors.
 Each audited node records an assessment rationale, concrete remaining work and
-relevant inspection/regression evidence. Existing tests and recordings were read;
-they were not rerun to produce this map. Native first-pass assessments retain the
+relevant inspection/regression evidence. The original source audit read existing
+tests and recordings without rerunning them. The overnight implementation pass
+adds executed reference recordings and hosted workspace validation; its exact
+code checkpoint and job results are recorded separately in
+[overnight/ci-evidence.json](overnight/ci-evidence.json). Native first-pass assessments retain the
 reference-backed regression requirement. A source-supported slice with an
 unverified behavioral boundary is partial until precise existing assertion or
 recording scope supports the claimed slice. An evidence filename by itself does
@@ -53,6 +58,17 @@ snapshot. Every source line has a SHA-256 fingerprint, and every linked module
 records the exact pinned Git blob hash. The audit directory preserves curated
 patches, inspection notes and the old-to-new anchor mapping. These hashes prove
 source provenance; they do not prove behavior or constrain the current checkout.
+
+The overnight ledger freezes the original 1,812 reference IDs and their 862
+missing/378 partial/572 first-pass assessments in
+[overnight/baseline.json](overnight/baseline.json).
+[overnight/progress.json](overnight/progress.json) lists every changed assessment
+and counts concrete implementation completions separately from parent/alias
+updates and evidence-only reassessments. Author manifests retain inspected
+boundaries; [overnight/reviewed-patch.json](overnight/reviewed-patch.json) resolves
+all published source anchors to the CI-tested integration commit, so applying
+the reviewed patch does not require unpublished author branches. First pass
+always describes the stated supported slice, not complete reference parity.
 
 1. Read the reference behavior, native implementation, limitations and relevant
    oracle/regression evidence before changing an assessment. Callback presence

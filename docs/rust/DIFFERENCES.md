@@ -1132,9 +1132,9 @@ Mixed downloader package import accepts URL classes, GUGs and page parsers;
 standalone formulas/content nodes belong in their matching native editors.
 Login scripts and domain metadata packages are explicitly unsupported here.
 
-Tab context menus expose close, select, move-page, sort-pages and send-down submenus, and rename. The
-reference's other tab-context actions (duplicate, collapse,
-per-notebook session append/save and batch close/select) remain deferred. As in
+Tab context menus expose close, select, move-page, sort-pages and send-down submenus,
+rename, duplicate, collapse and grouped close actions. Per-notebook session
+append/save and the remaining page-selector child workflows are deferred. As in
 the reference, a page not opened/initialised contributes zero to the size sort;
 kept file counts and persisted importer progress still participate in count sorts.
 
