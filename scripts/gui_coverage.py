@@ -101,7 +101,7 @@ def load_and_validate():
     snapshots = {}
     reports = {}
     for name in ["reference", "native"]:
-        snapshots[name] = json.loads((DATA / f"{name}-inventory.json").read_text())
+        snapshots[name] = json.loads((DATA / f"{name}-inventory.json").read_text(encoding="utf-8"))
         reports[name] = validate(snapshots[name], name)
     native_ids = {n["id"] for n in snapshots["native"]["nodes"]}
     reference_ids = {n["id"] for n in snapshots["reference"]["nodes"]}
@@ -123,7 +123,7 @@ def render(snapshots):
     payload = json.dumps(snapshots, ensure_ascii=False, separators=(",", ":"))
     payload = payload.replace("<", "\\u003c").replace(">", "\\u003e").replace("&", "\\u0026")
     payload = payload.replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
-    template = (DATA / "viewer.template.html").read_text()
+    template = (DATA / "viewer.template.html").read_text(encoding="utf-8")
     marker = "__GUI_COVERAGE_DATA__"
     if template.count(marker) != 1:
         raise ValueError("Template must contain exactly one data marker")
@@ -138,10 +138,10 @@ def main():
     try:
         snapshots, reports = load_and_validate()
         if args.check:
-            if not OUTPUT.exists() or OUTPUT.read_text() != render(snapshots):
+            if not OUTPUT.exists() or OUTPUT.read_text(encoding="utf-8") != render(snapshots):
                 raise ValueError("Generated HTML is stale; run python3 scripts/gui_coverage.py")
         elif not args.validate:
-            OUTPUT.write_text(render(snapshots))
+            OUTPUT.write_text(render(snapshots), encoding="utf-8")
         print(json.dumps(reports, indent=2))
         if not args.validate and not args.check:
             print(f"Built {OUTPUT.relative_to(ROOT)}")
