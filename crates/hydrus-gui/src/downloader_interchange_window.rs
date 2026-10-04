@@ -111,6 +111,7 @@ pub fn open_subscriptions(
             processing: false,
         },
     )?;
+    window.set_json_enabled(true);
     window.set_window_title(
         if importing {
             "import subscriptions"
@@ -356,7 +357,8 @@ fn attach_png(
             let Some(window) = weak.upgrade() else {
                 return;
             };
-            if !window.get_active() || png.has_open() {
+            if !window.get_active() || png.has_open() || !window.get_overwrite_question().is_empty()
+            {
                 return;
             }
             let closed = Rc::new({
@@ -417,6 +419,7 @@ fn open_objects<T: Clone + 'static>(
     }
     let active = Rc::new(Cell::new(true));
     let pending = Rc::new(RefCell::new(None::<Vec<T>>));
+    let overwrite = Rc::new(RefCell::new(None::<std::path::PathBuf>));
     let close: Rc<dyn Fn()> = Rc::new({
         let active = active.clone();
         let slot = Rc::downgrade(&slots.0);
@@ -454,6 +457,11 @@ fn open_objects<T: Clone + 'static>(
             if w.get_png_child() && action != "cancel" {
                 return;
             }
+            if overwrite.borrow().is_some()
+                && !matches!(action.as_str(), "cancel" | "yes-json" | "no-json")
+            {
+                return;
+            }
             let result = (|| -> Result<(), String> {
                 match action.as_str() {
                     "cancel" => close(),
@@ -464,6 +472,89 @@ fn open_objects<T: Clone + 'static>(
                     }
                     "paste" => w.set_text(crate::from_clipboard()?.into()),
                     "copy" => crate::copy_to_clipboard(w.get_text().as_str()),
+                    "import-jsons" | "import-pngs" if importing && w.get_json_enabled() => {
+                        let png = action == "import-pngs";
+                        let title = if png {
+                            "select the png or pngs with the encoded data"
+                        } else {
+                            "select the json or jsons with the serialised data"
+                        };
+                        let paths =
+                            crate::pick_exchange_files(title, if png { "png" } else { "json" });
+                        if paths.is_empty() {
+                            return Ok(());
+                        }
+                        let mut definitions = Vec::new();
+                        let mut total_bytes = 0usize;
+                        for path in paths {
+                            let bytes = read_bytes(&path)?;
+                            total_bytes = total_bytes.saturating_add(bytes.len());
+                            if total_bytes > hydrus_downloader_exchange::MAX_BYTES {
+                                return Err(hydrus_downloader_exchange::Error::Limit.to_string());
+                            }
+                            let mut incoming = if png {
+                                (codec.decode_png)(&bytes).map_err(|e| e.to_string())?
+                            } else {
+                                (codec.decode_text)(
+                                    std::str::from_utf8(&bytes).map_err(|e| e.to_string())?,
+                                )
+                                .map_err(|e| e.to_string())?
+                            };
+                            definitions.append(&mut incoming);
+                            if definitions.len() > hydrus_downloader_exchange::MAX_OBJECTS {
+                                return Err("Subscription package exceeds the object limit.".into());
+                            }
+                        }
+                        w.set_review(preview(definitions.clone())?.into());
+                        *pending.borrow_mut() = Some(definitions);
+                        w.set_ready(true);
+                    }
+                    "browse-json" if !importing && w.get_json_enabled() => {
+                        if let Some(path) = rfd::FileDialog::new()
+                            .set_title("select where to save the json file")
+                            .add_filter("JSON", &["json"])
+                            .set_file_name("export.json")
+                            .save_file()
+                        {
+                            w.set_path(path.to_string_lossy().as_ref().into());
+                        }
+                    }
+                    "save-json" if !importing && w.get_json_enabled() => {
+                        let path = std::path::PathBuf::from(w.get_path().as_str());
+                        if path.as_os_str().is_empty() {
+                            return Err("Choose an export path first.".into());
+                        }
+                        if path.exists() {
+                            w.set_overwrite_question(
+                                format!(
+                                    "The path \"{}\" already exists! Ok to overwrite?",
+                                    path.display()
+                                )
+                                .into(),
+                            );
+                            *overwrite.borrow_mut() = Some(path);
+                        } else {
+                            save_json(
+                                &path,
+                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
+                            )?;
+                            w.set_review("JSON saved.".into());
+                        }
+                    }
+                    "yes-json" => {
+                        if let Some(path) = overwrite.borrow_mut().take() {
+                            save_json(
+                                &path,
+                                &(codec.encode_text)(&definitions).map_err(|e| e.to_string())?,
+                            )?;
+                            w.set_review("JSON saved.".into());
+                        }
+                        w.set_overwrite_question("".into());
+                    }
+                    "no-json" => {
+                        overwrite.borrow_mut().take();
+                        w.set_overwrite_question("".into());
+                    }
                     "browse" => {
                         let dialog = rfd::FileDialog::new()
                             .add_filter("Hydrus downloader definitions", &["png", "json", "txt"]);
@@ -526,12 +617,29 @@ fn open_objects<T: Clone + 'static>(
     *slots.0.borrow_mut() = Some(w.clone_strong());
     Ok(w)
 }
-fn read_file<T>(path: &str, codec: &Codec<T>) -> Result<Vec<T>, String> {
+fn save_json(path: &Path, text: &str) -> Result<(), String> {
+    let parent = path
+        .parent()
+        .filter(|p| !p.as_os_str().is_empty())
+        .unwrap_or_else(|| Path::new("."));
+    let mut file = tempfile::NamedTempFile::new_in(parent).map_err(|e| e.to_string())?;
+    std::io::Write::write_all(&mut file, text.as_bytes()).map_err(|e| e.to_string())?;
+    file.persist(path).map_err(|e| e.to_string())?;
+    Ok(())
+}
+fn read_bytes(path: &Path) -> Result<Vec<u8>, String> {
     let file = std::fs::File::open(path).map_err(|e| e.to_string())?;
     let mut bytes = Vec::new();
     file.take((hydrus_downloader_exchange::MAX_BYTES + 1) as u64)
         .read_to_end(&mut bytes)
         .map_err(|e| e.to_string())?;
+    if bytes.len() > hydrus_downloader_exchange::MAX_BYTES {
+        return Err(hydrus_downloader_exchange::Error::Limit.to_string());
+    }
+    Ok(bytes)
+}
+fn read_file<T>(path: &str, codec: &Codec<T>) -> Result<Vec<T>, String> {
+    let bytes = read_bytes(Path::new(path))?;
     if bytes.starts_with(b"\x89PNG") {
         (codec.decode_png)(&bytes).map_err(|e| e.to_string())
     } else {

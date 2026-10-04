@@ -147,7 +147,9 @@ containers: settings, query headers, cached example/velocity data and both URL
 histories. `oracle/record_subscription_exchange.py` records the actual Qt list
 clipboard flow and reference PNG. Manage subscriptions now opens an owned
 import/export child: clipboard/JSON text or JSON/PNG files are reviewed, imported
-subscriptions remain staged, and Apply persists both URL histories and retained
+subscriptions remain staged; JSON export asks before overwriting an existing file,
+and multiple JSON or PNG files can be imported as one reviewed selection. Apply
+persists both URL histories and retained
 header examples. Cancel invalidates the child and its callbacks.
 
 Network > "subscriptions…" opens the manage subscriptions dialog

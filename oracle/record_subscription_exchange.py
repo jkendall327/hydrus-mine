@@ -19,7 +19,7 @@ def record(session):
     def work():
         from qtpy import QtWidgets as QW
         from hydrus.core import HydrusTime as T, HydrusSerialisable as S
-        from hydrus.client.gui import ClientGUISubscriptions as G, ClientGUIDialogsMessage as M, ClientGUIDialogsQuick as D
+        from hydrus.client.gui import ClientGUISubscriptions as G, ClientGUIDialogsMessage as M, ClientGUIDialogsQuick as D, ClientGUIDialogsFiles as FD
         from hydrus.client.importing import ClientImportSubscriptions as Subs, ClientImportSubscriptionQuery as Query, ClientImportFileSeeds as Files, ClientImportGallerySeeds as Galleries
         from hydrus.client import ClientSerialisable as PNG
         old_now, old_generate = T.GetNow, Query.GenerateQueryLogContainerName
@@ -81,6 +81,47 @@ def record(session):
             listing.SelectDatas(listing.GetData()); exchange._ExportToClipboard()
             out['bundle'] = json.loads(copied[-1][2])
             out['imported_log_names'] = [h.GetQueryLogContainerName() for s in listing.GetData() for h in s.GetQueryHeaders()]
+            # Drive the actual JSON file menu actions on a separate empty list.
+            with tempfile.TemporaryDirectory() as temp:
+                json_path=os.path.join(temp,'subscriptions.json')
+                old_dialog=FD.FileDialog
+                dialogs=[]
+                picker_accept=[True]
+                class FileDialog:
+                    def __init__(self,owner,title,**kwargs):
+                        dialogs.append({'title':title,'default_filename':kwargs.get('default_filename'),'wildcard':kwargs.get('wildcard')})
+                    def __enter__(self): return self
+                    def __exit__(self,*args): pass
+                    def exec(self): return QW.QDialog.DialogCode.Accepted if picker_accept[0] else QW.QDialog.DialogCode.Rejected
+                    def GetPath(self): return json_path
+                    def GetPaths(self): return [json_path]
+                FD.FileDialog=FileDialog
+                file_panel=G.EditSubscriptionsPanel(c.gui,[])
+                try:
+                    exchange._ExportToJSON()
+                    with open(json_path) as stream: exported_json=json.load(stream)
+                    file_panel._subscriptions_panel._ImportFromJSON()
+                    names=[s.GetName() for s in file_panel._subscriptions.GetData()]
+                    picker_accept[0]=False
+                    file_panel._subscriptions_panel._ImportFromJSON()
+                    after_cancel=[s.GetName() for s in file_panel._subscriptions.GetData()]
+                    picker_accept[0]=True
+                    overwritten=[]
+                    for confirm in [False,True]:
+                        with open(json_path,'w') as stream: stream.write('previous file')
+                        def confirm_overwrite(owner,message,**kwargs):
+                            overwritten.append({'question':message.replace(json_path,'{path}'),'accepted':confirm})
+                            return QW.QDialog.DialogCode.Accepted if confirm else QW.QDialog.DialogCode.Rejected
+                        D.GetYesNo=confirm_overwrite
+                        exchange._ExportToJSON()
+                        with open(json_path) as stream: content=stream.read()
+                        overwritten[-1]['retained_existing'] = content=='previous file'
+                    D.GetYesNo=answer
+                    out['json_files']={'exported':exported_json,'imported_names':names,'cancel_names':after_cancel,'dialogs':dialogs,'overwrite':overwritten}
+                finally:
+                    FD.FileDialog=old_dialog
+                    D.GetYesNo=answer
+                    file_panel.deleteLater()
             broken = json.loads(json.dumps(single)); broken[2][1] = [26,3,[]]
             counts=[]
             for ok in [False,True]:

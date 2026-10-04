@@ -997,5 +997,113 @@ fn full_subscription_exchange_is_staged_cancellable_and_reopens_with_complete_hi
         exported[0].queries[0].reference_header.as_ref().unwrap()[2][15],
         reference["single"][2][0][3][1][0][2][15]
     );
+    let exports = tempfile::tempdir().unwrap();
+    let path = exports.path().join("subscriptions.json");
+    child.set_path(path.to_string_lossy().as_ref().into());
+    child.invoke_action("save-json".into());
+    assert!(child.get_error().is_empty(), "{}", child.get_error());
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    std::fs::write(&path, "previous file").unwrap();
+    child.invoke_action("save-json".into());
+    let question = reference["json_files"]["overwrite"][0]["question"]
+        .as_str()
+        .unwrap()
+        .replace("{path}", path.to_string_lossy().as_ref());
+    assert_eq!(child.get_overwrite_question().as_str(), question);
+    child.invoke_action("no-json".into());
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), "previous file");
+    child.invoke_action("save-json".into());
+    child.invoke_action("yes-json".into());
+    assert_eq!(
+        exchange::decode_text(&std::fs::read_to_string(&path).unwrap()).unwrap(),
+        exported
+    );
+    std::fs::write(&path, "previous file").unwrap();
+    child.invoke_action("save-json".into());
     dialog.invoke_cancel();
+    child.invoke_action("yes-json".into());
+    assert_eq!(std::fs::read_to_string(&path).unwrap(), "previous file");
+}
+
+#[test]
+fn subscription_exchange_file_menus_load_selected_packages_and_cancel_invalid_batches() {
+    let reference = hydrus_testkit::fixture_json("subscription_exchange.json");
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(&ui, Pages::open(store.clone()).unwrap());
+    let path = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(path.path(), reference["json_files"]["exported"].to_string()).unwrap();
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    let chosen = path.path().to_path_buf();
+    let caption = reference["json_files"]["dialogs"][1]["title"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    hydrus_gui::set_picker(move |kind, title| {
+        assert_eq!(kind, hydrus_gui::Pick::Files);
+        assert_eq!(title, caption);
+        vec![chosen.clone()]
+    });
+    child.invoke_action("import-jsons".into());
+    assert!(child.get_ready());
+    assert!(rows(&dialog).is_empty());
+    child.invoke_action("accept".into());
+    assert_eq!(
+        serde_json::json!(
+            rows(&dialog)
+                .iter()
+                .map(|(row, _)| row[0].clone())
+                .collect::<Vec<_>>()
+        ),
+        reference["json_files"]["imported_names"]
+    );
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    let dialog = open_dialog(&ui, &bound);
+    dialog.invoke_exchange(true);
+    let child = bound
+        .subscription_exchange
+        .0
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    hydrus_gui::set_picker(|_, _| Vec::new());
+    child.invoke_action("import-jsons".into());
+    assert!(!child.get_ready());
+    assert!(rows(&dialog).is_empty());
+    let chosen = hydrus_testkit::fixtures_dir().join("subscription_exchange.png");
+    hydrus_gui::set_picker(move |kind, title| {
+        assert_eq!(kind, hydrus_gui::Pick::Files);
+        assert_eq!(title, "select the png or pngs with the encoded data");
+        vec![chosen.clone()]
+    });
+    child.invoke_action("import-pngs".into());
+    assert!(child.get_ready(), "{}", child.get_error());
+    child.invoke_action("back".into());
+    let good = path.path().to_path_buf();
+    let bad = tempfile::Builder::new().suffix(".json").tempfile().unwrap();
+    std::fs::write(bad.path(), "invalid JSON").unwrap();
+    let bad_path = bad.path().to_path_buf();
+    hydrus_gui::set_picker(move |_, _| vec![good.clone(), bad_path.clone()]);
+    child.invoke_action("import-jsons".into());
+    assert!(!child.get_error().is_empty());
+    assert!(!child.get_ready());
+    child.invoke_action("accept".into());
+    assert!(rows(&dialog).is_empty());
+    assert!(store.read(subscriptions::subscriptions).unwrap().is_empty());
+    dialog.invoke_cancel();
+    hydrus_gui::set_picker(|_, _| Vec::new());
 }
