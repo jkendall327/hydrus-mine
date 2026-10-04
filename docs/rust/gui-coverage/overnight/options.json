@@ -1,0 +1,424 @@
+{
+  "schema_version": 1,
+  "agent": "options",
+  "baseline_git_head": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "implementation_git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92",
+  "implementation_commits": [
+    "f146d9d4",
+    "5e528865",
+    "30e3f915",
+    "47d4753c",
+    "9a70a2d5"
+  ],
+  "dependencies": [
+    {
+      "git_head": "efc8b4fcd60b09bbbf86f746c348c7616340cfe4",
+      "agent": "overnight_pages",
+      "reason": "SessionBackupSettings and rolling-backup save consumer used by 47d4753c and its GUI test."
+    }
+  ],
+  "summary": {
+    "concrete_existing_reference_controls_completed": 12,
+    "concrete_existing_reference_controls_improved_to_partial": 1,
+    "parent_or_alias_completions": 0
+  },
+  "validation": {
+    "reference_recordings_executed": [
+      "oracle/record_options_ranges.py",
+      "oracle/record_options_preferences.py",
+      "oracle/record_gui_settings.py"
+    ],
+    "existing_reference_recordings_reused": [
+      "oracle/record_options_dialog.py",
+      "oracle/record_session_backups.py (pages agent)"
+    ],
+    "cargo_fmt": "passed",
+    "python_compile": "passed",
+    "rust_assertions": "Authored; root asynchronous CI owns execution. No local Cargo build/test or mutation testing performed."
+  },
+  "claims": [
+    {
+      "reference_id": "audit-options-connection-general-network-timeout-seconds",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "network timeout: 3..600 seconds normally, 1..2592000 in advanced mode. The opening mode selects control bounds and setters; reopening clamps saved values to the visible range, and Apply saves those clamps.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 883,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 629,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
+      ]
+    },
+    {
+      "reference_id": "audit-options-connection-general-connection-error-retry-wait-seconds",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "connection-error retry wait: 3..1800 seconds normally, 1..2592000 in advanced mode. The opening mode selects control bounds and setters; reopening clamps saved values to the visible range, and Apply saves those clamps.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 889,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 629,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
+      ]
+    },
+    {
+      "reference_id": "audit-options-connection-general-serverside-bandwidth-retry-wait-seconds",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "serverside-bandwidth retry wait: 3..1800 seconds normally, 1..2592000 in advanced mode. The opening mode selects control bounds and setters; reopening clamps saved values to the visible range, and Apply saves those clamps.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 895,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 629,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
+      ]
+    },
+    {
+      "reference_id": "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "simultaneous network jobs: 1..30 normally, 1..1000 in advanced mode. The opening mode selects control bounds and setters; reopening clamps saved values to the visible range, and Apply saves those clamps.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 916,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 629,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
+      ]
+    },
+    {
+      "reference_id": "audit-options-connection-general-max-number-of-simultaneous-active-network-jobs-per-domain",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "per-domain simultaneous jobs: 1..5 normally, 1..100 in advanced mode. The opening mode selects control bounds and setters; reopening clamps saved values to the visible range, and Apply saves those clamps.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 922,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 629,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Bounds use the mode saved when opening the dialog; changing advanced mode takes effect after Apply and reopening, as Qt constructs its controls."
+      ]
+    },
+    {
+      "reference_id": "audit-options-downloading-misc-delay-time-on-a-gallery-watcher-network-error",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "The error-delay editor and Apply setter use a minimum of 600 seconds normally or 1 second in advanced mode.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1061,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "The duration control remains inline rather than behind the reference TimeDeltaButton.",
+        "Bounds use the saved mode when opening, matching Qt construction."
+      ]
+    },
+    {
+      "reference_id": "audit-options-downloading-misc-delay-time-on-a-subscription-network-error",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "The error-delay editor and Apply setter use a minimum of 600 seconds normally or 1 second in advanced mode.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1067,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "The duration control remains inline rather than behind the reference TimeDeltaButton.",
+        "Bounds use the saved mode when opening, matching Qt construction."
+      ]
+    },
+    {
+      "reference_id": "audit-options-downloading-misc-delay-time-on-a-subscription-other-error",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "behavior": "The error-delay editor and Apply setter use a minimum of 600 seconds normally or 1 second in advanced mode.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1073,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 435,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "The duration control remains inline rather than behind the reference TimeDeltaButton.",
+        "Bounds use the saved mode when opening, matching Qt construction."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-misc-remember-last-open-options-panel-in-this-window",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Editable remembered-panel switch is imported and persists through Apply; the next opening uses the last selected page when enabled, otherwise gui. Navigation remembers its page independently of canceled option drafts. Unknown panels fall back to gui. Search matches can navigate to the remembered page.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1330,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/src/options_window.rs",
+          "line": 241,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 495,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 876,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": []
+    },
+    {
+      "reference_id": "audit-options-gui-misc-put-the-options-search-bar-at-the",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Editable top/bottom choice is imported and persisted; reopening moves the search field and displays suggestions below the top field or above the bottom field. Initial current combo text, none labels and units are searchable with their owning row highlighted.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1335,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/ui/options.slint",
+          "line": 399,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1922,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 495,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 876,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Position is captured on opening; Apply and reopen relocates it, as the reference tooltip specifies.",
+        "Search covers native controls and their auxiliary labels; absent-page explanatory text is not claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-main-window-confirm-client-exit",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Editable/imported exit switch reaches both File > exit and window close. Enabled requests use the recorded yes/no question; no leaves the window open, yes saves geometry and closes it, and 15 seconds automatically answers yes. Cancel preserves the old switch; disabled exits directly.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1320,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/src/client_exit.rs",
+          "line": 30,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 556,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 922,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Claim covers this switch and its ordinary exit consumer. Importer activity reason summaries and shutdown-maintenance review remain separate gaps.",
+        "Reference timeout value is recorded and implemented; the automatic timeout callback is source-backed, while the GUI regression verifies immediate yes/no decisions."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-sessions-sessions-number-of-session-backups-to-keep",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "behavior": "Gui Sessions > sessions exposes the recorded 1..32 integer control, migrates its saved count, clamps edited values and persists Apply/Cancel. The next backup save reads the updated count; the GUI regression applies 2 and replays recorded retention/timestamp boundaries.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1405,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 46,
+          "git_head": "efc8b4fcd60b09bbbf86f746c348c7616340cfe4"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 594,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 992,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Requires pages-agent efc 8b 4fc SessionBackupSettings/save consumer. No other Gui Sessions controls are claimed."
+      ]
+    },
+    {
+      "reference_id": "audit-options-gui-main-window-application-display-name",
+      "previous_status": "missing",
+      "proposed_status": "partial",
+      "behavior": "Adds imported/persistent display-name editing with the reference empty-string fallback and preserved whitespace. Apply refreshes the main-window title with the chosen name and Rust version; Cancel/reopen follow the shared draft transaction.",
+      "source_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/src/options.rs",
+          "line": 1308,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 5173,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "test_anchors": [
+        {
+          "path": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
+          "line": 556,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/options_window.rs",
+          "line": 922,
+          "git_head": "9a70a2d5f01ea37b38ce63a8d65c39ea2ba70b92"
+        }
+      ],
+      "boundaries": [
+        "Secondary windows still use their existing captions, so this remains partial.",
+        "Native title suffix uses the Rust package version rather than the reference 688 version."
+      ]
+    }
+  ]
+}
