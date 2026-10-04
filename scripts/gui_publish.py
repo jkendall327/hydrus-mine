@@ -339,8 +339,8 @@ def publish(commit, output, patch, review, ci):
                 and baseline['reference'][key] in {'missing', 'partial'}
                 and reference[key]['status'] == 'first_pass'):
             claim = claims.get(key, {}).get('claim', {})
-            countable = claim.get('change_kind', 'implementation') in {'implementation', 'new_behavior'} and claim.get('countAsCompletedLeaf') is not False
-            require(not countable or key in selected, f'Unselected concrete first-pass promotion: {key}')
+            is_completion_claim = claim.get('change_kind', 'implementation') in {'implementation', 'new_behavior'} and claim.get('countAsCompletedLeaf') is not False
+            require(not is_completion_claim or key in selected, f'Unselected concrete first-pass promotion: {key}')
     for key in changed['reference']:
         claim = claims.get(key, {}).get('claim', {})
         proposals[key] = {'id': key, 'label': reference[key]['label'], 'before': baseline['reference'][key],
