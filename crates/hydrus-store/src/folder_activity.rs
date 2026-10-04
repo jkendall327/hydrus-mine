@@ -7,6 +7,7 @@
 
 use std::fs::File;
 use std::path::{Path, PathBuf};
+use std::time::SystemTime;
 
 use crate::settings::{self, FolderSettings};
 use crate::{Result, Store};
@@ -51,6 +52,15 @@ impl Kind {
 /// the OS lock, rather than the existence or contents of the file, is the marker.
 pub fn edit_requested(dir: &Path, kind: Kind) -> std::io::Result<bool> {
     Ok(crate::store::lock(dir, kind.request_file())?.is_none())
+}
+
+/// Acquisition and release timestamp, for schedulers waiting between runs.
+pub fn change_time(dir: &Path, kind: Kind) -> std::io::Result<Option<SystemTime>> {
+    match std::fs::metadata(dir.join(kind.request_file())) {
+        Ok(metadata) => metadata.modified().map(Some),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(error) => Err(error),
+    }
 }
 
 /// Current effective pause, including live user changes and a manager request.
@@ -100,14 +110,16 @@ pub struct Edit {
 
 impl Edit {
     pub fn request(dir: &Path, kind: Kind) -> std::io::Result<Option<Self>> {
-        Ok(
-            crate::store::lock(dir, kind.request_file())?.map(|request| Self {
-                dir: dir.to_owned(),
-                kind,
-                _request: request,
-                activity: None,
-            }),
-        )
+        let Some(request) = crate::store::lock(dir, kind.request_file())? else {
+            return Ok(None);
+        };
+        request.set_modified(SystemTime::now())?;
+        Ok(Some(Self {
+            dir: dir.to_owned(),
+            kind,
+            _request: request,
+            activity: None,
+        }))
     }
 
     /// True only after the active worker's lease has been released.
@@ -116,6 +128,14 @@ impl Edit {
             self.activity = crate::store::lock(&self.dir, self.kind.activity_file())?;
         }
         Ok(self.activity.is_some())
+    }
+}
+
+impl Drop for Edit {
+    fn drop(&mut self) {
+        // The timestamp wakes schedulers; the OS lock alone controls pausing.
+        // Lease release never needs a database transaction, even on unwinding.
+        let _ = self._request.set_modified(SystemTime::now());
     }
 }
 
