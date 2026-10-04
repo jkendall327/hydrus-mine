@@ -1619,11 +1619,12 @@ recorded zero, nullable and finite limits, including Options Apply/Cancel and
 page reopening. Other tag-presentation and tag-list menu differences remain
 unchanged; this completes only the original computation-limit preference leaf.
 
-Domain mask mode, match tester, normalized result, and subdomain enabled states
-follow the real Qt widget. The full-mode native fields still use multiline
-bulk edits; the Qt per-item Add/Edit/Delete entry dialogs (including regex
-favourite controls) remain a layout/workflow difference, so this packet keeps
-`url-domain` partial. The five URL preview values use native read-only text
+Domain mask mode, match tester, normalized result, subdomain enabled states,
+and per-item Add/Edit/Delete queues follow the recorded Qt owner. Native entry
+and counted confirmation dialogs reuse SessionDialog. Regex components and
+favourites use dedicated buttons rather than the reference’s combined menu;
+both copy to the clipboard without inserting into the entry, and favourites
+Apply persists globally even if the domain entry is later cancelled. The five URL preview values use native read-only text
 controls rather than Qt read-only line edits, with the recorded output values
 and invalid-example retention behavior.
 

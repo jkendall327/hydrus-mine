@@ -135,6 +135,12 @@ export component DownloaderDefinitionEditWindow inherits Window {
     in-out property <string> domain-test;
     in property <string> domain-status;
     in property <string> domain-normalised;
+    in property <[TableRow]> domain-raw-rows;
+    in property <[TableRow]> domain-regex-rows;
+    in property <bool> domain-raw-selected;
+    in property <bool> domain-regex-selected;
+    callback domain-row-clicked(bool,int,bool,bool);
+    callback domain-action(bool,string);
     in property <string> preview-status;
     in property <string> preview-normalised;
     in property <string> preview-request;
@@ -181,11 +187,36 @@ export component DownloaderDefinitionEditWindow inherits Window {
                         text <=> root.domain-raw; enabled: !root.child-open;
                         edited(t) => { root.text-edited(3,t); }
                     }
-                    if root.domain-mode == 1: VerticalLayout {
-                        Text { text: "domains (one per line):"; color: Theme.text; }
-                        TextEdit { height: 70px; text <=> root.domain-raw; enabled: !root.child-open; edited(t) => { root.text-edited(3,t); } }
-                        Text { text: "domain regexes (one per line):"; color: Theme.text; }
-                        TextEdit { height: 70px; text <=> root.domain-regex; enabled: !root.child-open; edited(t) => { root.text-edited(4,t); } }
+                    if root.domain-mode == 1: HorizontalLayout {
+                        spacing: 8px;
+                        VerticalLayout {
+                            Text { text: "fixed domains"; color: Theme.text; }
+                            ListTable {
+                                height: 120px; columns: [{title: "domain",width: 320px,stretch: true}]; rows: root.domain-raw-rows;
+                                row-clicked(i,c,s) => { if !root.child-open {root.domain-row-clicked(false,i,c,s);} }
+                                row-activated(i) => { if !root.child-open {root.domain-row-clicked(false,i,false,false);root.domain-action(false,"edit");} }
+                                delete-pressed => { if !root.child-open {root.domain-action(false,"delete");} }
+                            }
+                            HorizontalLayout {
+                                Button { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(false,"add");} }
+                                Button { text: "edit"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"edit");} }
+                                Button { text: "delete"; enabled: root.domain-raw-selected && !root.child-open; clicked => {root.domain-action(false,"delete");} }
+                            }
+                        }
+                        VerticalLayout {
+                            Text { text: "domain regexes"; color: Theme.text; }
+                            ListTable {
+                                height: 120px; columns: [{title: "regex",width: 320px,stretch: true}]; rows: root.domain-regex-rows;
+                                row-clicked(i,c,s) => { if !root.child-open {root.domain-row-clicked(true,i,c,s);} }
+                                row-activated(i) => { if !root.child-open {root.domain-row-clicked(true,i,false,false);root.domain-action(true,"edit");} }
+                                delete-pressed => { if !root.child-open {root.domain-action(true,"delete");} }
+                            }
+                            HorizontalLayout {
+                                Button { text: "add"; enabled: !root.child-open; clicked => {root.domain-action(true,"add");} }
+                                Button { text: "edit"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"edit");} }
+                                Button { text: "delete"; enabled: root.domain-regex-selected && !root.child-open; clicked => {root.domain-action(true,"delete");} }
+                            }
+                        }
                     }
                     CheckBox { text: "match subdomains:"; checked: root.domain-match; enabled: !root.child-open; toggled => { root.toggled(5,self.checked); } }
                     CheckBox { text: "keep matched subdomains:"; checked: root.domain-keep; enabled: root.domain-match && !root.child-open; toggled => { root.toggled(6,self.checked); } }

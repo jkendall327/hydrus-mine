@@ -786,3 +786,269 @@ fn domain_mask_modes_tester_and_selectable_previews_apply_cancel_and_reopen() {
         list.invoke_action("cancel".into());
     }
 }
+
+#[test]
+fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consumers() {
+    use hydrus_gui_model::regex_favourites::RegexFavourites;
+    let _windows = headless::init();
+    let fixture = hydrus_testkit::fixture_json("domain_mask_queue.json");
+    let mut class = hydrus_gui_model::downloader_definitions::new_class();
+    class.domain_mask =
+        hydrus_core::url::DomainMask::new(vec!["mask.example".into()], Vec::new(), false, false);
+    class.example_url = "https://mask.example/post/page.php?id=123456&s=view".into();
+    let original = UrlClassSettings {
+        url_classes: vec![class],
+        ..UrlClassSettings::default()
+    };
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let saved = original.clone();
+    store
+        .write_and_refresh(move |ctx| {
+            settings::set(ctx.conn(), &saved)?;
+            settings::set(
+                ctx.conn(),
+                &RegexFavourites(vec![("a+".into(), "letters".into())]),
+            )
+        })
+        .unwrap();
+    let slots = Slots::default();
+    let list = windows::open(&store, &slots, true).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let edit = child(&slots.class_edit);
+    edit.invoke_choice_edited(30, 1);
+    fn rows(model: &slint::ModelRc<hydrus_gui::TableRow>) -> serde_json::Value {
+        serde_json::json!(
+            (0..model.row_count())
+                .map(|i| model
+                    .row_data(i)
+                    .unwrap()
+                    .cells
+                    .row_data(0)
+                    .unwrap()
+                    .to_string())
+                .collect::<Vec<_>>()
+        )
+    }
+    for step in fixture["steps"].as_array().unwrap() {
+        if step["action"] != "initial" {
+            let regex = step["regex"].as_bool().unwrap();
+            if let Some(indices) = step["indices"].as_array() {
+                for (n, index) in indices.iter().enumerate() {
+                    edit.invoke_domain_row_clicked(
+                        regex,
+                        i32::try_from(index.as_i64().unwrap()).unwrap(),
+                        n > 0,
+                        false,
+                    );
+                }
+            }
+            edit.invoke_domain_action(regex, step["action"].as_str().unwrap().into());
+            assert!(edit.get_child_open());
+            if step["action"] == "delete" {
+                let entry = slots
+                    .domains
+                    .entry
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
+                assert!(!entry.get_asking_name());
+                assert_eq!(
+                    entry.get_message(),
+                    step["said"][0]["question"].as_str().unwrap()
+                );
+                entry.invoke_answered(step["response"].as_bool().unwrap());
+                entry.invoke_answered(true);
+            } else {
+                for dialog in step["dialogs"].as_array().unwrap() {
+                    let entry = slots
+                        .domains
+                        .entry
+                        .borrow()
+                        .as_ref()
+                        .unwrap()
+                        .clone_strong();
+                    assert_eq!(entry.get_window_title(), dialog["title"].as_str().unwrap());
+                    assert_eq!(entry.get_text(), dialog["initial"].as_str().unwrap());
+                    edit.invoke_action("apply".into());
+                    assert!(slots.class_edit.borrow().is_some());
+                    entry.set_text(dialog["entered"].as_str().unwrap().into());
+                    entry.invoke_regex_changed();
+                    if dialog["yes"] == true {
+                        entry.invoke_name_entered(entry.get_text());
+                    }
+                    if dialog["accepted"] != true {
+                        if dialog["entered"] == "" {
+                            assert_eq!(
+                                entry.get_warning(),
+                                step["said"][0]["warning"].as_str().unwrap()
+                            );
+                            assert!(slots.domains.has_open());
+                        }
+                        entry.invoke_cancelled();
+                    }
+                    entry.invoke_name_entered("stale.example".into());
+                }
+            }
+            assert!(!slots.domains.has_open());
+            assert!(!edit.get_child_open());
+        }
+        assert_eq!(rows(&edit.get_domain_raw_rows()), step["state"]["raw_rows"]);
+        assert_eq!(
+            rows(&edit.get_domain_regex_rows()),
+            step["state"]["regex_rows"]
+        );
+        assert_eq!(
+            edit.get_domain_mode_enabled(),
+            step["state"]["mode_enabled"].as_bool().unwrap()
+        );
+        assert_eq!(
+            store.read(settings::get::<UrlClassSettings>).unwrap(),
+            original
+        );
+    }
+    edit.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    let list = windows::open(&store, &slots, true).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let edit = child(&slots.class_edit);
+    edit.invoke_choice_edited(30, 1);
+    edit.invoke_domain_action(true, "add".into());
+    let entry = slots
+        .domains
+        .entry
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(entry.get_regex_mode());
+    entry.set_text("[".into());
+    entry.invoke_regex_changed();
+    assert!(
+        entry
+            .get_regex_validity()
+            .starts_with("Invalid expression:")
+    );
+    entry.invoke_name_entered("[".into());
+    edit.invoke_action("apply".into());
+    assert_eq!(
+        edit.get_error(),
+        "Please enter an example url that matches the given rules!"
+    );
+    edit.invoke_domain_row_clicked(true, 0, false, false);
+    edit.invoke_domain_action(true, "edit".into());
+    let entry = slots
+        .domains
+        .entry
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    entry.set_text(r"img\d+\.cdn\.example".into());
+    let copied = std::rc::Rc::new(std::cell::RefCell::new(Vec::<String>::new()));
+    // The real platform records clipboard writes; favourites copy never inserts.
+    let clip = copied.clone();
+    hydrus_gui::set_clipper(move |value| {
+        if let hydrus_gui::Clip::Text(value) = value {
+            clip.borrow_mut().push(value.clone());
+        }
+    });
+    entry.invoke_favourite_menu(0.0, 0.0);
+    entry.invoke_favourite_line_clicked(0, 4, 0.0, 0.0, 0.0);
+    assert_eq!(*copied.borrow(), vec!["a+".to_owned()]);
+    assert_eq!(entry.get_text(), r"img\d+\.cdn\.example");
+    entry.invoke_favourite_menu(0.0, 0.0);
+    entry.invoke_favourite_line_clicked(0, 0, 0.0, 0.0, 0.0);
+    let favourites = slots
+        .domains
+        .favourites
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    assert!(entry.get_child_open());
+    favourites.invoke_action("add".into());
+    favourites.set_phrase("z+".into());
+    favourites.set_description("new choice".into());
+    favourites.invoke_action("save-row".into());
+    favourites.invoke_action("cancel".into());
+    assert!(!entry.get_child_open());
+    assert_eq!(
+        store
+            .read(hydrus_store::regex_favourites::load)
+            .unwrap()
+            .0
+            .len(),
+        1
+    );
+    entry.invoke_favourite_menu(0.0, 0.0);
+    entry.invoke_favourite_line_clicked(0, 0, 0.0, 0.0, 0.0);
+    let favourites = slots
+        .domains
+        .favourites
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    favourites.invoke_action("add".into());
+    favourites.set_phrase("z+".into());
+    favourites.set_description("new choice".into());
+    favourites.invoke_action("save-row".into());
+    favourites.invoke_action("apply".into());
+    assert_eq!(
+        store
+            .read(hydrus_store::regex_favourites::load)
+            .unwrap()
+            .0
+            .len(),
+        2
+    );
+    entry.invoke_name_entered(entry.get_text());
+    edit.invoke_text_edited(
+        40,
+        "https://img3.cdn.example/post/page.php?id=123456&s=view".into(),
+    );
+    edit.invoke_action("apply".into());
+    list.invoke_action("apply".into());
+    let installed = store.snapshot();
+    assert!(
+        installed.url_classes.settings().url_classes[0]
+            .matches("https://img9.cdn.example/post/page.php?id=2&s=view", false)
+    );
+    let list = windows::open(&store, &slots, true).unwrap();
+    list.invoke_row_clicked(0, false, false);
+    list.invoke_action("edit".into());
+    let edit = child(&slots.class_edit);
+    assert_eq!(edit.get_domain_mode(), 1);
+    assert_eq!(edit.get_domain_regex_rows().row_count(), 1);
+    edit.invoke_domain_action(true, "add".into());
+    let stale = slots
+        .domains
+        .entry
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    stale.invoke_favourite_menu(0.0, 0.0);
+    stale.invoke_favourite_line_clicked(0, 0, 0.0, 0.0, 0.0);
+    let stale_favourite = slots
+        .domains
+        .favourites
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
+    slots.domains.cancel();
+    assert!(!slots.domains.has_open());
+    assert!(slots.domains.favourites.borrow().is_none());
+    stale.invoke_name_entered("stale.example".into());
+    stale_favourite.invoke_action("apply".into());
+    assert_eq!(edit.get_domain_regex_rows().row_count(), 1);
+    edit.invoke_action("cancel".into());
+    list.invoke_action("cancel".into());
+    edit.invoke_domain_action(false, "add".into());
+    assert!(!slots.domains.has_open());
+}

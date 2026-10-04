@@ -756,6 +756,10 @@ pub struct DefinitionEditor {
     pub domain_mode: usize,
     /// Independent tester input, initialized from the original example URL.
     pub domain_test: String,
+    pub domain_raw_values: Vec<String>,
+    pub domain_regex_values: Vec<String>,
+    pub domain_raw_selection: ListSelection<usize>,
+    pub domain_regex_selection: ListSelection<usize>,
 }
 
 impl DefinitionEditor {
@@ -784,7 +788,18 @@ impl DefinitionEditor {
             ),
             _ => (0, String::new()),
         };
+        let (domain_raw_values, domain_regex_values) = match &value {
+            EditValue::Class(c) => (
+                c.domain_mask.raw_domains.clone(),
+                c.domain_mask.domain_regexes.clone(),
+            ),
+            _ => (Vec::new(), Vec::new()),
+        };
         Self {
+            domain_raw_values,
+            domain_regex_values,
+            domain_raw_selection: ListSelection::default(),
+            domain_regex_selection: ListSelection::default(),
             domain_mode,
             domain_test,
             value,
@@ -815,6 +830,11 @@ impl DefinitionEditor {
                             .map(str::to_owned)
                             .collect()
                     };
+                    if id == 3 {
+                        self.domain_raw_values.clone_from(&lines);
+                    } else {
+                        self.domain_regex_values.clone_from(&lines);
+                    }
                     let mask = &c.domain_mask;
                     c.domain_mask = if id == 3 {
                         DomainMask::new(
@@ -979,6 +999,84 @@ impl DefinitionEditor {
                 position,
                 delta: self.gallery_delta.parse().unwrap_or(1),
             });
+        }
+    }
+
+    /// Full-mask queues retain insertion order separately from the sorted native mask.
+    pub fn domain_values(&self, regex: bool) -> &[String] {
+        if regex {
+            &self.domain_regex_values
+        } else {
+            &self.domain_raw_values
+        }
+    }
+    pub fn domain_selected(&self, regex: bool) -> Vec<usize> {
+        let order = (0..self.domain_values(regex).len()).collect::<Vec<_>>();
+        if regex {
+            self.domain_regex_selection.in_order(&order)
+        } else {
+            self.domain_raw_selection.in_order(&order)
+        }
+    }
+    pub fn domain_click(&mut self, regex: bool, row: usize, ctrl: bool, shift: bool) {
+        let order = (0..self.domain_values(regex).len()).collect::<Vec<_>>();
+        if row < order.len() {
+            if regex {
+                self.domain_regex_selection.click(&order, row, ctrl, shift);
+            } else {
+                self.domain_raw_selection.click(&order, row, ctrl, shift);
+            }
+        }
+    }
+    /// Empty accepted values are cancellation, while malformed regexes are advisory.
+    pub fn domain_put(&mut self, regex: bool, replacing: Option<usize>, text: &str) -> bool {
+        let text = text.trim();
+        if text.is_empty() {
+            return false;
+        }
+        let values = if regex {
+            &mut self.domain_regex_values
+        } else {
+            &mut self.domain_raw_values
+        };
+        if let Some(i) = replacing {
+            let Some(value) = values.get_mut(i) else {
+                return false;
+            };
+            *value = text.to_owned();
+        } else {
+            values.push(text.to_owned());
+        }
+        self.sync_domain();
+        true
+    }
+    pub fn domain_remove(&mut self, regex: bool, indices: &[usize]) {
+        let values = if regex {
+            &mut self.domain_regex_values
+        } else {
+            &mut self.domain_raw_values
+        };
+        let mut i = 0;
+        values.retain(|_| {
+            let keep = !indices.contains(&i);
+            i += 1;
+            keep
+        });
+        if regex {
+            self.domain_regex_selection = ListSelection::default();
+        } else {
+            self.domain_raw_selection = ListSelection::default();
+        }
+        self.sync_domain();
+    }
+    fn sync_domain(&mut self) {
+        if let EditValue::Class(c) = &mut self.value {
+            c.domain_mask = DomainMask::new(
+                self.domain_raw_values.clone(),
+                self.domain_regex_values.clone(),
+                c.domain_mask.match_subdomains,
+                c.domain_mask.keep_matched_subdomains,
+            );
         }
     }
 

@@ -30,6 +30,7 @@ mod checker_options_window;
 mod client_exit;
 pub mod clipboard_monitor;
 pub mod daemon;
+pub mod domain_mask_entry;
 pub mod downloader_definitions_window;
 pub mod downloader_display_window;
 pub mod downloader_interchange_window;

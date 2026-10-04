@@ -656,3 +656,63 @@ fn selectable_preview_values_use_recorded_api_referral_and_gallery_consumers() {
         assert_eq!(step["readonly"], json!([true; 5]));
     }
 }
+
+#[test]
+fn domain_mask_queue_replays_staged_crud_and_insertion_order() {
+    use definitions::{DefinitionEditor, EditValue};
+    let fixture = hydrus_testkit::fixture_json("domain_mask_queue.json");
+    let mut class = definitions::new_class();
+    class.domain_mask =
+        hydrus_core::url::DomainMask::new(vec!["mask.example".into()], Vec::new(), false, false);
+    let draft = Draft::new(
+        UrlClassSettings::default(),
+        Downloaders::default(),
+        Kind::Classes,
+    );
+    let mut editor = DefinitionEditor::new(EditValue::Class(Box::new(class)), &draft);
+    editor.choose(30, 1);
+    for step in fixture["steps"].as_array().unwrap() {
+        let regex = step["regex"].as_bool().unwrap_or(false);
+        let indices = step["indices"].as_array().map_or_else(Vec::new, |indices| {
+            indices
+                .iter()
+                .map(|i| usize::try_from(i.as_u64().unwrap()).unwrap())
+                .collect::<Vec<_>>()
+        });
+        if step["action"] == "delete" {
+            if step["response"] == true {
+                editor.domain_remove(regex, &indices);
+            }
+        } else if let Some(dialogs) = step["dialogs"].as_array() {
+            for (n, dialog) in dialogs.iter().enumerate() {
+                if dialog["accepted"] != true {
+                    break;
+                }
+                let index = (step["action"] == "edit").then(|| indices[n]);
+                if !editor.domain_put(regex, index, dialog["entered"].as_str().unwrap()) {
+                    break;
+                }
+            }
+        }
+        assert_eq!(
+            json!(editor.domain_values(false)),
+            step["state"]["raw_rows"]
+        );
+        assert_eq!(
+            json!(editor.domain_values(true)),
+            step["state"]["regex_rows"]
+        );
+        let EditValue::Class(c) = &editor.value else {
+            panic!("class");
+        };
+        assert_eq!(json!(c.domain_mask.raw_domains), step["state"]["raw_mask"]);
+        assert_eq!(
+            json!(c.domain_mask.domain_regexes),
+            step["state"]["regex_mask"]
+        );
+    }
+    assert!(!editor.domain_put(false, Some(999), "stale.example"));
+    let before = editor.domain_values(false).to_vec();
+    assert!(!editor.domain_put(false, None, "   "));
+    assert_eq!(editor.domain_values(false), before);
+}

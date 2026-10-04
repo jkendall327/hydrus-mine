@@ -269,7 +269,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 1095,
+          "line": 1096,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -873,26 +873,46 @@
     {
       "originalID": "url-domain",
       "before": "partial",
-      "proposedStatus": "partial",
-      "exactBehavior": "Adds reference simple/full mode and exact choices, mode disabled with multiple fixed domains or regexes, independent trimmed-domain match/status and selectable read-only normalized result. Initialized from original example host; WWW variants, regex matching, empty/test/mismatch, retained disabled keep-subdomain checkbox values, Apply/Cancel/reopen and installed URL-mask consumer covered. Mode/test state is presentation-only; masks persist through existing staged class editor.",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Adds reference simple/full mode and exact choices, mode disabled with multiple fixed domains or regexes, independent trimmed-domain match/status and selectable read-only normalized result. Initialized from original example host; WWW variants, regex matching, empty/test/mismatch, retained disabled keep-subdomain checkbox values, Apply/Cancel/reopen and installed URL-mask consumer covered. Mode/test state is presentation-only; masks persist through existing staged class editor. Full-mode raw/regex queues now have reference Add/Edit/Delete controls, multi-selection, insertion-order display and sorted saved masks. Trim accepted entries; blank raw text stays open with exact warning, whitespace/regex-empty cancel without changes. Multi-edit retains earlier accepted values and stops on Cancel. Delete asks exact counted question. Malformed regex is advisory in its entry but invalid class Apply rejects. Shared regex component clipboard tools and owned global favourites manager (Cancel/Apply/persist/owner retirement) use real store consumers.",
       "limits": [
-        "Full masks retain native bulk multiline editing. Reference per-item Add/Edit/Delete modal dialogs, including regex favourites, remain unimplemented in this specific owner; leaf stays partial and is not counted complete."
+        "Native tables and owned SessionDialog entries instead of Qt list boxes/modal windows. Regex components/favourites use separate buttons; both preserve raw clipboard text and never insert it. Global favourites apply immediately as in reference; domain-mask edits remain staged."
       ],
       "sourceAnchors": [
         {
           "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
           "symbol": "pub fn domain_preview(",
-          "line": 986
+          "line": 1084
         },
         {
           "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
           "symbol": "fn show_editor(",
-          "line": 588
+          "line": 591
         },
         {
           "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
           "symbol": "if root.url-class && root.tab == 0:",
-          "line": 171
+          "line": 177
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
+          "symbol": "pub fn domain_put(",
+          "line": 1032
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/domain_mask_entry.rs",
+          "symbol": "pub(crate) fn edit(",
+          "line": 269
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/domain_mask_entry.rs",
+          "symbol": "pub(crate) fn delete(",
+          "line": 315
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "symbol": "if root.regex-mode: HorizontalLayout",
+          "line": 65
         }
       ],
       "testAnchors": [
@@ -905,6 +925,16 @@
           "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
           "symbol": "fn domain_mode_and_independent_tester_replay_reference_and_preserve_disabled_values()",
           "line": 554
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/downloader_definitions.rs",
+          "symbol": "fn domain_mask_queue_replays_staged_crud_and_insertion_order()",
+          "line": 661
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
+          "symbol": "fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consumers()",
+          "line": 791
         }
       ],
       "referenceRecording": {
@@ -918,7 +948,14 @@
         "slintSourceCompilation": true,
         "localCargoBuildsOrTests": false,
         "ci": "Parent runs asynchronous GitHub CI; new regressions authored, not locally run."
-      }
+      },
+      "additionalReferenceRecordings": [
+        {
+          "script": "oracle/record_domain_mask_queue.py",
+          "fixture": "oracle/fixtures/domain_mask_queue.json",
+          "executed": true
+        }
+      ]
     },
     {
       "originalID": "url-preview",
@@ -937,12 +974,12 @@
         {
           "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
           "symbol": "fn show_editor(",
-          "line": 588
+          "line": 591
         },
         {
           "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
           "symbol": "if root.url-class: VerticalLayout",
-          "line": 240
+          "line": 271
         }
       ],
       "testAnchors": [
@@ -1289,17 +1326,17 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/downloader_definitions.rs",
           "symbol": "pub fn domain_preview(",
-          "line": 986
+          "line": 1084
         },
         {
           "relativepath": "crates/hydrus-gui/src/downloader_definitions_window.rs",
           "symbol": "fn show_editor(",
-          "line": 588
+          "line": 591
         },
         {
           "relativepath": "crates/hydrus-gui/ui/downloader_definitions.slint",
           "symbol": "if root.url-class && root.tab == 0:",
-          "line": 171
+          "line": 177
         }
       ],
       "testAnchors": [
@@ -1318,7 +1355,12 @@
             "subdomain matching",
             "retain matched subdomains",
             "independent domain test",
-            "select normalized domain"
+            "select normalized domain",
+            "Add fixed domain",
+            "Edit selected fixed domains in order",
+            "Add regex",
+            "Edit selected regexes in order",
+            "Delete selected masks with counted confirmation"
           ]
         },
         {
@@ -1333,7 +1375,59 @@
         }
       ],
       "limits": [
-        "No new native Window added. Domain owner remains partial until per-item full-mask entry dialogs are implemented."
+        "No new native Window added; SessionDialog is reused for entry/deletion owners."
+      ]
+    },
+    {
+      "name": "SessionDialog",
+      "referenceIDs": [
+        "url-domain"
+      ],
+      "ownerParentIDs": [
+        "url-domain"
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/domain_mask_entry.rs",
+          "symbol": "fn open(",
+          "line": 47
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/session_dialog.slint",
+          "symbol": "export component SessionDialog",
+          "line": 11
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/downloader_definitions.rs",
+          "symbol": "fn full_domain_mask_owned_entries_questions_and_favourites_reach_persisted_consumers()",
+          "line": 791
+        }
+      ],
+      "actionGroups": [
+        {
+          "label": "fixed-domain/regex entry",
+          "actions": [
+            "Accept trimmed text",
+            "Cancel current edit and remaining selected edits",
+            "Empty fixed-domain warning",
+            "Advisory regex status",
+            "Copy regex components",
+            "Copy favourites",
+            "Manage global favourites"
+          ]
+        },
+        {
+          "label": "counted deletion",
+          "actions": [
+            "Yes removes selected rows",
+            "No preserves masks"
+          ]
+        }
+      ],
+      "limits": [
+        "Default-false regex hooks preserve existing session-saving dialog behavior."
       ]
     }
   ]

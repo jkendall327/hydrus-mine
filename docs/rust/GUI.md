@@ -2461,8 +2461,10 @@ limits, sort direction, collections, selection and tag service.
 URL-class domain masks have the reference simple/full selector, locked while
 multiple domains or regexes are present, and an independent domain tester. The
 tester trims input and shows matching and normalized domain results; the
-subdomain controls retain disabled values. Full masks remain editable as one
-fixed domain or regex per line. URL previews now provide separately selectable,
+subdomain controls retain disabled values. Full masks use independent fixed-domain and regex queues with owned Add/Edit
+entry dialogs and counted Delete confirmations. Selected rows edit in order;
+cancelling stops the rest. Regex inputs offer advisory validation, clipboard
+shortcuts, and the shared global favourites manager. URL previews now provide separately selectable,
 read-only stored, request, API, referral, and next-page outputs. Invalid examples
 clear stored/request/API outputs and retain prior referral/next results, matching
 the recorded Qt owner transition.

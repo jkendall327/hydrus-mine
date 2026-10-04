@@ -4,6 +4,8 @@
 // yes/no question with the reference's buttons.
 
 import { Button, LineEdit } from "std-widgets.slint";
+import { RegexTools } from "regex_tools.slint";
+import { MenuPane, MenuPanes } from "main_menu.slint";
 import { Theme } from "theme.slint";
 
 export component SessionDialog inherits Window {
@@ -18,6 +20,20 @@ export component SessionDialog inherits Window {
     in property <string> warning;
     in property <string> yes-label: "yes";
     in property <string> no-label: "no";
+    in property <string> placeholder;
+    in property <bool> regex-mode;
+    in property <bool> child-open;
+    in property <string> regex-validity;
+    in property <[string]> regex-components;
+    in property <[MenuPane]> favourite-panes;
+    callback regex-changed();
+    callback regex-tool(int,int);
+    callback favourite-menu(float,float);
+    callback favourite-placed(int,float,float,float);
+    callback favourite-line-hovered(int,int,float,float,float);
+    callback favourite-line-clicked(int,int,float,float,float);
+    callback favourite-dismissed();
+    callback force-close();
     callback name-entered(string);
     callback cancelled();
     callback answered(bool);
@@ -41,16 +57,26 @@ export component SessionDialog inherits Window {
             // (no room taken while a question is asked)
             height: root.asking-name ? self.preferred-height : 0px;
             text <=> root.text;
+            placeholder-text: root.placeholder;
+            enabled: !root.child-open;
+            edited => { if root.regex-mode { root.regex-changed(); } }
             accepted => { root.name-entered(self.text); }
+        }
+        if root.regex-mode: HorizontalLayout {
+            RegexTools { components: root.regex-components; show-groups: false; enabled: !root.child-open; selected(c,i) => { root.regex-tool(c,i); } }
+            favourite := Button { text: "favourites"; enabled: !root.child-open; clicked => { root.favourite-menu(favourite.x / 1px, (favourite.y + favourite.height) / 1px); } }
+            Text { text: root.regex-validity; color: Theme.text; wrap: word-wrap; }
         }
         HorizontalLayout {
             alignment: end;
             spacing: 6px;
             if root.asking-name: Button {
+                enabled: !root.child-open;
                 text: "apply";
                 clicked => { root.name-entered(root.text); }
             }
             if root.asking-name: Button {
+                enabled: !root.child-open;
                 text: "cancel";
                 clicked => { root.cancelled(); }
             }
@@ -63,5 +89,12 @@ export component SessionDialog inherits Window {
                 clicked => { root.answered(false); }
             }
         }
+    }
+    if root.favourite-panes.length > 0: MenuPanes {
+        width: root.width; height: root.height; top: 0px; panes: root.favourite-panes;
+        dismiss => { root.favourite-dismissed(); }
+        placed(p,x,y,w) => { root.favourite-placed(p,x / 1px,y / 1px,w / 1px); }
+        line-hovered(p,l,r,t,left) => { root.favourite-line-hovered(p,l,r / 1px,t / 1px,left / 1px); }
+        line-clicked(p,l,r,t,left) => { root.favourite-line-clicked(p,l,r / 1px,t / 1px,left / 1px); }
     }
 }
