@@ -1,0 +1,489 @@
+{
+  "agent": "tag-filters",
+  "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
+  "commits": [
+    "0482c0ab982d095a61bacd1e5748ef06da54f05c",
+    "93f2779fc6cfefb9d03eb967f1295a2dc5ccaef6",
+    "a7ade3debedbf276de3dc951afea13dbe297df53",
+    "d5ae06684de869f155ce79daa8c49c591248b553"
+  ],
+  "implementation_leaf_count": 7,
+  "implementation_parent_count": 1,
+  "evidence_only_count": 1,
+  "claims": [
+    {
+      "reference_id": "tag-filter-favourites",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Five shared favourites buttons offer named save/load/delete and reference JSON clipboard exchange with optional JSON files. Favourites persist immediately, independently of detached caller Apply/Cancel. Insertion order, case-sensitive collisions, reject/cancel paths and reopen are preserved.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/ui/tag_filter.slint",
+          "line": 285,
+          "symbol": "title: \"favourites\"",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 657,
+          "symbol": "pub struct FavouriteTagFilters",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [
+        "Repository serverside filters are not offered in load; remote repositories are not functional.",
+        "JSON import uses an additional inline text/file panel before naming."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-favourite-import",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Import bounded reference [44,1,rules] JSON from clipboard or UTF-8 JSON file, clean rules, ask for a nonblank name and confirm exact-name overwrites. Only successful naming/confirmation saves and loads the imported filter; rejected, malformed and cancelled imports leave settings/draft/caller untouched.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 724,
+          "symbol": "pub fn import_favourite",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 573,
+          "symbol": "window.on_exchange_action",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [
+        "An additional inline text/file panel precedes the reference naming prompt."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-favourite-export",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Export this draft or a selected saved favourite to the reference JSON Tag Filter format, copy immediately to clipboard and offer an atomic JSON file export; saved favourites retain insertion order after this-filter entry.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 711,
+          "symbol": "pub fn export_favourite",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 573,
+          "symbol": "window.on_exchange_action",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-favourite-load",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "The load button lists insertion-ordered named favourites, displays no-favourites label when empty, and loads a detached saved value into all rule views/testing. Loaded edits never mutate saved favourites or caller settings until explicit save/Apply.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 493,
+          "symbol": "window.on_favourite",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 667,
+          "symbol": "pub fn get(&self, name",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [
+        "Repository serverside tag filters are not offered because remote repositories are not functional."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-favourite-save",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Ask Enter a name for the favourite; reject blank names, allow literal whitespace and case-sensitive distinct names, ask exact reference overwrite question, and persist only accepted saves immediately. Atomic per-name updates preserve other editors' saves.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 675,
+          "symbol": "pub fn save(",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 540,
+          "symbol": "window.on_favourite_named",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-favourite-delete",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "List saved favourites, ask Delete name using the reference string, preserve rejected deletes, and persist accepted deletion of only that name immediately without changing the draft or caller.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 701,
+          "symbol": "pub fn delete(store:",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 698,
+          "symbol": "Asking::DeleteFavourite(name), Some(0)",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-paste",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "All four rule-list inputs have paste buttons. Split the reference newline forms, remove leading BOM/whitespace and blank lines, then apply the same whitelist/blacklist/advanced cleaning, wildcard and deduplication behavior as entered slices.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 237,
+          "symbol": "pub fn paste_slices",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 454,
+          "symbol": "window.on_paste",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 162,
+          "symbol": "fn reference_bulk_paste",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 177,
+          "symbol": "fn blacklist_extra_panels",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [
+        "Native paste buttons are text-labelled; the reference shows an icon and micro-notification."
+      ],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-extra-panels",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "change_kind": "implementation",
+      "exact_behavior": "Advanced mode offers show other panels in blacklist-only editors. It appends whitelist and advanced tabs after blacklist, hides the button and preserves fixed-blacklist sibling/unnamespaced-to-namespaced testing.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/tag_filter_editor.rs",
+          "line": 226,
+          "symbol": "pub fn show_other_panels_offered",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 450,
+          "symbol": "window.on_show_panels",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 162,
+          "symbol": "fn reference_bulk_paste",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 177,
+          "symbol": "fn blacklist_extra_panels",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    },
+    {
+      "reference_id": "audit-shared-tag-apply",
+      "previous_status": "partial",
+      "proposed_status": "first_pass",
+      "change_kind": "evidence_only",
+      "exact_behavior": "Added native callback and CloseRequested regression coverage for existing detached Apply/Cancel/owner-close behavior, plus pending favourite-import cancellation and stale naming/Apply invalidation. This is an evidence-only reassessment outside newly implemented completion counts.",
+      "implementation_commit": "d5ae06684de869f155ce79daa8c49c591248b553",
+      "anchors": [
+        {
+          "relativepath": "crates/hydrus-gui/src/tag_filter_window.rs",
+          "line": 718,
+          "symbol": "let close = {",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/tag_filter_favourites.rs",
+          "line": 23,
+          "symbol": "fn reference_favourite_workflow",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/tag_filter_favourites.rs",
+          "line": 18,
+          "symbol": "fn shared_favourites_exchange",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        },
+        {
+          "relativepath": "oracle/record_tag_filter_favourites.py",
+          "line": 15,
+          "symbol": "def record(session):",
+          "commit": "d5ae06684de869f155ce79daa8c49c591248b553"
+        }
+      ],
+      "reference_recording": "oracle/fixtures/tag_filter_favourites.json",
+      "limitations": [],
+      "validation": {
+        "reference_recording_executed": true,
+        "cargo_fmt_executed": true,
+        "git_diff_check_executed": true,
+        "rust_tests_executed_locally": false,
+        "rust_tests": "Awaiting root asynchronous CI"
+      }
+    }
+  ]
+}
