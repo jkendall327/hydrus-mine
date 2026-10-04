@@ -670,8 +670,10 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   taken). Its queries' bandwidth waits ("recent delays") aren't reckoned.
 - **The sidecar editors** edit a router's destination in a window of its
   own (the reference embeds it in the router editor), list "Which
-  type?"'s descriptions in its message, and take JSON object names a
-  line each. JSON sidecar formulae use the reusable HTML/JSON editor;
+  type?"'s descriptions in its message. JSON object names now use the actual
+  ordered add/edit/delete/reorder workflow with staged owned text children;
+  the native list/text-child geometry differs from Qt. JSON sidecar formulae
+  use the reusable HTML/JSON editor;
   router testing uses per-source tables instead of a notebook. Router queues
   import/export clipboard text and PNGs through the shared staged review window,
   rather than Qt's separate chooser dialogs. Unsupported mixed packages are

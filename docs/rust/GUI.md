@@ -336,6 +336,13 @@ exports supply up to 25 local files or media results; previews read their
 sidecars or metadata without exporting. Source/formula and router processor
 children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
 records seven file/media, empty-input, processing and parse-error states.
+JSON destination object names are an ordered queue with add/edit text children,
+up/down, deletion confirmation and double-click editing. Literal duplicate,
+whitespace and embedded-newline keys survive staged Apply; empty input receives
+the reference veto. Parent cancellation closes the child and rejects stale
+answers. `oracle/record_sidecar_json_names.py` records 14 real queue states and
+text-entry validation; the saved-router worker regression verifies nested JSON
+updates preserve unrelated existing object contents.
 Export folders also have **update test example files**: their current query runs
 in the background, uses ascending file size when a system limit removes results,
 and supplies up to 25 media results to router/source previews. The button says
