@@ -2909,3 +2909,10 @@ never saved as file ratings. Child Apply stages only the service configuration;
 parent Apply persists it. Cancel, reopening and closed-owner callbacks leave
 samples and unapplied configuration behind. The actual three-kind Qt replay is
 `service_rating_preview.json`; hosted native coverage also saves a populated PNG.
+
+
+Numerical rating examples accept left-button dragging and clicks on either
+fraction label through the same whole-widget control as their star graphics.
+Dragging outside keeps the last valid sample; an outside press clears it. Hover
+motion after release does not change a rating, and each context remains independent.
+The pointer-route Qt recording is `rating_preview_pointer.json`.

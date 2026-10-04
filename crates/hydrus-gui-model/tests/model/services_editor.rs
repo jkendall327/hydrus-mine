@@ -645,3 +645,42 @@ fn numerical_example_one_star_retains_live_conversion_but_saves_normalized_scale
     }
     assert_eq!(recorded["original_unchanged"], true);
 }
+
+#[test]
+fn rating_example_whole_widget_pointer_routes_replay_qt() {
+    use hydrus_gui_model::rating_example::{Example, Sample};
+    let recorded = hydrus_testkit::fixture_json("rating_preview_pointer.json");
+    assert_eq!(recorded["original_unchanged"], true);
+    for case in recorded["cases"].as_array().unwrap() {
+        let mut kind = services_editor::default_kind(ServiceType::LocalRatingNumerical).unwrap();
+        let ServiceKind::RatingNumerical(config) = &mut kind else {
+            unreachable!()
+        };
+        config.num_stars = 5;
+        config.allow_zero = true;
+        config.custom_pad = 3;
+        config.show_fraction_beside_stars = u8::try_from(case["side"].as_u64().unwrap()).unwrap();
+        let mut example = Example::new(&kind).unwrap();
+        for event in case["events"].as_array().unwrap() {
+            let action = event["action"].as_str().unwrap();
+            if action == "press" || (action == "move" && event["held"] == true) {
+                example.pointer(
+                    0,
+                    event["right"].as_bool().unwrap(),
+                    event["x"].as_f64().unwrap(),
+                    event["width"].as_f64().unwrap(),
+                    event["icon"].as_f64().unwrap(),
+                    action == "move",
+                );
+            }
+            let Sample::Numerical(value) = example.samples()[0] else {
+                unreachable!()
+            };
+            assert_eq!(json!(value.unwrap_or(0.0)), event["rating"], "{event}");
+            assert_eq!(json!(if value.is_some() { 3 } else { 2 }), event["state"]);
+            assert_eq!(json!(example.fraction(0, &kind)), event["fraction"]);
+            assert_eq!(example.samples()[1], Sample::Numerical(None));
+        }
+        assert_eq!(case["example_value"], json!({}));
+    }
+}

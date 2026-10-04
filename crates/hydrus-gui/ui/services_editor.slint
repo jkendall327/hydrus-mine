@@ -4,6 +4,74 @@ import { RatingRow, RatingGraphic } from "viewer.slint";
 import { Theme } from "theme.slint";
 export struct ServiceRatingExampleRow { label: string, graphic: RatingRow, icon-size: length, incdec-height: length, outline: length, counter-width: length, fraction: string, fraction-placement: int }
 export struct ServiceColourRow { label: string, border: string, fill: string }
+// One hit area includes the fraction, stars and trailing widget space, as Qt.
+component RatingSampleControl inherits HorizontalBox {
+    in property <ServiceRatingExampleRow> sample;
+    in property <bool> interactive: true;
+    callback pointer(bool,float,float,float,bool);
+    callback counter-edit();
+    out property <length> hit-x: sample-touch.absolute-position.x;
+    out property <length> hit-y: sample-touch.absolute-position.y;
+    out property <length> hit-width: sample-touch.width;
+    out property <length> hit-height: sample-touch.height;
+    out property <length> fraction-x: fraction.absolute-position.x;
+    out property <length> fraction-y: fraction.absolute-position.y;
+    in-out property <bool> left-dragging;
+    Text { text: root.sample.label; color: Theme.text; min-width: 155px; }
+    Rectangle {
+        horizontal-stretch: 1;
+        height: max(16px, (root.sample.graphic.kind == 2 ? root.sample.incdec-height : root.sample.icon-size) + 4px);
+        graphic := RatingGraphic { rating: root.sample.graphic; icon-size: root.sample.icon-size; incdec-height: root.sample.incdec-height; outline: root.sample.outline;
+            x: 2px + (root.sample.fraction-placement == 1 ? fraction.width + 1px : 0px);
+            y: 2px;
+            width: root.sample.graphic.kind == 2 ? root.sample.counter-width : max(1px, root.sample.graphic.shapes.length * (root.sample.icon-size + root.sample.graphic.pad) - root.sample.graphic.pad);
+        }
+        fraction := Text { visible: root.sample.fraction-placement != 0;
+            text: root.sample.fraction; color: Theme.text; font-size: root.sample.icon-size - 1px;
+            width: self.preferred-width; height: parent.height;
+            x: root.sample.fraction-placement == 1 ? 2px : graphic.x + graphic.width + 1px;
+        }
+        sample-touch := TouchArea { enabled: root.interactive;
+            pointer-event(ev) => {
+                if ev.kind == PointerEventKind.down {
+                    root.left-dragging = ev.button == PointerEventButton.left;
+                    if ev.button == PointerEventButton.middle && root.sample.graphic.kind == 2 { root.counter-edit(); }
+                    else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right { root.pointer(ev.button == PointerEventButton.right, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, false); }
+                } else if ev.kind == PointerEventKind.up { root.left-dragging = false; }
+            }
+            moved => { if self.pressed && root.left-dragging && root.sample.graphic.kind == 1 { root.pointer(false, self.mouse-x / 1px, self.width / 1px, root.sample.icon-size / 1px, true); } }
+        }
+    }
+}
+component RatingExamplePanel inherits VerticalBox {
+    in property <[ServiceRatingExampleRow]> rows;
+    in property <bool> interactive: true;
+    callback pointer(int,bool,float,float,float,bool);
+    callback counter-edit(int);
+    out property <length> first-x: first.hit-x;
+    out property <length> first-y: first.hit-y;
+    out property <length> first-width: first.hit-width;
+    out property <length> first-height: first.hit-height;
+    out property <length> first-fraction-x: first.fraction-x;
+    out property <length> first-fraction-y: first.fraction-y;
+    callback placed(float,float,float,float,float,float);
+    function report-placement() { root.placed(root.first-x / 1px, root.first-y / 1px, root.first-width / 1px, root.first-height / 1px, root.first-fraction-x / 1px, root.first-fraction-y / 1px); }
+    init => { root.report-placement(); }
+    changed first-x => { root.report-placement(); }
+    changed first-y => { root.report-placement(); }
+    changed first-width => { root.report-placement(); }
+    changed first-height => { root.report-placement(); }
+    changed first-fraction-x => { root.report-placement(); }
+    changed first-fraction-y => { root.report-placement(); }
+    first := RatingSampleControl { sample: root.rows[0]; interactive: root.interactive;
+        pointer(r,x,w,s,d) => { root.pointer(0,r,x,w,s,d); }
+        counter-edit => { root.counter-edit(0); }
+    }
+    for i in 3: RatingSampleControl { sample: root.rows[i+1]; interactive: root.interactive;
+        pointer(r,x,w,s,d) => { root.pointer(i+1,r,x,w,s,d); }
+        counter-edit => { root.counter-edit(i+1); }
+    }
+}
 export component ServicesEditorWindow inherits Window {
     in property <string> window-title: "edit services";
     title: root.window-title;
@@ -89,6 +157,13 @@ export component EditServiceWindow inherits Window {
     in-out property <int> counter-value;
     callback preview-edited();
     callback preview-clicked(int,bool,float);
+    callback preview-pointer(int,bool,float,float,float,bool);
+    out property <length> first-preview-x;
+    out property <length> first-preview-y;
+    out property <length> first-preview-width;
+    out property <length> first-preview-height;
+    out property <length> first-preview-fraction-x;
+    out property <length> first-preview-fraction-y;
     callback counter-edit(int);
     callback counter-answered(bool);
     changed appearance => { root.preview-edited(); }
@@ -143,25 +218,11 @@ export component EditServiceWindow inherits Window {
                 }
                 if root.rating: VerticalBox {
                     Button { text: root.example-expanded ? "▼ example display" : "▶ example display"; clicked => { root.example-expanded = !root.example-expanded; } }
-                    if root.example-expanded: VerticalBox {
-                        for e[i] in root.examples: HorizontalBox {
-                            Text { text: e.label; color: Theme.text; min-width: 155px; }
-                            HorizontalBox {
-                                spacing: 1px;
-                                if e.fraction-placement == 1: Text { text: e.fraction; color: Theme.text; font-size: e.icon-size - 1px; }
-                                graphic := RatingGraphic { rating: e.graphic; icon-size: e.icon-size; incdec-height: e.incdec-height; outline: e.outline;
-                                    width: e.graphic.kind == 2 ? e.counter-width : max(1px, e.graphic.shapes.length * (e.icon-size + e.graphic.pad) - e.graphic.pad);
-                                    TouchArea { enabled: !root.counter-editing; pointer-event(ev) => {
-                                        if ev.kind == PointerEventKind.down {
-                                            if ev.button == PointerEventButton.middle && e.graphic.kind == 2 { root.counter-edit(i); }
-                                            else if ev.button == PointerEventButton.left || ev.button == PointerEventButton.right { root.preview-clicked(i, ev.button == PointerEventButton.right, self.mouse-x / max(1px,self.width)); }
-                                        }
-                                    } }
-                                }
-                                if e.fraction-placement == 2: Text { text: e.fraction; color: Theme.text; font-size: e.icon-size - 1px; }
-                                Rectangle { horizontal-stretch: 1; }
-                            }
-                        }
+                    if root.example-expanded: example-panel := RatingExamplePanel {
+                        rows: root.examples; interactive: !root.counter-editing;
+                        placed(x,y,w,h,fx,fy) => { root.first-preview-x = x * 1px; root.first-preview-y = y * 1px; root.first-preview-width = w * 1px; root.first-preview-height = h * 1px; root.first-preview-fraction-x = fx * 1px; root.first-preview-fraction-y = fy * 1px; }
+                        pointer(i,r,x,w,s,d) => { root.preview-pointer(i,r,x,w,s,d); }
+                        counter-edit(i) => { root.counter-edit(i); }
                     }
                     if root.counter-editing: HorizontalBox {
                         Text { text: "edit value"; color: Theme.text; }

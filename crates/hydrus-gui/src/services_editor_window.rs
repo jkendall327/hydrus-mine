@@ -364,6 +364,36 @@ fn edit(
             refresh();
         }
     });
+    window.on_preview_pointer({
+        let weak = window.as_weak();
+        let samples = samples.clone();
+        let refresh = refresh.clone();
+        let active = active.clone();
+        let parent_active = parent_active.clone();
+        let pending_counter = pending_counter.clone();
+        move |index, right, x, width, icon, drag| {
+            if !active.get() || !parent_active.get() || pending_counter.get().is_some() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else { return };
+            if !w.window().is_visible() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index)
+                && let Some(example) = samples.borrow_mut().as_mut()
+            {
+                example.pointer(
+                    index,
+                    right,
+                    f64::from(x),
+                    f64::from(width),
+                    f64::from(icon),
+                    drag,
+                );
+            }
+            refresh();
+        }
+    });
     window.on_counter_edit({
         let weak = window.as_weak();
         let samples = samples.clone();

@@ -69,6 +69,47 @@ impl Example {
             }
         }
     }
+    /// Whole-widget Qt pointer conversion, including the opening fraction side.
+    /// Dragging outside its horizontal active region keeps the last valid value;
+    /// an outside press clears. Hover motion is filtered by the UI owner.
+    pub fn pointer(
+        &mut self,
+        index: usize,
+        right: bool,
+        x: f64,
+        width: f64,
+        icon: f64,
+        drag: bool,
+    ) {
+        let Some(conversion) = self.click_config.as_ref() else {
+            if !drag {
+                self.click(index, right, 0.0);
+            }
+            return;
+        };
+        if right {
+            self.click(index, true, 0.0);
+            return;
+        }
+        let x = x.round();
+        let width = width.round();
+        if x < 1.0 || x > width - 2.0 {
+            if !drag {
+                self.click(index, true, 0.0);
+            }
+            return;
+        }
+        let adjusted = x - 1.0;
+        let active_width = width - 2.0;
+        let fraction_width =
+            (icon - 1.0) * (conversion.num_stars.to_string().len() * 2 + 1) as f64 / 2.0;
+        let proportion = match conversion.show_fraction_beside_stars {
+            1 => (adjusted.max(fraction_width) - fraction_width) / (active_width - fraction_width),
+            2 => adjusted.min(active_width - fraction_width) / (active_width - fraction_width),
+            _ => adjusted / active_width,
+        };
+        self.click(index, false, proportion);
+    }
     pub fn set_counter(&mut self, index: usize, value: u32) {
         if let Some(Sample::IncDec(current)) = self.samples.get_mut(index) {
             *current = value.min(1_000_000);
