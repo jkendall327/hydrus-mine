@@ -21,6 +21,10 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 pub use transport::{decode_png, encode_png};
+/// Generic string carriers used by source logs and other reference PNG exports.
+pub mod text_png {
+    pub use super::transport::{decode_payload as decode, encode_payload_with_header as encode};
+}
 
 /// Maximum uncompressed JSON, compressed input, or decoded PNG pixel bytes.
 pub const MAX_BYTES: usize = 16 * 1024 * 1024;
