@@ -34,7 +34,7 @@ fn services_menu_opens_review_and_refreshes() {
         .snapshot()
         .services
         .all()
-        .find(|service| matches!(service.kind, hydrus_core::service::ServiceKind::Trash))
+        .find(|service| matches!(service.kind, hydrus_store::services::ServiceKind::Trash))
         .unwrap()
         .name
         .clone();
