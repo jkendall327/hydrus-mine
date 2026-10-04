@@ -2280,3 +2280,14 @@ subscription draft. Closing the editor cancels publication; missing saved logs
 produce an acknowledgement and restore the editor.
 
 The network > pause menu saves “always boot the client with paused network traffic” separately from the live traffic pause. The checked preference is available in basic and advanced mode, survives reopening, and is imported from legacy client options. Startup applies it before GUI daemon or standalone server workers start. Resuming live traffic keeps the next-boot preference; creating parser/login engines or restarting an attached daemon does not apply it again. The reference has no corresponding Options checkbox or Apply/Cancel draft.
+
+Tag Editing > tag dialogs now stages and saves the service-navigation and
+storage-list defaults. Manage Tags, siblings and parents use horizontal service
+tabs or a vertical service list according to the listbook preference. Manage
+Tags captures the separate parent-info, expanded-parent and sibling-info defaults
+when it opens: parents appear as a count or indented rows, and aliases display
+their ideal sibling. Inherited rows keep their parent's namespace colour and
+activate the originating stored tag. Cancelling either Options or Manage Tags
+preserves saved preferences and mappings; reopening uses the saved defaults.
+The real Qt `tag_dialog_preferences.json` recording covers all sixteen flag
+combinations and inherited-row activation.

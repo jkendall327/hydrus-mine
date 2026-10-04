@@ -1490,3 +1490,14 @@ DBException. Closing the native editor stops polling and prevents a late
 clipboard publication; cancellation is checked between queue reads.
 
 The network boot pause preference follows the reference’s direct menu toggle rather than introducing an Options control. Its startup helper only sets the live pause when enabled; a disabled preference preserves any existing live pause. GUI startup applies it before daemon startup, and standalone `hydrus serve` applies it before constructing API/download workers. An attached daemon belongs to an already-booted GUI, so restarting it preserves live Resume. The oracle records actual Qt menu triggers and option serialization, then executes the actual ClientController boot conditional in isolation; native tests exercise durable reopen and real loopback network requests.
+
+The Tag Editing service-listbook and three storage-list decoration defaults now
+reach Manage Tags; the service navigator also reaches sibling and parent editors.
+These are opening defaults independent of write-autocomplete decorations. Native
+service tabs and list rows use Slint geometry. Inherited parent ordering follows
+natural tag order; Qt's inherited-parent collection does not specify relative
+order. Existing Manage Tags differences remain: counts are omitted when every
+selected file has the tag, multiple stored-tag selection and its full context
+menu are not implemented, and remote service petition dialogs are outside this
+local-service slice. The four preference leaves do not claim those parent
+workflow gaps complete.

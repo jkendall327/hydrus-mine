@@ -50,6 +50,7 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<TagRelationshipsWindow, slint::PlatformError> {
     let window = TagRelationshipsWindow::new()?;
+    window.set_use_listbook(model.use_listbook());
     window.set_siblings(model.kind() == hydrus_store::display::RelationKind::Siblings);
     window.set_service_names(ModelRc::new(VecModel::from(
         model

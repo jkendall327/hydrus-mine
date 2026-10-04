@@ -16,6 +16,7 @@ pub(crate) fn open(
     applied: Rc<dyn Fn()>,
 ) -> Result<ManageTagsWindow, slint::PlatformError> {
     let window = ManageTagsWindow::new()?;
+    window.set_use_listbook(model.dialog_preferences().use_listbook);
     let names: Vec<SharedString> = model
         .service_names()
         .iter()
@@ -49,9 +50,9 @@ pub(crate) fn open(
             );
             window.set_service_index(i32::try_from(model.service()).unwrap_or(0));
             let tags: Vec<ListText> = model
-                .rows()
+                .display_rows()
                 .iter()
-                .map(|(tag, row)| list_text(row, colours.tag(tag)))
+                .map(|row| list_text(&row.label, colours.tag(&row.colour_tag)))
                 .collect();
             window.set_tags(ModelRc::new(VecModel::from(tags)));
             window
