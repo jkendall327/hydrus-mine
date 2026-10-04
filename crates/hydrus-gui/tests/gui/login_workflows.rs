@@ -2153,3 +2153,130 @@ fn reopened_domain_manager_monitors_and_cancels_actual_engine_owned_demand_proce
     );
     reopened.invoke_action("cancel".into());
 }
+
+#[test]
+fn delayed_manual_completion_cannot_overwrite_a_successor_login_outcome() {
+    let demand = hydrus_testkit::fixture_json("login_demand.json");
+    let (_dir, store, mut manager) = store();
+    let site = LoginSite::start();
+    let script = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&demand["script"].to_string()).unwrap(),
+    )
+    .unwrap();
+    let mut login = manager.domains.remove("login.example").unwrap();
+    login.script_key.clone_from(&script.key);
+    login.script_name.clone_from(&script.name);
+    login.credentials.clear();
+    login.active = true;
+    login.validity = hydrus_parse::login::Validity::Untested;
+    login.validity_error.clear();
+    login.no_work_until = 0;
+    login.delay_reason.clear();
+    manager.scripts = vec![script.clone()];
+    manager.domains.clear();
+    manager.domains.insert(site.domain.clone(), login);
+    store
+        .write_and_refresh(move |ctx| {
+            hydrus_store::logins::save(ctx.conn(), &manager)?;
+            hydrus_store::settings::set(
+                ctx.conn(),
+                &hydrus_store::network::NetworkSettings {
+                    detect_sleep: false,
+                    network_timeout: 2,
+                    max_connection_attempts: 1,
+                    max_get_attempts: 1,
+                    ..Default::default()
+                },
+            )
+        })
+        .unwrap();
+    let _rendered = headless::init();
+    let slots = hydrus_gui::login_domains_window::Slots::default();
+    let window = hydrus_gui::login_domains_window::open(&store, &slots).unwrap();
+    window.invoke_row_clicked(0, false, false);
+    window.invoke_action("do-login".into());
+    window.invoke_action("confirm-login".into());
+    assert!(slots.run.busy());
+    // Deliberately do not drain Slint timers: the actual worker must finish and
+    // release admission before its old completion callback reaches the GUI.
+    let started = Instant::now();
+    loop {
+        let saved = store.read(hydrus_store::logins::load).unwrap();
+        if saved.domains[&site.domain].validity == hydrus_parse::login::Validity::Valid
+            && hydrus_store::login_runtime::current(&store)
+                .unwrap()
+                .is_none()
+        {
+            break;
+        }
+        assert!(
+            started.elapsed() < Duration::from_secs(16),
+            "owned manual process did not commit"
+        );
+        std::thread::sleep(Duration::from_millis(10));
+    }
+    assert!(
+        slots.run.busy(),
+        "the old completion is still queued for the GUI"
+    );
+    let cases = hydrus_testkit::fixture_json("login_execution.json");
+    let case = cases
+        .as_array()
+        .unwrap()
+        .iter()
+        .find(|case| case["name"] == "final_cookie")
+        .unwrap();
+    let mut successor = script;
+    successor.required_cookies = legacy::login_script(
+        &SerialisableObject::from_tuple_str(&case["script"].to_string()).unwrap(),
+    )
+    .unwrap()
+    .required_cookies;
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let execution = runtime.block_on(async {
+        let engine = hydrus_net::NetEngine::new(
+            Store::open(store.dir()).unwrap(),
+            hydrus_net::NetOptions {
+                obey_bandwidth: false,
+                detect_sleep: false,
+                max_connection_attempts: 1,
+                max_get_attempts: 1,
+                ..Default::default()
+            },
+        )
+        .unwrap();
+        engine
+            .run_login_with_results(
+                &successor,
+                &site.domain,
+                &Default::default(),
+                &hydrus_net::Job::new(),
+                |_| {},
+            )
+            .await
+            .unwrap()
+    });
+    assert_eq!(execution.outcome.text(), case["outcome"].as_str().unwrap());
+    let newer = store.read(hydrus_store::logins::load).unwrap();
+    assert_eq!(
+        newer.domains[&site.domain].validity,
+        hydrus_parse::login::Validity::Invalid
+    );
+    assert!(
+        hydrus_store::login_runtime::current(&store)
+            .unwrap()
+            .is_none()
+    );
+    assert!(slots.run.busy());
+    until_login(|| !slots.run.busy());
+    assert_eq!(
+        store.read(hydrus_store::logins::load).unwrap(),
+        newer,
+        "an old GUI callback must not reapply success over the successor's recorded failure"
+    );
+    assert_eq!(site.requests.lock().unwrap().len(), 2);
+    slots.cancel();
+}

@@ -47,8 +47,6 @@ fn start_next(
         return;
     };
     let domain = input.domain.clone();
-    let key = input.script.key.clone();
-    let store = input.source.clone();
     let progress: crate::login_test_window::Progress = Rc::new({
         let status = status.clone();
         let domain = domain.clone();
@@ -59,25 +57,9 @@ fn start_next(
         move |execution| {
             let outcome = execution.outcome;
             *status.borrow_mut() = format!("{domain}: {}", outcome.text());
-            let now = jiff::Timestamp::now().as_second();
-            let saved = store.write_and_refresh({
-                let domain = domain.clone();
-                let key = key.clone();
-                let outcome = outcome.clone();
-                move |ctx| {
-                    let mut manager = hydrus_store::logins::load(ctx.conn())?;
-                    if let Some(login) = manager.domains.get_mut(&domain)
-                        && outcome.update_domain(login, &key, now)
-                    {
-                        hydrus_store::logins::save(ctx.conn(), &manager)?;
-                    }
-                    Ok(())
-                }
-            });
-            if let Err(error) = saved {
-                *status.borrow_mut() = error.to_string();
-                return;
-            }
+            // The lease owner has already committed the real-domain outcome.
+            // This delayed UI callback only reports it; startup/admission errors
+            // have no owner and must not modify a domain from here.
             if outcome != hydrus_net::login::Outcome::Cancelled {
                 start_next(&run, queue.clone(), status.clone());
             }
