@@ -11,6 +11,8 @@
 #
 # HYDRUS_CHECK_LOW_DISK=1 deletes each crate's test executables after its
 # tests (they are hundreds of megabytes each).
+# HYDRUS_CHECK_KEEP_GUI=1 retains GUI test executables during that cleanup,
+# so a targeted GUI run can be reused by the final workspace check.
 set -u
 cd "$(dirname "$0")/.."
 
@@ -27,7 +29,11 @@ step() {
 }
 clean_executables() {
   if [ "${HYDRUS_CHECK_LOW_DISK:-0}" = 1 ]; then
-    find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" -delete
+    if [ "${HYDRUS_CHECK_KEEP_GUI:-0}" = 1 ]; then
+      find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" ! -name "gui-*" -delete
+    else
+      find target/debug/deps -maxdepth 1 -type f -executable ! -name "*.so" ! -name "*.rlib" -delete
+    fi
   fi
 }
 mkdir -p target
