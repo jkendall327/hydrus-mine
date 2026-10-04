@@ -32,7 +32,7 @@ def record(session):
                 try:return real.GetValue()
                 except Exception as e:
                     inputs[-1]['error']=str(e);raise
-            finally:real.deleteLater()
+            finally:real.hide();real.deleteLater()
         def yes(parent,message,**kwargs):
             answer=answers.pop(0);questions.append({'message':message,'answer':answer})
             return QW.QDialog.DialogCode.Accepted if answer else QW.QDialog.DialogCode.Rejected
