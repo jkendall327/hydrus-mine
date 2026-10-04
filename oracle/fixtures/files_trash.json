@@ -218,5 +218,589 @@
       "resolved": false,
       "description": "Remove one file from art?"
     }
+  ],
+  "advanced_controls": [
+    {
+      "advanced": false,
+      "enabled": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "advanced": true,
+      "enabled": [
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "reason_queue": {
+    "events": [
+      {
+        "message": "Enter the reason",
+        "default": "I do not like the file.",
+        "answer": null,
+        "rows": [
+          "alpha",
+          "beta",
+          "beta",
+          ""
+        ]
+      },
+      {
+        "message": "Enter the reason",
+        "default": "I do not like the file.",
+        "answer": "synthetic reason 日本",
+        "rows": [
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "synthetic reason 日本"
+        ]
+      },
+      {
+        "message": "Enter the reason",
+        "default": "I do not like the file.",
+        "answer": "",
+        "rows": [
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "synthetic reason 日本",
+          ""
+        ]
+      },
+      {
+        "message": "Enter the reason",
+        "default": "beta",
+        "answer": "edited beta",
+        "rows": [
+          "alpha",
+          "edited beta",
+          "beta",
+          "",
+          "synthetic reason 日本",
+          ""
+        ]
+      }
+    ],
+    "up": [
+      "edited beta",
+      "alpha",
+      "beta",
+      "",
+      "synthetic reason 日本",
+      ""
+    ],
+    "down": [
+      "alpha",
+      "edited beta",
+      "beta",
+      "",
+      "synthetic reason 日本",
+      ""
+    ],
+    "delete_question": [
+      "Remove 1 selected?",
+      "Remove 1 selected?"
+    ],
+    "cancel_rows": [
+      "alpha",
+      "edited beta",
+      "beta",
+      "",
+      "synthetic reason 日本",
+      ""
+    ],
+    "deleted_rows": [
+      "alpha",
+      "beta",
+      "",
+      "synthetic reason 日本",
+      ""
+    ],
+    "staged": [
+      "I do not like it.",
+      "It is bad quality.",
+      "It is not appropriate for this client.",
+      "Temporary delete--I want to bring it back later."
+    ],
+    "reopened": [
+      "alpha",
+      "beta",
+      "",
+      "synthetic reason 日本",
+      ""
+    ]
+  },
+  "advanced": [
+    {
+      "existing": null,
+      "last": null,
+      "remember": true,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 0,
+        "custom": "",
+        "reason_enabled": true,
+        "custom_enabled": false
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "synthetic custom 日本",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "existing": null,
+      "last": "beta",
+      "remember": true,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 3,
+        "custom": "",
+        "reason_enabled": true,
+        "custom_enabled": false
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "synthetic custom 日本",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "existing": null,
+      "last": "outside list",
+      "remember": true,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "outside list",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "synthetic custom 日本",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "existing": null,
+      "last": "outside list",
+      "remember": false,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 0,
+        "custom": "",
+        "reason_enabled": true,
+        "custom_enabled": false
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "outside list",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "existing": "alpha",
+      "last": "beta",
+      "remember": true,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "keep existing reason: alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 1,
+        "custom": "",
+        "reason_enabled": true,
+        "custom_enabled": false
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "keep existing reason: alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "synthetic custom 日本",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "existing": "outside existing",
+      "last": "beta",
+      "remember": true,
+      "hash": "2ac9015afea5a8632145f184e6a89d26424a204635b156d6ad7158a5789f9e61",
+      "initial": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom",
+          "keep existing reason: outside existing"
+        ],
+        "reason": 6,
+        "custom": "",
+        "reason_enabled": true,
+        "custom_enabled": false
+      },
+      "accepted": {
+        "actions": [
+          "Send one file from art to trash?",
+          "Permanently delete one file?",
+          "Permanently delete this file and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom",
+          "keep existing reason: outside existing"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_reason": "synthetic custom 日本",
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    }
+  ],
+  "action_cases": [
+    {
+      "selected": "Remove 2 files from art?",
+      "state": {
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)",
+          "Permanently delete 2 files?",
+          "Permanently delete these 2 files and do not save a deletion record?"
+        ],
+        "action": 0,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_action": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "selected": "Remove one file from my files?",
+      "state": {
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)",
+          "Permanently delete 2 files?",
+          "Permanently delete these 2 files and do not save a deletion record?"
+        ],
+        "action": 1,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_action": "6c6f63616c2066696c6573"
+    },
+    {
+      "selected": "Delete from all local services? (force send to trash)",
+      "state": {
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)",
+          "Permanently delete 2 files?",
+          "Permanently delete these 2 files and do not save a deletion record?"
+        ],
+        "action": 2,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_action": "616c6c206c6f63616c206d65646961"
+    },
+    {
+      "selected": "Permanently delete 2 files?",
+      "state": {
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)",
+          "Permanently delete 2 files?",
+          "Permanently delete these 2 files and do not save a deletion record?"
+        ],
+        "action": 3,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": true,
+        "custom_enabled": true
+      },
+      "saved_action": "physical_delete"
+    },
+    {
+      "selected": "Permanently delete these 2 files and do not save a deletion record?",
+      "state": {
+        "actions": [
+          "Remove 2 files from art?",
+          "Remove one file from my files?",
+          "Delete from all local services? (force send to trash)",
+          "Permanently delete 2 files?",
+          "Permanently delete these 2 files and do not save a deletion record?"
+        ],
+        "action": 4,
+        "reasons": [
+          "Deleted from Preview or Media Viewer.",
+          "alpha",
+          "beta",
+          "beta",
+          "",
+          "custom"
+        ],
+        "reason": 5,
+        "custom": "synthetic custom 日本",
+        "reason_enabled": false,
+        "custom_enabled": false
+      },
+      "saved_action": "clear_delete"
+    }
+  ],
+  "mixed_existing": {
+    "actions": [
+      "Remove 2 files from art?",
+      "Remove one file from my files?",
+      "Delete from all local services? (force send to trash)",
+      "Permanently delete 2 files?",
+      "Permanently delete these 2 files and do not save a deletion record?"
+    ],
+    "action": 4,
+    "reasons": [
+      "Deleted from Preview or Media Viewer.",
+      "alpha",
+      "beta",
+      "beta",
+      "",
+      "custom",
+      "(all files have existing file deletion reasons and they differ): do not alter them."
+    ],
+    "reason": 6,
+    "custom": "synthetic custom 日本",
+    "reason_enabled": false,
+    "custom_enabled": false
+  },
+  "physical_remember": [
+    {
+      "before": null,
+      "after": null
+    },
+    {
+      "before": "6c6f63616c2066696c6573",
+      "after": "physical_delete"
+    },
+    {
+      "before": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270",
+      "after": "a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270a270"
+    },
+    {
+      "before": "clear_delete",
+      "after": "physical_delete"
+    }
   ]
 }

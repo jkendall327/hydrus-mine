@@ -42,6 +42,18 @@ use hydrus_store::trash::TrashSettings;
 use rusqlite::Connection;
 
 macro_rules! settings {
+    (@save $conn:ident, $after:ident, $before:ident, deletion) => {
+        if $after.deletion != $before.deletion {
+            let mut deletion = $after.deletion.clone();
+            let current: hydrus_store::settings::DeletionPreferences = hydrus_store::settings::get($conn)?;
+            if deletion.last_action == $before.deletion.last_action {deletion.last_action = current.last_action;}
+            if deletion.last_reason == $before.deletion.last_reason {deletion.last_reason = current.last_reason;}
+            hydrus_store::settings::set($conn, &deletion)?;
+        }
+    };
+    (@save $conn:ident, $after:ident, $before:ident, $field:ident) => {
+        if $after.$field != $before.$field {hydrus_store::settings::set($conn, &$after.$field)?;}
+    };
     (@load $conn:ident, $ty:ty, $load:path) => { $load($conn) };
     (@load $conn:ident, $ty:ty) => { hydrus_store::settings::get::<$ty>($conn) };
     ($($field:ident: $ty:ty $(=> $load:path)?),* $(,)?) => {
@@ -61,9 +73,7 @@ macro_rules! settings {
             /// Write those changed since `before`.
             pub fn save(&self, conn: &Connection, before: &Self) -> hydrus_store::Result<()> {
                 $(
-                    if self.$field != before.$field {
-                        hydrus_store::settings::set(conn, &self.$field)?;
-                    }
+                    settings!(@save conn, self, before, $field);
                 )*
                 Ok(())
             }
@@ -166,6 +176,8 @@ pub enum Value {
     Checker(CheckerOptions),
     /// The editable regular expression/description pairs.
     RegexFavourites(RegexFavourites),
+    /// Ordered advanced file-deletion reason suggestions.
+    DeletionReasons(Vec<String>),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
     ImportOptions(crate::import_options_panel::Value),
@@ -231,6 +243,8 @@ pub enum Kind {
     Checker,
     /// A button opening the transactional favourites list editor.
     RegexFavourites,
+    /// Inline ordered advanced file-deletion reason queue.
+    DeletionReasons,
     /// Importable current file domains, edited in a child selector.
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
@@ -452,6 +466,13 @@ fn opt(label: &'static str, kind: Kind, get: Get, set: Set) -> Item {
         set,
         enabled: |_| true,
     })
+}
+
+fn enabled(mut item: Item, predicate: fn(&Settings) -> bool) -> Item {
+    if let Item::Opt(option) = &mut item {
+        option.enabled = predicate;
+    }
+    item
 }
 
 /// Tag service choices in reference order: all known tags first when offered,
@@ -1668,6 +1689,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             "files and trash",
             vec![
                 check(
+                    "When copying file hashes, prefix with booru-friendly hash type: ",
+                    |s| s.file_handling.prefix_hash_when_copying,
+                    |s, v| s.file_handling.prefix_hash_when_copying = v,
+                ),
+                check(
                     "Confirm sending files to trash: ",
                     |s| s.deletion.confirm_trash,
                     |s, v| s.deletion.confirm_trash = v,
@@ -1676,11 +1702,6 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     "Confirm sending more than one file to archive or inbox: ",
                     |s| s.deletion.confirm_archive,
                     |s, v| s.deletion.confirm_archive = v,
-                ),
-                check(
-                    "When copying file hashes, prefix with booru-friendly hash type: ",
-                    |s| s.file_handling.prefix_hash_when_copying,
-                    |s, v| s.file_handling.prefix_hash_when_copying = v,
                 ),
                 check(
                     "When physically deleting files or folders, send them to the OS's recycle bin: ",
@@ -1731,6 +1752,47 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "In duplicates auto-resolution, ensure deletees are inboxed before delete: ",
                             |s| s.delete_lock.reinbox_in_auto_resolution,
                             |s, v| s.delete_lock.reinbox_in_auto_resolution = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "advanced file deletion and custom reasons",
+                    vec![
+                        check(
+                            "Use the advanced file deletion dialog: ",
+                            |s| s.deletion.advanced,
+                            |s, v| s.deletion.advanced = v,
+                        ),
+                        enabled(
+                            check(
+                                "Remember the last action: ",
+                                |s| s.deletion.remember_action,
+                                |s, v| s.deletion.remember_action = v,
+                            ),
+                            |s| s.deletion.advanced,
+                        ),
+                        enabled(
+                            check(
+                                "Remember the last reason: ",
+                                |s| s.deletion.remember_reason,
+                                |s, v| s.deletion.remember_reason = v,
+                            ),
+                            |s| s.deletion.advanced,
+                        ),
+                        enabled(
+                            opt(
+                                "",
+                                Kind::DeletionReasons,
+                                Rc::new(|s| Value::DeletionReasons(s.deletion.reasons.clone())),
+                                Rc::new(|s, v| match v {
+                                    Value::DeletionReasons(reasons) => {
+                                        s.deletion.reasons.clone_from(reasons);
+                                        Ok(())
+                                    }
+                                    _ => Err(wrong("deletion reasons")),
+                                }),
+                            ),
+                            |s| s.deletion.advanced,
                         ),
                     ],
                 ),
@@ -3420,6 +3482,30 @@ impl Editor {
     }
 
     /// Provider order staged independently of which options page is visible.
+    /// Reason queue edits stay in the parent draft until Options applies.
+    pub fn edited_deletion_reasons(&self) -> Vec<String> {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|v| {
+                if let Value::DeletionReasons(reasons) = v {
+                    Some(reasons.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_default()
+    }
+    pub fn set_deletion_reasons(&mut self, reasons: Vec<String>) {
+        if let Some(value) = self
+            .values
+            .iter_mut()
+            .flatten()
+            .find(|v| matches!(v, Value::DeletionReasons(_)))
+        {
+            *value = Value::DeletionReasons(reasons);
+        }
+    }
     pub fn edited_provider_order(&self) -> Vec<Provider> {
         self.values
             .iter()

@@ -120,6 +120,24 @@ pub fn confirm_deletion(store: &Store, files: &[HashId], deletion: &Deletion) ->
         != 1
 }
 
+/// Translate a simple menu action to the advanced dialog's suggested action.
+pub fn suggested_action(
+    store: &Store,
+    deletion: &Deletion,
+) -> Option<hydrus_store::settings::DeletionAction> {
+    use hydrus_store::settings::DeletionAction;
+    let snapshot = store.snapshot();
+    match deletion {
+        Deletion::FromDomain { domain, .. } => snapshot
+            .services
+            .get(*domain)
+            .ok()
+            .map(|s| DeletionAction::Domain(s.key.clone())),
+        Deletion::ToTrash => None,
+        Deletion::Physically => Some(DeletionAction::Physical),
+    }
+}
+
 /// Archive files in the inbox.
 pub fn archive(store: &Store, files: &[HashId]) -> hydrus_store::Result<()> {
     let files = files.to_vec();

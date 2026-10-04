@@ -429,14 +429,33 @@ impl Setting for FolderSettings {
     const KEY: &'static str = "folders";
 }
 
+/// The local deletion choice remembered by the advanced dialog.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+pub enum DeletionAction {
+    Domain(hydrus_core::ServiceKey),
+    Physical,
+    ClearRecord,
+}
+
 /// Confirmation preferences for local file operations.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
+#[allow(clippy::struct_excessive_bools)] // Independent reference checkbox preferences.
 pub struct DeletionPreferences {
     /// Ask before simple deletion from one local domain.
     pub confirm_trash: bool,
     /// Ask before archiving or inboxing multiple actionable files.
     pub confirm_archive: bool,
+    /// Show the action/reason chooser instead of a simple question.
+    pub advanced: bool,
+    /// Retain the last accepted action when it is offered again.
+    pub remember_action: bool,
+    /// Retain the last accepted non-default reason.
+    pub remember_reason: bool,
+    /// Ordered suggestions; duplicates and empty reasons are allowed.
+    pub reasons: Vec<String>,
+    pub last_action: Option<DeletionAction>,
+    pub last_reason: Option<String>,
 }
 
 impl Default for DeletionPreferences {
@@ -444,6 +463,20 @@ impl Default for DeletionPreferences {
         Self {
             confirm_trash: true,
             confirm_archive: true,
+            advanced: false,
+            remember_action: false,
+            remember_reason: true,
+            reasons: [
+                "I do not like it.",
+                "It is bad quality.",
+                "It is not appropriate for this client.",
+                "Temporary delete--I want to bring it back later.",
+            ]
+            .into_iter()
+            .map(str::to_owned)
+            .collect(),
+            last_action: None,
+            last_reason: None,
         }
     }
 }

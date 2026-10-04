@@ -4569,3 +4569,165 @@ fn files_trash_confirmations_are_staged_reopened_and_consumed() {
     viewer.invoke_close_requested();
     assert!(windows.get(0).is_some());
 }
+
+#[test]
+fn advanced_deletion_queue_stages_custom_reason_cancel_and_real_consumer() {
+    use hydrus_store::settings::DeletionPreferences;
+    let (_dirs, store) = store();
+    let _windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(super::common::all_local_page(store.clone())),
+    );
+    let preferences = || {
+        store
+            .read(hydrus_store::settings::get::<DeletionPreferences>)
+            .unwrap()
+    };
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "files and trash");
+    assert!(!row(&options, "Remember the last reason: ").1.enabled);
+    let (advanced, _) = row(&options, "Use the advanced file deletion dialog: ");
+    options.invoke_check_toggled(advanced, true);
+    assert!(row(&options, "Remember the last reason: ").1.enabled);
+    options.invoke_reason_action("add".into());
+    let child = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    assert_eq!(child.get_message(), "Enter the reason");
+    assert_eq!(child.get_text(), "I do not like the file.");
+    child.invoke_name_entered("synthetic staged reason 日本".into());
+    assert!(
+        !preferences()
+            .reasons
+            .contains(&"synthetic staged reason 日本".into())
+    );
+    options.invoke_reason_clicked(0, false, false);
+    options.invoke_reason_action("edit".into());
+    let stale = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    options.invoke_apply();
+    assert!(
+        bound.options.borrow().is_some(),
+        "child blocks parent Apply"
+    );
+    options.invoke_cancel();
+    assert!(!stale.window().is_visible());
+    stale.invoke_name_entered("stale replacement".into());
+    options.invoke_apply();
+    assert!(!preferences().advanced);
+    assert!(
+        !preferences()
+            .reasons
+            .contains(&"synthetic staged reason 日本".into())
+    );
+
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&options, "files and trash");
+    let (advanced, _) = row(&options, "Use the advanced file deletion dialog: ");
+    options.invoke_check_toggled(advanced, true);
+    options.invoke_reason_action("add".into());
+    hydrus_gui::options_deletion::last_reason_editor()
+        .unwrap()
+        .invoke_name_entered("synthetic applied reason 日本".into());
+    let (remember, _) = row(&options, "Remember the last action: ");
+    options.invoke_check_toggled(remember, true);
+    options.invoke_reason_clicked(0, false, false);
+    let original_rows = options.get_reason_rows();
+    let original = (0..original_rows.row_count())
+        .map(|i| {
+            original_rows
+                .row_data(i)
+                .unwrap()
+                .cells
+                .row_data(0)
+                .unwrap()
+        })
+        .collect::<Vec<_>>();
+    options.invoke_reason_action("down".into());
+    assert_eq!(
+        options
+            .get_reason_rows()
+            .row_data(1)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        original[0]
+    );
+    options.invoke_reason_action("up".into());
+    options.invoke_reason_action("delete".into());
+    let question = hydrus_gui::options_deletion::last_reason_editor().unwrap();
+    assert_eq!(question.get_message(), "Remove 1 selected?");
+    question.invoke_answered(false);
+    assert_eq!(options.get_reason_rows().row_count(), original.len());
+    options.invoke_apply();
+    assert!(preferences().advanced);
+    assert!(preferences().remember_action);
+    assert_eq!(
+        preferences().reasons.last().map(String::as_str),
+        Some("synthetic applied reason 日本")
+    );
+    open(&ui);
+    let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
+    show_page(&reopened, "files and trash");
+    assert_eq!(
+        reopened
+            .get_reason_rows()
+            .row_data(reopened.get_reason_rows().row_count() - 1)
+            .unwrap()
+            .cells
+            .row_data(0)
+            .unwrap(),
+        "synthetic applied reason 日本"
+    );
+    reopened.invoke_cancel();
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let recording = hydrus_testkit::fixture_json("files_trash.json");
+    let hash: hydrus_core::Sha256 = recording["advanced"][0]["hash"]
+        .as_str()
+        .unwrap()
+        .parse()
+        .unwrap();
+    let file = store
+        .read(|c| hydrus_store::master::hash_id(c, &hash))
+        .unwrap()
+        .unwrap();
+    let page = bound.current.borrow().clone();
+    page.borrow_mut().select_files(&[file]);
+    ui.invoke_delete_selected();
+    let deletion = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    assert_eq!(
+        deletion
+            .get_reasons()
+            .row_data(deletion.get_reasons().row_count() - 2)
+            .unwrap(),
+        "synthetic applied reason 日本"
+    );
+    let before = preferences();
+    deletion.invoke_cancel();
+    deletion.invoke_accept_deletion();
+    assert_eq!(preferences(), before);
+    assert!(page.borrow().results().contains(&file));
+    ui.invoke_delete_selected();
+    let deletion = bound.delete_files.borrow().as_ref().unwrap().clone_strong();
+    let index = (0..deletion.get_reasons().row_count())
+        .find(|&i| deletion.get_reasons().row_data(i).unwrap() == "synthetic applied reason 日本")
+        .unwrap();
+    deletion.invoke_reason_selected(i32::try_from(index).unwrap());
+    deletion.invoke_accept_deletion();
+    assert!(!page.borrow().results().contains(&file));
+    let batch = store
+        .read(|c| hydrus_store::media::load(c, &store.snapshot().services, None, &[file]))
+        .unwrap();
+    assert_eq!(
+        batch.results[0].deletion_reason.as_deref(),
+        Some("synthetic applied reason 日本")
+    );
+    assert_eq!(
+        preferences().last_reason.as_deref(),
+        Some("synthetic applied reason 日本")
+    );
+    assert!(preferences().last_action.is_some());
+}

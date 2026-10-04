@@ -9,6 +9,7 @@ mod auto_resolution_rules;
 mod checker_options;
 mod clipboard_urls;
 mod datetime_editor;
+mod delete_files;
 mod downloader_definitions;
 mod duplicates_page;
 mod edit_subscription;
