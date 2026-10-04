@@ -1001,12 +1001,10 @@ fn open_converter(
         done,
     ) {
         Ok(w) => {
-            w.on_closed({
-                let refresh = refresh.clone();
-                move || refresh(true)
-            });
+            let refresh_now = refresh.clone();
+            w.on_closed(move || refresh(true));
             *slots.strings.converter.borrow_mut() = Some(w);
-            refresh(false);
+            refresh_now(false);
         }
         Err(e) => eprintln!("could not open converter: {e}"),
     }
@@ -1207,12 +1205,10 @@ fn rule_action(
         }
     });
     let window = open_editor(store, child_editor, slots, slots.rule.clone(), done)?;
-    window.on_closed({
-        let refresh = refresh.clone();
-        move || refresh(true)
-    });
+    let refresh_now = refresh.clone();
+    window.on_closed(move || refresh(true));
     *slots.rule.borrow_mut() = Some(window);
-    refresh(false);
+    refresh_now(false);
     Ok(())
 }
 
@@ -1245,12 +1241,10 @@ fn open_default_processor(
         done,
     ) {
         Ok(window) => {
-            window.on_closed({
-                let refresh = refresh.clone();
-                move || refresh(true)
-            });
+            let refresh_now = refresh.clone();
+            window.on_closed(move || refresh(true));
             *slots.strings.processor.borrow_mut() = Some(window);
-            refresh(false);
+            refresh_now(false);
         }
         Err(e) => eprintln!("could not open default processor: {e}"),
     }
