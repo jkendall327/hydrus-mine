@@ -2878,3 +2878,7 @@ thumbnail banners and the title of an already-open viewer. Cancelling either
 owner discards its draft and invalidates retained child callbacks. The Qt oracle
 drives all three reference buttons, namespace CRUD/movement and live preview.
 
+The banner editor child is held explicitly by the main window's Options owner.
+Its slot clears on child or parent close; retained stale callbacks cannot clear
+a replacement slot or commit an old draft. No test-only global window registry
+is used for banner editing.

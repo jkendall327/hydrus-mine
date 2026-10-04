@@ -322,6 +322,7 @@ pub(crate) fn open(
     checker_slot: &Rc<RefCell<Option<CheckerOptionsWindow>>>,
     reason_slot: &crate::options_deletion::Slot,
     frame_slot: &crate::options_frames::Slot,
+    banner_slot: &crate::tag_banner_window::Slot,
     applied: Rc<dyn Fn()>,
 ) -> Result<OptionsWindow, String> {
     let settings = store
@@ -350,7 +351,6 @@ pub(crate) fn open(
     let tag_slot: crate::write_tag_window::Slot = Rc::default();
     let import_slot: crate::import_options_panel_window::Slot = Rc::default();
     let namespace_slot: crate::namespace_sorts_window::Slot = Rc::default();
-    let banner_slot: crate::tag_banner_window::Slot = Rc::default();
     let active = Rc::new(Cell::new(true));
     let cog_target: Rc<RefCell<Option<SortCogTarget>>> = Rc::default();
     let names: Vec<StandardListViewItem> = editor

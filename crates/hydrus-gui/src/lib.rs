@@ -260,6 +260,8 @@ pub struct Bound {
     pub options_reason_child: options_deletion::Slot,
     /// Options-owned detached frame geometry editor.
     pub options_frame_child: options_frames::Slot,
+    /// The Options-owned detached banner editor, while one is open.
+    pub options_banner_child: tag_banner_window::Slot,
     /// The Ctrl+P command palette while open.
     pub command_palette: command_palette_window::Slot,
     /// The about window while it is open.
@@ -1746,6 +1748,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let options: Rc<RefCell<Option<OptionsWindow>>> = Rc::default();
     let options_reason_child: options_deletion::Slot = Rc::default();
     let options_frame_child: options_frames::Slot = Rc::default();
+    let options_banner_child: tag_banner_window::Slot = Rc::default();
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
@@ -1915,6 +1918,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 let slot = options.clone();
                 let reason_slot = options_reason_child.clone();
                 let frame_slot = options_frame_child.clone();
+                let banner_slot = options_banner_child.clone();
                 let checker_slot = checker_options.clone();
                 let viewer = viewer.clone();
                 let change_pages = change_pages.clone();
@@ -1958,6 +1962,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                         &checker_slot,
                         &reason_slot,
                         &frame_slot,
+                        &banner_slot,
                         applied,
                     ) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
@@ -3784,6 +3789,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         options_reason_child,
         options_frame_child,
+        options_banner_child,
         command_palette,
         about,
         services_review,

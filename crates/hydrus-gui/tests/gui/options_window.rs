@@ -5190,7 +5190,12 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
         let (at, button) = row(&options, label);
         assert_eq!(button.kind, 27);
         options.invoke_banner_clicked(at);
-        let child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+        let child = bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
         replay_banner_events(&child, &events[index * 10..(index + 1) * 10]);
         options.invoke_apply();
         assert!(options.window().is_visible(), "parent waits for its child");
@@ -5212,13 +5217,19 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
                 options = bound.options.borrow().as_ref().unwrap().clone_strong();
                 show_page(&options, "tag presentation");
                 options.invoke_banner_clicked(row(&options, label).0);
-                let again = hydrus_gui::tag_banner_window::last_opened().unwrap();
+                let again = bound
+                    .options_banner_child
+                    .borrow()
+                    .as_ref()
+                    .unwrap()
+                    .clone_strong();
                 replay_banner_events(&again, &events[10..20]);
                 again.invoke_action("apply".into());
                 old_children.push(again);
             }
         }
         assert!(!child.window().is_visible());
+        assert!(bound.options_banner_child.borrow().is_none());
         old_children.push(child);
     }
     assert_eq!(
@@ -5279,7 +5290,12 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     let reopened = bound.options.borrow().as_ref().unwrap().clone_strong();
     show_page(&reopened, "tag presentation");
     reopened.invoke_banner_clicked(row(&reopened, "On media viewer top:").0);
-    let reopened_child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+    let reopened_child = bound
+        .options_banner_child
+        .borrow()
+        .as_ref()
+        .unwrap()
+        .clone_strong();
     assert_eq!(
         reopened_child.get_preview(),
         events[39]["preview"].as_str().unwrap()
@@ -5305,11 +5321,21 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
         reopened_child.window().is_visible(),
         "stale children cannot clear a fresh owner slot"
     );
+    assert!(std::ptr::eq(
+        bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .window(),
+        reopened_child.window()
+    ));
     reopened_child.set_showing(false);
     reopened_child.invoke_changed();
     assert_eq!(reopened_child.get_preview(), "not showing");
     reopened.invoke_cancel();
     assert!(!reopened_child.window().is_visible());
+    assert!(bound.options_banner_child.borrow().is_none());
     reopened_child.invoke_action("apply".into());
     assert_eq!(store.read(settings::get::<TagSummaries>).unwrap(), saved);
     assert_eq!(
@@ -5322,7 +5348,12 @@ fn banner_options_match_qt_drafts_and_refresh_cached_thumbnails_and_open_viewer(
     show_page(&options, "tag presentation");
     for label in ["On thumbnail top:", "On media viewer top:"] {
         options.invoke_banner_clicked(row(&options, label).0);
-        let child = hydrus_gui::tag_banner_window::last_opened().unwrap();
+        let child = bound
+            .options_banner_child
+            .borrow()
+            .as_ref()
+            .unwrap()
+            .clone_strong();
         child.set_showing(false);
         child.invoke_changed();
         child.invoke_action("apply".into());

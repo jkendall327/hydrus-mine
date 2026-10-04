@@ -12,11 +12,6 @@ use std::{
 };
 pub type Slot = Rc<RefCell<Option<TagBannerWindow>>>;
 pub type Applied = Rc<dyn Fn(TagSummaryGenerator)>;
-thread_local! {static LAST:RefCell<Option<slint::Weak<TagBannerWindow>>>=const {RefCell::new(None)};}
-pub fn last_opened() -> Option<TagBannerWindow> {
-    LAST.with(|last| last.borrow().as_ref().and_then(slint::Weak::upgrade))
-        .filter(|window| window.window().is_visible())
-}
 pub fn cancel(slot: &Slot) {
     let window = slot
         .borrow()
@@ -301,6 +296,5 @@ pub fn open(
     });
     window.show()?;
     *slot.borrow_mut() = Some(window.clone_strong());
-    LAST.with(|last| *last.borrow_mut() = Some(window.as_weak()));
     Ok(window)
 }
