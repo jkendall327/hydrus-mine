@@ -29,7 +29,27 @@ fn services_menu_opens_review_and_refreshes() {
         .unwrap();
     window.invoke_selected_service(i32::try_from(index).unwrap());
     assert!(window.get_statistics().contains("total mappings involving"));
-    assert!(window.get_unavailable().contains("not available yet"));
+    assert!(window.get_unavailable().is_empty());
+    let trash = store
+        .snapshot()
+        .services
+        .all()
+        .find(|service| matches!(service.kind, hydrus_core::service::ServiceKind::Trash))
+        .unwrap()
+        .name
+        .clone();
+    let trash_index = window
+        .get_services()
+        .iter()
+        .position(|service| service.ends_with(&format!(": {trash}")))
+        .unwrap();
+    window.invoke_selected_service(i32::try_from(trash_index).unwrap());
+    assert_eq!(
+        window.get_unavailable(),
+        "Bulk clear trash and undelete all are not available here yet."
+    );
+    window.invoke_selected_service(i32::try_from(index).unwrap());
+    assert!(window.get_unavailable().is_empty());
     window.invoke_show_id();
     assert!(window.get_database_id().starts_with("service id: "));
     let copied = std::rc::Rc::new(std::cell::RefCell::new(Vec::new()));
