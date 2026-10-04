@@ -138,6 +138,66 @@
       "tooltip": "Otherwise, copy title and text."
     }
   ],
+  "cog_openings": [
+    {
+      "button": "right",
+      "changed": false,
+      "preferences": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "menus": []
+    },
+    {
+      "button": "left",
+      "changed": false,
+      "preferences": [
+        true,
+        true,
+        true,
+        false
+      ],
+      "menus": [
+        [
+          true,
+          true,
+          true,
+          false
+        ]
+      ]
+    },
+    {
+      "button": "right",
+      "changed": true,
+      "preferences": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "menus": []
+    },
+    {
+      "button": "left",
+      "changed": true,
+      "preferences": [
+        true,
+        true,
+        false,
+        false
+      ],
+      "menus": [
+        [
+          true,
+          true,
+          false,
+          false
+        ]
+      ]
+    }
+  ],
   "initial_cursors": [
     {
       "name": "empty",

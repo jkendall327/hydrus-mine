@@ -196,7 +196,10 @@ insertion, six copy variants (including empty-current JSON/plain text), and actu
 NotePanel middle mouse events capture the consumers. Both real modal DialogEdit
 Cancels close their owners through recorded dirty-note confirmations while keeping
 changed preferences; reopened menus/cursors and serialized flags are captured.
-Executed successfully 2026-10-04 23:31:06–23:31:09 UTC via serialized `with-oracle`,
+Actual cog mouse clicks confirm right-click opens nothing and left-click opens a
+fresh menu, including after another preference owner changes the saved cursor
+flag. Popup presentation alone is observed; the real button and menu creation
+remain active. Executed successfully 2026-10-04 23:48:17–23:48:20 UTC via serialized `with-oracle`,
 on a fresh basic fixture with clean shutdown. `notes_preferences.json` and its
 inspected PNG contain the evidence. Clipboard input/publication and notifications
 are supplied/observed; no note handler or registered file content is replaced.
