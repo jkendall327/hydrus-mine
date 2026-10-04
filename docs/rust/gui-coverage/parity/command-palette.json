@@ -469,7 +469,8 @@
       ],
       "behavior": "Real inline staged queue renders all six stable provider names in persisted priority. Plain/control/shift selection, up/down, confirmed deletion and cancelled deletion follow reference QueueListBox behavior. Worker arrival order cannot reorder display groups; removed providers neither query nor render. ParentApply commits, Cancel and old callbacks discard; reopen preserves saved order. All options use exact reference labels/defaults, stage under the Options draft, migrate legacy values and persist only on parentApply.",
       "limits": [
-        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend."
+        "Native providers expose existing supported native menu/search contexts. This setting claim does not promote the entire palette or any absent menu command/backend.",
+        "This original ordered-editor-list dialog contains the concrete Add descendant and is excluded as a group from the eligible concrete completion count."
       ],
       "referenceRecording": {
         "recorder": "oracle/record_command_palette.py",
@@ -498,7 +499,8 @@
         "crates/hydrus-gui-model/tests/model/command_palette.rs::late_workers_cannot_repopulate_a_new_query_or_closed_owner",
         "crates/hydrus-gui/tests/gui/command_palette.rs::palette_reopen_rejects_stale_callbacks_and_removed_providers_do_not_return",
         "crates/hydrus-gui/tests/gui/command_palette.rs::saved_favourite_current_page_policy_and_provider_order_reach_a_reopened_palette"
-      ]
+      ],
+      "countAsConcrete": false
     },
     {
       "id": "audit-options-command-palette-command-palette-search-provider-order-add",
@@ -556,7 +558,7 @@
         "3a56eced",
         "be58bc07"
       ],
-      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All12 eligible concrete option/queue leaves (plus the implemented ordered-editor-list group) have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
       "limits": [
         "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
         "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
@@ -598,7 +600,7 @@
         "3a56eced",
         "be58bc07"
       ],
-      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All12 eligible concrete option/queue leaves (plus the implemented ordered-editor-list group) have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
       "limits": [
         "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
         "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
@@ -640,7 +642,7 @@
         "3a56eced",
         "be58bc07"
       ],
-      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All13 concrete option/queue leaves have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
+      "behavior": "Ctrl+P opens an owned native frameless asynchronous palette with real pages/history/favourites/main-menu/media-menu/calculator providers; key/mouse selection launches actual supported contexts, cancelled/stale async results and prior owners cannot affect a reopened palette. All12 eligible concrete option/queue leaves (plus the implemented ordered-editor-list group) have actual consumers. Parent retainedPartial for explicitly documented whole-palette numerical/presentation boundaries.",
       "limits": [
         "Native calculator math functions may differ in the final float bit from Python, particularly gamma/lgamma. Very large intermediate powers and enormous integer-to-float conversions are bounded.",
         "Native palette uses plain matched text rather than Qt rich-text emphasis and result icons. Existing native menu command availability still bounds corresponding results.",
@@ -673,8 +675,8 @@
     }
   ],
   "counts": {
-    "concrete_first_pass": 13,
-    "parent_or_alias_first_pass": 0,
+    "concrete_first_pass": 12,
+    "parent_or_alias_first_pass": 1,
     "parent_partial": 3
   },
   "validation": {
