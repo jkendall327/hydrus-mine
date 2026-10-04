@@ -90,6 +90,18 @@ fn actual_legacy_subscription_list_imports_match_converted_settings_histories_an
         let direct_expected = &case["direct_normalised"];
         direct[2][0][3][1][0][2][0] = direct_expected[2][0][3][1][0][2][0].clone();
         direct[2][1][2][0][1][1] = direct_expected[2][1][2][0][1][1].clone();
+        if case["version"].as_u64().unwrap() <= 7 {
+            assert_eq!(direct[2][0][3][0][1], "unknown downloader");
+            assert_eq!(direct[2][0][3][0][0].as_str().unwrap().len(), 64);
+            // Both implementations generate a new identity when forgetting the
+            // obsolete gallery identifier. Only that random key is unconstrained.
+            direct[2][0][3][0][0] = direct_expected[2][0][3][0][0].clone();
+            expected[2][0][3][0][0]
+                .as_str()
+                .unwrap()
+                .clone_into(&mut imported[0].settings.gug_key);
+            assert!(imported[0].settings.paused);
+        }
         assert_eq!(direct, *direct_expected, "direct legacy conversion");
         let query = &mut imported[0].queries[0];
         exchange::rename_history(
@@ -131,6 +143,11 @@ fn malformed_and_unsupported_legacy_subscriptions_fail_without_reducing_history(
     invalid = valid;
     let _ = invalid[3].as_array_mut().unwrap().pop();
     assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    for period in [json!(0), json!(-1), json!(i64::MAX), json!("bad period")] {
+        let mut invalid = reference["cases"][5]["source"].clone();
+        invalid[3][3] = period;
+        assert!(exchange::decode_text(&invalid.to_string()).is_err());
+    }
     assert!(exchange::decode_text(&json!([90, 1, []]).to_string()).is_err());
     assert!(
         exchange::decode_text(&json!([90, 1, [[88, "empty", 4, []], [26, 3, []]]]).to_string())

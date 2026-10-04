@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Record actual Qt subscription-list import of legacy type3 versions8–10
+"""Record actual Qt subscription-list import of legacy type3 versions1–10
 and legacy query versions1–3.
 
 Real legacy subscriptions carry both complete URL histories and old import
@@ -60,13 +60,29 @@ def record(session):
         M.ShowWarning=lambda owner,text:messages.append(text)
         cases=[]
         try:
-            for version,query_version in [(8,3),(9,3),(10,3),(10,2),(10,1)]:
+            for version,query_version in [(8,3),(9,3),(10,3),(10,2),(10,1)]+[(v,3) for v in range(1,8)]:
                 incoming=json.loads(json.dumps(source));incoming[2]=version
                 legacy_query=incoming[3][1][0]
                 legacy_query[1]=query_version
                 if query_version<=2:
                     legacy_query[2].pop(9);legacy_query[2].pop(1)
                 if query_version==1:legacy_query[2].pop(6)
+                if version<=7:
+                    fields=source[3]
+                    # Obsolete gallery identifiers are intentionally discarded by
+                    # Python's v7 upgrade in favour of a new unknown downloader.
+                    gallery=[5,1,[0,None]]
+                    if version<=3:
+                        incoming[3]=[gallery,[],fields[1][0][2][0],3600,True,
+                            None,2001,False,fields[6],fields[7],NOW-3600,True,
+                            NOW-1200,NOW+600,'old delay',fields[1][0][2][8]]
+                        if version<=2: incoming[3][13:15]=[]
+                        if version==1: incoming[3].pop(11)
+                    else:
+                        incoming[3]=[gallery,[],fields[1],fields[2],None,2001,
+                            False,fields[6],fields[7],fields[8],fields[9]]
+                        if version==4: incoming[3].insert(4,True)
+                        if version>=6: incoming[3].extend([False,True,False])
                 if version==9: incoming[3].pop(13)
                 if version==8:
                     incoming[3].pop(13);incoming[3].pop(10)

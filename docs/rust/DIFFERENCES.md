@@ -644,8 +644,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   `hydrus serve` within five minutes.**
 - **Full subscription exchange transport** supports modern reference container 90
   JSON and PNG without dropping query history or cached header metadata. Legacy
-  subscription type3 versions8–10 now import through the actual list; versions1–7
-  remain pending. The original transport menus are wired; native imports still
+  subscription type3 versions1–10 now import through the actual list. The original transport menus are wired; native imports still
   pass through a reviewed child instead of adding immediately. Clipboard PNG
   image precedence and PNG list drops remain absent. Older unsupported seed-cache
   versions fail explicitly rather than losing history.
