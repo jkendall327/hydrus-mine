@@ -6,7 +6,9 @@
   "implementationCommits": [
     "d9769c36",
     "1e0604546c2a533eca3d050d5138e4c500022543",
-    "ed754fa172892a10a9d7f6fc233607f898c18f9e"
+    "ed754fa172892a10a9d7f6fc233607f898c18f9e",
+    "6303f615",
+    "ad269bf9"
   ],
   "claims": [
     {
@@ -86,6 +88,13 @@
           "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "source",
           "symbol": "let mut manage_tags ="
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 1478,
+          "commit": "ad269bf9",
+          "kind": "source",
+          "symbol": "window.on_manage_tags_selected"
         }
       ],
       "testAnchors": [
@@ -159,7 +168,8 @@
         "Multiple stored-tag selection/full context menus, parent uncommitted-change confirmation and suggested-tag side panels remain independently assessed. These features do not complete audit-media-manage-tags.",
         "Rust store/model/GUI tests are authored for root hosted CI; only real Qt recordings, cargo fmt, git diff --check and cached Slint source compilation were executed locally.",
         "Native invalid callback values retain the accepted preview rather than allowing out-of-range state.",
-        "The native child retains reference fields, labels and ranges but uses Slint controls/geometry and an Apply caption instead of the Qt framework OK caption."
+        "The native child retains reference fields, labels and ranges but uses Slint controls/geometry and an Apply caption instead of the Qt framework OK caption.",
+        "Actual Qt fails panel construction when an initial decimal integer exceeds signed 32-bit range (OverflowError), and its configured Python 4300-digit limit rejects larger raw synthetic previews (ValueError). Native deliberately keeps a usable initial value by arbitrary-precision decimal parsing and clamping; long leading-zero values preserve their small integer. Stored tags remain limited to1024 characters; longer recorder inputs are injected into real media tag-manager previews without DB writes."
       ],
       "sourceAnchors": [
         {
@@ -238,6 +248,13 @@
           "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "shared_source",
           "symbol": "pub fn decimal_digit"
+        },
+        {
+          "path": "crates/hydrus-gui/src/lib.rs",
+          "line": 1478,
+          "commit": "ad269bf9",
+          "kind": "source",
+          "symbol": "window.on_manage_tags_selected"
         }
       ],
       "testAnchors": [
@@ -261,6 +278,13 @@
           "commit": "ed754fa172892a10a9d7f6fc233607f898c18f9e",
           "kind": "reference_replay",
           "symbol": "fn initial_start_uses"
+        },
+        {
+          "path": "crates/hydrus-gui-model/tests/model/incremental_tagging.rs",
+          "line": 204,
+          "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+          "kind": "reference_replay",
+          "symbol": "fn actual_qt_initial_clamps_and_long_decimal_previews_preserve_safe_native_inference"
         }
       ],
       "referenceRecording": {
@@ -282,7 +306,29 @@
         "executedAt": "2026-10-04T20:48:26Z",
         "environment": "hydrus v688, actual Qt offscreen private basic legacy DB, shared with-oracle lock, activated pyenv Python; synthetic checkpoint tags and folder-log.example-style domains only, no remote requests",
         "observed": "Three actual DialogEdit/IncrementalTaggingPanel sequences: child Cancel; child Apply then parent Cancel; child Apply then parent Apply. Real text and numeric controls, negative start/step, reverse mapping order, initial numeric inference, exact namespace conflict summaries, remembered reopening and complete DB current tags per file. Eleven actual Qt initial-start and zero-step cases: Arabic-Indic, fullwidth, mixed-script, ASCII-vs-Unicode precedence, negative-only/mixed subtags, nondecimal superscript, zero, clamped start and Unicode15.1 Kawi/Nag Mundari digits. Complete68-block Python decimal table recorded."
-      }
+      },
+      "additionalReferenceRecordings": [
+        {
+          "recorder": {
+            "path": "oracle/record_incremental_number_boundaries.py",
+            "line": 30,
+            "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+            "kind": "reference_recorder",
+            "symbol": "def record"
+          },
+          "fixture": {
+            "path": "oracle/fixtures/incremental_number_boundaries.json",
+            "line": 1,
+            "commit": "8c85e60a98f308c098f697e565c5d40e7223ce11",
+            "kind": "reference_fixture",
+            "symbol": "{"
+          },
+          "command": "/workspace/parallel/with-oracle python oracle/record_incremental_number_boundaries.py",
+          "executedAt": "2026-10-04T21:00:55Z",
+          "environment": "Actual Hydrus v688/Qt offscreen on a fresh private basic DB through the serialized with-oracle helper; literal decimal previews injected into real MediaResult tags, no remote requests.",
+          "observed": "Eleven actual panel construction inputs: zero, initial-control clamp below/at/above bounds, signed-int maximum and overflow,512-digit ASCII/Arabic-Indic values,1024 leading ASCII/Arabic-Indic zero digits plus7, and5001 digits beyond the Python conversion limit. Seven successful panels replay four real Qt start/step control edits including both clamp bounds. Four construction failures are explicitly retained as intentional safe-native differences."
+        }
+      ]
     }
   ],
   "nativeComponents": [
@@ -389,7 +435,8 @@
       "cargo fmt --all",
       "git diff --check",
       "cached Slint source compiler passed, no Cargo build",
-      "source-only comparison: native decimal table exactly equals all68 recorded Python3.13 Unicode15.1 decimal zero blocks"
+      "source-only comparison: native decimal table exactly equals all68 recorded Python3.13 Unicode15.1 decimal zero blocks",
+      "independent review actual Qt IncrementalTaggingPanel recorder at 2026-10-04T21:00:55Z; original workflow fixture unchanged; frozen-selection caption repaired and source-checked against both actual page/viewer reference launchers"
     ],
     "notExecuted": [
       "local Cargo builds/tests or mutation tests"
