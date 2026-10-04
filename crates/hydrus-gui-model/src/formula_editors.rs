@@ -99,6 +99,7 @@ impl FormulaTestData {
         selected
     }
     /// Put the selected document first for a recursive child, retaining all others.
+    #[must_use]
     pub fn selected_first(&self, index: usize) -> Self {
         let mut test = self.clone();
         if index < test.examples.len() {
