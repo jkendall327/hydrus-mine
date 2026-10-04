@@ -308,11 +308,13 @@ impl Migration {
                 self.left_filter.to_filter_string()
             )
         } else {
-            format!(
-                "for \"{}\" on the left and for \"{}\" on the right",
-                self.left_filter.to_filter_string(),
-                self.right_filter.to_filter_string()
-            )
+            let left = self.left_filter.to_filter_string();
+            let right = self.right_filter.to_filter_string();
+            if left == right {
+                format!("for \"{left}\" on both sides")
+            } else {
+                format!("for \"{left}\" on the left and for \"{right}\" on the right")
+            }
         };
         let filters = if self.content != Content::Mappings
             && (self.count_left || self.count_right || self.count_either)

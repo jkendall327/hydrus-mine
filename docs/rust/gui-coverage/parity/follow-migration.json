@@ -360,5 +360,14 @@
       "Existing alternate-hash destinations pin actual metadata rather than the unsafe recorded reference MD5/SHA256-dropdown mismatch.",
       "Optional post-job archive VACUUM/ANALYZE is omitted."
     ]
+  },
+  "confirmationWordingRepair": {
+    "exactBehavior": "Sibling/parent migration summaries compare the actual rendered left/right filter text: equal text uses on both sides; asymmetric text retains separate left/right clauses, including distinct rule maps rendering identical text. No fixture weakened and no additional completion claim.",
+    "referenceRecorder": "oracle/record_tag_migration_filter_summaries.py",
+    "referenceFixture": "oracle/fixtures/tag_migration_filter_summaries.json",
+    "referenceExecuted": "2026-10-04 19:03:32 UTC; actual Qt MigrationGo with confirmation rejected, 12 sibling/parent variants",
+    "authoredRegression": "crates/hydrus-gui-model/tests/model/tag_migration.rs::pair_summary_replays_equal_asymmetric_and_equal_text_distinct_filters",
+    "localRustTestsRun": false,
+    "validation": "cargo fmt, Python syntax and git diff --check passed; runtime regressions await hosted CI"
   }
 }

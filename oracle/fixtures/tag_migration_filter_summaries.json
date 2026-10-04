@@ -1,0 +1,183 @@
+{
+  "service_key": "646f776e6c6f616465722074616773",
+  "cases": [
+    {
+      "content": "siblings",
+      "label": "all",
+      "left": [],
+      "right": [],
+      "left_text": "all tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "siblings",
+      "label": "same blacklist",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags except 'excluded' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags except 'excluded' tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "siblings",
+      "label": "different blacklist",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [
+        [
+          "other:",
+          0
+        ]
+      ],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags except 'other' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags except 'excluded' tags\" on the left and for \"all tags except 'other' tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "siblings",
+      "label": "left only",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags except 'excluded' tags\" on the left and for \"all tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "siblings",
+      "label": "right only",
+      "left": [],
+      "right": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "left_text": "all tags",
+      "right_text": "all tags except 'excluded' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags\" on the left and for \"all tags except 'excluded' tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "siblings",
+      "label": "same text distinct rules",
+      "left": [],
+      "right": [
+        [
+          "explicitly allowed",
+          1
+        ]
+      ],
+      "left_text": "all tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag siblings for \"all tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "all",
+      "left": [],
+      "right": [],
+      "left_text": "all tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "same blacklist",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags except 'excluded' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags except 'excluded' tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "different blacklist",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [
+        [
+          "other:",
+          0
+        ]
+      ],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags except 'other' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags except 'excluded' tags\" on the left and for \"all tags except 'other' tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "left only",
+      "left": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "right": [],
+      "left_text": "all tags except 'excluded' tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags except 'excluded' tags\" on the left and for \"all tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "right only",
+      "left": [],
+      "right": [
+        [
+          "excluded:",
+          0
+        ]
+      ],
+      "left_text": "all tags",
+      "right_text": "all tags except 'excluded' tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags\" on the left and for \"all tags except 'excluded' tags\" on the right from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    },
+    {
+      "content": "parents",
+      "label": "same text distinct rules",
+      "left": [],
+      "right": [
+        [
+          "explicitly allowed",
+          1
+        ]
+      ],
+      "left_text": "all tags",
+      "right_text": "all tags",
+      "confirmation": "Migrations can make huge changes. They can be cancelled early, but any work they do cannot always be undone. Please check that this summary looks correct:\n\ntaking current tag parents for \"all tags\" on both sides from \"downloader tags\" and deleting them from \"downloader tags\"\n\nIf you plan to make a very big change (especially a mass delete), I recommend making a backup of your database before going ahead, just in case something unexpected happens."
+    }
+  ]
+}

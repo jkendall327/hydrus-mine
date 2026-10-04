@@ -410,3 +410,55 @@ fn migration_popup_speed_and_phase_text_replay_actual_qt_outputs() {
         "3000 rows/s"
     );
 }
+
+#[test]
+fn pair_summary_replays_equal_asymmetric_and_equal_text_distinct_filters() {
+    let recording = hydrus_testkit::fixture_json("tag_migration_filter_summaries.json");
+    let source = hydrus_testkit::legacy_fixture("basic");
+    let destination = tempfile::tempdir().unwrap();
+    hydrus_store::import::import_legacy(
+        source.path(),
+        &destination.path().join(hydrus_store::store::DB_FILE_NAME),
+    )
+    .unwrap();
+    let store = Store::open(destination.path()).unwrap();
+    let key = ServiceKey::from_hex(recording["service_key"].as_str().unwrap()).unwrap();
+    let mut model = Migration::new(&store, &key, vec![]).unwrap();
+    let index = model.services.iter().position(|s| s.key == key).unwrap();
+    model.source = index;
+    model.destination = index;
+    let filter = |rules: &serde_json::Value| {
+        rules
+            .as_array()
+            .unwrap()
+            .iter()
+            .fold(hydrus_core::TagFilter::new(), |filter, rule| {
+                filter.with_rule(
+                    rule[0].as_str().unwrap(),
+                    if rule[1] == 0 {
+                        hydrus_core::FilterRule::Blacklist
+                    } else {
+                        hydrus_core::FilterRule::Whitelist
+                    },
+                )
+            })
+    };
+    assert_eq!(recording["cases"].as_array().unwrap().len(), 12);
+    for case in recording["cases"].as_array().unwrap() {
+        model.content = if case["content"] == "siblings" {
+            Content::Siblings
+        } else {
+            Content::Parents
+        };
+        model.normalize();
+        model.left_filter = filter(&case["left"]);
+        model.right_filter = filter(&case["right"]);
+        assert_eq!(model.left_filter.to_filter_string(), case["left_text"]);
+        assert_eq!(model.right_filter.to_filter_string(), case["right_text"]);
+        if case["label"] == "same text distinct rules" {
+            assert_ne!(model.left_filter, model.right_filter);
+            assert_eq!(case["left_text"], case["right_text"]);
+        }
+        assert_eq!(model.confirmation(), case["confirmation"], "{case}");
+    }
+}
