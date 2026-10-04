@@ -1,0 +1,133 @@
+{
+  "agent": "parity_parser_children",
+  "baseline": "d50df26b",
+  "implementation_commits": [
+    "ae7227ab0557ee277307145e9c862cf6a0306aa0"
+  ],
+  "validation": {
+    "reference_recording": "passed; 16 real Qt recursive subsidiary states",
+    "formatting": "cargo fmt --all and git diff --check passed",
+    "rust_tests": "authored reference-model replay and real-store GUI parser/owner regressions; execution pending root asynchronous CI; no local Cargo builds",
+    "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI"
+  },
+  "entries": [
+    {
+      "reference_id": "subsidiary-create",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Add/edit recursive subsidiary page parsers with reference HTML div.thumb separation defaults, source-time sorting and full child page/content/formula editors. Parent-converted documents become separated multiple examples with preserved source URLs/context/newlines for descendants. Apply stages upward, list Apply persists; cancellation discards and owner closure invalidates retained descendants. Name sorting and child keys, converters, recursive definitions and imported auxiliary data are retained. Metadata-only separator/sort cancellation follows the reference without a page-change prompt.",
+      "exactBehavior": "Add/edit recursive subsidiary page parsers with reference HTML div.thumb separation defaults, source-time sorting and full child page/content/formula editors. Parent-converted documents become separated multiple examples with preserved source URLs/context/newlines for descendants. Apply stages upward, list Apply persists; cancellation discards and owner closure invalidates retained descendants. Name sorting and child keys, converters, recursive definitions and imported auxiliary data are retained. Metadata-only separator/sort cancellation follows the reference without a page-change prompt.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 218,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "new_subsidiary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 263,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "child_test_data"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 433,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "open_editor"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 210,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1033,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1123,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_children.py",
+        "fixture": "oracle/fixtures/parser_children.json",
+        "visual_reference": "oracle/fixtures/parser_child_editor.png",
+        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs"
+      },
+      "limitations": [],
+      "limits": []
+    },
+    {
+      "reference_id": "subsidiary",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "partial",
+      "proposedStatus": "partial",
+      "behavior": "Recursive subsidiary add/edit/delete and per-child separation/sort controls are available; parent-page interchange and live parsing retain wrappers and recursive data. Creation/editing is proven against the actual Qt recording and real-store GUI consumers.",
+      "exactBehavior": "Recursive subsidiary add/edit/delete and per-child separation/sort controls are available; parent-page interchange and live parsing retain wrappers and recursive data. Creation/editing is proven against the actual Qt recording and real-store GUI consumers.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 218,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "new_subsidiary"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "line": 263,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "child_test_data"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "line": 433,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "open_editor"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "line": 210,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recorded_recursive_subsidiaries_preserve_context_documents_and_runtime_outputs"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1033,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "recursive_subsidiary_creation_is_staged_and_owner_cancels_descendants"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "line": 1123,
+          "commit": "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+          "symbol": "subsidiary_edits_preserve_nested_page_identity_and_cancel_metadata_without_prompt"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_parser_children.py",
+        "fixture": "oracle/fixtures/parser_children.json",
+        "visual_reference": "oracle/fixtures/parser_child_editor.png",
+        "actual_recording": "passed: 16 real Qt states; synthetic HTML and children.example; defaults/add/nested/edit/cancel/runtime outputs"
+      },
+      "limitations": [
+        "Standalone subsidiary wrapper exchange is still unavailable; the shared child editor exports its page parser, while parent-page exchange preserves separation/sort metadata."
+      ],
+      "limits": [
+        "Standalone subsidiary wrapper exchange is still unavailable; the shared child editor exports its page parser, while parent-page exchange preserves separation/sort metadata."
+      ]
+    }
+  ]
+}
