@@ -59,6 +59,7 @@ pub mod mpv;
 mod options_window;
 mod page;
 mod pages;
+pub mod parser_editors_window;
 mod playback;
 mod popup_menu;
 mod popups;
@@ -222,6 +223,8 @@ pub struct Bound {
     pub subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>>,
     /// URL class and gallery URL generator definition editors.
     pub downloader_definitions: downloader_definitions_window::Slots,
+    /// Native parser and URL-class link windows.
+    pub parser_editors: parser_editors_window::Slots,
     /// The edit subscription dialog while it is open (from the manage
     /// subscriptions dialog).
     pub edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>>,
@@ -1244,6 +1247,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
     let downloader_definitions = downloader_definitions_window::Slots::default();
+    let parser_editors = parser_editors_window::Slots::default();
     let edit_subscription: Rc<RefCell<Option<EditSubscriptionWindow>>> = Rc::default();
     // a downloader list's menu's actions, as last opened
     let importer_actions: Rc<RefCell<Vec<importer_menu::Action>>> = Rc::default();
@@ -1369,6 +1373,16 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                     match options_window::open(&store, &slot, &checker_slot, applied) {
                         Ok(window) => *slot.borrow_mut() = Some(window),
                         Err(e) => eprintln!("could not open the options: {e}"),
+                    }
+                })
+            },
+            manage_parsers: {
+                let pages = pages.clone();
+                let slots = parser_editors.clone();
+                Rc::new(move |links| {
+                    let store = pages.borrow().store().clone();
+                    if let Err(e) = parser_editors_window::open(&store, &slots, links) {
+                        eprintln!("could not open parser definitions: {e}");
                     }
                 })
             },
@@ -3030,6 +3044,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         session_dialog,
         subscriptions,
         downloader_definitions,
+        parser_editors,
         edit_subscription,
         folders,
         simple_formulae,

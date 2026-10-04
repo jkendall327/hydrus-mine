@@ -301,7 +301,21 @@ impl Draft {
                 return Err(StoreError::Invalid("Parser definitions or links changed in another editor. Reopen this dialog before applying.".into()));
             }
             if parsers_changed { current.parsers = draft.parsers; settings::set(conn, &current)?; }
-            if links_changed { classes.parser_links = draft.classes.parser_links; }
+            if links_changed {
+                if draft.classes.parser_links.iter().any(|(_, key)| {
+                    key.as_ref().is_some_and(|key| !current.parsers.iter().any(|p| &p.key == key))
+                }) {
+                    return Err(StoreError::Invalid("A linked parser no longer exists. Reopen this dialog before applying.".into()));
+                }
+                classes.parser_links = draft.classes.parser_links;
+            }
+            if parsers_changed {
+                for (_, key) in &mut classes.parser_links {
+                    if key.as_ref().is_some_and(|key| !current.parsers.iter().any(|p| &p.key == key)) {
+                        *key = None;
+                    }
+                }
+            }
             classes.parser_keys = current.parsers.iter().map(|p| p.key.clone()).collect();
             // A class removed while this editor was open must never be resurrected.
             classes.parser_links.retain(|(key, _)| classes.url_classes.iter().any(|c| hex::encode(&c.key) == *key));

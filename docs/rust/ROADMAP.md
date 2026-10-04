@@ -35,8 +35,9 @@ The next breadth work, in the owner's existing order:
    relationship application configuration are implemented in the second slate.
    Existing relationship editors still need write autocomplete, asynchronous
    loading, default service tabs and repository permission/reason suggestions.
-3. **Downloader definitions**: page/content parser editors, URL class links,
-   logins and serialized downloader import/export. The reusable formula editor
+3. **Downloader definitions**: logins and serialized downloader import/export.
+   Native page/content parser editors and direct URL-class parser links are
+   implemented; subsidiary editing, auto-link/review controls remain follow-up. The reusable formula editor
    can support the parser work; nested/zipper/context/static editing, formula
    import/export and fetch/multiple-example test controls remain.
 

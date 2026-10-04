@@ -755,7 +755,7 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   rule editors. Their duplicate button creates new keys and unique names.
   Domain lists and regex lists use one rule per line, and nested generators
   select members with checkboxes. Definition import/export, page/content parser
-  editors, URL class links and login editors remain follow-up work.
+  login editors remain follow-up work.
 - Invalid example details use the native URL rules' error wording. The
   reference retains stale referral/next-page examples after a match failure;
   the native editor clears all derived output. A changed list asks before
@@ -947,7 +947,13 @@ uses a numeric zero for the reference's nullable "always autocomplete" threshold
 Tag migration and manual/background sibling/parent sync remain unimplemented.
 
 The native parser editor model supports all nine content kinds and typed test
-context. Parser windows are still being integrated. Subsidiary parser editing,
+context. Native page/content/parser-list and direct URL-class-link windows are available. Subsidiary parser editing,
 formula kinds beyond the existing HTML/JSON editors, downloader import/export,
 and remote test-data fetching remain deferred; existing subsidiary parsers and
 unsupported formulas are preserved intact.
+
+The URL-class links panel uses a parser chooser and explicit staged link/clear
+actions. Automatic gap filling and the reference API/redirect review tab are
+deferred; API/redirect source classes are excluded because their targets own
+the parser. The temporary-variable content kind is also editable here, while
+the reference page editor normally limits its creation to lookup scripts.

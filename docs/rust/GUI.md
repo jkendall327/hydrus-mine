@@ -1438,4 +1438,13 @@ and links in one transaction, preserves generators and unrelated URL settings,
 and rejects concurrent parser/link edits. The existing downloader reloads
 changed parser definitions through its normal settings refresh; a local site
 regression proves an existing downloader follows an edited parser and link.
-Native parser windows are the next integration milestone.
+Network > downloaders > parsers now opens the native named parser list
+(add/edit/duplicate/delete), and url class links opens staged direct parser
+associations. Page editors edit names, example URLs, pre-parsing converters and
+content nodes. Content editors support URLs, tags, notes, hashes, timestamps,
+titles, headers, temporary variables and vetoes, reusing the HTML/JSON formula
+and string-match editors. Test panels accept the document, page URL, post
+index and validated key=value context variables, and run the live parser engine.
+Child editors block parent changes and Apply; cancellation or owner closure
+invalidates all child callbacks. GUI/store regressions include rendered page
+and note-content screenshots through HYDRUS_PARSER_SCREENSHOTS.

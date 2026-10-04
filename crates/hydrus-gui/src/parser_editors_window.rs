@@ -1,0 +1,837 @@
+//! Native page/content parser windows with staged persistence and owned children.
+use crate::{DefinitionField, ParserEditWindow, ParserListWindow, TableColumn, TableRow};
+use hydrus_gui_model::formula_editors::FormulaTestData;
+use hydrus_gui_model::list_selection::ListSelection;
+use hydrus_gui_model::parser_editors::{self as model, ContentEditor, Draft, TestContext};
+use hydrus_parse::content::{ContentKind, PageParser};
+use hydrus_store::Store;
+use slint::{ComponentHandle as _, ModelRc, SharedString, VecModel};
+use std::{
+    cell::{Cell, RefCell},
+    rc::Rc,
+    sync::Arc,
+};
+
+/// Retain parser dialogs and all their child formula/string windows.
+#[derive(Clone, Default)]
+pub struct Slots {
+    pub list: Rc<RefCell<Option<ParserListWindow>>>,
+    pub links: Rc<RefCell<Option<ParserListWindow>>>,
+    pub page: Rc<RefCell<Option<ParserEditWindow>>>,
+    pub content: Rc<RefCell<Option<ParserEditWindow>>>,
+    pub formula: crate::formula_window::Slots,
+}
+impl std::fmt::Debug for Slots {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        f.debug_struct("Slots").finish_non_exhaustive()
+    }
+}
+fn strings(items: impl IntoIterator<Item = String>) -> ModelRc<SharedString> {
+    ModelRc::new(VecModel::from(
+        items.into_iter().map(Into::into).collect::<Vec<_>>(),
+    ))
+}
+fn table(items: impl IntoIterator<Item = (Vec<String>, bool)>) -> ModelRc<TableRow> {
+    ModelRc::new(VecModel::from(
+        items
+            .into_iter()
+            .map(|(cells, selected)| TableRow {
+                cells: strings(cells),
+                selected,
+            })
+            .collect::<Vec<_>>(),
+    ))
+}
+fn field(
+    id: i32,
+    label: &str,
+    kind: i32,
+    text: String,
+    options: &[&str],
+    chosen: i32,
+    checked: bool,
+) -> DefinitionField {
+    DefinitionField {
+        id,
+        label: label.into(),
+        kind,
+        text: text.into(),
+        options: strings(options.iter().map(|s| (*s).to_owned())),
+        chosen,
+        checked,
+        enabled: true,
+    }
+}
+fn text(id: i32, label: &str, value: &str) -> DefinitionField {
+    field(id, label, 0, value.into(), &[], 0, false)
+}
+fn choice(id: i32, label: &str, values: &[&str], at: usize) -> DefinitionField {
+    field(
+        id,
+        label,
+        1,
+        String::new(),
+        values,
+        i32::try_from(at).unwrap_or(0),
+        false,
+    )
+}
+fn check(id: i32, label: &str, value: bool) -> DefinitionField {
+    field(id, label, 2, String::new(), &[], 0, value)
+}
+#[derive(Clone)]
+enum Value {
+    Page(PageParser),
+    Content(ContentEditor),
+}
+struct Editor {
+    errors: std::collections::BTreeMap<i32, String>,
+    value: Value,
+    original: Value,
+    selected: Option<usize>,
+}
+fn fields(value: &Value) -> Vec<DefinitionField> {
+    match value {
+        Value::Page(p) => vec![
+            text(0, "name or description", &p.name),
+            field(
+                1,
+                "example URLs (one per line)",
+                3,
+                p.example_urls.join("\n"),
+                &[],
+                0,
+                false,
+            ),
+        ],
+        Value::Content(e) => {
+            let mut fields = vec![
+                text(0, "name or description", &e.parser.name),
+                choice(1, "content type", &model::CONTENT_TYPES, e.kind_index()),
+            ];
+            match &e.parser.kind {
+                ContentKind::Url { url_type, priority } => {
+                    fields.push(choice(
+                        2,
+                        "URL type",
+                        &[
+                            "download/pursue (file/post)",
+                            "associate (source)",
+                            "next gallery page",
+                            "sub-gallery page",
+                        ],
+                        [7, 8, 6, 9].iter().position(|t| t == url_type).unwrap_or(0),
+                    ));
+                    fields.push(text(3, "priority (0–100)", &priority.to_string()));
+                }
+                ContentKind::Tag { namespace } => {
+                    fields.push(check(4, "any namespace", namespace.is_none()));
+                    fields.push(text(
+                        5,
+                        "namespace (empty forces unnamespaced)",
+                        namespace.as_deref().unwrap_or_default(),
+                    ));
+                }
+                ContentKind::Note { name } => fields.push(text(5, "note name", name)),
+                ContentKind::Hash {
+                    hash_type,
+                    encoding,
+                } => {
+                    fields.push(choice(
+                        6,
+                        "hash type",
+                        &["md5", "sha1", "sha256", "sha512"],
+                        ["md5", "sha1", "sha256", "sha512"]
+                            .iter()
+                            .position(|t| *t == hash_type)
+                            .unwrap_or(0),
+                    ));
+                    fields.push(choice(
+                        7,
+                        "encoding",
+                        &["hex", "base64"],
+                        usize::from(encoding == "base64"),
+                    ));
+                }
+                ContentKind::Timestamp { timestamp_type } => fields.push(text(
+                    8,
+                    "timestamp type (0 = source time)",
+                    &timestamp_type.map_or(String::new(), |t| t.to_string()),
+                )),
+                ContentKind::Title { priority } => {
+                    fields.push(text(3, "priority (0–100)", &priority.to_string()))
+                }
+                ContentKind::HttpHeader { name } => fields.push(text(5, "header name", name)),
+                ContentKind::Variable { name } => fields.push(text(5, "variable name", name)),
+                ContentKind::Veto {
+                    if_matches_found,
+                    string_match,
+                } => {
+                    fields.push(check(9, "veto if match found", *if_matches_found));
+                    fields.push(text(
+                        10,
+                        "string match",
+                        &string_match.describe(false, false),
+                    ));
+                    fields.last_mut().unwrap().enabled = false;
+                }
+            }
+            fields
+        }
+    }
+}
+fn show_editor(w: &ParserEditWindow, e: &Editor) {
+    w.set_fields(ModelRc::new(VecModel::from(fields(&e.value))));
+    if let Value::Page(p) = &e.value {
+        w.set_nodes(table(p.content_parsers.iter().enumerate().map(|(i, c)| {
+            (
+                vec![
+                    c.name.clone(),
+                    model::CONTENT_TYPES[model::kind_index(&c.kind)].into(),
+                ],
+                e.selected == Some(i),
+            )
+        })));
+        w.set_subsidiary_note(
+            format!(
+                "{} subsidiary page parsers are preserved; subsidiary editing is deferred.",
+                p.subsidiary.len()
+            )
+            .into(),
+        );
+    }
+    w.set_selected(e.selected.is_some());
+}
+fn test_data(w: &ParserEditWindow, collapse_newlines: bool) -> Result<FormulaTestData, String> {
+    let context = TestContext::parse(
+        w.get_test_url().to_string(),
+        w.get_post_index().as_str(),
+        w.get_variables().as_str(),
+    )?;
+    Ok(FormulaTestData {
+        context: context.values(),
+        text: w.get_document().to_string(),
+        collapse_newlines,
+    })
+}
+fn edit_text(value: &mut Value, id: i32, value_text: String) -> Result<(), String> {
+    match value {
+        Value::Page(p) => match id {
+            0 => p.name = value_text,
+            1 => {
+                p.example_urls = value_text
+                    .lines()
+                    .filter(|s| !s.is_empty())
+                    .map(str::to_owned)
+                    .collect()
+            }
+            _ => (),
+        },
+        Value::Content(e) => match id {
+            0 => e.parser.name = value_text,
+            3 => {
+                let priority: i64 = value_text
+                    .parse()
+                    .map_err(|_| "Priority must be an integer from 0 to 100.".to_owned())?;
+                if !(0..=100).contains(&priority) {
+                    return Err("Priority must be from 0 to 100.".into());
+                }
+                if let ContentKind::Url { priority: old, .. }
+                | ContentKind::Title { priority: old } = &mut e.parser.kind
+                {
+                    *old = priority;
+                }
+            }
+            5 => match &mut e.parser.kind {
+                ContentKind::Tag { namespace: Some(n) } => *n = value_text,
+                ContentKind::Note { name }
+                | ContentKind::HttpHeader { name }
+                | ContentKind::Variable { name } => *name = value_text,
+                _ => (),
+            },
+            8 => {
+                if let ContentKind::Timestamp { timestamp_type } = &mut e.parser.kind {
+                    *timestamp_type = if value_text.is_empty() {
+                        None
+                    } else {
+                        Some(
+                            value_text
+                                .parse()
+                                .map_err(|_| "Timestamp type must be an integer.".to_owned())?,
+                        )
+                    };
+                }
+            }
+            _ => (),
+        },
+    }
+    Ok(())
+}
+fn edit_choice(value: &mut Value, id: i32, index: usize) {
+    if let Value::Content(e) = value {
+        match id {
+            1 => e.change_kind(index),
+            2 => {
+                if let ContentKind::Url { url_type, .. } = &mut e.parser.kind {
+                    if let Some(t) = [7, 8, 6, 9].get(index) {
+                        *url_type = *t;
+                    }
+                }
+            }
+            6 => {
+                if let ContentKind::Hash { hash_type, .. } = &mut e.parser.kind {
+                    if let Some(t) = ["md5", "sha1", "sha256", "sha512"].get(index) {
+                        *hash_type = (*t).into();
+                    }
+                }
+            }
+            7 => {
+                if let ContentKind::Hash { encoding, .. } = &mut e.parser.kind {
+                    *encoding = if index == 1 { "base64" } else { "hex" }.into();
+                }
+            }
+            _ => (),
+        }
+    }
+}
+fn child_open(slots: &Slots, page: bool) -> bool {
+    (page && slots.content.borrow().is_some())
+        || slots.formula.formula.borrow().is_some()
+        || slots.formula.strings.has_open()
+}
+type Done = Rc<dyn Fn(Value) -> Result<(), String>>;
+fn open_editor(
+    store: &Arc<Store>,
+    value: Value,
+    test: FormulaTestData,
+    slots: &Slots,
+    applied: Done,
+) -> Result<ParserEditWindow, slint::PlatformError> {
+    let w = ParserEditWindow::new()?;
+    let page = matches!(value, Value::Page(_));
+    w.set_page(page);
+    w.set_document(test.text.into());
+    w.set_test_url(test.context.get("url").cloned().unwrap_or_default().into());
+    w.set_post_index(
+        test.context
+            .get("post_index")
+            .cloned()
+            .unwrap_or_else(|| "0".into())
+            .into(),
+    );
+    w.set_variables(
+        test.context
+            .iter()
+            .filter(|(k, _)| !matches!(k.as_str(), "url" | "post_index"))
+            .map(|(k, v)| format!("{k}={v}"))
+            .collect::<Vec<_>>()
+            .join("\n")
+            .into(),
+    );
+    let state = Rc::new(RefCell::new(Editor {
+        errors: std::collections::BTreeMap::new(),
+        original: value.clone(),
+        value,
+        selected: None,
+    }));
+    let active = Rc::new(Cell::new(true));
+    let refresh: Rc<dyn Fn()> = Rc::new({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                show_editor(&w, &state.borrow());
+                w.set_child_open(child_open(&slots, page));
+            }
+        }
+    });
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || child_open(&slots, page)
+    });
+    w.on_text_edited({
+        let state = state.clone();
+        let weak = w.as_weak();
+        let blocked = blocked.clone();
+        move |id, t| {
+            if blocked() {
+                return;
+            }
+            if let Some(w) = weak.upgrade() {
+                let mut editor = state.borrow_mut();
+                let result = edit_text(&mut editor.value, id, t.to_string());
+                match result {
+                    Ok(()) => {
+                        editor.errors.remove(&id);
+                    }
+                    Err(error) => {
+                        editor.errors.insert(id, error);
+                    }
+                }
+                w.set_error(
+                    editor
+                        .errors
+                        .values()
+                        .cloned()
+                        .collect::<Vec<_>>()
+                        .join("\n")
+                        .into(),
+                );
+            }
+        }
+    });
+    w.on_choice_edited({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |id, index| {
+            if blocked() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(index) {
+                edit_choice(&mut state.borrow_mut().value, id, index);
+            }
+            refresh();
+        }
+    });
+    w.on_toggled({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |id, v| {
+            if blocked() {
+                return;
+            }
+            if let Value::Content(e) = &mut state.borrow_mut().value {
+                match &mut e.parser.kind {
+                    ContentKind::Tag { namespace } if id == 4 => {
+                        *namespace = if v { None } else { Some(String::new()) }
+                    }
+                    ContentKind::Veto {
+                        if_matches_found, ..
+                    } if id == 9 => *if_matches_found = v,
+                    _ => (),
+                }
+            }
+            refresh();
+        }
+    });
+    w.on_row_clicked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |row, _, _| {
+            if blocked() {
+                return;
+            }
+            if let Ok(index) = usize::try_from(row) {
+                let mut s = state.borrow_mut();
+                if let Value::Page(p) = &s.value
+                    && index < p.content_parsers.len()
+                {
+                    s.selected = Some(index);
+                }
+            }
+            refresh();
+        }
+    });
+    let close: Rc<dyn Fn()> = Rc::new({
+        let weak = w.as_weak();
+        let active = active.clone();
+        let slots = slots.clone();
+        move || {
+            if !active.replace(false) {
+                return;
+            }
+            if page {
+                let child = slots
+                    .content
+                    .borrow()
+                    .as_ref()
+                    .map(slint::ComponentHandle::clone_strong);
+                if let Some(child) = child {
+                    child.invoke_force_close();
+                }
+            }
+            slots.formula.cancel();
+            if page {
+                slots.page.borrow_mut().take();
+            } else {
+                slots.content.borrow_mut().take();
+            }
+            if let Some(w) = weak.upgrade() {
+                let _ = w.hide();
+                w.invoke_closed();
+            }
+        }
+    });
+    w.on_force_close({
+        let close = close.clone();
+        move || close()
+    });
+    w.on_answered({
+        let weak = w.as_weak();
+        let close = close.clone();
+        let blocked = blocked.clone();
+        move |yes| {
+            if blocked() {
+                return;
+            }
+            if yes {
+                close();
+            } else if let Some(w) = weak.upgrade() {
+                w.set_question(SharedString::new());
+            }
+        }
+    });
+    w.on_action({ let weak = w.as_weak(); let state = state.clone(); let slots = slots.clone(); let store = store.clone(); let refresh = refresh.clone(); let blocked = blocked.clone(); let active = active.clone(); let close = close.clone(); move |action| {
+        if blocked() { return; } let Some(w) = weak.upgrade() else { return; };
+        let result = (|| -> Result<(),String> {
+            match action.as_str() {
+                "apply" => { if !state.borrow().errors.is_empty() { return Err(state.borrow().errors.values().cloned().collect::<Vec<_>>().join("\n")); } let value = match &state.borrow().value { Value::Content(e) => Value::Content(ContentEditor::new(&e.value(),e.test.clone())), v => v.clone() }; applied(value)?; close(); }
+                "cancel" => { let changed = { let e = state.borrow(); match (&e.value,&e.original) { (Value::Page(p),Value::Page(o)) => p != o, (Value::Content(e),_) => e.changed(), _ => false } }; if changed { w.set_question(if page { "It looks like you have made changes to the parser--are you sure you want to cancel?" } else { model::CONTENT_CANCEL }.into()); } else { close(); } }
+                "test" => { let mut test = test_data(&w,true)?; let mut e = state.borrow_mut(); let parsed = match &mut e.value { Value::Page(p) => p.parse(&mut test.context,&test.text), Value::Content(c) => { c.test = test; c.preview().map(|p| vec![p]) } }; w.set_preview(match parsed { Ok(posts) => model::preview_text(&posts), Err(error) => error.to_string() }.into()); }
+                "delete-content" => { let mut e = state.borrow_mut(); if let Some(index) = e.selected.take() && let Value::Page(p) = &mut e.value && index < p.content_parsers.len() { p.content_parsers.remove(index); } }
+                "add-content"|"edit-content" => {
+                    let test = test_data(&w,true)?;
+                    let (at, original, converted) = { let e = state.borrow(); let Value::Page(p) = &e.value else { return Ok(()); }; let at = if action == "edit-content" { e.selected } else { None }; if action == "edit-content" && at.is_none() { return Ok(()); } (at,at.and_then(|i| p.content_parsers.get(i).cloned()),p.converter.convert(&test.text).map_err(|e| e.to_string())?) };
+                    let parser = original.clone().unwrap_or_else(model::new_content);
+                    let test = FormulaTestData { text: converted, collapse_newlines: !matches!(parser.kind,ContentKind::Note { .. }), ..test };
+                    let done: Done = Rc::new({ let state = state.clone(); let active = active.clone(); move |v| { if !active.get() { return Ok(()); } let Value::Content(c) = v else { return Ok(()); }; let mut e = state.borrow_mut(); let Value::Page(p) = &mut e.value else { return Ok(()); }; if let Some(index) = at { if p.content_parsers.get(index) != original.as_ref() { return Err("The content parser changed while its editor was open.".into()); } p.content_parsers[index] = c.value(); } else { p.content_parsers.push(c.value()); } Ok(()) } });
+                    let child = open_editor(&store,Value::Content(ContentEditor::new(&parser,test.clone())),test,&slots,done).map_err(|e| e.to_string())?;
+                    let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.content.borrow_mut() = Some(child);
+                }
+                "formula" => { let test = test_data(&w,true)?; let Value::Content(e) = &state.borrow().value else { return Ok(()); }; let formula = e.parser.formula.clone(); let test = FormulaTestData { collapse_newlines: !matches!(e.parser.kind,ContentKind::Note { .. }), ..test }; let done = Rc::new({ let state = state.clone(); let active = active.clone(); move |formula| { if active.get() && let Value::Content(e) = &mut state.borrow_mut().value { e.parser.formula = formula; } } }); let child = crate::formula_window::open(&store,&formula,test,&slots.formula,done).map_err(|e| e.to_string())?; let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.formula.formula.borrow_mut() = Some(child); }
+                "converter" => { let Value::Page(p) = &state.borrow().value else { return Ok(()); }; let converter = p.converter.clone(); let done = Rc::new({ let state = state.clone(); let active = active.clone(); move |converter| { if active.get() && let Value::Page(p) = &mut state.borrow_mut().value { p.converter = converter; } } }); let child = crate::string_processor_window::open_converter(&converter,Some(w.get_document().to_string()),&slots.formula.strings,done).map_err(|e| e.to_string())?; let refresh = refresh.clone(); child.on_closed(move || refresh()); *slots.formula.strings.converter.borrow_mut() = Some(child); }
+                "match" => { let matcher = match &state.borrow().value { Value::Content(e) => match &e.parser.kind { ContentKind::Veto { string_match,.. } => string_match.clone(), _ => return Ok(()) }, _ => return Ok(()) }; let done = Rc::new({ let state = state.clone(); let active = active.clone(); let refresh = refresh.clone(); move |matcher| { if active.get() && let Value::Content(e) = &mut state.borrow_mut().value && let ContentKind::Veto { string_match,.. } = &mut e.parser.kind { *string_match = matcher; } refresh(); } }); crate::string_processor_window::open_match(&store,&matcher,&slots.formula.strings,done); if let Some(child)=slots.formula.strings.step.borrow().as_ref() { let refresh=refresh.clone(); child.on_closed(move ||refresh()); } }
+                _ => (),
+            } Ok(())
+        })();
+        if let Err(error) = result { w.set_error(error.into()); }
+        refresh();
+    } });
+    w.window().on_close_requested({
+        let weak = w.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                w.invoke_action("cancel".into());
+            }
+            slint::CloseRequestResponse::KeepWindowShown
+        }
+    });
+    refresh();
+    w.show()?;
+    Ok(w)
+}
+struct ListState {
+    draft: Draft,
+    selection: ListSelection<usize>,
+    order: Vec<usize>,
+    links: bool,
+    sort_column: usize,
+    ascending: bool,
+    deleting: bool,
+}
+fn list_row(s: &ListState, i: usize) -> Vec<String> {
+    if s.links {
+        let c = &s.draft.classes.url_classes[i];
+        let key = hex::encode(&c.key);
+        let parser = s
+            .draft
+            .classes
+            .parser_links
+            .iter()
+            .find(|(k, _)| k == &key)
+            .and_then(|(_, key)| key.as_ref())
+            .and_then(|key| s.draft.parsers.iter().find(|p| &p.key == key));
+        vec![
+            c.name.clone(),
+            c.url_type.name().unwrap_or("source url").into(),
+            parser.map_or(String::new(), |p| p.name.clone()),
+        ]
+    } else {
+        let p = &s.draft.parsers[i];
+        vec![
+            p.name.clone(),
+            p.example_urls.join(", "),
+            p.content_parsers
+                .iter()
+                .map(|c| model::CONTENT_TYPES[model::kind_index(&c.kind)])
+                .collect::<Vec<_>>()
+                .join(", "),
+        ]
+    }
+}
+fn show_list(w: &ParserListWindow, s: &mut ListState, slots: &Slots) {
+    s.order = if s.links {
+        s.draft.linkable()
+    } else {
+        (0..s.draft.parsers.len()).collect()
+    };
+    let mut rows = s
+        .order
+        .iter()
+        .map(|&i| (i, list_row(s, i)))
+        .collect::<Vec<_>>();
+    rows.sort_by(|a, b| {
+        let order = a.1[s.sort_column].cmp(&b.1[s.sort_column]);
+        if s.ascending { order } else { order.reverse() }
+    });
+    s.order = rows.iter().map(|(i, _)| *i).collect();
+    w.set_rows(table(
+        rows.into_iter()
+            .map(|(i, row)| (row, s.selection.is_selected(i))),
+    ));
+    w.set_selected(!s.selection.in_order(&s.order).is_empty());
+    w.set_child_open(slots.page.borrow().is_some());
+    w.set_parser_choices(strings(s.draft.parsers.iter().map(|p| p.name.clone())));
+}
+/// Open either named page parsers or direct URL-class links on native settings.
+pub fn open(store: &Arc<Store>, slots: &Slots, links: bool) -> Result<ParserListWindow, String> {
+    let slot = if links { &slots.links } else { &slots.list };
+    if let Some(w) = slot.borrow().as_ref() {
+        w.show().map_err(|e| e.to_string())?;
+        return Ok(w.clone_strong());
+    }
+    let draft = Draft::load(store).map_err(|e| e.to_string())?;
+    let w = ParserListWindow::new().map_err(|e| e.to_string())?;
+    w.set_links(links);
+    w.set_columns(ModelRc::new(VecModel::from(
+        (if links {
+            model::LINK_COLUMNS
+        } else {
+            model::PARSER_COLUMNS
+        })
+        .iter()
+        .map(|title| TableColumn {
+            title: (*title).into(),
+            width: 280.,
+            stretch: true,
+        })
+        .collect::<Vec<_>>(),
+    )));
+    let active = Rc::new(Cell::new(true));
+    let state = Rc::new(RefCell::new(ListState {
+        draft,
+        selection: ListSelection::default(),
+        order: Vec::new(),
+        links,
+        sort_column: 0,
+        ascending: true,
+        deleting: false,
+    }));
+    let refresh: Rc<dyn Fn()> = Rc::new({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let slots = slots.clone();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                show_list(&w, &mut state.borrow_mut(), &slots);
+            }
+        }
+    });
+    let blocked: Rc<dyn Fn() -> bool> = Rc::new({
+        let active = active.clone();
+        let slots = slots.clone();
+        move || !active.get() || slots.page.borrow().is_some()
+    });
+    let close: Rc<dyn Fn()> = Rc::new({
+        let active = active.clone();
+        let weak = w.as_weak();
+        let slot = slot.clone();
+        move || {
+            active.set(false);
+            if let Some(w) = weak.upgrade() {
+                let _ = w.hide();
+            }
+            slot.borrow_mut().take();
+        }
+    });
+    w.on_row_clicked({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |r, c, h| {
+            if blocked() {
+                return;
+            }
+            let mut s = state.borrow_mut();
+            if let Ok(r) = usize::try_from(r)
+                && let Some(&i) = s.order.get(r)
+            {
+                let order = s.order.clone();
+                s.selection.click(&order, i, c, h);
+            }
+            drop(s);
+            refresh();
+        }
+    });
+    w.on_sort({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        move |c, a| {
+            if blocked() {
+                return;
+            }
+            if let Ok(c) = usize::try_from(c)
+                && c < 3
+            {
+                let mut s = state.borrow_mut();
+                s.sort_column = c;
+                s.ascending = a;
+            }
+            refresh();
+        }
+    });
+    w.on_answered({
+        let state = state.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let weak = w.as_weak();
+        move |yes| {
+            if blocked() {
+                return;
+            }
+            let mut s = state.borrow_mut();
+            if yes && s.deleting {
+                let keys = s
+                    .selection
+                    .in_order(&s.order)
+                    .iter()
+                    .map(|&i| s.draft.parsers[i].key.clone())
+                    .collect::<Vec<_>>();
+                s.draft.remove(&keys);
+                s.selection = ListSelection::default();
+            }
+            s.deleting = false;
+            drop(s);
+            if let Some(w) = weak.upgrade() {
+                w.set_question(SharedString::new());
+            }
+            refresh();
+        }
+    });
+    w.on_action({
+        let weak = w.as_weak();
+        let state = state.clone();
+        let store = store.clone();
+        let slots = slots.clone();
+        let active = active.clone();
+        let refresh = refresh.clone();
+        let blocked = blocked.clone();
+        let close = close.clone();
+        move |action| {
+            if blocked() {
+                return;
+            }
+            let Some(w) = weak.upgrade() else {
+                return;
+            };
+            let result = (|| -> Result<(), String> {
+                match action.as_str() {
+                    "apply" => {
+                        state
+                            .borrow()
+                            .draft
+                            .save(&store)
+                            .map_err(|e| e.to_string())?;
+                        close();
+                    }
+                    "cancel" => close(),
+                    "delete" => {
+                        state.borrow_mut().deleting = true;
+                        w.set_question("Remove all selected?".into());
+                    }
+                    "link" | "clear" => {
+                        let mut s = state.borrow_mut();
+                        let classes = s
+                            .selection
+                            .in_order(&s.order)
+                            .iter()
+                            .map(|&i| hex::encode(&s.draft.classes.url_classes[i].key))
+                            .collect::<Vec<_>>();
+                        let parser = if action == "clear" {
+                            None
+                        } else {
+                            Some(
+                                usize::try_from(w.get_chosen_parser())
+                                    .ok()
+                                    .and_then(|i| s.draft.parsers.get(i))
+                                    .ok_or_else(|| {
+                                        "No parser selected. Create a parser first.".to_owned()
+                                    })?
+                                    .key
+                                    .clone(),
+                            )
+                        };
+                        for key in classes {
+                            s.draft.link(&key, parser.as_deref())?;
+                        }
+                    }
+                    "add" | "edit" | "duplicate" => {
+                        let s = state.borrow();
+                        let selected = s.selection.in_order(&s.order).first().copied();
+                        let page = if action == "add" {
+                            model::new_page()
+                        } else {
+                            let Some(i) = selected else {
+                                return Ok(());
+                            };
+                            s.draft.parsers[i].clone()
+                        };
+                        let replacing = (action == "edit").then(|| page.key.clone());
+                        let test = FormulaTestData {
+                            context: TestContext {
+                                url: page.example_urls.first().cloned().unwrap_or_default(),
+                                ..TestContext::default()
+                            }
+                            .values(),
+                            ..FormulaTestData::default()
+                        };
+                        drop(s);
+                        let done: Done = Rc::new({
+                            let state = state.clone();
+                            let active = active.clone();
+                            move |v| {
+                                if !active.get() {
+                                    return Ok(());
+                                }
+                                if let Value::Page(p) = v {
+                                    state.borrow_mut().draft.put(replacing.as_deref(), p)?;
+                                }
+                                Ok(())
+                            }
+                        });
+                        let child = open_editor(&store, Value::Page(page), test, &slots, done)
+                            .map_err(|e| e.to_string())?;
+                        let refresh = refresh.clone();
+                        child.on_closed(move || refresh());
+                        *slots.page.borrow_mut() = Some(child);
+                    }
+                    _ => (),
+                }
+                Ok(())
+            })();
+            if let Err(error) = result {
+                w.set_error(error.into());
+            }
+            refresh();
+        }
+    });
+    w.window().on_close_requested({
+        let weak = w.as_weak();
+        move || {
+            if let Some(w) = weak.upgrade() {
+                w.invoke_action("cancel".into());
+            }
+            slint::CloseRequestResponse::KeepWindowShown
+        }
+    });
+    refresh();
+    w.show().map_err(|e| e.to_string())?;
+    *slot.borrow_mut() = Some(w.clone_strong());
+    Ok(w)
+}

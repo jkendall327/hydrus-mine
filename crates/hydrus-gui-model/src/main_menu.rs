@@ -175,6 +175,8 @@ pub enum Command {
     ManageSubscriptions,
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
+    /// Parser definitions (`false`) or URL-class parser links (`true`).
+    ManageParsers(bool),
     /// Open the manage import folders dialog.
     ManageImportFolders,
     /// Open the manage export folders dialog.
@@ -853,9 +855,9 @@ fn network_menu(facts: &Facts) -> Entry {
                         dots("url classes"),
                         Command::ManageDownloaderDefinitions(true),
                     ),
-                    todo(dots("parsers")),
+                    item(dots("parsers"), Command::ManageParsers(false)),
                     SEP,
-                    todo(dots("url class links")),
+                    item(dots("url class links"), Command::ManageParsers(true)),
                     SEP,
                     todo(dots("LEGACY: lookup scripts")),
                 ],
