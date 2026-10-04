@@ -1190,13 +1190,13 @@ fn subscription_missing_history_asks_original_question_before_staging_or_persist
 fn legacy_subscription_clipboard_import_reaches_saved_query_settings_and_full_histories() {
     use hydrus_downloader_exchange::subscriptions as exchange;
     let reference = hydrus_testkit::fixture_json("subscription_legacy_exchange.json");
+    let _windows = headless::init();
     for case_index in [2, 5] {
         let case = &reference["cases"][case_index];
         let expected = exchange::decode_text(&case["normalised"].to_string())
             .unwrap()
             .remove(0);
         let (_dirs, store) = store();
-        let _windows = headless::init();
         let ui = MainWindow::new().unwrap();
         let bound = bind(&ui, Pages::open(store.clone()).unwrap());
         let dialog = open_dialog(&ui, &bound);
