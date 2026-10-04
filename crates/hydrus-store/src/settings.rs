@@ -533,7 +533,7 @@ impl Setting for ViewerCanvasSettings {
 }
 
 /// Pop-in hover panels and the passive bottom-right index in the media viewer.
-#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]
 pub struct ViewerHoverSettings {
     pub tags: bool,
