@@ -220,6 +220,10 @@ impl ManageTags {
     }
     pub fn display_rows(&self) -> Vec<TagRow> {
         let rows = self.plain_rows();
+        let presentation: hydrus_core::tag_presentation::TagPresentation = self
+            .store
+            .read(hydrus_store::settings::get)
+            .unwrap_or_default();
         let snapshot = self.store.snapshot();
         let graph = snapshot.display.get(self.services[self.service].0);
         let details = self
@@ -256,7 +260,7 @@ impl ManageTags {
             if preferences.tag_list_show_siblings
                 && let Some(ideal) = ideal
             {
-                label.push_str(" → ");
+                label.push_str(&presentation.sibling_connector);
                 label.push_str(&ideal);
             }
             if preferences.tag_list_show_parents

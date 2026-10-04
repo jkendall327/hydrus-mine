@@ -2253,3 +2253,11 @@ activate the originating stored tag. Cancelling either Options or Manage Tags
 preserves saved preferences and mappings; reopening uses the saved defaults.
 The real Qt `tag_dialog_preferences.json` recording covers all sixteen flag
 combinations and inherited-row activation.
+
+Tag Presentation > other rendering now edits the sibling connecting string.
+The exact saved text, including empty strings and Unicode, joins raw aliases
+and their ideal siblings in Manage Tags and every shared write-autocomplete
+consumer. Options changes remain staged until Apply; Cancel preserves existing
+labels and reopening reads the saved text. The real Qt `sibling_connector.json`
+recording uses actual storage and write-result widgets with unchanged raw tags
+and counts.

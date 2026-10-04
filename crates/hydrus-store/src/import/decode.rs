@@ -1847,6 +1847,9 @@ fn tag_presentation(
     if let Some(connector) = options.strings.get("namespace_connector") {
         out.namespace_connector.clone_from(connector);
     }
+    if let Some(connector) = options.strings.get("sibling_connector") {
+        out.sibling_connector.clone_from(connector);
+    }
     if let Some(namespaces) = options.string_lists.get("user_namespace_group_by_sort") {
         out.user_namespaces.clone_from(namespaces);
     }
@@ -3090,6 +3093,9 @@ mod tests {
         options
             .strings
             .insert("namespace_connector".into(), " - ".into());
+        options
+            .strings
+            .insert("sibling_connector".into(), " ⇢ ".into());
         options.string_lists.insert(
             "user_namespace_group_by_sort".into(),
             vec!["series".into(), ":".into(), String::new()],
@@ -3106,6 +3112,7 @@ mod tests {
         let converted = tag_presentation(&options);
         assert!(!converted.show_namespaces && converted.replace_underscores);
         assert_eq!(converted.namespace_connector, " - ");
+        assert_eq!(converted.sibling_connector, " ⇢ ");
         assert_eq!(converted.user_namespaces, ["series", ":", ""]);
         assert_eq!(
             converted.search_page_sort,

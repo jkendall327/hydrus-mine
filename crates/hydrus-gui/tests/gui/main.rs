@@ -102,6 +102,7 @@ mod tag_filter_favourites;
 mod downloader_display;
 mod favourite_search_editor;
 
+mod sibling_connector;
 mod tag_dialog_defaults;
 mod tag_dialog_preferences;
 

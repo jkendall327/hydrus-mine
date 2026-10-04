@@ -1481,3 +1481,9 @@ selected file has the tag, multiple stored-tag selection and its full context
 menu are not implemented, and remote service petition dialogs are outside this
 local-service slice. The four preference leaves do not claim those parent
 workflow gaps complete.
+
+The sibling connecting string now persists, migrates from legacy options and
+reaches native Manage Tags and shared write-tag labels. The related Qt connector
+fade and separate connector namespace-colour options remain unimplemented:
+native rows still use a single namespace colour for the full label. This text
+control does not complete the broader tag-presentation parent.
