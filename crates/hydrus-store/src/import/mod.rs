@@ -1647,7 +1647,18 @@ pub(crate) mod tests {
         // the reference's default: no collecting
         assert_eq!(
             input.settings["sorts"]["default_collect"],
-            serde_json::json!({"namespaces": [], "ratings": [], "collect_unmatched": true})
+            serde_json::json!({
+                "namespaces": [],
+                "ratings": [],
+                "collect_unmatched": true,
+                "tag_context": hydrus_core::search::context::TagContext::new(
+                    hydrus_core::ServiceKey::new(
+                        hydrus_core::service::builtin_keys::COMBINED_TAG.to_vec()
+                    ),
+                    true,
+                    true,
+                )
+            })
         );
         // recorded, counting the media viewer and the Client API
         assert_eq!(
