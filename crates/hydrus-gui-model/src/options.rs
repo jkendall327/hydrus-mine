@@ -87,6 +87,8 @@ settings! {
     gui: GuiSettings,
     gui_sessions: hydrus_store::settings::GuiSessionSettings,
     info_line: InfoLineSettings,
+    import_options: hydrus_core::import_options::ImportOptionsManager,
+    import_options_ui: hydrus_store::settings::ImportOptionsUiSettings,
     media_viewer: MediaViewerSettings,
     network: NetworkSettings,
     notebooks: NotebookSettings,
@@ -156,6 +158,7 @@ pub enum Value {
     RegexFavourites(RegexFavourites),
     /// Shared favourite tags, staged until the parent options dialog applies.
     FavouriteTags(FavouriteTags),
+    ImportOptions(crate::import_options_panel::Value),
     TagService(hydrus_core::ServiceKey),
     Location(hydrus_core::search::context::LocationContext),
 }
@@ -216,6 +219,8 @@ pub enum Kind {
     LocalLocation,
     /// A detached tag list editor sharing write autocomplete.
     FavouriteTags,
+    /// The transactional manager page, including simple-mode presentation.
+    ImportOptions,
     /// Real tag services, optionally including all known tags.
     TagService {
         combined: bool,
@@ -2115,6 +2120,27 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
             ],
         ),
         page(
+            "import options",
+            vec![opt(
+                "",
+                Kind::ImportOptions,
+                Rc::new(|settings| {
+                    Value::ImportOptions(crate::import_options_panel::Value {
+                        manager: settings.import_options.clone(),
+                        ui: settings.import_options_ui.clone(),
+                    })
+                }),
+                Rc::new(|settings, value| match value {
+                    Value::ImportOptions(value) => {
+                        settings.import_options = value.manager.clone();
+                        settings.import_options_ui = value.ui.clone();
+                        Ok(())
+                    }
+                    _ => Err(wrong("import options")),
+                }),
+            )],
+        ),
+        page(
             "regex favourites",
             vec![opt(
                 "",
@@ -2951,6 +2977,32 @@ impl Editor {
         for value in self.values.iter_mut().flatten() {
             if matches!(value, Value::RegexFavourites(_)) {
                 *value = Value::RegexFavourites(favourites);
+                return;
+            }
+        }
+    }
+
+    /// All defaults/profiles and their presentation preference, staged together.
+    pub fn edited_import_options(&self) -> crate::import_options_panel::Value {
+        self.values
+            .iter()
+            .flatten()
+            .find_map(|value| {
+                if let Value::ImportOptions(value) = value {
+                    Some(value.clone())
+                } else {
+                    None
+                }
+            })
+            .unwrap_or_else(|| crate::import_options_panel::Value {
+                manager: self.before.import_options.clone(),
+                ui: self.before.import_options_ui.clone(),
+            })
+    }
+    pub fn set_import_options(&mut self, draft: crate::import_options_panel::Value) {
+        for value in self.values.iter_mut().flatten() {
+            if matches!(value, Value::ImportOptions(_)) {
+                *value = Value::ImportOptions(draft);
                 return;
             }
         }

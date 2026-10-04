@@ -537,6 +537,9 @@ impl Editor {
     /// Use custom options for a kind (starting from what its page shows),
     /// or the default.
     pub fn set_custom(&mut self, kind: Kind, custom: bool) {
+        if self.caller == CallerType::Global && !custom {
+            return;
+        }
         self.custom.retain(|k| *k != kind);
         if custom {
             self.custom.push(kind);

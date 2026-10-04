@@ -89,6 +89,7 @@ fn the_options_window_applies_its_changes() {
             "gui",
             "gui pages",
             "gui sessions",
+            "import options",
             "importing",
             "maintenance and processing",
             "media playback",

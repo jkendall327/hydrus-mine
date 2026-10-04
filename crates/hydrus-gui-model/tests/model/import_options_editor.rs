@@ -378,3 +378,56 @@ fn defaults_editor_uses_parent_stack_and_retains_hidden_custom_kinds() {
         );
     }
 }
+
+#[test]
+fn caller_defaults_lists_and_fallback_labels_match_real_reference_editors() {
+    use hydrus_core::import_options::UrlClassKind;
+    use hydrus_gui_model::import_options_editor::Editor;
+    let manager = ImportOptionsManager::default();
+    let fixture = hydrus_testkit::fixture_json("import_options_panel.json");
+    for case in fixture["editors"].as_array().unwrap() {
+        let caller = CallerType::from_code(case["caller"].as_i64().unwrap()).unwrap();
+        let urls = case["url_keys"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|key| {
+                let key = key.as_str().unwrap().to_owned();
+                let kind = if key.starts_with("02") {
+                    UrlClassKind::Watchable
+                } else {
+                    UrlClassKind::Other
+                };
+                (key, kind)
+            })
+            .collect::<Vec<_>>();
+        let own = manager.caller_default(caller).cloned().unwrap_or_default();
+        let editor = Editor::new_for_defaults(
+            &manager,
+            caller,
+            case["simple"].as_bool().unwrap(),
+            &own,
+            &urls,
+        );
+        assert_eq!(
+            serde_json::json!(
+                editor
+                    .kinds
+                    .iter()
+                    .map(|kind| kind.code())
+                    .collect::<Vec<_>>()
+            ),
+            case["kinds"]
+        );
+        assert_eq!(
+            serde_json::json!(
+                editor
+                    .kinds
+                    .iter()
+                    .map(|&kind| editor.source(kind))
+                    .collect::<Vec<_>>()
+            ),
+            case["sources"]
+        );
+    }
+}

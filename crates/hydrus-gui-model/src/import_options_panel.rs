@@ -470,6 +470,57 @@ impl Editor {
         }
         self.sync();
     }
+    /// The exact caller explanation displayed above its default editor.
+    pub fn description(&self, target: &Target) -> String {
+        let caller = target.caller();
+        let label = match target {
+            Target::Url(key) => self
+                .classes
+                .iter()
+                .find(|class| hex::encode(&class.key) == *key)
+                .map_or_else(|| "Unknown URL Class".into(), |class| class.name.clone()),
+            _ => caller.name().into(),
+        };
+        let heading = if matches!(target, Target::Url(_)) {
+            format!("You are editing URL Class \"{label}\".")
+        } else {
+            format!("You are editing \"{label}\".")
+        };
+        let description = match caller {
+            CallerType::LocalImport => {
+                "This covers all imports from a local hard drive, via a local import page or an \"import folder\". This is the place to filter, route, or present files differently to downloads."
+            }
+            CallerType::PostUrls => {
+                "This covers any gallery search or \"post\" URL, be that in a gallery downloader, urls downloader, or subscription. A general catch-all for all normal URLs. This is a good place to set up metadata filtering."
+            }
+            CallerType::Subscription => {
+                "This covers all subscriptions. A good place to set up quieter presentation options than a normal download page (e.g. to make your subscription popups less spammy)."
+            }
+            CallerType::WatcherUrls => {
+                "This covers all thread watcher work. A good place to set metadata filtering that differs from your gallery/post URL settings."
+            }
+            CallerType::Global => {
+                "This is the base that all importers will default to if nothing else is set. This is the place to manage your general preferences."
+            }
+            CallerType::UrlClass => {
+                "This covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters."
+            }
+            CallerType::SpecificImporter => {
+                "These import options are attached to this specific importer alone. If you set something here, it will only apply here, and it will definitely apply, overriding any other default."
+            }
+            CallerType::LocalImportFolder => {
+                "This covers all import folders, if you want different behaviour to a regular local import. A good place to set up quieter presentation options."
+            }
+            CallerType::ClientApi => {
+                "This covers all files directly imported via the Client API, i.e. when an external program posts a raw file or a file path to be imported, with no downloader page involved. Only appropriate for file filtering and routing."
+            }
+            CallerType::Favourites => {
+                "This is a template you can load and paste wherever you need it."
+            }
+        };
+        format!("{heading}\n\n{description}")
+    }
+
     pub fn stack(&self, target: &Target) -> Option<String> {
         let (intro, lines) = match target {
             Target::Caller(CallerType::Global) => return Some(GLOBAL_STACK.into()),

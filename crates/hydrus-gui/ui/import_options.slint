@@ -74,6 +74,7 @@ export component ImportOptionsWindow inherits Window {
     in property <string> kind-description;
     in property <[string]> custom-choices;
     in-out property <int> custom-index;
+    in property <bool> default-choice-enabled: true;
     // (a kind with no editor here yet: its options' summary)
     in property <string> summary;
     // presentation
@@ -202,6 +203,7 @@ export component ImportOptionsWindow inherits Window {
                         horizontal-alignment: center;
                     }
                     ComboBox {
+                        enabled: root.default-choice-enabled;
                         model: root.custom-choices;
                         current-index <=> root.custom-index;
                         selected => { root.changed(); }

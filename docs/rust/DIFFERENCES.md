@@ -1510,3 +1510,17 @@ reuses one owned chooser window for the second list; the reference opens a secon
 quick dialog. Existing gallery-page and subscription source controls retain their
 previous presentation; this slice implements the Options default and verifies its
 saved value reaches those consumers.
+
+Options' import-options manager uses a child window with three expandable lists
+rather than embedding those lists directly in the main Options page. Informational
+messages, reset choices and confirmation questions appear within that child;
+HTML help opens the online import-options manual. Its default editors inherit
+only less-specific contexts, while importer buttons retain their existing lists.
+The reference currently raises a tuple-unpack error for single-profile deletion;
+native asks the intended named-profile confirmation and safely deletes after Yes,
+so that original delete entry remains partial. Resetting profiles refreshes the
+native visible list immediately; the reference updates its manager but leaves the
+old list visible until reopening. The paste menu preserves the reference's current
+label-to-handler mapping (merge-paste invokes replace, fill-in-gaps-paste invokes
+merge, replace-paste invokes fill). Existing import-options editor limitations,
+including program-command editing/execution, remain as described above.

@@ -132,6 +132,7 @@ export component OptionsWindow inherits Window {
     callback gallery-source-clicked();
     callback local-location-clicked(int);
     callback favourite-tags-clicked();
+    callback import-options-clicked();
     callback apply();
     callback cancel();
 
@@ -295,6 +296,10 @@ export component OptionsWindow inherits Window {
                             if row.kind == 19: Button {
                                 text: row.text;
                                 clicked => { root.gallery-source-clicked(); }
+                            }
+                            if row.kind == 18: Button {
+                                text: row.text;
+                                clicked => {root.import-options-clicked();}
                             }
                             if row.kind == 14: Button {
                                 text: row.text;

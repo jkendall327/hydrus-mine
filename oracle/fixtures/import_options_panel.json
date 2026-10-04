@@ -64,6 +64,478 @@
     ],
     "favourites": []
   },
+  "editors": [
+    {
+      "caller": 4,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"global\".\n\nThis is the base that all importers will default to if nothing else is set. This is the place to manage your general preferences.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 4,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"global\".\n\nThis is the base that all importers will default to if nothing else is set. This is the place to manage your general preferences.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 10,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"client api\".\n\nThis covers all files directly imported via the Client API, i.e. when an external program posts a raw file or a file path to be imported, with no downloader page involved. Only appropriate for file filtering and routing.",
+      "kinds": [
+        1,
+        3
+      ],
+      "sources": [
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 10,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"client api\".\n\nThis covers all files directly imported via the Client API, i.e. when an external program posts a raw file or a file path to be imported, with no downloader page involved. Only appropriate for file filtering and routing.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 0,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"local hard drive import\".\n\nThis covers all imports from a local hard drive, via a local import page or an \"import folder\". This is the place to filter, route, or present files differently to downloads.",
+      "kinds": [
+        1,
+        3,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 0,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"local hard drive import\".\n\nThis covers all imports from a local hard drive, via a local import page or an \"import folder\". This is the place to filter, route, or present files differently to downloads.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 9,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"import folder\".\n\nThis covers all import folders, if you want different behaviour to a regular local import. A good place to set up quieter presentation options.",
+      "kinds": [
+        3,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 9,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"import folder\".\n\nThis covers all import folders, if you want different behaviour to a regular local import. A good place to set up quieter presentation options.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 3,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"watchable urls\".\n\nThis covers all thread watcher work. A good place to set metadata filtering that differs from your gallery/post URL settings.",
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 3,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"watchable urls\".\n\nThis covers all thread watcher work. A good place to set metadata filtering that differs from your gallery/post URL settings.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 1,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"gallery/post urls\".\n\nThis covers any gallery search or \"post\" URL, be that in a gallery downloader, urls downloader, or subscription. A general catch-all for all normal URLs. This is a good place to set up metadata filtering.",
+      "kinds": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 1,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"gallery/post urls\".\n\nThis covers any gallery search or \"post\" URL, be that in a gallery downloader, urls downloader, or subscription. A general catch-all for all normal URLs. This is a good place to set up metadata filtering.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 2,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"subscription\".\n\nThis covers all subscriptions. A good place to set up quieter presentation options than a normal download page (e.g. to make your subscription popups less spammy).",
+      "kinds": [
+        3,
+        6
+      ],
+      "sources": [
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 2,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"subscription\".\n\nThis covers all subscriptions. A good place to set up quieter presentation options than a normal download page (e.g. to make your subscription popups less spammy).",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": true,
+      "url_keys": [
+        "0101010101010101010101010101010101010101010101010101010101010101"
+      ],
+      "description": "You are editing URL Class \"alpha post\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": false,
+      "url_keys": [
+        "0101010101010101010101010101010101010101010101010101010101010101"
+      ],
+      "description": "You are editing URL Class \"alpha post\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "gallery/post urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": true,
+      "url_keys": [
+        "0202020202020202020202020202020202020202020202020202020202020202"
+      ],
+      "description": "You are editing URL Class \"beta watch\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "watchable urls",
+        "global"
+      ]
+    },
+    {
+      "caller": 7,
+      "simple": false,
+      "url_keys": [
+        "0202020202020202020202020202020202020202020202020202020202020202"
+      ],
+      "description": "You are editing URL Class \"beta watch\".\n\nThis covers all URLs of a particular class. It overrides most other defaults. This is the place to set up blacklists particular to a certain site. The logic of passing from one URL to another can get tricky depending on the question, so if the site is complicated, spam these settings to all the URLs that might be involved (gallery, post, any file...) so you are covering every step of parsing and processing. Generally, though, the final \"Post URL\" encountered is the one that matters.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "watchable urls",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 11,
+      "simple": true,
+      "url_keys": [],
+      "description": "You are editing \"favourites template\".\n\nThis is a template you can load and paste wherever you need it.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    },
+    {
+      "caller": 11,
+      "simple": false,
+      "url_keys": [],
+      "description": "You are editing \"favourites template\".\n\nThis is a template you can load and paste wherever you need it.",
+      "kinds": [
+        0,
+        1,
+        2,
+        3,
+        4,
+        5,
+        7,
+        6
+      ],
+      "sources": [
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global",
+        "global"
+      ]
+    }
+  ],
   "steps": [
     {
       "action": "_SeeDefaultStack",
@@ -2903,6 +3375,13 @@
     }
   ],
   "incoming_summary": "notes: adding notes, with conflict resolution: add the new note under a new name",
+  "help_titles": [
+    "open tl;dr",
+    "open the import options help"
+  ],
+  "documentation": [
+    "getting_started_import_options.html"
+  ],
   "draft_isolated": true,
   "applied": true,
   "reopened_simple": false,

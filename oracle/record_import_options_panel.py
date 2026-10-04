@@ -17,15 +17,17 @@ sys.path.insert(0, str(HERE))
 def record(session):
     from qtpy import QtWidgets as QW
     from hydrus.core import HydrusConstants as HC, HydrusExceptions
-    from hydrus.client.gui import ClientGUIDialogsQuick, ClientGUIDialogsMessage, ClientGUITopLevelWindowsPanels
+    from hydrus.client.gui import ClientGUIDialogsQuick, ClientGUIDialogsMessage, ClientGUITopLevelWindowsPanels, ClientGUIDialogsDocumentation
+    from hydrus.client.gui.widgets import ClientGUIMenuButton
     from hydrus.client.gui.panels.options.ImportOptionsPanel import ImportOptionsPanel
+    from hydrus.client.gui.importing import ClientGUIImportOptionsContainer
     from hydrus.client.importing.options import ImportOptionsConstants as IOC, ImportOptionsContainer, ImportOptionsManager, NoteImportOptions
     from hydrus.client.networking import ClientNetworkingURLClass
     controller, gui = session.controller, session.controller.gui
     domain = controller.network_engine.domain_manager
     original = (ClientGUIDialogsQuick.GetYesNo, ClientGUIDialogsQuick.SelectFromListButtons,
                 ClientGUIDialogsMessage.ShowInformation, ClientGUITopLevelWindowsPanels.DialogEdit,
-                domain.GetURLClasses, domain.GetURLClassFromKey, controller.import_options_manager)
+                domain.GetURLClasses, domain.GetURLClassFromKey, controller.import_options_manager, ClientGUIDialogsDocumentation.OpenDocumentation)
 
     def drive():
         classes = [ClientNetworkingURLClass.URLClass(name, url_class_key=bytes([index])*32, url_type=kind)
@@ -42,7 +44,14 @@ def record(session):
         incoming.SetImportOptions(NoteImportOptions.NoteImportOptions())
         options = controller.new_options.Duplicate()
         options.SetBoolean('import_options_simple_mode',True)
+        help_calls=[]
+        ClientGUIDialogsDocumentation.OpenDocumentation=lambda parent,page:help_calls.append(page)
         panel = ImportOptionsPanel(gui, options, manager)
+        help_button=next(button for button in panel.findChildren(ClientGUIMenuButton.MenuIconButton)
+                         if button._menu_template_items and button._menu_template_items[0].GetTitle()=='open tl;dr')
+        help_titles=[item.GetTitle() for item in help_button._menu_template_items]
+        item=help_button._menu_template_items[1]
+        item.call(*item.args,**item.kwargs)
         calls, answers, choices, edits, rows = [], [], [], [], []
         ClientGUIDialogsMessage.ShowInformation = lambda parent,message,*args,**kwargs: calls.append({'information':message})
         def yes_no(parent,message,*args,**kwargs):
@@ -97,6 +106,16 @@ def record(session):
             except Exception as exc:error=type(exc).__name__+': '+str(exc)
             rows.append({'action':action,'selection':selected,'calls':list(calls),'error':error,'state':state()})
         initial=state()
+        editors=[]
+        for code, url_keys in [(code,[]) for code in IOC.IMPORT_OPTIONS_CALLER_TYPES_EDITABLE_CANONICAL_ORDER]+[(IOC.IMPORT_OPTIONS_CALLER_TYPE_URL_CLASS,[classes[0].GetClassKey()]),(IOC.IMPORT_OPTIONS_CALLER_TYPE_URL_CLASS,[classes[1].GetClassKey()]),(IOC.IMPORT_OPTIONS_CALLER_TYPE_FAVOURITES,[])]:
+            for simple in [True,False]:
+                own=manager.GetDefaultImportOptionsContainerForCallerType(code) if code in IOC.IMPORT_OPTIONS_CALLER_TYPES_EDITABLE_CANONICAL_ORDER else ImportOptionsContainer.ImportOptionsContainer()
+                child=ClientGUIImportOptionsContainer.EditImportOptionsContainerPanel(gui,manager,code,own,simple_mode=simple,url_class_keys=url_keys)
+                editors.append({'caller':code,'simple':simple,'url_keys':[key.hex() for key in url_keys],
+                                'description':child._description_label.text(),
+                                'kinds':[page._import_options_type for page in child._listbook.GetPages()],
+                                'sources':[page._full_default_import_options_container.GetSourceLabel(page._import_options_type) for page in child._listbook.GetPages()]})
+                child.deleteLater()
         for code in initial['caller_codes']:
             step('_SeeDefaultStack',(panel._default_import_options_list,[code]))
         for cls in classes[:3]:step('_SeeURLClassStack',(panel._url_class_import_options_list,[cls]))
@@ -131,8 +150,8 @@ def record(session):
         panel.UpdateOptions()
         applied=controller.import_options_manager is panel._import_options_manager
         reopened=ImportOptionsPanel(gui, options, controller.import_options_manager)
-        result={'initial':initial,'steps':rows,'incoming_summary':incoming.GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_FAVOURITES),
-                'draft_isolated':isolated,'applied':applied,'reopened_simple':reopened._simple_mode.isChecked(),
+        result={'initial':initial,'editors':editors,'steps':rows,'incoming_summary':incoming.GetSummary(IOC.IMPORT_OPTIONS_CALLER_TYPE_FAVOURITES),
+                'help_titles':help_titles,'documentation':help_calls,'draft_isolated':isolated,'applied':applied,'reopened_simple':reopened._simple_mode.isChecked(),
                 'reopened_favourites':[list(reopened._ConvertFavouriteDataToDisplayTuple(f)) for f in reopened._favourite_import_options_list.GetData()]}
         panel.deleteLater();reopened.deleteLater()
         return result
@@ -140,7 +159,7 @@ def record(session):
     finally:
         (ClientGUIDialogsQuick.GetYesNo,ClientGUIDialogsQuick.SelectFromListButtons,
          ClientGUIDialogsMessage.ShowInformation,ClientGUITopLevelWindowsPanels.DialogEdit,
-         domain.GetURLClasses,domain.GetURLClassFromKey,controller.import_options_manager)=original
+         domain.GetURLClasses,domain.GetURLClassFromKey,controller.import_options_manager,ClientGUIDialogsDocumentation.OpenDocumentation)=original
 
 
 def main():

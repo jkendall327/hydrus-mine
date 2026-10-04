@@ -360,7 +360,7 @@ fn page_problems(page: &Page, items: &Json, settings: &Settings, store: &Store) 
         // in a child window, covered by dedicated regex/write-tag/gallery-source recordings.
         if matches!(
             option.kind,
-            Kind::RegexFavourites | Kind::FavouriteTags | Kind::GallerySource
+            Kind::RegexFavourites | Kind::FavouriteTags | Kind::GallerySource | Kind::ImportOptions
         ) {
             continue;
         }

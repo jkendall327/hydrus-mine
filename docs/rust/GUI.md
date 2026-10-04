@@ -2300,3 +2300,19 @@ broken entries explain their real URL-class/parser/template error and remain
 selectable. Empty clients receive the reference warning. Child OK updates only
 the Options draft; Cancel, window close and parent Cancel discard it. Apply saves
 the default for newly created gallery pages and the subscription Add chooser.
+
+Options > import options opens a staged manager page containing the reference's
+three expandable lists: caller defaults, eligible post/watchable/gallery URL
+classes, and favourites/profiles. Rows show the actual custom-container summary;
+selection survives sorting and profile renaming. Show stack explains the exact
+caller/site precedence, while edit opens the shared import-options editor against
+its less-specific parent defaults. Global keeps all eight kinds. Clear, deletion
+and the three reset choices use the reference prompts and wait for acceptance.
+The simple-mode checkbox controls both these children and ordinary importer
+editors after Apply. The help menu provides the recorded tl;dr and import-options
+manual. Copy/paste and the staged star menus share the existing container exchange
+and overwrite helpers. All manager changes remain in the Options draft until its
+outer Apply; Cancel also closes and invalidates child handles. Saved defaults,
+URL overrides and profiles are visible on reopening and reach importer defaults.
+`import_options_panel.json` records the actual Qt lists, stacks, editor kinds and
+fallback sources, clear/reset/name prompts, cancellation and apply isolation.

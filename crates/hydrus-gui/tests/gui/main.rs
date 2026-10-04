@@ -25,6 +25,7 @@ mod force_filetype;
 mod formula_editors;
 mod import_files;
 mod import_options;
+mod import_options_panel;
 mod importer_list_menu;
 mod info_lines;
 mod list_drag;
