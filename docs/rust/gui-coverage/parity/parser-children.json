@@ -2,12 +2,13 @@
   "agent": "parity_parser_children",
   "baseline": "d50df26b",
   "implementation_commits": [
-    "ae7227ab0557ee277307145e9c862cf6a0306aa0"
+    "ae7227ab0557ee277307145e9c862cf6a0306aa0",
+    "671a6d8d1f32c9ed8043a15a1008740ee1874bb8"
   ],
   "validation": {
-    "reference_recording": "passed; 16 real Qt recursive subsidiary states",
-    "formatting": "cargo fmt --all and git diff --check passed",
-    "rust_tests": "authored reference-model replay and real-store GUI parser/owner regressions; execution pending root asynchronous CI; no local Cargo builds",
+    "reference_recording": "passed; 16 recursive subsidiary and seven sidecar example panel states",
+    "formatting": "cargo fmt --all, git diff --check and Python recorder syntax check passed",
+    "rust_tests": "authored exact model reference replays, real-store GUI persistence, recursive/stale owner regressions and saved router consumer assertions; root asynchronous CI pending; no local Cargo builds",
     "rendered_ui": "reference screenshot inspected; native headless render assertions authored and pending root CI"
   },
   "entries": [
@@ -127,6 +128,65 @@
       ],
       "limits": [
         "Standalone subsidiary wrapper exchange is still unavailable; the shared child editor exports its page parser, while parent-page exchange preserves separation/sort metadata."
+      ]
+    },
+    {
+      "reference_id": "sidecar-test",
+      "previous_status": "missing",
+      "before": "missing",
+      "proposed_status": "first_pass",
+      "proposedStatus": "first_pass",
+      "behavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "exactBehavior": "Reusable router example panel shows a source selector and per-object input path/media hash, sorted imported strings, and router-processed strings (literal no changes for inert processors). Actual TXT/JSON sidecar importers and read-only media metadata drive the results, including duplicates, missing sidecars, notes with preserved newlines, URLs, and exact HTML-in-JSON error text. Source processor and JSON formula children receive pre-source-processor texts from the first example; router processors receive every source output from that first example. Owner cancellation invalidates retained children; accepted processing is staged and reaches saved real-store router consumers.",
+      "source_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1214,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "test_importer_strings"
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/sidecar_editors.rs",
+          "line": 1256,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "router_test_rows"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/sidecars_window.rs",
+          "line": 758,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "open_router"
+        }
+      ],
+      "test_anchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/sidecar_editors.rs",
+          "line": 451,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "recorded_router_tables_and_child_strings_use_real_sidecars_and_read_only_media"
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/sidecars.rs",
+          "line": 632,
+          "commit": "671a6d8d1f32c9ed8043a15a1008740ee1874bb8",
+          "symbol": "router_examples_follow_reference_source_tabs_and_processor_children_without_exports"
+        }
+      ],
+      "reference_evidence": {
+        "recorder": "oracle/record_sidecar_testing.py",
+        "fixture": "oracle/fixtures/sidecar_testing.json",
+        "visual_reference": "oracle/fixtures/sidecar_testing.png",
+        "actual_recording": "passed: seven real Qt source-table states; generated documents and synthetic sidecars.example media URLs/notes"
+      },
+      "limitations": [
+        "Uses a source selector and table instead of the reference notebook.",
+        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
+      ],
+      "limits": [
+        "Uses a source selector and table instead of the reference notebook.",
+        "The export-folder parent update-test-example-files search button is not yet implemented; filename tagging, import folders and manual exports supply bounded owner examples.",
+        "General filesystem I/O errors include the operating-system error text; the recorded formula parse error is asserted exactly."
       ]
     }
   ]
