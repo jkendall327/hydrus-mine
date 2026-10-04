@@ -30,7 +30,7 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 615,
+          "line": 622,
           "symbol": "pub fn runtime_command("
         },
         {
@@ -67,12 +67,12 @@
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1140,
+          "line": 1142,
           "symbol": "fn runtime_cog_server"
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1198,
+          "line": 1200,
           "symbol": "fn runtime_cog_gallery"
         },
         {
@@ -82,7 +82,7 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 2011,
+          "line": 2030,
           "symbol": "async fn runtime_domain_scrub_wakes_a_registered_domain_gate_and_preserves_unrelated_errors"
         }
       ],
@@ -125,7 +125,7 @@
         },
         {
           "relativepath": "crates/hydrus-net/src/engine.rs",
-          "line": 615,
+          "line": 622,
           "symbol": "pub fn runtime_command("
         },
         {
@@ -168,12 +168,12 @@
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1140,
+          "line": 1142,
           "symbol": "fn runtime_cog_server"
         },
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
-          "line": 1198,
+          "line": 1200,
           "symbol": "fn runtime_cog_gallery"
         },
         {
@@ -269,7 +269,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui/src/lib.rs",
-          "line": 1043,
+          "line": 1070,
           "symbol": "                let predicates = crate::file_log::url_search(&urls);"
         }
       ],
@@ -320,7 +320,7 @@
         },
         {
           "relativepath": "crates/hydrus-gui-model/src/png_export.rs",
-          "line": 58,
+          "line": 74,
           "symbol": "pub fn encode("
         },
         {
@@ -680,7 +680,7 @@
         {
           "relativepath": "crates/hydrus-store/src/import/decode.rs",
           "symbol": "fn network_boot_preference_converts_without_changing_live_pause(",
-          "line": 2530
+          "line": 2584
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/menu_bar.rs",
@@ -690,7 +690,7 @@
         {
           "relativepath": "crates/hydrus-net/tests/engine.rs",
           "symbol": "async fn boot_pause_blocks_real_requests_and_resume_does_not_reset_the_preference(",
-          "line": 1318
+          "line": 1320
         }
       ],
       "referenceRecording": {
@@ -748,6 +748,69 @@
         "fixture": "oracle/fixtures/matcher_favourites.json",
         "executed": true,
         "behavior": "Actual EditStringMatchPanel RegexInput button/QActions, clipboard pub outputs, real owned DialogEdit with real Apply/Cancel and staged list edits."
+      },
+      "validation": {
+        "cargoFmt": true,
+        "diffCheck": true,
+        "slintCachedCompiler": true,
+        "localCargoBuildsOrTests": false,
+        "ci": "Parent asynchronous GitHub CI."
+      }
+    },
+    {
+      "originalID": "audit-network-parser-auto-links",
+      "before": "missing",
+      "proposedStatus": "first_pass",
+      "exactBehavior": "Two actual URL-class link controls: parser links/API-redirect review tabs and exact gaps-enabled auto-fill button. Direct API pairs use source examples, real converter execution and descending-complexity first-match lookup; source classes with valid pairs are excluded from direct parser rows. Readonly pair rows/columns and sorting are bound to stored classes. The matching helper finds missing candidates by parser name/example and class complexity; the actual v688 owner applies none because it iterates existing linked keys. Empty, partly linked and installed recordings are reproduced, including disabled full-installed button. Cancel/stale actions/reopen preserve stored associations, and installed redirect resolution still returns the API target/parser.",
+      "limits": [
+        "The reference auto-fill owner bug is deliberately reproduced: missing links remain missing after the button. This is a complete claim for the actual recorded controls, not a claim that the reference fills gaps.",
+        "Existing native validation rejects newly authored associations to unresolved API converters; existing explicit parser chooser behavior is outside this leaf.",
+        "Native tabs use explicit tab buttons; pair review is readonly and does not add separate inventory IDs."
+      ],
+      "sourceAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "symbol": "pub fn api_pairs(",
+          "line": 415
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "symbol": "pub fn auto_link_candidates(",
+          "line": 440
+        },
+        {
+          "relativepath": "crates/hydrus-gui-model/src/parser_editors.rs",
+          "symbol": "pub fn try_fill_gaps(",
+          "line": 482
+        },
+        {
+          "relativepath": "crates/hydrus-gui/src/parser_editors_window.rs",
+          "symbol": "let mut api_pairs = {",
+          "line": 1339
+        },
+        {
+          "relativepath": "crates/hydrus-gui/ui/parser_editors.slint",
+          "symbol": "in property <bool> gaps-exist;",
+          "line": 10
+        }
+      ],
+      "testAnchors": [
+        {
+          "relativepath": "crates/hydrus-gui-model/tests/model/parser_editors.rs",
+          "symbol": "fn auto_fill_reference_owner_leaves_candidates_unapplied_and_reviews_api_pairs(",
+          "line": 326
+        },
+        {
+          "relativepath": "crates/hydrus-gui/tests/gui/parser_editors.rs",
+          "symbol": "fn links_auto_fill_and_api_review_reproduce_reference_and_preserve_installed_consumers(",
+          "line": 1635
+        }
+      ],
+      "referenceRecording": {
+        "script": "oracle/record_parser_auto_links.py",
+        "fixture": "oracle/fixtures/parser_auto_links.json",
+        "executed": true,
+        "behavior": "Actual Qt link panel, visible auto-fill button, exact rows/values/gaps enablement before/after click in empty/linked/installed contexts; API pair tab/headers; actual static candidates and invalid converter pair skip. Confirms no-op source bug."
       },
       "validation": {
         "cargoFmt": true,
@@ -960,6 +1023,43 @@
           ]
         }
       ]
+    }
+  ],
+  "nativeComponentUpdates": [
+    {
+      "name": "ParserListWindow",
+      "file": "crates/hydrus-gui/ui/parser_editors.slint",
+      "ownerParentIDs": [
+        "url-links"
+      ],
+      "referenceIDs": [
+        "audit-network-parser-auto-links"
+      ],
+      "actionGroups": [
+        {
+          "label": "parser links",
+          "controls": [
+            "try to fill in gaps based on example urls (enabled if gaps remain)",
+            "existing link/clear chooser"
+          ]
+        },
+        {
+          "label": "api/redirect link review",
+          "controls": [
+            "readonly url-class pair rows",
+            "source/target sort columns"
+          ]
+        },
+        {
+          "label": "owner",
+          "controls": [
+            "Apply",
+            "Cancel",
+            "stale action guard"
+          ]
+        }
+      ],
+      "newPhysicalWindow": false
     }
   ]
 }

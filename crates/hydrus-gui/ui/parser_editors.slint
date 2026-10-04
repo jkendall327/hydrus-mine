@@ -6,6 +6,11 @@ import { DefinitionField } from "downloader_definitions.slint";
 import { Question } from "favourites.slint";
 export component ParserListWindow inherits Window {
     in property <bool> links;
+    in-out property <int> links-tab;
+    in property <bool> gaps-exist;
+    in property <[TableColumn]> api-columns;
+    in property <[TableRow]> api-rows;
+    callback api-sort(int,bool);
     title: root.links ? "url class links" : "parsers";
     preferred-width: 1000px; preferred-height: 580px;
     background: Theme.window;
@@ -23,14 +28,23 @@ export component ParserListWindow inherits Window {
     callback answered(bool);
     VerticalLayout {
         padding: 10px; spacing: 8px;
-        ListTable {
+        if root.links: HorizontalLayout {
+            spacing: 6px;
+            Button { text: "parser links"; enabled: root.links-tab != 0; clicked => { root.links-tab = 0; } }
+            Button { text: "api/redirect link review"; enabled: root.links-tab != 1; clicked => { root.links-tab = 1; } }
+        }
+        if root.links && root.links-tab == 1: ListTable {
+            columns: root.api-columns; rows: root.api-rows;
+            sort(c,a) => { root.api-sort(c,a); }
+        }
+        if !root.links || root.links-tab == 0: ListTable {
             columns: root.columns; rows: root.rows;
             row-clicked(i,c,s) => { if root.question == "" { root.row-clicked(i,c,s); } }
             row-activated(i) => { if root.question == "" { root.row-clicked(i,false,false); root.action(root.links ? "link" : "edit"); } }
             sort(c,a) => { if root.question == "" { root.sort(c,a); } }
             delete-pressed => { if root.question == "" { root.action(root.links ? "clear" : "delete"); } }
         }
-        HorizontalLayout {
+        if !root.links || root.links-tab == 0: HorizontalLayout {
             spacing: 6px; alignment: start;
             if !root.links: Button { text: "add"; enabled: !root.child-open && root.question == ""; clicked => { root.action("add"); } }
             if !root.links: Button { text: "edit"; enabled: root.selected && !root.child-open && root.question == ""; clicked => { root.action("edit"); } }
@@ -41,6 +55,7 @@ export component ParserListWindow inherits Window {
             if root.links: ComboBox { enabled: root.question == ""; model: root.parser-choices; current-index <=> root.chosen-parser; }
             if root.links: Button { text: "link"; enabled: root.selected && root.question == ""; clicked => { root.action("link"); } }
             if root.links: Button { text: "clear"; enabled: root.selected && root.question == ""; clicked => { root.action("clear"); } }
+            if root.links: Button { text: "try to fill in gaps based on example urls"; enabled: root.gaps-exist && !root.child-open && root.question == ""; clicked => { root.action("auto-link"); } }
         }
         if root.links: Text { text: "API/redirect source classes use their target's parser. Associations apply to the live downloader."; color: Theme.text; wrap: word-wrap; }
         if root.error != "": Text { text: root.error; color: Theme.error; wrap: word-wrap; }

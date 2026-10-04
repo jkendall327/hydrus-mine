@@ -2387,3 +2387,5 @@ failed file imports, stop and continue later”. The reference noneable control
 starts at 5 errors, permits 1–1,000,000, and its “no limit” checkbox disables
 abandonment. Edits wait for Apply, Cancel retains the saved threshold, and legacy
 number/None values migrate. New syncs consume the saved network setting.
+
+The URL-class links editor now has “parser links” and “api/redirect link review” tabs. The review computes direct pairs from source example URLs, skips failed converters/self matches, and displays sortable class names. Valid redirect sources use their target’s parser. The exact “try to fill in gaps based on example urls” button appears when gaps remain. The v688 reference owner leaves those gaps unchanged: its matching helper returns new keys, but its replacement loop iterates existing linked keys. The native owner preserves this recorded behavior. Installed associations continue to drive actual API/redirect parser resolution, and the review never changes them.

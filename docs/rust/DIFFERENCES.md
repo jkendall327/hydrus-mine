@@ -1568,3 +1568,5 @@ imports now retain the typed DataMissing identity through the handled-file resul
 The native StoreError set has no general Python DBException/DataMissing wrapper;
 additional native outer DataMissing producers must preserve that identity when
 implemented. Unrelated existing inner import/veto throttle differences remain.
+
+The v688 URL-class links auto-fill button currently finds candidates but applies none: STATICLinkURLClassesAndParsers returns only previously unlinked keys, while EditURLClassLinksPanel applies replacements only among already-linked rows. The actual Qt recorder confirms empty, partly linked and installed cases; the installed case disables the button. Hydrus-rs reproduces that boundary and adds the reference’s real API/redirect pair review, including converter failure handling and readonly sorting. Existing native validation still rejects saving newly authored associations to unresolved API converters. Native parser links retain their existing explicit chooser rather than Qt’s per-row modal selector.
