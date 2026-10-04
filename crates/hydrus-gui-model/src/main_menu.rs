@@ -175,6 +175,8 @@ pub enum Command {
     Options,
     /// Open the manage subscriptions dialog.
     ManageSubscriptions,
+    /// Review live network usage/rules (`true`) or current jobs.
+    NetworkData(bool),
     /// Manage URL classes (true) or gallery URL generators (false).
     ManageDownloaderDefinitions(bool),
     /// Parser definitions (`false`) or URL-class parser links (`true`).
@@ -826,8 +828,11 @@ fn network_menu(facts: &Facts) -> Entry {
             menu(
                 "data",
                 vec![
-                    todo("review bandwidth usage and edit rules"),
-                    todo("review current network jobs"),
+                    item(
+                        "review bandwidth usage and edit rules",
+                        Command::NetworkData(true),
+                    ),
+                    item("review current network jobs", Command::NetworkData(false)),
                     item(
                         "review session cookies",
                         Command::ManageNetworkSessions(false),

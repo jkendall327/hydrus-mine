@@ -24,6 +24,7 @@ pub(crate) struct Hooks {
     pub tag_display: Rc<dyn Fn(bool)>,
     pub tag_relationships: Rc<dyn Fn(hydrus_store::display::RelationKind)>,
     pub pages: Rc<RefCell<Pages>>,
+    pub network_data: crate::network_data_window::Slots,
     pub change_pages: ChangePages,
     pub ask: Ask,
     /// Show the page shown again, its files changed.
@@ -576,6 +577,16 @@ fn run(window: &MainWindow, hooks: &Hooks, command: Command) {
         }
         Command::ManageNetworkSessions(headers) => (hooks.manage_network_sessions)(headers),
         Command::ManageParsers(links) => (hooks.manage_parsers)(links),
+        Command::NetworkData(bandwidth) => {
+            let result = if bandwidth {
+                crate::network_data_window::open_bandwidth(store, &hooks.network_data).map(|_| ())
+            } else {
+                crate::network_data_window::open_jobs(store, &hooks.network_data).map(|_| ())
+            };
+            if let Err(e) = result {
+                eprintln!("could not open network review: {e}");
+            }
+        }
         Command::ManageSubscriptions => (hooks.manage_subscriptions)(),
         Command::ManageImportFolders => (hooks.manage_folders)(true),
         Command::ManageExportFolders => (hooks.manage_folders)(false),

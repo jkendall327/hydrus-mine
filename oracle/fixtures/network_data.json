@@ -1,0 +1,141 @@
+{
+ "now": 1770000000,
+ "contexts": [
+  [
+   0,
+   null
+  ],
+  [
+   2,
+   "example.com"
+  ],
+  [
+   2,
+   "empty.example"
+  ]
+ ],
+ "usage_rows": [
+  [
+   "global",
+   "global",
+   "",
+   "0B in 0 requests",
+   "0B in 0 requests",
+   "0B in 0 requests",
+   "n/a",
+   ""
+  ],
+  [
+   "web domain: example.com",
+   "web domain",
+   "2 KB/s",
+   "2 KB in 1 requests",
+   "2 KB in 1 requests",
+   "2 KB in 1 requests",
+   "yes",
+   ""
+  ],
+  [
+   "web domain: empty.example",
+   "web domain",
+   "",
+   "0B in 0 requests",
+   "0B in 0 requests",
+   "0B in 0 requests",
+   "",
+   ""
+  ]
+ ],
+ "rule_values": [
+  [
+   0,
+   null,
+   104857600
+  ],
+  [
+   0,
+   86400,
+   4096
+  ],
+  [
+   1,
+   60,
+   20
+  ]
+ ],
+ "rule_rows": [
+  [
+   "100 MB",
+   "per month"
+  ],
+  [
+   "4 KB",
+   "1 day"
+  ],
+  [
+   "20 requests",
+   "1 minute"
+  ]
+ ],
+ "detail": {
+  "current": "Current usage: 2 KB/s",
+  "all_time": "All time usage: 2 KB in 1 requests",
+  "rules": "has its own rules",
+  "edit": "edit rules"
+ },
+ "job_columns": [
+  "position",
+  "url",
+  "status",
+  "current speed",
+  "progress"
+ ],
+ "job_rows": [
+  [
+   "waiting for validation",
+   "https://example.com/file",
+   "downloading…",
+   "2 KB/s",
+   "2 KB/4 KB"
+  ],
+  [
+   "waiting for bandwidth",
+   "https://example.com/file",
+   "downloading…",
+   "2 KB/s",
+   "2 KB/4 KB"
+  ],
+  [
+   "waiting for login",
+   "https://example.com/file",
+   "downloading…",
+   "2 KB/s",
+   "2 KB/4 KB"
+  ],
+  [
+   "waiting for free work slot",
+   "https://example.com/file",
+   "downloading…",
+   "2 KB/s",
+   "2 KB/4 KB"
+  ],
+  [
+   "running",
+   "https://example.com/file",
+   "downloading…",
+   "2 KB/s",
+   "2 KB/4 KB"
+  ]
+ ],
+ "job_phases": {
+  "0": "waiting for validation",
+  "1": "waiting for bandwidth",
+  "2": "waiting for login",
+  "3": "waiting for free work slot",
+  "4": "running"
+ },
+ "questions": [
+  "Are you sure you want to revert to using the default rules for this context?",
+  "Reset your 'default' and 'global' bandwidth rules to default?"
+ ]
+}

@@ -1525,3 +1525,27 @@ atomically, preserving unrelated cookies received from websites or API writes.
 trim/newline validation and cancelled delete/clear questions. Model and native
 widget tests cover cancellation, persistence, stale editor callbacks, concurrent
 writes and actual outgoing cookie/header values through an existing NetEngine.
+
+## Bandwidth and current network jobs
+
+Network > data opens native bandwidth usage/rule and current network-job reviews.
+Bandwidth review shows global and known contexts, current speed, day/history/month
+usage, specific-rule ownership and blocked time; selecting a context shows its
+all-time total and usage against each rule. Detached rule editors add, replace
+and delete data/request limits with rolling-second or calendar-month periods.
+Apply preserves unrelated context edits and pacing settings; Cancel leaves them
+untouched. Default/global rules can be edited by kind or reset with the reference
+confirmation, and specific domains can inherit their defaults again.
+
+Current jobs show every active engine request, including subscriptions, with
+URL, status, typed wait reason, speed and progress. Extended selection supports
+cancel and bandwidth override, with selected-job context details and manual or
+live refresh. The daemon publishes usage and jobs through typed local store IPC,
+independent of the Client API listener. Heartbeats expire after five seconds;
+offline bandwidth review falls back to saved history. Commands identify the
+reviewed daemon and request, so finished jobs or replacement daemons ignore them.
+The real Qt controls/rows/questions are recorded in `network_data.json`.
+Backend/model regressions cover cancellation, dropped futures, live overrides,
+settings reload, stale heartbeat, concurrent edits and persistence. GUI regressions
+cover draft cancellation, owner closure, invalid values, Apply/reopen and local
+commands, and render the review, rules and current-jobs windows.

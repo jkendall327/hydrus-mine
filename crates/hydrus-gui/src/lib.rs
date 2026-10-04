@@ -210,6 +210,8 @@ pub struct Bound {
     pub options: Rc<RefCell<Option<OptionsWindow>>>,
     /// The about window while it is open.
     pub about: Rc<RefCell<Option<AboutWindow>>>,
+    /// Live network reviews and their detached rules editor.
+    pub network_data: network_data_window::Slots,
     /// The review services window while it is open.
     pub services_review: Rc<RefCell<Option<ServicesReviewWindow>>>,
     /// Staged local service editors while open.
@@ -1249,6 +1251,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
     let about: Rc<RefCell<Option<AboutWindow>>> = Rc::default();
     let services_review: Rc<RefCell<Option<ServicesReviewWindow>>> = Rc::default();
     let services_editor = services_editor_window::Slots::default();
+    let network_data = network_data_window::Slots::default();
     let checker_options: Rc<RefCell<Option<CheckerOptionsWindow>>> = Rc::default();
     let session_dialog: Rc<RefCell<Option<SessionDialog>>> = Rc::default();
     let subscriptions: Rc<RefCell<Option<SubscriptionsWindow>>> = Rc::default();
@@ -1351,6 +1354,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
                 })
             },
             pages: pages.clone(),
+            network_data: network_data.clone(),
             change_pages: Rc::new(change_pages.clone()),
             ask: {
                 let ask = ask.clone();
@@ -3074,6 +3078,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         options,
         about,
         services_review,
+        network_data,
         services_editor,
         checker_options,
         session_dialog,
@@ -5229,3 +5234,5 @@ mod tests {
 pub mod client_api_admin_window;
 
 pub mod network_sessions_window;
+
+pub mod network_data_window;

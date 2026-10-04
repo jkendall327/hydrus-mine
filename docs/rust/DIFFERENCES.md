@@ -840,10 +840,10 @@ Checked by the `popups` conformance scenario.
   reference's popups all go when it closes.
 - **A popup's `network_job`** says its URL, status, speed, bytes read and to
   read, whether it is done and whether it failed, as the reference's does;
-  hydrus-rs's network jobs don't say whether they are waiting on a
-  connection error, the domain, the server's bandwidth or the engine, so
-  those read `false`, `true`, `false` and `false` (as for a job that
-  isn't), and `total_data_used` is what this request has read.
+  the popup/API shape does not yet carry the network review's typed wait
+  reasons. Its connection/domain/server-bandwidth/engine flags still read
+  `false`, `true`, `false` and `false`, and `total_data_used` is what this
+  request has read.
 - **An error's "traceback" is its text**, and its title is "Exception", as
   the reference titles the errors it raises itself: hydrus-rs has no
   Python traceback to show.
@@ -1022,3 +1022,22 @@ explicitly persisted in the native store. Refresh preserves a cookie/header
 draft; reopen reloads committed changes. Browser create and confirmed clear
 actions take effect immediately. Passwords and cookie values remain ordinary
 local database fields, as in the reference.
+
+## Bandwidth and current network jobs
+
+Native bandwidth review uses numeric bytes/requests and seconds with a monthly
+switch in one detached rules window, rather than the reference's nested amount
+and time widgets. Rule usage is textual; monthly history charts and deleting
+selected history are deferred. The review lists known contexts and specific
+rules together, with selectable history spans, rather than Qt's usage/rules
+filters. New explicit contexts can be added by domain; existing subscription
+and service contexts remain editable through their usage rows.
+
+Current network-job review refreshes live by default (Qt starts with manual
+snapshots). Native typed wait reasons distinguish pauses, header approval, wake,
+bandwidth, domain, gallery, connection and server waits from transfers; Qt's
+engine-position strings/debug menu use different categories. Selected-job debug
+context/obeys-bandwidth details are inline, and cancel/override controls are
+explicit buttons. Login-script waits remain outside the implemented engine.
+Local snapshots are published by the daemon without requiring its Client API;
+expiry disables stale controls and saved bandwidth history remains available.
