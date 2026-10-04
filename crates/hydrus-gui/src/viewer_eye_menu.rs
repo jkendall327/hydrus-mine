@@ -144,7 +144,7 @@ pub(crate) fn bind(
     current_file: Rc<dyn Fn() -> HashId>,
 ) {
     let initial: ViewerEyeMenuSettings = store.read(settings::get).unwrap_or_default();
-    window.set_viewer_window_top(initial.start_on_top);
+    window.set_viewer_window_top(initial.start_on_top && !initial.start_on_top_while_playing);
     window.set_viewer_top_while_playing(initial.start_on_top_while_playing);
     window.set_viewer_window_frameless(initial.start_frameless);
     let owned = Rc::new({
@@ -177,7 +177,16 @@ pub(crate) fn bind(
                     Ok(())
                 }
                 1 => {
-                    window.set_viewer_top_while_playing(!window.get_viewer_top_while_playing());
+                    let tied = !window.get_viewer_top_while_playing();
+                    window.set_viewer_top_while_playing(tied);
+                    let top = if tied {
+                        window.get_media_playing()
+                    } else {
+                        let settings: ViewerEyeMenuSettings =
+                            store.read(settings::get).unwrap_or_default();
+                        settings.start_on_top
+                    };
+                    window.set_viewer_window_top(top);
                     Ok(())
                 }
                 2 => {

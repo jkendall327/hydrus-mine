@@ -127,7 +127,10 @@ export component MediaViewerWindow inherits Window {
     in-out property <bool> viewer-top-while-playing;
     in-out property <bool> viewer-window-frameless;
     in property <bool> media-playing;
-    always-on-top: root.viewer-top-while-playing ? root.media-playing : root.viewer-window-top;
+    always-on-top: root.viewer-window-top;
+    changed media-playing => {
+        if root.viewer-top-while-playing { root.viewer-window-top = root.media-playing; }
+    }
     no-frame: root.viewer-window-frameless;
     in property <ViewerEyeMenu> eye-menu;
     callback eye-menu-requested();

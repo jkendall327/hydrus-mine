@@ -903,5 +903,47 @@
     true,
     true,
     true
+  ],
+  "window_actions": [
+    {
+      "label": "always on top",
+      "state": [
+        true,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "always on top (while playing)",
+      "state": [
+        false,
+        true,
+        false
+      ]
+    },
+    {
+      "label": "always on top",
+      "state": [
+        true,
+        true,
+        false
+      ]
+    },
+    {
+      "label": "always on top (while playing)",
+      "state": [
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "label": "remove titlebar/frame",
+      "state": [
+        false,
+        false,
+        true
+      ]
+    }
   ]
 }

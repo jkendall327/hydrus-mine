@@ -49,9 +49,11 @@ def record(session):
         core = ClientGUICore.core()
         old_popup = core.PopupMenu
         captured = []
+        live_menus = []
         def capture(widget, menu):
             ClientGUIMenus.RemoveFinalSeparator(menu)
             captured.append(tree(menu))
+            live_menus.append(menu)
         core.PopupMenu = capture
         events = []
         try:
@@ -64,6 +66,21 @@ def record(session):
                 events.append({'values': list(values), 'stored': [options.GetBoolean(key) for key in keys],
                     'reopened': [control.isChecked() for control in reopened_controls], 'menu': captured[-1]})
                 reopened.deleteLater()
+            def find_action(menu, label):
+                for action in menu.actions():
+                    if action.text() == label: return action
+                    if action.menu() is not None:
+                        found = find_action(action.menu(), label)
+                        if found is not None: return found
+                return None
+            window_actions = []
+            for label in ('always on top', 'always on top (while playing)', 'always on top',
+                          'always on top (while playing)', 'remove titlebar/frame'):
+                canvas._top_hover._ShowViewOptionsMenu()
+                find_action(live_menus[-1], label).trigger()
+                QW.QApplication.processEvents()
+                window_actions.append({'label': label, 'state': [canvas.IsAlwaysOnTop(),
+                    canvas.IsAlwaysOnTopWhilePlaying(), canvas.IsHidingWindowFrame()]})
             cancelled, cancelled_controls = panel()
             for control in cancelled_controls: control.setChecked(False)
             cancelled.deleteLater()
@@ -76,7 +93,7 @@ def record(session):
             initial_page.deleteLater()
             frame.hide()
             frame.deleteLater()
-        return {'initial': initial, 'labels': labels, 'events': events, 'cancelled_values': cancelled_values}
+        return {'initial': initial, 'labels': labels, 'events': events, 'cancelled_values': cancelled_values, 'window_actions': window_actions}
     return session.controller.CallBlockingToQt(session.controller.gui, qt)
 
 
