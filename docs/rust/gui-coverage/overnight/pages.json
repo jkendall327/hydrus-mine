@@ -7,15 +7,21 @@
     "backups": "efc8b4fc",
     "size_test": "26c435f7",
     "close_navigation": "1807f758",
-    "rename_send": "c6cae887"
+    "rename_send": "c6cae887",
+    "importer_snapshots": "a4e885fd",
+    "snapshot_api_repair": "0783f8a9",
+    "nested_close_repair": "7a87ded9",
+    "duplicate_collapse": "9b8e4247"
   },
-  "completed_existing_leaf_count": 23,
+  "completed_existing_leaf_count": 28,
   "validation": {
     "local": [
       "cargo fmt --all",
       "git diff --check",
       "reference Qt notebook method recording",
-      "reference real-client session backup recording"
+      "reference real-client session backup recording",
+      "reference real-client tab action and ordered-media harvest recordings",
+      "reference real-client independent importer backup recording"
     ],
     "cargo_tests": "Deferred to root asynchronous CI by coordination instructions."
   },
@@ -485,12 +491,42 @@
           "line": 1,
           "commit": "efc8b4fc",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 85,
+          "commit": "a4e885fd",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 348,
+          "commit": "0783f8a9",
+          "kind": "store_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2275,
+          "commit": "0783f8a9",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_importers.py",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_importers.json",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_fixture"
         }
       ],
       "limitations": [
-        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
         "Legacy historical snapshots are not imported.",
-        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history.",
+        "Early experimental native queue-backed snapshots without frozen importer data cannot restore importer pages."
       ]
     },
     {
@@ -536,21 +572,51 @@
           "line": 1,
           "commit": "efc8b4fc",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 85,
+          "commit": "a4e885fd",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 348,
+          "commit": "0783f8a9",
+          "kind": "store_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2275,
+          "commit": "0783f8a9",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_importers.py",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_importers.json",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_fixture"
         }
       ],
       "limitations": [
-        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
         "Legacy historical snapshots are not imported.",
-        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history.",
+        "Early experimental native queue-backed snapshots without frozen importer data cannot restore importer pages."
       ]
     },
     {
       "reference_id": "audit-options-session-backups-timestamp",
       "previous_status": "missing",
-      "proposed_status": "partial",
-      "count_as_completed_leaf": false,
-      "implementation_commit": "efc8b4fc",
-      "implemented_behavior": "Timestamp action appends exact archived tree at top level with new keys and independent files/selection; timestamp display, retention, clock reversal and collision follow real reference recording.",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "a4e885fd",
+      "implemented_behavior": "Timestamp action appends exact archived tree at top level with new keys and independent files/selection; timestamp display, retention, clock reversal and collision follow real reference recording. All five native downloader kinds restore independent queues/settings/auxiliary state/file and gallery logs, with new highlighted queue mapping. Deleted source queues and work in other loaded copies do not change snapshots.",
       "evidence": [
         {
           "path": "crates/hydrus-store/src/session_backups.rs",
@@ -587,12 +653,42 @@
           "line": 1,
           "commit": "efc8b4fc",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 85,
+          "commit": "a4e885fd",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-store/src/session_backups.rs",
+          "line": 348,
+          "commit": "0783f8a9",
+          "kind": "store_regression"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2275,
+          "commit": "0783f8a9",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_session_importers.py",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/session_importers.json",
+          "line": 1,
+          "commit": "a4e885fd",
+          "kind": "reference_fixture"
         }
       ],
       "limitations": [
-        "Snapshots retain downloader queue references; independent historical downloader-engine state remains deferred.",
         "Legacy historical snapshots are not imported.",
-        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history."
+        "Live last-session synchronization and startup/autosave lifecycle settings do not create snapshot history.",
+        "Early experimental native queue-backed snapshots without frozen importer data cannot restore importer pages."
       ]
     },
     {
@@ -626,6 +722,12 @@
           "line": 1,
           "commit": "1807f758",
           "kind": "reference_fixture"
+        },
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1644,
+          "commit": "7a87ded9",
+          "kind": "nested_notebook_repair"
         }
       ],
       "limitations": []
@@ -1057,11 +1159,161 @@
         }
       ],
       "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2201-duplicate-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "9b8e4247",
+      "implemented_behavior": "Duplicate clicked page/notebook beside original with fresh page identities, media and importer queues; selected copied notebook starts on its first child. Media survives deleting original.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1684,
+          "commit": "9b8e4247",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2473,
+          "commit": "9b8e4247",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_harvest.py",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_harvest.json",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": []
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2223-this-page",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "9b8e4247",
+      "implemented_behavior": "Confirm harvesting a clicked page or entire nested notebook into one default search at its position, deduplicating first-seen files; retain old tree in undo and cancel cleanly.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1684,
+          "commit": "9b8e4247",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2473,
+          "commit": "9b8e4247",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_harvest.py",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_harvest.json",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Uses native default local domain My Files; broader default-local-location option is not ported.",
+        "Confirmation freezes source media; if source keys leave shared notebook before acceptance, action does nothing."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2227-pages-from-here-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "9b8e4247",
+      "implemented_behavior": "Confirm harvesting clicked page and right siblings in flattened first-seen order into one default search at first source position; retain source tabs in undo and cancel cleanly.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1684,
+          "commit": "9b8e4247",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2473,
+          "commit": "9b8e4247",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_harvest.py",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_harvest.json",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Uses native default local domain My Files; broader default-local-location option is not ported.",
+        "Confirmation freezes source media; if source keys leave shared notebook before acceptance, action does nothing."
+      ]
+    },
+    {
+      "reference_id": "audit-options-tabs-context-action-2228-pages-to-the-right",
+      "previous_status": "missing",
+      "proposed_status": "first_pass",
+      "count_as_completed_leaf": true,
+      "implementation_commit": "9b8e4247",
+      "implemented_behavior": "Confirm harvesting only right siblings in first-seen order into one default search at first right source position; retain sources in undo and cancel cleanly.",
+      "evidence": [
+        {
+          "path": "crates/hydrus-gui/src/pages.rs",
+          "line": 1684,
+          "commit": "9b8e4247",
+          "kind": "implementation"
+        },
+        {
+          "path": "crates/hydrus-gui/tests/gui/session.rs",
+          "line": 2473,
+          "commit": "9b8e4247",
+          "kind": "integration_regression"
+        },
+        {
+          "path": "oracle/record_tab_harvest.py",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_recorder"
+        },
+        {
+          "path": "oracle/fixtures/tab_harvest.json",
+          "line": 1,
+          "commit": "9b8e4247",
+          "kind": "reference_fixture"
+        }
+      ],
+      "limitations": [
+        "Uses native default local domain My Files; broader default-local-location option is not ported.",
+        "Confirmation freezes source media; if source keys leave shared notebook before acceptance, action does nothing."
+      ]
     }
   ],
   "overall_limitations": [
-    "Tab-context duplicate/collapse/per-notebook-session submenus remain deferred; tab-context parent remains partial.",
-    "No lifecycle-settings completion is claimed.",
-    "Backup workflow improvements are conservatively partial for downloader state; submenu container is counted separately from the ten completed tab leaves."
+    "Per-notebook-session submenus remain deferred; tab-context parent remains partial.",
+    "Startup/autosave lifecycle settings remain deferred.",
+    "Backup snapshots are independent for all native importer kinds; imported historical snapshots and old experimental native backups without importer data remain unsupported.",
+    "Collapse uses native My Files default local domain."
   ]
 }
