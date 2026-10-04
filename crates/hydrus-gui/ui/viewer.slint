@@ -91,6 +91,22 @@ export component MediaViewerWindow inherits Window {
     in property <length> seek-hidden-height: 5px;
     in property <length> seek-nub-width: 10px;
     callback presentation-settings-changed();
+    in property <bool> window-active: true;
+    in property <bool> another-window-active;
+    property <bool> info-raised;
+    property <bool> tags-raised;
+    property <bool> ratings-raised;
+    property <bool> notes-raised;
+    changed info-showing => { root.info-raised = root.info-showing; }
+    changed tags-showing => { root.tags-raised = root.tags-showing; }
+    changed ratings-showing => { root.ratings-raised = root.ratings-showing; }
+    changed notes-showing => { root.notes-raised = root.notes-showing; }
+    in property <bool> seek-requires-focus: true;
+    in property <bool> hovers-require-focus: true;
+    property <bool> hover-focus-good: !root.hovers-require-focus || root.window-active;
+    property <bool> seek-focus-good: !root.seek-requires-focus || root.window-active;
+    out property <bool> seek-bar-full: root.scanbar-shown && bar.full;
+    out property <length> seek-bar-height: root.scanbar-shown ? bar.height : 0px;
     in property <bool> hover-tags-enabled: true;
     in property <bool> hover-ratings-enabled: true;
     in property <bool> hover-notes-enabled: true;
@@ -104,15 +120,15 @@ export component MediaViewerWindow inherits Window {
     // the file's notes, for the right hover frame under the ratings, shown
     // while the pointer is over it
     in property <[NoteRow]> notes;
-    out property <bool> notes-showing: root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
+    out property <bool> notes-showing: (root.hover-focus-good || (!root.another-window-active && root.notes-raised)) && root.hover-notes-enabled && root.notes.length > 0 && pointer.has-hover
         && pointer.mouse-x >= notes-box.x
         && pointer.mouse-y >= notes-box.y && pointer.mouse-y <= notes-box.y + notes-box.height;
     // the file's info line, for the top hover frame, which shows with the
     // pointer over it or near it, in the window's middle three fifths
     in property <string> info-line;
-    out property <bool> info-showing: top-frame.has-hover || (pointer.has-hover
+    out property <bool> info-showing: (root.hover-focus-good || (!root.another-window-active && root.info-raised)) && (top-frame.has-hover || (pointer.has-hover
         && pointer.mouse-y <= top-box.preferred-height + 20px
-        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8);
+        && pointer.mouse-x >= root.width * 0.2 && pointer.mouse-x <= root.width * 0.8));
     // the file's state, for the frame's buttons: in the inbox (archive,
     // else re-inbox), in the trash (delete completely), here and not
     // trashed (send to trash), deleted from a local file domain (undelete)
@@ -132,10 +148,10 @@ export component MediaViewerWindow inherits Window {
     in property <length> rating-size: 12px;
     in property <length> incdec-height: 12px;
     in property <length> rating-outline: 1px;
-    out property <bool> ratings-showing: root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
+    out property <bool> ratings-showing: (root.hover-focus-good || (!root.another-window-active && root.ratings-raised)) && root.hover-ratings-enabled && (root.ratings.length > 0 || root.url-links.length > 0) && (ratings-frame.has-hover
         || (pointer.has-hover && pointer.mouse-x >= root.width - ratings-box.preferred-width - 20px
             && pointer.mouse-y <= ratings-box.preferred-height + 20px));
-    out property <bool> tags-showing: root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
+    out property <bool> tags-showing: (root.hover-focus-good || (!root.another-window-active && root.tags-raised)) && root.hover-tags-enabled && pointer.has-hover && pointer.mouse-x < root.width * 0.2 && root.tags.length > 0;
 
     // a question to answer (a deletion): enter is yes, escape no
     in property <string> question;
@@ -860,8 +876,9 @@ export component MediaViewerWindow inherits Window {
                 accept
             }
         }
-        if root.scanbar-shown: bar := Rectangle {
-            property <bool> full: root.bar-near || scrub.has-hover || scrub.pressed || root.volume-open;
+        bar := Rectangle {
+            visible: root.scanbar-shown;
+            property <bool> full: (root.seek-focus-good && (root.bar-near || scrub.has-hover)) || scrub.pressed || root.volume-open;
             x: root.media-x;
             width: root.media-width - (root.volume-shown ? 24px : 0px);
             height: self.full ? root.seek-height : root.seek-hidden-height;
@@ -910,7 +927,7 @@ export component MediaViewerWindow inherits Window {
             // the volume and the viewer's mute, above the global mute
             property <length> popup: self.track + 2 * self.track-top + self.line;
             width: 24px;
-            height: self.open ? self.popup + root.seek-height : root.bar-near ? root.seek-height : root.seek-hidden-height;
+            height: self.open ? self.popup + root.seek-height : root.seek-bar-full ? root.seek-height : root.seek-hidden-height;
             x: root.media-x + root.media-width - self.width;
             y: root.media-y + root.media-height - self.height;
             background: #303030;
@@ -951,6 +968,7 @@ export component MediaViewerWindow inherits Window {
                 font-size: 11px;
             }
             volume-area := TouchArea {
+                enabled: root.seek-bar-full;
                 pointer-event(event) => {
                     if (event.button == PointerEventButton.left && event.kind == PointerEventKind.down) {
                         if (self.mouse-y >= volume-box.height - volume-box.line) {

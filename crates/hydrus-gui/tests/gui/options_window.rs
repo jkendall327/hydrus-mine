@@ -2650,3 +2650,244 @@ fn favourite_tags_child_replays_reference_and_waits_for_parent_apply() {
     assert!(bound.options.borrow().is_none());
     assert_eq!(store.read(settings::get::<FavouriteTags>).unwrap(), saved);
 }
+
+#[test]
+#[allow(clippy::float_cmp)] // whole logical-pixel bar heights
+fn focus_options_reach_native_activity_and_actual_mouseover_gates() {
+    use hydrus_store::settings::{self, ViewerFocusSettings};
+    use slint::{
+        LogicalPosition,
+        platform::{PointerEventButton, WindowEvent},
+    };
+    let fixture = hydrus_testkit::fixture_json("viewer_focus_options.json");
+    let (_dirs, store) = store();
+    let animation =
+        hydrus_import::FileImporter::new(store.clone(), hydrus_media::MediaTools::new())
+            .import_path(
+                &hydrus_testkit::fixture_path("media/webp_anim.webp"),
+                &hydrus_import::FileImportOptions::default(),
+            )
+            .unwrap()
+            .hash
+            .unwrap();
+    let id = store
+        .read(|conn| hydrus_store::master::hash_id(conn, &animation))
+        .unwrap()
+        .unwrap();
+    store
+        .write_content(move |writer| writer.set_note(id, "details", "synthetic focus note"))
+        .unwrap();
+    let mut tags = hydrus_gui::manage_tags::ManageTags::new(store.clone(), vec![id]).unwrap();
+    let mine = tags
+        .service_names()
+        .iter()
+        .position(|name| name == "my tags")
+        .unwrap();
+    tags.choose_service(mine).unwrap();
+    tags.enter("synthetic focus tag").unwrap();
+    tags.apply().unwrap();
+    let windows = headless::init();
+    let ui = MainWindow::new().unwrap();
+    let bound = bind(
+        &ui,
+        Pages::single(hydrus_gui::SearchPage::new(store.clone())),
+    );
+    ui.invoke_search_edited("system:everything".into());
+    ui.invoke_search_accepted();
+    let files = bound.current.borrow().borrow().results().to_vec();
+    let index = files.iter().position(|file| *file == id).unwrap();
+    ui.invoke_thumbnail_activated(i32::try_from(index).unwrap());
+    let viewer = bound.viewer.borrow().as_ref().unwrap().clone_strong();
+    let drawn = windows.get(windows.count() - 1).unwrap();
+    headless::render(&drawn, 1000, 750);
+    assert!(viewer.get_scanbar_shown());
+    assert!(
+        viewer.get_tags().row_count() > 0
+            && viewer.get_notes().row_count() > 0
+            && viewer.get_ratings().row_count() > 0
+    );
+    let focus = hydrus_gui::viewer_focus::NativeFocus::new(&viewer);
+    let identity = slint::winit_030::winit::window::WindowId::from(9_001);
+    focus.watch_id(identity);
+    let activate = |active| {
+        // Dispatch the native backend observer route used by ActivityHandler;
+        // headless Slint also receives its corresponding native activation.
+        hydrus_gui::session_autosave::observe_native_focus(identity, active);
+        if !active {
+            hydrus_gui::session_autosave::observe_native_focus(
+                slint::winit_030::winit::window::WindowId::from(9_002),
+                true,
+            );
+        }
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(active));
+        headless::render(&drawn, 1000, 750);
+        assert_eq!(viewer.get_window_active(), active);
+    };
+    let move_to = |x, y| {
+        viewer.window().dispatch_event(WindowEvent::PointerMoved {
+            position: LogicalPosition::new(x, y),
+        });
+        headless::render(&drawn, 1000, 750);
+    };
+    activate(true);
+    let notes_y = (60..740)
+        .step_by(10)
+        .find(|&y| {
+            move_to(980.0, y as f32);
+            viewer.get_notes_showing()
+        })
+        .unwrap() as f32;
+    let labels = [
+        (
+            "media viewer",
+            "Seek bar full-height pop-in requires window focus:",
+        ),
+        (
+            "media viewer hovers",
+            "Hover window pop-in requires window focus:",
+        ),
+    ];
+    for event in fixture["events"].as_array().unwrap() {
+        open(&ui);
+        let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+        for ((name, label), field) in labels
+            .iter()
+            .zip(["seek_requires_focus", "hover_requires_focus"])
+        {
+            show_page(&options, name);
+            options.invoke_check_toggled(row(&options, label).0, event[field].as_bool().unwrap());
+        }
+        options.invoke_apply();
+        activate(event["active"].as_bool().unwrap());
+        let bottom = viewer.get_media_y() + viewer.get_media_height() - 2.0;
+        move_to(
+            viewer.get_media_x() + viewer.get_media_width() / 2.0,
+            bottom,
+        );
+        assert_eq!(
+            viewer.get_seek_bar_full(),
+            event["seek_full"].as_bool().unwrap()
+        );
+        assert_eq!(
+            viewer.get_seek_bar_height(),
+            event["seek_height"].as_i64().unwrap() as f32
+        );
+        let states = [
+            {
+                move_to(500.0, 10.0);
+                viewer.get_info_showing()
+            },
+            {
+                move_to(20.0, 375.0);
+                viewer.get_tags_showing()
+            },
+            {
+                move_to(980.0, 15.0);
+                viewer.get_ratings_showing()
+            },
+            {
+                move_to(980.0, notes_y);
+                viewer.get_notes_showing()
+            },
+        ];
+        assert_eq!(serde_json::json!(states), event["hover_up"]);
+    }
+    for trace in fixture["transient"].as_array().unwrap() {
+        let hover = trace["hover"].as_str().unwrap();
+        let point = match hover {
+            "top" => (500.0, 10.0),
+            "tags" => (20.0, 375.0),
+            "ratings" => (980.0, 15.0),
+            "notes" => (980.0, notes_y),
+            name => panic!("unrecorded hover {name}"),
+        };
+        let showing = || match hover {
+            "top" => viewer.get_info_showing(),
+            "tags" => viewer.get_tags_showing(),
+            "ratings" => viewer.get_ratings_showing(),
+            "notes" => viewer.get_notes_showing(),
+            name => panic!("unrecorded hover {name}"),
+        };
+        move_to(500.0, 375.0);
+        activate(true);
+        move_to(point.0, point.1);
+        let mut states = vec![showing()];
+        hydrus_gui::session_autosave::observe_native_focus(identity, false);
+        viewer
+            .window()
+            .dispatch_event(WindowEvent::WindowActiveChanged(false));
+        headless::render(&drawn, 1000, 750);
+        assert!(!viewer.get_window_active() && !viewer.get_another_window_active());
+        states.push(showing());
+        move_to(500.0, 375.0);
+        states.push(showing());
+        move_to(point.0, point.1);
+        states.push(showing());
+        activate(true);
+        states.push(showing());
+        activate(false);
+        states.push(showing());
+        let expected: Vec<_> = trace["states"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|state| state["up"].as_bool().unwrap())
+            .collect();
+        assert_eq!(
+            states, expected,
+            "{} active→None retains existing only→other hides",
+            trace["hover"]
+        );
+    }
+    // An inactive viewer can still finish a seek: an actual held scrub keeps
+    // the bar full, independently of the mouseover focus requirement.
+    activate(false);
+    let position = LogicalPosition::new(
+        viewer.get_media_x() + viewer.get_media_width() / 2.0,
+        viewer.get_media_y() + viewer.get_media_height() - 2.0,
+    );
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerMoved { position });
+    assert!(!viewer.get_seek_bar_full());
+    viewer.window().dispatch_event(WindowEvent::PointerPressed {
+        position,
+        button: PointerEventButton::Left,
+    });
+    assert!(viewer.get_seek_bar_full());
+    viewer
+        .window()
+        .dispatch_event(WindowEvent::PointerReleased {
+            position,
+            button: PointerEventButton::Left,
+        });
+    assert!(!viewer.get_seek_bar_full());
+    let persisted = store.read(settings::get::<ViewerFocusSettings>).unwrap();
+    assert_eq!(persisted, ViewerFocusSettings::default());
+    open(&ui);
+    let options = bound.options.borrow().as_ref().unwrap().clone_strong();
+    for (name, label) in labels {
+        show_page(&options, name);
+        assert!(row(&options, label).1.checked);
+        options.invoke_check_toggled(row(&options, label).0, false);
+    }
+    options.invoke_cancel();
+    assert!(viewer.get_seek_requires_focus() && viewer.get_hovers_require_focus());
+    assert_eq!(
+        store.read(settings::get::<ViewerFocusSettings>).unwrap(),
+        persisted
+    );
+    // Focus for other native identities and stale released observers do not
+    // alter this viewer. The registry never extends the callback's lifetime.
+    hydrus_gui::session_autosave::observe_native_focus(
+        slint::winit_030::winit::window::WindowId::from(9_002),
+        true,
+    );
+    assert!(!viewer.get_window_active());
+    drop(focus);
+    hydrus_gui::session_autosave::observe_native_focus(identity, true);
+    assert!(!viewer.get_window_active());
+    viewer.invoke_close_requested();
+}

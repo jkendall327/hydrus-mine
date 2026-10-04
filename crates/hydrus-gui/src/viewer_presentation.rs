@@ -3,11 +3,16 @@ use hydrus_core::HashId;
 use hydrus_store::{
     Store,
     media::FileFlags,
-    settings::{self, ViewerCanvasSettings, ViewerHoverSettings, ViewerPointerSettings},
+    settings::{
+        self, ViewerCanvasSettings, ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
+    },
 };
 
 pub(crate) fn refresh(window: &crate::MediaViewerWindow, store: &Store, file: HashId) {
     let options: ViewerCanvasSettings = store.read(settings::get).unwrap_or_default();
+    let focus: ViewerFocusSettings = store.read(settings::get).unwrap_or_default();
+    window.set_seek_requires_focus(focus.seek_requires_focus);
+    window.set_hovers_require_focus(focus.hovers_require_focus);
     let hovers: ViewerHoverSettings = store.read(settings::get).unwrap_or_default();
     window.set_hover_tags_enabled(hovers.tags);
     window.set_hover_ratings_enabled(hovers.ratings);

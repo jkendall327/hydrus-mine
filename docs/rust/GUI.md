@@ -2230,3 +2230,15 @@ flag. The standalone `SearchLogImportWindow` keeps the actual question text and
 button labels, handles invalid PNG/clipboard access errors, and cancels with its
 log owner. These actions also work directly from a downloader's search-log menu
 without opening the log editor.
+
+Seek-bar and hover pop-in focus preferences now consume actual desktop window
+activation through the shared native observer. Both default enabled and are
+independent: an inactive viewer keeps the seek bar at its configured away height,
+while an accepted scrub or existing volume popup keeps it full. The hover rule
+covers the top information, tags, ratings/locations and notes panels. With no
+active application window, an already-raised hover stays up while the pointer
+remains there; leaving hides it, and moving back cannot raise it until the viewer
+is active. Another active application window hides it. Apply updates the current
+viewer, Cancel retains the preferences, and legacy values migrate. The fresh
+`viewer_focus_options.json` recording includes real Qt activation and all four
+no-active-window transitions.

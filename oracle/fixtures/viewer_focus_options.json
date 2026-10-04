@@ -1,0 +1,260 @@
+{
+  "initial": [
+    true,
+    true
+  ],
+  "events": [
+    {
+      "seek_requires_focus": false,
+      "hover_requires_focus": false,
+      "active": false,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "seek_requires_focus": false,
+      "hover_requires_focus": false,
+      "active": true,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "seek_requires_focus": false,
+      "hover_requires_focus": true,
+      "active": false,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "seek_requires_focus": false,
+      "hover_requires_focus": true,
+      "active": true,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "seek_requires_focus": true,
+      "hover_requires_focus": false,
+      "active": false,
+      "seek_full": false,
+      "seek_height": 5,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "seek_requires_focus": true,
+      "hover_requires_focus": false,
+      "active": true,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    },
+    {
+      "seek_requires_focus": true,
+      "hover_requires_focus": true,
+      "active": false,
+      "seek_full": false,
+      "seek_height": 5,
+      "hover_up": [
+        false,
+        false,
+        false,
+        false
+      ]
+    },
+    {
+      "seek_requires_focus": true,
+      "hover_requires_focus": true,
+      "active": true,
+      "seek_full": true,
+      "seek_height": 20,
+      "hover_up": [
+        true,
+        true,
+        true,
+        true
+      ]
+    }
+  ],
+  "hover_order": [
+    "top",
+    "tags",
+    "ratings",
+    "notes"
+  ],
+  "transient": [
+    {
+      "hover": "top",
+      "states": [
+        {
+          "phase": "viewer-over",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "none-hold",
+          "active": null,
+          "up": true
+        },
+        {
+          "phase": "none-away",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "none-new-raise",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "viewer-again",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "other-hide",
+          "active": "other",
+          "up": false
+        }
+      ]
+    },
+    {
+      "hover": "tags",
+      "states": [
+        {
+          "phase": "viewer-over",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "none-hold",
+          "active": null,
+          "up": true
+        },
+        {
+          "phase": "none-away",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "none-new-raise",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "viewer-again",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "other-hide",
+          "active": "other",
+          "up": false
+        }
+      ]
+    },
+    {
+      "hover": "ratings",
+      "states": [
+        {
+          "phase": "viewer-over",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "none-hold",
+          "active": null,
+          "up": true
+        },
+        {
+          "phase": "none-away",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "none-new-raise",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "viewer-again",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "other-hide",
+          "active": "other",
+          "up": false
+        }
+      ]
+    },
+    {
+      "hover": "notes",
+      "states": [
+        {
+          "phase": "viewer-over",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "none-hold",
+          "active": null,
+          "up": true
+        },
+        {
+          "phase": "none-away",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "none-new-raise",
+          "active": null,
+          "up": false
+        },
+        {
+          "phase": "viewer-again",
+          "active": "viewer",
+          "up": true
+        },
+        {
+          "phase": "other-hide",
+          "active": "other",
+          "up": false
+        }
+      ]
+    }
+  ]
+}

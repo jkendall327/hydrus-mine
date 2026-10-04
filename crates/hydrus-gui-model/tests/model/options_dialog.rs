@@ -1396,3 +1396,72 @@ fn viewer_pointer_controls_stage_the_reference_drag_preferences() {
         "drafts do not persist"
     );
 }
+
+#[test]
+fn viewer_focus_controls_stage_independent_reference_policies() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_focus_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(
+        serde_json::json!([
+            settings.viewer_focus.seek_requires_focus,
+            settings.viewer_focus.hovers_require_focus
+        ]),
+        fixture["initial"]
+    );
+    let registry = pages(&settings);
+    let labels = [
+        (
+            "media viewer",
+            "Seek bar full-height pop-in requires window focus:",
+        ),
+        (
+            "media viewer hovers",
+            "Hover window pop-in requires window focus:",
+        ),
+    ];
+    for (name, _) in labels {
+        let page = registry.iter().find(|page| page.name == name).unwrap();
+        let reference = recorded["pages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|page| page["page"] == name)
+            .unwrap();
+        let problems = page_problems(page, &reference["items"], &settings, &store);
+        assert!(problems.is_empty(), "{problems:?}");
+    }
+    let mut editor = Editor::new(settings.clone());
+    for event in fixture["events"].as_array().unwrap() {
+        for ((name, label), field) in labels
+            .iter()
+            .zip(["seek_requires_focus", "hover_requires_focus"])
+        {
+            let page = editor
+                .page_names()
+                .iter()
+                .position(|page| *page == *name)
+                .unwrap();
+            editor.show_page(page);
+            let row = editor
+                .rows()
+                .iter()
+                .position(|row| matches!(row,EditorRow::Opt {option,..} if option.label == *label))
+                .unwrap();
+            editor.check(row, event[field].as_bool().unwrap());
+        }
+        let (applied, _, problems) = editor.applied();
+        assert!(problems.is_empty(), "{problems:?}");
+        assert_eq!(
+            applied.viewer_focus.seek_requires_focus,
+            event["seek_requires_focus"].as_bool().unwrap()
+        );
+        assert_eq!(
+            applied.viewer_focus.hovers_require_focus,
+            event["hover_requires_focus"].as_bool().unwrap()
+        );
+    }
+    assert_eq!(store.read(Settings::load).unwrap(), settings);
+}

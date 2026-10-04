@@ -102,6 +102,7 @@ pub mod thumbnail_menu;
 mod thumbnails;
 mod unlock;
 mod viewer;
+pub mod viewer_focus;
 pub mod viewer_menu;
 mod viewer_presentation;
 mod watcher;
@@ -4217,10 +4218,13 @@ fn open_viewer(
                 .recenter_on_resize
         }
     });
+    let native_focus = viewer_focus::NativeFocus::new(&window);
     window.on_presentation_settings_changed({
+        let native_focus = native_focus.clone();
         let weak = window.as_weak();
         let model = model.clone();
         move || {
+            native_focus.watch_native();
             if let Some(window) = weak.upgrade() {
                 let model = model.borrow();
                 viewer_presentation::refresh(&window, model.store(), model.current());
@@ -5219,6 +5223,7 @@ fn open_viewer(
     });
     windows::place(window.window(), &settings_frame);
     window.show()?;
+    native_focus.watch_native();
     Ok(window)
 }
 

@@ -1330,8 +1330,9 @@ existing dark canvas colour rather than the reference client's configurable
 palette. Checkerboard tiles and greenscreen RGB values match the reference.
 The recenter setting controls the native viewer's existing default zoom rules;
 the reference's additional per-filetype zoom-lock policies remain separate gaps.
-The seek-bar focus requirement, preview canvas preferences, and MPV-specific
-presentation preferences are outside this slice. A hidden-height value of None
+The seek-bar focus requirement now consumes native desktop activity, as described
+below. Preview canvas and MPV-specific presentation preferences remain outside
+these slices. A hidden-height value of None
 hides the native bar completely when the pointer is away; Qt internally retains
 a five-pixel ideal rectangle for its hidden widget. The recorder includes both
 that rectangle and the actual Qt visibility decision.
@@ -1387,8 +1388,9 @@ not change that preference.
 
 The tags, ratings/locations, and notes hover enable switches and passive
 bottom-right zoom/index background switch now have native consumers. Native
-hover panels retain their existing layout and contents; the reference's separate
-focus requirement and other passive background copies are still unimplemented.
+hover panels retain their existing layout and contents; the other passive
+background copies remain unimplemented. The separate focus requirement now
+consumes native desktop activity, as described below.
 The passive index uses native text styling and palette rather than Qt font
 metrics. Its text format, bottom-right three-pixel inset, and placement behind
 media follow the reference. Preview and duplicate-filter hover preferences are
@@ -1460,3 +1462,11 @@ bounded grayscale carrier. Complete page-object JSON excludes runtime run tokens
 and force-next-page flags, as the reference serialiser does; set ordering is
 stable in the native output. Whole-log exchange dialogs belong to the main
 window, while an open log owns and closes its own children.
+Seek-bar and hover focus requirements now reach the shared winit native activity
+observer without installing another backend handler. Hover focus preserves the
+reference's transient no-active-window exception for panels already raised,
+while suppressing new raises and hiding panels when another application window
+is active. Native hover content/layout and the reference's menu/dominant-hover
+interaction rules retain their existing differences; the implemented focus
+preference applies to all four existing native hover panels. Focus callbacks use
+weak viewer handles and do not keep closed components alive.

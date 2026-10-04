@@ -532,6 +532,25 @@ impl Setting for ViewerCanvasSettings {
     const KEY: &'static str = "viewer_canvas";
 }
 
+/// Whether mouseover panels require the native viewer's active window.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerFocusSettings {
+    pub seek_requires_focus: bool,
+    pub hovers_require_focus: bool,
+}
+impl Default for ViewerFocusSettings {
+    fn default() -> Self {
+        Self {
+            seek_requires_focus: true,
+            hovers_require_focus: true,
+        }
+    }
+}
+impl Setting for ViewerFocusSettings {
+    const KEY: &'static str = "viewer_focus";
+}
+
 /// Pointer panning and cursor visibility during native viewer drags.
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

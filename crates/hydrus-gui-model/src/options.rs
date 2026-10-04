@@ -32,7 +32,7 @@ use hydrus_store::settings::{
     AdvancedMode, ExportSettings, FavouriteTags, FileHandlingSettings, FileSearchSettings,
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
-    ViewerCanvasSettings, ViewerHoverSettings, ViewerPointerSettings,
+    ViewerCanvasSettings, ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -114,6 +114,7 @@ settings! {
     viewer_canvas: ViewerCanvasSettings,
     viewer_hovers: ViewerHoverSettings,
     viewer_pointer: ViewerPointerSettings,
+    viewer_focus: ViewerFocusSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1875,6 +1876,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                                     value.map(|height| height as u32);
                             },
                         ),
+                        check(
+                            "Seek bar full-height pop-in requires window focus:",
+                            |settings| settings.viewer_focus.seek_requires_focus,
+                            |settings, value| settings.viewer_focus.seek_requires_focus = value,
+                        ),
                         int(
                             "Seek bar nub width:",
                             (1, 63),
@@ -1945,6 +1951,11 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                 boxed(
                     "hover windows",
                     vec![
+                        check(
+                            "Hover window pop-in requires window focus:",
+                            |settings| settings.viewer_focus.hovers_require_focus,
+                            |settings, value| settings.viewer_focus.hovers_require_focus = value,
+                        ),
                         check(
                             "Pop-in tags (left) hover window on mouseover:",
                             |settings| settings.viewer_hovers.tags,

@@ -658,6 +658,22 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_focus = crate::settings::ViewerFocusSettings::default();
+        for (key, field) in [
+            (
+                "animated_scanbar_pop_in_requires_focus",
+                &mut viewer_focus.seek_requires_focus,
+            ),
+            (
+                "hover_windows_need_window_focus_to_pop_in",
+                &mut viewer_focus.hovers_require_focus,
+            ),
+        ] {
+            if let Some(value) = options.booleans.get(key) {
+                *field = *value;
+            }
+        }
+        insert_setting(&mut input, &viewer_focus)?;
         let mut viewer_pointer = crate::settings::ViewerPointerSettings::default();
         for (key, field) in [
             (
@@ -2799,6 +2815,38 @@ mod tests {
                 seek_height: 37,
                 seek_hidden_height: None,
                 seek_nub_width: 19
+            }
+        );
+    }
+
+    #[test]
+    fn viewer_focus_options_import_independent_mouseover_gates() {
+        use crate::settings::ViewerFocusSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerFocusSettings>(input.settings["viewer_focus"].clone())
+                .unwrap()
+        };
+        assert_eq!(decoded(), ViewerFocusSettings::default());
+        edit_client_options(
+            source.path(),
+            &[
+                (
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, true]]"#,
+                    r#"[[0, "animated_scanbar_pop_in_requires_focus"], [0, false]]"#,
+                ),
+                (
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, true]]"#,
+                    r#"[[0, "hover_windows_need_window_focus_to_pop_in"], [0, false]]"#,
+                ),
+            ],
+        );
+        assert_eq!(
+            decoded(),
+            ViewerFocusSettings {
+                seek_requires_focus: false,
+                hovers_require_focus: false
             }
         );
     }
