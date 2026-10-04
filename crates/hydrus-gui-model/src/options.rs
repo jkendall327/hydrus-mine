@@ -2434,7 +2434,7 @@ pub fn suggestions_with_values(pages: &[Page], values: &[Vec<Value>]) -> Vec<Sug
                     }
                 }
                 (Kind::SavedSession, Value::SavedSession(name)) => {
-                    labels.push(name.as_deref().unwrap_or("just a blank page"))
+                    labels.push(name.as_deref().unwrap_or("just a blank page"));
                 }
                 (
                     Kind::Noneable {
