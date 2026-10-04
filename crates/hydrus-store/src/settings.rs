@@ -453,6 +453,26 @@ impl Setting for hydrus_core::pages::SortSettings {
     const KEY: &'static str = "sorts";
 }
 
+/// Top-hover zoom button and animation loop preferences.
+#[derive(Debug, Clone, PartialEq, Eq, Serialize, serde::Deserialize)]
+#[serde(default)]
+pub struct ViewerPlaybackSettings {
+    /// Choice index: fit, centred fit, fit/fill, centred fit/fill.
+    pub zoom_switch: usize,
+    pub always_loop: bool,
+}
+impl Default for ViewerPlaybackSettings {
+    fn default() -> Self {
+        Self {
+            zoom_switch: 0,
+            always_loop: true,
+        }
+    }
+}
+impl Setting for ViewerPlaybackSettings {
+    const KEY: &'static str = "viewer_playback";
+}
+
 /// Native media viewer cursor inactivity timeout, or never hide.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, serde::Deserialize)]
 #[serde(default)]

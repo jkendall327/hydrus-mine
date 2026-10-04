@@ -2478,3 +2478,14 @@ preserve queue selection and order. Cancelling either question changes nothing.
 Child Apply returns an Options draft; only the outer Apply saves it. Reopening
 retains the schemes, and new namespaces reach the page's real sort and collect
 controls. The recorded queue is in `oracle/fixtures/namespace_sorts.json`.
+
+Media Playback's “Always Loop Animations” now reaches native animation players
+in the media viewer, archive/delete filter and duplicate filter. Unchecking it
+respects GIF, APNG and WebP stored play counts; missing GIF counts mean one play,
+and zero (including ugoira) means infinite. Native finite animations pause on
+the final frame, while mpv-backed animations follow the reference's restart-and-
+pause behavior. Slideshow stopping still takes precedence. The top-hover zoom
+switch offers the reference's four fit/fit-and-fill choices with optional viewer
+centering. Its command is captured when the viewer opens; right-click/keyboard
+zoom switching retains its separate normal 100%/fit action. Both options stage
+until Apply, persist, and migrate their legacy values.

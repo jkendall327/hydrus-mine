@@ -32,6 +32,7 @@ pub struct Zoom {
     ratio: f64,
     zooms: BTreeMap<ZoomType, f64>,
     current: f64,
+    current_type: ZoomType,
     /// The file's top left.
     position: Point,
 }
@@ -57,6 +58,7 @@ impl Zoom {
             ratio,
             zooms: BTreeMap::new(),
             current: 1.0,
+            current_type: ZoomType::Full,
             position: (0, 0),
         };
         zoom.reinit();
@@ -132,7 +134,8 @@ impl Zoom {
             ),
             self.ratio,
         );
-        self.current = self.zooms[&self.settings.default_zoom_type];
+        self.current_type = self.settings.default_zoom_type;
+        self.current = self.zooms[&self.current_type];
         self.recentre();
     }
 
@@ -289,10 +292,43 @@ impl Zoom {
         } else {
             1.0
         };
+        self.current_type = if zoom == 1.0 {
+            ZoomType::Full
+        } else {
+            ZoomType::Canvas
+        };
         self.change_zoom(zoom, pointer);
         if zoom <= canvas {
             self.recentre();
         }
+    }
+
+    /// The configurable top-hover switch: two or three levels, optionally
+    /// overriding the chosen zoom centre with the viewer centre.
+    #[allow(clippy::float_cmp)]
+    pub fn switch_with_policy(&mut self, choice: usize, pointer: Option<Point>) {
+        if !self.zoomable() {
+            return;
+        }
+        let centre = self.settings.zoom_centre;
+        if choice % 2 == 1 {
+            self.settings.zoom_centre = ZoomCentre::ViewerCentre;
+        }
+        if choice < 2 {
+            self.switch(pointer);
+        } else {
+            self.current_type = if self.current == 1.0 {
+                ZoomType::Canvas
+            } else if self.current_type == ZoomType::Canvas {
+                ZoomType::FillAuto
+            } else {
+                ZoomType::Full
+            };
+            let zoom = self.zoom_of(self.current_type);
+            self.change_zoom(zoom, pointer);
+            self.recentre();
+        }
+        self.settings.zoom_centre = centre;
     }
 
     /// To the largest zoom (`ZoomMax`): the largest of the zoom steps, or
@@ -760,6 +796,10 @@ impl Zoomed {
             -1 => zoom.zoom_out(pointer),
             _ => zoom.switch(pointer),
         });
+    }
+
+    pub fn switch_with_policy(&self, choice: usize, pointer: Option<Point>) {
+        self.change(|zoom| zoom.switch_with_policy(choice, pointer));
     }
 
     pub fn pan(&self, x_steps: i32, y_steps: i32) {

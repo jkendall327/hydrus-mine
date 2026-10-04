@@ -1,0 +1,1305 @@
+{
+  "initial": {
+    "zoom": 91,
+    "loop": true,
+    "choices": [
+      "100% and canvas fit",
+      "100% and canvas fit, and recenter media on switch",
+      "100% and canvas fit and canvas fill",
+      "100% and canvas fit and canvas fill, and recenter media on switch"
+    ]
+  },
+  "zoom": [
+    {
+      "choice": 0,
+      "command": 91,
+      "centre": 0,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 0,
+      "command": 91,
+      "centre": 2,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 0,
+      "command": 91,
+      "centre": 0,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 0,
+      "command": 91,
+      "centre": 2,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            128,
+            -241,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            128,
+            -241,
+            2000,
+            1600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 1,
+      "command": 106,
+      "centre": 0,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 1,
+      "command": 106,
+      "centre": 2,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 1,
+      "command": 106,
+      "centre": 0,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 1,
+      "command": 106,
+      "centre": 2,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 2,
+      "command": 172,
+      "centre": 0,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 15.625,
+          "rect": [
+            0,
+            -75,
+            1000,
+            750
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 2,
+      "command": 172,
+      "centre": 2,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 15.625,
+          "rect": [
+            0,
+            -75,
+            1000,
+            750
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 2,
+      "command": 172,
+      "centre": 0,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 0.5,
+          "rect": [
+            0,
+            -100,
+            1000,
+            800
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 2,
+      "command": 172,
+      "centre": 2,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 0.5,
+          "rect": [
+            0,
+            -100,
+            1000,
+            800
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 3,
+      "command": 173,
+      "centre": 0,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 15.625,
+          "rect": [
+            0,
+            -75,
+            1000,
+            750
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 3,
+      "command": 173,
+      "centre": 2,
+      "name": "jpeg_00.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        64,
+        48
+      ],
+      "states": [
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        },
+        {
+          "zoom": 15.625,
+          "rect": [
+            0,
+            -75,
+            1000,
+            750
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            468,
+            276,
+            64,
+            48
+          ]
+        },
+        {
+          "zoom": 12.5,
+          "rect": [
+            100,
+            0,
+            800,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 3,
+      "command": 173,
+      "centre": 0,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 0.5,
+          "rect": [
+            0,
+            -100,
+            1000,
+            800
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        }
+      ]
+    },
+    {
+      "choice": 3,
+      "command": 173,
+      "centre": 2,
+      "name": "synthetic-large.jpg",
+      "pointer": [
+        123,
+        145
+      ],
+      "canvas": [
+        1000,
+        600
+      ],
+      "resolution": [
+        2000,
+        1600
+      ],
+      "states": [
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        },
+        {
+          "zoom": 0.5,
+          "rect": [
+            0,
+            -100,
+            1000,
+            800
+          ]
+        },
+        {
+          "zoom": 1.0,
+          "rect": [
+            -500,
+            -500,
+            2000,
+            1600
+          ]
+        },
+        {
+          "zoom": 0.375,
+          "rect": [
+            125,
+            0,
+            750,
+            600
+          ]
+        }
+      ]
+    }
+  ],
+  "loops": [
+    {
+      "count": 0,
+      "always": false,
+      "decoded_count": 0,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 3
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 3
+        }
+      ]
+    },
+    {
+      "count": 0,
+      "always": true,
+      "decoded_count": 0,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 3
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 3
+        }
+      ]
+    },
+    {
+      "count": 1,
+      "always": false,
+      "decoded_count": 1,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 1
+        }
+      ]
+    },
+    {
+      "count": 1,
+      "always": true,
+      "decoded_count": 1,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 3
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 3
+        }
+      ]
+    },
+    {
+      "count": 2,
+      "always": false,
+      "decoded_count": 2,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": true,
+          "playthroughs": 2
+        }
+      ]
+    },
+    {
+      "count": 2,
+      "always": true,
+      "decoded_count": 2,
+      "frames": 3,
+      "states": [
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 0
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 1
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 2,
+          "paused": false,
+          "playthroughs": 2
+        },
+        {
+          "frame": 0,
+          "paused": false,
+          "playthroughs": 3
+        },
+        {
+          "frame": 1,
+          "paused": false,
+          "playthroughs": 3
+        }
+      ]
+    }
+  ],
+  "metadata": [
+    {
+      "format": "GIF",
+      "stored_count": null,
+      "count": 1,
+      "bytes": "47494638396114001000810000ff000000000000000000000021f90400040000002c000000001400100000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b182906040021f90401040001002c00000000140010008100ff00000000000000000000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b18290604003b"
+    },
+    {
+      "format": "GIF",
+      "stored_count": 0,
+      "count": 0,
+      "bytes": "47494638396114001000810000ff000000000000000000000021ff0b4e45545343415045322e30030100000021f90400040000002c000000001400100000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b182906040021f90401040001002c00000000140010008100ff00000000000000000000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b18290604003b"
+    },
+    {
+      "format": "GIF",
+      "stored_count": 1,
+      "count": 1,
+      "bytes": "47494638396114001000810000ff000000000000000000000021ff0b4e45545343415045322e30030101000021f90400040000002c000000001400100000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b182906040021f90401040001002c00000000140010008100ff00000000000000000000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b18290604003b"
+    },
+    {
+      "format": "GIF",
+      "stored_count": 2,
+      "count": 2,
+      "bytes": "47494638396114001000810000ff000000000000000000000021ff0b4e45545343415045322e30030102000021f90400040000002c000000001400100000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b182906040021f90401040001002c00000000140010008100ff00000000000000000000081f0001081c48b0a0c18308132a5cc8b0a1c38710234a9c48b1a2c58b18290604003b"
+    },
+    {
+      "format": "PNG",
+      "stored_count": 0,
+      "count": 0,
+      "bytes": "89504e470d0a1a0a0000000d494844520000001400000010080600000016185f1b000000086163544c0000000200000000f38d93700000001a6663544c0000000000000014000000100000000000000000000100190000944edfee0000001f49444154789c63fccfc0f09f818a80899a868d1a386ae0a881a306d2cf4000678b021ef5fb93800000001a6663544c00000001000000140000001000000000000000000001001900000f3d353a000000236664415400000002789c6364f8cff09f818a80899a868d1a386ae0a881a306d2cf4000668c021e2ff913e40000000049454e44ae426082"
+    },
+    {
+      "format": "PNG",
+      "stored_count": 1,
+      "count": 1,
+      "bytes": "89504e470d0a1a0a0000000d494844520000001400000010080600000016185f1b000000086163544c0000000200000001848aa3e60000001a6663544c0000000000000014000000100000000000000000000100190000944edfee0000001f49444154789c63fccfc0f09f818a80899a868d1a386ae0a881a306d2cf4000678b021ef5fb93800000001a6663544c00000001000000140000001000000000000000000001001900000f3d353a000000236664415400000002789c6364f8cff09f818a80899a868d1a386ae0a881a306d2cf4000668c021e2ff913e40000000049454e44ae426082"
+    },
+    {
+      "format": "PNG",
+      "stored_count": 2,
+      "count": 2,
+      "bytes": "89504e470d0a1a0a0000000d494844520000001400000010080600000016185f1b000000086163544c00000002000000021d83f25c0000001a6663544c0000000000000014000000100000000000000000000100190000944edfee0000001f49444154789c63fccfc0f09f818a80899a868d1a386ae0a881a306d2cf4000678b021ef5fb93800000001a6663544c00000001000000140000001000000000000000000001001900000f3d353a000000236664415400000002789c6364f8cff09f818a80899a868d1a386ae0a881a306d2cf4000668c021e2ff913e40000000049454e44ae426082"
+    }
+  ],
+  "animation_bytes": "52494646d80c000057454250565038580a00000002000000590000590000414e494d06000000000000000000414e4d469a0400000000000000005900005900007800000256503820820400007017009d012a5a005a003e6d2e92462422a1a12e340c00800d896648aaf3ded6bf5eb536ff99f701d0a30efe905c80fbb4f49ff94ca441c1f22df24f286e0005100fed79867ad016801fe3b5c2ff89ff7afcc2fe91961a19f5ae6b9f11f901d053da71927ca72dffadf5c1fe47d4bf945f8a07b4bf301faabfac1eecdfe63d4079c77544fa23fed1fa6a7ed57c377ee4fec07b5e1327db77c70ec1fbb3e7b557b7846a60cc3b1cb25b98cf54910cfa7d9f5537afe2b3cfd03df7086a5e2d21fd41ec040000fee44a07f821993fd7987aecacbb8821240932756ff4c23c2bdbf25475e037f06977ff0d7c4571a3d8600c226ffc1af11b3a7a22c08fe4fe6a950fff6fc6be1047e99e66bb49e03b29b9deb1d9ca74a0f47befac125174dcef16d585c30743f56c02b8f82edd29253bc0fc1b6267d05c3ef09faf9d6b846d6acfaf87c17824c1009b9be669dadd29eda10cf36b99d3b6a83bdb7230f39a91b2e9ba8a9a4d50f67bf9ee68420b473fa3a86cff229993fa4a63e5ac837fe54c8000bed4696d837fe43a65ff16ddc5613ca2c4a763eb2a8366c726a9167bc9fe7fdba8ef61a4f5469997c1c61037c99c38d6c5ad4bea6883577314479974f0f41f571499ed899fe8e5903b6f40c1819fb28a072c96c3f59008c119d7323b22fb880426d7dedf566fc7d3a5db0f197b68c26c5ad3529bc75918a2cb2aeae9cfd5fb1e7293d28bf4ed36a3939e24dd41b4c763b4289da9ee2f39bd37f817fffb6d3f77d5fab62e531bbf8993faab7fb5ffeae72db5147290c9ff5c917808715f31a24e35ca2b303e7aa6fda1f9c99957e3fbdb56e1e9736a70cf3905ad0854ee058857296cd77bade3e8b2f8d6f90c2464732632b77476aa713e5e886f5c4123d323f973fe469fa587e2581efa9f1d33b0d74c2e4f1fd8df6d556444586b8c96c950decf4ea8bff99dfec41c870163f15b9574de7d527e8d5d951da7c7a22bee0de27424f86e32b086c3728cd326c9ad425b47e33e734c4e46681f7f3e94ffccb1e517b29dcfaeec0b8b210a5ce4e1423f6f7ffc1add8f832fa3f7eeb66adc4ee7dfc3d970dfc4efe966ee7677c442e23f2c5bdf68be58b7bebc8d1e7dd8aba181ac553005e2800ca5d618e8fdc5a9b5f2f20487ecb409304c06f2eb530189182b49d3f8a91f1eebd9f4ce0371ff250953a22a5f7a3d216e6506d7cea8a8905f8f8774ca18942f075e8304d70791b8ac1e2ca3360e558b5975450783b7eb73bc8673504196ed9572f98978a894f00b4698d5cff597c84be76e19b953d8957a22ab6d359ba9f2451ccbd4e6af7a0a040d91fdf59c08845528811af21baf1066e9cf9c792744bb241fe855e1624d99c8b4fbeff2e9f7370e53dba1828172efc600ee3f89052a91f7d57ee6674d5bcd5185354ef98eff75f193b711fedee9a77a12ddda35f73ff2e7d6eee7ea123488ab9579588a3b97fc7d9948c9bd47c1c989050497a8f744eb9bcfb0f977f63b7c4f51ccf5d9b82e9492108715eb5e24dda640731dfd53bfc4792c90f7ecd68059eb8378b3566362ffe19c7ce0d9e7ec66d0de129a0f940b7abfbb22ca3244824e1afed7b3f65a4a251906ea7e67b7672475e4fabe13800000414e4d465404000000000000000059000059000078000000565038203c040000b417009d012a5a005a003e6d3494480239bfc00000d89686dc3577a0f651fd7ff99f638fe577805f1edb45fa37e807f00f504ed5e6abfb01e808f77e65598676ab3013ccfe4ae0c067805b807e2063266445fe03fcefd99fc8fff46ff4ff651a33c38fd57ac6b80f49fc4de5d3d98eedf201589fe4fee77b4cf98073abf313fb0feb47fe03d407ea4fea6fc007ec5759e7a007f00ff5de99dfb55f0a5fb9de9803502415cc71340001dc815795cbcfc5765e5be64fd9bd31c1663afeaab64d1ff3b37900068000fef6e43fd419c833905d52f8dc18f86a4665dc4cf285a4f3c6f929cbff63ff28d5648dc5a4bd8775fc31b72df9187cef9cf85daad0bcc3ff204b3733a8ac27641a8862c827a123548475ede7d079310f55dc02d1318f3c8b5179bec893e79a3dc00e0ac64e3f724ba4609e1edd3af0f6531aa8684823b2fee4ecd7a80bb78e801f151bde3578ff2582c27de516d4874b7de66bea52dd40dfcfbb6aff99b324007750fb76043caac6f7d8c18474394db4c884639f9e016554f38310ae8d0e9c1b14e2d0ca44d3b3418a1b6dfad97f5b9e75a6ce3febeb2be866ac67797351c913ce45560a6a5093b153856f03bfbfcfe8f05ffffae00dd3fec7b4edefc0383ca687b32c7e6b1d2664678278e25de8040bfb8a7708709c6ff7e8b4e06a5ef915b1ba48167faf78c13e96ea6db6f384af9a7bdb45720afec30285634a6a4727c07cb64b1fca91e4d1be9c967bb0938e39b3653a1173bf58ab4d38b6b2e3393e68d1b9f27cc631ef0e2e1f6a0dbffea99f9e5dcd139350b5af5bf4ef494a2ff9df6a0ba61ff29821c62f844e7480029b19695a08f0c22dc92f1c8f0eca24cddaf191ea400847ca47e330bfd91c776e4e5dd791f1d0adfb5b77b77b77b608aa9adcaafcf53316f000754b204422dd6e3cfff0744eacbc2eed7b82d6f7148505c5a57f0dc9b3d2598a10d9d766b9217b42dc86a232c1e0fe37ac1d1683e58270b8af8acce1f3740b9d12f031997f1ce4fde133bba330f7c30d6888a298f5e341ff71d800c1aaffeb710e29874cd323d38be80d7afc06eeec6a845a3daeb7c7ffdd7471df1d38c2b94519d8e32e797da7a56267ea391ceff1940c77e84d89b4f076eb38449b8c9b66a16608d9ea4c80433a3b0cd2b7e9ce25337b173333b8ae23ffb780327f50559147f0c7e7d0169c57dd9257007870066d7d8cd3f7db3876923971f86bcdda6bcdfc4a28d2b1b2fe27ffcabfc1afb17ddfb48834feb9e86d31657a0e5564b7eff50f87173b5fe67358c9d84274e0c6dd3905c621d47153b66d75b6736c10de73df5d7d399751e7bca11edeffa8ed85397b652b6cfa7605344c89ca2fd546c6e718a2652418571ec2022bb3b2ed8f1591e7a333266fb67934ee379f6c99f2f7766985fffac2801ffd0d9aecb7a6cc743ecd17279b4a7fe5e757a4f005d26808d0c3d38dac1ef0740e396e21a21ee16f92d2dbc594a2e6e27818c20f703b07014f0586054218af7ce08ad119e281c5d80000414e4d46ae030000000000000000590000590000780000005650382096030000b416009d012a5a005a003e692c92458371318d0000d096648aacf6efecdc41d403fc04d49ff10ed05d806a007f259a00f22bfe23f9a5fdbf880394863ff72e9630d3d77f1bbf1bbaa0381fbfbcf715e7fa7fb6ef7e3fe8bd987896f3307a80fd30ff9dfe1bde2ffd775007f44ea52e79dfd6bf861fdd1f492d5a672c1cda9ddcc454cf43b8edaeebfb37bd1a85b6ff9c0484cd6ff16d564ae23b30e29c945706d7443a19c48dbde9a4cd21f162b2a0d37f77bb8ebca008a62a2222b9e00000fef4180ad1b39f42320f68f2461f7f7fdd46abfffdfe9166b617fcffffc592623ffcbd2b0de2f3779cd50249fe5246f4d127ede4ad9af3abe75b8ff62da2e309c62030889f38b6fb88976d676846affa7a2eb2db0022d22a300af7abbd46ce67fcdf94e361c2a6be313569560d0265daf35b42b89971e1c89a17a4f6b81c2666a51bffc46f3bffedffa8bddbcf020278b78c5616f33d4bbb39deee0f37114f1025bc9d24d199ff7bdee0c2c1b8a1b20e0703857986d1d267026f0475f16046f6fdecfbd0437f781cfbe0136b2d73190f16b22de9ee0b74fff1b8579b35d5d7802078be6dd01799dfd0dedf9c7c067202afcab4dcfacc59ddb8775455edcec5bdb9d8b7b66f6db4a0c2db8445ed4f7ac6cf7bf7e7947f04ff6c157f58c7e735cc186c02edc1a6181e86cadb4fd8ae2bc70b584fefc8309eb559de36f1f750762140f6bebe4d2da007fe0107a7bd74993913e8f320555469b36e7d60206acfcf36c1f45274a89db675ad1acd967b9c2ca4de99906b67044765c254faa8005aedae84a536785ddf4e2136b177d9dcf80eb08cf9fbcff1f8c6e7cfc721ea2c4c97866276e51725e52e7dd8cea7b3eac4cb57fe9d4ed3eb7a01eff9d3b3ff4005e2fad56426d91fa964958d2ce140fda4defb4281e7ebe957d3b9f8c4a8aa562eaad947c3eacb5820d3eef547cc969181d46bf67b2b0bc746afe907d43afd8b5de885666ae9461561f3cab6fe7fd0d339bbe5fac40ff1b7d5ff6c246eb6201335115178287efe7effee0fef0feffee0ff8fbf63e1ef16de31f600653babefc6fedb501ddee11a622368fe723b0b3f59583e16453add742dc946f3f946b9980009e19434c873056af2090454760ae79a58e835584024d79997cbe3a3b94d9f5572fa09c484e9f0e26eeed3ffd98d1ae2b6c7fda11ff6612d1ba19a96440aaa6752eba3cbff914d3c4f6031d4d5cff0ee39e162743e5e96fca61c919aa340c07870aebeaff0c1996558d17d0dbf22823deacb5bfc00cb0bda6000"
+}

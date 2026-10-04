@@ -1634,3 +1634,12 @@ in that window rather than separate modal dialogs; they retain the reference's
 question strings, answers, escaping, cancellation and ordered output. Options
 Apply is blocked while the editor is open, and closing Options cancels its draft
 and invalidates retained editor callbacks.
+
+Animation loop metadata and the four top-hover zoom-switch policies are now
+consumed by native viewer/filter playback. This does not add players for formats
+whose backend is absent: mpv-backed playback still requires libmpv, and the
+native animation decoder supports WebP and ugoira. GIF/APNG finite loop metadata
+is honored by the existing mpv consumer. The configured hover switch is frozen
+at viewer construction, matching the reference button callback; reopening a
+viewer uses a newly applied choice. Backend error reporting and player-specific
+Options controls remain separate gaps.

@@ -373,7 +373,7 @@ pub(crate) fn open_filter(
 ) -> Result<DuplicateFilterWindow, slint::PlatformError> {
     let window = DuplicateFilterWindow::new()?;
     window.set_reviewing(model.reviewing());
-    let model_dir = model.store().dir().to_path_buf();
+    let playback_store = model.store().clone();
     let slow = Rc::new(SlowStatements::new(model.store()));
     let stills = Rc::new(Stills::new(model.store()));
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
@@ -395,8 +395,8 @@ pub(crate) fn open_filter(
         slow_done: false,
         images: HashMap::new(),
         requested: HashSet::new(),
-        playback: Playback::new(model_dir.join("mpv.conf")),
-        animator: crate::animation::Animator::new(),
+        playback: Playback::for_store(playback_store.clone()),
+        animator: crate::animation::Animator::for_store(playback_store),
         zoomed,
         custom: None,
         merge_options: Rc::default(),

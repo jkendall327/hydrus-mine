@@ -4289,8 +4289,8 @@ fn open_viewer(
     } = hooks;
     let window = MediaViewerWindow::new()?;
     let model = Rc::new(RefCell::new(model));
-    let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
-    let animator = animation::Animator::new();
+    let playback = playback::Playback::for_store(model.borrow().store().clone());
+    let animator = animation::Animator::for_store(model.borrow().store().clone());
     // (where it opens, and how big: fullscreen, by hydrus's default)
     let settings_frame = windows::settings(model.borrow().store()).media_viewer;
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
@@ -4593,6 +4593,16 @@ fn open_viewer(
     };
     show();
     bind_zoom!(window, zoomed);
+    window.on_zoom_switch_requested({
+        let zoomed = zoomed.clone();
+        // The reference captures this command when the top hover is built.
+        let preferences = model
+            .borrow()
+            .store()
+            .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerPlaybackSettings>)
+            .unwrap_or_default();
+        move |x, y| zoomed.switch_with_policy(preferences.zoom_switch, Some((x as i32, y as i32)))
+    });
     window.on_audio_changed(show_audio.clone());
     window.on_flip_global_mute({
         let store = model.borrow().store().clone();

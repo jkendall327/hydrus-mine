@@ -20,8 +20,8 @@ pub(crate) fn open(
 ) -> Result<ArchiveDeleteWindow, slint::PlatformError> {
     let window = ArchiveDeleteWindow::new()?;
     let model = Rc::new(RefCell::new(model));
-    let playback = playback::Playback::new(model.borrow().store().dir().join("mpv.conf"));
-    let animator = animation::Animator::new();
+    let playback = playback::Playback::for_store(model.borrow().store().clone());
+    let animator = animation::Animator::for_store(model.borrow().store().clone());
     let settings: hydrus_core::media_viewer::MediaViewerSettings = model
         .borrow()
         .store()

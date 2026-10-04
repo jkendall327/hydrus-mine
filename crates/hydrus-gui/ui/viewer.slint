@@ -98,6 +98,7 @@ component RatingGraphic inherits Rectangle {
 component HoverButton inherits Rectangle {
     in property <image> icon;
     callback clicked();
+    callback pointed-click(length, length);
     width: 24px;
     height: 24px;
     border-radius: 3px;
@@ -110,7 +111,10 @@ component HoverButton inherits Rectangle {
         source: root.icon;
     }
     touch := TouchArea {
-        clicked => { root.clicked(); }
+        clicked => {
+            root.clicked();
+            root.pointed-click(root.absolute-position.x + self.mouse-x, root.absolute-position.y + self.mouse-y);
+        }
     }
 }
 
@@ -127,6 +131,7 @@ export component MediaViewerWindow inherits Window {
     in property <length> seek-height: 20px;
     in property <length> seek-hidden-height: 5px;
     in property <length> seek-nub-width: 10px;
+    callback zoom-switch-requested(length, length);
     callback presentation-settings-changed();
     in property <bool> window-active: true;
     in property <bool> another-window-active;
@@ -1230,7 +1235,7 @@ export component MediaViewerWindow inherits Window {
                             }
                             HoverButton {
                                 icon: @image-url("../../../static/zoom_switch.png");
-                                clicked => { root.zoom(0, false, 0, 0); }
+                                pointed-click(x, y) => { root.zoom-switch-requested(x, y); }
                             }
                             HoverButton {
                                 icon: @image-url("../../../static/fullscreen_switch.svg");

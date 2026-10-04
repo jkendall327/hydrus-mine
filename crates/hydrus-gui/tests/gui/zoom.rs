@@ -510,3 +510,45 @@ fn resizing_preserves_or_recenters_the_recorded_zoom_and_pan() {
         assert_eq!(zoom.zoom(), event["after"]["zoom"].as_f64().unwrap());
     }
 }
+
+#[test]
+fn configurable_top_hover_zoom_cycles_match_real_qt_positions() {
+    let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+    for case in fixture["zoom"].as_array().unwrap() {
+        let settings = MediaViewerSettings {
+            zoom_centre: if case["centre"] == 0 {
+                ZoomCentre::MediaCentre
+            } else {
+                ZoomCentre::Mouse
+            },
+            ..Default::default()
+        };
+        let resolution = (
+            case["resolution"][0].as_u64().unwrap() as u32,
+            case["resolution"][1].as_u64().unwrap() as u32,
+        );
+        let canvas = (
+            case["canvas"][0].as_i64().unwrap() as i32,
+            case["canvas"][1].as_i64().unwrap() as i32,
+        );
+        let mut zoom = Zoom::new(settings, Mime::ImageJpeg, Some(resolution), canvas, 1.0);
+        if zoom.zoom() != 1.0 {
+            zoom.switch(None);
+        }
+        zoom.drag((37, 19));
+        let pointer = Some((
+            case["pointer"][0].as_i64().unwrap() as i32,
+            case["pointer"][1].as_i64().unwrap() as i32,
+        ));
+        for expected in case["states"].as_array().unwrap() {
+            zoom.switch_with_policy(case["choice"].as_u64().unwrap() as usize, pointer);
+            assert_eq!(zoom.zoom(), expected["zoom"].as_f64().unwrap(), "{case:?}");
+            let (x, y, w, h) = zoom.rect();
+            assert_eq!(
+                serde_json::json!([x, y, w, h]),
+                expected["rect"],
+                "{case:?}"
+            );
+        }
+    }
+}

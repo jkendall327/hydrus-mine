@@ -5,6 +5,7 @@
 use std::cell::{Cell, RefCell};
 use std::path::{Path, PathBuf};
 use std::rc::Rc;
+use std::sync::Arc;
 use std::time::Duration;
 
 use crate::mpv;
@@ -12,6 +13,8 @@ use crate::mpv;
 pub(crate) struct Playback {
     /// The store's `mpv.conf` (else hydrus's default options apply).
     conf: PathBuf,
+    store: Option<Arc<hydrus_store::Store>>,
+    times_to_play: Cell<u32>,
     player: RefCell<Option<mpv::Player>>,
     frames: slint::Timer,
     /// The volume and mute to play at.
@@ -34,6 +37,8 @@ impl Playback {
     pub fn new(conf: PathBuf) -> Rc<Self> {
         Rc::new(Self {
             conf,
+            store: None,
+            times_to_play: Cell::new(0),
             player: RefCell::new(None),
             frames: slint::Timer::default(),
             audio: Cell::new((100, false)),
@@ -41,6 +46,14 @@ impl Playback {
             restarts: Cell::new(0),
             last_position: Cell::new(None),
         })
+    }
+
+    pub fn for_store(store: Arc<hydrus_store::Store>) -> Rc<Self> {
+        let mut playback = Self::new(store.dir().join("mpv.conf"));
+        Rc::get_mut(&mut playback)
+            .expect("new player is exclusively owned")
+            .store = Some(store);
+        playback
     }
 
     /// Play `path`, its frames at the size `size` gives shown by `show`; or,
@@ -59,6 +72,17 @@ impl Playback {
             self.stop();
             return;
         };
+        let always_loop = self.store.as_ref().is_none_or(|store| {
+            store
+                .read(hydrus_store::settings::get::<hydrus_store::settings::ViewerPlaybackSettings>)
+                .unwrap_or_default()
+                .always_loop
+        });
+        self.times_to_play.set(if always_loop {
+            0
+        } else {
+            hydrus_media::animation::times_to_play(path)
+        });
         let mut player = self.player.borrow_mut();
         if player.is_none() {
             match mpv::Player::new(Some(&self.conf)) {
@@ -115,7 +139,10 @@ impl Playback {
         let before = self.last_position.replace(Some(position));
         if before.is_some_and(|before| position < before) && position < RESTARTED_MS {
             self.restarts.set(self.restarts.get() + 1);
-            if self.stop_at_end.get() {
+            if self.stop_at_end.get()
+                || (self.times_to_play.get() != 0
+                    && self.restarts.get() >= self.times_to_play.get())
+            {
                 let _ = player.set_paused(true);
                 let _ = player.seek_ms(0.0);
                 self.last_position.set(Some(0.0));

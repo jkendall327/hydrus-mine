@@ -33,7 +33,7 @@ use hydrus_store::settings::{
     FileViewingStatistics, FolderSettings, GuiSettings, NotebookCreationSettings,
     OptionsPreferences, PageSettings, SearchDefaults, TagAutocompleteTabs, ThumbnailLayout,
     ViewerBackgroundSettings, ViewerCanvasSettings, ViewerClosingSettings, ViewerCursorSettings,
-    ViewerFocusSettings, ViewerHoverSettings, ViewerPointerSettings,
+    ViewerFocusSettings, ViewerHoverSettings, ViewerPlaybackSettings, ViewerPointerSettings,
 };
 use hydrus_store::similar::SimilarFilesSettings;
 use hydrus_store::tag_editing::TagEditingSettings;
@@ -123,6 +123,7 @@ settings! {
     viewer_focus: ViewerFocusSettings,
     viewer_closing: ViewerClosingSettings,
     viewer_cursor: ViewerCursorSettings,
+    viewer_playback: ViewerPlaybackSettings,
 }
 
 /// An option's value as its control holds it.
@@ -1962,6 +1963,14 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                         ),
                     ],
                 ),
+                boxed(
+                    "video/animations",
+                    vec![check(
+                        "Always Loop Animations:",
+                        |s| s.viewer_playback.always_loop,
+                        |s, value| s.viewer_playback.always_loop = value,
+                    )],
+                ),
             ],
         ),
         page(
@@ -2158,6 +2167,20 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             |settings, value| settings.viewer_hovers.notes = value,
                         ),
                     ],
+                ),
+                boxed(
+                    "top hover button/menu controls",
+                    vec![choice(
+                        "Zoom switch button switches between:",
+                        &[
+                            "100% and canvas fit",
+                            "100% and canvas fit, and recenter media on switch",
+                            "100% and canvas fit and canvas fill",
+                            "100% and canvas fit and canvas fill, and recenter media on switch",
+                        ],
+                        |s| s.viewer_playback.zoom_switch.min(3),
+                        |s, value| s.viewer_playback.zoom_switch = value,
+                    )],
                 ),
                 boxed(
                     "top hover file summary",

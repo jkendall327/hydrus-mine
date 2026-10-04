@@ -1795,3 +1795,71 @@ fn subscription_concurrency_replays_recorded_clamps_and_committed_parent_states(
         );
     }
 }
+
+#[test]
+fn zoom_switch_and_animation_loop_controls_match_reference_and_stage_changes() {
+    use hydrus_gui_model::options::{Editor, Row as EditorRow};
+    let recorded = hydrus_testkit::fixture_json("options_dialog.json");
+    let fixture = hydrus_testkit::fixture_json("viewer_zoom_loop_options.json");
+    let (_directory, store) = fixture_store(&recorded);
+    let settings = store.read(Settings::load).unwrap();
+    assert_eq!(settings.viewer_playback.zoom_switch, 0);
+    assert_eq!(
+        settings.viewer_playback.always_loop,
+        fixture["initial"]["loop"].as_bool().unwrap()
+    );
+    for name in ["media playback", "media viewer hovers"] {
+        let registry = pages(&settings);
+        let page = registry.iter().find(|page| page.name == name).unwrap();
+        let reference = recorded["pages"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .find(|page| page["page"] == name)
+            .unwrap();
+        let problems = page_problems(page, &reference["items"], &settings, &store);
+        assert!(problems.is_empty(), "{problems:?}");
+    }
+    let mut editor = Editor::new(settings.clone());
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media viewer hovers")
+        .unwrap();
+    editor.show_page(page);
+    let row = editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == "Zoom switch button switches between:")).unwrap();
+    let EditorRow::Opt { option, .. } = &editor.rows()[row] else {
+        panic!("choice row")
+    };
+    let Kind::Choice(labels) = &option.kind else {
+        panic!("choice control")
+    };
+    assert_eq!(serde_json::json!(labels), fixture["initial"]["choices"]);
+    for choice in 0..4 {
+        editor.choose(row, choice);
+        assert_eq!(editor.applied().0.viewer_playback.zoom_switch, choice);
+    }
+    let page = editor
+        .page_names()
+        .iter()
+        .position(|name| *name == "media playback")
+        .unwrap();
+    editor.show_page(page);
+    let row = editor.rows().iter().position(|row| matches!(row, EditorRow::Opt {option,..} if option.label == "Always Loop Animations:")).unwrap();
+    editor.check(row, false);
+    let (after, before, errors) = editor.applied();
+    assert!(errors.is_empty(), "{errors:?}");
+    assert!(!after.viewer_playback.always_loop);
+    assert_eq!(
+        store.read(Settings::load).unwrap(),
+        settings,
+        "drafts remain staged"
+    );
+    let before = before.clone();
+    store
+        .write(move |ctx| after.save(ctx.conn(), &before))
+        .unwrap();
+    let saved = store.read(Settings::load).unwrap().viewer_playback;
+    assert_eq!(saved.zoom_switch, 3);
+    assert!(!saved.always_loop);
+}

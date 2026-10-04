@@ -744,6 +744,19 @@ pub fn decode_input(db: &LegacyDb) -> Result<ImportInput> {
             viewer_canvas.seek_nub_width = (*value).clamp(1, 63) as u32;
         }
         insert_setting(&mut input, &viewer_canvas)?;
+        let mut viewer_playback = crate::settings::ViewerPlaybackSettings::default();
+        if let Some(value) = options.booleans.get("always_loop_gifs") {
+            viewer_playback.always_loop = *value;
+        }
+        if let Some(value) = options.integers.get("zoom_switch_command") {
+            viewer_playback.zoom_switch = match *value {
+                106 => 1,
+                172 => 2,
+                173 => 3,
+                _ => 0,
+            };
+        }
+        insert_setting(&mut input, &viewer_playback)?;
         let mut viewer_cursor = crate::settings::ViewerCursorSettings::default();
         if let Some(value) = options
             .noneable_integers
@@ -3093,6 +3106,38 @@ mod tests {
                 seek_nub_width: 19
             }
         );
+    }
+
+    #[test]
+    fn viewer_playback_import_keeps_zoom_command_and_loop_policy() {
+        use crate::settings::ViewerPlaybackSettings;
+        let source = hydrus_testkit::legacy_fixture("basic");
+        let decoded = || {
+            let input = decode_input(&LegacyDb::open(source.path()).unwrap()).unwrap();
+            serde_json::from_value::<ViewerPlaybackSettings>(
+                input.settings["viewer_playback"].clone(),
+            )
+            .unwrap()
+        };
+        assert_eq!(decoded(), ViewerPlaybackSettings::default());
+        for (previous, command, choice) in [(91, 106, 1), (106, 172, 2), (172, 173, 3)] {
+            edit_client_options(
+                source.path(),
+                &[(
+                    &format!(r#"[[0, "zoom_switch_command"], [0, {previous}]]"#),
+                    &format!(r#"[[0, "zoom_switch_command"], [0, {command}]]"#),
+                )],
+            );
+            assert_eq!(decoded().zoom_switch, choice);
+        }
+        edit_client_options(
+            source.path(),
+            &[(
+                r#"[[0, "always_loop_gifs"], [0, true]]"#,
+                r#"[[0, "always_loop_gifs"], [0, false]]"#,
+            )],
+        );
+        assert!(!decoded().always_loop);
     }
 
     #[test]
