@@ -152,6 +152,7 @@ settings! {
     thumbnails: ThumbnailSettings,
     thumbnail_layout: ThumbnailLayout,
     thumbnail_ratings: ThumbnailRatingSettings,
+    rating_context_sizes: hydrus_store::settings::RatingContextSizes,
     trash: TrashSettings,
     url_classes: UrlClassSettings,
     windows: WindowSettings,
@@ -696,6 +697,35 @@ fn float(
                     return Err(format!("{name} must be from {min} to {max}"));
                 }
                 set(s, f);
+                Ok(())
+            }
+            _ => Err(wrong(label)),
+        }),
+    )
+}
+
+fn rating_size(
+    label: &'static str,
+    (min, max): (f64, f64),
+    get: fn(&Settings) -> f64,
+    set: fn(&mut Settings, f64),
+) -> Item {
+    opt(
+        label,
+        Kind::Float { min, max },
+        Rc::new(move |s| Value::Float(float_text(get(s)))),
+        Rc::new(move |s, v| match v {
+            Value::Float(text) => {
+                let value = text
+                    .trim()
+                    .parse::<f64>()
+                    .ok()
+                    .filter(|value| value.is_finite())
+                    .ok_or_else(|| format!("{} \"{text}\" is not a number", label.trim_end()))?;
+                set(
+                    s,
+                    ((value.clamp(min, max) * 100.0).round() / 100.0).clamp(min, max),
+                );
                 Ok(())
             }
             _ => Err(wrong(label)),
@@ -2689,6 +2719,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                     ],
                 ),
                 boxed(
+                    "preview window",
+                    vec![
+                        rating_size(
+                            "Preview window like/dislike and numerical rating icon size:",
+                            (1.0, 255.0),
+                            |s| s.rating_context_sizes.preview_icon_size,
+                            |s, v| s.rating_context_sizes.preview_icon_size = v,
+                        ),
+                        rating_size(
+                            "Preview window inc/dec rating icon height:",
+                            (2.0, 255.0),
+                            |s| s.rating_context_sizes.preview_incdec_height,
+                            |s, v| s.rating_context_sizes.preview_incdec_height = v,
+                        ),
+                    ],
+                ),
+                boxed(
                     "thumbnails",
                     vec![
                         float(
@@ -2712,6 +2759,23 @@ pub fn pages(settings: &Settings) -> Vec<Page> {
                             "Always draw thumbnail numerical ratings collapsed: ",
                             |s| s.thumbnail_ratings.numerical_collapsed,
                             |s, v| s.thumbnail_ratings.numerical_collapsed = v,
+                        ),
+                    ],
+                ),
+                boxed(
+                    "dialogs",
+                    vec![
+                        rating_size(
+                            "Dialogs like/dislike and numerical rating icon size:",
+                            (6.0, 128.0),
+                            |s| s.rating_context_sizes.dialog_icon_size,
+                            |s, v| s.rating_context_sizes.dialog_icon_size = v,
+                        ),
+                        rating_size(
+                            "Dialogs inc/dec rating height:",
+                            (12.0, 128.0),
+                            |s| s.rating_context_sizes.dialog_incdec_height,
+                            |s, v| s.rating_context_sizes.dialog_incdec_height = v,
                         ),
                     ],
                 ),
@@ -4020,11 +4084,23 @@ mod tests {
         let pages = pages(&before);
         let ratings = pages.iter().position(|p| p.name == "ratings").unwrap();
         let mut values = values(&pages, &before);
-        // (the media viewer's two, then the thumbnails')
-        values[ratings][2] = Value::Float("200".into());
-        values[ratings][3] = Value::Float("201".into());
-        values[ratings][4] = Value::Check(false);
-        values[ratings][5] = Value::Check(true);
+        let indices = [
+            "Thumbnail like/dislike and numerical rating icon size: ",
+            "Thumbnail inc/dec rating height: ",
+            "Give thumbnail ratings a flat background: ",
+            "Always draw thumbnail numerical ratings collapsed: ",
+        ]
+        .map(|label| {
+            pages[ratings]
+                .options
+                .iter()
+                .position(|option| option.label == label)
+                .unwrap()
+        });
+        values[ratings][indices[0]] = Value::Float("200".into());
+        values[ratings][indices[1]] = Value::Float("201".into());
+        values[ratings][indices[2]] = Value::Check(false);
+        values[ratings][indices[3]] = Value::Check(true);
         let (after, problems) = applied(&pages, &before, &values);
         assert_eq!(
             problems,
@@ -4038,16 +4114,16 @@ mod tests {
         );
         assert!(!ratings_after.background);
         assert!(ratings_after.numerical_collapsed);
-        values[ratings][3] = Value::Float("1.5".into());
+        values[ratings][indices[1]] = Value::Float("1.5".into());
         assert_eq!(applied(&pages, &before, &values).1.len(), 1, "below 2");
-        values[ratings][3] = Value::Float("2".into());
+        values[ratings][indices[1]] = Value::Float("2".into());
         let (after, problems) = applied(&pages, &before, &values);
         assert!(problems.is_empty());
         assert_eq!(after.thumbnail_ratings.incdec_height, 2.0);
         // (and they show as they are)
         let shown = super::values(&pages, &after);
         assert_eq!(
-            shown[ratings][2..],
+            indices.map(|index| shown[ratings][index].clone()),
             [
                 Value::Float("200.0".into()),
                 Value::Float("2.0".into()),

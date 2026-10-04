@@ -2955,3 +2955,13 @@ Qt's broader tree drag/drop, collapse, or context-menu behavior. Actual Qt choic
 bar positions, hidden states, selected indices and fitted strings are recorded in
 `tab_presentation.json`, alongside Qt orientation PNGs. Native consumer replays
 capture each side, hidden navigation and overflowing labels for hosted review.
+
+Options → ratings now stages independent Preview Window and Dialog square-icon
+sizes and counter heights. The four controls retain Qt's separate bounds, two
+decimal places and clamping; Apply persists them, Cancel discards them, and
+legacy import preserves the saved fractions. Newly opened Manage Ratings uses
+the Dialog preferences for like/numerical graphics, their outlines and counter
+height, with counter width expanding for long values. Held right-button movement
+clears without rating stars; held left movement rates the dialog's draft. All
+four service-editor examples read their corresponding saved sizing preferences.
+The Preview Window preferences have no native preview-canvas consumer yet.

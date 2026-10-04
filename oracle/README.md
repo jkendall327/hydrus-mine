@@ -165,3 +165,15 @@ presses, held left-button motion, outside movement/presses, release, ordinary
 motion and clicks on painted fraction text, for all three opening fraction sides.
 It records whole-widget positions/dimensions, fractions and the unchanged second
 sample, preserves original fixture services, and saves a populated drag-state PNG.
+
+`record_rating_context_sizes.py` drives the four real RatingsPanel double-spin
+boxes, their editingFinished consumers, UpdateOptions, reopened controls and
+actual option serialization. Five cases cover defaults, independent fractional
+values and both bounds. Real RatingLike/Numerical/IncDec dialog and preview
+controls capture pixel sizes, including five-digit counter widths; the actual
+Manage Ratings dialog captures all three sizes and held-right/left mouse moves.
+An abandoned detached Options draft preserves saved values. Executed successfully
+2026-10-04 22:36:53–22:36:55 UTC via the serialized `with-oracle` helper, on a
+freshly unpacked basic fixture with clean reference shutdown. The fixture and
+inspected PNG are `rating_context_sizes.json` and `rating_context_sizes.png`. No
+rating handlers or registered services were replaced; the dialog was cancelled.

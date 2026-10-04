@@ -30,6 +30,24 @@ fn colour(rgb: hydrus_store::services::Rgb) -> slint::Color {
 }
 
 fn show(window: &ManageRatingsWindow, state: &State) {
+    window.set_counter_widths(ModelRc::new(VecModel::from(
+        state
+            .editor
+            .rows
+            .iter()
+            .map(|row| {
+                let (control, _) = row.display();
+                if let crate::ratings::Kind::IncDec { value } = control.kind {
+                    hydrus_gui_model::rating_sizes::counter_width(
+                        f64::from(window.get_incdec_height()),
+                        value,
+                    ) as f32
+                } else {
+                    0.0
+                }
+            })
+            .collect::<Vec<_>>(),
+    )));
     let names: Vec<SharedString> = state
         .editor
         .rows
@@ -92,6 +110,12 @@ pub(crate) fn open(
         .collect();
     let window = ManageRatingsWindow::new().map_err(|e| e.to_string())?;
     window.set_window_title(title(files.len()).into());
+    let sizes = store
+        .read(hydrus_store::settings::get::<hydrus_store::settings::RatingContextSizes>)
+        .map_err(|error| error.to_string())?;
+    window.set_rating_size(sizes.dialog_icon_size.trunc() as f32);
+    window.set_incdec_height(sizes.dialog_incdec_height.trunc() as f32);
+    window.set_rating_outline(crate::ratings::outline_width(sizes.dialog_icon_size.trunc()) as f32);
     let state = Rc::new(RefCell::new(State {
         editor: RatingsEditor::new(&services, &file_ratings),
         notice: String::new(),

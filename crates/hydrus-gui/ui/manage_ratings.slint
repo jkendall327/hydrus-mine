@@ -16,8 +16,10 @@ export component ManageRatingsWindow inherits Window {
     background: Theme.window;
     in property <[string]> names;
     in property <[RatingRow]> ratings;
-    in property <length> rating-size: 16px;
-    in property <length> incdec-height: 16px;
+    in property <[float]> counter-widths;
+    in property <length> rating-size: 12px;
+    in property <length> incdec-height: 12px;
+    in property <length> rating-outline: 1px;
     // what the last copy or paste did ("Copied 3 ratings!")
     in property <string> notice;
     // a paste's error
@@ -45,7 +47,7 @@ export component ManageRatingsWindow inherits Window {
                 horizontal-stretch: 1;
             }
             Rectangle {
-                width: row.kind == 2 ? root.incdec-height * 2 : row.shapes.length * (root.rating-size + row.pad) - row.pad;
+                width: row.kind == 2 ? root.counter-widths[i] * 1px : row.shapes.length * (root.rating-size + row.pad) - row.pad;
                 height: row.kind == 2 ? root.incdec-height : root.rating-size;
                 if row.kind == 2: Rectangle {
                     border-width: 1px;
@@ -72,7 +74,7 @@ export component ManageRatingsWindow inherits Window {
                     commands: row.shape;
                     fill: star.brush;
                     stroke: star.pen;
-                    stroke-width: 1px;
+                    stroke-width: root.rating-outline;
                 }
                 TouchArea {
                     enabled: !root.asking;
@@ -87,7 +89,7 @@ export component ManageRatingsWindow inherits Window {
                     }
                     moved => {
                         // (dragging along stars sets them)
-                        if (row.kind == 1) {
+                        if (row.kind == 1 && self.pressed) {
                             root.rating-clicked(i, true, self.mouse-x / self.width);
                         }
                     }
