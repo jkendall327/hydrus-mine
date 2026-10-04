@@ -103,3 +103,19 @@ export component CookieImportWindow inherits Window {
         }
     }
 }
+
+export component HeaderApprovalWindow inherits Window {
+    title: "custom HTTP header approval"; width: 700px; height: 360px; background: Theme.window;
+    in property <string> question; in property <string> error; in property <bool> busy;
+    callback answer(bool); callback later();
+    VerticalBox { padding: 18px; spacing: 12px;
+        Text { text: root.question; wrap: word-wrap; color: Theme.text; }
+        Text { text: root.error; wrap: word-wrap; color: Theme.error; }
+        Rectangle { vertical-stretch: 1; }
+        HorizontalBox { Rectangle { horizontal-stretch: 1; }
+            Button { text: "yes"; enabled: !root.busy; clicked => { root.answer(true); } }
+            Button { text: "no"; enabled: !root.busy; clicked => { root.answer(false); } }
+            Button { text: "later"; enabled: !root.busy; clicked => { root.later(); } }
+        }
+    }
+}

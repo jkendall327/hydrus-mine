@@ -1,0 +1,19 @@
+{
+  "questions": [
+    "For the network context global, can the client set this header?\n\nX-Test: global-value\n\nglobal reason",
+    "For the network context web domain: example.com, can the client set this header?\n\nAuthorization: token\n\nlogin reason"
+  ],
+  "validations": [
+    [
+      "global",
+      "X-Test",
+      1
+    ],
+    [
+      "web domain: example.com",
+      "Authorization",
+      0
+    ]
+  ],
+  "done": true
+}

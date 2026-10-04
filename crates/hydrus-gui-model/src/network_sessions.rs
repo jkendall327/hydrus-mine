@@ -428,6 +428,91 @@ pub struct HeaderRow {
     pub context: NetworkContext,
     pub header: CustomHeader,
 }
+/// A pending header currently blocking one or more requests in a daemon epoch.
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct HeaderQuestion {
+    pub row: HeaderRow,
+    pub jobs: Vec<(String, u64)>,
+}
+impl HeaderQuestion {
+    /// The exact question text produced by the reference validation popup process.
+    pub fn text(&self) -> String {
+        format!(
+            "For the network context {}, can the client set this header?\n\n{}: {}\n\n{}",
+            self.row.context.to_human_string(),
+            self.row.header.name,
+            self.row.header.value,
+            self.row.header.reason
+        )
+    }
+}
+
+/// Questions are triggered only by fresh, live requests waiting on these contexts.
+/// Multiple requests for the same header share one decision.
+pub fn pending_header_questions(
+    store: &Store,
+    now: i64,
+) -> hydrus_store::Result<Vec<HeaderQuestion>> {
+    store.read(|conn| {
+        let snapshot =
+            hydrus_store::settings::get::<hydrus_store::network_runtime::Snapshot>(conn)?;
+        if !snapshot.fresh(now) {
+            return Ok(Vec::new());
+        }
+        let mut questions: Vec<HeaderQuestion> = Vec::new();
+        for job in snapshot
+            .jobs
+            .iter()
+            .filter(|j| j.wait == hydrus_store::network_runtime::WaitReason::Headers)
+        {
+            for context in &job.contexts {
+                for header in network::headers(conn, context)?
+                    .into_iter()
+                    .filter(|h| h.approval == Approval::Pending)
+                {
+                    let row = HeaderRow {
+                        context: context.clone(),
+                        header,
+                    };
+                    let identity = (snapshot.epoch.clone(), job.id);
+                    if let Some(question) = questions.iter_mut().find(|q| q.row == row) {
+                        if !question.jobs.contains(&identity) {
+                            question.jobs.push(identity);
+                        }
+                    } else {
+                        questions.push(HeaderQuestion {
+                            row,
+                            jobs: vec![identity],
+                        });
+                    }
+                }
+            }
+        }
+        for question in &mut questions {
+            question.jobs.sort();
+        }
+        Ok(questions)
+    })
+}
+
+/// Approve or deny precisely the header that was shown, preserving its value/reason.
+/// A changed or removed header cannot inherit an answer to an old question.
+pub fn answer_header_question(
+    store: &Store,
+    question: HeaderQuestion,
+    approved: bool,
+) -> hydrus_store::Result<()> {
+    store.write(move |ctx| {
+        let row = question.row;
+        let current = network::headers(ctx.conn(), &row.context)?.into_iter().find(|h| h.name == row.header.name);
+        if row.header.approval != Approval::Pending || current.as_ref() != Some(&row.header) {
+            return Err(StoreError::Invalid("This header changed while the question was open. Review its new value before approving it.".into()));
+        }
+        network::set_header(ctx.conn(), &row.context, &row.header.name, None,
+            Some(if approved { Approval::Approved } else { Approval::Denied }), None)
+    })
+}
+
 /// All staged custom headers.
 #[derive(Debug, Clone)]
 pub struct HeaderDraft {

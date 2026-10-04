@@ -549,3 +549,285 @@ fn cookie_exchange_widgets_confirm_filter_cancel_import_export_and_report_errors
     assert!(!import.window().is_visible());
     import.invoke_action("import".into());
 }
+
+fn wait_for_header(mut predicate: impl FnMut() -> bool) {
+    let start = std::time::Instant::now();
+    while !predicate() {
+        assert!(start.elapsed() < std::time::Duration::from_secs(8));
+        slint::platform::update_timers_and_animations();
+        std::thread::sleep(std::time::Duration::from_millis(10));
+    }
+}
+
+#[test]
+fn automatic_header_dialog_approval_denial_later_and_stale_callbacks() {
+    use hydrus_gui::network_header_approval::{Monitor, last_question};
+    use hydrus_store::{
+        network_runtime::{NetworkJob, Snapshot, WaitReason},
+        settings,
+    };
+    let fixture = hydrus_testkit::fixture_json("header_approval.json");
+    let rendered = headless::init();
+    let parent = hydrus_gui::MainWindow::new().unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let now = jiff::Timestamp::now().as_second();
+    store
+        .write(move |ctx| {
+            for (context, name, value, reason) in [
+                (
+                    NetworkContext::global(),
+                    "X-Test",
+                    "global-value",
+                    "global reason",
+                ),
+                (
+                    NetworkContext::domain("example.com"),
+                    "Authorization",
+                    "token",
+                    "login reason",
+                ),
+            ] {
+                network::set_header(
+                    ctx.conn(),
+                    &context,
+                    name,
+                    Some(value),
+                    Some(Approval::Pending),
+                    Some(reason),
+                )?;
+            }
+            settings::set(
+                ctx.conn(),
+                &Snapshot {
+                    epoch: "question test".into(),
+                    at: now,
+                    usage: Vec::new(),
+                    jobs: vec![NetworkJob {
+                        id: 1,
+                        url: "https://example.com/file".into(),
+                        status: "waiting".into(),
+                        wait: WaitReason::Headers,
+                        bytes_read: 0,
+                        bytes_total: None,
+                        speed: 0,
+                        contexts: vec![
+                            NetworkContext::global(),
+                            NetworkContext::domain("example.com"),
+                        ],
+                        obeys_bandwidth: true,
+                    }],
+                },
+            )
+        })
+        .unwrap();
+    let monitor = Monitor::bind(&parent, store.clone());
+    wait_for_header(|| last_question().is_some());
+    let first = last_question().unwrap();
+    assert_eq!(
+        first.get_question(),
+        fixture["questions"][0].as_str().unwrap()
+    );
+    screenshot(
+        &rendered,
+        rendered.count() - 1,
+        "pending-header-question.png",
+        700,
+        360,
+    );
+    first.invoke_answer(true);
+    wait_for_header(|| last_question().is_some_and(|w| w.get_question().contains("Authorization")));
+    let second = last_question().unwrap();
+    assert_eq!(
+        second.get_question(),
+        fixture["questions"][1].as_str().unwrap()
+    );
+    second.invoke_later();
+    assert!(!second.window().is_visible());
+    assert_eq!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+            .unwrap()[0]
+            .approval,
+        Approval::Pending
+    );
+    // Later suppresses this exact job/question; changing the payload asks anew.
+    store
+        .write(|ctx| {
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::domain("example.com"),
+                "Authorization",
+                Some("new token"),
+                None,
+                None,
+            )
+        })
+        .unwrap();
+    wait_for_header(|| last_question().is_some_and(|w| w.get_question().contains("new token")));
+    second.invoke_answer(true);
+    let third = last_question().unwrap();
+    third.invoke_answer(false);
+    wait_for_header(|| last_question().is_none());
+    assert_eq!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+            .unwrap()[0]
+            .approval,
+        Approval::Denied
+    );
+    assert_eq!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::global()))
+            .unwrap()
+            .iter()
+            .find(|h| h.name == "X-Test")
+            .unwrap()
+            .approval,
+        Approval::Approved
+    );
+    store
+        .write(|ctx| {
+            network::set_header(
+                ctx.conn(),
+                &NetworkContext::domain("example.com"),
+                "Authorization",
+                None,
+                Some(Approval::Pending),
+                None,
+            )?;
+            let mut snapshot = settings::get::<Snapshot>(ctx.conn())?;
+            snapshot.at = jiff::Timestamp::now().as_second();
+            settings::set(ctx.conn(), &snapshot)
+        })
+        .unwrap();
+    wait_for_header(|| last_question().is_some());
+    let abandoned = last_question().unwrap();
+    drop(monitor);
+    assert!(!abandoned.window().is_visible());
+    abandoned.invoke_answer(true);
+    assert_eq!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::domain("example.com")))
+            .unwrap()[0]
+            .approval,
+        Approval::Pending
+    );
+}
+
+#[test]
+fn automatic_header_answers_reach_an_existing_engine_request() {
+    use hydrus_gui::network_header_approval::{Monitor, last_question};
+    use std::io::{Read as _, Write as _};
+    let listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
+    let address = listener.local_addr().unwrap().to_string();
+    let server = std::thread::spawn(move || {
+        let (mut socket, _) = listener.accept().unwrap();
+        let mut request = Vec::new();
+        let mut byte = [0];
+        while !request.ends_with(b"\r\n\r\n") {
+            socket.read_exact(&mut byte).unwrap();
+            request.push(byte[0]);
+        }
+        let body = String::from_utf8(request).unwrap();
+        write!(
+            socket,
+            "HTTP/1.1 200 OK\r\nContent-Length: {}\r\nConnection: close\r\n\r\n{body}",
+            body.len()
+        )
+        .unwrap();
+    });
+    let _rendered = headless::init();
+    let parent = hydrus_gui::MainWindow::new().unwrap();
+    let dir = tempfile::tempdir().unwrap();
+    let store = Store::open(dir.path()).unwrap();
+    let runtime = tokio::runtime::Builder::new_current_thread()
+        .enable_all()
+        .build()
+        .unwrap();
+    let engine = {
+        let _guard = runtime.enter();
+        std::sync::Arc::new(
+            hydrus_net::NetEngine::new(
+                store.clone(),
+                hydrus_net::NetOptions {
+                    obey_bandwidth: false,
+                    ..hydrus_net::NetOptions::default()
+                },
+            )
+            .unwrap(),
+        )
+    };
+    store
+        .write({
+            let address = address.clone();
+            move |ctx| {
+                network::set_header(
+                    ctx.conn(),
+                    &NetworkContext::global(),
+                    "X-Test",
+                    Some("global-value"),
+                    Some(Approval::Pending),
+                    Some("global reason"),
+                )?;
+                network::set_header(
+                    ctx.conn(),
+                    &NetworkContext::domain(address),
+                    "Authorization",
+                    Some("token"),
+                    Some(Approval::Pending),
+                    Some("login reason"),
+                )
+            }
+        })
+        .unwrap();
+    let task = runtime.spawn({
+        let engine = engine.clone();
+        async move {
+            engine
+                .fetch(
+                    &hydrus_net::Request::get(format!("http://{address}/echo")),
+                    &hydrus_net::Job::new(),
+                )
+                .await
+        }
+    });
+    runtime.block_on(async { tokio::time::sleep(std::time::Duration::from_millis(30)).await });
+    assert_eq!(
+        engine.runtime_snapshot().jobs[0].wait,
+        hydrus_store::network_runtime::WaitReason::Headers
+    );
+    engine.publish_runtime().unwrap();
+    let monitor = Monitor::bind(&parent, store.clone());
+    wait_for_header(|| last_question().is_some());
+    let first = last_question().unwrap();
+    assert!(first.get_question().contains("X-Test: global-value"));
+    first.invoke_answer(true);
+    wait_for_header(|| {
+        last_question().is_some_and(|q| q.get_question().contains("Authorization: token"))
+    });
+    last_question().unwrap().invoke_answer(false);
+    wait_for_header(|| last_question().is_none());
+    let response = runtime.block_on(async {
+        tokio::time::timeout(std::time::Duration::from_secs(8), task)
+            .await
+            .unwrap()
+            .unwrap()
+            .unwrap()
+    });
+    let sent = response.text().to_ascii_lowercase();
+    assert!(sent.contains("x-test: global-value"), "{sent}");
+    assert!(!sent.contains("authorization:"), "{sent}");
+    assert_eq!(
+        store
+            .read(|c| network::headers(c, &NetworkContext::global()))
+            .unwrap()
+            .iter()
+            .find(|h| h.name == "X-Test")
+            .unwrap()
+            .reason,
+        "global reason"
+    );
+    monitor.close();
+    server.join().unwrap();
+}

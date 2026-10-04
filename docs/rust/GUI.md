@@ -1599,8 +1599,16 @@ next request and suppresses expired, wrong-path and HTTPS-only cookies on HTTP.
 
 Network > data > manage http headers stages global and domain header names,
 values, approval and reasons, with filter, sorting, duplicate and confirmed
-delete. Pending headers keep jobs waiting until approved or denied; approved
-values affect the next request from an already-running engine. Cookie and header
+delete. When a live daemon request waits for pending headers, the desktop opens
+one automatic question per header, with its context, value and reason, even when
+network review windows are closed. Yes approves and No denies that exact header;
+changed or removed values cannot inherit a stale answer. Requests sharing the
+header share its decision. Later leaves it pending and suppresses that exact
+question until the request set or header changes. Approved values affect the next
+request from an already-running engine, while denied values are omitted.
+`oracle/record_header_approval.py` records the actual validation process questions
+and stored yes/no decisions; native tests cover dialogs, stale callbacks and an
+existing engine request resumed with the approved header only. Cookie and header
 Apply merges only edited keys and rejects a concurrent change to those keys
 atomically, preserving unrelated cookies received from websites or API writes.
 

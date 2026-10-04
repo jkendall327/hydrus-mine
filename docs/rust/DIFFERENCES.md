@@ -1034,8 +1034,13 @@ rejects invalid HTTP field names, cookie delimiters, relative paths and impossib
 UTC expiry values; empty cookie/header values are accepted as valid HTTP data.
 Expired cookies remain visible until manually removed, while Qt periodically
 clears expired cookies when opening a session. Header duplicates use valid `-2`, `-3` suffixes instead of
-Qt's human-name suffixes containing spaces. Pending approval still waits for
-a manual approval change; its automatic question popup is not implemented.
+Qt's human-name suffixes containing spaces. Automatic header approval uses a
+separate desktop question window rather than a JobStatus popup. It watches fresh
+daemon snapshots and displays one question per pending header blocking live jobs.
+A Later/close action leaves approval pending and suppresses the exact header/job
+set until either changes. A changed header must be reviewed anew; Qt's validation
+process does not guard its answer against concurrent value edits. Requests resume
+on the engine's next approval check (currently up to five seconds).
 
 The browser can inspect imported service sessions and create domain sessions;
 creating new service sessions and drag/drop cookie imports remain deferred.

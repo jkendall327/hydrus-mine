@@ -59,6 +59,7 @@ mod manage_urls_window;
 mod menu_bar;
 pub mod merge_options_window;
 pub mod mpv;
+pub mod network_header_approval;
 mod options_window;
 mod page;
 mod pages;
@@ -289,6 +290,7 @@ pub struct Bound {
     _popups: Rc<slint::Timer>,
     /// Automatic recognised URL imports while this desktop window is bound.
     pub clipboard_monitor: clipboard_monitor::Monitor,
+    _header_approval: network_header_approval::Monitor,
 }
 
 impl std::fmt::Debug for Bound {
@@ -1298,6 +1300,8 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
             move || change_pages(&|_| Ok(()))
         }),
     );
+    let header_approval =
+        network_header_approval::Monitor::bind(window, pages.borrow().store().clone());
     let menu_titles_shown = menu_bar::bind(
         window,
         menu_bar::Hooks {
@@ -3193,6 +3197,7 @@ pub fn bind(window: &MainWindow, pages: Pages) -> Bound {
         _menu_titles: menu_titles,
         _popups: popup_timer,
         clipboard_monitor,
+        _header_approval: header_approval,
     }
 }
 
