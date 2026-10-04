@@ -264,13 +264,15 @@ fn last_conversion_loads_reference_options_then_native_override() {
             [step["options"][2].to_string()],
         )
         .unwrap();
-        let options = hydrus_legacy::objects::ClientOptions::from_object(
-            &SerialisableObject::from_tuple_str(&step["options"].to_string()).unwrap(),
-        )
-        .unwrap();
+        let expected =
+            hydrus_downloader_exchange::processing::decode_text(&step["saved"].to_string())
+                .unwrap();
+        let ProcessingStep::Convert(expected) = &expected[0] else {
+            panic!("reference preference is a converter")
+        };
         assert_eq!(
-            load(&conn).unwrap().0,
-            options.last_used_string_conversion().unwrap()
+            load(&conn).unwrap().0.as_ref(),
+            expected.conversions.first()
         );
     }
     let saved = LastStringConversion(Some(Conversion::Append("native".into())));
