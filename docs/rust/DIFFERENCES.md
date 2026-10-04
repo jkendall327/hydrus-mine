@@ -979,6 +979,7 @@ questions use an inline edit panel and generated-key button. Listener changes
 may take up to one second; current requests drain for at most ten seconds
 before restart. HTTP logs omit query strings and credentials. HTTPS is refused
 rather than served as plain HTTP; normie Eris/external URL override fields are
-shown as unsupported preserved values.
+shown as unsupported preserved values in plain text; unset external URL fields
+read "not set".
 Listener reconfiguration retains the same API state, so session keys continue
 to use the current permissions after rebind; revocation still invalidates them.

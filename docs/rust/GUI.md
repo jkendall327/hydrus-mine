@@ -1468,7 +1468,8 @@ GUI regressions render `client_api_keys.png`, `client_api_permissions.png` and
 
 Manage services narrowly permits editing the built-in API service's enabled
 state, port, local/network binding, CORS and anonymous request logging. Other
-imported flags remain preserved. Imported HTTPS can be disabled; enabling it
+imported flags remain preserved and display plain values, with unset external
+URL fields labeled "not set". Imported HTTPS can be disabled; enabling it
 is unsupported. The daemon notices configuration changes within one second and
 restarts only the API listener, keeping downloads, queues and authentication
 sessions alive. A bind failure reports its cause and recovers after settings
