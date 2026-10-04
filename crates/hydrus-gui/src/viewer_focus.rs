@@ -63,7 +63,9 @@ impl NativeFocus {
         use slint::winit_030::WinitWindowAccessor as _;
         if !self.registered.get()
             && let Some(window) = self.window.upgrade()
-            && let Some(id) = window.window().with_winit_window(|native| native.id())
+            && let Some(id) = window
+                .window()
+                .with_winit_window(slint::winit_030::winit::window::Window::id)
         {
             self.watch_id(id);
             self.registered.set(true);

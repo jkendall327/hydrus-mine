@@ -2454,8 +2454,8 @@ fn pointer_options_change_real_drag_acceptance_and_cursor_transitions() {
         );
         // Distinct press points avoid synthesising a double click that closes
         // the actual viewer. The media delta is independent of the origin.
-        let x = 400.0 + case as f32 * 35.0;
-        let at = |dx, dy| LogicalPosition::new(x + dx, 350.0 + dy);
+        let x: f32 = 400.0 + case as f32 * 35.0;
+        let at = |dx: f32, dy: f32| LogicalPosition::new(x + dx, 350.0 + dy);
         let moved = |dx, dy| {
             viewer.window().dispatch_event(WindowEvent::PointerMoved {
                 position: at(dx, dy),
