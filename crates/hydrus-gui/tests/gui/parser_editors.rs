@@ -1978,3 +1978,111 @@ fn owned_parser_picker_and_clear_questions_replay_reference_and_reach_live_resol
     assert!(slots.picker.borrow().is_none());
     slots.cancel();
 }
+
+#[test]
+fn timestamp_content_has_only_source_choice_and_persists_real_parsed_metadata() {
+    use hydrus_gui_model::formula_editors::FormulaTestData;
+    use hydrus_legacy::{objects::parsers, serialisable::SerialisableObject};
+    use std::rc::Rc;
+    let (_dir, store, slots) = setup();
+    let rendered = headless::init();
+    let reference = hydrus_testkit::fixture_json("content_time.json");
+    for case in reference["cases"].as_array().unwrap() {
+        let object = SerialisableObject::from_tuple_str(&case["tuple"].to_string()).unwrap();
+        let mut parser = parsers::content_parser(&object).unwrap();
+        if case["input_type"] != "datestring" {
+            parser.kind = ContentKind::Timestamp {
+                timestamp_type: case["input_type"].as_i64(),
+            };
+        }
+        let original = definitions(&store);
+        let content = windows::open_content(
+            &store,
+            &parser,
+            FormulaTestData::default(),
+            &slots,
+            &[4],
+            Rc::new({
+                let store = store.clone();
+                move |parser| {
+                    store
+                        .write(move |ctx| {
+                            let mut saved: Downloaders = settings::get(ctx.conn())?;
+                            saved.parsers[0].content_parsers = vec![parser];
+                            settings::set(ctx.conn(), &saved)
+                        })
+                        .map_err(|e| e.to_string())
+                }
+            }),
+        )
+        .unwrap();
+        let field = content
+            .get_fields()
+            .iter()
+            .find(|field| field.id == 8)
+            .unwrap();
+        assert_eq!(field.kind, 1);
+        assert_eq!(field.label, "timestamp type");
+        assert_eq!(field.chosen, 0);
+        assert_eq!(
+            field
+                .options
+                .iter()
+                .map(|s| s.to_string())
+                .collect::<Vec<_>>(),
+            vec!["source time"]
+        );
+        // Retained text callbacks and invalid choices cannot author timestamp
+        // metadata that is not in the original one-choice control.
+        content.invoke_text_edited(8, "7".into());
+        content.invoke_choice_edited(8, 99);
+        content.invoke_choice_edited(8, 0);
+        content.set_test_url("https://source-time.example/post/1".into());
+        content.set_document(case["cases"][0]["document"].as_str().unwrap().into());
+        content.invoke_action("test".into());
+        assert!(content.get_preview().contains("timestamp:"));
+        assert_eq!(definitions(&store), original);
+        let pixels = headless::render(&rendered.get(rendered.count() - 1).unwrap(), 1000, 780);
+        assert_eq!(pixels.len(), 1000 * 780 * 4);
+        headless::save_png(
+            &std::path::Path::new(env!("CARGO_TARGET_TMPDIR")).join("content_time.png"),
+            &pixels,
+            1000,
+            780,
+        )
+        .unwrap();
+        content.invoke_action("apply".into());
+        assert!(slots.content.borrow().is_none());
+        let saved = definitions(&store).parsers[0].content_parsers[0].clone();
+        assert_eq!(
+            saved.kind,
+            ContentKind::Timestamp {
+                timestamp_type: Some(0)
+            }
+        );
+        assert_eq!(saved.formula, parser.formula);
+        let mut context = ParsingContext::new();
+        context.insert("url".into(), "https://source-time.example/post/1".into());
+        for parsed in case["cases"].as_array().unwrap() {
+            let post = saved
+                .parse(&context, parsed["document"].as_str().unwrap())
+                .unwrap();
+            assert_eq!(
+                serde_json::json!(
+                    post.contents
+                        .iter()
+                        .map(|c| c.text.as_str())
+                        .collect::<Vec<_>>()
+                ),
+                parsed["texts"]
+            );
+            assert_eq!(
+                serde_json::json!(post.timestamp(0, reference["now"].as_i64().unwrap())),
+                parsed["source_time"]
+            );
+        }
+        content.invoke_choice_edited(8, 0);
+        content.invoke_action("apply".into());
+        assert_eq!(definitions(&store).parsers[0].content_parsers[0], saved);
+    }
+}

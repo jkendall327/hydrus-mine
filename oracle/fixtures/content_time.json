@@ -1,0 +1,597 @@
+{
+ "timestamp_type": 0,
+ "now": 1800000000,
+ "cases": [
+  {
+   "input_type": 0,
+   "choices": [
+    [
+     "source time",
+     0
+    ]
+   ],
+   "selected": 0,
+   "tuple": [
+    30,
+    7,
+    [
+     "source timestamp",
+     16,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     0
+    ]
+   ],
+   "cases": [
+    {
+     "document": "<p>1700000000</p><p>1600000000</p>",
+     "texts": [
+      "1700000000",
+      "1600000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      },
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1600000000,
+     "preview": "*** 2 RESULTS BEGIN ***\nsource/post time: 2020-09-13 12:26:40\nsource/post time: 2023-11-14 22:13:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>2000000000</p>",
+     "texts": [
+      "2000000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1799999995,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 2033-05-18 03:33:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>0</p>",
+     "texts": [
+      "0"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 0,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1970-01-01 00:00:00\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>-1</p>",
+     "texts": [
+      "-1"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": -1,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1969-12-31 23:59:59\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>not a time</p>",
+     "texts": [
+      "not a time"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": null,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: could not convert to integer\n*** RESULTS END ***"
+    }
+   ]
+  },
+  {
+   "input_type": null,
+   "choices": [
+    [
+     "source time",
+     0
+    ]
+   ],
+   "selected": 0,
+   "tuple": [
+    30,
+    7,
+    [
+     "source timestamp",
+     16,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     0
+    ]
+   ],
+   "cases": [
+    {
+     "document": "<p>1700000000</p><p>1600000000</p>",
+     "texts": [
+      "1700000000",
+      "1600000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      },
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1600000000,
+     "preview": "*** 2 RESULTS BEGIN ***\nsource/post time: 2020-09-13 12:26:40\nsource/post time: 2023-11-14 22:13:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>2000000000</p>",
+     "texts": [
+      "2000000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1799999995,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 2033-05-18 03:33:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>0</p>",
+     "texts": [
+      "0"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 0,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1970-01-01 00:00:00\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>-1</p>",
+     "texts": [
+      "-1"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": -1,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1969-12-31 23:59:59\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>not a time</p>",
+     "texts": [
+      "not a time"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": null,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: could not convert to integer\n*** RESULTS END ***"
+    }
+   ]
+  },
+  {
+   "input_type": 7,
+   "choices": [
+    [
+     "source time",
+     0
+    ]
+   ],
+   "selected": 0,
+   "tuple": [
+    30,
+    7,
+    [
+     "source timestamp",
+     16,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         []
+        ]
+       ]
+      ]
+     ],
+     0
+    ]
+   ],
+   "cases": [
+    {
+     "document": "<p>1700000000</p><p>1600000000</p>",
+     "texts": [
+      "1700000000",
+      "1600000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      },
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1600000000,
+     "preview": "*** 2 RESULTS BEGIN ***\nsource/post time: 2020-09-13 12:26:40\nsource/post time: 2023-11-14 22:13:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>2000000000</p>",
+     "texts": [
+      "2000000000"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1799999995,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 2033-05-18 03:33:20\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>0</p>",
+     "texts": [
+      "0"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 0,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1970-01-01 00:00:00\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>-1</p>",
+     "texts": [
+      "-1"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": -1,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 1969-12-31 23:59:59\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>not a time</p>",
+     "texts": [
+      "not a time"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": null,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: could not convert to integer\n*** RESULTS END ***"
+    }
+   ]
+  },
+  {
+   "input_type": "datestring",
+   "choices": [
+    [
+     "source time",
+     0
+    ]
+   ],
+   "selected": 0,
+   "tuple": [
+    30,
+    7,
+    [
+     "source timestamp",
+     16,
+     [
+      27,
+      8,
+      [
+       [
+        26,
+        3,
+        [
+         [
+          2,
+          [
+           62,
+           3,
+           [
+            0,
+            "p",
+            {},
+            null,
+            null,
+            false,
+            [
+             51,
+             1,
+             [
+              3,
+              "",
+              null,
+              null,
+              "example string"
+             ]
+            ]
+           ]
+          ]
+         ]
+        ]
+       ],
+       1,
+       "href",
+       "",
+       [
+        84,
+        1,
+        [
+         26,
+         3,
+         [
+          [
+           2,
+           [
+            55,
+            2,
+            [
+             [
+              [
+               10,
+               [
+                "%Y-%m-%d",
+                0,
+                0
+               ]
+              ]
+             ],
+             "example string"
+            ]
+           ]
+          ]
+         ]
+        ]
+       ]
+      ]
+     ],
+     0
+    ]
+   ],
+   "cases": [
+    {
+     "document": "<p>2023-11-14</p><p>2020-09-13</p>",
+     "texts": [
+      "1699920000",
+      "1599955200"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      },
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1599955200,
+     "preview": "*** 2 RESULTS BEGIN ***\nsource/post time: 2020-09-13 00:00:00\nsource/post time: 2023-11-14 00:00:00\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>2099-01-01</p>",
+     "texts": [
+      "4070908800"
+     ],
+     "metadata": [
+      {
+       "name": "source timestamp",
+       "timestamp_type": 0,
+       "description": "source/post time"
+      }
+     ],
+     "source_time": 1799999995,
+     "preview": "*** 1 RESULTS BEGIN ***\nsource/post time: 2099-01-01 00:00:00\n*** RESULTS END ***"
+    },
+    {
+     "document": "<p>invalid date</p>",
+     "texts": [],
+     "metadata": [],
+     "source_time": null,
+     "preview": "*** 0 RESULTS BEGIN ***\n*** RESULTS END ***"
+    }
+   ]
+  }
+ ]
+}
