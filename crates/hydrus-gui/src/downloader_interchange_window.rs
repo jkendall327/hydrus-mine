@@ -189,6 +189,41 @@ pub fn open_subsidiaries(
     Ok(window)
 }
 
+/// Share selected metadata routers through a caller's permitted migration context.
+pub fn open_routers(
+    slots: &Slots,
+    importing: bool,
+    routers: Vec<hydrus_parse::sidecar::Router>,
+    preview: Preview<hydrus_parse::sidecar::Router>,
+    applied: Apply<hydrus_parse::sidecar::Router>,
+) -> Result<DownloaderExchangeWindow, String> {
+    use hydrus_downloader_exchange::routers;
+    let window = open_objects(
+        slots,
+        importing,
+        routers,
+        preview,
+        applied,
+        Codec {
+            encode_text: routers::encode_text,
+            decode_text: routers::decode_text,
+            encode_png: routers::encode_png,
+            decode_png: routers::decode_png,
+            processing: false,
+        },
+    )?;
+    window.set_window_title(
+        if importing {
+            "import metadata routers"
+        } else {
+            "export metadata routers"
+        }
+        .into(),
+    );
+    window.set_instructions(if importing { "Paste reference router text or open a hydrus PNG. Review the permitted sources and destinations before adding them." } else { "Copy selected metadata routers or save a hydrus PNG to share them." }.into());
+    Ok(window)
+}
+
 fn open_objects<T: Clone + 'static>(
     slots: &Slots,
     importing: bool,

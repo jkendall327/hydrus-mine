@@ -672,8 +672,14 @@ deleted sidecars by `crates/hydrus-download/tests/local_import.rs`.
   own (the reference embeds it in the router editor), list "Which
   type?"'s descriptions in its message, and take JSON object names a
   line each. JSON sidecar formulae use the reusable HTML/JSON editor;
-  router testing uses per-source tables instead of a notebook. The routers
-  list still has no import and export buttons. Export-folder search results
+  router testing uses per-source tables instead of a notebook. Router queues
+  import/export clipboard text and PNGs through the shared staged review window,
+  rather than Qt's separate chooser dialogs. Unsupported mixed packages are
+  rejected atomically instead of appending the permitted subset and warning.
+  Source/destination editor samples, filename conversions, JSON formula data and
+  timestamp stubs round-trip. Non-stub timestamps and unsupported processors are
+  rejected before staging rather than silently dropping information.
+  Export-folder search results
   are not yet supplied as media examples (manual exports are).
 - **The string processor editor** receives starting strings from the sidecar
   owner's first example, including source processors before their own processing.

@@ -16,6 +16,40 @@ use hydrus_parse::sidecar::{Exporter, Importer, Router, Source, TagDisplay};
 use hydrus_store::Store;
 use serde_json::{Value, json};
 
+#[test]
+fn recorded_router_queue_restrictions_veto_wrong_direction_and_sources() {
+    let reference = hydrus_testkit::fixture_json("router_exchange.json");
+    let decode = |key: &str| {
+        reference[key]
+            .as_array()
+            .unwrap()
+            .iter()
+            .map(|value| router(&object(value)).unwrap())
+            .collect::<Vec<_>>()
+    };
+    let imports = decode("imports");
+    let exports = decode("exports");
+    editors::validate_router_import(Context::Import, &imports).unwrap();
+    editors::validate_router_import(Context::Export, &exports).unwrap();
+    assert_eq!(
+        editors::validate_router_import(Context::Import, &exports).unwrap_err(),
+        reference["vetoes"][0]["error"]
+    );
+    assert_eq!(
+        editors::validate_router_import(Context::Export, &imports).unwrap_err(),
+        reference["vetoes"][1]["error"]
+    );
+    let mut wrong = exports[0].clone();
+    wrong.importers = imports[0].importers.clone();
+    assert_eq!(
+        editors::validate_router_import(Context::Export, &[wrong]).unwrap_err(),
+        reference["vetoes"][2]["error"]
+    );
+    let mut mixed = imports.clone();
+    mixed.extend(exports);
+    assert!(editors::validate_router_import(Context::Import, &mixed).is_err());
+}
+
 fn store() -> (tempfile::TempDir, std::sync::Arc<Store>) {
     let legacy = hydrus_testkit::legacy_fixture("basic");
     let dir = tempfile::tempdir().unwrap();

@@ -337,6 +337,15 @@ sidecars or metadata without exporting. Source/formula and router processor
 children inherit the reference's first-example strings. `oracle/record_sidecar_testing.py`
 records seven file/media, empty-input, processing and parse-error states.
 
+Router queues also import and export selected routers through clipboard text or
+reference PNGs, duplicate selected rows, and ask before deleting them. Imports
+check the owner's allowed direction, source and destination types before staging
+the package. Apply saves the queue with its owning import folder or export
+editor; Cancel closes recursive source, formula, processor and exchange children.
+`oracle/record_router_exchange.py` records both queue contexts, all six node kinds,
+exact rejection messages and duplication selection. The accepted URL-to-TXT router
+is also exercised through the native manual-export worker and its written sidecar.
+
 A router's or source's processing button (its steps, a line each) opens
 the string processor editor (`ui/string_processor.slint`,
 `src/string_processor_window.rs`, `hydrus-gui-model/src/string_editors.rs`):

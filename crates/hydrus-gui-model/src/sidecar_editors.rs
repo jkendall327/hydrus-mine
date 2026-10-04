@@ -1304,3 +1304,59 @@ pub fn router_test_strings(
         .flat_map(|importer| test_importer_strings(store, importer, object, false))
         .collect()
 }
+
+fn class_name(kind: Kind, importing: bool) -> String {
+    let node = if importing { "Importer" } else { "Exporter" };
+    let kind = match kind {
+        Kind::MediaTags => "MediaTags",
+        Kind::MediaNotes => "MediaNotes",
+        Kind::MediaUrls => "MediaURLs",
+        Kind::MediaTimestamps => "MediaTimestamps",
+        Kind::Txt => "TXT",
+        Kind::Json => "JSON",
+    };
+    format!("SingleFileMetadata{node}{kind}")
+}
+fn permitted_names(kinds: &[Kind], importing: bool) -> String {
+    format!(
+        "[{}]",
+        kinds
+            .iter()
+            .map(|kind| format!("'{}'", class_name(*kind, importing)))
+            .collect::<Vec<_>>()
+            .join(", ")
+    )
+}
+/// Reference router-queue import restrictions, checked before any package is staged.
+pub fn validate_router_import(context: Context, routers: &[Router]) -> Result<(), String> {
+    for router in routers {
+        let destination = exporter_kind(&router.exporter);
+        let sidecars = destination.is_sidecar();
+        if sidecars != (context == Context::Export) {
+            return Err(if context == Context::Export {
+                "I take routers that export to sidecars, these new router(s) import from them!"
+            } else {
+                "I take routers that import from sidecars, these new router(s) export to them!"
+            }
+            .into());
+        }
+        if !context.exporters().contains(&destination) {
+            return Err(format!(
+                "Exporter was {}, I only allow {}.",
+                class_name(destination, false),
+                permitted_names(context.exporters(), false)
+            ));
+        }
+        for importer in &router.importers {
+            let source = importer_kind(importer);
+            if !context.importers().contains(&source) {
+                return Err(format!(
+                    "Importer was {}, I only allow {}.",
+                    class_name(source, true),
+                    permitted_names(context.importers(), true)
+                ));
+            }
+        }
+    }
+    Ok(())
+}
