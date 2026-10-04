@@ -11,7 +11,8 @@ on:
 
 concurrency:
   group: rust-${{ github.ref }}
-  cancel-in-progress: true
+  # Overnight implementation continues while earlier checkpoints validate.
+  cancel-in-progress: ${{ github.head_ref != 'codex/overnight-gui-burndown' && github.ref != 'refs/heads/codex/overnight-gui-burndown' }}
 
 env:
   CARGO_TERM_COLOR: always
@@ -19,6 +20,9 @@ env:
 
 jobs:
   check:
+    # This branch has an open PR: run once per checkpoint, rather than both
+    # its push and pull_request events. Other branch pushes still validate.
+    if: github.event_name != 'push' || github.ref != 'refs/heads/codex/overnight-gui-burndown'
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -44,6 +48,7 @@ jobs:
   # hydrus-rs should build and pass its tests on Windows and macOS too; the
   # Linux job above is the full check (lints and the parity ratchet).
   other-platforms:
+    if: github.event_name != 'push' || github.ref != 'refs/heads/codex/overnight-gui-burndown'
     strategy:
       fail-fast: false
       matrix:
