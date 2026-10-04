@@ -2,7 +2,7 @@
   "schema_version": 1,
   "task": "Browser viewer eye-menu collapse controls",
   "baseline": "4356918f41d2cb2b0159eb8c466d987de9fa9339",
-  "source_commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+  "source_commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
   "validation": {
     "reference": "executed actual Qt8-combination recorder and inspected PNG",
     "formatting": "rustfmt --edition2024, Python py_compile, git diff --check passed",
@@ -28,25 +28,25 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
           "line": 2573,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "Collapse \\\"window\\\" submenu"
         },
         {
           "relativepath": "crates/hydrus-gui/src/viewer_eye_menu.rs",
           "line": 140,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub(crate) fn bind("
         },
         {
           "relativepath": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
           "line": 7,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "export component ViewerEyeButton"
         },
         {
           "relativepath": "crates/hydrus-store/src/settings.rs",
           "line": 855,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub struct ViewerEyeMenuSettings"
         }
       ],
@@ -54,19 +54,19 @@
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
           "line": 1963,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
           "line": 5367,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()"
         },
         {
           "relativepath": "crates/hydrus-store/src/import/decode.rs",
           "line": 3868,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn browser_eye_menu_preferences_migrate_independently()"
         }
       ],
@@ -76,9 +76,9 @@
         "screenshots": [
           "oracle/fixtures/viewer_eye_menu.png"
         ],
-        "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+        "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:08:35\u201340 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, clean reference shutdown. PNG inspected. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:21\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
@@ -108,25 +108,25 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
           "line": 2578,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "Collapse \\\"hovers\\\" submenu"
         },
         {
           "relativepath": "crates/hydrus-gui/src/viewer_eye_menu.rs",
           "line": 140,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub(crate) fn bind("
         },
         {
           "relativepath": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
           "line": 7,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "export component ViewerEyeButton"
         },
         {
           "relativepath": "crates/hydrus-store/src/settings.rs",
           "line": 855,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub struct ViewerEyeMenuSettings"
         }
       ],
@@ -134,19 +134,19 @@
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
           "line": 1963,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
           "line": 5367,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()"
         },
         {
           "relativepath": "crates/hydrus-store/src/import/decode.rs",
           "line": 3868,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn browser_eye_menu_preferences_migrate_independently()"
         }
       ],
@@ -156,9 +156,9 @@
         "screenshots": [
           "oracle/fixtures/viewer_eye_menu.png"
         ],
-        "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+        "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:08:35\u201340 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, clean reference shutdown. PNG inspected. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:21\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
@@ -188,25 +188,25 @@
         {
           "relativepath": "crates/hydrus-gui-model/src/options.rs",
           "line": 2583,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "Collapse \\\"rendering\\\" submenu"
         },
         {
           "relativepath": "crates/hydrus-gui/src/viewer_eye_menu.rs",
           "line": 140,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub(crate) fn bind("
         },
         {
           "relativepath": "crates/hydrus-gui/ui/viewer_eye_menu.slint",
           "line": 7,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "export component ViewerEyeButton"
         },
         {
           "relativepath": "crates/hydrus-store/src/settings.rs",
           "line": 855,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "pub struct ViewerEyeMenuSettings"
         }
       ],
@@ -214,19 +214,19 @@
         {
           "relativepath": "crates/hydrus-gui-model/tests/model/options_dialog.rs",
           "line": 1963,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_preferences_follow_all_reference_combinations_without_saving_detached_edits()"
         },
         {
           "relativepath": "crates/hydrus-gui/tests/gui/options_window.rs",
           "line": 5367,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn eye_menu_collapse_options_stage_reopen_and_rebuild_the_existing_browser_viewer()"
         },
         {
           "relativepath": "crates/hydrus-store/src/import/decode.rs",
           "line": 3868,
-          "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+          "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
           "symbol": "fn browser_eye_menu_preferences_migrate_independently()"
         }
       ],
@@ -236,9 +236,9 @@
         "screenshots": [
           "oracle/fixtures/viewer_eye_menu.png"
         ],
-        "commit": "5cfd384d80466caa66912b5ae150a5e9b391b894",
+        "commit": "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0",
         "executed": true,
-        "result": "Actual Qt v688 completed 2026-10-04 22:08:35\u201340 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, clean reference shutdown. PNG inspected. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
+        "result": "Actual Qt v688 completed 2026-10-04 22:22:21\u201326 UTC under shared oracle lock; eight real _ShowViewOptionsMenu trees on same browser viewer, three real Options checkboxes, saved/reopened values and discarded detached edits, plus five actual window-action clicks with Qt queued media-container commands processed before post-action state reads. Clean reference shutdown and inspected PNG. Reference Python unmodified; media from basic imported fixture, no authored public-site domains."
       },
       "limits": [
         "Scope is the browser media viewer's real eye-menu topology. The deeper ICC toggle, duplicate-filter checkerboard and pinned duplicates-hover actions are absent; Linux warning label and platform-specific OS window behavior differ. Broader hover/button/view-options parents remain Partial; no deeper action or parent completion claimed.",
@@ -254,5 +254,9 @@
   ],
   "remaining_boundaries": [
     "Broader hover, top-button and eye-menu families remain Partial. Unsupported deeper ICC/duplicate-filter actions and platform differences do not create additional claims."
+  ],
+  "implementation_commits": [
+    "5cfd384d80466caa66912b5ae150a5e9b391b894",
+    "6d85958c3e69b482f83d7da4b5815a4e0d0ab9d0"
   ]
 }
